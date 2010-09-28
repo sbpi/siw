@@ -5,8 +5,8 @@ include_once($w_dir_volta.'classes/sp/db_getRegionList.php');
 // -------------------------------------------------------------------------
 function selecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  if ($restricao=='INDICADOR') $RS = db_getRegionList::getInstanceOf($dbms, nvl($chaveAux,0), $restricao, $w_cliente);
-  else $RS = db_getRegionList::getInstanceOf($dbms, $chaveAux, null, null);
+  if ($restricao=='INDICADOR') { $sql = new db_getRegionList; $RS = $sql->getInstanceOf($dbms, nvl($chaveAux,0), $restricao, $w_cliente); }
+  else                         { $sql = new db_getRegionList; $RS = $sql->getInstanceOf($dbms, $chaveAux, null, null); }
   $RS = SortArray($RS,'ordem','asc');
 
   if (!isset($hint)) {

@@ -210,7 +210,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         $l_html .=chr(13).'         </table></td></tr>';
       } 
       // Listagem das tarefas na visualização da ação, rotina adquirida apartir da rotina exitente na Projetoativ.php para listagem das tarefas
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORPCAD');
+      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORPCAD');
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ORPCAD',5,
             null,null,null,null,null,null,
             null,null,null,null,
@@ -587,7 +587,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           $l_html .=chr(13).'    document.Form.submit();';
           $l_html .=chr(13).'  }';
           $l_html .=chr(13).'</SCRIPT>';
-          $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
+          $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_p2);
           AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Atividades',3,$w_P2,1,null,$w_TP,f($RS1,'sigla'),$w_pagina.$par,'L');
           $l_html .=chr(13).MontaFiltro('POST');
           $l_html .=chr(13).'<input type="Hidden" name="p_projeto" value="">';
@@ -643,7 +643,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         $l_html .=chr(13).'         </table></td></tr>';
       } 
       // Listagem das tarefas na visualização da ação, rotina adquirida apartir da rotina exitente na projetoativ.php para listagem das tarefas
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORPCAD');
+      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORPCAD');
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ORPCAD',5,
               null,null,null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,

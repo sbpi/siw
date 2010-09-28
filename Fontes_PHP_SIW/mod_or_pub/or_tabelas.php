@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -52,7 +52,7 @@ include_once($w_dir_volta.'funcoes/cabecalhoWordOR.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); } 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
@@ -102,13 +102,13 @@ exit;
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS = db_getMenuData::getInstanceOf($dbms,$P2); 
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$P2); 
 } else {
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
 }
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
   // Se for sub-menu, pega a configuração do pai
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 // =========================================================================
@@ -482,7 +482,7 @@ function Rel_PPA() {
   $p_metas                  = $_REQUEST['p_metas'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
@@ -719,7 +719,7 @@ function Rel_PPA() {
           ShowHTML('</tr>');
           if ($p_metas>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
             $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    null,null,null,null,null,null,null,null,null,null,null,null,
@@ -755,7 +755,7 @@ function Rel_PPA() {
             ShowHTML('        </table>');
           } if ($p_tarefas>'') {  
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
             $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    null,null,null,null,null,null,null,null,null,null,null,null,
@@ -766,7 +766,7 @@ function Rel_PPA() {
               $w_linha+=1;
             } else {
               foreach ($RS2 as $row2){$RS2=$row2; break;}
-              $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORPCAD');
+              $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORPCAD');
               $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                      null,null,null,null,null,null,null,$p_prioridade,null,null,
                      null,null,null,null,null,null,null,null,null,null,null,null, 
@@ -838,7 +838,7 @@ function Rel_PPA() {
             ShowHTML('        </table>');
           } if ($p_sq_unidade_resp>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
             $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1008,7 +1008,7 @@ function Rel_Iniciativa() {
   $p_metas                  = $_REQUEST['p_metas'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
@@ -1213,7 +1213,7 @@ function Rel_Iniciativa() {
           if ($p_metas>'') {
             ShowHTML('   <tr><td colspan='.$w_col_word.'>');
             ShowHTML('     <table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
             $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                     null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1251,7 +1251,7 @@ function Rel_Iniciativa() {
           if ($p_tarefas>'') {
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
             $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                     null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1262,7 +1262,7 @@ function Rel_Iniciativa() {
               $w_linha+=1;
             } else {
               foreach($RS2 as $row2){$RS2=$row2; break;}
-              $RS1= db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORPCAD');
+              $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORPCAD');
               $RS3= db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                       null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,f($RS2,'sq_siw_solicitacao'),null,
@@ -1332,7 +1332,7 @@ function Rel_Iniciativa() {
           if ($p_sq_unidade_resp>'') {
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
             $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                     null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1497,7 +1497,7 @@ function Rel_Sintetico_IP() {
   $w_cont = 0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
@@ -1629,7 +1629,7 @@ function Rel_Sintetico_IP() {
           ShowHTML('        </tr>');
         } 
         //Montagem da lista das ações
-        $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
         $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                null,null,null,null,$p_atraso,null,null,null,null,null,f($row,'sq_siw_solicitacao'),
                null,null,null,null,null,null,null,null,null,null,null,null,null,null,f($row,'chave'));
@@ -1890,7 +1890,7 @@ function Rel_Sintetico_PPA() {
   $w_teste_pai=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens  
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
         $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);  
     } 
@@ -2039,7 +2039,7 @@ function Rel_Sintetico_PPA() {
         } 
         if (Nvl(f($row,'sq_acao_ppa_pai'),'')!='') {
           //Montagem da lista das ações
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
           $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                  null,null,null,null,$p_atraso,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                  null,null,null,null,null,null,null,null,null,null,null,null,f($row,'chave'),null);
@@ -2253,7 +2253,7 @@ function Grava() {
     case 'ORTBINIC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
-        dml_putOrPrioridade::getInstanceOf($dbms,$O,
+        $SQL = new dml_putOrPrioridade; $SQL->getInstanceOf($dbms,$O,
         $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
         $_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],
         $_REQUEST['w_ordem'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);
@@ -2270,7 +2270,7 @@ function Grava() {
     case 'ORTBPPA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putAcaoPPA::getInstanceOf($dbms,$O,
+        $SQL = new dml_putAcaoPPA; $SQL->getInstanceOf($dbms,$O,
           $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_acao_ppa_pai'],
           $_REQUEST['w_codigo'],$_REQUEST['w_nome'],
           $_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],

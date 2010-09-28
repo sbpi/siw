@@ -19,7 +19,7 @@ class dml_CoAgencia {
                    'p_padrao'          =>array($p_padrao,          B_VARCHAR,      1),
                    'p_ativo'           =>array($p_ativo,           B_VARCHAR,      1)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

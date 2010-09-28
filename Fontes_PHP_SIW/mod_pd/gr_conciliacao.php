@@ -63,7 +63,7 @@ if ($_SESSION['LOGON'] != 'Sim') {
 }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -155,7 +155,7 @@ $p_ini_emibil = $_REQUEST['p_ini_emibil'];
 $p_fim_emibil = $_REQUEST['p_fim_emibil'];
 
 // Recupera a configuração do serviço
-$RS_Menu = db_getMenuData::getInstanceOf($dbms, $w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms, $w_menu);
 
 Main();
 
@@ -402,7 +402,7 @@ function Conciliacao() {
 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
-    //$RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+    //$RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
     //SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$w_cliente,$p_projeto,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'p_projeto',f($RS,'sigla'),null,null,'<BR />',2);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');

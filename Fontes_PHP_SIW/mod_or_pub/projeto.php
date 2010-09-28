@@ -83,7 +83,7 @@ include_once('visualprojeto.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); } 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par                      = upper($_REQUEST['par']);
@@ -166,13 +166,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2); 
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); 
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 if (f($RS_Menu,'ultimo_nivel')=='S') {
   // Se for sub-menu, pega a configuração do pai
-  $RS_Menu  = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -254,7 +254,7 @@ function Inicial() {
       if ($p_atraso=='S')   $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
       if ($w_filtro>'')     $w_filtro = '<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     }   
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORCAD');
     if ($w_copia>'') {
       // Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,$SG,3,
@@ -579,7 +579,7 @@ function Inicial() {
       // Recupera dados da opçãa açãos
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('      <tr>');
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORCAD');
       SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione a ação da atividade na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','ORLIST',null);
       DesconectaBD();
       ShowHTML('      </tr>');
@@ -846,7 +846,7 @@ function Geral() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -867,7 +867,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_descricao" value="'.$w_descricao.'">');
     ShowHTML('<INPUT type="hidden" name="w_justificativa" value="'.$w_justificativa.'">');
     //Passagem da cidade padrão como brasília, pelo retidara do impacto geográfico da tela
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.f($RS,'sq_cidade_padrao').'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
@@ -951,7 +951,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -1098,7 +1098,7 @@ function InfoAdic(){
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -2697,7 +2697,7 @@ function Visual() {
   $w_chave = $_REQUEST['w_chave'];
   $w_tipo  = upper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') {
     $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
@@ -2916,7 +2916,7 @@ function Anexos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       //ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.f($RS,'upload_maximo')/1024.' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -3309,7 +3309,7 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   // Recupera os dados da ação
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PJGERAL');
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
@@ -3481,11 +3481,11 @@ function Grava() {
         //No caso de mudança da ação PPA, os regitros de outras iniciativas devem se apagadas. Caso a ação PPA seja
         //nula, deve-se apagar todas os registros e caso seja outra ação deve-se apagar aquela ação das outras iniciativas, caso exista.
         if ($_REQUEST['w_sq_orprioridade']=='') {
-          dml_putProjetoOutras::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+          $SQL = new dml_putProjetoOutras; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
         } else {
-          dml_putProjetoOutras::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],$_REQUEST['w_sq_prioridade']);
+          $SQL = new dml_putProjetoOutras; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],$_REQUEST['w_sq_prioridade']);
         } 
-        dml_putProjetoGeral::getInstanceOf($dbms,$O,
+        $SQL = new dml_putProjetoGeral; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],$_REQUEST['w_proponente'],
             $_SESSION['SQ_PESSOA'],null,null,$_REQUEST['w_sqcc'],null,$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],
             $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],$_REQUEST['w_titulo'],$_REQUEST['w_prioridade'],
@@ -3494,13 +3494,13 @@ function Grava() {
         ScriptOpen('JavaScript');
         if ($O=='I') {
           // Recupera os dados para montagem correta do menu
-          $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
+          $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
           ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
         } elseif ($O=='E') {
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         } 
         ScriptClose();
@@ -3514,17 +3514,17 @@ function Grava() {
     case 'ORINFO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') { 
-        dml_putProjetoInfo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_problema'],$_REQUEST['w_ds_acao'],$_REQUEST['w_publico_alvo'],$_REQUEST['w_estrategia'],$_REQUEST['w_indicadores'],$_REQUEST['w_objetivo']);
+        $SQL = new dml_putProjetoInfo; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_problema'],$_REQUEST['w_ds_acao'],$_REQUEST['w_publico_alvo'],$_REQUEST['w_estrategia'],$_REQUEST['w_indicadores'],$_REQUEST['w_objetivo']);
         ScriptOpen('JavaScript');
         if ($O=='I') {
           // Recupera os dados para montagem correta do menu
-            $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
+            $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
             ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
           } elseif ($O=='E') {
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&R='.$R.'&SG=ORCAD&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';');
           } else {
             // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           } 
           ScriptClose();
@@ -3538,22 +3538,22 @@ function Grava() {
     case 'OROUTRAS':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') { 
-        dml_putProjetoOutras::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+        $SQL = new dml_putProjetoOutras; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
         for ($i=0; $i<=count($_POST['w_outras_iniciativas'])-1; $i=$i+1) {
           if ($_REQUEST['w_outras_iniciativas'][$i]>'') {
-            dml_putProjetoOutras::getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_REQUEST['w_outras_iniciativas'][$i]);
+            $SQL = new dml_putProjetoOutras; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_REQUEST['w_outras_iniciativas'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
         if ($O=='I') {
           // Recupera os dados para montagem correta do menu
-          $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
+          $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
           ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr.'.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.$MontaFiltro('GET')).'\';');
         } elseif ($O=='E') {
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         } 
         ScriptClose();
@@ -3567,10 +3567,10 @@ function Grava() {
     case 'ORFINANC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
-        dml_putProjetoFinancAcao::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acao_ppa'],$_REQUEST['w_obs_financ']);
+        $SQL = new dml_putProjetoFinancAcao; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acao_ppa'],$_REQUEST['w_obs_financ']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3583,10 +3583,10 @@ function Grava() {
     case 'ORRESP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putRespAcao::getInstanceOf($dbms,$_REQUEST['w_chave_aux'],$_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],$_REQUEST['w_tipo']);
+        $SQL = new dml_putRespAcao; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave_aux'],$_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],$_REQUEST['w_tipo']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3599,14 +3599,14 @@ function Grava() {
     case 'ORETAPA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putProjetoEtapa::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_chave_pai'],
+        $SQL = new dml_putProjetoEtapa; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_chave_pai'],
             $_REQUEST['w_titulo'],$_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_inicio'],
             $_REQUEST['w_fim'],$_REQUEST['w_perc_conclusao'],$_REQUEST['w_orcamento'],
             $_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_vincula_atividade'],$w_usuario,
             $_REQUEST['w_programada'],$_REQUEST['w_cumulativa'],$_REQUEST['w_quantidade'],$_REQUEST['w_unidade_medida']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3645,13 +3645,13 @@ function Grava() {
             $w_perc_conclusao=($w_quantitativo_total*100)/$_REQUEST['w_quantidade'];
           } 
         } 
-        dml_putAtualizaEtapa::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$w_usuario,Nvl($w_perc_conclusao,0),$_REQUEST['w_situacao_atual'],$_REQUEST['w_exequivel'],$_REQUEST['w_justificativa_inex'],$_REQUEST['w_outras_medidas']);
+        $SQL = new dml_putAtualizaEtapa; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$w_usuario,Nvl($w_perc_conclusao,0),$_REQUEST['w_situacao_atual'],$_REQUEST['w_exequivel'],$_REQUEST['w_justificativa_inex'],$_REQUEST['w_outras_medidas']);
         $i=1;
         // Gravação da execução física e feita mês por mês
-        dml_putEtapaMensal::getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],$_REQUEST['w_quantitativo_'.$i.''],$_REQUEST['w_referencia_'.$i.'']);
+        $SQL = new dml_putEtapaMensal; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],$_REQUEST['w_quantitativo_'.$i.''],$_REQUEST['w_referencia_'.$i.'']);
         while($i<13) {
           if (Nvl($_REQUEST['w_quantitativo_'.$i.''],0)>0) {
-            dml_putEtapaMensal::getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_quantitativo_'.$i.''],$_REQUEST['w_referencia_'.$i.'']);
+            $SQL = new dml_putEtapaMensal; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_quantitativo_'.$i.''],$_REQUEST['w_referencia_'.$i.'']);
           } 
           $i+=1;
         } 
@@ -3669,10 +3669,10 @@ function Grava() {
     case 'ORRECURSO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putProjetoRec::getInstaceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$_REQUEST['w_finalidade']);
+        $SQL = new dml_putProjetoRec; $SQL->getInstaceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$_REQUEST['w_finalidade']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3686,16 +3686,16 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Inicialmente, desativa a opção em todos os endereços
-        dml_putSolicEtpRec::getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
+        $SQL = new dml_putSolicEtpRec; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
         // Em seguida, ativa apenas para os endereços selecionados
         for ($i=0; $i<=count($_POST['w_recurso'])-1; $i=$i+1) {
           if ($_REQUEST['w_recurso'][$i]>'') {
-            dml_putSolicEtpRec::getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_recurso'][$i]);
+            $SQL = new dml_putSolicEtpRec; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_recurso'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_sg']);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_sg']);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla')).'\';');
         ScriptClose();
       } else {
@@ -3708,10 +3708,10 @@ function Grava() {
     case 'ORINTERESS':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putProjetoInter::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_tipo_visao'],$_REQUEST['w_envia_email']);
+        $SQL = new dml_putProjetoInter; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_tipo_visao'],$_REQUEST['w_envia_email']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu   
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);      
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);      
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3724,10 +3724,10 @@ function Grava() {
     case 'ORAREAS':
       // Verifica se a Assinatura Eletrônica é válida 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putProjetoAreas::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_papel']);
+        $SQL = new dml_putProjetoAreas; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_papel']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3755,7 +3755,7 @@ function Grava() {
               } 
               // Se já há um nome para o arquivo, mantém 
               if ($_REQUEST['w_atual']>'') {
-                $RS = db_getSolicAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+                $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
                 foreach ($RS as $row) {
                   if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                   if (!(strpos(f($row,'caminho'),'.')===false)) {
@@ -3783,13 +3783,12 @@ function Grava() {
           } 
           // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
           if ($O=='E' && $_REQUEST['w_atual']>'') {
-            $RS = db_getSolicAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+            $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
             foreach ($RS as $row) {
               if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
             }
           } 
-          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-          }
+          $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -3798,7 +3797,7 @@ function Grava() {
         } 
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
@@ -3817,13 +3816,13 @@ function Grava() {
           ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!\');');
           ScriptClose();
         } else {
-          dml_putProjetoEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],null,null,null,null);
+          $SQL = new dml_putProjetoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],null,null,null,null);
           // Envia e-mail comunicando a tramitação
           if ($_REQUEST['w_novo_tramite']>'') SolicMail($_REQUEST['w_chave'],2); 
           if ($P1==1) {
             // Se for envio da fase de cadastramento, remonta o menu principal
             // Recupera os dados para montagem correta do menu
-            $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+            $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
             ScriptOpen('JavaScript');
             ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET')).'\';');
             ScriptClose();
@@ -3849,7 +3848,7 @@ function Grava() {
           ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!\');');
           ScriptClose();
        } else {
-          dml_putProjetoConc::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],$_REQUEST['w_nota_conclusao'],$_REQUEST['w_custo_real']);
+          $SQL = new dml_putProjetoConc; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],$_REQUEST['w_nota_conclusao'],$_REQUEST['w_custo_real']);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');

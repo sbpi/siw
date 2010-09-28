@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getStateList.php');
 // -------------------------------------------------------------------------
 function selecaoEstado($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  $RS = db_getStateList::getInstanceOf($dbms, $chaveAux, $chaveAux2, 'S', $restricao);
+  $sql = new db_getStateList; $RS = $sql->getInstanceOf($dbms, $chaveAux, $chaveAux2, 'S', $restricao);
   $RS = SortArray($RS,'padrao','desc','ordena','asc');
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

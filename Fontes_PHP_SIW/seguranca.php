@@ -67,7 +67,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -150,11 +150,11 @@ function Usuarios() {
   $p_dirigente        = upper($_REQUEST['p_dirigente']);
 
   
-  $RS = db_getMenuData::getInstanceOf($dbms, $w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='L') {
-    $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_endereco,$p_gestor_seguranca,$p_gestor_sistema,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo,$p_contratado,$p_visao_especial,$p_dirigente,null,null);
+    $SQL = new db_getUserList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_endereco,$p_gestor_seguranca,$p_gestor_sistema,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo,$p_contratado,$p_visao_especial,$p_dirigente,null,null);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1),'nome_resumido_ind','asc');
     } else {
@@ -296,7 +296,7 @@ function Usuarios() {
 
     ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr>');
-    $RS1 = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
+    $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms, $w_cliente);
     selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'N','p_uf',null,null);
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
     ShowHTML('        <tr valign="top">');
@@ -449,7 +449,7 @@ function Menu() {
         // Se for herança, atribui a chave da opção selecionada para w_sq_menu
         if ($w_heranca>'') $w_sq_menu=$w_heranca;
 
-        $RS = db_getMenuData::getInstanceof($dbms, $w_sq_menu);
+        $RS = new db_getMenuData; $RS = $RS->getInstanceof($dbms, $w_sq_menu);
         $w_sq_menu_pai          = f($RS,'sq_menu_pai');
         $w_descricao            = f($RS,'nome');
         $w_link                 = f($RS,'link');
@@ -771,7 +771,7 @@ function Menu() {
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
 
-    $RS = db_getMenuLink::getInstanceof($dbms, $w_cliente, $p_sq_endereco_unidade, $p_modulo, nvl($p_menu,'IS NULL'));
+    $SQL = new db_getMenuLink; $RS = $SQL->getInstanceof($dbms, $w_cliente, $p_sq_endereco_unidade, $p_modulo, nvl($p_menu,'IS NULL'));
     $w_ContOut=0;
     foreach($RS as $row) {
 
@@ -804,7 +804,7 @@ function Menu() {
 
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getMenuLink::getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row,'sq_menu'));
+        $SQL = new db_getMenuLink; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row,'sq_menu'));
         foreach($RS1 as $row1) {
           $w_Titulo=$w_Titulo.' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
@@ -835,7 +835,7 @@ function Menu() {
             } 
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getMenuLink::getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row1,'sq_menu'));
+            $SQL = new db_getMenuLink; $RS2 = $SQL->getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row1,'sq_menu'));
             foreach($RS2 as $row2) {
 
               $w_Titulo=$w_Titulo.' - '.f($row2,'nome');
@@ -868,7 +868,7 @@ function Menu() {
                 } 
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getMenuLink::getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row2,'sq_menu'));
+                $SQL = new db_getMenuLink; $RS3 = $SQL->getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row2,'sq_menu'));
                 foreach($RS3 as $row3) {
                   $w_Titulo=$w_Titulo.' - '.f($row3,'nome');
                   if (f($row3,'IMAGEM')>'') $w_Imagem=f($row3,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -1028,7 +1028,7 @@ function Menu() {
     ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="sti" NAME="w_ordem" SIZE=4 MAXLENGTH=4 VALUE="'.$w_ordem.'" '.$w_Disabled.' TITLE="Verifique na tabela abaixo os números de ordem existentes."></td>');
 
     // Recupera o número de ordem das outras opções irmãs à selecionada
-    $RS = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, $w_sq_menu_pai, null, null);
+    $SQL = new db_getMenuOrder; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_menu_pai, null, null);
     if (count($RS) > 0)  {
       $w_texto='<b>Nºs de ordem em uso para esta subordinação:</b>:<br>'.
                '<table border=1>'.
@@ -1278,7 +1278,7 @@ function Menu() {
     ShowHTML('          <OPTION VALUE="">---');
     // Recupera as opções existentes
 
-    $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $O, null, null);
+    $SQL = new db_getMenuList; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $O, null, null);
     foreach($RS as $row) {
       ShowHTML('          <OPTION VALUE='.f($row,'sq_menu').'>'.f($row,'nome'));
     } 
@@ -1360,7 +1360,7 @@ function Acessos() {
   $w_sq_modulo          = $_REQUEST['w_sq_modulo'];
   $w_sq_pessoa_endereco = $_REQUEST['w_sq_pessoa_endereco'];
 
-  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
   $w_username = f($RS,'username');
   $w_nome     = f($RS,'nome');
 
@@ -1423,7 +1423,7 @@ function Acessos() {
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="2"><font size=2><b>');
-    $RS = DB_GetUserModule::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
+    $SQL = new DB_GetUserModule; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
     ShowHTML('<tr><td>');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <a class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
@@ -1529,7 +1529,7 @@ function Visao() {
   $w_sq_cc      = $_REQUEST['w_sq_cc'];
   $w_sq_menu    = $_REQUEST['w_sq_menu'];
 
-  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
   $w_username   = f($RS,'username');
   $w_nome       = f($RS,'nome');
   Cabecalho();
@@ -1597,7 +1597,7 @@ function Visao() {
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="2"><font size=2><b>');
-    $RS = DB_GetUserVision::getInstanceOf($dbms, null, $w_sq_pessoa);
+    $SQL = new DB_GetUserVision; $RS = $SQL->getInstanceOf($dbms, null, $w_sq_pessoa);
     ShowHTML('<tr><td>');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <a class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
@@ -1660,13 +1660,13 @@ function Visao() {
     // Apresenta a seleção de centros de custo apenas se tiver sido escolhido o serviço
     $w_ContOut=0;
     if ($w_sq_menu>'') {
-      $RS = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, 'IS NULL');
+      $SQL = new DB_GetCCTreeVision; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, 'IS NULL');
       foreach($RS as $row) {
         $w_ContOut=$w_ContOut+1;
         if (f($row,'Filho')>0) {
           ShowHTML('<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'sigla').'</font>');
           ShowHTML('   <div style="position:relative; left:12;">');
-          $RS1 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row,'sq_cc'));
+          $SQL = new DB_GetCCTreeVision; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row,'sq_cc'));
           foreach($RS1 as $row1) {
 
             if (f($row1,'Filho')>0) {
@@ -1674,13 +1674,13 @@ function Visao() {
               $w_ContOut=$w_ContOut+1;
               ShowHTML('<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'sigla'));
               ShowHTML('   <div style="position:relative; left:12;">');
-              $RS2 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row1,'sq_cc'));
+              $SQL = new DB_GetCCTreeVision; $RS2 = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row1,'sq_cc'));
               foreach($RS2 as $row2) {
                 if (f($row2,'Filho')>0) {
                   $w_ContOut=$w_ContOut+1;
                   ShowHTML('<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'sigla'));
                   ShowHTML('   <div style="position:relative; left:12;">');
-                  $RS3 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row2,'sq_cc'));
+                  $SQL = new DB_GetCCTreeVision; $RS3 = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row2,'sq_cc'));
                   foreach($RS3 as $row3) {
                     if (f($row3,'existe')>0) {
                       ShowHTML('    <input checked type="checkbox" name="w_sq_cc[]" value="'.f($row3,'sq_cc').'"> '.f($row3,'sigla').'<br>');
@@ -1763,7 +1763,7 @@ function Email() {
 
   $w_sq_pessoa          = nvl($_REQUEST['w_sq_pessoa'],$_SESSION['SQ_PESSOA']);
 
-  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
   $w_username = f($RS,'username');
   $w_nome     = f($RS,'nome');
   Cabecalho();
@@ -1853,7 +1853,7 @@ function Email() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="3"><font size=2><b>');
-    $RS = DB_GetUserMail::getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, null);
+    $SQL = new DB_GetUserMail; $RS = $SQL->getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, null);
     $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
     ShowHTML('<tr><td colspan=2>');
     ShowHTML('    <a accesskey="C" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'"><u>C</u>onfiguração</a>&nbsp;');
@@ -1915,7 +1915,7 @@ function Email() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_menu[]" value="">');
-    $RS = DB_GetUserMail::getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, 'LISTA');
+    $SQL = new DB_GetUserMail; $RS = $SQL->getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, 'LISTA');
     $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2031,7 +2031,7 @@ function NovaSenha() {
   global $w_Disabled;
 
   // Recupera o tipo de autenticação e a username do usuário
-  $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null);
+  $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null);
   $w_tipo     = f($RS,'tipo_autenticacao');
   $w_username = f($RS,'username');
   // Configura texto
@@ -2041,8 +2041,8 @@ function NovaSenha() {
   $w_senha='nova'.date('is');
 
   // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
-  if ($w_tipo=='B') db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
-  db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
+  if ($w_tipo=='B') { $SQL = new db_updatePassword; $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD'); }
+  $SQL = new db_updatePassword; $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
 
   // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
   $w_html = '<HTML><HEAD><TITLE>Reinicialização de '.$w_texto_mail.'</TITLE></HEAD>'.chr(13);
@@ -2059,7 +2059,7 @@ function NovaSenha() {
     $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
   }
   $w_html .= '         <ul>'.$crlf;
-  $RS = db_getCustomerSite::getInstanceOf($dbms, $w_cliente);
+  $SQL = new db_getCustomerSite; $RS = $SQL->getInstanceOf($dbms, $w_cliente);
   $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
   DesconectaBD();
   $w_html .= '         <li>Nome de usuário: <b>'.$w_username.'</b></li>'.$crlf;
@@ -2074,7 +2074,7 @@ function NovaSenha() {
   $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
   $w_html .= '         Orientações e observações:<br>'.$crlf;
   $w_html .= '         <ol>'.$crlf;
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   if ($w_tipo=='B'){
     $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
     $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
@@ -2116,7 +2116,7 @@ function TelaUsuario() {
   extract($GLOBALS);
   global $w_Disabled, $w_TP;
   $l_sq_pessoa = $_REQUEST['w_sq_pessoa'];
-  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null);
+  $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null);
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -2174,7 +2174,7 @@ function TelaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
+    $SQL = new db_getBenef; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
     if (count($RS1)<=0) {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
@@ -2239,7 +2239,7 @@ function TelaUsuario() {
     ShowHTML('</table>');
   } else {
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
+    $SQL = new db_getBenef; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
     ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad="this.focus();"');
@@ -2319,9 +2319,9 @@ function TelaAcessoUsuarios() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,null);
+  $SQL = new db_getSolicData; $RS_Solic = $SQL->getInstanceOf($dbms,$w_chave,null);
   // Recupera todos os registros para a listagem 
-  $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'USUARIOS', null, $w_chave);
+  $SQL = new db_getAlerta; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_usuario, 'USUARIOS', null, $w_chave);
   $RS = SortArray($RS,'nome_resumido_ind','asc');
   
   Cabecalho();
@@ -2404,7 +2404,7 @@ function TelaUnidade() {
 
   $w_sq_unidade=$_REQUEST['w_sq_unidade'];
 
-  $RS = db_getUorgData::getInstanceOf($dbms, $w_sq_unidade);
+  $SQL = new db_getUorgData; $RS = $SQL->getInstanceOf($dbms, $w_sq_unidade);
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -2442,7 +2442,7 @@ function TelaUnidade() {
   ShowHTML('      <tr><td   colspan="2" align="center" bgcolor="#D0D0D0"><b>Responsáveis</td>');
   ShowHTML('      <tr><td align="center" colspan="2" height="1"     bgcolor="#000000">');
   ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-  $RS = db_getUorgResp::getInstanceOf($dbms, $w_sq_unidade);
+  $SQL = new db_getUorgResp; $RS = $SQL->getInstanceOf($dbms, $w_sq_unidade);
   if (count($RS)<=0) {
     ShowHTML('      <tr><td align="center" colspan=2><font size="2"><b>Não informados</b></b></td>');
   } else {
@@ -2500,7 +2500,7 @@ function TelaUnidade() {
   ShowHTML('              <td><b>Fax</td>');
   ShowHTML('              <td><b>Endereço</td>');
   ShowHTML('            </tr>');
-  $RS = DB_GetaddressList::getInstanceOf($dbms, $w_cliente, $w_sq_unidade, 'LISTALOCALIZACAO', null);
+  $SQL = new DB_GetaddressList; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_sq_unidade, 'LISTALOCALIZACAO', null);
   foreach($RS as $row) {
     ShowHTML('            <tr bgcolor="'.$conTrBgColor.'" valign="top">');
     ShowHTML('              <td>'.f($row,'nome').'</td>');
@@ -2534,7 +2534,7 @@ function Grava() {
 
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_SiwMenu::getInstanceOf($dbms, $O, 
+        $SQL = new dml_SiwMenu; $SQL->getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_pai'], $_REQUEST['w_link'], $_REQUEST['w_p1'], 
             $_REQUEST['w_p2'], $_REQUEST['w_p3'], $_REQUEST['w_p4'], $_REQUEST['w_sigla'], $_REQUEST['w_imagem'], 
             $_REQUEST['w_target'], $_REQUEST['w_emite_os'], $_REQUEST['w_consulta_opiniao'], $_REQUEST['w_envia_email'], 
@@ -2560,7 +2560,7 @@ function Grava() {
     case "ACESSOS":
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_SgPesMod::getInstanceOf($dbms, $O, 
+        $SQL = new dml_SgPesMod; $SQL->getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_pessoa'], $w_cliente, $_REQUEST['w_sq_modulo'], $_REQUEST['w_sq_pessoa_endereco']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'\';');
@@ -2576,10 +2576,10 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Elimina todas as permissões existentes para depois incluir
-        dml_PutSiwPesCC::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
+        $SQL = new dml_PutSiwPesCC; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
 
         for ($i=0; $i<=count($_POST['w_sq_cc'])-1; $i=$i+1)   {
-          dml_PutSiwPesCC::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], $_POST['w_sq_cc'][$i]);
+          $SQL = new dml_PutSiwPesCC; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], $_POST['w_sq_cc'][$i]);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'\';');
@@ -2595,15 +2595,15 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Elimina todas as configurações existentes para depois incluir
-        dml_PutSiwPessoaMail::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], null, null, null, null, null);
+        $SQL = new dml_PutSiwPessoaMail; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], null, null, null, null, null);
         $w_teste = '';
-        $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', null, null);
+        $SQL = new db_getMenuList; $RS = $SQL->getInstanceOf($dbms, $w_cliente, 'X', null, null);
         $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
         foreach($RS as $row) {
           for ($i=0; $i<=count($_REQUEST['w_sq_menu'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_menu'][$i]>'') {
               if($_REQUEST['w_sq_menu'][$i]==f($row,'sq_menu')) {
-                dml_PutSiwPessoaMail::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), nvl($_REQUEST['w_alerta_'.f($row,'sq_menu').''],'N'),
+                $SQL = new dml_PutSiwPessoaMail; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), nvl($_REQUEST['w_alerta_'.f($row,'sq_menu').''],'N'),
                                                     nvl($_REQUEST['w_tramitacao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_conclusao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_responsabilidade_'.f($row,'sq_menu').''],'N'));
               }
             } 

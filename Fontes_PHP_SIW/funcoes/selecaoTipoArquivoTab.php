@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoArquivo.php');
 function selecaoTipoArquivoTab($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo=null,$colspan=1,$separador='<BR >') {
   extract($GLOBALS);
 
-  $RS = db_getTipoArquivo::getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null, 'REGISTROS');
+  $sql = new db_getTipoArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null, 'REGISTROS');
   $RS = SortArray($RS,'nome','asc');
   ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

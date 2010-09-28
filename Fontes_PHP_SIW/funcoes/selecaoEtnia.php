@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getEtniaList.php');
 // =========================================================================
 // Montagem da seleção de etnia
 // -------------------------------------------------------------------------
 function selecaoEtnia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getEtniaList::getInstanceOf($dbms,null,'S');
+  $sql = new db_getEtniaList; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'codigo_siape','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

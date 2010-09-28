@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getCategoriaDiaria.php');
 // =========================================================================
 // Montagem da seleção de companhias de viagem
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getCategoriaDiaria.php');
 function selecaoCategoriaDiaria($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getCategoriaDiaria::getInstanceOf($dbms,$cliente,null,null,'S',$restricao);
+  $sql = new db_getCategoriaDiaria; $RS = $sql->getInstanceOf($dbms,$cliente,null,null,'S',$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     if ($label=='') {

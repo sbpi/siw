@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -57,7 +57,7 @@ include_once($w_dir_volta.'funcoes/selecaoOpcaoEstrat.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -1159,7 +1159,7 @@ function Grava() {
     case 'ISNATUREZA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putNatureza_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+        $SQL = new dml_putNatureza_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1173,7 +1173,7 @@ function Grava() {
     case 'ISHORIZONT':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putHorizonte_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+        $SQL = new dml_putHorizonte_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1187,7 +1187,7 @@ function Grava() {
     case 'ISTBPROJ':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putProjeto_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
+        $SQL = new dml_putProjeto_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
           $_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],$_REQUEST['w_ordem'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1205,7 +1205,7 @@ function Grava() {
         if ($O=='I') {
           $RS = db_getIsUnidade_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null);
           if (count($RS)==0) {
-            dml_putIsUnidade_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
+            $SQL = new dml_putIsUnidade_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
             ScriptOpen('JavaScript');
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
             ScriptClose();
@@ -1216,7 +1216,7 @@ function Grava() {
             ScriptClose();
           } 
         } else {
-          dml_putIsUnidade_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
+          $SQL = new dml_putIsUnidade_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
@@ -1235,7 +1235,7 @@ function Grava() {
         if ($O=='I') {
           $RS = db_getIsUnidadeLimite_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano'],$w_cliente);
           if (count($RS)==0) {
-            dml_putIsUnidadeLimite_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
+            $SQL = new dml_putIsUnidadeLimite_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
             ScriptOpen('JavaScript');
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
             ScriptClose();
@@ -1246,7 +1246,7 @@ function Grava() {
             ScriptClose();
           } 
         } else {
-          dml_putIsUnidadeLimite_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
+          $SQL = new dml_putIsUnidadeLimite_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
@@ -1284,7 +1284,7 @@ function Grava() {
             ScriptClose();
           } 
         }     
-        dml_putOpcaoEstrat_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo'],Nvl($_REQUEST['w_chave_aux'],''));
+        $SQL = new dml_putOpcaoEstrat_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo'],Nvl($_REQUEST['w_chave_aux'],''));
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1308,7 +1308,7 @@ function Grava() {
             ScriptClose();
           }
         }
-        dml_putMacroObjetivo_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_opcao'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo'],Nvl($_REQUEST['w_chave_aux'],''));
+        $SQL = new dml_putMacroObjetivo_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_opcao'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo'],Nvl($_REQUEST['w_chave_aux'],''));
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

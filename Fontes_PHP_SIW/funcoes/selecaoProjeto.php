@@ -8,12 +8,12 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cha
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
-    $RS1 = db_getMenuRelac::getInstanceOf($dbms, $restricao, null, null, null, null);
+    $sql = new db_getMenuRelac; $RS1 = $sql->getInstanceOf($dbms, $restricao, null, null, null, null);
   } else {
    $RS1 = array(0);
   }
   if (count($RS1)>0) {
-    $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux3, null, $chaveAux4, $chaveAux5);
+    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux3, null, $chaveAux4, $chaveAux5);
     if ($formato==2) {
       $RS = SortArray($RS,'codigo_interno','asc','titulo','asc');
     } else {

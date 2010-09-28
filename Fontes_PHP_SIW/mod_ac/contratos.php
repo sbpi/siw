@@ -123,7 +123,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -170,26 +170,26 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
 // Verifica se o cliente tem o módulo de compras e licitações contratado
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'CO');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'CO');
 if (count($RS)>0) $w_compras='S'; else $w_compras='N';
 
 // Verifica se o cliente tem o módulo de protocolo contratado
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PA');
 if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 
 // Verifica se o cliente tem o módulo de acordos contratado
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
 if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
 
 // Verifica se o cliente tem o módulo viagens contratado
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
 if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
 
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
 if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
 
 // Verifica se o cliente tem o módulo de planejamento estratégico
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PE');
 if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
   
 // Carrega os parâmetros do módulo
@@ -200,7 +200,7 @@ if (count($RS)>0) {
 } 
 
 // Recupera os dados do cliente
-$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 $w_segmento = f($RS_Cliente,'segmento');
 
 $w_copia         = $_REQUEST['w_copia'];
@@ -246,14 +246,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -340,7 +340,7 @@ function Inicial() {
       if ($p_processo>'')   $w_filtro .= '<tr valign="top"><td align="right">Número do processo<td>[<b>'.$p_processo.'</b>]';
       if ($w_filtro>'')     $w_filtro  = '<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
     if ($w_copia>'') {
       // Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
@@ -746,7 +746,7 @@ function Inicial() {
       if ($p_sq_menu_relac=='CLASSIF') {
         SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_sq_menu_relac,null,'p_sqcc','SIWSOLIC',null);
       } else {
-        $RS_Relac = db_getMenuData::getInstanceOf($dbms,$p_sq_menu_relac);
+        $RS_Relac = new db_getMenuData; $RS_Relac = $RS_Relac->getInstanceOf($dbms,$p_sq_menu_relac);
         if(f($RS_Relac,'sg_modulo')=='PR') {
           SelecaoSolic('Vinculação:',null,null,$w_cliente,$p_chave_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_etapa\'; document.Form.submit();"');
           if(nvl($p_chave_pai,'')!='') {
@@ -848,7 +848,7 @@ function BuscaCompra() {
   global $w_Disabled;
 
   // Recupera chave do menu de licitações
-  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'CLLCCAD');
+  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
 
   // Recupera certames passíveis de contratação
   $RS = db_getSolicCL::getInstanceOf($dbms,f($RS,'sq_menu'),$_SESSION['SQ_PESSOA'],'CONTRATO',3,
@@ -954,7 +954,7 @@ function Geral() {
 
   // Carrega os valores padrão para país, estado e cidade 
   // Carrega o segmento do cliente
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente); 
   if ($w_pais=='') {
     $w_pais   = f($RS,'sq_pais');
     $w_uf     = f($RS,'co_uf');
@@ -1097,7 +1097,7 @@ function Geral() {
       break;
     }
   }
-  if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
+  if(nvl($w_sq_menu_relac,0)>0) { $RS_Relac = new db_getMenuData; $RS_Relac = $RS_Relac->getInstanceOf($dbms,$w_sq_menu_relac); }
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -1156,7 +1156,7 @@ function Geral() {
     } elseif (substr($SG,0,3)=='GCB' || $w_cd_modalidade!='F') {
       Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
     }
-    if($w_sq_menu_relac!='CLASSIF') $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
+    if($w_sq_menu_relac!='CLASSIF') { $RS_Relac = new db_getMenuData; $RS_Relac = $RS_Relac->getInstanceOf($dbms,$w_sq_menu_relac); }
     if(f($RS_Relac,'sg_modulo')=='PR') {
        if (substr($SG,0,3)=='GCB') {
          Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
@@ -1408,7 +1408,7 @@ function Geral() {
 *       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
 *       // Recupera dados da opção Projetos
 *       ShowHTML('      <tr>');
-*       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
+*       $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
 *       SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto que deseja a vinculação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto',f($RS_Menu,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
 *       ShowHTML('      </tr>');
 *       ShowHTML('      <tr>');
@@ -1419,8 +1419,8 @@ function Geral() {
 *       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
 *       // Recupera dados da opção Projetos
 *       ShowHTML('      <tr>');
-*       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-*       $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,substr($SG,0,3).'CAD');
+*       $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+*       $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,substr($SG,0,3).'CAD');
 *       SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto que deseja para a vinculação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto',f($RS1,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
 *       ShowHTML('      </tr>');
 *       ShowHTML('      <tr>');
@@ -1478,7 +1478,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&w_herda='.$w_herda.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -1639,7 +1639,7 @@ function Termo() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -1838,7 +1838,7 @@ function DadosAdicionais() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -3247,7 +3247,7 @@ function Parcelas() {
     ShowHTML('              <li>Vigência: <b>'.FormataDataEdicao($w_inicio).'</b> a <b>'.FormataDataEdicao($w_fim).'</b>');
     ShowHTML('              <li>Valor: <b>'.formatNumber($w_valor_acordo).'</b>');
     ShowHTML('              </ul>');
-    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCDCAD');
+    $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'GCDCAD');
     $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,'PERIODO',null,FormataDataEdicao($w_inicio),FormataDataEdicao($w_fim),null,null,null,null);
     $RS_Parc = SortArray($RS_Parc,'ordem','asc');
     ShowHTML('  <tr><td colspan="2">');
@@ -3440,7 +3440,7 @@ function Anexo() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b></font>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  
@@ -3952,7 +3952,7 @@ function Anotar() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
   ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
   if ($w_existe_tipo_log) {
@@ -4736,7 +4736,7 @@ function Notas() {
     //Parcelas a serem ligadas na nota de empenho.
     if(nvl($w_sq_acordo_aditivo,'')>'') ShowHTML('      <tr><td colspan="3"><br><b>Parcelas do aditivo selecionado:</b>');
     else                                ShowHTML('      <tr><td colspan="3"><br><b>Parcelas do contrato:</b>');
-    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCDCAD');
+    $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'GCDCAD');
     $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,'NOTA',null,null,null,null,null,null,$w_sq_acordo_aditivo);
     $RS_Parc = SortArray($RS_Parc,'ordem','asc');
     ShowHTML('  <tr><td colspan="3">');
@@ -5004,7 +5004,7 @@ function NotaCancel() {
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
@@ -5151,7 +5151,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       exibevariaveis();
-      dml_geraContrato::getInstanceOf($dbms,$_REQUEST['w_solic'],$_REQUEST['w_pessoa']);
+      $SQL = new dml_geraContrato; $SQL->getInstanceOf($dbms,$_REQUEST['w_solic'],$_REQUEST['w_pessoa']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert("Geração concluída com sucesso!");');
@@ -5193,7 +5193,7 @@ function Grava() {
           }
         }
       }
-      dml_putAcordoGeral::getInstanceOf($dbms,$O, $w_cliente, 
+      $SQL = new dml_putAcordoGeral; $SQL->getInstanceOf($dbms,$O, $w_cliente, 
           $_REQUEST['w_chave'], $_REQUEST['w_menu'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_solicitante'], 
           $_SESSION['SQ_PESSOA'], $_REQUEST['w_sqcc'], $_REQUEST['w_descricao'], $_REQUEST['w_justificativa'], 
           $_REQUEST['w_inicio'], $_REQUEST['w_fim'], nvl($_REQUEST['w_valor'],0), $_REQUEST['w_data_hora'], 
@@ -5205,7 +5205,7 @@ function Grava() {
           &$w_chave_nova, $w_copia, $_REQUEST['w_herda'],&$w_codigo);
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
-        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
+        $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
         ScriptOpen('JavaScript');
         ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento='.$w_codigo.'&R='.$R.'&w_menu='.$w_menu.'&SG='.f($RS1,'sigla').'&TP='.RemoveTP($TP)).'\';');
       } elseif ($O=='E') {
@@ -5213,7 +5213,7 @@ function Grava() {
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-        $RS1 = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       } 
@@ -5227,7 +5227,7 @@ function Grava() {
   } elseif (strpos($SG,'ADIC')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putAcordoDadosAdicionais::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
+      $SQL = new dml_putAcordoDadosAdicionais; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
         $_REQUEST['w_numero_certame'],$_REQUEST['w_numero_ata'],$_REQUEST['w_tipo_reajuste'],
         nvl($_REQUEST['w_limite_variacao'],0),$_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],
         $_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_espec_despesa'],$_REQUEST['w_sq_lcmodalidade'],
@@ -5258,9 +5258,9 @@ function Grava() {
           exit;
         }
       }
-      dml_putAcordoNota::getInstanceOf($dbms,'EXCLUIPARCELA',
+      $SQL = new dml_putAcordoNota; $SQL->getInstanceOf($dbms,'EXCLUIPARCELA',
           $_REQUEST['w_chave_aux'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-      dml_putAcordoNota::getInstanceOf($dbms, $O,
+      $SQL = new dml_putAcordoNota; $SQL->getInstanceOf($dbms, $O,
           $_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_sq_tipo_documento'],
           $_REQUEST['w_sq_acordo_outra_parte'],$_REQUEST['w_sq_acordo_aditivo'],$_REQUEST['w_numero'],$_REQUEST['w_data'],
           $_REQUEST['w_valor'],$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_espec_despesa'],$_REQUEST['w_observacao'],
@@ -5268,7 +5268,7 @@ function Grava() {
           &$w_chave_nova);
       for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
-          dml_putAcordoNota::getInstanceOf($dbms,'PARCELA',
+          $SQL = new dml_putAcordoNota; $SQL->getInstanceOf($dbms,'PARCELA',
               $w_chave_nova,null,null,null,null,null,null,null,null,null,null,
               null,null,null,$_REQUEST['w_sq_acordo_parcela'][$i],null);
         }
@@ -5286,7 +5286,7 @@ function Grava() {
   } elseif (strpos($SG,'NTCANCEL')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {    
-      dml_putAcordoNotaCancel::getInstanceOf($dbms, $O,
+      $SQL = new dml_putAcordoNotaCancel; $SQL->getInstanceOf($dbms, $O,
           $_REQUEST['w_chave_aux'],$_REQUEST['w_chave_aux2'],$_REQUEST['w_data'],$_REQUEST['w_valor']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_chave_aux='.$_REQUEST['w_chave_aux'].'&w_chave_aux2='.$_REQUEST['w_chave_aux2'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
@@ -5333,14 +5333,14 @@ function Grava() {
           $RS_Aditivo = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,null,null,null,'LANCAMENTOF');
           foreach($RS_Aditivo as $row) {
             if(count($RS_Aditivo)>0) {
-              dml_putFinanceiroGeral::getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),f($row,'sq_menu'),
+              $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),f($row,'sq_menu'),
                 null,null,null,null,null,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         }       
       }
-      dml_putAcordoAditivo::getInstanceOf($dbms, $O,
+      $SQL = new dml_putAcordoAditivo; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_protocolo'],
             $_REQUEST['w_codigo'],$_REQUEST['w_objeto'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
             $_REQUEST['w_duracao'],$_REQUEST['w_doc_origem'],$_REQUEST['w_doc_data'],nvl($_REQUEST['w_variacao_valor'],0),
@@ -5362,7 +5362,7 @@ function Grava() {
   } elseif (strpos($SG,'TERMO')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putAcordoTermo::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
+      $SQL = new dml_putAcordoTermo; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
         $_REQUEST['w_atividades'],$_REQUEST['w_produtos'],$_REQUEST['w_requisitos'],
         $_REQUEST['w_codigo_externo'],$_REQUEST['w_vincula_projeto'],
         $_REQUEST['w_vincula_demanda'],$_REQUEST['w_vincula_viagem'],$_REQUEST['w_prestacao_contas']);
@@ -5383,13 +5383,13 @@ function Grava() {
       if($O=='V') {
         for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
           if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
-            dml_putAcordoParc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
+            $SQL = new dml_putAcordoParc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
               $_REQUEST['w_sq_acordo_aditivo'], null,null,null,null,null,null,null,
               null,null,null,$_REQUEST['w_inicio'][$i],$_REQUEST['w_fim'][$i],null,null,null);
            }
         }
       } else {
-        dml_putAcordoParc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], 
+        $SQL = new dml_putAcordoParc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], 
           $_REQUEST['w_sq_acordo_aditivo'], $_REQUEST['w_ordem'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
           $_REQUEST['w_observacao'], $_REQUEST['w_tipo_geracao'],$_REQUEST['w_tipo_mes'],$_REQUEST['w_vencimento'],
           $_REQUEST['w_dia_vencimento'], $_REQUEST['w_valor_parcela'],$_REQUEST['w_valor_diferente'],
@@ -5438,7 +5438,7 @@ function Grava() {
           exit();
         }
       }
-      dml_putConvOutraParte::getInstanceOf($dbms,$_REQUEST['O'],$SG,$_REQUEST['w_sq_acordo_outra_parte'],
+      $SQL = new dml_putConvOutraParte; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$SG,$_REQUEST['w_sq_acordo_outra_parte'],
         $_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],
         $_REQUEST['w_tipo'],$_REQUEST['w_chave_aux'],
         $_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
@@ -5476,7 +5476,7 @@ function Grava() {
           exit();
         }
       }
-      dml_putConvPreposto::getInstanceOf($dbms,$_REQUEST['O'],$SG,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_outra_parte'],$_REQUEST['w_sq_pessoa'],
+      $SQL = new dml_putConvPreposto; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$SG,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_outra_parte'],$_REQUEST['w_sq_pessoa'],
         $_REQUEST['w_chave_aux'],$_REQUEST['w_cpf'],$_REQUEST['w_nome'],
         $_REQUEST['w_nome_resumido'],$_REQUEST['w_sexo'],
         $_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],
@@ -5505,7 +5505,7 @@ function Grava() {
           exit();
         }
       }
-      dml_putConvOutroRep::getInstanceOf($dbms,$_REQUEST['O'],$SG,$_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_acordo_outra_parte'],
+      $SQL = new dml_putConvOutroRep; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$SG,$_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_acordo_outra_parte'],
         $_REQUEST['w_chave_aux'],$_REQUEST['w_cpf'],$_REQUEST['w_nome'],
         $_REQUEST['w_nome_resumido'],$_REQUEST['w_sexo'],
         $_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],
@@ -5581,7 +5581,7 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -5641,7 +5641,7 @@ function Grava() {
               exit();
             } 
           } 
-          dml_putAcordoEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
+          $SQL = new dml_putAcordoEnvio; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
               $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_tipo_log'],$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
               $w_file,$w_tamanho,$w_tipo,$w_nome);
           //Rotina para gravação da imagem da versão da solicitacão no log.
@@ -5662,7 +5662,7 @@ function Grava() {
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
-        dml_putAcordoEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
+        $SQL = new dml_putAcordoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_tipo_log'],$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
           null,null,null,null);
         //Rotina para gravação da imagem da versão da solicitacão no log.
@@ -5679,7 +5679,7 @@ function Grava() {
         // Se for envio da fase de cadastramento, remonta o menu principal
         if ($P1==1) {
           // Recupera os dados para montagem correta do menu
-          $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+          $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
           ScriptOpen('JavaScript');
           ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET')).'\';');
           ScriptClose();
@@ -5705,13 +5705,13 @@ function Grava() {
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
-        dml_putAcordoConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
+        $SQL = new dml_putAcordoConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],$_REQUEST['w_nota_conclusao'],
           $_REQUEST['w_custo_real'],$_REQUEST['w_tipo_conc']);
         // Se for renovação, grava os registros a partir do contrato atual
         if ($_REQUEST['w_tipo_conc']==0) {
           // Grava dados gerais
-          dml_putAcordoGeral::getInstanceOf($dbms,'I',$w_cliente,
+          $SQL = new dml_putAcordoGeral; $SQL->getInstanceOf($dbms,'I',$w_cliente,
             null,f($RS,'sq_menu'),f($RS,'sq_unidade'),f($RS,'solicitante'),
             $_SESSION['SQ_PESSOA'],f($RS,'sq_cc'),f($RS,'descricao'),f($RS,'justificativa'),
             $_REQUEST['w_inicio'],$_REQUEST['w_fim'],nvl($_REQUEST['w_valor'],0),f($RS,'data_hora'),

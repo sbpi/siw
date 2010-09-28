@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTTUsuario.php');
 // =========================================================================
 // Montagem da seleção de usuários da central telefônica
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getTTUsuario.php');
 function selecaoTTUsuario($label,$accesskey,$hint,$chave,$chaveAux,$campo,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getTTUsuario::getInstanceOf($dbms, null, null, $chave, null, null);
+  $sql = new db_getTTUsuario; $RS = $sql->getInstanceOf($dbms, null, null, $chave, null, null);
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

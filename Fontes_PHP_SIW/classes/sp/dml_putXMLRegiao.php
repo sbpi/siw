@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -17,7 +17,7 @@ class dml_putXMLRegiao {
                    'p_uf'                        =>array(tvl($p_uf),                                       B_VARCHAR,        20),
                    'p_regiao'                    =>array(tvl($p_regiao),                                   B_VARCHAR,         2)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

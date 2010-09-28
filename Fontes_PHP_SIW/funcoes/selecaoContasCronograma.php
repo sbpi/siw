@@ -1,11 +1,11 @@
-<? 
+<?php 
 include_once($w_dir_volta.'classes/sp/db_getAcordoParcela.php');
 // =========================================================================
 // Montagem da seleção dos cronogramas de prestação de contas
 // -------------------------------------------------------------------------
 function selecaoContasCronograma($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getContasCronograma::getInstanceOf($dbms,null,$chaveAux,null,null,null,null,null,$restricao);
+  $sql = new db_getContasCronograma; $RS = $sql->getInstanceOf($dbms,null,$chaveAux,null,null,null,null,null,$restricao);
   $RS = SortArray($RS,'tipo','desc','fim','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

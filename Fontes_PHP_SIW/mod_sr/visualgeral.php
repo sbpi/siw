@@ -6,7 +6,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  $sql = new db_getSolicData; $RS1 = $sql->getInstanceof($dbms,$l_chave,$l_sg);
   $w_tramite_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
@@ -67,10 +67,10 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   }
 
   // Verifica se é necessário mostrar o recurso
-  $RS_Recursos = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_menu,null,null,null,null,null,'SERVICO');
+  $sql = new db_getRecurso; $RS_Recursos = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_menu,null,null,null,null,null,'SERVICO');
   if (count($RS_Recursos)) $w_exibe_recurso = true; else $w_exibe_recurso = false;
   if ($w_exibe_recurso) {
-    $RS_Recurso = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicRecursos; $RS_Recurso = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS_Recurso as $row) {$RS_Recurso = $row; break;}
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Recurso:</b></font></td>';
@@ -166,7 +166,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   } 
   // Encaminhamentos
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-  $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+  $sql = new db_getSolicLog; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
   $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
   $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
   $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
@@ -187,7 +187,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
         $l_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
         if ($w_tramite_ativo=='S') {
           // Recupera os responsáveis pelo tramite
-          $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
+          $sql = new db_getTramiteResp; $RS2 = $sql->getInstanceOf($dbms,$l_chave,null,null);
           $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
           $l_html .= chr(13).'        <td colspan=4>Responsáveis pelo trâmite: <b>';
           if (count($RS2)>0) {

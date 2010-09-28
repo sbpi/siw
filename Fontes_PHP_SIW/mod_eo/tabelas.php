@@ -42,7 +42,7 @@ include_once($w_dir_volta.'classes/sp/dml_putTipoArquivo.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -123,8 +123,8 @@ $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 
 // Recupera a configuração do serviço
-if ($P2 > 0) $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
-else $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+if ($P2 > 0) { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
+else { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu); }
 
 Main();
 FechaSessao($dbms);
@@ -335,7 +335,7 @@ function Grava() {
             break;
           } 
         } 
-        dml_putTipoArquivo::getInstanceOf($dbms,$O,$w_cliente, Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
+        $SQL = new dml_putTipoArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente, Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
                 $_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

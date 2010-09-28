@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina dos dados gerais de solicitações de transporte
 // -------------------------------------------------------------------------
@@ -7,7 +7,7 @@
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
-  $RS = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+  $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
   $w_nm_unidade = f($RS,'nome');
   $w_cidade     = f($RS,'sq_cidade');
 
@@ -35,9 +35,9 @@
     if ((strpos('AEV',$O)!==false) || $w_copia>'') {
       // Recupera os dados da solicitação
       if ($w_copia>'') {
-        $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG); 
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG); 
       } else { 
-        $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
       }
       if (count($RS)>0) {
         $w_chave_pai        = f($RS,'sq_solic_pai');
@@ -102,7 +102,7 @@
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_cidade=='') {
       // Carrega o valores padrão para cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       $w_cidade   = f($RS,'sq_cidade_padrao');
     } 
     if (!(strpos('EV',$O)===false)) {
@@ -155,7 +155,7 @@
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
-    $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+    $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

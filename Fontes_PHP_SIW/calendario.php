@@ -29,7 +29,7 @@
   if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
   //Declaração de variáveis
-  $dbms         = abreSessao::getInstanceOf($_SESSION['DBMS']);
+  $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
   $w_pagina     = 'calendario.php';  
   $w_cliente    = RetornaCliente();
   $w_usuario    = RetornaUsuario();
@@ -95,7 +95,7 @@
     
     // Exibe o calendário da organização
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-    $RS_Ano[$w_ano] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
+    $SQL = new db_getDataEspecial; $RS_Ano[$w_ano] = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
     //$RS_Ano[$w_ano] = SortArray($RS_Ano[$i],'data_formatada','asc');
    
     ShowHTML('            <tr valign="top">');

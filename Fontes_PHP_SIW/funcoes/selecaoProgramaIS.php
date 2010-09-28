@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getPrograma_IS.php');
 // =========================================================================
 // Montagem da seleção de programas cadastrados no INFRASIG
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getPrograma_IS.php');
 function selecaoProgramaIS($label,$accesskey,$hint,$cliente,$ano,$chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   if ($restricao=='CADASTRADOS') {
-    $RS = db_getPrograma_IS::getInstanceOf($dbms,${'w_cd_programa'},$w_ano,$w_cliente,$restricao);
+    $sql = new db_getPrograma_IS; $RS = $sql->getInstanceOf($dbms,${'w_cd_programa'},$w_ano,$w_cliente,$restricao);
     $RS = SortArray($RS,'titulo','asc');
   } 
   if (!isset($hint))

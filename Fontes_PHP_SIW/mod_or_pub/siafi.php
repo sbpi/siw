@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -41,7 +41,7 @@ include_once($w_dir_volta.'classes/sp/dml_putAcaoPPA.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -93,13 +93,13 @@ if (count($RS)>0) {
 } 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -212,7 +212,7 @@ function Inicial() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -413,7 +413,7 @@ function Grava() {
                 $w_erro = 1;
               } else {
                 // Se existir, atualiza os dados financeiros
-                dml_putAcaoPPA::getInstanceOf($dbms,'U',null,$w_cliente,null,null,null,null,null,null,null,null,$w_dotacao,null,$w_empenhado,$w_liquidado,null,null,null,$w_programa,$w_acao);
+                $SQL = new dml_putAcaoPPA; $SQL->getInstanceOf($dbms,'U',null,$w_cliente,null,null,null,null,null,null,null,null,$w_dotacao,null,$w_empenhado,$w_liquidado,null,null,null,$w_programa,$w_acao);
               } 
             } 
             $w_registros += 1;
@@ -429,7 +429,7 @@ function Grava() {
           $w_tamanho_registro   = filesize($w_caminho.$w_caminho_registro);
           $w_tipo_registro      = $w_tipo_recebido;
           // Grava o resultado da importação no banco de dados
-          dml_putOrImport::getInstanceOf($dbms,$O,
+          $SQL = new dml_putOrImport; $SQL->getInstanceOf($dbms,$O,
                 $_REQUEST['w_chave'],$w_cliente,$w_usuario,$_REQUEST['w_data_arquivo'],
                 $w_nome_recebido,$w_caminho_recebido,$w_tamanho_recebido,$w_tipo_recebido,
                 $w_arquivo_registro,$w_caminho_registro,$w_tamanho_registro,$w_tipo_registro,

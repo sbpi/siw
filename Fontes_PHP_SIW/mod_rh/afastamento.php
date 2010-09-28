@@ -41,7 +41,7 @@ include_once('validaafastamento.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
@@ -562,7 +562,7 @@ function Grava() {
             exit;
           }  
         } 
-        dml_putAfastamento::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_tipo_afastamento'],$_REQUEST['w_sq_contrato_colaborador'],
+        $SQL = new dml_putAfastamento; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_tipo_afastamento'],$_REQUEST['w_sq_contrato_colaborador'],
         $_REQUEST['w_inicio_data'],$_REQUEST['w_inicio_periodo'],$_REQUEST['w_fim_data'],$_REQUEST['w_fim_periodo'],
         $_REQUEST['w_dias'],$_REQUEST['w_observacao']);
         ScriptOpen('JavaScript');

@@ -40,7 +40,7 @@ if ($_SESSION['LOGON'] != 'Sim') {
 }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -111,7 +111,7 @@ function Inicial() {
   }
   if ($O == 'L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $w_cliente);
     if (f($RS, 'logo') > '')
       $w_logo = '/img/logo' . substr(f($RS, 'logo'), (strpos(f($RS, 'logo'), '.') ? strpos(f($RS, 'logo'), '.') + 1 : 0) - 1, 30);
     // Recupera todos os registros para a listagem

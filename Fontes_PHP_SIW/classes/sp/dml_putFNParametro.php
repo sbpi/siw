@@ -25,7 +25,7 @@ class dml_putFNParametro {
                    'p_fundo_data'                =>array(tvl($p_fundo_data),                               B_VARCHAR,         5),
                    'p_devolucao'                 =>array(tvl($p_devolucao),                                B_VARCHAR,      4000)                   
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

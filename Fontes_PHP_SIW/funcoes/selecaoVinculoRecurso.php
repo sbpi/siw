@@ -10,7 +10,7 @@ function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$
     include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
     
     // Verifica se o cliente tem o módulo de recursos logísticos contratado
-    $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'SR');
+    $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'SR');
     $w_mod_sr = ''; foreach ($RS as $row) $w_mod_sr = f($row,'nome');
 
     // Se restrição não for informado, exibe seleção dos objetos aos quais o recurso pode ser ligado

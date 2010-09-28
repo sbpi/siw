@@ -84,7 +84,7 @@ if(nvl($_REQUEST['p_dbms'],'nulo')!='nulo')    $_SESSION['DBMS']    = $_REQUEST[
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); } 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par          = upper($_REQUEST['par']);
@@ -129,13 +129,13 @@ default:      $w_TP=$TP.' - Listagem';    break;
 } 
 // Recupera a configuração do serviço
 if ($P2>0 && $SG!='CVVISUAL') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2); 
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); 
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -480,7 +480,7 @@ function Identificacao() {
   if (strpos('IAEV',$O)!==false) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -2011,7 +2011,7 @@ function Visualizar() {
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR>');
   if ($P2==0) {
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     ShowHTML('  <TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,'/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'">');    
   } 
   ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">Curriculum Vitae</FONT>');
@@ -2088,7 +2088,7 @@ function Grava() {
               if ($w_file >'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             } 
           } 
-          dml_putCVIdent::getInstanceOf($dbms,$O,
+          $SQL = new dml_putCVIdent; $SQL->getInstanceOf($dbms,$O,
               $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],
               $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_sq_etnia'],
               $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissor'],
@@ -2125,7 +2125,7 @@ function Grava() {
               $w_username = 'S';
             }
             //Grava os dados do contrato
-            dml_putGPContrato::getInstanceOf($dbms,$O,
+            $SQL = new dml_putGPContrato; $SQL->getInstanceOf($dbms,$O,
                 $w_cliente,$_REQUEST['w_sq_contrato_colaborador'],null,$w_chave_nova,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
                 $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
                 $_REQUEST['w_dt_ini'],null,$w_username,$ferias,$extras,
@@ -2134,11 +2134,11 @@ function Grava() {
             );
             //Cria a conta para o usuário
             if ($w_username == 'S') {
-              dml_putSiwUsuario::getInstanceOf($dbms,'I',
+              $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'I',
                   $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                   $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
                   $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null,'B');
-              dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+              $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         } 
@@ -2147,7 +2147,7 @@ function Grava() {
           ShowHTML('  top.location.href=\''.montaURL_JS($w_dir,$R).'\';');
         } else {
           if (Nvl($P1,0)==1) {
-            $RS = db_getMenuData::getInstanceOf($dbms,$RS1,$w_menu);
+            $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$RS1,$w_menu);
             ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_usuario='.$w_chave_nova.'&w_sq_pessoa='.$w_chave_nova.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG=COINICIAL&TP='.RemoveTP($TP).MontaFiltro('GET')).'\';');
           } else {
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_usuario='.$_REQUEST['w_chave'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2164,7 +2164,7 @@ function Grava() {
     case 'CVHIST':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVHist::getInstanceOf($dbms,$O,
+        $SQL = new dml_putCVHist; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_residencia_outro_pais'],$_REQUEST['w_mudanca_nacionalidade'],
             $_REQUEST['w_mudanca_nacionalidade_medida'],$_REQUEST['w_emprego_seis_meses'],$_REQUEST['w_impedimento_viagem_aerea'],
             $_REQUEST['w_objecao_informacoes'],$_REQUEST['w_prisao_envolv_justica'],$_REQUEST['w_motivo_prisao'],
@@ -2183,7 +2183,7 @@ function Grava() {
     case 'CVIDIOMA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVIdioma::getInstanceOf($dbms,$O,$w_usuario,
+        $SQL = new dml_putCVIdioma; $SQL->getInstanceOf($dbms,$O,$w_usuario,
         $_REQUEST['w_chave'],$_REQUEST['w_leitura'],$_REQUEST['w_escrita'],
         $_REQUEST['w_compreensao'],$_REQUEST['w_conversacao']);
         ScriptOpen('JavaScript');
@@ -2199,7 +2199,7 @@ function Grava() {
     case 'CVEXPPER':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVExperiencia::getInstanceOf($dbms,$O,$w_usuario,
+        $SQL = new dml_putCVExperiencia; $SQL->getInstanceOf($dbms,$O,$w_usuario,
         $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_cidade'],$_REQUEST['w_sq_eo_tipo_posto'],
         $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_empregador'],$_REQUEST['w_entrada'],$_REQUEST['w_saida'],
         $_REQUEST['w_duracao_mes'],$_REQUEST['w_duracao_ano'],$_REQUEST['w_motivo_saida'],$_REQUEST['w_ultimo_salario'],
@@ -2217,7 +2217,7 @@ function Grava() {
     case 'CVCARGOS':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVCargo::getInstanceOf($dbms,$O,$_REQUEST['w_sq_cvpescargo'],
+        $SQL = new dml_putCVCargo; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_cvpescargo'],
         $_REQUEST['w_sq_cvpesexp'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_especialidades'],
         $_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
@@ -2233,7 +2233,7 @@ function Grava() {
     case 'CVESCOLA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVEscola::getInstanceOf($dbms,$O,$w_usuario,
+        $SQL = new dml_putCVEscola; $SQL->getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_formacao'],
           $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
@@ -2249,7 +2249,7 @@ function Grava() {
     case 'CVCURSO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVCurso::getInstanceOf($dbms,$O,$w_usuario,
+        $SQL = new dml_putCVCurso; $SQL->getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
           $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_carga_horaria'],$_REQUEST['w_conclusao']);
         ScriptOpen('JavaScript');
@@ -2265,7 +2265,7 @@ function Grava() {
     case 'CVTECNICA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCVProducao::getInstanceOf($dbms,$O,$w_usuario,
+        $SQL = new dml_putCVProducao; $SQL->getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
           $_REQUEST['w_nome'],$_REQUEST['w_meio'],$_REQUEST['w_data']);
         ScriptOpen('JavaScript');

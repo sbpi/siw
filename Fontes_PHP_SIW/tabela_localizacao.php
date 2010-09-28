@@ -52,7 +52,7 @@ include_once('funcoes/selecaoContinente.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -100,7 +100,7 @@ function Cidade() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
@@ -122,7 +122,7 @@ function Cidade() {
     $w_aeroportos   = $_REQUEST['w_aeroportos'];
   } elseif ($O=='L') {
 
-    $RS = db_getCityList::getInstanceOf($dbms,$p_sq_pais,$p_co_uf,$p_nome,null);
+    $SQL = new db_getCityList; $RS = $SQL->getInstanceOf($dbms,$p_sq_pais,$p_co_uf,$p_nome,null);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc','nome','asc');
@@ -131,7 +131,7 @@ function Cidade() {
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_cidade = $_REQUEST['w_sq_cidade'];
-    $RS = db_getCityData::getInstanceOf($dbms,$w_sq_cidade);
+    $SQL = new db_getCityData; $RS = $SQL->getInstanceOf($dbms,$w_sq_cidade);
     $w_sq_pais      = f($RS,'sq_pais');
     $w_co_uf        = f($RS,'co_uf');
     $w_nome         = f($RS,'nome');
@@ -348,7 +348,7 @@ function Estado() {
   $p_ativo      = upper($_REQUEST['p_ativo']);
   $p_ordena     = lower($_REQUEST['p_ordena']);
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O!='I' && $p_sq_pais=='') $O='P';
@@ -362,7 +362,7 @@ function Estado() {
     $w_codigo_ibge  = $_REQUEST['w_codigo_ibge'];
     $w_ordem        = $_REQUEST['w_ordem'];
   } elseif ($O=='L') {
-    $RS = db_getStateList::getInstanceOf($dbms,nvl($p_sq_pais,0),$p_sq_regiao,$p_ativo,null);
+    $SQL = new db_getStateList; $RS = $SQL->getInstanceOf($dbms,nvl($p_sq_pais,0),$p_sq_regiao,$p_ativo,null);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc'); 
@@ -372,7 +372,7 @@ function Estado() {
   } elseif ($O=='A' || $O=='E') {
     $w_sq_pais  = $_REQUEST['w_sq_pais'];
     $w_co_uf    = $_REQUEST['w_co_uf'];
-    $RS = db_getStateData::getInstanceOf($dbms,$w_sq_pais,$w_co_uf);
+    $SQL = new db_getStateData; $RS = $SQL->getInstanceOf($dbms,$w_sq_pais,$w_co_uf);
     $w_sq_regiao    = f($RS,'sq_regiao');
     $w_nome         = f($RS,'nome');
     $w_ativo        = f($RS,'ativo');
@@ -594,7 +594,7 @@ function Regiao() {
   $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
   $p_ordena     = lower($_REQUEST['p_ordena']);
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E')  {
     $w_nome         = $_REQUEST['w_nome'];
@@ -602,7 +602,7 @@ function Regiao() {
     $w_sigla        = $_REQUEST['w_sigla'];
     $w_sq_pais      = $_REQUEST['w_sq_pais'];
   } elseif ($O=='L') {
-    $RS = db_getRegionList::getInstanceOf($dbms,$p_sq_pais,'N',$p_nome);
+    $SQL = new db_getRegionList; $RS = $SQL->getInstanceOf($dbms,$p_sq_pais,'N',$p_nome);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],$p_ordena,'asc');
@@ -611,7 +611,7 @@ function Regiao() {
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_regiao = $_REQUEST['w_sq_regiao'];
-    $RS = db_getRegionData::getInstanceOf($dbms,$w_sq_regiao);
+    $SQL = new db_getRegionData; $RS = $SQL->getInstanceOf($dbms,$w_sq_regiao);
     $w_nome     = f($RS,'nome');
     $w_ordem    = f($RS,'ordem');
     $w_sigla    = f($RS,'sigla');
@@ -794,7 +794,7 @@ function Pais() {
   $p_sigla  = upper($_REQUEST['p_sigla']);
   $p_ordena = lower($_REQUEST['p_ordena']);
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E')  {
     $w_nome         = $_REQUEST['w_nome'];
@@ -805,7 +805,7 @@ function Pais() {
     $w_continente   = $_REQUEST['w_continente'];
     $w_sq_moeda     = $_REQUEST['w_sq_moeda'];
   } elseif ($O=='L') {
-    $RS = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
+    $SQL = new db_getCountryList; $RS = $SQL->getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
     if (nvl($p_ordena,'')!='') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sq_pais','asc','nome','asc');
@@ -814,7 +814,7 @@ function Pais() {
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_pais = $_REQUEST['w_sq_pais'];
-    $RS = db_getCountryData::getInstanceOf($dbms,$w_sq_pais);
+    $SQL = new db_getCountryData; $RS = $SQL->getInstanceOf($dbms,$w_sq_pais);
     $w_nome       = f($RS,'nome');
     $w_ddi        = f($RS,'ddi');
     $w_sigla      = f($RS,'sigla');
@@ -1026,7 +1026,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
-        $RS = db_getCityList::getInstanceOf($dbms,$_REQUEST['w_sq_pais'],$_REQUEST['w_co_uf'],null,null);
+        $SQL = new db_getCityList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pais'],$_REQUEST['w_co_uf'],null,null);
         foreach($RS as $row) {
           if(f($row,'capital')=='Sim' && $_REQUEST['w_capital']=='S') {
             if ($O=='I') $w_cont = $w_cont + 1;
@@ -1039,7 +1039,7 @@ function Grava() {
           ShowHTML('  history.back(1);');
           ScriptClose();
         } else {        
-          dml_CoCidade::getInstanceOf($dbms, $O,
+          $SQL = new dml_CoCidade; $SQL->getInstanceOf($dbms, $O,
               $_REQUEST['w_sq_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_sq_pais'],
               $_REQUEST['w_sq_regiao'],$_REQUEST['w_co_uf'],$_REQUEST['w_nome'],$_REQUEST['w_capital'],$_REQUEST['w_aeroportos']);
           ScriptOpen('JavaScript');
@@ -1061,7 +1061,7 @@ function Grava() {
 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
-        $RS = db_getCountryList::getInstanceOf($dbms,null,null,null,null);
+        $SQL = new db_getCountryList; $RS = $SQL->getInstanceOf($dbms,null,null,null,null);
         foreach($RS as $row) {
           if(f($row,'padrao')=='S' && $_REQUEST['w_padrao']=='S') {
             if ($O=='I') $w_cont = $w_cont + 1;
@@ -1074,7 +1074,7 @@ function Grava() {
           ShowHTML('  history.back(1);');
           ScriptClose();
         } else {
-          dml_CoPais::getInstanceOf($dbms, $O,
+          $SQL = new dml_CoPais; $SQL->getInstanceOf($dbms, $O,
               $_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],
               $_REQUEST['w_padrao'],$_REQUEST['w_ddi'],$_REQUEST['w_sigla'],$_REQUEST['w_sq_moeda'],
               $_REQUEST['w_continente']);
@@ -1096,7 +1096,7 @@ function Grava() {
 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoRegiao::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoRegiao; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_regiao'],$_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
@@ -1118,7 +1118,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
-        $RS = db_getStateList::getInstanceOf($dbms,$_REQUEST['w_sq_pais'],null,null,null);
+        $SQL = new db_getStateList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pais'],null,null,null);
         foreach($RS as $row) {
           if(f($row,'padrao')=='S' && $_REQUEST['w_padrao']=='S') {
             if ($O=='I') $w_cont = $w_cont + 1;
@@ -1131,7 +1131,7 @@ function Grava() {
           ShowHTML('  history.back(1);');
           ScriptClose();
         } else {        
-          dml_CoUf::getInstanceOf($dbms, $O,
+          $SQL = new dml_CoUf; $SQL->getInstanceOf($dbms, $O,
               $_REQUEST['w_co_uf'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_regiao'],$_REQUEST['w_nome'],
               $_REQUEST['w_ativo'],$_REQUEST['w_padrao'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_ordem']);
           ScriptOpen('JavaScript');

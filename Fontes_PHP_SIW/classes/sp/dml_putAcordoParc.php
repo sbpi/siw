@@ -34,7 +34,7 @@ class dml_putAcordoParc {
                    'p_valor_excedente'          =>array(toNumber(tvl($p_valor_excedente)),          B_NUMERIC,      18,2),
                    'p_valor_reajuste'           =>array(toNumber(tvl($p_valor_reajuste)),           B_NUMERIC,      18,2)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -56,7 +56,7 @@ include_once($w_dir_volta.'classes/sp/dml_putCLPesqFornecedor.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -111,13 +111,13 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera as informações do cliente
-$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 
 // Recupera as informações da opçao de menu;
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 // Recupera os parâmetros do módulo de compras e licitações
@@ -1304,7 +1304,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putMatServ::getInstanceOf($dbms,$O,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_copia'],
+        $SQL = new dml_putMatServ; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_copia'],
             $_REQUEST['w_tipo_material'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_nome'],
             $_REQUEST['w_descricao'],$_REQUEST['w_detalhamento'],$_REQUEST['w_apresentacao'],$_REQUEST['w_codigo_interno'],
             $_REQUEST['w_codigo_externo'], $_REQUEST['w_exibe_catalogo'], $_REQUEST['w_vida_util'], $_REQUEST['w_ativo'],
@@ -1381,7 +1381,7 @@ function Grava() {
           }
         }
 
-        dml_putPessoa::getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,'FORNECEDOR',
+        $SQL = new dml_putPessoa; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,'FORNECEDOR',
             $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
             $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],
@@ -1392,7 +1392,7 @@ function Grava() {
             $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
       
         // Inseri as cotaçoes e atualiza a tabela de materiais
-        dml_putCLPesqFornecedor::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave_aux'],null,$w_chave_nova,
+        $SQL = new dml_putCLPesqFornecedor; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave_aux'],null,$w_chave_nova,
            $_REQUEST['w_inicio'],$_REQUEST['w_dias'],$_REQUEST['w_valor'],$_REQUEST['w_fabricante'],
            $_REQUEST['w_marca_modelo'],$_REQUEST['w_embalagem'],$_REQUEST['w_fator'],$_REQUEST['w_sq_material'],
            $_REQUEST['w_origem']);

@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 // -------------------------------------------------------------------------
 function selecaoContaBAnco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  $l_rs = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
+  $sql = new db_getContaBancoList; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
   $l_rs = SortArray($l_rs,'cd_banco','asc','cd_agencia','asc','numero','asc');
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

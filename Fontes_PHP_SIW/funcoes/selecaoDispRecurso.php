@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getRecurso_Disp.php');
 // =========================================================================
 // Montagem da seleção de períodos de disponibilidade de um recurso
 // -------------------------------------------------------------------------
 function selecaoDispRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null,'REGISTROS');
+  $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null,'REGISTROS');
   $RS = SortArray($RS,'inicio','desc','fim','desc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

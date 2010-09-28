@@ -1,4 +1,4 @@
-<?
+<?php
   include('constants.inc');
   include('classes/db/db_constants.php');
   include('funcoes.php');
@@ -10,7 +10,7 @@
 <body bgcolor='#FFFFFF' background='bg.jpg' bgproperties='fixed'>
 <font size='1'>
 <br>
-<? 
+<?php 
 
 $svrName  = nvl($_POST['serverName'],ORA9_SERVER_NAME);
 $dbName   = $_POST['databaseName'];

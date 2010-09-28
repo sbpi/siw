@@ -22,7 +22,7 @@ class db_getCargo {
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        20),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0);
      if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {

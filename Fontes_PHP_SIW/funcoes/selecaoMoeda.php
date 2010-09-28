@@ -5,7 +5,7 @@
 function selecaoMoeda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getMoeda.php');
-  $RS = db_getMoeda::getInstanceOf($dbms, null, $restricao, $chaveAux, null, null);
+  $sql = new db_getMoeda; $RS = $sql->getInstanceOf($dbms, null, $restricao, $chaveAux, null, null);
   $RS = SortArray($RS,'padrao','desc','ativo','desc','nome','asc');
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

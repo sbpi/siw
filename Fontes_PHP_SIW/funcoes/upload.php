@@ -38,7 +38,7 @@ include_once($w_dir_volta . 'classes/sp/dml_putSolicRelAnexo.php');
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
-$dbms = abreSessao::getInstanceOf($_REQUEST['dbms']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_REQUEST['dbms']);
 $w_caminho = $_REQUEST['w_caminho'];
 $w_chave = $_REQUEST['w_chave'];
 $w_cliente = $_REQUEST['w_cliente'];
@@ -63,7 +63,7 @@ if (!empty($_FILES)) {
   // Uncomment the following line if you want to make the directory if it doesn't exist
   // mkdir(str_replace('//','/',$targetPath), 0755, true);
   if (move_uploaded_file($tempFile, $targetFile)) {
-    dml_putSolicRelAnexo::getInstanceOf($dbms, 'I', $w_cliente, $w_chave, null, $w_nome, null, $w_nome, $w_tamanho, $w_tipo, $w_nome);
+    $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, 'I', $w_cliente, $w_chave, null, $w_nome, null, $w_nome, $w_tamanho, $w_tipo, $w_nome);
   }
   echo "1";
 

@@ -1,12 +1,12 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getLancamentoProjeto.php');
 // =========================================================================
 // Montagem da seleção de tipo de rubrica
 // -------------------------------------------------------------------------
 function SelecaoTipoRubrica ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $l_RS  = db_getLinkData::getInstanceOf($dbms,$w_cliente,$restricao);
-  $l_RS1 = db_getLancamentoProjeto::getInstanceOf($dbms,$chaveAux,f($l_RS,'sq_menu'),null);
+  $l_RS = new db_getLinkData; $l_RS = $l_RS->getInstanceOf($dbms,$w_cliente,$restricao);
+  $sql = new db_getLancamentoProjeto; $l_RS1 = $sql->getInstanceOf($dbms,$chaveAux,f($l_RS,'sq_menu'),null);
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

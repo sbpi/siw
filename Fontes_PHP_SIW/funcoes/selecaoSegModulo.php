@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSegModList.php');
 // =========================================================================
 // Montagem da seleção da localização
@@ -7,7 +7,7 @@ function selecaoSegModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
   extract($GLOBALS);
 
 
-  $RS = db_getSegModList::getInstanceOf($dbms, $ChaveAux);
+  $sql = new db_getSegModList; $RS = $sql->getInstanceOf($dbms, $ChaveAux);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -55,7 +55,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoTabela.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -109,13 +109,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -1030,7 +1030,7 @@ function Mapeamento() {
 function Importacao() {
   extract($GLOBALS);
   $w_sq_esquema = $_REQUEST['w_sq_esquema'];
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   $w_upload_maximo = f($RS,'upload_maximo');
   if ($O=='I') {
     // Recupera todos os ws_url para a listagem
@@ -1463,7 +1463,7 @@ function Script() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -1598,7 +1598,7 @@ function Grava() {
     case 'TIMPORT':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putEsquema::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
+        $SQL = new dml_putEsquema; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
                 $_REQUEST['w_ativo'],$_REQUEST['w_formato'],$_REQUEST['w_ws_servidor'],$_REQUEST['w_ws_url'],
                 $_REQUEST['w_ws_acao'],$_REQUEST['w_ws_mensagem'],$_REQUEST['w_no_raiz'],$_REQUEST['w_bd_hostname'],$_REQUEST['w_bd_username'],
                 $_REQUEST['w_bd_password'],$_REQUEST['w_tx_delimitador'],$_REQUEST['w_tipo_efetivacao'],$_REQUEST['w_tx_origem_arquivos'],$_REQUEST['w_ftp_hostname'],$_REQUEST['w_ftp_username'],
@@ -1619,14 +1619,14 @@ function Grava() {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_tabela'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_tabela'][$i]>'') {
-              dml_putEsquemaTabela::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i],Nvl($_REQUEST['w_remove_registro'][$i],'N'));
+              $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i],Nvl($_REQUEST['w_remove_registro'][$i],'N'));
             }
           } 
         } elseif ($O=='A') {
-          dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento'],Nvl($_REQUEST['w_remove_registro'],'N'));
+          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento'],Nvl($_REQUEST['w_remove_registro'],'N'));
         } elseif ($O=='E') {
-          dml_putEsquemaAtributo::getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
-          dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
+          $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
+          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
@@ -1641,12 +1641,12 @@ function Grava() {
     case 'ISSIGMAP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putEsquemaAtributo::getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
+        $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_coluna'][$i]>'') {
               if (upper($_REQUEST['w_tipo_coluna'][$i])=='DATE') $w_valor_mascara = $_REQUEST['w_mascara_data'][$i]; else $w_valor_mascara = '';
-              dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i],$w_valor_mascara,$_REQUEST['w_valor_default'][$i]);
+              $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i],$w_valor_mascara,$_REQUEST['w_valor_default'][$i]);
             }
           }
         } 
@@ -1665,10 +1665,10 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
-              dml_putEsquemaInsert::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_insert'][$i],$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_valor'][$i],null);
+              $SQL = new dml_putEsquemaInsert; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_insert'][$i],$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_valor'][$i],null);
             } 
         } elseif ($O=='E') {
-          dml_putEsquemaInsert::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,$_REQUEST['w_registro']);
+          $SQL = new dml_putEsquemaInsert; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,$_REQUEST['w_registro']);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&w_sq_tabela='.$_REQUEST['w_sq_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
@@ -1733,7 +1733,7 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        dml_putEsquemaScript::getInstanceOf($dbms,$O,
+        $SQL = new dml_putEsquemaScript; $SQL->getInstanceOf($dbms,$O,
           $w_cliente,$_REQUEST['w_sq_esquema_script'],$_REQUEST['w_sq_arquivo'],$_REQUEST['w_sq_esquema'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
           $w_file,$w_tamanho,$w_tipo,$w_nome,$_REQUEST['w_ordem']);
       } else {
@@ -1744,7 +1744,7 @@ function Grava() {
       } 
       ScriptOpen('JavaScript');
      // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -1779,7 +1779,7 @@ function Grava() {
        ShowHTML('  alert(\'Importação executada com sucesso!\');');
 
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-       $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'TIMPORT');
+       $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'TIMPORT');
        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS1,'sigla').MontaFiltro('GET')).'\';');
        ScriptClose();
      } else {
@@ -1814,7 +1814,7 @@ function Grava() {
       // Varre cada um dos esquemas e gera arquivo de script com todos eles
       foreach($RS_Esquema as $row_esquema) {
         if (f($row_esquema,'ativo')=='S') {
-          $l_arquivo =  '<?'.$crlf;
+          $l_arquivo =  '<?php'.$crlf;
           $l_arquivo .= '/**'.$crlf;
           $l_arquivo .= '* { Description :- '.$crlf;
           $l_arquivo .= '*    '.f($row_esquema,'descricao').$crlf;

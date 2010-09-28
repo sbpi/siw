@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -21,7 +21,7 @@ class dml_putEsquemaAtributo {
                    'p_mascara_data'              =>array(tvl($p_mascara_data),                             B_VARCHAR,        50),
                    'p_valor_default'             =>array(tvl($p_valor_default),                            B_VARCHAR,        50)                   
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

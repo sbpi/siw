@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getPPALocalizador_IS.php');
 // =========================================================================
 // Montagem da seleção de ações do PPA(tabela SIGPLAN)
 // -------------------------------------------------------------------------
 function selecaoLocalizador_IS($label,$accesskey,$hint,$chave,$w_cd_programa,$w_cd_acao,$w_cd_unidade,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getPPALocalizador_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$w_cd_programa,$w_cd_acao,$w_cd_unidade,null);
+  $sql = new db_getPPALocalizador_IS; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$w_cd_programa,$w_cd_acao,$w_cd_unidade,null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

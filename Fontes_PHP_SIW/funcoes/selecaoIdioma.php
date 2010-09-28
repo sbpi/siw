@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getIdiomList.php');
 // =========================================================================
 // Montagem da seleção de idiomas
 // -------------------------------------------------------------------------
 function selecaoIdioma($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getIdiomList::getInstanceOf($dbms,null,'S');
+  $sql = new db_getIdiomList; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

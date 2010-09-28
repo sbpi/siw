@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de informações para execução
 // -------------------------------------------------------------------------
@@ -14,7 +14,7 @@
     $w_sq_veiculo         = $_REQUEST['w_sq_veiculo'];
     $w_executor           = $_REQUEST['w_executor'];
   } else {
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
     $w_sq_veiculo         = f($RS,'sq_veiculo');
     $w_executor           = f($RS,'executor');
   }
@@ -56,7 +56,7 @@
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   ShowHTML('    <tr><td colspan="2"><br><font size="2"><b>DADOS DO ATENDIMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
   ShowHTML('          <tr valign="top">');

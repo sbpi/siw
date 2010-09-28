@@ -137,7 +137,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     } 
     // Listagem das tarefa na visualização da ação, rotina adquirida apartir da rotina exitente na tarefa.php para listagem das tarefa     
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS2 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
+    $RS2 = new db_getLinkData; $RS2 = $RS2->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
     $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',4,
              null,null,null,null,null,null,
              null,null,null,null,
@@ -743,7 +743,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Listagem das tarefas na visualização da ação, rotina adquirida apartir da rotina exitente na Tarefas.php para listagem das tarefas
     if ($l_tarefa==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS2 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
+      $RS2 = new db_getLinkData; $RS2 = $RS2->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
     $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',3,
              null,null,null,null,null,null,
              null,null,null,null,

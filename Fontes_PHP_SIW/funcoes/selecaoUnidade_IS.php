@@ -1,19 +1,20 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getIsUnidade_IS.php');
 // =========================================================================
 // Rotina de selecao das unidades de planejamento e administrativas do modulo infra-sig
 // -------------------------------------------------------------------------
 function selecaoUnidade_IS($label,$accesskey,$hint,$chave,$chaveAux,$campo,$atributo,$tipo) {
   extract($GLOBALS);
-  if ($tipo=='ADMINISTRATIVA')
-    $RS = db_getIsUnidade_IS::getInstanceOf($dbms,null,$w_cliente,'S',null);
-  elseif ($tipo=='PLANEJAMENTO')
-    $RS = db_getIsUnidade_IS::getInstanceOf($dbms,null,$w_cliente,null,'S');
+  if ($tipo=='ADMINISTRATIVA') {
+    $sql = new db_getIsUnidade_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,'S',null);
+  } elseif ($tipo=='PLANEJAMENTO') {
+    $sql = new db_getIsUnidade_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,'S');
+  }
   $RS = SortArray($RS,'nome','asc');
   if (count($RS)>100) {
     ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
     if ($chave>'') {
-      $RS = db_getIsUnidade_IS::getInstanceOf($dbms,$chave,$w_cliente,null,null);
+      $sql = new db_getIsUnidade_IS; $RS = $sql->getInstanceOf($dbms,$chave,$w_cliente,null,null);
       foreach ($RS as $row) {
         $w_nm_unidade = f($row,'nome');
         $w_sigla      = f($row,'sigla');

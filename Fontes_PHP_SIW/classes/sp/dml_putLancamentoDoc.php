@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -29,7 +29,7 @@ class dml_putLancamentoDoc {
                    'p_reajuste'                  =>array(tonumber(nvl($p_reajuste,0)),                       B_NUMERIC,      18,2),
                    'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

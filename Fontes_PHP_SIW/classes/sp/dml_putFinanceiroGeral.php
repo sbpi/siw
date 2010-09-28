@@ -47,7 +47,7 @@ class dml_putFinanceiroGeral {
                    'p_chave_nova'               =>array(&$p_chave_nova,                                   B_INTEGER,        32),
                    'p_codigo_interno'           =>array(&$p_codigo_interno,                               B_VARCHAR,        60)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 // =========================================================================
 // Montagem da seleção de etapas do projeto
@@ -13,9 +13,9 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
   ShowHTML('          <option value="">---');
 
   if ($restricao=='Pesquisa') {
-    $RST = db_getSolicEtapa::getInstanceOf($dbms, $chaveAux, null, 'ARVORE', nvl($chaveAux2,0));
+    $sql = new db_getSolicEtapa; $RST = $sql->getInstanceOf($dbms, $chaveAux, null, 'ARVORE', nvl($chaveAux2,0));
   } else {
-    $RST = db_getSolicEtapa::getInstanceOf($dbms, $chaveAux, null, 'ARVORE', null);
+    $sql = new db_getSolicEtapa; $RST = $sql->getInstanceOf($dbms, $chaveAux, null, 'ARVORE', null);
   }
   foreach($RST as $rowT) {
     if ($restricao=='Grupo' && (f($rowT,'vincula_atividade')=='N' || f($rowT,'perc_conclusao')>=100)) { 

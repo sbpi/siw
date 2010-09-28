@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 $w_dir_volta    = '../';
 include_once($w_dir_volta.'constants.inc');
@@ -38,7 +38,7 @@ include_once($w_dir_volta.'classes/sp/db_exec.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -78,14 +78,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -237,7 +237,7 @@ function ResultSql() {
     ShowHTML('<h4> Instrução SQL não informada </h4>');
   } else {
     //Inicializa objeto de conexão e executa a query
-    $conObj = abreSessao::getInstanceOf($dataBank);
+    $conObj = new abreSessao; $conObj = $conObj->getInstanceOf($dataBank);
 
     //tira os brancos e substitui aspas duplas por aspas simples
     $mySql = str_replace('\\\'','\'',trim($_POST['sqlStr']));

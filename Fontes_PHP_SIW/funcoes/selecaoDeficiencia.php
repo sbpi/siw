@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getDeficiencyList.php');
 // =========================================================================
 // Montagem da seleção de deficiência
 // -------------------------------------------------------------------------
 function selecaoDeficiencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getDeficiencyList::getInstanceOf($dbms,null,'S');
+  $sql = new db_getDeficiencyList; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'sq_grupo_defic','asc','nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

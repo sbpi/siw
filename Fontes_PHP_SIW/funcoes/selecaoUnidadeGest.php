@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 // =========================================================================
 // Montagem da seleção das unidades gestoras
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 function selecaoUnidadeGest($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
 
-  $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, 'GESTORA', null, null, null);
+  $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chaveAux, 'GESTORA', null, null, null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

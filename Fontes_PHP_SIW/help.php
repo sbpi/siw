@@ -39,7 +39,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -81,22 +81,22 @@ function Help() {
   $w_sq_modulo = $_REQUEST['w_sq_modulo'];
 
   if ($w_sq_modulo == '') {
-    $RS = db_getLinkData::getInstanceOf($dbms, $w_cliente, $SG);
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $SG);
     $w_modulo = f($RS,'sq_modulo');
   } else {
     $w_modulo = $w_sq_modulo;
   } 
 
-  $RS = db_getModData::getInstanceOf($dbms, $w_modulo);
+  $SQL = new db_getModData; $RS = $SQL->getInstanceOf($dbms, $w_modulo);
   $w_nome_modulo    = f($RS,'Nome');
   $w_objetivo_geral = f($RS,'objetivo_geral');
 
-  $RS = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $w_cliente);
   $w_segmento       = f($RS,'sq_segmento');
 
 
   $w_objetivo_espec = 'Não informado';
-  $RS = db_getSegModData::getInstanceOf($dbms, $w_segmento, $w_modulo);
+  $SQL = new db_getSegModData; $RS = $SQL->getInstanceOf($dbms, $w_segmento, $w_modulo);
   $w_objetivo_espec = f($RS,'objetivo_especif');
 
   Cabecalho();
@@ -129,7 +129,7 @@ function Help() {
     ShowHTML('         </DT></DL>');
     ShowHTML('      <tr><td><BR>');
     ShowHTML('      <tr align="center" valign="top"><td><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Funcionalidades</td>');
-    $RS = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,'IS NULL');
+    $SQL = new db_getLinkdataHelp; $RS = $SQL->getInstanceOf($dbms, $w_cliente,$w_modulo,0,'IS NULL');
     ShowHTML('      <tr valign="top"><td colspan=2><font size=2><br>');
     if (count($RS) <= 0) {
        ShowHTML('      <b>Não há funcionalidades disponíveis.</b>');
@@ -146,7 +146,7 @@ function Help() {
 
         if (f($row,'tramite')=='S') ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row,'como_funciona')));
         if (f($row,'Filho')>0) {
-          $RS1 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row,'sq_menu'));
+          $SQL = new db_getLinkdataHelp; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row,'sq_menu'));
           foreach ($RS1 as $row1) {
             if ($w_cont2==0 && f($row1,'ultimo_nivel') == 'S') {
               $w_submenu='S';
@@ -163,7 +163,7 @@ function Help() {
               ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row1,'como_funciona')));
 
               // Verifica se têm trâmites e exibe
-              $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'),null, null, null);
+              $SQL = new db_getTramiteList; $RS_Tramite = $SQL->getInstanceOf($dbms, f($row1,'sq_menu'),null, null, null);
               if (count($RS_Tramite) > 0) {
                 ShowHTML('    <DD><BR>Fases:');
                 ShowHTML('    <DD><TABLE width="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -187,7 +187,7 @@ function Help() {
             } 
   
             if (f($row1,'Filho')>0) {
-              $RS2 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row1,'sq_menu'));
+              $SQL = new db_getLinkdataHelp; $RS2 = $SQL->getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row1,'sq_menu'));
               foreach ($RS2 as $row2) {
                 if ($w_cont3==0 && f($row2,'ultimo_nivel') == 'S') {
                   $w_submenu = 'S';
@@ -207,7 +207,7 @@ function Help() {
                   ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row2,'como_funciona')));
   
                   // Verifica se têm trâmites e exibe
-                  $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'),null, null, null);
+                  $SQL = new db_getTramiteList; $RS_Tramite = $SQL->getInstanceOf($dbms, f($row2,'sq_menu'),null, null, null);
                   if (count($RS_Tramite) > 0) {
                     ShowHTML('    <DD><BR>Fases:');
                     ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -231,7 +231,7 @@ function Help() {
                 } 
   
                 if (f($row2,'Filho')>0) {
-                  $RS3 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row2,'sq_menu'));
+                  $SQL = new db_getLinkdataHelp; $RS3 = $SQL->getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row2,'sq_menu'));
                   foreach ($RS3 as $row3) {
                     if ($w_cont4==0 && f($row3,'ultimo_nivel') == 'S') {
                       $w_submenu='S';
@@ -246,7 +246,7 @@ function Help() {
                       ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row3,'como_funciona')));
 
                       // Verifica se têm trâmites e exibe
-                      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'),null, null, null);
+                      $SQL = new db_getTramiteList; $RS_Tramite = $SQL->getInstanceOf($dbms, f($row3,'sq_menu'),null, null, null);
                       if (count($RS_Tramite) > 0) {
                         ShowHTML('    <DD><BR>Fases:');
                         ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -322,11 +322,11 @@ function Pagina() {
   extract($GLOBALS);
 
   if ($w_menu == '') {
-    $RS       = db_getLinkData::getInstanceOf($dbms, $w_cliente, $SG);
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $SG);
     $w_modulo = f($RS,'sq_modulo');
-    $RS_Menu  = db_getMenuData::getInstanceOf($dbms,f($RS,'sq_menu'));
+    $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS,'sq_menu'));
   } else {
-    $RS_Menu  = db_getMenuData::getInstanceOf($dbms,$w_menu);
+    $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
     $w_modulo = f($RS_Menu,'sq_modulo');
   } 
 
@@ -353,7 +353,7 @@ function Pagina() {
   ShowHTML('      <tr><td colspan="2"><br></td></tr>');
   
   // Verifica se tem sub-menu e exibe
-  $RS = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($RS_Menu,'sq_menu'));
+  $SQL = new db_getLinkdataHelp; $RS = $SQL->getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($RS_Menu,'sq_menu'));
   if (count($RS)>0) {
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>TELAS CONTIDAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
     ShowHTML('      <tr valign="top"><td colspan=2><font size=2><DL>');
@@ -367,7 +367,7 @@ function Pagina() {
   
   // Verifica se tem trâmites e exibe
   if (f($RS_Menu,'tramite')=='S') {
-    $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($RS_Menu,'sq_menu'),null, null, null);
+    $SQL = new db_getTramiteList; $RS_Tramite = $SQL->getInstanceOf($dbms, f($RS_Menu,'sq_menu'),null, null, null);
     if (count($RS_Tramite) > 0) {
       ShowHTML('      <tr><td colspan="2"><font size="2"><b>FASES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
       ShowHTML('      <tr valign="top"><td colspan=2><table width=100%  border="1" bordercolor="#00000">');
@@ -412,7 +412,7 @@ function Menu() {
 
   if ($O=='L') {
      // Recupera os módulos contratados pelo cliente
-     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, null);
+     $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, null);
   }
   
   Cabecalho();

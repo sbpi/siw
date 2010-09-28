@@ -24,7 +24,7 @@ class dml_putEtapaComentario {
                    'p_nome'                 =>array(tvl($p_nome),                         B_VARCHAR,       255),
                    'p_remove'               =>array(tvl($p_remove),                       B_VARCHAR,         1)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

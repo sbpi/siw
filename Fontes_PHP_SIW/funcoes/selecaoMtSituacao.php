@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getMtSituacao.php');
 // =========================================================================
 // Montagem da seleção de situação do almoxarifado
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getMtSituacao.php');
 function selecaoMtSituacao($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getMtSituacao::getInstanceOf($dbms,$cliente,$restricao,null,null,null,null);
+  $sql = new db_getMtSituacao; $RS = $sql->getInstanceOf($dbms,$cliente,$restricao,null,null,null,null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     if ($label=='') {

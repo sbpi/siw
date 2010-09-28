@@ -43,7 +43,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -96,7 +96,7 @@ function TipoVinculo() {
   $w_sq_tipo_vinculo    = $_REQUEST['w_sq_tipo_vinculo'];
   $p_ordena             = $_REQUEST['p_ordena'];
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
@@ -109,7 +109,7 @@ function TipoVinculo() {
     $w_mail_tramite     = $_REQUEST['w_mail_tramite'];
     $w_mail_alerta      = $_REQUEST['w_mail_alerta'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getVincKindList::getInstanceOf($dbms,$w_cliente,$p_ativo,null,$p_nome,null);
+    $SQL = new db_getVincKindList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$p_ativo,null,$p_nome,null);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
@@ -117,7 +117,7 @@ function TipoVinculo() {
      $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getVincKindData::getInstanceOf($dbms,$w_sq_tipo_vinculo);
+    $SQL = new db_getVincKindData; $RS = $SQL->getInstanceOf($dbms,$w_sq_tipo_vinculo);
     $w_nome             = f($RS,'nome');
     $w_sq_tipo_pessoa   = f($RS,'sq_tipo_pessoa');
     $w_interno          = f($RS,'interno');
@@ -343,7 +343,7 @@ function ParSeguranca() {
     $w_dias_vigencia_senha    = $_REQUEST['w_dias_vigencia_senha'];
     $w_dias_aviso_expiracao   = $_REQUEST['w_dias_aviso_expiracao'];
   } else {
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     $w_tamanho_minimo_senha   = f($RS,'tamanho_min_senha');
     $w_tamanho_maximo_senha   = f($RS,'tamanho_max_senha');
     $w_maximo_tentativas      = f($RS,'maximo_tentativas');
@@ -415,7 +415,7 @@ function Integracao() {
     $w_codigo_interno=$_REQUEST['w_codigo_interno'];
   } 
   if ($w_codigo_interno>'') {
-    $RS = db_getCodigo::getInstanceOf($dbms,$w_cliente,$w_tabela,$w_codigo_interno,null);
+    $SQL = new db_getCodigo; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_tabela,$w_codigo_interno,null);
     if (count($RS) > 0) {
       $w_codigo_externo=Nvl(f($RS,'codigo_externo'),'');
     } else {
@@ -610,7 +610,7 @@ function Grava() {
     case 'COTPVINC':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoTipoVinc::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoTipoVinc; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_tipo_pessoa'],$w_cliente,
             $_REQUEST['w_nome'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_padrao'],
             $_REQUEST['w_ativo'],$_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta']);
@@ -628,7 +628,7 @@ function Grava() {
     case 'PARSEG':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putSiwCliConf::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],
+        $SQL = new dml_putSiwCliConf; $SQL->getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],
             $_REQUEST['w_maximo_tentativas'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],null,null,null,null,null,null,null,
             'AUTENTICACAO',null);
@@ -645,7 +645,7 @@ function Grava() {
     case 'INTEGR':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCodigoExterno::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tabela'],$_REQUEST['w_codigo_interno'], $_REQUEST['w_codigo_externo'],null);
+        $SQL = new dml_putCodigoExterno; $SQL->getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tabela'],$_REQUEST['w_codigo_interno'], $_REQUEST['w_codigo_externo'],null);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();

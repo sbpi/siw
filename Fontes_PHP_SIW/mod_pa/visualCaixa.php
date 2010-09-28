@@ -5,7 +5,7 @@
 function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
   extract($GLOBALS);
   
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
   $RS_Dados = db_getCaixa::getInstanceOf($dbms,$l_chave,$w_cliente,null,null,null,null,null,null,null,null,'PASTA');

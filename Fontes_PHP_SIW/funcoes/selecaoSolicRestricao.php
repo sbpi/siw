@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
 // =========================================================================
 // Montagem da seleção de responsáveis por solicitações
 // -------------------------------------------------------------------------
 function selecaoSolicRestricao($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getSolicRestricao::getInstanceOf($dbms,$chaveAux,null,null,null,null,null,null);
+  $sql = new db_getSolicRestricao; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,null,null,null,null,null);
   $RS = SortArray($RS,'nm_tipo_restricao','asc','descricao','asc');
 
   if (!isset($hint)) {

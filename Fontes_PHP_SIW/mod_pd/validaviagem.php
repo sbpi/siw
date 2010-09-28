@@ -30,7 +30,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   } 
 
   // Verifica se o cliente tem o módulo de viagens contratado
-  $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$v_cliente,null,'PD');
+  $l_rs_modulo = new db_getSiwCliModLis; $l_rs_modulo = $l_rs_modulo->getInstanceOf($dbms,$v_cliente,null,'PD');
   if (!($l_rs_modulo==0)) $l_viagem='S'; else $l_viagem='N';
 
   $l_erro   = '';

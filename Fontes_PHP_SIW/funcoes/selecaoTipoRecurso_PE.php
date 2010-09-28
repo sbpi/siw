@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoRecurso.php');
 // =========================================================================
 // Montagem da seleção de tipos de recurso
 // -------------------------------------------------------------------------
 function selecaoTipoRecurso_PE($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,null,$chaveAux,null,null,null,'S', $restricao);
+  $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$chaveAux,null,null,null,'S', $restricao);
   $RS = SortArray($RS,'nome_completo','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

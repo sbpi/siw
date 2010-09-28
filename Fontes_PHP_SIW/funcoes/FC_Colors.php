@@ -1,4 +1,4 @@
-<?
+<?php
 //This page contains an array of colors to be used as default set of colors for FusionCharts
 //arr_FCColors is the array that would contain the hex code of colors 
 //ALL COLORS HEX CODES TO BE USED WITHOUT #

@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getVincKindList.php');
 // -------------------------------------------------------------------------
 function selecaoVinculo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$ativo, $tipo_pessoa, $interno,$restricao=null,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  $RS = db_getVincKindList::getInstanceOf($dbms, $w_cliente, $ativo, $tipo_pessoa, null, $interno);
+  $sql = new db_getVincKindList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $ativo, $tipo_pessoa, null, $interno);
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {

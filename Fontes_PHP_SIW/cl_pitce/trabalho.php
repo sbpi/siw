@@ -52,7 +52,7 @@ include_once($w_dir_volta.'visualalerta.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -131,7 +131,7 @@ switch ($O) {
 }
 
 // Define visualizações disponíveis para o usuário
-$RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+$sql = new db_getPersonData; $RS_Usuario = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
   
 // Identifica se o vínculo do usuário é com a a Secretaria executiva
 if (upper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
@@ -153,7 +153,7 @@ function Mesa() {
   extract($GLOBALS);
 
   // Recupera os dados do cliente
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 
   Cabecalho();
   head();
@@ -197,7 +197,7 @@ function Mesa() {
 
   if ($_SESSION['DBMS']!=5) {
     // Exibe, se necessário, sinalizador para alerta
-    $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
+    $sql = new db_getAlerta; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     if (count($RS)>0) {
       $w_sinal = $conImgAlLow;
       $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
@@ -233,7 +233,7 @@ function Mesa() {
            "                                    d.ativo          = 'S'".$crlf. 
            "                                   ) ".$crlf. 
            "  where a.codigo_interno='PDE' ";
-    $RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
+    $sql = new db_exec; $RS = $sql->getInstanceOf($dbms,$SQL,$recordcount);
     foreach($RS as $row) { $RS = $row; break; }
     $w_plano = f($RS,'sq_plano');
     
@@ -270,7 +270,7 @@ function Mesa() {
            "  where 0 < a3.acesso ".$crlf. 
            "    and (b.sq_plano = ".nvl($w_plano,0)." or e.sq_plano = ".nvl($w_plano,0).") ".$crlf. 
     "group by b.sq_solic_pai, b.sq_siw_solicitacao, b.codigo_interno, b.sq_plano";
-    $RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
+    $sql = new db_exec; $RS = $sql->getInstanceOf($dbms,$SQL,$recordcount);
     $c_pde = 0;
     $c_pns = 0;
     $c_pne = 0;
@@ -337,7 +337,7 @@ function Alerta() {
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  $RS_Volta = db_getLinkData::getInstanceOf($dbms,$w_cliente,'MESA');
+  $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms,$w_cliente,'MESA');
   ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
   ShowHTML('<tr><td colspan=2><hr>');
   ShowHTML('</table>');
@@ -345,11 +345,11 @@ function Alerta() {
   ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
     // Recupera solicitações a serem listadas
-    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
+    $sql = new db_getAlerta; $RS_Solic = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
 
     // Recupera pacotes de trabalho a serem listados
-    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
+    $sql = new db_getAlerta; $RS_Pacote = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
 
     ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, null));
@@ -378,16 +378,16 @@ function Arquivos() {
   if ($p_codigo=='TODOS') {
     $RS_Unidade = array();
     if (nvl($p_unidade,'')!='') { 
-      $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
+      $sql = new db_getUorgList; $RS_Unidade = $sql->getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
       foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
     }
   } elseif (nvl($p_unidade,'')!='') {
-    $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
+    $sql = new db_getUorgList; $RS_Unidade = $sql->getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
     foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
   
     $p_codigo = f($RS_Unidade,'sigla');
   } else {
-    $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,null,null,$p_codigo,null);
+    $sql = new db_getUorgList; $RS_Unidade = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,$p_codigo,null);
     foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
   
     $p_unidade = f($RS_Unidade,'sq_unidade');
@@ -395,7 +395,7 @@ function Arquivos() {
   }
 
   if (nvl($p_unidade,'')!='') {
-    $RS_Membros = db_getUserList::getInstanceOf($dbms,$w_cliente,null,$p_unidade,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getUserList; $RS_Membros = $sql->getInstanceOf($dbms,$w_cliente,null,$p_unidade,null,null,null,null,null,null,null,null,null,null,null,null,null);
   } else {
     $RS_Membros = array();
   }
@@ -455,14 +455,14 @@ function Arquivos() {
   ShowHTML('   <tr><td>&nbsp;</td>');
   ShowHTML('       <td>');
   ShowHTML('       <input class="STB" type="submit" name="Botao" value="BUSCAR" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
-  $RS_Volta = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'MESA');
+  $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms, $w_cliente, 'MESA');
   ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
   ShowHTML('   </td></tr>');
   ShowHTML('</FORM>');
   ShowHTML(' </table></fieldset>');
   
   if($_REQUEST['p_pesquisa'] == 'S'){
-    $RS = db_getUorgAnexo::getInstanceOf($dbms,f($RS_Unidade,'sq_unidade'),null,$p_tipo,$p_titulo,$w_cliente);
+    $sql = new db_getUorgAnexo; $RS = $sql->getInstanceOf($dbms,f($RS_Unidade,'sq_unidade'),null,$p_tipo,$p_titulo,$w_cliente);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc','nome','asc');
@@ -501,8 +501,8 @@ function Arquivos() {
     }
   }
   if ($w_usuario_se && $p_codigo=='PDPSE') {
-    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJMON');
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+    $sql = new db_getLinkData ; $RS = $sql-> getInstanceOf($dbms, $w_cliente, 'PJMON');
+    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
               null,null,null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row) {
@@ -601,14 +601,14 @@ function Calendario() {
     ShowHTML('   <tr>');
     ShowHTML('     <td><b>Recuperar</b><td>');
     ShowHTML('          <input type="CHECKBOX" name="p_agenda" value="S" '.((nvl($p_agenda,'')!='') ? 'checked': '').'> Agenda de ação');
-    $RS_Projeto = db_getLinkData::getInstanceOf($dbms,$w_cliente,'EVCAD');
+    $RS_Projeto = new db_getLinkData; $RS_Projeto = $RS_Projeto->getInstanceOf($dbms,$w_cliente,'EVCAD');
     SelecaoTipoEventoCheck(null,null,null,$p_tipo_evento,f($RS_Projeto,'sq_menu'),'p_tipo_evento[]',null,null,null,'&nbsp;');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
     selecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,null,'<td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
-    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    $sql = new db_getLinkData ; $RS = $sql-> getInstanceOf($dbms, $w_cliente, 'PJCAD');
     SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, 1, null, '<td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');    
@@ -622,7 +622,7 @@ function Calendario() {
     ShowHTML('   </td></tr>');
     ShowHTML('   <tr><td><td colspan="2">');
     ShowHTML('     <input class="STB" type="submit" name="Botao" value="BUSCAR">');
-    $RS_Volta = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'MESA');
+    $sql = new db_getLinkData ; $RS_Volta = $sql-> getInstanceOf($dbms, $w_cliente, 'MESA');
     ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
     ShowHTML('   </tr>');
     ShowHTML('          </form>');
@@ -632,16 +632,16 @@ function Calendario() {
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
     for ($i=$w_ano1;$i<=$w_ano6;$i++) {
       if (nvl($i,0)>0 && !(is_array($RS_Ano[$i]))) {
-        $RS_Ano[$i] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
+        $sql = new db_getDataEspecial; $RS_Ano[$i] = $sql->getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
         $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
       }
     }
 
     // Recupera os dados da unidade de lotação do usuário
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-    $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+    $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
     if (nvl($_REQUEST['p_pesquisa'],'')!='') {
-      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+      $sql = new db_getSolicResultado ; $RS_Resultado = $sql-> getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
       if ($p_ordena>'') { 
         $lista = explode(',',str_replace(' ',',',$p_ordena));
         $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
@@ -759,7 +759,7 @@ function Calendario() {
       ShowHTML($w_legenda);
     }
     
-    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+    $sql = new db_getSolicResultado ; $RS_Resultado = $sql-> getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');

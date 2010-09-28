@@ -6,7 +6,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
   include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-  $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
+  $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
   if (count($RS)<=100) {
     $RS = SortArray($RS,'nome','asc');
     $atributo = str_replace('onBlur','onChange',$atributo);
@@ -24,7 +24,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     $atributo = str_replace('onChange','onBlur',$atributo);
     ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
     if ($chave>'') {
-      $RS = db_getUorgData::getInstanceOf($dbms, $chave);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms, $chave);
       $w_nm_unidade = f($RS,'nome');
       $w_sigla      = f($RS,'sigla');
     }

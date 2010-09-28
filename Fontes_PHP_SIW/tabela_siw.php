@@ -49,7 +49,7 @@ include_once('funcoes/selecaoSegModulo.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -104,7 +104,7 @@ function SegmentoVinc() {
 
   if ($O=='') $O='L';
 
-  $RS = db_getSegName::getInstanceOf($dbms,$w_sq_segmento);
+  $SQL = new db_getSegName; $RS = $SQL->getInstanceOf($dbms,$w_sq_segmento);
   $w_nome_segmento = f($RS,'nome');
 
   if (nvl($w_troca,'')!='') {
@@ -116,10 +116,10 @@ function SegmentoVinc() {
     $w_ordem              = $_REQUEST['w_ordem'];
     $w_sq_tipo_pessoa     = $_REQUEST['w_sq_tipo_pessoa'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
+    $SQL = new db_getSegVincData; $RS = $SQL->getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
     $RS = SortArray($RS,'nm_tipo_pessoa','asc','ordem','asc');
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,$w_sq_segmento_vinculo);
+    $SQL = new db_getSegVincData; $RS = $SQL->getInstanceOf($dbms,$par,$w_sq_segmento,null,$w_sq_segmento_vinculo);
     foreach($RS as $row) {
       $w_nome             = f($row,'nome_pessoa');
       $w_padrao           = f($row,'padrao');
@@ -307,11 +307,11 @@ function SegmentoMenu() {
 
   if ($O=='') $O='L';
 
-  $RS = db_getSegName::getInstanceOf($dbms,$w_sq_segmento);
+  $SQL = new db_getSegName; $RS = $SQL->getInstanceOf($dbms,$w_sq_segmento);
   $w_nome_segmento = f($RS,'nome');
 
   if (!(strpos('LP',$O)===false)) {
-    $RS = db_getSegVincData::getInstanceOF($dbms,$par,$w_sq_segmento,null,null);
+    $SQL = new db_getSegVincData; $RS = $SQL->getInstanceOF($dbms,$par,$w_sq_segmento,null,null);
   } 
 
   Cabecalho();
@@ -480,7 +480,7 @@ function SegmentoModulo() {
 
   if ($O=='') $O='L';
 
-  $RS = db_getSegName::getInstanceOf($dbms,$w_sq_segmento);
+  $SQL = new db_getSegName; $RS = $SQL->getInstanceOf($dbms,$w_sq_segmento);
   $w_nome_segmento = f($RS,'nome');
 
   if (nvl($w_troca,'')!='' && $O!='E') {
@@ -490,10 +490,10 @@ function SegmentoModulo() {
     $w_objetivo_geral       = $_REQUEST['w_objetivo_geral'];
     $w_objetivo_especifico  = $_REQUEST['w_objetivo_especifico'];    
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
+    $SQL = new db_getSegVincData; $RS = $SQL->getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
     $RS = SortArray($RS,'nm_modulo','asc');
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getSegModData::getInstanceOf($dbms,$w_sq_segmento,$w_sq_modulo);
+    $SQL = new db_getSegModData; $RS = $SQL->getInstanceOf($dbms,$w_sq_segmento,$w_sq_modulo);
     $w_nome_modulo          = f($RS,'nome');
     $w_comercializar        = f($RS,'comercializar');
     $w_ativo                = f($RS,'ativo');
@@ -671,10 +671,10 @@ function Modulos() {
 
   if (!(strpos('LP',$O)===false)) {
 
-    $RS = db_getModList::getInstanceOf($dbms);
+    $SQL = new db_getModList; $RS = $SQL->getInstanceOf($dbms);
     $RS = SortArray($RS,'ordem','asc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getModData::getInstanceOf($dbms,$w_sq_modulo);
+    $SQL = new db_getModData; $RS = $SQL->getInstanceOf($dbms,$w_sq_modulo);
     $w_nome             = f($RS,'nome');
     $w_sigla            = f($RS,'sigla');
     $w_objetivo_geral   = f($RS,'objetivo_geral');
@@ -826,10 +826,10 @@ function Segmento() {
     $w_ativo    = $_REQUEST['w_ativo'];
     $w_padrao   = $_REQUEST['w_padrao'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getSegList::getInstanceOf($dbms, null);
+    $SQL = new db_getSegList; $RS = $SQL->getInstanceOf($dbms, null);
     $RS = SortArray($RS,'padrao','desc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getSegData::getInstanceOf($dbms,$w_sq_segmento);
+    $SQL = new db_getSegData; $RS = $SQL->getInstanceOf($dbms,$w_sq_segmento);
     $w_nome     = f($RS,'nome');
     $w_ativo    = f($RS,'ativo');
     $w_padrao   = f($RS,'padrao');
@@ -997,7 +997,7 @@ function Grava() {
     case 'SEGVINC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_DmSegVinc::getInstanceOf($dbms,$O,
+        $SQL = new dml_DmSegVinc; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_segmento_vinculo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_sq_tipo_pessoa'],
             $_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
@@ -1013,7 +1013,7 @@ function Grava() {
     case 'SEGMOD':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_SiwModSeg::getInstanceOf($dbms, $O,
+        $SQL = new dml_SiwModSeg; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_objetivo_especifico'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_comercializar'],
             $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1029,7 +1029,7 @@ function Grava() {
     case 'COTPMODULO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_SiwModulo::getInstanceOf($dbms, $O,
+        $SQL = new dml_SiwModulo; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_objetivo_geral'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
@@ -1044,7 +1044,7 @@ function Grava() {
     case 'COTPSEG':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoSegmento::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoSegmento; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_segmento'],$_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');

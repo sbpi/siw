@@ -151,7 +151,7 @@ function CriaBaseLine($l_chave,$l_html,$l_nome,$l_tramite) {
   fwrite($l_arq,'</BODY>');
   fwrite($l_arq,'</HTML>');
   @fclose($l_arq);
-  dml_putBaseLine::getInstanceOf($dbms,$w_cliente,$l_chave,$w_usuario,$l_tramite,$l_nome_arq,filesize($l_arquivo),'text/html',$l_nome_arq);
+  $SQL = new dml_putBaseLine; $SQL->getInstanceOf($dbms,$w_cliente,$l_chave,$w_usuario,$l_tramite,$l_nome_arq,filesize($l_arquivo),'text/html',$l_nome_arq);
 }
 
 // =========================================================================
@@ -347,7 +347,7 @@ function headerExcel($p_orientation='LANDSCAPE') {
 function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
-  $l_RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
+  $l_RS = new db_getCustomerData; $l_RS = $l_RS->getInstanceOf($dbms,$p_cliente);
   ShowHTML('<TABLE WIDTH="100%" BORDER=0>');
   ShowHTML('  <TR>');
   if (nvl($p_pagina,0)>0) $l_colspan = 4; else $l_colspan = 3;
@@ -427,7 +427,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   if($titulo == 'S'){
-    $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS_Logo = new db_getCustomerData; $RS_Logo = $RS_Logo->getInstanceOf($dbms,$p_cliente);
     if (f($RS_Logo,'logo')>'') {
       $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
     }
@@ -511,7 +511,7 @@ function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCo
 // -------------------------------------------------------------------------
 function SolicAcesso($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  $l_acesso = db_getSolicAcesso::getInstanceOf($dbms, $p_solicitacao, $p_usuario);
+  $l_acesso = new db_getSolicAcesso; $l_acesso = $l_acesso->getInstanceOf($dbms, $p_solicitacao, $p_usuario);
   return $l_acesso;
 }
 
@@ -580,7 +580,7 @@ function  extenso($valor = 0, $maiusculas = false) {
 function RetornaExpediente($p_data, $p_cliente, $p_pais, $p_uf, $p_cidade) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_VerificaDataEspecial.php');
-  $l_expediente = db_VerificaDataEspecial::getInstanceOf($dbms,$p_data, $p_cliente, $p_pais, $p_uf, $p_cidade);
+  $l_expediente = new db_VerificaDataEspecial; $l_expediente = $l_expediente->getInstanceOf($dbms,$p_data, $p_cliente, $p_pais, $p_uf, $p_cidade);
   return $l_expediente;
 }
 
@@ -837,7 +837,7 @@ function consultaTelefone($p_cliente) {
 
   // Verifica se o cliente tem o módulo de telefonia contratado
   include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
-  $l_rs_ac = db_getSiwCliModLis::getInstanceOf($dbms, $p_cliente, null, 'TT');
+  $l_rs_ac = new db_getSiwCliModLis; $l_rs_ac = $l_rs_ac->getInstanceOf($dbms, $p_cliente, null, 'TT');
   $l_mod_tt = false;
   $l_string = '';
   foreach ($l_rs_ac as $row) {
@@ -866,7 +866,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
     }
   } elseif (nvl($l_chave,'')!='') {
     include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
-    $RS = db_getSolicData::getInstanceOf($dbms,$l_chave);
+    $RS = new db_getSolicData; $RS = $RS->getInstanceOf($dbms,$l_chave);
     $l_hint = $l_array[4];
     $l_array = explode('|@|', f($RS,'dados_solic'));
     if(nvl($l_embed,'-')!= 'WORD') {
@@ -969,7 +969,7 @@ function ExibeUnidadePacote($O,$p_cliente,$p_chave,$p_chave_aux,$p_unidade,$p_tp
 // -------------------------------------------------------------------------
 function VisualIndicador($p_dir,$p_cliente,$p_sigla,$p_tp,$p_nome) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  $l_RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,$p_sigla,null,null,null,null,null,null,null,null,null,null,null,"EXISTE");
+  $l_RS = new db_getIndicador; $l_RS = $l_RS->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,$p_sigla,null,null,null,null,null,null,null,null,null,null,null,"EXISTE");
   if(count($l_RS)>0) {
     if (Nvl($p_nome,'')=='') {
       $l_string='---';
@@ -1174,7 +1174,7 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
 function ExibeSinalPesquisa($l_legenda,$l_inicio, $l_fim,$l_dias_aviso=0) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getCLParametro.php');
-  $RS_Parametro = db_getCLParametro::getInstanceOf($dbms,$w_cliente,null,null);
+  $RS_Parametro = new db_getCLParametro; $RS_Parametro = $RS_Parametro->getInstanceOf($dbms,$w_cliente,null,null);
   foreach($RS_Parametro as $row_parametro) { $RS_Parametro = $row_parametro; break; }
   if ($l_legenda) {
     $l_string .= '<tr valign="top">';
@@ -1934,7 +1934,7 @@ function MontaOrdemEtapa($l_chave) {
   extract($GLOBALS);
   if (nvl($l_chave,'')=='') return null;
   include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
-  $l_rs = db_getEtapaDataParents::getInstanceOf($dbms, $l_chave);
+  $l_rs = new db_getEtapaDataParents; $l_rs = $l_rs->getInstanceOf($dbms, $l_chave);
   foreach($l_rs as $row) {
     $w_texto = f($row,'ordem');
     break;
@@ -1947,7 +1947,7 @@ function MontaOrdemEtapa($l_chave) {
 // -------------------------------------------------------------------------
 function MontaOrdemEspec($l_chave) {
   extract($GLOBALS);
-  $RSQuery = db_getEspecOrdem::getInstanceOf($dbms, $l_chave);
+  $RSQuery = new db_getEspecOrdem; $RSQuery = $RSQuery->getInstanceOf($dbms, $l_chave);
   $w_texto = '';
   $w_contaux = 0;
   foreach($RSQuery as $row) {
@@ -2071,7 +2071,7 @@ function testFile($l_erro, $l_raiz, $l_leitura = false, $l_escrita = false) {
 function MontaURL($p_sigla) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
-  $RS_MontaURL = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
+  $RS_MontaURL = new db_getLinkData; $RS_MontaURL = $RS_MontaURL->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
   $l_ImagemPadrao='images/Folder/SheetLittle.gif';
   if (count($RS_MontaURL)<=0) return '';
   else {
@@ -2179,7 +2179,7 @@ function RetornaUsuarioCentral() {
   if ($_REQUEST['w_sq_usuario_central']>'') {
      return $_REQUEST['w_sq_usuario_central'];
   } else {
-     $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
+     $RS = new db_getPersonData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
      return f($RS,'sq_usuario_central');
   }
 }
@@ -2230,7 +2230,7 @@ function RetornaMenu($p_cliente,$p_sigla) {
     return $_REQUEST['w_menu'];
   } else {
      include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
-     $l_RS = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
+     $l_RS = new db_getMenuCode; $l_RS = $l_RS->getInstanceOf($dbms, $p_cliente, $p_sigla);
      foreach($l_RS as $l_row) {
        if (f($l_row,'ativo')=='S') { return f($l_row,'sq_menu'); break; }
      }
@@ -2247,7 +2247,7 @@ function RetornaCliente() {
   // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
   // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
   if ($_REQUEST['w_cgccpf']>'' && strlen($_REQUEST['w_cgccpf'])>11) {
-     $RS = db_getCompanyData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_REQUEST['w_cgccpf']);
+     $RS = new db_getCompanyData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_REQUEST['w_cgccpf']);
      if (count($RS) > 0) {
         return f($RS,'sq_pessoa');
      } else {
@@ -2269,7 +2269,7 @@ function RetornaCliente() {
 function RetornaGestor($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getGestor.php');
-  $l_acesso = db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
+  $l_acesso = new db_getGestor; $l_acesso = $l_acesso->getInstanceOf($dbms,$p_solicitacao, $p_usuario);
   return $l_acesso;
 }
 
@@ -2280,7 +2280,7 @@ function RetornaGestor($p_solicitacao,$p_usuario) {
 function RetornaMarcado($p_menu,$p_usuario,$p_endereco,$p_tramite) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getMarcado.php');
-  $l_acesso = db_getMarcado::getInstanceOf($dbms,$p_menu, $p_usuario,$p_endereco,$p_tramite);
+  $l_acesso = new db_getMarcado; $l_acesso = $l_acesso->getInstanceOf($dbms,$p_menu, $p_usuario,$p_endereco,$p_tramite);
   return $l_acesso;
 }
 
@@ -2291,7 +2291,7 @@ function RetornaMarcado($p_menu,$p_usuario,$p_endereco,$p_tramite) {
 function RetornaModMaster($p_cliente, $p_usuario, $p_menu) {
   include_once($w_dir_volta.'classes/sp/db_getModMaster.php');
   extract($GLOBALS);
-  $l_RS = db_getModMaster::getInstanceOf($dbms,$p_cliente, $p_usuario, $p_menu);
+  $l_RS = new db_getModMaster; $l_RS = $l_RS->getInstanceOf($dbms,$p_cliente, $p_usuario, $p_menu);
   if (count($l_RS)==0) {
     return 'N';
   } else {
@@ -2443,7 +2443,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 
   // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   
   if( trim(f($RS_Cliente,'siw_email_conta')) == 'false' ){
     $from = f($RS_Cliente,'siw_email_nome');
@@ -2724,7 +2724,7 @@ function enviaSyslog($tipo, $objeto, $mensagem) {
     include_once($w_dir_volta.'classes/syslog/syslog.php');
 
     // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
-    $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+    $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
     
     if (nvl(f($RS_Cliente,'syslog_server_name'),'')!='' &&
         (($tipo=='LV' && nvl(f($RS_Cliente,'syslog_level_pass_ok'),'')!='') ||
@@ -3203,7 +3203,7 @@ function Estrutura_Menu() {
      ShowHTML('        <DIV id=mainMenu>');
      ShowHTML('          <UL id=menuList>');
      $l_cont=0;
-     $l_RS = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], null);
+     $l_RS = new db_getLinkDataUser; $l_RS = $l_RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], null);
      $l_cont=0;
      foreach($l_RS as $row) {
        $l_titulo=f(row,'nome');
@@ -3212,7 +3212,7 @@ function Estrutura_Menu() {
          ShowHTML('            <LI class=menubar>::<A class=starter HREF="javascript:this.status.value;"> '.f(row,'nome').'</A>');
          ShowHTML('            <UL class=menu id=menu'.$l_cont.'>');
          $l_cont1=0;
-         $l_RS1 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row,'sq_menu'));
+         $l_RS1 = new db_getLinkDataUser; $l_RS1 = $l_RS1->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row,'sq_menu'));
          foreach($l_RS1 as $row1) {
            $l_titulo=$l_titulo.' - '.f(row1,'nome');
            if (f(row1,'filho')>0) {
@@ -3220,14 +3220,14 @@ function Estrutura_Menu() {
               ShowHTML('              <LI><A HREF="javascript:this.status.value;"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row1,'nome').'</A> ');
               ShowHTML('              <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'>');
               $l_cont2=0;
-              $l_RS2 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row1,'sq_menu'));
+              $l_RS2 = new db_getLinkDataUser; $l_RS2 = $l_RS2->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row1,'sq_menu'));
               foreach($l_RS2 as $row2) {
                 $l_titulo=$l_titulo.' - '.f(row2,'nome');
                 if (f(row2,'filho')>0) {
                    $l_cont2=$l_cont2+1;
                    ShowHTML('                <LI><A HREF="javascript:this.status.value;"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row2,'nome').'</A> ');
                    ShowHTML('                <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'_'.$l_cont2.'>');
-                   $l_RS3 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row2,'sq_menu'));
+                   $l_RS3 = new db_getLinkDataUser; $l_RS3 = $l_RS3->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row2,'sq_menu'));
                    foreach($l_RS3 as $row3) {
                      $l_titulo=$l_titulo.' - '.f(row3,'nome');
                      if (f(row3,'externo')=='S') {
@@ -3282,7 +3282,9 @@ function Estrutura_Menu() {
 // Abre conexão com o banco de dados
 // -------------------------------------------------------------------------
 function abreSessao() {
-  return abreSessao::getInstanceOf($_SESSION["DBMS"]);
+  $dbms = new abreSessao; 
+  $dbms = $dbms->getInstanceOf($_SESSION["DBMS"]);
+  return $dbms;
 }
 
 // =========================================================================
@@ -3327,7 +3329,8 @@ function f($rs, $fld) {
 // =========================================================================
 function VerificaSenhaAcesso($Usuario,$Senha) {
    extract($GLOBALS);
-   if (db_verificaSenha::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha) ==0)
+   $db_verificaSenha = new db_verificaSenha; $db_verificaSenha = $db_verificaSenha->getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha);
+   if ($db_verificaSenha==0)
       return true;
     else
       return false;
@@ -3339,7 +3342,8 @@ function VerificaSenhaAcesso($Usuario,$Senha) {
 function VerificaAssinaturaEletronica($Usuario,$Senha) {
    extract($GLOBALS);
    if ($Senha>'') {
-      if (db_verificaAssinatura::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha)==0)
+      $db_verificaAssinatura = new db_verificaAssinatura; $db_verificaAssinatura = $db_verificaAssinatura->getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha);
+      if ($db_verificaAssinatura==0)
          return true;
        else
          return false;

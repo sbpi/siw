@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
 * class db_updatePassword
@@ -16,7 +16,7 @@ class db_updatePassword {
                    "p_valor"        =>array($p_valor,       B_VARCHAR,     255),
                    "p_tipo"         =>array($p_tipo,        B_VARCHAR,     10)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

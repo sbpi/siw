@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getCiaTrans::getInstanceOf($dbms,$cliente,null,null,null,null,null,null,null,'S',null,$restricao);
+  $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$cliente,null,null,null,null,null,null,null,'S',null,$restricao);
   $RS = SortArray($RS,'padrao','desc','nome','asc');
   if (!isset($hint)) {
     if ($label=='') {

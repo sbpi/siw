@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getEventoTrigger.php');
 // =========================================================================
 // Montagem da seleção de eventos de trigger
 // -------------------------------------------------------------------------
 function selecaoEvento($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getEventoTrigger::getInstanceOf($dbms,null);
+  $sql = new db_getEventoTrigger; $RS = $sql->getInstanceOf($dbms,null);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'')
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

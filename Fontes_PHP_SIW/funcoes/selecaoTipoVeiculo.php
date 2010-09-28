@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoVeiculo.php');
 // =========================================================================
 // Montagem da seleção dos grupos de veiculos
 // -------------------------------------------------------------------------
 function selecaoTipoVeiculo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null, null,'S');
+  $sql = new db_getTipoVeiculo; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null,'S');
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML(' <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

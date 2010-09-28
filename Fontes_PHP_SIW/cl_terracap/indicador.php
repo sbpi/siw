@@ -76,7 +76,7 @@ if (count($_POST) > 0) {
   $w_codigo    = utf8_decode(trim(substr($_POST['codigo'],0,20)));
 
   // Abre conexão com o banco de dados
-  $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+  $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 	
   // Autentica o usuário, recupera variáveis de sessão e grava log de acesso
   $auth = Valida();
@@ -92,7 +92,7 @@ if (count($_POST) > 0) {
 	  $w_ano      = RetornaAno();
 
     // Retorna os dados do menu
-	  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+	  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 	  
     $w_erro     = '';
     // Testa os dados recebidos
@@ -104,7 +104,7 @@ if (count($_POST) > 0) {
       $response = '501'.$crlf.substr($w_erro,2);
     } else {
       // Recupera os trâmites do serviço de programas estratégicos
-			$RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null, null,null);
+			$sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
 			$RS = SortArray($RS,'ordem','asc');
 			$w_fase = '';
 			foreach($RS as $row) {
@@ -114,7 +114,7 @@ if (count($_POST) > 0) {
 			$w_fase = substr($w_fase,1);
 
       // Verifica se o programa existe
-      $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -150,8 +150,8 @@ if (count($_POST) > 0) {
             $w_atraso  = 0;
             $w_conc   = 0;
 			      // Recupera os projetos do programa
-			      $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-            $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+			      $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PJCAD');
+            $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
 			          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
 			          $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
 			          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,

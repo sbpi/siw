@@ -49,7 +49,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoFatura.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -101,13 +101,13 @@ if (count($RS)>0) {
 } 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -242,7 +242,7 @@ function Inicial() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -888,7 +888,7 @@ function Grava() {
                   $w_erro.=$crlf.'Código do projeto: '.$w_result; 
                 } else {
                   // Verifica se o projeto existe
-                  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+                  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
                   $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
@@ -1263,7 +1263,7 @@ function Grava() {
                   $w_erro.=$crlf.'Código do projeto: '.$w_result; 
                 } else {
                   // Verifica se o projeto existe
-                  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+                  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
                   $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
@@ -1288,7 +1288,7 @@ function Grava() {
                   $w_erro.=$crlf.'Código da viagem: '.$w_result; 
                 } else {
                   // Verifica se o código da viagem existe
-                  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+                  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
                   $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_solic, null);
                   $w_hn_solic    = '';
                   $w_solicitacao = '';
@@ -1428,7 +1428,7 @@ function Grava() {
           $w_tamanho_registro   = filesize($w_caminho.$w_caminho_registro);
           $w_tipo_registro  = 'text/plain';
           // Grava o resultado da importação no banco de dados
-          dml_putPDImportacao::getInstanceOf($dbms,$O,
+          $SQL = new dml_putPDImportacao; $SQL->getInstanceOf($dbms,$O,
                 $_REQUEST['w_chave'],$w_cliente,$w_usuario,$_REQUEST['w_tipo'],$_REQUEST['w_data_arquivo'],
                 $w_nome_recebido,$w_caminho_recebido,$w_tamanho_recebido,$w_tipo_recebido,
                 $w_arquivo_registro,$w_caminho_registro,$w_tamanho_registro,$w_tipo_registro,
@@ -1439,7 +1439,7 @@ function Grava() {
             //Grava cada uma das faturas sem erro
             if (nvl(f($row1,'erro'),'')=='') {
               $w_fatura = f($row1,'fatura');
-              dml_putPD_Fatura::getInstanceOf($dbms,'I',
+              $SQL = new dml_putPD_Fatura; $SQL->getInstanceOf($dbms,'I',
                   null,$w_chave_arq,$_REQUEST['w_agencia'],$_REQUEST['w_tipo'],f($row1,'fatura'),f($row1,'inicio'),f($row1,'fim'),
                   f($row1,'emissao'),f($row1,'vencimento'),f($row1,'valor'),nvl(f($row1,'aceitos'),0)+nvl(f($row1,'rejeitados'),0),
                   nvl(f($row1,'aceitos'),0),nvl(f($row1,'rejeitados'),0),&$w_chave_fatura);
@@ -1447,12 +1447,12 @@ function Grava() {
               foreach($bilhete_grava[$w_fatura] as $row2) {
                 if ($_REQUEST['w_tipo']==0) {
                   // Grava bilhetes aéreos
-                  dml_putPD_Bilhete::getInstanceOf($dbms,'I',f($row2,'solicitacao'),null,f($row2,'cia'),$w_chave_fatura,f($row2,'desconto'),
+                  $SQL = new dml_putPD_Bilhete; $SQL->getInstanceOf($dbms,'I',f($row2,'solicitacao'),null,f($row2,'cia'),$w_chave_fatura,f($row2,'desconto'),
                     f($row2,'emissao'),f($row2,'numero'),f($row2,'trecho'),null,null,f($row2,'valor'),f($row2,'valor_cheio'),
                     f($row2,'embarque'),0,null,'P','S','N',f($row2,'erro'));
                 } else {
                 // Grava hospedagens, locações e seguros
-                  dml_putPD_Fatura_Outros::getInstanceOf($dbms,'I', $w_cliente, null, f($row2,'solicitacao'), $w_chave_fatura,
+                  $SQL = new dml_putPD_Fatura_Outros; $SQL->getInstanceOf($dbms,'I', $w_cliente, null, f($row2,'solicitacao'), $w_chave_fatura,
                       f($row2,'tipo'),f($row2,'cnpj'),f($row2,'nome'),f($row2,'inicio'),f($row2,'fim'),f($row2,'valor'));
                 }
               }

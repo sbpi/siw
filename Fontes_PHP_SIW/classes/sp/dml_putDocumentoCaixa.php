@@ -17,7 +17,7 @@ class dml_putDocumentoCaixa {
                    'p_caixa'              =>array(tvl($p_caixa),                            B_INTEGER,        32),
                    'p_pasta'              =>array(tvl($p_pasta),                            B_VARCHAR,        20)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

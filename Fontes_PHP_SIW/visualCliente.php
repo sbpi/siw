@@ -5,7 +5,7 @@
 function visualCliente($w_sq_cliente,$O) {
   extract($GLOBALS);
 
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente);
 
   if ($O=='L') {
     // Se for listagem dos dados
@@ -51,7 +51,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('          </table>');
 
     //Endereços de e-mail e internet
-    $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_cliente,null,'EMAILINTERNET',null);
+    $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,'EMAILINTERNET',null);
     $RS = SortArray($RS,'tipo_endereco','asc','padrao','desc','endereco','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços e-Mail e Internet ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -77,7 +77,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
   
     //Endereços físicos
-    $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_cliente,null,'FISICO',null);
+    $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,'FISICO',null);
     $RS = SortArray($RS,'padrao','desc','logradouro','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços Físicos ('.count($RS).')</td>');
     if (count($RS)==0) {
@@ -101,7 +101,7 @@ function visualCliente($w_sq_cliente,$O) {
     } 
 
     //Telefones
-    $RS = db_getFoneList::getInstanceOf($dbms,$w_sq_cliente,null,null,null);
+    $SQL = new db_getFoneList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null,null);
     $RS = SortArray($RS,'tipo_telefone','asc','cidade','asc','padrao','desc','numero','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Telefones ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -133,7 +133,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Contas bancárias
-    $RS = db_getContaBancoList::getInstanceOf($dbms,$w_sq_cliente,null,null);
+    $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null);
     $RS = SortArray($RS,'tipo_conta','asc','padrao','desc','banco','asc','numero','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Contas Bancárias ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -165,7 +165,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Módulos contratados
-    $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_sq_cliente,null,null);
+    $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente,null,null);
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Módulos Contratados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -188,7 +188,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Usuários cadastrados
-    $RS = db_getUserList::getInstanceOf($dbms,$w_sq_cliente,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null);
+    $SQL = new db_getUserList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null);
     $RS = SortArray($RS,'nome_resumido_ind','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Usuários Cadastrados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -218,7 +218,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Configuração da aplicação
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente);
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Configuração da Aplicação</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%">');
@@ -247,7 +247,7 @@ function visualCliente($w_sq_cliente,$O) {
     //Funcionalidades
     $w_imagemPadrao='images/Folder/SheetLittle.gif';
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Funcionalidades</td>');
-    $RS = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
+    $RS = new db_getLinkDataUser; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -269,17 +269,17 @@ function visualCliente($w_sq_cliente,$O) {
         if (f($row,'Filho')>0) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
-          $RS1 = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,f($row,'sq_menu'));
+          $RS1 = new db_getLinkDataUser; $RS1 = $RS1->getInstanceOf($dbms,$w_sq_cliente,0,f($row,'sq_menu'));
           foreach ($RS1 as $row1) {
             if (f($row1,'Filho')>0) {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
               ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
-              $RS2 = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,f($row1,'sq_menu'));
+              $RS2 = new db_getLinkDataUser; $RS2 = $RS2->getInstanceOf($dbms,$w_sq_cliente,0,f($row1,'sq_menu'));
               foreach ($RS2 as $row2) {
                 if (f($row2,'Filho')>0) {
                   ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
                   ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
-                  $RS3 = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,f($row2,'sq_menu'));
+                  $RS3 = new db_getLinkDataUser; $RS3 = $RS3->getInstanceOf($dbms,$w_sq_cliente,0,f($row2,'sq_menu'));
                   foreach ($RS3 as $row3) {
                     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
                     ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));

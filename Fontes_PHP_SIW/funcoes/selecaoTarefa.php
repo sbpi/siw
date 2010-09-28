@@ -1,12 +1,12 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicList_IS.php');
 // =========================================================================
 // Montagem da seleção das tarefas
 // -------------------------------------------------------------------------
 function selecaoTarefa($label,$accesskey,$hint,$cliente,$ano,$p_chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
-  $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',3,
+  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ISTCAD');
+  $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',3,
           null,null,null,null,null,null,
           null,null,null,null,
           null,null,null,null,null,null,null,

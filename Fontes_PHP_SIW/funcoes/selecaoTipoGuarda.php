@@ -1,15 +1,15 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoGuarda_PA.php');
 // =========================================================================
 // Montagem da seleção do tipo de guardas
 // -------------------------------------------------------------------------
 function selecaoTipoGuarda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  if($restricao=='CORRENTE')       $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,'S',null,null,null,'S',null);
-  elseif($restricao=='INTERMED')   $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,'S',null,null,'S',null);
-  elseif($restricao=='FINAL')      $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,'S',null,'S',null);
-  elseif($restricao=='DESTINACAO') $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,'S','S',null);
-  else                             $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,'S',null);
+  if($restricao=='CORRENTE')       { $sql = new db_getTipoGuarda_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,'S',null,null,null,'S',null); }
+  elseif($restricao=='INTERMED')   { $sql = new db_getTipoGuarda_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,'S',null,null,'S',null); }
+  elseif($restricao=='FINAL')      { $sql = new db_getTipoGuarda_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,'S',null,'S',null); }
+  elseif($restricao=='DESTINACAO') { $sql = new db_getTipoGuarda_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,'S','S',null); }
+  else                             { $sql = new db_getTipoGuarda_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,'S',null); }
   $RS = SortArray($RS,'descricao','asc');
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

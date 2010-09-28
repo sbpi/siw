@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getBankHouseList.php');
 // =========================================================================
 // Montagem da seleção de idiomas
@@ -7,7 +7,7 @@ function SelecaoIdioma($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
   extract($GLOBALS);
   $RS = db_getIdiomList::getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'Nome','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -31,7 +31,7 @@ function SelecaoEtnia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao
   extract($GLOBALS);
   $RS = db_getEtniaList::getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'codigo_siape','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -55,7 +55,7 @@ function SelecaoDeficiencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   extract($GLOBALS);
   $RS = db_getDeficiencyList::getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'sq_grupo_defic','asc','nome','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -80,7 +80,7 @@ function SelecaoEstadoCivil($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   extract($GLOBALS);
   $RS = db_getCivStateList::getInstanceOf($dbms,$restricao);
   $RS = SortArray($RS,'nome','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -104,7 +104,7 @@ function SelecaoFormacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   extract($GLOBALS);
   $RS = db_getFormationList::getInstanceOf($dbms,$chaveAux,null,null);
   $RS = SortArray($RS,'ordem','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -128,7 +128,7 @@ function SelecaoTipoPosto2($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   extract($GLOBALS);
   $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,null,null);
   $RS = SortArray($RS,'descricao','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.'>');
@@ -152,11 +152,11 @@ function SelecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   extract($GLOBALS);
   $w_tipos='';
   $RS = db_getDataEspecial($RS1,$w_cliente,null,null,null,null,null,'VERIFICATIPO');
-  if (!(count($RS)< = 0)) {
+  if (!(count($RS)<=0)) {
     foreach ($RS1 as $row) {
       $w_tipos = $w_tipos.f($row,'tipo');
     } 
-  } if (Nvl($hint),'')>''){
+  } if (Nvl($hint,'')>''){
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -170,37 +170,37 @@ function SelecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
     ShowHTML('          <option value="E" SELECTED>Específica');
   } else {
     ShowHTML('          <option value="E">Específica');
-  } if ((strpos($w_tipos,'S')===false || Nvl($chave,'')=='S') {
+  } if (strpos($w_tipos,'S')===false || Nvl($chave,'')=='S') {
     if (Nvl($chave,'')=='S') {
       ShowHTML('          <option value="S" SELECTED>Segunda Carnaval');
     } else {
       ShowHTML('          <option value="S">Segunda Carnaval');
     } 
-  } if ((strpos($w_tipos,'C')===false || Nvl($chave,'')=='C') {
+  } if (strpos($w_tipos,'C')===false || Nvl($chave,'')=='C') {
     if (Nvl($chave,'')=='C') {
       ShowHTML('          <option value="C" SELECTED>Terça Carnaval');
     } else {
       ShowHTML('          <option value="C">Terça Carnaval');
     } 
-  } if ((strpos($w_tipos,'Q')===false || Nvl($chave,'')=='Q') {
+  } if (strpos($w_tipos,'Q')===false || Nvl($chave,'')=='Q') {
     if (Nvl($chave,'')=='Q') {
       ShowHTML('          <option value="Q" SELECTED>Quarta Cinzas');
     } else {
       ShowHTML('          <option value="Q">Quarta Cinzas');
     } 
-  } if ((strpos($w_tipos,'P')===false || Nvl($chave,'')=='P') {
+  } if (strpos($w_tipos,'P')===false || Nvl($chave,'')=='P') {
     if (Nvl($chave,'')=='P') {
       ShowHTML('          <option value="P" SELECTED>Sexta Santa');
     } else {
       ShowHTML('          <option value="P">Sexta Santa');
     } 
-  } if ((strpos($w_tipos,'D')===false || Nvl($chave,'')=='D') {
+  } if (strpos($w_tipos,'D')===false || Nvl($chave,'')=='D') {
     if (Nvl($chave,'')=='D') {
       ShowHTML('          <option value="D" SELECTED>Domingo Páscoa');
     } else {
       ShowHTML('          <option value="D">Domingo Páscoa');
     } 
-  } if ((strpos($w_tipos,'H')===false || Nvl($chave,'')=='H') {
+  } if (strpos($w_tipos,'H')===false || Nvl($chave,'')=='H') {
     if (Nvl($chave,'')=='H') {
       ShowHTML('          <option value="H" SELECTED>Corpus Christi');
     } else {
@@ -216,7 +216,7 @@ function SelecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
 
 function SelecaoAbrangData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -258,7 +258,7 @@ function SelecaoTipoAfastamento($label,$accesskey,$hint,$chave,$chaveAux,$campo,
   } else {
     $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
     $RS = SortArray($RS,'nome','asc');
-  } if (Nvl($hint),'')>'') {
+  } if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -282,7 +282,7 @@ function SelecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   extract($GLOBALS);
   $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'nome_resumido','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -296,7 +296,7 @@ function SelecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
     } 
   } 
   ShowHTML('          </select>');
-  ShowHTML('              <a class="ss" HREF="javascript:this.status.value;" onClick="window.open('Afastamento.asp?par=BuscaColaborador&TP='.RemoveTP($TP).'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&w_menu='.$w_menu.'&restricao='.$restricao.'&campo='.$campo.'','Colaborador','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;" title="Clique aqui para selecionar o colaborador."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
+  ShowHTML('              <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'Afastamento.asp?par=BuscaColaborador&TP='.RemoveTP($TP).'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&w_menu='.$w_menu.'&restricao='.$restricao.'&campo='.$campo.'\',\'Colaborador\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o colaborador."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
 }
 
 // =========================================================================
@@ -307,7 +307,7 @@ function ExibeColaborador($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(''.$p_dir.'Afastamento.asp?par=TELACOLABORADOR&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_TP.'&SG='.$SG.'','Colaborador','width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;" title="Clique para exibir os dados deste colaborador!">'.$p_nome.'</A>';
+    $l_string=$l_string.'<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$p_dir.'Afastamento.asp?par=TELACOLABORADOR&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_TP.'&SG='.$SG.'\',\'Colaborador\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste colaborador!">'.$p_nome.'</A>';
   } 
   $ExibeColaborador = $l_string;
   $l_string         = null; 
@@ -321,7 +321,7 @@ function SelecaoModalidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   extract($GLOBALS);
   $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,$restricao);
   $RS = SortArray($RS,'nome','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -346,7 +346,7 @@ function SelecaoCargo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao
   extract($GLOBALS);
   $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,null,null,null,null,'S',$restricao);
   $RS = SortArray($RS,'nome','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

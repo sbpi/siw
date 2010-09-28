@@ -1,4 +1,4 @@
-<?
+<?php
 
 header('Expires: ' . -1500);
 session_start();
@@ -42,7 +42,7 @@ if ($_SESSION['LOGON'] != 'Sim') {
 }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);

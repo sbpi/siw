@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getLCModEnq.php');
 // -------------------------------------------------------------------------
 function selecaoLCModEnq($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $l_rs = db_getLCModEnq::getInstanceOf($dbms, $chaveAux, null, null, null, null);
+  $sql = new db_getLCModEnq; $l_rs = $sql->getInstanceOf($dbms, $chaveAux, null, null, null, null);
   $l_rs = SortArray($l_rs,'sigla','asc');
 
   if (!isset($hint)) {

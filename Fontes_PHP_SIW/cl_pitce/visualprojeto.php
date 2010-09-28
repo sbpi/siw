@@ -12,7 +12,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
   
   //Recupera as informações do sub-menu
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PJCAD');
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PJCAD');
   foreach ($RS as $row) {
     if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
     elseif (strpos(f($row,'sigla'),'AREAS')!==false)    $l_nome_menu['AREAS'] = upper(f($row,'nome'));
@@ -27,29 +27,29 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   $l_html='';
   // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
+  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N';
 
   // Verifica se o cliente tem o módulo de viagens contratado
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
+  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N';
 
   // Verifica se o cliente tem o módulo planejamento estratégico
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N';
   
   // Verifica se o cliente tem o módulo financeiro
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'FN');
+  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'FN');
   if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
 
   // Recupera os dados do projeto
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'PJGERAL');
   $w_ige = f($RS,'ige');
   $w_codigo = f($RS,'codigo_interno');
   $w_solic_pai = f($RS,'sq_solic_pai');
 
   // Define visualizações disponíveis para o usuário
-  $RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+  $sql = new db_getPersonData; $RS_Usuario = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
   
   $w_exibe1 = false; // Análise e observações da Secretaria Executiva
   $w_exibe2 = false; // Análise e observações do Coordenador
@@ -72,7 +72,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
 
   // Coordenador do macroprograma vê análise do coordenador e do gestor
-  $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_solic_pai,$w_usuario,'LISTA');
+  $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$w_solic_pai,$w_usuario,'LISTA');
   if (count($RS1)>0) {
     foreach($RS1 as $row) {$RS1 = $row; break; }
     if (f($RS1,'sg_tipo_interessado')=='MPGCO') {
@@ -82,7 +82,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   
   // Membro do comitê executivo, de qualquer tipo, vê a análise do gestor
-  $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,$w_usuario,'LISTA');
+  $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,$w_usuario,'LISTA');
   if (count($RS1)>0) {
     $w_exibe3 = true;;
   }
@@ -103,12 +103,12 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     // Se for solicitante, executor ou cadastrador, tem visão completa
     $w_tipo_visao = 0;
   } else {
-    $RSQuery = db_getSolicInter::getInstanceOf($dbms,$l_chave,$l_usuario,'REGISTRO');
+    $sql = new db_getSolicInter; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,$l_usuario,'REGISTRO');
     if (count($RSquery)>0) {
       // Se for interessado, verifica a visão cadastrada para ele.
       $w_tipo_visao = f($RSquery,'tipo_visao');
     } else {
-      $RSQuery = db_getSolicAreas::getInstanceOf($dbms,$l_chave,$_SESSION['LOTACAO'],'REGISTRO');
+      $sql = new db_getSolicAreas; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,$_SESSION['LOTACAO'],'REGISTRO');
       if (count($RSquery)>0) {
         // Se for de uma das unidades envolvidas, tem visão parcial
         $w_tipo_visao = 1;
@@ -137,7 +137,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   else       $l_html.=chr(13).'        '.f($RS,'sg_unidade_resp').'</b></td>';
   
   // Recupera coordenadores do macroprograma
-  $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_solic_pai,null,'LISTA');
+  $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$w_solic_pai,null,'LISTA');
   $RS1 = SortArray($RS1,'or_tipo_interessado','asc','nome','asc');
     if (count($RS1)>0) {
     $l_coord = '';
@@ -151,7 +151,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   $l_html.=chr(13).'          <td colspan="2" width="50%"><b>'.nvl($l_coord,'&nbsp;').'</b></td>';
   
   // Direção
-  $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+  $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
   $RS1 = SortArray($RS1,'ordena','asc','or_tipo_interessado','asc','nome','asc');
   if (count($RS1)>0) {
     $l_cont = 0;
@@ -164,7 +164,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
          $l_cont++;
       }
     }
-    $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'ordena','asc','lotacao','asc','or_tipo_interessado','asc','nome','asc');
     foreach($RS1 as $row) {
       if (f($row,'sg_tipo_interessado')=='PDPCET'||f($row,'sg_tipo_interessado')=='PDPCES') {
@@ -236,7 +236,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   if($l_nome_menu['ETAPA']!='') {
     $w_p2 = '';
     $w_p3 = '';
-    $RSQuery = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'LISTA',null);
+    $sql = new db_getSolicEtapa; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA',null);
     $RSQuery = SortArray($RSQuery,'ordem','asc');
     // Recupera o código da opção de menu  a ser usada para listar as tarefas
     if (count($RSQuery)>0) {
@@ -245,7 +245,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         if (Nvl(f($row,'P3'),0) > 0) $w_p3 = f($row,'P3');
       } 
     } 
-    $RSQuery = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'ARVORE',null);
+    $sql = new db_getSolicEtapa; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'ARVORE',null);
     if (count($RSQuery)>0) {
       // Se não foram selecionados registros, exibe mensagem
       // Monta função JAVASCRIPT para fazer a chamada para a lista de tarefas
@@ -255,12 +255,12 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           $l_html.=chr(13).'  function lista (projeto, etapa) {';
           $l_html.=chr(13).'    document.Form1.p_projeto.value=projeto;';
           $l_html.=chr(13).'    document.Form1.p_atividade.value=etapa;';
-          $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
+          $RSQuery1 = new db_getMenuData; $RSQuery1 = $RSQuery1->getInstanceOf($dbms,$w_p2);
           $l_html.=chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
           $l_html.=chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
           $l_html.=chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
           $l_html.=chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
-          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null,null);
+          $sql = new db_getTramiteList; $RSQuery1 = $sql->getInstanceOf($dbms,$w_p2,null,null,null);
            $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
           $l_html.=chr(13).'    document.Form1.p_fase.value=\'\';';
           $w_fases='';
@@ -274,7 +274,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         }
       }
 
-      $RSQuery1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
+      $sql = new db_getSolicData; $RSQuery1 = $sql->getInstanceOf($dbms,$l_chave,'PJGERAL');
       $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>RESUMO DA AGENDA DE AÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td colspan="2"><table border=0>';
       $l_html.=chr(13).'        <tr valign="top"><td colspan=6><font size="2"><b>Estrutura de uma agenda de ação:</b><br>> Acão<br>&nbsp;&nbsp;&nbsp;> Medida<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Atividade ou Etapa ou Projeto';
@@ -364,7 +364,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
 
   // Metas
   if ($l_nome_menu['METASOLIC']!='') {
-    $RSQuery = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicMeta; $RSQuery = $sql->getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     $RSQuery = SortArray($RSQuery,'ordem','asc','titulo','asc');
     if (count($RSQuery)>0) {
       //$l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -411,7 +411,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
             $l_cron.=chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
           }
           $l_cron.=chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
-          $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+          $sql = new db_getSolicMeta; $RSCron = $sql->getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
           $RSCron = SortArray($RSCron,'inicio','asc');
           $i = 0;
           $w_previsto  = 0;
@@ -476,7 +476,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   
   // Indicadores
   if ($l_nome_menu['INDSOLIC']!='') { 
-    $RSQuery = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null,'VISUAL');
+    $sql = new db_getSolicIndicador; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,null,null,'VISUAL');
     $RSQuery = SortArray($RSQuery,'nm_tipo_indicador','asc','nome','asc');
     if (count($RSQuery)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'_I.pdf'),'arquivo','Clique para exibir arquivo descritivo dos indicadores do setor',null,'EMBED').'">'.$l_nome_menu['INDSOLIC'].' DO SETOR</a> ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -544,7 +544,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   
   // Objetivos estratégicos
-  $RSQuery = db_getSolicObjetivo::getInstanceOf($dbms,$l_chave,null,null);
+  $sql = new db_getSolicObjetivo; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,null);
   $RSQuery = SortArray($RSQuery,'nome','asc');
   if (count($RSQuery)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RSQuery).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -585,7 +585,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   
   // Recursos
   if ($l_nome_menu['RECSOLIC']!='') {
-    $RSQuery = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicRecursos; $RSQuery = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RSQuery = SortArray($RSQuery,'nm_tipo_recurso','asc','nm_recurso','asc'); 
     if (count($RSQuery)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -613,7 +613,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   // Recursos envolvidos na execução do projeto
   if ($l_nome_menu['RECURSO']!='') {
-    $RSQuery = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicRecurso; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RSQuery = SortArray($RSQuery,'tipo','asc','nome','asc');
     if (count($RSQuery)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECURSO'].' ('.count($RSQuery).')<hr color=#000000 SIZE=1></b></font></td></tr>';
@@ -636,7 +636,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     }     
   }
   // Riscos
-  $RSQuery = db_getSolicRestricao::getInstanceOf($dbms,$l_chave,$w_chave_aux,null,null,null,null,null);
+  $sql = new db_getSolicRestricao; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,$w_chave_aux,null,null,null,null,null);
   $RSQuery = SortArray($RSQuery,'problema','desc','criticidade','desc','nm_tipo_restricao','asc','nm_risco','asc'); 
   if (count($RSQuery)>0 && $l_nome_menu['RESTSOLIC']!='') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -654,12 +654,12 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $w_cor=$conTrBgColor;
     foreach ($RSQuery as $row) {
       $l_row = 1;
-      $RS_Etapa = db_getSolicEtapa::getInstanceOf($dbms,f($row,'chave_aux'),null,'PACOTES',null);
+      $sql = new db_getSolicEtapa; $RS_Etapa = $sql->getInstanceOf($dbms,f($row,'chave_aux'),null,'PACOTES',null);
       if(count($RS_Etapa)>0) {
         $l_row += count($RS_Etapa);
         $l_row += 2;
       }
-      $RS_Restricao = db_getSolicRestricao::getInstanceOf($dbms,f($row,'chave_aux'), null, null, null, null, null, 'TAREFA');
+      $sql = new db_getSolicRestricao; $RS_Restricao = $sql->getInstanceOf($dbms,f($row,'chave_aux'), null, null, null, null, null, 'TAREFA');
       if(count($RS_Restricao)>0) {
         $l_row += count($RS_Restricao);
         $l_row += 2;  
@@ -692,7 +692,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html.=chr(13).'        <td colspan=4>'.CRLF2BR(f($row,'nm_fase_atual')).'</td>';
       $l_html.=chr(13).'      </tr>';
       // Exibe as tarefas vinculadas ao risco/problema
-      $RS_Tarefa = db_getSolicRestricao::getInstanceOf($dbms,f($row,'chave_aux'), null, null, null, null, null, 'TAREFA');
+      $sql = new db_getSolicRestricao; $RS_Tarefa = $sql->getInstanceOf($dbms,f($row,'chave_aux'), null, null, null, null, null, 'TAREFA');
       if (count($RS_Tarefa) > 0) {
         $l_html.=chr(13).'    <tr align="center" bgColor="#f0f0f0">';
         $l_html.=chr(13).'      <td rowspan=2><b>Tarefa</td>';
@@ -741,7 +741,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         } 
       }        
       // Exibe os pacotes associados ao risco/problema
-      $RS_Etapa = db_getSolicEtapa::getInstanceOf($dbms,f($row,'chave_aux'),null,'PACOTES',null);
+      $sql = new db_getSolicEtapa; $RS_Etapa = $sql->getInstanceOf($dbms,f($row,'chave_aux'),null,'PACOTES',null);
       $RS_Etapa = SortArray($RS_Etapa,'cd_ordem','asc');
       if (count($RS_Etapa) > 0) {
         $l_html.=chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>';
@@ -771,7 +771,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   // Áreas envolvidas na execução do projeto
   if ($l_nome_menu['AREAS']!='') {
-    $RSQuery = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicAreas; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RSQuery = SortArray($RSQuery,'nome','asc');
     if (count($RSQuery)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -797,7 +797,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   // Arquivos vinculados
   if ($l_nome_menu['ANEXO']!='') {
-    $RSQuery = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RSQuery = SortArray($RSQuery,'nome','asc');
     if (count($RSQuery)>0) {
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ANEXO'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

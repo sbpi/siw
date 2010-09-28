@@ -15,7 +15,7 @@ class dml_putDocumentoArqSet {
                    'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32),
                    'p_observacao'         =>array(tvl($p_observacao),                       B_VARCHAR,      2000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

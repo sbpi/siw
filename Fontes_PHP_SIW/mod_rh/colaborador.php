@@ -69,7 +69,7 @@ include_once('validacolaborador.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
@@ -2482,7 +2482,7 @@ function Grava() {
     case 'COINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putGPColaborador::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,
+        $SQL = new dml_putGPColaborador; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,
         null,null,null,null,null,null,null,null,null,null,null,null,null);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2500,7 +2500,7 @@ function Grava() {
         // Executa a operação no banco de dados
         //exit('essa aqui');
         //exibeArray($_REQUEST);
-        dml_putGPFamiliares::getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$w_cliente,$_REQUEST['w_usuario'],
+        $SQL = new dml_putGPFamiliares; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$w_cliente,$_REQUEST['w_usuario'],
               $_REQUEST['w_cpf'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],$_REQUEST['w_sexo'],
               $_REQUEST['w_parentesco'],$_REQUEST['w_seguro_saude'],$_REQUEST['w_seguro_odonto'],$_REQUEST['w_seguro_vida'],
               $_REQUEST['w_imposto_renda']);
@@ -2517,7 +2517,7 @@ function Grava() {
     case 'GPPENSAO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_PutGPPensionista::getInstanceOf($dbms, $O, $w_restricao, $_REQUEST['w_sq_pessoa'], $w_cliente, $w_usuario, $w_sq_pessoa,
+        $SQL = new dml_PutGPPensionista; $SQL->getInstanceOf($dbms, $O, $w_restricao, $_REQUEST['w_sq_pessoa'], $w_cliente, $w_usuario, $w_sq_pessoa,
               $_REQUEST['w_cpf'], $_REQUEST['w_nome'], $_REQUEST['w_nome_resumido'], $_REQUEST['w_sexo'], $_REQUEST['w_rg_numero'], $_REQUEST['w_rg_emissao'], $_REQUEST['w_rg_emissor'],
               $_REQUEST['w_ddd'], $_REQUEST['w_nr_telefone'], $_REQUEST['w_nr_fax'], $_REQUEST['w_nr_celular'], $_REQUEST['w_sq_agencia'], $_REQUEST['w_operacao'], $_REQUEST['w_nr_conta'],
               $_REQUEST['w_tipo_pensao'], $_REQUEST['w_valor'], $_REQUEST['w_dt_inicio'], $_REQUEST['w_dt_fim'], $_REQUEST['w_observacao']);
@@ -2534,7 +2534,7 @@ function Grava() {
     case 'CODOCUM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putGPColaborador::getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_ctps_numero'],$_REQUEST['w_ctps_serie'],$_REQUEST['w_ctps_emissor'],
+        $SQL = new dml_putGPColaborador; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_ctps_numero'],$_REQUEST['w_ctps_serie'],$_REQUEST['w_ctps_emissor'],
               $_REQUEST['w_ctps_emissao'],$_REQUEST['w_pis_pasep'],$_REQUEST['w_pispasep_numero'],$_REQUEST['w_pispasep_cadastr'],
               $_REQUEST['w_te_numero'],$_REQUEST['w_te_zona'],$_REQUEST['w_te_secao'],$_REQUEST['w_reservista_numero'],
               $_REQUEST['w_reservista_csm'],$_REQUEST['w_tipo_sangue'],$_REQUEST['w_doador_sangue'],$_REQUEST['w_doador_orgaos'],
@@ -2581,7 +2581,7 @@ function Grava() {
               exit;
             }
           }
-          dml_putGPContrato::getInstanceOf($dbms,$O,
+          $SQL = new dml_putGPContrato; $SQL->getInstanceOf($dbms,$O,
                 $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_cc'],$w_usuario,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
                 $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
                 $_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],$_REQUEST['w_username'],$_REQUEST['w_ferias'],$_REQUEST['w_horas_extras'],
@@ -2596,10 +2596,10 @@ function Grava() {
             $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
             if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
               $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
-              dml_putSiwUsuario::getInstanceOf($dbms,'I',$w_usuario,$w_cliente,f($RS,'nome'),f($RS,'nome_resumido'),$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
+              $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'I',$w_usuario,$w_cliente,f($RS,'nome'),f($RS,'nome_resumido'),$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                     f($RS,'sq_tipo_vinculo'),'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
                     f($RS,'cpf'),f($RS,'email'),null,null,null);
-              dml_putSiwUsuario::getInstanceOf($dbms,'T',$w_usuario,null,null,null,
+              $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'T',$w_usuario,null,null,null,
               null,null,null,null,null,null,null,null,null,null,null);
             }
           }
@@ -2625,7 +2625,7 @@ function Grava() {
           retornaFormulario('w_ano');
           exit;
         }
-        dml_putGpDesempenho::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_ano'], $_REQUEST['w_percentual'],$O);
+        $SQL = new dml_putGpDesempenho; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_ano'], $_REQUEST['w_percentual'],$O);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Desempenho'.'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -2647,7 +2647,7 @@ function Grava() {
          retornaFormulario('w_ano');
          exit;
          }*/
-        dml_putGpAlteracaoSalario::getInstanceOf($dbms, $O, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], $_REQUEST['w_data_alteracao'], $_REQUEST['w_novo_valor'], $_REQUEST['w_funcao'], $_REQUEST['w_motivo']);
+        $SQL = new dml_putGpAlteracaoSalario; $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], $_REQUEST['w_data_alteracao'], $_REQUEST['w_novo_valor'], $_REQUEST['w_funcao'], $_REQUEST['w_motivo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'REMUNERACAO'.'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

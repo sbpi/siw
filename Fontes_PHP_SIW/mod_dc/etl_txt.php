@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 include_once('../constants.inc');
 $w_dir_volta = $conDiretorio;
@@ -60,7 +60,7 @@ $_SESSION['P_CLIENTE'] = $w_cliente;
 $_SESSION['DBMS']      = $w_dbms;
 
 // Abre conexão como banco de dados
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 Principal();
 
@@ -409,7 +409,7 @@ function Principal() {
             }
 
             // Grava a ocorrência
-            dml_putDcOcorrencia::getInstanceOf($dbms,'I',
+            $SQL = new dml_putDcOcorrencia; $SQL->getInstanceOf($dbms,'I',
               $esq['chave'],$w_cliente,$w_usuario,substr(formatadataedicao(time(),3),0,-3),
               basename($w_arquivo_script),basename($w_arquivo_script),filesize($w_arquivo_script),filetype($w_arquivo_script),
               basename($w_arquivo_log),basename($w_arquivo_log),filesize($w_arquivo_log),filetype($w_arquivo_log),

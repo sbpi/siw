@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getBankHouseList.php');
 // =========================================================================
 // Montagem da seleção de agências bancárias
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getBankHouseList.php');
 function selecaoAgencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getBankHouseList::getInstanceOf($dbms, $chaveAux, null, 'padrao desc, codigo asc', null);
+  $sql = new db_getBankHouseList; $RS = $sql->getInstanceOf($dbms, $chaveAux, null, 'padrao desc, codigo asc', null);
   $RS = SortArray($RS,'padrao','desc','codigo','asc');
 
   if (!isset($hint)) {
@@ -23,6 +23,5 @@ function selecaoAgencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     }
   }
   ShowHTML('          </select>');
-  return $function_ret;
 }
 ?>

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getProgramaPPA_IS.php');
 // =========================================================================
 // Montagem da seleção de ações do PPA(tabela SIGPLAN)
@@ -6,13 +6,13 @@ include_once($w_dir_volta.'classes/sp/db_getProgramaPPA_IS.php');
 function selecaoProgramaPPA($label,$accesskey,$hint,$cliente,$ano,$chave,$campo,$restricao,$atributo,$menu,$macro,$opcao) {
   extract($GLOBALS);
   if ($restricao=='IDENTIFICACAO') {
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,null,$w_cliente,$w_ano,$restricao,null,$macro,$opcao);
+    $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_ano,$restricao,null,$macro,$opcao);
     $RS = SortArray($RS,'ds_programa','asc');
   } elseif ($restricao=='RELATORIO') {
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,null,$w_cliente,$w_ano,null,null,$macro,$opcao);
+    $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_ano,null,null,$macro,$opcao);
     $RS = SortArray($RS,'ds_programa','asc');
   } else {
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$chave,$w_cliente,$w_ano,$restricao,null,$macro,$opcao);
+    $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,$chave,$w_cliente,$w_ano,$restricao,null,$macro,$opcao);
     $RS = SortArray($RS,'ds_programa','asc');
   } 
   if (!isset($hint))

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSegList.php');
 // =========================================================================
 // Montagem da seleção de segmentos de mercado
@@ -7,7 +7,7 @@ function selecaoSegMercado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   extract($GLOBALS);
 
 
-  $RS = db_getSegList::getInstanceOf($dbms, null);
+  $sql = new db_getSegList; $RS = $sql->getInstanceOf($dbms, null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

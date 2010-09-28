@@ -51,7 +51,7 @@ include_once('funcoes/selecaoTipoAutenticacao.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -165,7 +165,7 @@ function Benef() {
         $w_username_ant         = $_REQUEST['w_username_ant'];
     } else {
         if ($O=='I' && $w_sq_pessoa=='' && $w_cpf>'' && $SG=='SGUSU') {
-          $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
+          $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
           if (count($RS)>0) {
             if (nvl(f($RS,'username'),'')!='') {
               ScriptOpen('JavaScript');
@@ -181,7 +181,7 @@ function Benef() {
         if (strpos('IATDEV',$O)!==false) {
             if (nvl($w_sq_pessoa,'')!='') {
                 // Recupera os dados do beneficiário em co_pessoa
-                $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
+                $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
                 if (count($RS)) {
                     $w_cpf                  = f($RS,'cpf');
                     $w_username             = f($RS,'username');
@@ -199,7 +199,7 @@ function Benef() {
                 }
             } elseif (nvl($w_username,'')>'') {
                 // Recupera os dados do beneficiário em co_pessoa
-                $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_username,null);
+                $SQL = new db_getPersonData; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_username,null);
                 if (count($RS)) {
                     $w_sq_pessoa            = f($RS,'sq_pessoa');
                     $w_nome                 = f($RS,'Nome');
@@ -354,7 +354,7 @@ function Benef() {
             ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_pagina.$par.'\'">');
             ShowHTML('      </table>');
             if ($_REQUEST['w_nome']>"") {
-                $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,null,"PESSOA",$_REQUEST['w_nome'],null,null,null);
+                $SQL = new db_getPersonList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,"PESSOA",$_REQUEST['w_nome'],null,null,null);
                 ShowHTML('<tr><td align="center" colspan=3>');
                 ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                 ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -511,7 +511,7 @@ function Benef() {
             } else {
                 ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
             }
-            $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'SGUSU');
+            $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'SGUSU');
             ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.f($RS,'link').'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.f($RS,'P1').'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
             ShowHTML('          </td>');
             ShowHTML('      </tr>');
@@ -596,7 +596,7 @@ function CadastraPessoa() {
         $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
     } elseif ($O=='A' || $w_sq_pessoa>'') {
         // Recupera os dados do beneficiário em co_pessoa
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+        $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) {
             foreach($RS as $row) {
                 $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -859,7 +859,7 @@ function BuscaUsuario() {
     $ChaveAux     = $_REQUEST['ChaveAux'];
     $restricao    = $_REQUEST['restricao'];
     $campo        = $_REQUEST['campo'];
-    $RS = db_getPersonList::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$ChaveAux,$restricao,$w_nome,$w_sg_unidade,null,null);
+    $SQL = new db_getPersonList; $RS = $SQL->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$ChaveAux,$restricao,$w_nome,$w_sg_unidade,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
     head();
@@ -965,7 +965,7 @@ function BuscaPessoa() {
     $p_restricao   = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
     $p_campo       = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
     $p_objeto      = nvl($SG,$_REQUEST['p_objeto']);
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
+    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
     head();
@@ -1096,7 +1096,7 @@ function Grava() {
             if (strlen($_REQUEST['w_username'])<=14 || $SG=='SGUSU') $w_tipo='Física'; else $w_tipo='Jurídica';
             if (strpos('ED',$O)===false) {
               // Se não for exclusão nem desativação de usuários, verifica se o nome de usuário já existe
-              $RS = db_getUserData::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_username']);
+              $SQL = new db_getUserData; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_username']);
               $w_sq_pessoa = f($RS,'sq_pessoa');
               if (count($RS) > 0 && ($O=='I' || ($O!='I' && $w_sq_pessoa!=$_REQUEST['w_sq_pessoa']))) {
                 ScriptOpen('JavaScript');
@@ -1108,7 +1108,7 @@ function Grava() {
               // Se a autenticação não for na aplicação, o nome de usuário deve existir no repositório indicado
               if (($O=='I' || $_REQUEST['w_username_ant']!= $_REQUEST['w_username']) && strpos('AO',$_REQUEST['w_tipo_autenticacao'])!==false) {
                 include_once('classes/ldap/ldap.php');
-                $RS1 = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
+                $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
                         
                 if ($_REQUEST['w_tipo_autenticacao']=='A') {
                   // Recupera dados para conexão ao MS-AD
@@ -1175,7 +1175,7 @@ function Grava() {
             }
 
             // Executa a operação no banco de dados
-            dml_putSiwUsuario::getInstanceOf($dbms, $O,
+            $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms, $O,
                  $_REQUEST['w_sq_pessoa'],$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
                  $_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                  $_REQUEST['w_sq_tipo_vinculo'],$w_tipo,$_REQUEST['w_sq_unidade_lotacao'],$_REQUEST['w_sq_localizacao'],
@@ -1203,7 +1203,7 @@ function Grava() {
                   $w_html .= '         Seu acesso ao sistema foi desbloqueado. Utilize os dados informados abaixo:<br>'.$crlf;
                 }
                 $w_html .= '         <ul>'.$crlf;
-                $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
+                $SQL = new db_getCustomerSite; $RS = $SQL->getInstanceOf($dbms,$w_cliente);
                 $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
                 $w_html .= '         <li>Nome de usuário: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
                 if (strpos('AO',$_REQUEST['w_tipo_autenticacao'])===false){
@@ -1217,7 +1217,7 @@ function Grava() {
                 $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
                 $w_html .= '         Orientações e observações:<br>'.$crlf;
                 $w_html .= '         <ol>'.$crlf;
-                $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+                $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
                 if (strpos('AO',$_REQUEST['w_tipo_autenticacao'])===false){
                   $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
                   $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
@@ -1242,7 +1242,7 @@ function Grava() {
                   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>BLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
                 }
                 $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
-                $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
+                $SQL = new db_getCustomerSite; $RS = $SQL->getInstanceOf($dbms,$w_cliente);
                 if ($O=='E') {
                   $w_html .= '         Seus dados foram excluídos do sistema existente no endereço '.f($RS,'logradouro').'. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
                 } elseif ($O=='D') {
@@ -1281,7 +1281,7 @@ function Grava() {
               }
             }
             // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-            $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+            $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
             ScriptOpen('JavaScript');
             if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
               if ($w_resultado>'') {
@@ -1305,7 +1305,7 @@ function Grava() {
             if ($O=='I' || $O=='A') {
                 if ($_REQUEST['w_tipo_pessoa']==1 || $_REQUEST['w_tipo_pessoa']==3) {
                     // Verifica se já existe pessoa física com o CPF informado
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null);
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null);
                     if (count($RS)>0) {
                         ScriptOpen('JavaScript');
                         ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -1314,7 +1314,7 @@ function Grava() {
                         exit;
                     }
                     // Verifica se já existe pessoa física com o mesmo nome.
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         foreach ($RS as $row) {
                             if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
@@ -1332,7 +1332,7 @@ function Grava() {
                     }
                 } else {
                     // Verifica se já existe pessoa jurídica com o CNPJ informado
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         ScriptOpen('JavaScript');
                         ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
@@ -1342,7 +1342,7 @@ function Grava() {
                     }
 
                     // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         foreach ($RS as $row) {
                             if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {
@@ -1361,7 +1361,7 @@ function Grava() {
                 }
             }
 
-            dml_putPessoa::getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,Nvl($_REQUEST['p_restricao'],$SG),
+            $SQL = new dml_putPessoa; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,Nvl($_REQUEST['p_restricao'],$SG),
                 $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
                 $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
                 $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],

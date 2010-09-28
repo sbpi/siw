@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getNatureza_PE.php');
 // -------------------------------------------------------------------------
 function selecaoNatureza($label,$accesskey,$hint,$cliente,$chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getNatureza_PE::getInstanceOf($dbms,null,$cliente,null,'S');
+  $sql = new db_getNatureza_PE; $RS = $sql->getInstanceOf($dbms,null,$cliente,null,'S');
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

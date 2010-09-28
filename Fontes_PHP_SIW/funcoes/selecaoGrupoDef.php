@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getDeficGroupList.php');
 // =========================================================================
 // Montagem da seleção do grupo de deficiência
 // -------------------------------------------------------------------------
 function selecaoGrupoDef($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getDeficGroupList::getInstanceOf($dbms, null, null);
+  $sql = new db_getDeficGroupList; $RS = $sql->getInstanceOf($dbms, null, null);
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {

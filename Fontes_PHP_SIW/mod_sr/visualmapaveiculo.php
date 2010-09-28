@@ -1,4 +1,4 @@
-<? 
+<?php
 // =========================================================================
 // Rotina de emissão da ordem de serviço
 // -------------------------------------------------------------------------
@@ -7,9 +7,9 @@ function VisualMapaVeiculo($l_chave,$l_sg,$l_placa,$l_alugado,$l_ativo,$l_solic,
   $l_html='';
   // Recupera os dados da tarefa
   include_once($w_dir_volta.'classes/sp/db_getVeiculo.php');
-  $RS_Mapa = db_getVeiculo::getInstanceof($dbms,null,null,$w_cliente,$l_placa,$l_alugado,$l_ativo,$l_solic,$l_inicio,$l_fim,$l_restricao);
+  $sql = new db_getVeiculo; $RS_Mapa = $sql->getInstanceof($dbms,null,null,$w_cliente,$l_placa,$l_alugado,$l_ativo,$l_solic,$l_inicio,$l_fim,$l_restricao);
   $RS_Mapa = SortArray($RS_Mapa,'st_veiculo','desc','marca','asc','modelo','asc','nm_veiculo','asc','phpdt_fim','asc','phpdt_inicio','asc'); 
-  $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  $sql = new db_getSolicData; $RS1 = $sql->getInstanceof($dbms,$l_chave,$l_sg);
   $l_html.=chr(13).'    <table border=0 width="100%" cellpadding=0 cellspacing=0>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align="center"><font size="2"><b>MAPA DE ALOCAÇÃO DE VEÍCULOS</b></font></td></tr>';

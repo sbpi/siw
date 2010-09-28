@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicResp.php');
 // =========================================================================
 // Montagem da seleção de responsáveis por solicitações
 // -------------------------------------------------------------------------
 function selecaoSolicResp($label,$accesskey,$hint,$chave,$chaveAux,$tramite,$chaveAux2,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getSolicResp::getInstanceOf($dbms, $chaveAux, $tramite, $chaveAux2, $restricao);
+  $sql = new db_getSolicResp; $RS = $sql->getInstanceOf($dbms, $chaveAux, $tramite, $chaveAux2, $restricao);
   $RS = SortArray($RS,'nome_resumido_ind','asc');
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

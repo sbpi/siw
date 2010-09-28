@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -19,7 +19,7 @@ class dml_putXMLUnidade_SIG {
                    'p_tipo_org'                  =>array(tvl($p_tipo_org),                                 B_VARCHAR,         1),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,       110)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

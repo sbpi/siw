@@ -56,7 +56,7 @@ include_once('exibeprograma.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca    = $_REQUEST['w_troca'];
 $w_copia    = $_REQUEST['w_copia'];
@@ -90,7 +90,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -98,13 +98,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -126,7 +126,7 @@ function Rel_Executivo() {
   $w_marca_bloco = $_REQUEST['w_marca_bloco'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
@@ -159,7 +159,7 @@ function Rel_Executivo() {
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
     $w_projeto_atual = 0;
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_plano, null, null,$p_inicio,$p_fim, null, 'REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, null, null,$p_inicio,$p_fim, null, 'REGISTROS');
     $RS = SortArray($RS,'sq_projeto','asc'); 
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -185,8 +185,8 @@ function Rel_Executivo() {
         }
         
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
-        $RS2= db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-        $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
+        $RS2 = new db_getLinkData; $RS2 = $RS2->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
         $RS1 = SortArray($RS1,'cd_programa','asc','titulo','asc');
         if (count($RS1)==0) {
           ShowHTML('   <tr><td colspan="2" align="center"><font size="1"><b>Nenhum programa cadastrado.</b></td></tr>');
@@ -233,7 +233,7 @@ function Rel_Executivo() {
                 ShowHTML('          </tr>');
               }
 
-              $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS2,'sq_menu'),$w_usuario,'ESTRUTURA',7,
+              $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_menu'),$w_usuario,'ESTRUTURA',7,
                   $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                   $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
                   f($row1,'sq_siw_solicitacao'), $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -356,7 +356,7 @@ function Rel_Executivo() {
     }
   } elseif ($O=='P') {
     // Se somente uma opção puder ser selecionada, já seleciona.
-    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RST = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
     $w_cont = 0;
     foreach ($RST as $row) {
       if (f($row,'filho')==0) {
@@ -480,17 +480,17 @@ function Rel_Programas() {
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('   <tr><td colspan="2"><table border=0>');
       if ($p_plano) {
-        $RS_Plano = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_plano,null,null,null,null,null,'REGISTROS');
+        $sql = new db_getPlanoEstrategico; $RS_Plano = $sql->getInstanceOf($dbms,$w_cliente,$p_plano,null,null,null,null,null,'REGISTROS');
         foreach ($RS_Plano as $row) { $RS_Plano = $row; break; }
         ShowHTML('     <tr valign="top"><td>PLANO ESTRATÉGICO:<td>'.f($RS_Plano,'titulo').'</td></tr>');
       }
       if ($p_objetivo) {
-        $RS_Objetivo = db_getObjetivo_PE::getInstanceOf($dbms,$p_plano,$p_objetivo,$w_cliente,null,null,null,null);
+        $sql = new db_getObjetivo_PE; $RS_Objetivo = $sql->getInstanceOf($dbms,$p_plano,$p_objetivo,$w_cliente,null,null,null,null);
         foreach ($RS_Objetivo as $row) {$RS_Objetivo=$row; break;}
         ShowHTML('     <tr valign="top"><td>OBJETIVO ESTRATÉGICO:<td>'.f($RS_Objetivo,'nome').'</td></tr>');
       }
       if ($p_programa) {
-        $RS_Programa = db_getSolicData::getInstanceOf($dbms,$p_programa,'PEPRGERAL');
+        $sql = new db_getSolicData; $RS_Programa = $sql->getInstanceOf($dbms,$p_programa,'PEPRGERAL');
         ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
       }
       ShowHTML('     </table>');
@@ -510,8 +510,8 @@ function Rel_Programas() {
     }
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
-    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-    $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS1,'sq_menu'), $w_usuario, f($RS1,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
+    $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+    $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($RS1,'sq_menu'), $w_usuario, f($RS1,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
     if (count($RS1)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
@@ -530,7 +530,7 @@ function Rel_Programas() {
     ShowHTML('     </table>');
   } elseif ($O=='P') {
     // Se somente uma opção puder ser selecionada, já seleciona.
-    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RST = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
     $w_cont = 0;
     foreach ($RST as $row) {
       if (f($row,'filho')==0) {
@@ -639,7 +639,7 @@ function Rel_Programas() {
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');    
     //Recupera as informações do sub-menu
-    $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PEPROCAD');
+    $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PEPROCAD');
     $RS = SortArray($RS,'ordem','asc'); 
     foreach ($RS as $row) {
       if     (strpos(f($row,'sigla'),'ANEXO')!==false)    if ($_REQUEST['p_anexo']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_anexo" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_anexo" value="S"> '.f($row,'nome').'</td>');

@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getEspecieDocumento_PA.php');
 // =========================================================================
 // Montagem da seleção de especies do documento
 // -------------------------------------------------------------------------
 function selecaoEspecieDocumento($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,null,$w_cliente,null,null,'S',null);
+  $sql = new db_getEspecieDocumento_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,'S',null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else               ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

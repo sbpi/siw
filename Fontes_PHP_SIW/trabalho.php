@@ -46,7 +46,7 @@ include_once($w_dir_volta.'visualalerta.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -104,30 +104,30 @@ function Mesa() {
   extract($GLOBALS);
 
   // Recupera os dados do cliente
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 
   if ($O=="L") {
     // Verifica se o cliente tem o módulo de telefonia contratado
-    $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'TT');
+    $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'TT');
     foreach ($RS as $row) $w_telefonia = f($row,'nome');
     // Apenas para usuários internos da organização
     if ($_SESSION['INTERNO']=='S') {
       // Verifica se o cliente tem o módulo de colaboradores contratado
-      $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'GP');
+      $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'GP');
       foreach ($RS as $row) $w_pessoal = f($row,'nome');
       
 
       // Verifica se o cliente tem o módulo de viagens
-      $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'PD');
+      $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'PD');
       foreach ($RS as $row) $w_viagem = f($row,'nome');
 
       // Verifica se há algum indicador com aferição
-      $RS_Indicador = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'TIPOINDIC');
+      $RS_Indicador = new db_getIndicador; $RS_Indicador = $RS_Indicador->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'TIPOINDIC');
       $RS_Indicador = SortArray($RS_Indicador,'nome','asc');
       if (count($RS_Indicador)>0) $w_indicador='S'; else $w_indicador='N';
       
       // Verifica se o usuário tem acesso ao módulo de telefonia
-      //$RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
+      //$RS = new db_getPersonData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
       //if (f($RS,'sq_usuario_central')=='') $w_telefonia='';
     }
   }
@@ -143,10 +143,10 @@ function Mesa() {
   // Se o módulo de pessoal estiver habilitado para o cliente, exibe link para acesso à folha de ponto
   if (nvl($w_pessoal,'')!='') {
     // Verifica se o usuário tem contrato de trabalho  
-    $RS1 = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+    $RS1 = new db_getGPContrato; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
     
     // Verifica se é chefe de unidade
-    $RS2 = db_getUserResp::getInstanceOf($dbms,$w_usuario,null);
+    $RS2 = new db_getUserResp; $RS2 = $RS2->getInstanceOf($dbms,$w_usuario,null);
     
     if (count($RS1) || count($RS2)) {
       $w_erro = false;
@@ -173,7 +173,7 @@ function Mesa() {
 
   if ($_SESSION['DBMS']!=5) {
     // Exibe, se necessário, sinalizador para alerta
-    $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
+    $RS = new db_getAlerta; $RS = $RS->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     if (count($RS)>0) {
       $w_sinal = $conImgAlLow;
       $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
@@ -215,7 +215,7 @@ function Mesa() {
     ShowHTML('        </tr>');
 
     if ($_SESSION['DBMS']!=5) {
-      $RS = db_getDeskTop_Recurso::getInstanceOf($dbms, $w_cliente, $w_usuario);
+      $RS = new db_getDeskTop_Recurso; $RS = $RS->getInstanceOf($dbms, $w_cliente, $w_usuario);
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
@@ -233,7 +233,7 @@ function Mesa() {
 
     // Verifica se é necessário colocar as ligações telefônicas
     if ($w_telefonia>'' && $_SESSION['INTERNO']=='S') {
-      $RS = db_getDeskTop_TT::getInstanceOf($dbms, $w_usuario);
+      $RS = new db_getDeskTop_TT; $RS = $RS->getInstanceOf($dbms, $w_usuario);
       foreach ($RS as $row) $w_telefonia_qtd=f($row,'existe');
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       if ($w_telefonia_qtd>0) $w_negrito='<b>'; else $w_negrito='';
@@ -249,7 +249,7 @@ function Mesa() {
     }
 
     // Monta a mesa de trabalho para os outros serviços do SIW
-    $RS = db_getDeskTop::getInstanceOf($dbms, $w_cliente, $w_usuario, $w_ano);
+    $RS = new db_getDeskTop; $RS = $RS->getInstanceOf($dbms, $w_cliente, $w_usuario, $w_ano);
     $w_nm_modulo='-';
     foreach ($RS as $row) {
       if ($w_nm_modulo!=f($row,'nm_modulo')) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -290,17 +290,17 @@ function Mesa() {
     // Exibe o calendário da organização
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
     for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-      $RS_Ano[$i] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
+      $RS_Ano[$i] = new db_getDataEspecial; $RS_Ano[$i] = $RS_Ano[$i]->getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
       $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
     }
 
     // Recupera os dados da unidade de lotação do usuário
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-    $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+    $RS_Unidade = new db_getUorgData; $RS_Unidade = $RS_Unidade->getInstanceOf($dbms,$_SESSION['LOTACAO']);
     
     if (nvl($w_viagem,'')!='') {
-      $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-      $RS_Viagem = db_getSolicList::getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
+      $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+      $RS_Viagem = new db_getSolicList; $RS_Viagem = $RS_Viagem->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
           formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
           null, null, null, null, null, null, null,null, null, null, null, null, null, null, $w_usuario);
       $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
@@ -330,7 +330,7 @@ function Mesa() {
     }
 
     if (nvl($w_pessoal,'')!='') {
-      $RS_Afast = db_getAfastamento::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
+      $RS_Afast = new db_getAfastamento; $RS_Afast = $RS_Afast->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
       $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc'); 
       // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
       foreach($RS_Afast as $row) retornaArrayDias(f($row,'inicio_data'), f($row,'fim_data'), &$w_datas, f($row,'nm_tipo_afastamento'), 'S');
@@ -513,7 +513,7 @@ function Alerta() {
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  $RS_Volta = db_getLinkData::getInstanceOf($dbms,$w_cliente,'MESA');
+  $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms,$w_cliente,'MESA');
   ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
   ShowHTML('<tr><td colspan=2><hr>');
   ShowHTML('</table>');
@@ -521,15 +521,15 @@ function Alerta() {
   ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
   // Recupera solicitações a serem listadas
-    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
+    $RS_Solic = new db_getAlerta; $RS_Solic = $RS_Solic->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
 
     // Recupera pacotes de trabalho a serem listados
-    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
+    $RS_Pacote = new db_getAlerta; $RS_Pacote = $RS_Pacote->getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
 
     // Recupera banco de horas
-    $RS_Horas = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'N', null);
+    $RS_Horas = new db_getAlerta; $RS_Horas = $RS_Horas->getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'N', null);
     
     ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, $RS_Horas));
   } else {

@@ -64,7 +64,7 @@ include_once($w_dir_volta.'funcoes/selecaoMoeda.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -109,7 +109,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Recupera os dados do cliente
-$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 
 $RS_Param = db_getParametro::getInstanceOf($dbms,$w_cliente,'PD',null);
 foreach($RS_Param as $row){ $RS_Param = $row; }
@@ -1614,7 +1614,7 @@ function Grava() {
         }*/ 
       } 
       //($dbms, $operacao, $p_cliente, $p_chave, $p_agencia, $p_inicio, $p_fim, $p_desconto, $p_ativo)
-      dml_putDescontoAgencia::getInstanceOf($dbms,$O,$w_cliente,
+      $SQL = new dml_putDescontoAgencia; $SQL->getInstanceOf($dbms,$O,$w_cliente,
       $_REQUEST['w_chave'],$_REQUEST['w_agencia'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_desconto'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1650,7 +1650,7 @@ function Grava() {
           exit;
         } 
       } 
-      dml_putCiaTrans::getInstanceOf($dbms,$O,$w_cliente,
+      $SQL = new dml_putCiaTrans; $SQL->getInstanceOf($dbms,$O,$w_cliente,
       $_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_aereo'],$_REQUEST['w_rodoviario'],
       $_REQUEST['w_aquaviario'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
@@ -1679,7 +1679,7 @@ function Grava() {
             }
           }
       }
-      dml_putCategoriaDiaria::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite'],$_REQUEST['w_dias_prest_contas']);
+      $SQL = new dml_putCategoriaDiaria; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite'],$_REQUEST['w_dias_prest_contas']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -1718,7 +1718,7 @@ function Grava() {
           }
         } 
       }
-      dml_putMeioTrans::getInstanceOf($dbms, $O, $w_cliente,
+      $SQL = new dml_putMeioTrans; $SQL->getInstanceOf($dbms, $O, $w_cliente,
           $_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_aereo'],$_REQUEST['w_rodoviario'],
           $_REQUEST['w_ferroviario'], $_REQUEST['w_aquaviario'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
@@ -1757,7 +1757,7 @@ function Grava() {
           exit;
         }
       }
-      dml_putValorDiaria::getInstanceOf($dbms, $O, $w_cliente,
+      $SQL = new dml_putValorDiaria; $SQL->getInstanceOf($dbms, $O, $w_cliente,
           $_REQUEST['w_nacional'],$_REQUEST['w_continente'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_cidade'],
           $_REQUEST['w_sq_moeda'], $_REQUEST['w_tipo_diaria'],$_REQUEST['w_categoria'], 
           $_REQUEST['w_valor'], $_REQUEST['w_chave']);
@@ -1773,7 +1773,7 @@ function Grava() {
   } elseif (!(strpos($SG,'PDPARAM')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putPDParametro::getInstanceOf($dbms,$w_cliente,
+      $SQL = new dml_putPDParametro; $SQL->getInstanceOf($dbms,$w_cliente,
           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],
           $_REQUEST['w_sufixo'],$_REQUEST['w_dias_antecedencia'],$_REQUEST['w_dias_anteced_int'],
           $_REQUEST['w_dias_prest_contas'],$_REQUEST['w_limite_unidade'],$_REQUEST['w_cadastrador_geral']);
@@ -1793,7 +1793,7 @@ function Grava() {
       if ($O=='I') {
         $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'VIAGEM',null,null,null);
         if (count($RS)==0) {
-          dml_putPDUnidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
+          $SQL = new dml_putPDUnidade; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
@@ -1804,7 +1804,7 @@ function Grava() {
           ScriptClose();
         } 
       } else {
-        dml_putPDUnidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
+        $SQL = new dml_putPDUnidade; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1821,7 +1821,7 @@ function Grava() {
       if ($O=='I') {
         $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'PDUNIDLIM',null,null,$_REQUEST['w_ano']);
         if (count($RS)==0) {
-          dml_putPDUnidLimite::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
+          $SQL = new dml_putPDUnidLimite; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
@@ -1832,7 +1832,7 @@ function Grava() {
           ScriptClose();
         } 
       } else {
-        dml_putPDUnidLimite::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
+        $SQL = new dml_putPDUnidLimite; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1856,7 +1856,7 @@ function Grava() {
           exit;
         } 
       } 
-      dml_putPDUsuario::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave']);
+      $SQL = new dml_putPDUsuario; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();

@@ -77,10 +77,10 @@ if (count($_POST) > 0) {
   $w_codigo    = utf8_decode(trim(substr($_POST['codigo'],0,20)));
 
   // Abre conexão com o banco de dados
-  $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+  $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 	
   // Verifica se o usuário existe
-  $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);
+  $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);
   $O = 'I';
   if (count($RS)>0) {
     $O                  = 'A';
@@ -98,17 +98,17 @@ if (count($_POST) > 0) {
   }        
 
   // Cria ou atualiza o usuário
-  dml_putSiwUsuario::getInstanceOf($dbms, $O, $w_chave, $w_cliente, $w_nome, $w_nome_resumido, $w_cpf, $w_sexo,
+  $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms, $O, $w_chave, $w_cliente, $w_nome, $w_nome_resumido, $w_cpf, $w_sexo,
         $w_sq_tipo_vinculo, $w_tipo_pessoa, $w_unidade, $w_localizacao, $w_username, $w_mail, $w_gestor_seguranca, 
         $w_gestor_sistema, $w_tipo);
 
   // Recupera a chave do usuário
-  $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);
+  $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);
   $w_chave  = f($RS,'SQ_PESSOA');
   
   // Atualiza a senha e a assinatura eletrônica do usuário
-  db_updatePassword::getInstanceOf($dbms,$w_cliente,$w_chave,$w_senha,'PASSWORD');
-  db_updatePassword::getInstanceOf($dbms,$w_cliente,$w_chave,$w_senha,'SIGNATURE');
+  $sql = new db_updatePassword; $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_senha,'PASSWORD');
+  $sql = new db_updatePassword; $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_senha,'SIGNATURE');
         
   //Autentica o usuário, recupera variáveis de sessão e grava log de acesso
   $auth = Valida();
@@ -117,14 +117,14 @@ if (count($_POST) > 0) {
   } else {
     
     // Configura variáveis de uso global
-	  $SG         = 'PEPROCAD';
-	  $P1         = 5; // Recupera qualquer programa, independentemente da fase ou de estar cancelado
+	$SG         = 'PEPROCAD';
+	$P1         = 5; // Recupera qualquer programa, independentemente da fase ou de estar cancelado
     $w_usuario  = RetornaUsuario();
-	  $w_menu     = RetornaMenu($w_cliente,$SG);
-	  $w_ano      = RetornaAno();
+	$w_menu     = RetornaMenu($w_cliente,$SG);
+	$w_ano      = RetornaAno();
 	  
     // Retorna os dados do menu
-	  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+	$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 	  
     $w_erro     = '';
     // Testa os dados recebidos
@@ -136,7 +136,7 @@ if (count($_POST) > 0) {
       $response = '501'.$crlf.substr($w_erro,2);
     } else {
       // Recupera os trâmites do serviço de programas estratégicos
-			$RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null, null,null);
+			$sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
 			$RS = SortArray($RS,'ordem','asc');
 			$w_fase = '';
 			foreach($RS as $row) {
@@ -146,7 +146,7 @@ if (count($_POST) > 0) {
 			$w_fase = substr($w_fase,1);
 			
       // Verifica se o programa existe
-      $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$w_usuario,'PEPROCAD',$P1,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,'PEPROCAD',$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -171,7 +171,7 @@ if (count($_POST) > 0) {
         if ($w_cont > 1) $p_programa = '';
         
         $SG = 'RELPJPROG';
-        $RS1 = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
         $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_programa='.$p_programa.'&p_legenda=S&p_projeto=S&p_resumo=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla')));
       }
       

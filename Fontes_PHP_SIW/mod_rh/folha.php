@@ -59,7 +59,7 @@ include_once('validacolaborador.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao();}
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -100,7 +100,7 @@ $w_usuario = RetornaUsuario();
 $w_menu = RetornaMenu($w_cliente, $SG);
 
 // Verifica se o cliente tem o módulo de viagens
-$RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'PD');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'PD');
 $w_mod_pd = 'N';
 foreach ($RS as $row)
   $w_mod_pd = 'S';
@@ -232,7 +232,7 @@ function Inicial() {
   }
 
   if ($w_mod_pd=='S') {
-    $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
+    $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
     $RS_Viagem = db_getSolicList::getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
                     formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);
@@ -1388,7 +1388,7 @@ function Visual() {
   }
 
   if ($w_mod_pd=='S') {
-    $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
+    $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
     $RS_Viagem = db_getSolicList::getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
                     formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);
@@ -1963,17 +1963,17 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_mes = $_REQUEST['w_mes'];
         $w_mes = substr($w_mes, 3, 4) . substr($w_mes, 0, 2);
-        dml_putGpPontoMensal::getInstanceOf($dbms, 'E', $_REQUEST['w_contrato'], $w_mes, null, null, null, null, null);
+        $SQL = new dml_putGpPontoMensal; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_contrato'], $w_mes, null, null, null, null, null);
         for ($i = 1; $i < count($_REQUEST['w_trabalhadas']); $i++) {
           if (Nvl($_REQUEST['w_entrada1'][$i], '')!='' || Nvl($_REQUEST['w_entrada2'][$i], '')!='') {
             $w_dia = substr((100 + $i), 1, 2) . '/' . $_REQUEST['w_mes'];
-            dml_putGpPontoDiario::getInstanceOf($dbms, 'I', $_REQUEST['w_contrato'], $w_dia,
+            $SQL = new dml_putGpPontoDiario; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_contrato'], $w_dia,
                             $_REQUEST['w_entrada1'][$i], $_REQUEST['w_saida1'][$i],
                             $_REQUEST['w_entrada2'][$i], $_REQUEST['w_saida2'][$i],
                             $_REQUEST['w_trabalhadas'][$i], $_REQUEST['w_saldo_dia'][$i]);
           }
         }
-        dml_putGpPontoMensal::getInstanceOf($dbms, 'I', $_REQUEST['w_contrato'],
+        $SQL = new dml_putGpPontoMensal; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_contrato'],
                         $w_mes, Nvl($_REQUEST['w_total'], '00:00'),
                         Nvl($_REQUEST['w_extras'], '00:00'),
                         Nvl($_REQUEST['w_atrasos'], '00:00'),
@@ -2001,10 +2001,10 @@ function Grava() {
           if (Nvl($_REQUEST['w_chave'][$i], '')!='') {
             if ($_REQUEST['w_contrato'][$_REQUEST['w_chave'][$i]]=='S') {
               // Aprova a folha de ponto mensal
-              dml_putGpPontoMensal::getInstanceOf($dbms, 'T', $_REQUEST['w_chave'][$i], $w_mes, null, null, null, null, $w_usuario);
+              $SQL = new dml_putGpPontoMensal; $SQL->getInstanceOf($dbms, 'T', $_REQUEST['w_chave'][$i], $w_mes, null, null, null, null, $w_usuario);
             } else {
               // Remove aprovação da folha de ponto mensal
-              dml_putGpPontoMensal::getInstanceOf($dbms, 'D', $_REQUEST['w_chave'][$i], $w_mes, null, null, null, null, $w_usuario);
+              $SQL = new dml_putGpPontoMensal; $SQL->getInstanceOf($dbms, 'D', $_REQUEST['w_chave'][$i], $w_mes, null, null, null, null, $w_usuario);
             }
           }
         }

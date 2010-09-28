@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoIndice.php');
 // =========================================================================
 // Montagem da seleção de tipos de índice
 // -------------------------------------------------------------------------
 function selecaoTipoIndice($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTipoIndice::getInstanceOf($dbms,null);
+  $sql = new db_getTipoIndice; $RS = $sql->getInstanceOf($dbms,null);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'')
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

@@ -45,7 +45,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   $l_html.=chr(13). '</script>';
   
   // Anotações
-  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,1,'LISTA');
+  $SQL = new db_getSolicLog; $RS_Log = $SQL->getInstanceOf($dbms,$l_chave,null,1,'LISTA');
   $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
   if (count($RS_Log)>0) {
     $l_html.=chr(13).'      <tr id="anotacoes"><td colspan="2"><br><span id="colxanot"></span><font size="2"><b>ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -87,7 +87,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   } 
 
   // Versões
-  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,2,'LISTA');
+  $SQL = new db_getSolicLog; $RS_Log = $SQL->getInstanceOf($dbms,$l_chave,null,2,'LISTA');
   $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
   if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr id="versoes"><td colspan="2"><br><span id="colxver"></span><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -116,7 +116,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   }
 
   // Encaminhamentos
-  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,0,'LISTA');
+  $SQL = new db_getSolicLog; $RS_Log = $SQL->getInstanceOf($dbms,$l_chave,null,0,'LISTA');
   $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
   $l_html.=chr(13).'      <tr id="encaminhamentos"><td colspan="2"><br><span id="colxenc"></span><font size="2"><b>ENCAMINHAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
@@ -140,7 +140,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
         if ($l_tramite_ativo=='S') {
           // Recupera os responsáveis pelo tramite
           include_once($w_dir_volta.'classes/sp/db_getTramiteResp.php');
-          $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
+          $SQL = new db_getTramiteResp; $RS2 = $SQL->getInstanceOf($dbms,$l_chave,null,null);
           $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
           $l_html .= chr(13).'        <td colspan=4>Responsável(is) pelo trâmite: <b>';
           if (count($RS2)>0) {

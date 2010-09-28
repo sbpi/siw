@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoPostoList.php');
 // =========================================================================
 // Montagem da seleção dos tipos de postos
 // -------------------------------------------------------------------------
 function selecaoTipoPosto($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,null,null);
+  $sql = new db_getTipoPostoList; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
   //if (nvl($restricao,'')>'') { $RS->Filter=$restricao; }
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><b>'.$label.'</b><br>');

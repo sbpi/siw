@@ -64,7 +64,7 @@ include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 //include_once($w_dir_volta.'classes/sp/dml_putMail.php');
 
 // Abre conexão como banco de dados
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 Principal();
 
@@ -89,7 +89,7 @@ function Principal() {
 
   if (trim(upper($w_opcao))=='GERA') {
     // Recupera solicitações a serem listadas
-    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'S', null);
+    $SQL = new db_getAlerta; $RS_Solic = $SQL->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'S', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
     $i = 0;
     foreach ($RS_Solic as $row) {
@@ -101,7 +101,7 @@ function Principal() {
     }
   
     // Recupera pacotes de trabalho a serem listados
-    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'S', null);
+    $SQL = new db_getAlerta; $RS_Pacote = $SQL->getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'S', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
     $i = 0;
     foreach ($RS_Pacote as $row) {
@@ -113,7 +113,7 @@ function Principal() {
     }
     
     // Recupera banco de horas
-    $RS_Horas = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'S', null);
+    $SQL = new db_getAlerta; $RS_Horas = $SQL->getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'S', null);
     $RS_Horas = SortArray($RS_Horas, 'cliente', 'asc', 'usuario', 'asc');
     $i = 0;
     foreach ($RS_Horas as $row) {

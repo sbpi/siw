@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getArquivo.php');
 // -------------------------------------------------------------------------
 function selecaoArquivo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getArquivo::getInstanceOf($dbms,$cliente,null,null,$chaveAux,null,null,null);
+  $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$cliente,null,null,$chaveAux,null,null,null);
   $RS = SortArray($RS,'nm_arquivo','asc');
   if (Nvl($hint,'')>'')
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

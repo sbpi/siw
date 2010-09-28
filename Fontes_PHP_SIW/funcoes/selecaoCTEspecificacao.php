@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getCTEspecificacao.php');
 include_once($w_dir_volta.'classes/sp/db_getEspecOrdem.php');
 // =========================================================================
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getEspecOrdem.php');
 // -------------------------------------------------------------------------
 function selecaoCTEspecificacao($label,$accesskey,$hint,$chave,$pai,$sq_ctcc,$ano,$campo,$ultimo_nivel,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$chave,null,$ano,'S',$ultimo_nivel,$sq_ctcc,$restricao);
+  $sql = new db_getCTEspecificacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,$chave,null,$ano,'S',$ultimo_nivel,$sq_ctcc,$restricao);
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

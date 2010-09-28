@@ -18,7 +18,7 @@ class dml_putProjetoAnalise {
                    'p_analise3'                  =>array($p_analise3,                            B_VARCHAR,         2000),
                    'p_analise4'                  =>array($p_analise4,                            B_VARCHAR,         2000),
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

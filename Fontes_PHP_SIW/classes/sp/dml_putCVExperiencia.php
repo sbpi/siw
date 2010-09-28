@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -29,7 +29,7 @@ class dml_putCVExperiencia {
                    'p_ultimo_salario'            =>array(toNumber(tvl($p_ultimo_salario)),                 B_NUMERIC,      12,2),
                    'p_atividades'                =>array(tvl($p_atividades),                               B_VARCHAR,      4000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

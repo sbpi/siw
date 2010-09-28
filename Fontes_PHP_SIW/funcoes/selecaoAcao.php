@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getAcao_IS.php');
 // =========================================================================
 // Montagem da seleção de ações cadastradas
 // -------------------------------------------------------------------------
 function selecaoAcao($label,$accesskey,$hint,$l_cliente,$l_ano,$l_programa,$l_acao,$l_subacao,$l_unidade,$campo,$restricao,$atributo,$chave) {
   extract($GLOBALS);
-  $RS = db_getAcao_IS::getInstanceOf($dbms,null,null,null,$l_ano,$l_cliente,$restricao,null);
+  $sql = new db_getAcao_IS; $RS = $sql->getInstanceOf($dbms,null,null,null,$l_ano,$l_cliente,$restricao,null);
   $RS = SortArray($RS,'titulo','asc');
   if (!isset($hint))
     ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

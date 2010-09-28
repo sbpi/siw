@@ -1,4 +1,4 @@
-<? 
+<?php 
 // =========================================================================
 // Rotina de validação das solicitações de recursos logísticos
 // -------------------------------------------------------------------------
@@ -19,7 +19,7 @@ function ValidaGeral($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite)
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$p_sg1);
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$p_sg1);
   //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento.
@@ -29,12 +29,12 @@ function ValidaGeral($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite)
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
   // Verifica se o cliente tem o módulo financeiro contratado
-  $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$p_cliente,null,'FN');
+  $l_rs_modulo = new db_getSiwCliModLis; $l_rs_modulo = $l_rs_modulo->getInstanceOf($dbms,$p_cliente,null,'FN');
   if (count($l_rs_modulo)<=0) $l_financeiro='S'; else $l_financeiro='N';
   $l_erro='';
   $l_tipo='';
   // Recupera o trâmite atual da solicitação
-  $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
 
   $l_erro=$l_tipo.$l_erro;

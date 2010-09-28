@@ -75,7 +75,7 @@ include_once('visualGR.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -121,7 +121,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,'PADCAD');
 $w_ano      = RetornaAno();
 
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 
 $RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'PA',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
@@ -480,7 +480,7 @@ function Alterar() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -579,7 +579,7 @@ function Alterar() {
     ShowHTML('    <tr><td colspan=5 align="center"><hr>');
     ShowHTML('      <tr><td align="center" colspan="5">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -1881,7 +1881,7 @@ function Grava() {
       }
       
       // Grava as alterações
-      dml_putDocumentoGeral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_copia,$_REQUEST['w_menu'],
+      $SQL = new dml_putDocumentoGeral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_copia,$_REQUEST['w_menu'],
           nvl($_REQUEST['w_sq_unidade'],$_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'],$_SESSION['LOTACAO']),
           nvl($_REQUEST['w_pessoa_origem'],$_SESSION['SQ_PESSOA']),$_SESSION['SQ_PESSOA'],$_REQUEST['w_solic_pai'],
           $_REQUEST['w_codigo_interno'],nvl($_REQUEST['w_tipo'],$_REQUEST['w_processo']),$_REQUEST['w_circular'],
@@ -1893,7 +1893,7 @@ function Grava() {
 
       ScriptOpen('JavaScript');
       // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-      $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
+      $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } else {
@@ -1905,7 +1905,7 @@ function Grava() {
   } elseif ($SG=='PADAUTUA') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putDocumentoAutua::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_unidade_autua'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao']);
+      $SQL = new dml_putDocumentoAutua; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_unidade_autua'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Autuação realizada com sucesso!\\nImprima a etiqueta na próxima tela.\');');
@@ -1921,7 +1921,7 @@ function Grava() {
   } elseif ($SG=='PADANEXA') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putDocumentoAnexa::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
+      $SQL = new dml_putDocumentoAnexa; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Anexação realizada com sucesso!\');');
@@ -1937,7 +1937,7 @@ function Grava() {
   } elseif ($SG=='PADJUNTA') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putDocumentoJunta::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
+      $SQL = new dml_putDocumentoJunta; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Apensação realizada com sucesso!\');');
@@ -1955,7 +1955,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
-          dml_putDocumentoDesm::getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA']);
+          $SQL = new dml_putDocumentoDesm; $SQL->getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA']);
         } 
       }
 
@@ -1975,7 +1975,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
-          dml_putDocumentoArqSet::getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA'],$_REQUEST['w_observacao']);
+          $SQL = new dml_putDocumentoArqSet; $SQL->getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA'],$_REQUEST['w_observacao']);
         } 
       }
 
@@ -1997,7 +1997,7 @@ function Grava() {
         // Se arquivamento
         for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
           if (Nvl($_POST['w_chave'][$i],'')>'') {
-            dml_putDocumentoArqCen::getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA'],$_REQUEST['w_local']);  
+            $SQL = new dml_putDocumentoArqCen; $SQL->getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA'],$_REQUEST['w_local']);  
           } 
         }
         ScriptOpen('JavaScript');
@@ -2008,7 +2008,7 @@ function Grava() {
         // Se devolução para arquivo setorial
         for ($i=0; $i<=count($_POST['w_chave']); $i++) {
           if (Nvl($_POST['w_chave'][$i],'')>'') {
-            dml_putCaixaDevolucao::getInstanceOf($dbms,$_POST['w_chave'][$i],$w_usuario,$_REQUEST['w_observacao']);
+            $SQL = new dml_putCaixaDevolucao; $SQL->getInstanceOf($dbms,$_POST['w_chave'][$i],$w_usuario,$_REQUEST['w_observacao']);
           } 
         }
         ScriptOpen('JavaScript');

@@ -41,7 +41,7 @@ include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -96,7 +96,7 @@ $w_menu=$P2;
 $w_ano=RetornaAno();
 // Recupera a configuração do serviço
 // Recupera a configuração do serviço
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 Main();
 FechaSessao($dbms);
 exit;
@@ -115,7 +115,7 @@ function Gerencial() {
       $w_linha++;
       $RS = db_getSolicData_IS::getInstanceOf($dbms,$p_projeto,'ISACGERAL');
       foreach($RS as $row){$RS=$row; break;}
-      $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
+      $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
       if (Nvl(f($RS,'cd_acao'),'')>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Ação <td><font size=1>[<b><A class="HL" HREF="'.$w_dir.'acao.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS2,'sigla').'" title="Exibe as informações da ação.">'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').' ('.f($RS,'ds_unidade').')</a></b>]';
       else                             $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Ação <td><font size=1>[<b><A class="HL" HREF="'.$w_dir.'acao.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS2,'sigla').'" title="Exibe as informações da ação.">'.f($RS,'titulo').'</a></b>]';
     } 
@@ -319,7 +319,7 @@ function Gerencial() {
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
+        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {

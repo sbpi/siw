@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -17,7 +17,7 @@ class dml_putIsUnidadeLimite_IS {
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,         4),
                    'p_limite'                    =>array(toNumber(tvl($p_limite)),                         B_NUMERIC,      18,2)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

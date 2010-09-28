@@ -1,12 +1,12 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getOpcaoEstrat_IS.php');
 // =========================================================================
 // Montagem da seleção das opções estratégicas
 // -------------------------------------------------------------------------
 function selecaoOpcaoEstrat($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  if($restricao=='ATIVO') $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,null,null,'S');
-  else                    $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,null,null,null);
+  if($restricao=='ATIVO') { $sql = new db_getOpcaoEstrat_IS; $RS = $sql->getInstanceOf($dbms,null,null,'S'); }
+  else                    { $sql = new db_getOpcaoEstrat_IS; $RS = $sql->getInstanceOf($dbms,null,null,null); }
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

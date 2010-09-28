@@ -45,7 +45,7 @@ $w_dir = 'cl_ibict/';
 //if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -86,7 +86,7 @@ function Benef() {
   if (($w_troca>'') && ($w_cpf>'')) {
     // Se for recarga da página
     $w_Disabled = true;
-    $RS = db_getUsuarioTemp::getInstanceOf($dbms,$w_cliente,$w_cpf,null);
+    $sql = new db_getUsuarioTemp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_cpf,null);
     foreach($RS as $row){$RS=$row; break;}
     if (count($RS)>0) {
       ScriptOpen('JavaScript');
@@ -349,7 +349,7 @@ function Grava() {
   BodyOpen('onLoad=this.focus();');
   // Verifica se a Assinatura Eletrônica é válida
   if ($O !=='') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
-    dml_putUsuarioTemp::getInstanceOf($dbms,$O,
+    $SQL = new dml_putUsuarioTemp; $SQL->getInstanceOf($dbms,$O,
          $_REQUEST['w_cliente'],$_REQUEST['w_cpf'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
          $_REQUEST['w_sexo'],$_REQUEST['w_email'],$_REQUEST['w_vinculo'],$_REQUEST['w_unidade'],
          $_REQUEST['w_sala'],$_REQUEST['w_ramal']);

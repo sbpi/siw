@@ -43,7 +43,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     
     // Verifica o segmento do cliente    
-    $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+    $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente); 
     $w_segmento = f($RS1,'segmento');
     if ($w_mod_pa=='S' && nvl(f($RS,'processo'),'')!='') {
       if ((!($l_P1==4 || $l_tipo=='WORD')) && nvl(f($RS,'protocolo_siw'),'')!='') {
@@ -249,7 +249,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   }
     
   // Pagamentos vinculados
-  $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNDFUNDO');
+  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'FNDFUNDO');
   $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
          null,null,null,null,null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,$v_chave,null,null,null);

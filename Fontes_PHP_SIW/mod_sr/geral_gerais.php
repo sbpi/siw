@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina dos dados gerais para solicitações comuns
 // -------------------------------------------------------------------------
@@ -6,11 +6,11 @@
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
-  $RS = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+  $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
   $w_nm_unidade = f($RS,'nome');
   $w_cidade     = f($RS,'sq_cidade');
 
-  $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_menu,null,null,null,null,null,'SERVICO');
+  $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_menu,null,null,null,null,null,'SERVICO');
   if (count($RS)) $w_exibe_recurso = true; else $w_exibe_recurso = false;
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -37,9 +37,9 @@
     if ((strpos('AEV',$O)!==false) || $w_copia>'') {
       // Recupera os dados da solicitação
       if ($w_copia>'') {
-        $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG); 
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG); 
       } else { 
-        $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
       }
       if (count($RS)>0) {
         $w_chave_pai        = f($RS,'sq_solic_pai');
@@ -67,7 +67,7 @@
             break;
         } 
         if ($w_exibe_recurso) {
-          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+          $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
           foreach ($RS as $row) {$RS = $row; break;}
           $w_tipo_recurso    = f($RS,'sq_tipo_recurso');
           $w_recurso         = f($RS,'sq_recurso');
@@ -151,7 +151,7 @@
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_cidade=='') {
       // Carrega o valores padrão para cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       $w_cidade   = f($RS,'sq_cidade_padrao');
     } 
     if (!(strpos('EV',$O)===false)) {
@@ -201,7 +201,7 @@
       selecaoTipoRecurso_PE('T<U>i</U>po do recurso:','I',null,$w_tipo_recurso,f($RS_Menu,'sq_menu'),'w_tipo_recurso','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recurso\'; document.Form.submit();"');
       selecaoRecurso('<U>R</U>ecurso:','R',null,$w_recurso,nvl($w_tipo_recurso,0),f($RS_Menu,'sq_menu'),'w_recurso','VINCULACAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recurso\'; document.Form.submit();"');
       if (nvl($w_recurso,'')!='') {
-        $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_recurso,null,null,null,null,null,null);
+        $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_recurso,null,null,null,null,null,null);
         foreach ($RS as $row) {$RS = $row; break;}
         ShowHTML('      <tr><td colspan=2><b>Descrição do recurso</b>:<br>'.nvl(f($RS,'descricao'),'---'));
       }
@@ -224,7 +224,7 @@
       ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar" onClick="document.Form.w_envio.value=\'N\';">');
       ShowHTML('            <input class="STB" type="submit" name="btEnvio" value="Gravar e Enviar" onClick="document.Form.w_envio.value=\'S\'; confirm(\'Confirma gravação e envio automático da solicitação para a próxima fase?\nSe sim, a assinatura eletrônica deve ser informada.\');">');
     }
-    $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+    $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

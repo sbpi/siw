@@ -21,7 +21,7 @@ class dml_putACParametro {
                    'p_pagamento'                 =>array(tvl($p_pagamento),                                B_INTEGER,         4),
                    'p_condicao'                  =>array(tvl($p_condicao),                                 B_VARCHAR,      4000)   
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

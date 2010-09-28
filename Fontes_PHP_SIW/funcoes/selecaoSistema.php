@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSistema.php');
 // =========================================================================
 // Montagem da seleção de sistema
 // -------------------------------------------------------------------------
 function selecaoSistema($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getSistema::getInstanceOf($dbms,null,$chaveAux);
+  $sql = new db_getSistema; $RS = $sql->getInstanceOf($dbms,null,$chaveAux);
   $RS = SortArray($RS,'nome','asc');;
   if (Nvl($hint,'')=='')
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoMatServ.php');
 // =========================================================================
 // Montagem da seleção de tipos de material ou serviço
 // -------------------------------------------------------------------------
 function selecaoTipoMatServSubord($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTipoMatServ::getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, 'S', null, $restricao);
+  $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, 'S', null, $restricao);
   $RS = SortArray($RS,'nome_completo','asc'); 
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

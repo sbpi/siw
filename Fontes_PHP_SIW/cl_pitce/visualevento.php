@@ -6,7 +6,7 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  $RS1 = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+  $sql = new db_getSolicEV; $RS1 = $sql->getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
       $l_sg,5,null,null,null,null,null,null,null,null,null,null,$l_chave, null, 
       null, null, null, null, null,null, null, null, null, null, null, null, null, null);
   $RS1 = $RS1[0];
@@ -186,7 +186,7 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     if (nvl(f($RS1,'observacao'),'')!='') $l_html.=chr(13).'   <tr valign="top"><td><b>Observações:</b></font></td><td>'.crlf2br(f($RS1,'observacao')).'</font></td></tr>';
   }
   // Arquivos vinculados
-  $RSQuery = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+  $sql = new db_getSolicAnexo; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
   $RSQuery = SortArray($RSQuery,'nome','asc');
   if (count($RSQuery)>0) {
     $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>Arquivos<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -213,7 +213,7 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   if ($O!='V') {
     // Encaminhamentos
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+    $sql = new db_getSolicLog; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
     $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
     $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
     $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
@@ -234,7 +234,7 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
           $l_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
           if ($w_tramite_ativo=='S') {
             // Recupera os responsáveis pelo tramite
-            $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
+            $sql = new db_getTramiteResp; $RS2 = $sql->getInstanceOf($dbms,$l_chave,null,null);
             $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
             $l_html .= chr(13).'        <td colspan=4>Responsáveis pelo trâmite: <b>';
             if (count($RS2)>0) {

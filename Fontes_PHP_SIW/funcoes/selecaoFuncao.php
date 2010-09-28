@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getPrograma_IS.php');
 // =========================================================================
 // Montagem da seleção de ações do PPA(tabela SIGPLAN)
 // -------------------------------------------------------------------------
 function selecaoFuncao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$chave,$chaveaux,$w_cliente,$w_ano,null,null,null);
+  $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,$chave,$chaveaux,$w_cliente,$w_ano,null,null,null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

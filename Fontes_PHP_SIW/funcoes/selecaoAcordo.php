@@ -9,16 +9,16 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   if (strpos('0123456789',substr($restricao,0,1))!==false) {
-    $RS1 = db_getMenuRelac::getInstanceOf($dbms, $restricao, null, null, null, null);
+    $sql = new db_getMenuRelac; $RS1 = $sql->getInstanceOf($dbms, $restricao, null, null, null, null);
     if (count($RS1)>0) {
-      $RS = db_getSolicList::getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,3,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,3,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,
               null,null,null,$l_fase,null,null,null,null,null);
     }
   } else {
-      $RS = db_getSolicList::getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,4,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,4,
             null,null,null,null,null,null,
             null,null,null,null,
             null,null,null,null,null,null,null,

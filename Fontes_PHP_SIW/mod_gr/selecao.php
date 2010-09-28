@@ -42,7 +42,7 @@ include_once($w_dir_volta.'classes/googlemaps/nxgooglemapsapi.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -75,7 +75,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera os dados do cliente
-$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 define(GoogleMapsKey, f($RS_Cliente,'googlemaps_key')); 
 
 Main();
@@ -105,7 +105,7 @@ function indica(){
     $w_icone      = $_REQUEST['w_icone'];
   } elseif ($w_tipo=='PROJETO') {
     // Recupera os dados do endereço para exibição no cabeçalho
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJCAD');
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJCAD');
     $w_latitude   = f($RS,'latitude');
     $w_longitude  = f($RS,'longitude');
     $w_nome       = f($RS,'nm_coordenada');
@@ -121,7 +121,7 @@ function indica(){
     
   } elseif ($w_tipo=='ENDERECO') {
     // Recupera os dados do endereço para exibição no cabeçalho
-    $RS = db_getAddressData::getInstanceOf($dbms,$w_chave);
+    $sql = new db_getAddressData; $RS = $sql->getInstanceOf($dbms,$w_chave);
     $w_latitude   = f($RS,'latitude');
     $w_longitude  = f($RS,'longitude');
     $w_nome       = f($RS,'nm_coordenada');
@@ -137,7 +137,7 @@ function indica(){
     
   } elseif ($w_tipo=='PLANO') {
     // Recupera os dados do plano estratégico para exibição no cabeçalho
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_titulo           = f($RS,'titulo');
     $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
@@ -281,7 +281,7 @@ function Grava() {
   BodyOpen('onLoad="this.focus();"');
   // Verifica se a Assinatura Eletrônica é válida
   if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-    dml_putSiwCoordenada::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_pessoa'],
+    $SQL = new dml_putSiwCoordenada; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_pessoa'],
         $_REQUEST['w_tipo'],$_REQUEST['w_nome'],$_REQUEST['w_latitude'],$_REQUEST['w_longitude'],
         $_REQUEST['w_icone']);
     ScriptOpen('JavaScript');

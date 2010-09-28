@@ -60,7 +60,7 @@ include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -127,7 +127,7 @@ $p_agrega       = upper($_REQUEST['p_agrega']);
 $p_tamanho      = upper($_REQUEST['p_tamanho']);
 
 // Recupera a configuração do serviço
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 
 Main();
 
@@ -397,7 +397,7 @@ function Gerencial() {
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
+        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         if ($_REQUEST['p_atraso']=='') ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
@@ -719,7 +719,7 @@ function Gerencial() {
 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$w_cliente,$p_projeto,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'p_projeto',f($RS,'sigla'),null,null,'<BR />',2);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -954,7 +954,7 @@ function Conciliacao(){
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
+        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         if ($_REQUEST['p_atraso']=='') ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
@@ -1032,7 +1032,7 @@ function Conciliacao(){
 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
-    //$RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+    //$RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
     //SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$w_cliente,$p_projeto,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'p_projeto',f($RS,'sigla'),null,null,'<BR />',2);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');

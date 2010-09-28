@@ -36,7 +36,7 @@ include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -85,7 +85,7 @@ function Inicial() {
     $w_atual      = $_REQUEST['w_atual'];
     $w_arquivo    = $_REQUEST['w_arquivo'];
   } else {
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_chave,$p_chave_aux,1,'LISTA');
+    $SQL = new db_getSolicLog; $RS = $SQL->getInstanceOf($dbms,$p_chave,$p_chave_aux,1,'LISTA');
     foreach($RS as $row) { $RS = $row; break; }
     $w_observacao = f($RS,'despacho');
     $w_atual      = f($RS,'sq_siw_arquivo');
@@ -134,7 +134,7 @@ function Inicial() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
   ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
   ShowHTML('      <tr><td valign="top"><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="STI" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
@@ -232,7 +232,7 @@ function Grava() {
       }
       
       // Grava a anotação
-      dml_putAnotacao::getInstanceOf($dbms, $O, $_REQUEST['p_chave'],$_REQUEST['p_chave_aux'],$w_usuario,
+      $SQL = new dml_putAnotacao; $SQL->getInstanceOf($dbms, $O, $_REQUEST['p_chave'],$_REQUEST['p_chave_aux'],$w_usuario,
           $_REQUEST['w_observacao'],$_REQUEST['w_exclui_arquivo'],$w_file,$w_tamanho,$w_tipo,$w_nome);
     } else {
       ScriptOpen('JavaScript');

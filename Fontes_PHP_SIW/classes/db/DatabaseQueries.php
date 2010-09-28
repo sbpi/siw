@@ -708,7 +708,7 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                 if ($value[1]!=B_CURSOR) { 
                    if (nvl($value[0],'')=='') { $par .= ", null"; }
                    elseif ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
-                   elseif ($value[1]==B_DATE) { $par .= ", '".date('m/d/Y',toDate($value[0]))."'"; }
+                   elseif ($value[1]==B_DATE) { $par .= ", '".date('d/m/Y',toDate($value[0]))."'"; }
                    else { $par .= ", $value[0]"; }
                 } else {
                   $cursor = true;
@@ -778,10 +778,10 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                 if (nvl($this->resultData[$i][$key],'')>'') { 
                   if ($val=='date') {
                     $tmp = $this->resultData[$i][$key];
-                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,5,2),substr($tmp,7,2),substr($tmp,0,4)); 
+                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 
                   } elseif ($val=='timestamp') {
                     $tmp = $this->resultData[$i][$key];
-                    $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,7,2),substr($tmp,0,4)); 
+                    $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 
                   } else {
                     $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
                   }

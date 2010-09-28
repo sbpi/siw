@@ -37,7 +37,7 @@ class dml_putGPParametro {
                    'p_limite_diario_extras'      =>array(tvl($p_limite_diario_extras),                     B_VARCHAR,         5),
                    'p_dias_perda_ferias'         =>array(tvl($p_dias_perda_ferias),                        B_INTEGER,        32)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

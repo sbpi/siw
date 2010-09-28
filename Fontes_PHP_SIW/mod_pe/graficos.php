@@ -42,7 +42,7 @@ include_once($w_dir_volta.'classes/gantt/gantt.class.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -78,7 +78,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -86,13 +86,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -125,7 +125,7 @@ function Hierarquico() {
 function echo_map($l_chave, &$node, $selected) {
   extract($GLOBALS);
   if (nvl($node['chave'],'')!='') {
-    $RS = db_getSolicData::getInstanceOf($dbms,$node['chave'],null);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$node['chave'],null);
     $l_array = explode('|@|', f($RS,'dados_solic'));
     echo "<a style=\"TEXT-DECORATION: none\" HREF=\"#\" onClick=\"window.open('".$conRootSIW.$l_array[10]."&O=L&w_chave=".$node['chave']."&P1=".$l_array[6]."&P2=".$l_array[7]."&P3=".$l_array[8]."&P4=".$l_array[9]."&TP=".$TP."&SG=".$l_array[5]."','Detalhe','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">?</div></a>\n";
   }
@@ -142,22 +142,22 @@ function Gera_Hierarquico($l_gera) {
 
   include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
 
-  $l_xml = '<?xml version="1.0" encoding="iso-8859-1"?>';
+  $l_xml = '<?phpxml version="1.0" encoding="iso-8859-1"?>';
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
   
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   $l_xml .= chr(13).'  <node name="'.base64encodeIdentificada(f($RS,'ac_nome_completo')).'" fitname="1" align="left" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
   $l_xml .= chr(13).base64encodeIdentificada('     Período: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')));
 
   // Cria caixas para os documentos vinculados
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   if (count($RS)>0) {
     foreach ($RS as $row) {
       if (f($row,'qtd')>0 && f($row,'sigla')=='PEPROCAD') {
         //$l_xml .= chr(13).'     <node name="'.(f($row,'nome')).' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
-        $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
         $RS1 = SortArray($RS1,'codigo_interno','asc');
         foreach($RS1 as $row1) {
           if (f($row1,'sq_plano')==f($row,'sq_plano') && f($row1,'sigla')=='PEPROCAD') {
@@ -180,7 +180,7 @@ function Gera_Hierarquico($l_gera) {
               $l_xml .= base64encodeIdentificada('Ini: '.formataDataEdicao(f($row1,'inicio')).chr(10).'Fim: '.formataDataEdicao(f($row1,'fim')));
             }
             // Recupera os documentos vinculados
-            $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','titulo','asc');
             foreach($RS2 as $row2) {
               if (f($row2,'sigla')=='PEPROCAD') {
@@ -206,7 +206,7 @@ function Gera_Hierarquico($l_gera) {
                   $l_xml .= base64encodeIdentificada($v_xml);
   
                   // Recupera os documentos vinculados
-                  $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                  $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
                   $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','titulo','asc');
                   foreach ($RS3 as $row3) {
                     if (f($row3,'sigla')=='PEPROCAD') {
@@ -265,7 +265,7 @@ function Gera_Hierarquico($l_gera) {
 // -------------------------------------------------------------------------
 function Gantt() {
   extract($GLOBALS);
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_cabecalho   = f($RS,'nome_completo');  
 
@@ -393,7 +393,7 @@ function Gera_Gantt() {
   //global definitions to graphic
   // change to you project data/needs
   
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   $definitions['title_string'] = f($row,'nome_completo'); //project title
   $definitions['locale'] = "pt_BR";//change to language you need -> en = english, pt_BR = Brazilian Portuguese etc 
@@ -424,13 +424,13 @@ function Gera_Gantt() {
   // use loops to define these variables with database data
 
   // Recupera as etapas principais
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   $i = 0;
   $j = 0;
   foreach($RS as $row) {
     // Recupera os pacotes de trabalho da etapa
-    $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+    $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
     $RS1 = SortArray($RS1,'codigo_interno','asc');
     if (count($RS1)>0) {
       // you need to set groups to graphic be created
@@ -480,7 +480,7 @@ function Gera_Gantt1() {
   include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
   include_once ($w_dir_volta."classes/jpgraph/jpgraph_gantt.php");
 
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_cabecalho   = f($RS,'nome_completo');  
 
@@ -494,14 +494,14 @@ function Gera_Gantt1() {
   $menorData  = 9999999999;
   $maiorData  = 0;
 
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
 
   // Nível 0
   $i = 0;
   foreach ($RS as $row) {
     // Nível 1
-    $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+    $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
     $RS1 = SortArray($RS1,'ac_titulo','asc');
     if (count($RS1)>0) {
       $w_cor = $conTrBgColor;
@@ -510,7 +510,7 @@ function Gera_Gantt1() {
           if($menorData > nvl(f($row1,'inicio'),f($row1,'fim'))) $menorData = nvl(f($row1,'inicio'),f($row1,'fim'));
           if($maiorData < f($row1,'fim'))    $maiorData = f($row1,'fim');
           // Nível 2
-          $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+          $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
           $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
           if (count($RS2)==0) {
             $array = array($i,
@@ -540,7 +540,7 @@ function Gera_Gantt1() {
               if($menorData > nvl(f($row2,'inicio'),f($row2,'fim'))) $menorData = nvl(f($row2,'inicio'),f($row2,'fim'));
               if($maiorData < f($row2,'fim'))    $maiorData = f($row2,'fim');
               // Nível 3
-              $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+              $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
               $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
               if (count($RS3)==0) {
                 $array = array($i,

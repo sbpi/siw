@@ -16,7 +16,7 @@ class dml_putDocumentoAutua {
                    'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32),
                    'p_descricao'          =>array(tvl($p_descricao),                        B_VARCHAR,      2000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

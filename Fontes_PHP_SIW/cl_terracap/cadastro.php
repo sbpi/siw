@@ -89,7 +89,7 @@ if (count($_POST) > 0) {
   $w_situacao  = utf8_decode(trim(substr($_POST['situacao'],0,1)));
 
   // Abre conexão com o banco de dados
-  $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+  $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 	
   // Autentica o usuário, recupera variáveis de sessão e grava log de acesso
   $auth = Valida();
@@ -105,7 +105,7 @@ if (count($_POST) > 0) {
 	  $w_ano      = RetornaAno();
 
     // Retorna os dados do menu
-	  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+	  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 	  
     $w_erro     = '';
     // Testa os dados recebidos
@@ -132,14 +132,14 @@ if (count($_POST) > 0) {
       $response = '501'.$crlf.substr($w_erro,2);
     } else {
       // Recupera os trâmites do serviço de programas estratégicos
-			$RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null, null,null);
+			$sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
 			$RS = SortArray($RS,'ordem','asc');
 			foreach($RS as $row) {
 			  $tramites[f($row,'sigla')] = f($row,'sq_siw_tramite');
 			}
 
       // Verifica se o programa existe
-      $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -169,7 +169,7 @@ if (count($_POST) > 0) {
         $w_novo_tramite     = $tramites['CI'];
           
         // Recupera o plano estratégico
-        $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+        $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
         foreach ($RS as $row) {
           if (nvl(f($row,'codigo_externo'),'')=='INTEGRACAO') {
             $w_plano = f($row,'chave');
@@ -181,7 +181,7 @@ if (count($_POST) > 0) {
           $response = '501'.$crlf.'Não há plano estratégico configurado para integração com o '.$w_username.'. O código externo do plano deve ser igual a INTEGRACAO.';
         } else {
 	        // Recupera o objetivo estratégico
-	        $RS = db_getObjetivo_PE::getInstanceOf($dbms,$w_plano,null,$w_cliente,null,'INTEGRACAO','S',null);
+	        $sql = new db_getObjetivo_PE; $RS = $sql->getInstanceOf($dbms,$w_plano,null,$w_cliente,null,'INTEGRACAO','S',null);
 	        foreach ($RS as $row) {
 	          $w_objetivo = f($row,'chave');
 	          break;
@@ -190,7 +190,7 @@ if (count($_POST) > 0) {
 	        if (nvl($w_objetivo,'')=='') {
             $response = '501'.$crlf.'Não há objetivo do plano estratégico configurado para integração com o '.$w_username.'. A sigla do objetivo deve ser igual a INTEGRACAO.';
 	        } else {
-	          $RS = db_getHorizonte_PE::getInstanceOf($dbms,null,$w_cliente,null,'S');
+	          $sql = new db_getHorizonte_PE; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,'S');
             $RS = SortArray($RS,'nome','asc');
 	          foreach ($RS as $row) {
 	            $w_horizonte = f($row,'chave');
@@ -200,7 +200,7 @@ if (count($_POST) > 0) {
 	          if (nvl($w_horizonte,'')=='') {
 	            $response = '501'.$crlf.'Não há horizonte temporal cadastrado no '.$conSgSistema.'.';
 	          } else {
-						  $RS = db_getNatureza_PE::getInstanceOf($dbms,null,$w_cliente,null,'S');
+						  $sql = new db_getNatureza_PE; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,'S');
 						  $RS = SortArray($RS,'nome','asc');
 	            foreach ($RS as $row) {
 	              $w_natureza = f($row,'chave');
@@ -227,7 +227,7 @@ if (count($_POST) > 0) {
 				        $w_despacho     = 'Envio automático feito pelo '.$w_username;
 				          
 				        // Atualiza os dados do programa
-				        dml_putProgramaGeral::getInstanceOf($dbms,'I',null,null,$w_menu,
+				        $SQL = new dml_putProgramaGeral; $SQL->getInstanceOf($dbms,'I',null,null,$w_menu,
 				            $w_plano,$w_objetivo,$w_codigo,$w_titulo,$w_sq_unidade,
 				            $w_solicitante,$w_unid_resp,$w_horizonte,$w_natureza,
 				            $w_inicio,$w_fim,$w_parcerias,$w_ln_programa,
@@ -236,16 +236,16 @@ if (count($_POST) > 0) {
 				
 				        if ($w_novo_tramite==$tramites['AT']) {
                   // Envia para execução antes de concluir
-                  dml_putProgramaEnvio::getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$tramites['EE'],'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
+                  $SQL = new dml_putProgramaEnvio; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$tramites['EE'],'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
 				          
                   // Registra os dados da conclusão do programa
-				          dml_putProgramaConc::getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_inicio,$w_fim,'Conclusão automática do programa feita pelo '.$w_username,$w_valor);
+				          $SQL = new dml_putProgramaConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_inicio,$w_fim,'Conclusão automática do programa feita pelo '.$w_username,$w_valor);
 				        } elseif ($w_situacao=='C') {
                   // Envia para execução antes de cancelar
-                  dml_putProgramaEnvio::getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$tramites['EE'],'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
+                  $SQL = new dml_putProgramaEnvio; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$tramites['EE'],'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
 	                
                   // Cancela o programa
-	                dml_putProgramaGeral::getInstanceOf($dbms,'E',$w_chave,null,$w_menu,
+	                $SQL = new dml_putProgramaGeral; $SQL->getInstanceOf($dbms,'E',$w_chave,null,$w_menu,
 	                    $w_plano,$w_objetivo,$w_codigo,$w_titulo,$w_sq_unidade,
 	                    $w_solicitante,$w_unid_resp,$w_horizonte,$w_natureza,
 	                    $w_inicio,$w_fim,$w_parcerias,$w_ln_programa,
@@ -253,7 +253,7 @@ if (count($_POST) > 0) {
 	                    $w_aviso,$w_dias,&$w_chave_nova);
 				        } else {
 				          // Registra a atualização ou envio do programa
-				          dml_putProgramaEnvio::getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_novo_tramite,'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
+				          $SQL = new dml_putProgramaEnvio; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_novo_tramite,'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
 				        }
 			        }
 		        }
@@ -273,7 +273,7 @@ if (count($_POST) > 0) {
           $response = '501'.$crlf.'Há mais de um programa criado pelo '.$w_username.' com o mesmo código';
         } else {
 	        // Recupera os dados do programa
-          $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
           /* Dados recebidos pelo método POST e já configurados
           $w_codigo           = f($RS,'cd_programa');
           $w_titulo           = f($RS,'titulo');
@@ -298,7 +298,7 @@ if (count($_POST) > 0) {
 	        $w_tramite          = f($RS,'sq_siw_tramite');
 	        $w_novo_tramite     = f($RS,'sq_siw_tramite');
 	        
-	        $RS = db_getSolicObjetivo::getInstanceOf($dbms,$w_chave,null,null);
+	        $sql = new db_getSolicObjetivo; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null);
 	        $RS = SortArray($RS,'nome','asc');
 	        $w_objetivo = '';
 	        foreach($RS as $row) { $w_objetivo .= ','.f($row,'sq_peobjetivo'); }
@@ -330,7 +330,7 @@ if (count($_POST) > 0) {
           CriaBaseLine($w_chave,$w_html,f($RS_Menu,'nome'),$w_tramite);
           
           // Atualiza os dados do programa
-          dml_putProgramaGeral::getInstanceOf($dbms,(($w_situacao=='C') ? 'E' : 'A'),$w_chave,null,$w_menu,
+          $SQL = new dml_putProgramaGeral; $SQL->getInstanceOf($dbms,(($w_situacao=='C') ? 'E' : 'A'),$w_chave,null,$w_menu,
               $w_plano,$w_objetivo,$w_codigo,$w_titulo,$w_sq_unidade,
               $w_solicitante,$w_unid_resp,$w_horizonte,$w_natureza,
               $w_inicio,$w_fim,$w_parcerias,$w_ln_programa,
@@ -340,10 +340,10 @@ if (count($_POST) > 0) {
           
           if ($w_novo_tramite==$tramites['AT'] && $w_tramite!=$w_novo_tramite) {
             // Registra os dados da conclusão do programa
-            dml_putProgramaConc::getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_inicio,$w_fim,'Conclusão automática do programa feita pelo '.$w_username,$w_valor);
+            $SQL = new dml_putProgramaConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_inicio,$w_fim,'Conclusão automática do programa feita pelo '.$w_username,$w_valor);
           } elseif ($w_situacao!='C') {
             // Registra a atualização ou envio do programa
-            dml_putProgramaEnvio::getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_novo_tramite,'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
+            $SQL = new dml_putProgramaEnvio; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_novo_tramite,'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
           }
         }
       }

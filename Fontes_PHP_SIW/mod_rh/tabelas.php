@@ -57,7 +57,7 @@ include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par          = upper($_REQUEST['par']);
@@ -1450,7 +1450,7 @@ function Grava() {
             }
           }
           if($erro===false){
-            dml_putGPFeriasDias::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_dias_ferias'],$_REQUEST['w_ativo']);
+            $SQL = new dml_putGPFeriasDias; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_dias_ferias'],$_REQUEST['w_ativo']);
           }else{
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'O intervalo informado coincide com outro intervalo cadastrado!\');');
@@ -1458,7 +1458,7 @@ function Grava() {
             RetornaFormulario('w_faixa_inicio');
           }
         } elseif ($O=='E') {
-          dml_putGPFeriasDias::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_dias_ferias'],$_REQUEST['w_ativo']); 
+          $SQL = new dml_putGPFeriasDias; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_dias_ferias'],$_REQUEST['w_ativo']); 
         }
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1490,7 +1490,7 @@ function Grava() {
             ScriptClose();     
           } 
         } 
-        dml_putGPModalidade::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
+        $SQL = new dml_putGPModalidade; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
         $_REQUEST['w_sigla'],$_REQUEST['w_ferias'],$_REQUEST['w_username'],$_REQUEST['w_passagem'],$_REQUEST['w_diaria'],$_REQUEST['w_horas_extras'],
         $_REQUEST['w_ativo']);
                                 
@@ -1525,7 +1525,7 @@ function Grava() {
           } 
         } 
         
-        dml_putGPTipoAfast::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_limite_dias'],
+        $SQL = new dml_putGPTipoAfast; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_limite_dias'],
           $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'], $_REQUEST['w_abate_banco_horas'], 
           $_REQUEST['w_abate_ferias'], $_REQUEST['w_falta'], $_REQUEST['w_ativo'],
           explodearray($_REQUEST['w_sq_modalidade']));
@@ -1636,7 +1636,7 @@ function Grava() {
           ShowHTML('  alert(\'Arquivos de calendário gerados com sucesso!\');');
           ScriptClose();
         } else {
-          dml_putDataEspecial::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_sq_pais'],$_REQUEST['w_co_uf'],$_REQUEST['w_sq_cidade'],
+          $SQL = new dml_putDataEspecial; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_sq_pais'],$_REQUEST['w_co_uf'],$_REQUEST['w_sq_cidade'],
           $_REQUEST['w_tipo'],$_REQUEST['w_data_especial'],$_REQUEST['w_nome'],$_REQUEST['w_abrangencia'],$_REQUEST['w_expediente'],
           $_REQUEST['w_ativo']);
         } 
@@ -1653,7 +1653,7 @@ function Grava() {
     case 'GPPARAM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putGPParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_unidade_gestao'],$_REQUEST['w_admissao_texto'],$_REQUEST['w_admissao_destino'],$_REQUEST['w_rescisao_texto'],
+        $SQL = new dml_putGPParametro; $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_unidade_gestao'],$_REQUEST['w_admissao_texto'],$_REQUEST['w_admissao_destino'],$_REQUEST['w_rescisao_texto'],
         $_REQUEST['w_rescisao_destino'],$_REQUEST['w_feriado_legenda'],$_REQUEST['w_feriado_nome'],$_REQUEST['w_ferias_legenda'],$_REQUEST['w_ferias_nome'],
         $_REQUEST['w_viagem_legenda'],$_REQUEST['w_viagem_nome'],$_REQUEST['w_dias_atualizacao_cv'],$_REQUEST['w_aviso_atualizacao_cv'],$_REQUEST['w_tipo_tolerancia'],
         $_REQUEST['w_minutos_tolerancia'],$_REQUEST['w_vinculacao_contrato'],$_REQUEST['w_limite_diario_extras'],$_REQUEST['w_dias_perda_ferias']);
@@ -1687,7 +1687,7 @@ function Grava() {
             ScriptClose(); 
           } 
         } 
-        dml_putCargo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_sq_tipo'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_nome'],
+        $SQL = new dml_putCargo; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_sq_tipo'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_nome'],
         $_REQUEST['w_descricao'],$_REQUEST['w_atividades'],$_REQUEST['w_competencias'],$_REQUEST['w_salario_piso'],$_REQUEST['w_salario_teto'],
         $_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');

@@ -39,10 +39,10 @@ if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $w_
   $w_id         = str_replace('\\','/',$w_id);
 } else {
   // Configura objetos de BD
-  $dbms = abreSessao::getInstanceOf($w_dbms);
+  $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($w_dbms);
   
   // Tenta recuperar os dados do arquivo selecionado
-  $RS = db_getSiwArquivo::getInstanceOf($dbms,$w_cliente,$w_id,null);
+  $SQL = new db_getSiwArquivo; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_id,null);
   
   if (count($RS)==0) {
     $w_erro=2; // Arquivo não encontrado

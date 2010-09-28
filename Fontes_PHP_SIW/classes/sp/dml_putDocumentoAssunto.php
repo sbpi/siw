@@ -17,7 +17,7 @@ class dml_putDocumentoAssunto {
                    'p_assunto'         =>array($p_assunto,                    B_INTEGER,        32),
                    'p_principal'       =>array(tvl($p_principal),             B_VARCHAR,         1)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

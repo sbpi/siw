@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getUnidadeMedida.php');
 // =========================================================================
 // Montagem da seleção de unidades de medida
 // -------------------------------------------------------------------------
 function selecaoUnidadeMedida($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getUnidadeMedida::getInstanceOf($dbms,$w_cliente,null,null,null,'S', $restricao);
+  $sql = new db_getUnidadeMedida; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,'S', $restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

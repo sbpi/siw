@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -47,7 +47,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -102,14 +102,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -497,7 +497,7 @@ function Grava() {
                 }  
                 if ($w_diretorio=='/') $w_diretorio = null;
                   //echo '['.$operacao.'] '.'['.$w_chave.'] '.'['.$_REQUEST['w_sq_sistema'].'] '.'['.$file['nome'].'] '.'['.$w_descricao.'] '.'['.$w_tipo.'] '.'['.$w_diretorio.'] ';
-                  dml_putArquivo::getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],
+                  $SQL = new dml_putArquivo; $SQL->getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],
                     $file['nome'],$w_descricao,$w_tipo,$w_diretorio);
                 }
   
@@ -571,7 +571,7 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
     $buffer = str_replace('\'.$w_cliente.\'','1',fgets($w_origem));
     
     // Trata início e fim de código PHP
-    if (false!==strpos($buffer,'<?')) $php = true;
+    if (false!==strpos($buffer,'<?php')) $php = true;
     elseif (false!==strpos($buffer,'?>')) $php = false;
     
     // Analisa o código se for PHP

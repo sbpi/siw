@@ -50,7 +50,7 @@ include_once('funcoes/selecaoBanco.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -130,7 +130,7 @@ function CentroCusto() {
       if ($w_heranca>'' || $O!='I') {
         // Se for herança, atribui a chave da opção selecionada para w_sq_cc
         if ($w_heranca>'') $w_sq_cc = $w_heranca;
-        $RS = db_getCcData::getInstanceOf($dbms,$w_sq_cc);
+        $SQL = new db_getCcData; $RS = $SQL->getInstanceOf($dbms,$w_sq_cc);
         $w_sq_cc_pai    = f($RS,'sq_cc_pai');
         $w_nome         = f($RS,'nome');
         $w_sigla        = f($RS,'sigla');
@@ -203,7 +203,7 @@ function CentroCusto() {
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_CC"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getCcTree::getInstanceOf($dbms,$w_cliente,'IS NULL');
+    $SQL = new db_getCcTree; $RS = $SQL->getInstanceOf($dbms,$w_cliente,'IS NULL');
     $w_contOut = 0;
     foreach($RS as $row) {
       $w_titulo  = f($row,'sigla');
@@ -221,7 +221,7 @@ function CentroCusto() {
         } 
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getCcTree::getInstanceOf($dbms,$w_cliente,f($row,'sq_cc'));
+        $SQL = new db_getCcTree; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,f($row,'sq_cc'));
         foreach($RS1 as $row1) {
           $w_titulo = $w_titulo.' - '.f($row1,'sigla');
           if (f($row1,'Filho')>0) {
@@ -238,7 +238,7 @@ function CentroCusto() {
             }
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getCcTree::getInstanceOf($dbms,$w_cliente,f($row1,'sq_cc'));
+            $SQL = new db_getCcTree; $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,f($row1,'sq_cc'));
             foreach($RS2 as $row2) {
               $w_titulo = $w_titulo.' - '.f($row2,'sigla');
               if (f($row2,'Filho')>0) {
@@ -256,7 +256,7 @@ function CentroCusto() {
 
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getCcTree::getInstanceOf($dbms,$w_cliente,f($row2,'sq_cc'));
+                $SQL = new db_getCcTree; $RS3 = $SQL->getInstanceOf($dbms,$w_cliente,f($row2,'sq_cc'));
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'sigla');
                   ShowHTML('<A HREF=#"'.f($row3,'sq_cc').'"></A>');
@@ -433,7 +433,7 @@ function Agencia() {
   global $w_Disabled;
   $p_sq_banco = upper($_REQUEST['p_sq_banco']);
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O!='I' && $p_sq_banco=='') $O='P';
@@ -446,10 +446,10 @@ function Agencia() {
     $w_padrao       = $_REQUEST['w_padrao'];
     $w_nome         = $_REQUEST['w_nome'];
   } elseif ($O=='L') {
-    $RS = db_getBankHouseList::getInstanceOf($dbms,$p_sq_banco,$p_nome,$p_ordena,null);
+    $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$p_sq_banco,$p_nome,$p_ordena,null);
   } elseif ($O=='A' || $O=='E') {
     $w_sq_agencia   = $_REQUEST['w_sq_agencia'];
-    $RS = db_getBankHouseData::getInstanceOf($dbms,$w_sq_agencia);
+    $SQL = new db_getBankHouseData; $RS = $SQL->getInstanceOf($dbms,$w_sq_agencia);
     $w_sq_banco     = f($RS,'sq_banco');
     $w_codigo       = f($RS,'codigo');
     $w_ativo        = f($RS,'ativo');
@@ -656,7 +656,7 @@ function Agencia() {
 function Banco() {
   extract($GLOBALS);
   global $w_Disabled;
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   $w_sq_banco      = $_REQUEST['w_sq_banco'];
   $p_ordena        = $_REQUEST['p_ordena'];
@@ -670,7 +670,7 @@ function Banco() {
     $w_ativo         = $_REQUEST['w_ativo'];
     $w_exige         = $_REQUEST['w_exige'];    
   } elseif ($O=='L') {
-    $RS = db_getBankList::getInstanceOf($dbms,$p_codigo,$p_nome,$p_ativo);
+    $SQL = new db_getBankList; $RS = $SQL->getInstanceOf($dbms,$p_codigo,$p_nome,$p_ativo);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -679,7 +679,7 @@ function Banco() {
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_banco = $_REQUEST['w_sq_banco'];
-    $RS = db_getBankData::getInstanceOf($dbms,$w_sq_banco);
+    $SQL = new db_getBankData; $RS = $SQL->getInstanceOf($dbms,$w_sq_banco);
     $w_nome         = f($RS,'nome');
     $w_padrao       = f($RS,'padrao');
     $w_codigo       = f($RS,'codigo');
@@ -891,7 +891,7 @@ function Moeda() {
     $w_exclusao_ptax  = $_REQUEST['w_exclusao_ptax'];
     $w_ativo          = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getMoeda::getInstanceOf($dbms,null,null,null,null,null);
+    $SQL = new db_getMoeda; $RS = $SQL->getInstanceOf($dbms,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -899,7 +899,7 @@ function Moeda() {
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) || $w_troca>'') {
-    $RS = db_getMoeda::getInstanceOf($dbms,$w_chave,null,null,null,null);
+    $SQL = new db_getMoeda; $RS = $SQL->getInstanceOf($dbms,$w_chave,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_tipo          = f($RS,'sq_tipo_posto');
     $w_nome          = f($RS,'nome');
@@ -1064,7 +1064,7 @@ function Grava() {
     case 'CT_CC':
     // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CtCC::getInstanceOf($dbms,$O,
+        $SQL = new dml_CtCC; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_cc'],$_REQUEST['w_sq_cc_pai'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_descricao'],$_REQUEST['w_sigla'],$_REQUEST['w_receita'],$_REQUEST['w_regular'],
             $_REQUEST['w_ativo']);
@@ -1089,7 +1089,7 @@ function Grava() {
         if  ($_REQUEST['w_codigo']!= nvl($_REQUEST['w_codigo_atual'],'')) {
           if ($O=='I' || $O =='A') {
             // Verifica se já existe o código do banco informado
-            $RS = db_getBankList::getInstanceOf($dbms,$_REQUEST['w_codigo'],null,null);
+            $SQL = new db_getBankList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_codigo'],null,null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'O código já existe!\');');
@@ -1099,7 +1099,7 @@ function Grava() {
             }
           }
         }  
-        dml_CoBanco::getInstanceOf($dbms,$O,
+        $SQL = new dml_CoBanco; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],$_REQUEST['w_codigo'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_exige']);
         ScriptOpen('JavaScript');
@@ -1119,7 +1119,7 @@ function Grava() {
       $p_ordena     = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoAgencia::getInstanceOf($dbms,$O,
+        $SQL = new dml_CoAgencia; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],
             $_REQUEST['w_codigo'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1135,7 +1135,7 @@ function Grava() {
     case 'COMOEDA':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoMoeda::getInstanceOf($dbms,$O,
+        $SQL = new dml_CoMoeda; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_simbolo'],$_REQUEST['w_tipo'],
             $_REQUEST['w_exclusao_ptax'],$_REQUEST['w_ativo']);

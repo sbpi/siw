@@ -7,7 +7,7 @@ include_once($w_dir_volta.'classes/sp/db_getCadastrador_CL.php');
 function retornaCadastrador_CL($p_menu,$p_usuario) {
   extract($GLOBALS);
 
-  $l_acesso = db_getCadastrador_CL::getInstanceOf($dbms,$p_menu, $p_usuario);
+  $sql = new db_getCadastrador_CL; $l_acesso = $sql->getInstanceOf($dbms,$p_menu, $p_usuario);
   return $l_acesso;
 } 
 ?>

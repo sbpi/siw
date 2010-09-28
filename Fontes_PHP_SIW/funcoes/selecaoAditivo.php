@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getAcordoAditivo.php');
 // =========================================================================
 // Montagem da seleção dos aditivos do contrato
 // -------------------------------------------------------------------------
 function selecaoAditivo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$chaveAux,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getAcordoAditivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$chaveAux,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'fim','desc','nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

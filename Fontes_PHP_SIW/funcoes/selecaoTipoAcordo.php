@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getAgreeType.php');
 function SelecaoTipoAcordo($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getAgreeType::getInstanceOf($dbms,null,$chaveAux,$chaveAux2,null,null,$restricao);
+  $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,null,$chaveAux,$chaveAux2,null,null,$restricao);
   $RS = SortArray($RS,'nm_tipo','asc');
   ShowHTML('          <td colspan="'.$colspan.'"'.((!isset($hint)) ? '' : 'TITLE="'.$hint.'"').'><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

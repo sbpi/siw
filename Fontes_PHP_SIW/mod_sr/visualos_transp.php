@@ -1,4 +1,4 @@
-<? 
+<?php
 // =========================================================================
 // Rotina de emissão da ordem de serviço
 // -------------------------------------------------------------------------
@@ -6,7 +6,7 @@ function VisualOS($l_chave,$l_sg) {
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  $sql = new db_getSolicData; $RS1 = $sql->getInstanceof($dbms,$l_chave,$l_sg);
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.f($RS1,'nome').' - '.f($RS1,'sq_siw_solicitacao').'</b></font></div></td></tr>';

@@ -19,7 +19,7 @@ class dml_putCategoriaDiaria {
                    'p_tramite'                   =>array(tvl($p_tramite),                                  B_VARCHAR,         1),
                    'p_prest_contas'              =>array(tvl($p_prest_contas),                             B_INTEGER,        32)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

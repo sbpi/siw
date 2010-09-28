@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -60,7 +60,7 @@ include_once('visualtarefa.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
@@ -102,13 +102,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -131,7 +131,7 @@ function Gerencial() {
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'GERENCIAL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
   } 
@@ -358,7 +358,7 @@ function Gerencial() {
           }
 
           // Recupera as tarefas
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISTCAD');
           $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                     null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                     null,null,null,null,null,null,null,null,null,nvl(f($row,'sq_acao'),0),null,
@@ -413,7 +413,7 @@ function Gerencial() {
           } 
 
           // Recupera os projetos
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PJCAD');
           $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'PJCAD',4,
                   null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                   null,null,null,null,null,null,null,nvl(f($row,'sq_acao'),0), null);
@@ -595,7 +595,7 @@ function Rel_PPA() {
   $p_ordena             = $_REQUEST['p_ordena'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
     if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
@@ -844,7 +844,7 @@ function Rel_PPA() {
           ShowHTML('</tr>');
           if ($p_metas>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
             $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
@@ -882,7 +882,7 @@ function Rel_PPA() {
           } 
           if ($p_tarefas>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
             $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
@@ -893,7 +893,7 @@ function Rel_PPA() {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$w_col_word.' align="center"><b>Não foram encontrados registros(tarefas).</b></td></tr>');
               $w_linha += 1;
             } else {       
-              $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
+              $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISTCAD');
               $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,f($RS2,'sq_siw_solicitacao'),null,
@@ -951,7 +951,7 @@ function Rel_PPA() {
           } 
           if ($p_sq_unidade_resp>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
             $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
@@ -1095,7 +1095,7 @@ function Rel_Projeto(){
   $p_siw_solic      = $_REQUEST['p_siw_solic'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem     
     $RS = db_getProjeto_IS::getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,$p_selecao_mp,$p_selecao_se,null,$p_siw_solic);
@@ -1265,7 +1265,7 @@ function Rel_Projeto(){
           if ($p_metas>'') {
             ShowHTML('   <tr><td colspan='.$w_col_word.'>');
             ShowHTML('     <table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
             $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                       null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1303,7 +1303,7 @@ function Rel_Projeto(){
           if ($p_tarefas>'') {
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
             $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                       null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1314,7 +1314,7 @@ function Rel_Projeto(){
               $w_linha=$w_linha+1;
             } else {
               foreach($RS2 as $row2){$RS2=$row2; break;}
-              $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
+              $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISTCAD');
               $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,f($RS2,'sq_siw_solicitacao'),null,
@@ -1378,7 +1378,7 @@ function Rel_Projeto(){
           if ($p_sq_unidade_resp>'') {
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
-            $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+            $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
             $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                       null,null,null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1499,7 +1499,7 @@ function Rel_Programa() {
   }  
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
     $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
@@ -1662,7 +1662,7 @@ function Rel_Programa() {
         ShowHTML('</tr>');
         if ($p_indicador>'') {
           ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISPCAD');
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISPCAD');
           $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1700,7 +1700,7 @@ function Rel_Programa() {
         } 
         if ($p_sq_unidade_resp>'') {
           ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
-          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISPCAD');
+          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISPCAD');
           $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
@@ -1810,7 +1810,7 @@ function Rel_Sintetico_PR() {
   $w_cont = 0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
     $RS = db_getProjeto_IS::getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,$p_selecao_mp,$p_selecao_se,null,$p_siw_solic);
@@ -1930,7 +1930,7 @@ function Rel_Sintetico_PR() {
           ShowHTML('        </tr>');
         }
         //Montagem da lista das ações
-        $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
         $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                 null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                 null,null,null,null,null,null,null,null,null,null,null,null,
@@ -2128,7 +2128,7 @@ function Rel_Sintetico_PPA() {
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
     else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
@@ -2280,7 +2280,7 @@ function Rel_Sintetico_PPA() {
           ShowHTML('        </tr>');
         } 
         //Montagem da lista das ações
-        $RS1 = db_getLinkData::getInstanceOF($dbms,$w_cliente,'ISACAD');
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOF($dbms,$w_cliente,'ISACAD');
         $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                   null,null,null,null,$p_atraso,null,null,null,null,null,null,null,
                   null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
@@ -2488,7 +2488,7 @@ function Rel_Sintetico_Prog() {
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
     $RS = SortArray($RS,'ds_programa','asc');
@@ -2608,7 +2608,7 @@ function Rel_Sintetico_Prog() {
           ShowHTML('        </tr>');
         } 
         //Montagem da lista de programa
-        $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISPCAD');
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISPCAD');
         $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                 null,null,null,null,$p_atraso,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,
@@ -2747,7 +2747,7 @@ function Rel_Gerencial_Acao() {
   $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
@@ -2831,7 +2831,7 @@ function Rel_Gerencial_Prog() {
   $w_tipo           = upper(trim($_REQUEST['w_tipo']));
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
@@ -2916,7 +2916,7 @@ function Rel_Gerencial_Tarefa() {
   $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
@@ -3012,7 +3012,7 @@ function Rel_Metas() {
   $w_conc_igual_sisplam=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
@@ -3516,10 +3516,10 @@ function Rel_Det_Tarefa() {
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
-  $RS1 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
+  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
   $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
           null,null,null,null,null,null,
           $p_sq_unidade,null,null,null,
@@ -3738,10 +3738,10 @@ function Rel_Det_Acao() {
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   }
-  $RS1 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISACAD');
+  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISACAD');
   $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISACAD',4,
           null,null,null,null,null,null,
           $p_sq_unidade,null,null,null,
@@ -3977,10 +3977,10 @@ function Rel_Det_Prog() {
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
-  $RS1 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISPCAD');
+  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISPCAD');
   $RS4 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISPCAD',4,
             null,null,null,null,null,null,
             $p_sq_unidade,null,null,null,
@@ -4215,10 +4215,10 @@ function Rel_Limite() {
   $w_tot_limite     = 0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
-  $RS1 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
+  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
   $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
           null,null,null,null,null,null,
           $p_sq_unidade,null,null,null,
@@ -4386,7 +4386,7 @@ function Rel_Limite() {
       ShowHTML('</table>');
       if (upper($w_det_tarefa)==upper('sim')) {
         ShowHTML('<br><br><br><tr><td colspan="2"><div align="center"><font size="3"><b>DETALHAMENTO DAS TAREFAS</b></font></div></td></tr>');
-        $RS1 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
+        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
         $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
                 null,null,null,null,null,null,
                 $p_sq_unidade,null,null,null,

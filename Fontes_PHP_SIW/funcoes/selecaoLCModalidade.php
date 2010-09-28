@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getLCModalidade.php');
 // =========================================================================
 // Montagem da seleção de modalidades de contrato
 // -------------------------------------------------------------------------
 function selecaoLCModalidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getLCModalidade::getInstanceOf($dbms,null,$w_cliente,null,null,'S',$restricao);
+  $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,'S',$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

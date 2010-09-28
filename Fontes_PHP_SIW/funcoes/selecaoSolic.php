@@ -17,7 +17,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
     selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
   } elseif ($chaveAux=='COMPRA_FUNDO') {
-    $l_RS = db_getSolicCL::getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',3,
+    $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',3,
         null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,
         null, null, null, null, null, null, null,null, null, null, null);
     $l_RS = SortArray($l_RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
@@ -29,7 +29,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     } 
     ShowHTML('          </select>');  
   } elseif(substr($restricao,0,2)=='IS') {
-    $l_RS = db_getAcao_IS::getInstanceOf($dbms,null,null,null,$_SESSION['ANO'],$w_cliente,'ACAO',null);
+    $sql = new db_getAcao_IS; $l_RS = $sql->getInstanceOf($dbms,null,null,null,$_SESSION['ANO'],$w_cliente,'ACAO',null);
     $l_RS = SortArray($l_RS,'titulo','asc');
     ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
@@ -48,7 +48,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     } 
     ShowHTML('          </select>');  
   } else {
-    $RS1 = db_getMenuRelac::getInstanceOf($dbms,$chaveAux2,null,null,null,null);
+    $sql = new db_getMenuRelac; $RS1 = $sql->getInstanceOf($dbms,$chaveAux2,null,null,null,null);
     $l_fase = '';
     $l_cont = 0;
     foreach($RS1 as $l_row) {
@@ -61,7 +61,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
       }
     }
     if (count($RS1)>0) {
-      $l_RS = db_getSolicList::getInstanceOf($dbms,$chaveAux,$w_usuario,$chaveAux2,null,
+      $sql = new db_getSolicList; $l_RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$chaveAux2,null,
                 null,null,null,null,null,null,
                 null,null,null,null,
                 null,null,null,null,null,null,null,
@@ -69,7 +69,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
       
       ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       $l_cont = 0;
-      $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);
+      $l_RS1 = new db_getMenuData; $l_RS1 = $l_RS1->getInstanceOf($dbms,$chaveAux);
       $l_sigla = f($l_RS1,'sigla');
       foreach ($l_RS as $l_row1) {
         if ($l_sigla==='GCCCAD') {

@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -65,7 +65,7 @@ include_once($w_dir_volta.'funcoes/selecaoMoeda.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -110,7 +110,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Recupera os dados do cliente
-$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
 
 Main();
 
@@ -926,7 +926,7 @@ function Grava() {
           }
         } 
       }
-      dml_putMtSituacao::getInstanceOf($dbms, $O, $w_cliente,
+      $SQL = new dml_putMtSituacao; $SQL->getInstanceOf($dbms, $O, $w_cliente,
         $_REQUEST['w_chave'],
         $_REQUEST['w_nome'],
         $_REQUEST['w_sigla'],
@@ -965,7 +965,7 @@ function Grava() {
             }
           }
       }
-      dml_putTipoMovimentacao::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_entrada'],
+      $SQL = new dml_putTipoMovimentacao; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_entrada'],
       $_REQUEST['w_saida'],$_REQUEST['w_orcamentario'],$_REQUEST['w_consumo'],$_REQUEST['w_permanente'],$_REQUEST['w_inativa_bem'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -992,7 +992,7 @@ function Grava() {
             exit;
           }
       }
-      dml_putAlmoxarifado::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_localizacao'],$_REQUEST['w_chave'],
+      $SQL = new dml_putAlmoxarifado; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_localizacao'],$_REQUEST['w_chave'],
       $_REQUEST['w_nome'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1020,7 +1020,7 @@ function Grava() {
               exit;
             } 
           } 
-          dml_putAlmoxarifadoLocal::getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $_REQUEST['w_nome'], $_REQUEST['w_chave_aux'], $_REQUEST['w_chave_pai'], $_REQUEST['w_ativo']);
+          $SQL = new dml_putAlmoxarifadoLocal; $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $_REQUEST['w_nome'], $_REQUEST['w_chave_aux'], $_REQUEST['w_chave_pai'], $_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();

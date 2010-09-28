@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putSiwCliConf
@@ -57,7 +57,7 @@ class dml_putSiwCliConf {
                    'p_sl_write_er'          =>array($p_sl_write_er,         B_NUMERIC,     32),
                    'p_sl_res_er'            =>array($p_sl_res_er,           B_NUMERIC,     32)
      );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      
      error_reporting(0); 

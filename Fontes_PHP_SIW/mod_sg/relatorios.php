@@ -48,7 +48,7 @@ include_once($w_dir_volta.'visualalerta.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
@@ -82,7 +82,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -90,13 +90,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -150,17 +150,17 @@ function Rel_Permissao() {
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('   <tr><td colspan="2"><table border=0>');
       if ($p_endereco) {
-        $RS_Endereco = db_getAddressList::getInstanceOf($dbms, $w_cliente, $p_endereco, 'FISICO', null);
+        $sql = new db_getAddressList; $RS_Endereco = $sql->getInstanceOf($dbms, $w_cliente, $p_endereco, 'FISICO', null);
         foreach ($RS_Endereco as $row) {$RS_Endereco=$row; break;}
         ShowHTML('     <tr valign="top"><td>ENDEREÇO:<td><b>'.f($RS_Endereco,'endereco').'</td></tr>');
       }
       if ($p_localizacao) {
-        $RS_Localizacao = db_getLocalList::getInstanceOf($dbms, $w_cliente, $p_localizacao, null);
+        $sql = new db_getLocalList; $RS_Localizacao = $sql->getInstanceOf($dbms, $w_cliente, $p_localizacao, null);
         foreach ($RS_Localizacao as $row) {$RS_Localizacao=$row; break;}
         ShowHTML('     <tr valign="top"><td>LOCALIZAÇÃO:<td><b>'.f($RS_Localizacao,'localizacao').'</td></tr>');
       }
       if ($p_lotacao) {
-        $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$p_lotacao);;
+        $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$p_lotacao);;
         ShowHTML('     <tr valign="top"><td>LOTAÇÃO:<td><b>'.f($RS_Unidade,'nome').'</td></tr>');
       }
       if($p_nome){
@@ -186,7 +186,7 @@ function Rel_Permissao() {
       ShowHTML('     </table>');
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     }
-    $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_endereco,$p_gestor_seguranca,$p_gestor_sistema,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo,$p_contratado,$p_visao_especial,$p_dirigente,null,null);
+    $sql = new db_getUserList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_endereco,$p_gestor_seguranca,$p_gestor_sistema,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo,$p_contratado,$p_visao_especial,$p_dirigente,null,null);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1),'nome_resumido_ind','asc');
     } else {
@@ -289,7 +289,7 @@ function TelaUsuarioRel() {
   global $w_Disabled, $w_TP;
   $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
   $w_tipo      = $_REQUEST['w_tipo'];
-  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -397,7 +397,7 @@ function TelaUsuarioRel() {
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>DADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null,null, null, null, null, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null,null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row1) {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>Vínculo: </b></td>');
@@ -485,7 +485,7 @@ function TelaUsuarioRel() {
   ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_sistema'),'---').'</td></tr>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('          <td><b>Módulos: </b></td>');
-  $RS1 = DB_GetUserModule::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
+  $sql = new DB_GetUserModule; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
   $RS1 = SortArray($RS1,'modulo','asc');
   ShowHTML('      <tr><td colspan="2">');
   ShowHTML('        <table border="1" bordercolor="#00000">');
@@ -508,7 +508,7 @@ function TelaUsuarioRel() {
   
   //Unidades
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>UNIDADES QUE GERENCIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
-  $RS1 = db_getUserResp::getInstanceOf($dbms,$w_sq_pessoa,null);
+  $sql = new db_getUserResp; $RS1 = $sql->getInstanceOf($dbms,$w_sq_pessoa,null);
   $RS1 = SortArray($RS1,'nome','asc');
   ShowHTML('      <tr><td colspan="2">');
   ShowHTML('        <table border="1" bordercolor="#00000">');
@@ -535,7 +535,7 @@ function TelaUsuarioRel() {
   ShowHTML('         </table></td></tr>');
   //Visao
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>VISÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
-  $RS1 = DB_GetUserVision::getInstanceOf($dbms, null, $w_sq_pessoa);
+  $sql = new DB_GetUserVision; $RS1 = $sql->getInstanceOf($dbms, null, $w_sq_pessoa);
   $RS1 = SortArray($RS1,'nm_servico','asc','nm_modulo','asc','nm_cc','asc');
   ShowHTML('      <tr><td colspan="2">');
   ShowHTML('        <table border="1" bordercolor="#00000">');
@@ -560,7 +560,7 @@ function TelaUsuarioRel() {
   ShowHTML('         </table></td></tr>');    
   //Tramites
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>TRÂMITES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
-  $RS1 = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,null,$w_sq_pessoa,'ACESSO',null,null,null);
+  $sql = new db_getTramiteUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_pessoa,'ACESSO',null,null,null);
   $RS1 = SortArray($RS1,'nm_modulo','asc','nm_servico','asc','nm_tramite','asc');
   ShowHTML('      <tr><td colspan="2">');
   ShowHTML('        <table border="1" bordercolor="#00000">');
@@ -599,7 +599,7 @@ function TelaUsuarioRel() {
   ShowHTML('      <td><table border=0 width="100%">');
   ShowHTML('      <tr><td><br><font size="2"><b>OPÇÕES DO MENU<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
   $w_imagemPadrao='images/Folder/SheetLittle.gif';
-  $RS = db_getLinkDataUser::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
+  $RS = new db_getLinkDataUser; $RS = $RS->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
   ShowHTML('      <tr><td align="center" colspan="2">');
   ShowHTML('        <table width=100%>');
   if (count($RS)==0) {
@@ -609,17 +609,17 @@ function TelaUsuarioRel() {
       if (f($row,'Filho')>0) {
         ShowHTML('      <tr valign="top">');
         ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
-        $RS1 = db_getLinkDataUser::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
+        $RS1 = new db_getLinkDataUser; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
         foreach ($RS1 as $row1) {
           if (f($row1,'Filho')>0) {
             ShowHTML('      <tr valign="top">');
             ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
-            $RS2 = db_getLinkDataUser::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
+            $RS2 = new db_getLinkDataUser; $RS2 = $RS2->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
             foreach ($RS2 as $row2) {
               if (f($row2,'Filho')>0) {
                 ShowHTML('      <tr valign="top">');
                 ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
-                $RS3 = db_getLinkDataUser::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
+                $RS3 = new db_getLinkDataUser; $RS3 = $RS3->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
                 foreach ($RS3 as $row3) {
                   ShowHTML('      <tr valign="top">');
                   ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
@@ -665,7 +665,7 @@ function TelaUsuarioRel() {
   ShowHTML('      <tr><td colspan=2><br><font size="2"><b>DOCUMENTOS NÃO CONCLUÍDOS ACESSÍVEIS AO USUÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
 
   // Recupera solicitações a serem listadas
-  $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
+  $sql = new db_getAlerta; $RS_Solic = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
   $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
   
   ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, null, null));

@@ -72,7 +72,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoArquivoTab.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -120,7 +120,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera os dados da opção selecionada
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 Main();
 FechaSessao($dbms);
 exit;
@@ -148,7 +148,7 @@ function Inicial() {
     $w_ativo             = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_indicador','asc','sigla','asc','nome','asc');
@@ -157,7 +157,7 @@ function Inicial() {
     }
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_nome              = f($RS,'nome');
     $w_sigla             = f($RS,'sigla');
@@ -344,31 +344,31 @@ function VisualAfericao() {
 
   if (nvl($p_tipo_indicador,'nulo')!=nulo && nvl($p_indicador,'nulo')=='nulo') {
     // Se há apenas um indicador com aferição, seleciona automaticamente.
-    $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$usuario,null,null,null,null,$p_tipo_indicador,'S',null,null,null,null,null,null,null,null,null,'VS'.$p_volta);
+    $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$usuario,null,null,null,null,$p_tipo_indicador,'S',null,null,null,null,null,null,null,null,null,'VS'.$p_volta);
     if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_indicador = f($RS,'chave'); $w_troca = 'p_base'; }
   }
   if (nvl($p_indicador,'nulo')!='nulo') {
     // Se há apenas uma base geográfica do indicador com aferição, seleciona automaticamente.
-    $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$usuario,$p_indicador,null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'VISUALBASE');
+    $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$usuario,$p_indicador,null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'VISUALBASE');
     if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_base = f($RS,'chave'); $w_troca = ''; }
   }
   if (nvl($p_base,'nulo')!='nulo') {
     // Se não for base organizacional.
     if ($p_base!=5) {
       // Se há apenas um país na base geográfica do indicador com aferição, seleciona automaticamente.
-      $RS = db_getCountryList::getInstanceOf($dbms, 'INDICADOR', $w_cliente, 'S', null);
+      $sql = new db_getCountryList; $RS = $sql->getInstanceOf($dbms, 'INDICADOR', $w_cliente, 'S', null);
       if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_pais = f($RS,'sq_pais'); $w_troca = ''; }
   
       // Trata a recuperação automática de região, estado e cidade.
       if ($p_base>1 && nvl($p_pais,'')!='') {
-        $RS = db_getRegionList::getInstanceOf($dbms, $p_pais, 'INDICADOR', $w_cliente);
+        $sql = new db_getRegionList; $RS = $sql->getInstanceOf($dbms, $p_pais, 'INDICADOR', $w_cliente);
         if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_regiao = f($RS,'sq_regiao'); $w_troca = ''; }
       }
       if ($p_base>2 && (nvl($p_pais,'')!='' || nvl($p_regiao,'')!='')) {
-        $RS = db_getStateList::getInstanceOf($dbms, $p_pais, $p_regiao, 'S', $w_cliente);
+        $sql = new db_getStateList; $RS = $sql->getInstanceOf($dbms, $p_pais, $p_regiao, 'S', $w_cliente);
         if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_uf = f($RS,'co_uf'); $w_troca = ''; }
         if ($p_base==4) {
-          $RS = db_getCityList::getInstanceOf($dbms, $p_pais, $p_uf, $w_cliente, 'INDICADOR');
+          $sql = new db_getCityList; $RS = $sql->getInstanceOf($dbms, $p_pais, $p_uf, $w_cliente, 'INDICADOR');
           if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_cidade = f($RS,'sq_cidade'); $w_troca = ''; }
         }
       }
@@ -378,12 +378,12 @@ function VisualAfericao() {
   // Recupera os nomes 
   if ($p_pesquisa!='LIVRE') {
     if (nvl($p_tipo_indicador,'nulo')!=nulo) {
-      $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,$p_tipo_indicador,null,null,'REGISTROS');
+      $sql = new db_getTipoIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_tipo_indicador,null,null,'REGISTROS');
       foreach ($RS as $row) {$RS = $row; break;}
       $w_nm_tipo_indicador = f($RS,'nome');
     }
     if (nvl($p_indicador,'nulo')!=nulo) {
-      $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$p_indicador,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$p_indicador,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) { $RS = $row; break; }
       $w_nm_indicador = f($RS,'nome');
     }
@@ -409,7 +409,7 @@ function VisualAfericao() {
   ShowHTML('<table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
   ShowHTML('  <td><font size=2><b>Consulta a indicadores</b></font>');
   if ($p_volta=='MESA') {
-    $RS_Volta = db_getLinkData::getInstanceOf($dbms,$w_cliente,$p_volta);
+    $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms,$w_cliente,$p_volta);
     ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
   } 
   ShowHTML('</table>');
@@ -551,7 +551,7 @@ function Aferidor() {
   $w_chave_aux       = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados do indicador para exibição no cabeçalho
-  $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_nome             = f($RS,'nome');
   $w_sigla            = f($RS,'sigla');
@@ -564,7 +564,7 @@ function Aferidor() {
     $w_pessoa       = $_REQUEST['w_pessoa'];
     $w_prazo        = $_REQUEST['w_prazo'];
   } elseif ($O=='L') {
-    $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'REGISTROS');
+    $sql = new db_getIndicador_Aferidor; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','fim','desc');
@@ -572,7 +572,7 @@ function Aferidor() {
       $RS = SortArray($RS,'nm_pessoa','asc','inicio','desc','fim','desc'); 
     }
   } elseif (strpos('CAEV',$O)!==false) {
-    $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,null,'REGISTROS');
+    $sql = new db_getIndicador_Aferidor; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_inicio       = formataDataEdicao(f($RS,'inicio'));
     $w_pessoa       = f($RS,'sq_pessoa');
@@ -752,13 +752,13 @@ function AferidorPerm() {
   $w_chave_aux       = $_REQUEST['w_chave_aux'];
 
   // Verifica se o usuário é gestor do sistema ou do módulo
-  $RS = db_GetUserData::getInstanceOf($dbms, $w_cliente, $_SESSION['USERNAME']);
+  $sql = new db_GetUserData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $_SESSION['USERNAME']);
   $w_gestor_sistema = f($RS,'gestor_sistema');
   $w_gestor_modulo  = retornaModMaster($w_cliente, $w_usuario, $w_menu);
   
   // Retorna as permissões se o usuário não é gestor
   //if ($w_gestor_sistema=='N' && $w_gestor_modulo='N') {
-    $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,null,null,$w_usuario,null,null,'REGISTROS');
+    $sql = new db_getIndicador_Aferidor; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_usuario,null,null,'REGISTROS');
     $RS = SortArray($RS,'nm_indicador','asc','inicio','desc','fim','desc'); 
   //} 
   
@@ -849,7 +849,7 @@ function Solic() {
   
   if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
@@ -861,7 +861,7 @@ function Solic() {
   if (nvl($w_plano,'')=='' && $O=='A') $O = 'L';
   
   if ($O=='L') {
-    $RS = db_getSolicIndicador::getInstanceOf($dbms,$w_chave,null,null,$w_plano,null);
+    $sql = new db_getSolicIndicador; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,$w_plano,null);
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
   } 
   Cabecalho();
@@ -1002,7 +1002,7 @@ function Solic() {
       ShowHTML('<INPUT type="hidden" name="w_operacao" value="">');
       ShowHTML(MontaFiltro('POST'));
       // Recupera os registros
-      $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,$p_nome,null,$p_tipo,'S',null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,$p_nome,null,$p_tipo,'S',null,null,null,null,null,null,null,null,null,null);
       $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
       ShowHTML('<tr><td colspan=3><br>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1058,7 +1058,7 @@ function CronMeta() {
 
   if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
@@ -1067,10 +1067,10 @@ function CronMeta() {
     $w_label          = 'Plano';
   } else {
     // Recupera os dados do projeto a que a meta está ligada
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave_pai);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai);
     $l_array = explode('|@|', f($RS,'dados_solic'));
 
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,$l_array[5]);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$l_array[5]);
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
     $w_projeto        = nvl(f($RS,'codigo_interno'),$w_chave_pai).' - '.f($RS,'titulo');
@@ -1078,7 +1078,7 @@ function CronMeta() {
     $w_label          = 'Projeto';
   }
   // Recupera os dados da meta
-  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_pai,$w_chave,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_pai,$w_chave,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_inicio_meta = formataDataEdicao(f($RS,'inicio'));
   $w_fim_meta    = formataDataEdicao(f($RS,'fim'));
@@ -1095,11 +1095,11 @@ function CronMeta() {
     $w_valor_real     = $_REQUEST['w_valor_real'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+    $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
     $RS = SortArray($RS,'inicio', 'asc', 'fim', 'asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+    $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
     foreach ($RS as $row) {
       $w_inicio         = FormataDataEdicao(f($row,'inicio'),1);
       $w_fim            = FormataDataEdicao(f($row,'fim'),1);
@@ -1294,7 +1294,7 @@ function TelaIndicador() {
   BodyOpen(null);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Recupera os dados do indicador para exibição no cabeçalho
-  $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,$p_sigla,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,$p_sigla,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   ShowHTML('<table border=1 width="100%" bgcolor="#FAEBD7">');
   ShowHTML('  <tr valign="top">');
@@ -1346,7 +1346,7 @@ function Documentos() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   
   // Recupera os dados da meta
-  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_inicio_meta = formataDataEdicao(f($RS,'inicio'));
   $w_fim_meta    = formataDataEdicao(f($RS,'fim'));
@@ -1365,11 +1365,11 @@ function Documentos() {
     $w_caminho   = $_REQUEST['w_caminho'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
-    $RS = db_getMetaAnexo::getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
+    $sql = new db_getMetaAnexo; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
     $RS = SortArray($RS,'ordem','asc','nome','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado 
-    $RS = db_getMetaAnexo::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,$w_cliente);
+    $sql = new db_getMetaAnexo; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,$w_cliente);
     foreach ($RS as $row) {
       $w_tipo      = f($row,'sq_tipo_arquivo');
       $w_nome      = f($row,'nome');
@@ -1475,7 +1475,7 @@ function Documentos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" colspan="2" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  
@@ -1535,7 +1535,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Verifica se já existe indicador com o nome informado
-          $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe indicador com este nome!\');');
@@ -1545,7 +1545,7 @@ function Grava() {
           } 
 
           // Verifica se já existe indicador com o nome informado
-          $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,$_REQUEST['w_sigla'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,$_REQUEST['w_sigla'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe indicador com esta sigla!\');');
@@ -1554,7 +1554,7 @@ function Grava() {
             exit();
           } 
         }
-        dml_putIndicador::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_sigla'],
+        $SQL = new dml_putIndicador; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_sigla'],
               $_REQUEST['w_tipo_indicador'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_descricao'],
               $_REQUEST['w_forma_afericao'],$_REQUEST['w_fonte_comprovacao'],$_REQUEST['w_ciclo_afericao'],
               $_REQUEST['w_vincula_meta'],$_REQUEST['w_exibe_mesa'],$_REQUEST['w_ativo']);
@@ -1573,7 +1573,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Verifica se já existe indicador com o nome informado
-          $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_pessoa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
+          $sql = new db_getIndicador_Aferidor; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_pessoa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
           if (count($RS)>0) {
             foreach ($RS as $row) {$RS = $row; break; }
             ScriptOpen('JavaScript');
@@ -1583,7 +1583,7 @@ function Grava() {
             exit();
           } 
         }
-        dml_putIndicador_Aferidor::getInstanceOf($dbms,$O,$w_usuario,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),
+        $SQL = new dml_putIndicador_Aferidor; $SQL->getInstanceOf($dbms,$O,$w_usuario,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),
               $_REQUEST['w_pessoa'],$_REQUEST['w_prazo'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1601,7 +1601,7 @@ function Grava() {
         //exibevariaveis();
         if ($O=='I' || $O=='A') {
           // Verifica se o usuário pode registrar aferições no período de referencia informado
-          $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_indicador'],null,$w_usuario,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'PERMISSAO');
+          $sql = new db_getIndicador_Aferidor; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_indicador'],null,$w_usuario,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'PERMISSAO');
           if (count($RS)<=0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Suas permissões não abrangem o período de referência informado. Consulte suas permissões!\');');
@@ -1611,7 +1611,7 @@ function Grava() {
           }
 
           // Verifica se já existe aferição para indicador, base geográfica e período de referência informado
-          $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_indicador'],$_REQUEST['w_chave'],
+          $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_indicador'],$_REQUEST['w_chave'],
                 null,null,null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'],
                 $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEAF');
           if (count($RS)>0) {
@@ -1624,7 +1624,7 @@ function Grava() {
           } 
 
           // Verifica se já existe aferição para indicador, base geográfica e data de aferição informada
-          $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_indicador'],$_REQUEST['w_chave'],
+          $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_indicador'],$_REQUEST['w_chave'],
                 null,null,null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'],
                 $_REQUEST['w_cidade'],$_REQUEST['w_afericao'],$_REQUEST['w_afericao'],null,null,'EXISTEAF');
           if (count($RS)>0) {
@@ -1636,7 +1636,7 @@ function Grava() {
             exit();
           } 
         }
-        dml_putIndicador_Afericao::getInstanceOf($dbms,$O,$w_usuario,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_indicador'],''),
+        $SQL = new dml_putIndicador_Afericao; $SQL->getInstanceOf($dbms,$O,$w_usuario,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_indicador'],''),
               $_REQUEST['w_afericao'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],
               $_REQUEST['w_uf'],$_REQUEST['w_cidade'],$_REQUEST['w_base'],$_REQUEST['w_fonte'],$_REQUEST['w_valor'],
               $_REQUEST['w_previsao'],$_REQUEST['w_observacao']);
@@ -1656,11 +1656,11 @@ function Grava() {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_indicador'])-1; $i=$i+1) {
             if (Nvl($_POST['w_indicador'][$i],'')>'') {
-              dml_putSolicIndicador::getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_REQUEST['w_plano'],$_POST['w_indicador'][$i]);
+              $SQL = new dml_putSolicIndicador; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_REQUEST['w_plano'],$_POST['w_indicador'][$i]);
             } 
           } 
         } elseif ($O=='E') {
-          dml_putSolicIndicador::getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],null,$_REQUEST['w_plano'],null);
+          $SQL = new dml_putSolicIndicador; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],null,$_REQUEST['w_plano'],null);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'&w_plano='.$_REQUEST['w_plano']).'\';');
@@ -1676,7 +1676,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (nvl($_REQUEST['w_exequivel'],'')=='' && ($O=='I' || $O=='A')) {
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_plano'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
+          $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_plano'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica!\');');
@@ -1685,7 +1685,7 @@ function Grava() {
             exit();                                    
           }
         }
-        dml_putIndicador_Meta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''),
+        $SQL = new dml_putIndicador_Meta; $SQL->getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''),
               $_REQUEST['w_plano'], $_REQUEST['w_indicador'],$_REQUEST['w_titulo'], $_REQUEST['w_descricao'], $_REQUEST['w_ordem'],
               $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_base'], $_REQUEST['w_pais'],$_REQUEST['w_regiao'],
               $_REQUEST['w_uf'], $_REQUEST['w_cidade'],$_REQUEST['w_valor_inicial'],$_REQUEST['w_quantidade'],
@@ -1694,7 +1694,7 @@ function Grava() {
 
         // Insere os valor real  
         for ($i=1; $i<=count($_POST['w_chave_cron'])-1; $i=$i+1) {
-           dml_putCronMeta::getInstanceOf($dbms,'V',$w_usuario,$_REQUEST['w_chave_aux'],$_POST['w_chave_cron'][$i],
+           $SQL = new dml_putCronMeta; $SQL->getInstanceOf($dbms,'V',$w_usuario,$_REQUEST['w_chave_aux'],$_POST['w_chave_cron'][$i],
                 null, null,null,$_POST['w_valor_real'][$i]);
         }
 
@@ -1713,12 +1713,12 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Recupera os dados da meta
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+          $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
           foreach ($RS as $row) { $RS = $row; break; }
           $w_total      = f($RS,'quantidade');
           $w_cumulativa = f($RS,'cumulativa');
            // Verifica se há sobreposição de períodos
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'CRONOGRAMA');
+          $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'CRONOGRAMA');
           $RS = SortArray($RS,'fim','asc');
           foreach ($RS as $row) {
             // Despreza o registro em edição, se for alteração.
@@ -1731,7 +1731,7 @@ function Grava() {
             }
           } 
         }
-        dml_putCronMeta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putCronMeta; $SQL->getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
             $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave_pai='.$_REQUEST['w_chave_pai'].'&w_chave='.$_REQUEST['w_chave'].'&w_plano='.$_REQUEST['w_plano'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1774,7 +1774,7 @@ function Grava() {
             } 
             // Se já há um nome para o arquivo, mantém 
             if ($_REQUEST['w_atual']>'') {
-              $RS = db_getUorgAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+              $sql = new db_getUorgAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
               foreach ($RS as $row) {
                 if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                 if (strpos(f($row,'caminho'),'.')!==false) {
@@ -1802,12 +1802,12 @@ function Grava() {
         } 
         // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
         if ($O=='E' && $_REQUEST['w_atual']>'') {
-          $RS = db_getMetaAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+          $sql = new db_getMetaAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
           foreach ($RS as $row) {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        dml_putMetaAnexo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
+        $SQL = new dml_putMetaAnexo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
              $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');

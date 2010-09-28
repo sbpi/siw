@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -57,7 +57,7 @@ include_once($w_dir_volta.'funcoes/selecaoDispRecurso.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -108,10 +108,10 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera as informações da opçao de menu;
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -157,7 +157,7 @@ function Inicial	() {
     $w_ativo           = $_REQUEST['w_ativo'];
     $w_servico         = explodeArray($_REQUEST['w_servico']);
   } elseif ($O=='L') {
-    $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,$w_restricao);
+    $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,$w_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_recurso_pai','asc','nm_tipo_recurso','asc','nome','asc');
@@ -165,7 +165,7 @@ function Inicial	() {
       $RS = SortArray($RS,'nm_tipo_recurso_pai','asc','nm_tipo_recurso','asc','nome','asc'); 
     }
   } elseif (strpos('MCAEV',$O)!==false) {
-    $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
+    $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_tp_vinculo      = upper(f($RS,'tp_vinculo'));
     $w_ch_vinculo      = f($RS,'ch_vinculo');
@@ -186,7 +186,7 @@ function Inicial	() {
       case 'PESSOA': 
         include_once($w_dir_volta.'classes/sp/db_getBenef.php');
         include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
-        $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,nvl($w_ch_vinculo,0),null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_ch_vinculo,0),null,null,null,null,null,null,null,null,null,null,null,null);
         if (count($RS1)>0) {
           foreach($RS1 as $row) { $RS1 = $row; break; }
           $w_nome             = f($RS1,'nm_pessoa');
@@ -195,7 +195,7 @@ function Inicial	() {
           $w_edita_gestora    = false;
         }
         // Verifica e recupera informações do colaborador contratado.
-        $RS1 = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_ch_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getGPColaborador; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ch_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         if (count($RS1)>0) {
           foreach($RS1 as $row) { $RS1 = $row; break; }
           $w_codigo           = f($RS1,'matricula');
@@ -204,7 +204,7 @@ function Inicial	() {
         break;
       case 'VEÍCULO':
         include_once($w_dir_volta.'classes/sp/db_getVeiculo.php');
-        $RS1 = db_getVeiculo::getInstanceOf($dbms,nvl($w_ch_vinculo,0), null , $w_cliente, null, null, 'S', null, null, null, null);
+        $sql = new db_getVeiculo; $RS1 = $sql->getInstanceOf($dbms,nvl($w_ch_vinculo,0), null , $w_cliente, null, null, 'S', null, null, null, null);
         foreach($RS1 as $row) { $RS1 = $row; break; }
         $w_nome             = f($RS1,'nm_veiculo');
         $w_codigo           = substr(f($RS1,'nm_veiculo'),0,8);
@@ -218,7 +218,7 @@ function Inicial	() {
   
   // Se a disponibilidade do recurso não controlar períodos, recupera o registro de disponibilidade
   if ($w_disponibilidade==1 && nvl($w_chave,'')!='' && nvl($w_troca,'')=='') {
-    $RS1 = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
+    $sql = new db_getRecurso_Disp; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
     foreach ($RS1 as $row) { $RS1 = $row; break; }
     $w_disp          = f($RS1,'chave');
     $w_limite_diario = formatNumber(f($RS1,'limite_diario'),1);
@@ -297,7 +297,7 @@ function Inicial	() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   if ($O=='M') {
-    $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
+    $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_nome            = f($RS,'nome');
     $w_codigo          = f($RS,'codigo');
@@ -317,7 +317,7 @@ function Inicial	() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     if ($p_volta=='MESA') {
-      $RS_Volta = db_getLinkData::getInstanceOf($dbms,$w_cliente,$p_volta);
+      $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms,$w_cliente,$p_volta);
       if ($w_tipo!='WORD')  ShowHTML('<tr><td align="right" colspan=3><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
     } 
     if ($w_tipo!='WORD')
@@ -507,7 +507,7 @@ function Inicial	() {
     ShowHTML('</FORM>');
   } elseif ($O=='M') {
     // Recupera as vinculações existentes
-    $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,'MENU');
+    $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,'MENU');
     $RS = SortArray($RS,'nm_modulo','asc','nome','asc'); 
 
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Marque os serviços que poderão alocar este recurso.<li>Desmarque os serviços que não poderão alocar este recurso.</ul></b></font></td>');
@@ -586,7 +586,7 @@ function Disponivel() {
   $w_chave_aux       = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados do recurso para exibição no cabeçalho
-  $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
+  $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_nome             = f($RS,'nome');
   $w_nome_disp        = f($RS,'nm_disponibilidade_tipo');
@@ -602,7 +602,7 @@ function Disponivel() {
     $w_limite_diario = $_REQUEST['w_limite_diario'];
     $w_dia_util      = $_REQUEST['w_dia_util'];
   } elseif ($O=='L') {
-    $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
+    $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','fim','desc');
@@ -610,7 +610,7 @@ function Disponivel() {
       $RS = SortArray($RS,'inicio','desc','fim','desc'); 
     }
   } elseif (strpos('CAEV',$O)!==false) {
-    $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
+    $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_inicio        = formataDataEdicao(f($RS,'inicio'));
     $w_fim           = formataDataEdicao(f($RS,'fim'));
@@ -829,7 +829,7 @@ function Indisponivel() {
   $w_chave_aux       = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados do recurso para exibição no cabeçalho
-  $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
+  $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_nome             = f($RS,'nome');
   $w_nome_disp        = f($RS,'nm_disponibilidade_tipo');
@@ -843,7 +843,7 @@ function Indisponivel() {
     $w_justificativa = $_REQUEST['w_justificativa'];
     $w_periodo       = $_REQUEST['w_periodo'];
   } elseif ($O=='L') {
-    $RS = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
+    $sql = new db_getRecurso_Indisp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','fim','desc');
@@ -851,7 +851,7 @@ function Indisponivel() {
       $RS = SortArray($RS,'inicio','desc','fim','desc'); 
     }
   } elseif (strpos('CAEV',$O)!==false) {
-    $RS = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
+    $sql = new db_getRecurso_Indisp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_inicio        = formataDataEdicao(f($RS,'inicio'));
     $w_fim           = formataDataEdicao(f($RS,'fim'));
@@ -863,7 +863,7 @@ function Indisponivel() {
   // Recupera o início e o término do período base, para impedir que seja gravado período inválido
   // Somente se o recurso tiver controle de períodos
   if (nvl($w_periodo,'nulo')!='nulo') {
-    $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$w_chave,$w_periodo,null,null,'REGISTROS');
+    $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_periodo,null,null,'REGISTROS');
     foreach($RS as $row) { $RS = $row; break; }
     $w_base_inicio = formataDataEdicao(f($RS,'inicio'));
     $w_base_fim    = formataDataEdicao(f($RS,'fim'));
@@ -1056,12 +1056,12 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
   extract($GLOBALS);
 
   // Recupera os dados do recurso
-  $l_rs = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null);
+  $sql = new db_getRecurso; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null);
   foreach ($l_rs as $row) { $l_rs = $row; break; }
   $w_tipo = f($l_rs,'disponibilidade_tipo');
 
   // Recupera os dados da unidade gestora
-  $l_rs_Unidade = db_getUorgData::getInstanceOf($dbms,f($l_rs,'unidade_gestora'));
+  $sql = new db_getUorgData; $l_rs_Unidade = $sql->getInstanceOf($dbms,f($l_rs,'unidade_gestora'));
 
   $l_html = '<TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER=0 CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>';
   $l_html .= chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td>';
@@ -1080,7 +1080,7 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
   
   // Exibe os serviços que podem alocar este recurso
   $l_html .= chr(13).'      <tr><td align="center" colspan="3" bgcolor="#D0D0D0"><b>Serviços que podem alocar este recurso</td>';
-  $l_rs = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,'MENU');
+  $sql = new db_getRecurso; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,'MENU');
   $l_rs = SortArray($l_rs,'nome','asc','nm_modulo','asc'); 
   $w_cont = 0;
   $l_html .= chr(13).'      <tr><td colspan=3>';
@@ -1097,12 +1097,12 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
 
   // Recupera as datas especiais da organização
   include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-  $l_rs_Ano = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
+  $sql = new db_getDataEspecial; $l_rs_Ano = $sql->getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
   $l_rs_Ano = SortArray($l_rs_Ano,'data_formatada','asc');
 
   if ($w_tipo!=1) {
     // Recupera os períodos de disponibilidade do recurso, se ele tiver controle de períodos
-    $l_rs_Disp = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
+    $sql = new db_getRecurso_Disp; $l_rs_Disp = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
     $l_rs_Disp = SortArray($l_rs_Disp,'inicio','desc','fim','desc');
     // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
     foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Recurso disponível neste dia', f($row,'dia_util'));
@@ -1110,13 +1110,13 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
   }
 
   // Recupera os períodos de disponibilidade do recurso, se ele tiver controle de períodos
-  $l_rs_Indisp = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
+  $sql = new db_getRecurso_Indisp; $l_rs_Indisp = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
   $l_rs_Indisp = SortArray($l_rs_Indisp,'inicio','desc','fim','desc');
   // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
   foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, f($row,'justificativa'), f($row,'dia_util'));
   foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightRed1, f($row,'dia_util'));
 
-  $l_rs_Aloc = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_solic,$l_chave,null,null,null,null,null,null,null,null,null,'ALOCACAO');
+  $sql = new db_getSolicRecursos; $l_rs_Aloc = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_solic,$l_chave,null,null,null,null,null,null,null,null,null,'ALOCACAO');
   $l_rs_Aloc = SortArray($l_rs_Aloc,'inicio','desc','fim','desc');
   // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
   foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Alocado', 'S');
@@ -1293,7 +1293,7 @@ function Solic() {
     $w_fim             = $_REQUEST['w_fim'];
     $w_unidades        = $_REQUEST['w_unidades'];
   } elseif ($O=='L') {
-    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1301,7 +1301,7 @@ function Solic() {
       $RS = SortArray($RS,'nm_tipo_recurso','asc','nm_recurso','asc'); 
     }
   } elseif (strpos('MCAEV',$O)!==false) {
-    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_tipo_recurso    = f($RS,'sq_tipo_recurso');
     $w_recurso         = f($RS,'sq_recurso');
@@ -1491,7 +1491,7 @@ function SolicPeriodo() {
   $w_chave_aux       = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados do recurso para exibição no cabeçalho
-  $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_recurso          = f($RS,'sq_recurso');
   $w_nome             = f($RS,'nm_recurso');
@@ -1505,7 +1505,7 @@ function SolicPeriodo() {
     $w_fim           = $_REQUEST['w_fim'];
     $w_unidades      = $_REQUEST['w_unidades'];
   } elseif ($O=='L') {
-    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,'SOLICPER');
+    $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,'SOLICPER');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','fim','desc');
@@ -1513,7 +1513,7 @@ function SolicPeriodo() {
       $RS = SortArray($RS,'inicio','desc','fim','desc'); 
     }
   } elseif (strpos('CAEV',$O)!==false) {
-    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,'SOLICPER');
+    $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,'SOLICPER');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_inicio        = formataDataEdicao(f($RS,'inicio'));
     $w_fim           = formataDataEdicao(f($RS,'fim'));
@@ -1699,7 +1699,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,'EXISTE');
+          $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,'EXISTE');
           foreach ($RS as $row) { $RS = $row; break; }
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
@@ -1711,7 +1711,7 @@ function Grava() {
 
           if (nvl($_REQUEST['w_codigo'],'nulo')!='nulo') {
             // Testa a existência do código
-            $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_codigo'],null,null,'EXISTE');
+            $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_codigo'],null,null,'EXISTE');
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
               ScriptOpen('JavaScript');
@@ -1722,7 +1722,7 @@ function Grava() {
             } 
           }
         } elseif ($O=='E') {
-          $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,'EXISTE');
+          $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,'EXISTE');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este recurso. Ele está ligado a alguma alocação ou a alguma opção do menu!\');');
@@ -1731,7 +1731,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putRecurso::getInstanceOf($dbms,$O,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_copia'],
+        $SQL = new dml_putRecurso; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_copia'],
             $_REQUEST['w_tipo_recurso'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_gestora'],$_REQUEST['w_nome'],
             $_REQUEST['w_codigo'],$_REQUEST['w_descricao'],$_REQUEST['w_finalidade'],$_REQUEST['w_disponibilidade'],
             $_REQUEST['w_tp_vinculo'], $_REQUEST['w_ch_vinculo'], $_REQUEST['w_ativo'],&$w_chave_nova);
@@ -1740,11 +1740,11 @@ function Grava() {
           $w_o = $O;
           if ($O!='E') {
             // Verifica se já existe registro de disponibilidade para o recurso
-            $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],nvl($_REQUEST['w_disp'],0),null,null,'REGISTROS');
+            $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],nvl($_REQUEST['w_disp'],0),null,null,'REGISTROS');
             if (count($RS)==0) $w_o = 'I';
           }
           
-          dml_putRecurso_Disp::getInstanceOf($dbms,$w_o,$w_usuario, $w_chave_nova,$_REQUEST['w_disp'],
+          $SQL = new dml_putRecurso_Disp; $SQL->getInstanceOf($dbms,$w_o,$w_usuario, $w_chave_nova,$_REQUEST['w_disp'],
                 $_REQUEST['w_limite_diario'],$_REQUEST['w_valor'],$_REQUEST['w_dia_util'],null, null, null);
         }
 
@@ -1764,7 +1764,7 @@ function Grava() {
         if ($O=='C' || $O=='I' || $O=='A') {
           if (nvl($_REQUEST['w_inicio'],'nulo')!='nulo') {
             // Evita sobreposição de períodos para o recurso
-            $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
+            $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
               ScriptOpen('JavaScript');
@@ -1775,7 +1775,7 @@ function Grava() {
             } 
           } else {
             // Se não tem período, só pode ter um registro de disponibilidade
-            $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null,null,'REGISTROS');
+            $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null,null,'REGISTROS');
             if (f($RS,'existe')>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Não é permitido inserir mais de um registro para o recurso!\');');
@@ -1785,7 +1785,7 @@ function Grava() {
             } 
           }
         } elseif ($O=='E') {
-          $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],null,null,'VINCULADO');
+          $sql = new db_getRecurso_Disp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],null,null,'VINCULADO');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este período. Há alguma indisponibilidade ou alocação registrada!\');');
@@ -1794,7 +1794,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putRecurso_Disp::getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putRecurso_Disp; $SQL->getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
                 $_REQUEST['w_limite_diario'],$_REQUEST['w_valor'],$_REQUEST['w_dia_util'],$_REQUEST['w_inicio'],
                 $_REQUEST['w_fim'],$_REQUEST['w_unidades']);
         ScriptOpen('JavaScript');
@@ -1812,7 +1812,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Evita sobreposição de períodos para o recurso
-          $RS = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
+          $sql = new db_getRecurso_Indisp; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
           foreach ($RS as $row) { $RS = $row; break; }
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
@@ -1822,7 +1822,7 @@ function Grava() {
             break;
           } 
         } 
-        dml_putRecurso_Indisp::getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putRecurso_Indisp; $SQL->getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
                 $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_justificativa']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1838,12 +1838,12 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Remove os registros existentes
-        dml_putRecurso_Menu::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+        $SQL = new dml_putRecurso_Menu; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 
         // Insere apenas os itens marcados
         for ($i=0; $i<=count($_POST['w_servico'])-1; $i=$i+1) {
           if (Nvl($_POST['w_servico'][$i],'')>'') {
-            dml_putRecurso_Menu::getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
+            $SQL = new dml_putRecurso_Menu; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
@@ -1861,7 +1861,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O!='E') {
           // Evita que o mesmo recurso seja gravado duas vezes
-          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+          $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
               null, null, null, null, $_REQUEST['w_recurso'], null, null, null, null,'EXISTEREC');
           foreach ($RS as $row) { $RS = $row; break; }
           if (f($RS,'existe')>0) {
@@ -1874,7 +1874,7 @@ function Grava() {
 
           if (nvl($_REQUEST['w_inicio'],'nulo')!='nulo') {
             // Evita sobreposição de períodos para o recurso
-            $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+            $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
                 null, null, null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEPER');
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
@@ -1886,7 +1886,7 @@ function Grava() {
             } 
 
             // Verifica a disponibilidade do recurso no período informado
-            $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null,null, null, 
+            $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null,null, null, 
                 null, null, $_REQUEST['w_recurso'], null, null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')!=0) {
@@ -1899,7 +1899,7 @@ function Grava() {
           }
         } 
         // Grava o cabeçalho da alocação
-        dml_putSolicRecurso::getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putSolicRecurso; $SQL->getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
                 $_REQUEST['w_tipo'],$_REQUEST['w_recurso'],$_REQUEST['w_justificativa'],
                 $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_unidades']);
 
@@ -1918,7 +1918,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O!='E') {
           // Evita sobreposição de períodos para o recurso
-          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+          $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
               null, null, null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEPER');
           foreach ($RS as $row) { $RS = $row; break; }
           if (f($RS,'existe')>0) {
@@ -1930,7 +1930,7 @@ function Grava() {
           } 
 
           // Verifica a disponibilidade do recurso no período informado
-          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null, null, null, 
+          $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null, null, null, 
               null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
           foreach ($RS as $row) { $RS = $row; break; }
           if (f($RS,'existe')!=0) {
@@ -1942,7 +1942,7 @@ function Grava() {
           } 
         } 
         // Grava o cabeçalho da alocação
-        dml_putSolicRecAlocacao::getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putSolicRecAlocacao; $SQL->getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
                 $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_unidades']);
 
         ScriptOpen('JavaScript');

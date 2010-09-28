@@ -43,7 +43,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     
     // Verifica o segmento do cliente    
-    $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+    $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente); 
     $w_segmento = f($RS1,'segmento');
     if ($w_mod_pa=='S' && nvl(f($RS,'processo'),'')!='') {
       if ((!($l_P1==4 || $l_tipo=='WORD')) && nvl(f($RS,'protocolo_siw'),'')!='') {
@@ -76,7 +76,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
       if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
         // Recupera dados da solicitação de compra
-        $RS_Vinculo = db_getLinkData::getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+        $RS_Vinculo = new db_getLinkData; $RS_Vinculo = $RS_Vinculo->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
         $RS_Vinculo = db_getSolicCL::getInstanceOf($dbms,f($RS_Vinculo,'sq_menu'),$w_usuario,f($RS_Vinculo,'sigla'),3,
             null,null,null,null,null,null,null,null,null,null,f($RS,'sq_solic_vinculo'), null, null, null, null, null, null,
             null, null, null, null, null, null, null,null, null, null, null);

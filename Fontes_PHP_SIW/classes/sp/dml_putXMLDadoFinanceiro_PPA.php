@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -28,7 +28,7 @@ class dml_putXMLDadoFinanceiro_PPA {
                    'p_valor_ano_6'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_6))),B_NUMERIC,     18,2),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

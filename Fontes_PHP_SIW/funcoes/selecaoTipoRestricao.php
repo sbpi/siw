@@ -1,11 +1,11 @@
-<? 
+<?php 
 include_once($w_dir_volta.'classes/sp/db_getTipoRestricao.php');
 // =========================================================================
 // Montagem da seleção de tipos de documento
 // -------------------------------------------------------------------------
 function selecaoTipoRestricao($label,$accesskey,$hint,$chave,$cliente,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTipoRestricao::getInstanceOf($dbms,$p_chave, $cliente, null, null, 'S', null);
+  $sql = new db_getTipoRestricao; $RS = $sql->getInstanceOf($dbms,$p_chave, $cliente, null, null, 'S', null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML(' <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

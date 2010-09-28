@@ -43,10 +43,10 @@ if ($_SESSION['DBMS']=='' || isset($_REQUEST['p_dbms'])) {
 }*/
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Recupera informações a serem usadas na montagem das telas para o usuário
-$RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], '000.000.001-91');
+$sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], '000.000.001-91');
 $_SESSION['USERNAME']        = f($RS,'USERNAME');
 $_SESSION['SQ_PESSOA']       = f($RS,'SQ_PESSOA');
 $_SESSION['NOME']            = f($RS,'NOME');
@@ -132,7 +132,7 @@ $w_inicio  = first_day(toDate('01/'.substr(100+(intVal($w_mes)),1,2).'/'.$w_ano)
 $w_fim     = last_day(toDate('01/'.substr(100+(intVal($w_mes)),1,2).'/'.$w_ano));
 
 // Define visualizações disponíveis para o usuário
-$RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+$sql = new db_getPersonData; $RS_Usuario = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
   
 // Identifica se o vínculo do usuário é com a a Secretaria executiva
 if (upper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
@@ -148,7 +148,7 @@ $SQL = "select a.sq_plano ".$crlf.
        "                                    d.ativo          = 'S'".$crlf. 
        "                                   ) ".$crlf. 
        "  where a.codigo_interno='PDE' ";
-$RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
+$sql = new db_exec; $RS = $sql->getInstanceOf($dbms,$SQL,$recordcount);
 foreach($RS as $row) { $RS = $row; break; }
 $p_plano = f($RS,'sq_plano');
 
@@ -182,15 +182,15 @@ function Calendario() {
   }  
   
   // Recupera os tipos de evento desejados e monta string
-  $RS_Projeto = db_getLinkData::getInstanceOf($dbms,$w_cliente,'EVCAD');
-  $l_rs = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,f($RS_Projeto,'sq_menu'),null,null,null,'S', 'REGISTROS');
+  $RS_Projeto = new db_getLinkData; $RS_Projeto = $RS_Projeto->getInstanceOf($dbms,$w_cliente,'EVCAD');
+  $sql = new db_getTipoEvento; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,f($RS_Projeto,'sq_menu'),null,null,null,'S', 'REGISTROS');
   $l_rs = SortArray($l_rs,'nm_servico','asc','ordem','asc','nome','asc');
   $p_tipo_evento = '';
   foreach($l_rs as $row)  $p_tipo_evento.=','.f($row,'chave');
   $p_tipo_evento = substr($p_tipo_evento,1);
   
-  $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_chave,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
-  /*$RS_Resultado = db_getSolicEV::getInstanceOf($dbms, $w_cliente,f($RS_Projeto,'sq_menu'),$w_usuario,
+  $sql = new db_getSolicResultado ; $RS_Resultado = $sql-> getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_chave,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+  $sql = new db_getSolicEV; /*$RS_Resultado = $sql->getInstanceOf($dbms, $w_cliente,f($RS_Projeto,'sq_menu'),$w_usuario,
     null,null,null,null,null,null,null,null,null,null,null,null,$l_chave, null, 
     null, null, null, null, null,null, null, null, null, null, null, null, null, null);*/
     //print_r($RS_Resultado);

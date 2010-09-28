@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 // =========================================================================
 // Montagem da seleção dos módulos contratados pelo cliente
 // -------------------------------------------------------------------------
 function selecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms, $chaveAux, $restricao, null);
+  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $chaveAux, $restricao, null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

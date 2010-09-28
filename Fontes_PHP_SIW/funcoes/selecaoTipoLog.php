@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoLog.php');
 // -------------------------------------------------------------------------
 function selecaoTipoLog($label,$accesskey,$hint,$chave,$menu,$campo,$restricao,$atributo,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  $RS = db_getTipoLog::getInstanceOf($dbms, $w_cliente, $menu, null, null, null, 'S', $restricao);
+  $sql = new db_getTipoLog; $RS = $sql->getInstanceOf($dbms, $w_cliente, $menu, null, null, null, 'S', $restricao);
   $RS = SortArray($RS,'ordem','asc');
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

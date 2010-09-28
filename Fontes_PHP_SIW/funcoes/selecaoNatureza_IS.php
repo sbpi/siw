@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getNatureza_IS.php');
 // =========================================================================
 // Montagem da seleção da natureza dos programas do PPA
 // -------------------------------------------------------------------------
 function selecaoNatureza_IS($label,$accesskey,$hint,$cliente,$chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getNatureza_IS::getInstanceOf($dbms,null,$cliente,null,null);
+  $sql = new db_getNatureza_IS; $RS = $sql->getInstanceOf($dbms,null,$cliente,null,null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

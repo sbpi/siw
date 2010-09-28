@@ -7,7 +7,7 @@ function selecaoAssuntoRadio($label,$accesskey,$hint,$chave,$chaveAux,$campo,$re
   include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
   ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
   if ($chave>'') {
-    $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$chave,null,null,null,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getAssunto_PA; $RS = $sql->getInstanceOf($dbms,$w_cliente,$chave,null,null,null,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $l_assunto = lower(f($row,'codigo').' - '.f($row,'descricao'));
   }

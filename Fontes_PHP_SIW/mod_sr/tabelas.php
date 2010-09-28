@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -45,7 +45,7 @@ include_once($w_dir_volta.'funcoes/selecaoVeiculo.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par          = upper($_REQUEST['par']);
@@ -106,7 +106,7 @@ function Abastecimento() {
     $w_valor              = $_REQUEST['w_valor']; 
     $w_local              = $_REQUEST['w_local'];    
   } elseif ($O=='L') {
-    $RS = db_getAbastecimento::getInstanceOf($dbms, null, $w_chave_aux, $w_cliente);
+    $sql = new db_getAbastecimento; $RS = $sql->getInstanceOf($dbms, null, $w_chave_aux, $w_cliente);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'data','desc');
@@ -114,7 +114,7 @@ function Abastecimento() {
       $RS = SortArray($RS,'data','desc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getAbastecimento::getInstanceOf($dbms, $w_chave, null, $w_cliente);
+    $sql = new db_getAbastecimento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave              = f($RS,'chave');
     $w_chave_aux          = f($RS,'sq_veiculo');    
@@ -288,7 +288,7 @@ function Grupo() {
     $w_descricao    = $_REQUEST['w_descricao']; 
     $w_ativo        = $_REQUEST['w_ativo'];    
   } elseif ($O=='L') {
-    $RS = db_getGrupoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null,null);
+    $sql = new db_getGrupoVeiculo; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -296,7 +296,7 @@ function Grupo() {
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getGrupoVeiculo::getInstanceOf($dbms, $w_chave, $w_cliente, $w_nome, $w_sigla, null);
+    $sql = new db_getGrupoVeiculo; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, $w_nome, $w_sigla, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente      = f($RS,'cliente');
     $w_nome         = f($RS,'nome');
@@ -452,7 +452,7 @@ function Opiniao() {
     $w_sigla        = $_REQUEST['w_sigla']; 
     $w_ordem        = $_REQUEST['w_ordem'];  
   } elseif ($O=='L') {
-    $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, null, null, null);
+    $sql = new db_getOpiniao; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -460,7 +460,7 @@ function Opiniao() {
       $RS = SortArray($RS,'ordem','asc'); 
     }
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getOpiniao::getInstanceOf($dbms,  $w_chave, $w_cliente, $w_nome, $_sigla, null);
+    $sql = new db_getOpiniao; $RS = $sql->getInstanceOf($dbms,  $w_chave, $w_cliente, $w_nome, $_sigla, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente      = f($RS,'cliente');
     $w_chave        = f($RS,'chave');
@@ -623,7 +623,7 @@ function TipoVeiculo() {
     $w_descricao          = $_REQUEST['w_descricao']; 
     $w_ativo              = $_REQUEST['w_ativo'];  
   } elseif ($O=='L') {
-    $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null, null,null);
+    $sql = new db_getTipoVeiculo; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -631,7 +631,7 @@ function TipoVeiculo() {
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getTipoVeiculo::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
+    $sql = new db_getTipoVeiculo; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente            = f($RS,'cliente');
     $w_chave_aux          = f($RS,'sq_grupo_veiculo');    
@@ -800,7 +800,7 @@ function Veiculo() {
     $w_alugado            = $_REQUEST['w_alugado'];
     $w_ativo              = $_REQUEST['w_ativo'];    
   } elseif ($O=='L') {
-    $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, null, null, null, null, null, null, null);
+    $sql = new db_getVeiculo; $RS = $sql->getInstanceOf($dbms, null, null, $w_cliente, null, null, null, null, null, null, null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -808,7 +808,7 @@ function Veiculo() {
       $RS = SortArray($RS,'modelo','asc'); 
     }
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getVeiculo::getInstanceOf($dbms, $w_chave, null, $w_cliente, null, null, null, null, null, null, null);
+    $sql = new db_getVeiculo; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente, null, null, null, null, null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente            = f($RS,'cliente');
     $w_chave_aux          = f($RS,'sq_tipo_veiculo');    
@@ -999,7 +999,7 @@ function Grava() {
     case 'SRABAST':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putAbastecimento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_data'], $_REQUEST['w_hodometro'], $_REQUEST['w_litros'],
+        $SQL = new dml_putAbastecimento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_data'], $_REQUEST['w_hodometro'], $_REQUEST['w_litros'],
           $_REQUEST['w_valor'], $_REQUEST['w_local']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1016,7 +1016,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if (upper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {           
-            $RS = db_getGrupoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, upper($_REQUEST['w_sigla']),'S');
+            $sql = new db_getGrupoVeiculo; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, upper($_REQUEST['w_sigla']),'S');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe grupo de veículo com esta sigla!\');');
@@ -1026,7 +1026,7 @@ function Grava() {
             }
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, Nvl($_REQUEST['w_chave'],''), null, null, null);
+          $sql = new db_getTipoVeiculo; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, Nvl($_REQUEST['w_chave'],''), null, null, null);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe tipo de veículo associado a este grupo, não sendo possível sua exclusão!\');');
@@ -1035,7 +1035,7 @@ function Grava() {
             exit();
           }  
         }
-        dml_putGrupoVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),
+        $SQL = new dml_putGrupoVeiculo; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),
           $_REQUEST['w_descricao'], $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1052,7 +1052,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_nome']!= $_REQUEST['w_nome_ant']) {  
-            $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, $_REQUEST['w_nome'],null,null);
+            $sql = new db_getOpiniao; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, $_REQUEST['w_nome'],null,null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe opinião com este nome!\');');
@@ -1062,7 +1062,7 @@ function Grava() {
             }
           }          
           if (upper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {  
-            $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, null, upper($_REQUEST['w_sigla']),null);
+            $sql = new db_getOpiniao; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, upper($_REQUEST['w_sigla']),null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe sigla com este nome!\');');
@@ -1072,7 +1072,7 @@ function Grava() {
             }
           } 
         /*} elseif ($O=='E') {
-          $RS = db_getOpiniao::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,'RESTRICAO');                                               
+          $sql = new db_getOpiniao; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,'RESTRICAO');                                               
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe serviços associado a este opinião, não sendo possível sua exclusão!\');');
@@ -1080,7 +1080,7 @@ function Grava() {
             ScriptClose(); 
           } */
         } 
-        dml_putOpiniao::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente, $_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),$_REQUEST['w_ordem']);
+        $SQL = new dml_putOpiniao; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente, $_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1096,7 +1096,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if (upper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {           
-            $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null, upper($_REQUEST['w_sigla']),null);
+            $sql = new db_getTipoVeiculo; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, upper($_REQUEST['w_sigla']),null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe sigla com este nome!\');');
@@ -1106,7 +1106,7 @@ function Grava() {
             }
           } 
         } elseif ($O=='E') {
-          $RS = db_getVeiculo::getInstanceOf($dbms, null, Nvl($_REQUEST['w_chave'],''), $w_cliente,  null, null, null, null, null, null, null);
+          $sql = new db_getVeiculo; $RS = $sql->getInstanceOf($dbms, null, Nvl($_REQUEST['w_chave'],''), $w_cliente,  null, null, null, null, null, null, null);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe veículo associado a este tipo de veículo, não sendo possível sua exclusão!\');');
@@ -1114,7 +1114,7 @@ function Grava() {
             ScriptClose(); 
           }  
         }
-        dml_putTipoVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), $w_cliente, Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_nome'],$_REQUEST['w_sigla'],
+        $SQL = new dml_putTipoVeiculo; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), $w_cliente, Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_nome'],$_REQUEST['w_sigla'],
           $_REQUEST['w_descricao'], $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1131,7 +1131,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if (upper($_REQUEST['w_placa'])!= $_REQUEST['w_placa_ant']) {           
-            $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, upper($_REQUEST['w_placa']), null, null, null, null, null, null);
+            $sql = new db_getVeiculo; $RS = $sql->getInstanceOf($dbms, null, null, $w_cliente, upper($_REQUEST['w_placa']), null, null, null, null, null, null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe placa com este número!\');');
@@ -1141,7 +1141,7 @@ function Grava() {
             }
           } 
         } elseif ($O=='E') {
-          $RS = db_getAbastecimento::getInstanceOf($dbms, null, Nvl($_REQUEST['w_chave'],''),$w_cliente);
+          $sql = new db_getAbastecimento; $RS = $sql->getInstanceOf($dbms, null, Nvl($_REQUEST['w_chave'],''),$w_cliente);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe abastecimento associado a este veículo, não sendo possível sua exclusão!\');');
@@ -1149,7 +1149,7 @@ function Grava() {
             ScriptClose(); 
           }  
         }
-        dml_putVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $w_cliente, upper($_REQUEST['w_placa']),$_REQUEST['w_marca'],
+        $SQL = new dml_putVeiculo; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $w_cliente, upper($_REQUEST['w_placa']),$_REQUEST['w_marca'],
           $_REQUEST['w_modelo'],$_REQUEST['w_combustivel'],$_REQUEST['w_tipo'],$_REQUEST['w_potencia'],$_REQUEST['w_cilindrada'],$_REQUEST['w_ano_modelo'],$_REQUEST['w_ano_fabricacao'],
           $_REQUEST['w_renavam'],$_REQUEST['w_chassi'],$_REQUEST['w_alugado'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');

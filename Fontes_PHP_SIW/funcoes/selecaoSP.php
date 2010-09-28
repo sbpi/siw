@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getStoredProcedure.php');
 // =========================================================================
 // Montagem da seleção de Tabela
 // -------------------------------------------------------------------------
 function selecaoSP($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getStoredProcedure::getInstanceOf($dbms,$cliente,null,$chave,null,null,$chaveAux2,null,$restricao);
+  $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$cliente,null,$chave,null,null,$chaveAux2,null,$restricao);
   $RS = SortArray($RS,'nm_sp','asc');
   if (Nvl($hint,'')>'')
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

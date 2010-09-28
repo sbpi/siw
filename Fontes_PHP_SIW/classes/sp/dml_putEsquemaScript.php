@@ -24,7 +24,7 @@ class dml_putEsquemaScript {
                    'p_nome_original'             =>array(tvl($p_nome_original),                            B_VARCHAR,       255),
                    'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,        32)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

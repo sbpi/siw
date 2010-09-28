@@ -36,7 +36,7 @@ include_once($w_dir_volta.'classes/sp/db_getSF.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
@@ -90,7 +90,7 @@ function ConsultaDoc() {
   $w_sq_pessoa = $_SESSION['SQ_PESSOA'];
 
   if ($O=='L' && $_POST['p_documento']=='') {
-    $RS = db_getSF::getInstanceOf($dbms, 'NM_PESSOA', null, $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, null, null, null, null, null, null);
+    $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'NM_PESSOA', null, $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, null, null, null, null, null, null);
     foreach ($RS as $row) { $RS = $row; break; }
   } 
 
@@ -188,7 +188,7 @@ function ConsultaDoc() {
       ShowHTML('<li>Beneficiário: <b>'.f($RS,'cgccpf').' - '.f($RS,'nome').'</b>');
     }
     if ($_POST['p_ctcc']>"") {
-      $RS = db_getSF::getInstanceOf($dbms, 'NM_PROJETO', $_POST['p_ctcc'], null, null, null, null, null, null, null, null, null, null);
+      $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'NM_PROJETO', $_POST['p_ctcc'], null, null, null, null, null, null, null, null, null, null);
       foreach ($RS as $row) { $RS = $row; break; }
       ShowHTML('<li>Projeto: <b>'.f($RS,'nome').'</b>');
       DesconectaBD();
@@ -221,7 +221,7 @@ function ConsultaDoc() {
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
 
-      $RS = db_getSF::getInstanceOf($dbms, 'CONTRATOS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], null, null, null);
+      $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'CONTRATOS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], null, null, null);
       if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
@@ -276,7 +276,7 @@ function ConsultaDoc() {
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Pagamentos</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      $RS = db_getSF::getInstanceOf($dbms, 'PAGAMENTOS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], $_POST['p_comprovante'], $_POST['p_inicio_nf'], $_POST['p_fim_nf']);
+      $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'PAGAMENTOS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], $_POST['p_comprovante'], $_POST['p_inicio_nf'], $_POST['p_fim_nf']);
       if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
@@ -301,7 +301,7 @@ function ConsultaDoc() {
           ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SP.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td>'.f($row,'nome').'</td>');
           ShowHTML('        <td nowrap>');
-          $RS1 = db_getSF::getInstanceOf($dbms, 'NR_COMPROVANTE', null, null, null, null, null, null, null, null, f($row,'handle'), null, null);
+          $sql = new db_getSF; $RS1 = $sql->getInstanceOf($dbms, 'NR_COMPROVANTE', null, null, null, null, null, null, null, null, f($row,'handle'), null, null);
           if (count($RS1) <= 0) {
             print '---';
           } else {
@@ -335,7 +335,7 @@ function ConsultaDoc() {
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Passagens e Diárias</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      $RS = db_getSF::getInstanceOf($dbms, 'VIAGENS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], null, null, null);
+      $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'VIAGENS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], null, null, null);
       if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
@@ -391,7 +391,7 @@ function ConsultaDoc() {
     ShowHTML('            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE="TEXT" ACCESSKEY="O" class="STI" name="p_beneficiario" size=40 maxlength=40>');
     ShowHTML('            <input class="STB" type="button" name="Procura" value="Procura" onClick="procura()">');
 
-    $RS = db_getSF::getInstanceOf($dbms, 'DOLAR', null, null, null, null, null, null, null, null, null, null, null);
+    $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'DOLAR', null, null, null, null, null, null, null, null, null, null, null);
     ShowHTML('          <td rowspan=6><center><b>Dólar ONU</b>');
     ShowHTML('              <table border=0>');
     ShowHTML('              <tr valign="top" align="center">');
@@ -416,7 +416,7 @@ function ConsultaDoc() {
     ShowHTML('          <OPTION VALUE="">---');
 
     if (nvl($_POST['p_beneficiario'],'')!='') {
-      $RS = db_getSF::getInstanceOf($dbms, 'NOME', null, null, null, null, $_POST["p_beneficiario"], null, null, null, null, null, null);
+      $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'NOME', null, null, null, null, $_POST["p_beneficiario"], null, null, null, null, null, null);
       foreach ($RS as $row) {
         if (f($row,'handle')==$_POST['p_sq_pessoa']) {
           ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome').' ('.f($row,'cgccpf').')');
@@ -431,7 +431,7 @@ function ConsultaDoc() {
     ShowHTML('      <tr><td><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="STS" name="p_ctcc" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
-    $RS = db_getSF::getInstanceOf($dbms, 'PROJETOS', null, null, null, null, null, null, null, null, null, null, null);
+    $sql = new db_getSF; $RS = $sql->getInstanceOf($dbms, 'PROJETOS', null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS as $row) {
       if (f($row,'handle')==$_POST['p_ctcc']) {
         ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));

@@ -37,7 +37,7 @@ class dml_putSiwCliente {
                    'p_googlemaps'           =>array($p_googlemaps,          B_VARCHAR,   2000),
                    'p_arp'                  =>array($p_arp,                 B_VARCHAR,      1)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0); 
      if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
      } else {

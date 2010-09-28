@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 // =========================================================================
 // Montagem da seleção dos endereços da organização
 // -------------------------------------------------------------------------
 function selecaoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getAddressList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao, null);
+  $sql = new db_getAddressList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao, null);
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {

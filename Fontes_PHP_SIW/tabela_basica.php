@@ -62,7 +62,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -115,7 +115,7 @@ function TipoEndereco() {
   $w_sq_tipo_endereco   = $_REQUEST['w_sq_tipo_endereco'];
   $p_ordena             = $_REQUEST['p_ordena'];
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='') $O='L';
@@ -130,7 +130,7 @@ function TipoEndereco() {
     $p_ordena               = $_REQUEST['p_ordena'];
     
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getAdressTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
+    $SQL = new db_getAdressTypeList; $RS = $SQL->getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sq_tipo_pessoa','asc','padrao','desc','nome','asc');    
@@ -138,7 +138,7 @@ function TipoEndereco() {
       $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getAdressTypeData::getInstanceOf($dbms,$w_sq_tipo_endereco);
+    $SQL = new db_getAdressTypeData; $RS = $SQL->getInstanceOf($dbms,$w_sq_tipo_endereco);
     $w_nome             = f($RS,'nome');
     $w_sq_tipo_pessoa   = f($RS,'sq_tipo_pessoa');
     $w_email            = f($RS,'email');
@@ -337,7 +337,7 @@ function TipoTelefone() {
     $w_padrao               = $_REQUEST['w_padrao'];
     
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getFoneTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
+    $SQL = new db_getFoneTypeList; $RS = $SQL->getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
@@ -345,7 +345,7 @@ function TipoTelefone() {
       $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getFoneTypeData::getInstanceOf($dbms,$w_sq_tipo_telefone);
+    $SQL = new db_getFoneTypeData; $RS = $SQL->getInstanceOf($dbms,$w_sq_tipo_telefone);
     $w_nome             = f($RS,'nome');
     $w_sq_tipo_pessoa   = f($RS,'sq_tipo_pessoa');
     $w_ativo            = f($RS,'ativo');
@@ -518,7 +518,7 @@ function TipoPessoa() {
   $w_sq_tipo_pessoa = $_REQUEST['w_sq_tipo_pessoa'];
   $p_ordena         = $_REQUEST['p_ordena'];
 
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao=f($RS,'libera_edicao');
 
   if ($O=='') $O='L';
@@ -528,7 +528,7 @@ function TipoPessoa() {
     $w_ativo                = $_REQUEST['w_ativo'];
     $w_padrao               = $_REQUEST['w_padrao'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getUserTypeList::getInstanceOf($dbms,$p_nome,$p_ativo);
+    $SQL = new db_getUserTypeList; $RS = $SQL->getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc','nome','asc');
@@ -536,7 +536,7 @@ function TipoPessoa() {
       $RS = SortArray($RS,'padrao','desc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getUserTypeData::getInstanceOf($dbms,$w_sq_tipo_pessoa);
+    $SQL = new db_getUserTypeData; $RS = $SQL->getInstanceOf($dbms,$w_sq_tipo_pessoa);
     $w_nome     = f($RS,'nome');
     $w_ativo    = f($RS,'ativo');
     $w_padrao   = f($RS,'padrao');
@@ -721,7 +721,7 @@ function Deficiencia() {
     $w_sq_grupo_deficiencia = $_REQUEST['w_sq_grupo_deficiencia'];
     $w_ativo                = $_REQUEST['w_ativo'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getDeficiencyList::getInstanceOf($dbms,$p_nome,$p_ativo);
+    $SQL = new db_getDeficiencyList; $RS = $SQL->getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sq_grupo_defic','asc','codigo','asc');
@@ -729,7 +729,7 @@ function Deficiencia() {
       $RS = SortArray($RS,'sq_grupo_defic','asc','codigo','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getDeficiencyData::getInstanceOf($dbms,$w_sq_deficiencia);
+    $SQL = new db_getDeficiencyData; $RS = $SQL->getInstanceOf($dbms,$w_sq_deficiencia);
     $w_nome                 = f($RS,'nome');
     $w_codigo               = f($RS,'codigo');
     $w_descricao            = f($RS,'descricao');
@@ -916,7 +916,7 @@ function GrupoDeficiencia() {
     $w_codigo_externo       = $_REQUEST['w_codigo_externo'];
     $w_ativo                = $_REQUEST['w_ativo'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getDeficGroupList::getInstanceOf($dbms,$p_nome,$p_codigo_externo,$p_ativo);
+    $SQL = new db_getDeficGroupList; $RS = $SQL->getInstanceOf($dbms,$p_nome,$p_codigo_externo,$p_ativo);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -924,7 +924,7 @@ function GrupoDeficiencia() {
       $RS = SortArray($RS,'nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getDeficiencyGroupData::getInstanceOf($dbms,$w_sq_grupo_deficiencia);
+    $SQL = new db_getDeficiencyGroupData; $RS = $SQL->getInstanceOf($dbms,$w_sq_grupo_deficiencia);
     $w_nome             = f($RS,'nome');
     $w_codigo_externo   = f($RS,'codigo_externo');
     $w_ativo            = f($RS,'ativo');
@@ -1098,7 +1098,7 @@ function Idioma() {
     $w_ativo          = $_REQUEST['w_ativo'];
     $w_padrao         = $_REQUEST['w_padrao'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getIdiomList::getInstanceOf($dbms,$p_nome,$p_ativo);
+    $SQL = new db_getIdiomList; $RS = $SQL->getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc','nome','asc');
@@ -1106,7 +1106,7 @@ function Idioma() {
       $RS = SortArray($RS,'padrao','desc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getIdiomData::getInstanceOf($dbms,$w_sq_idioma);
+    $SQL = new db_getIdiomData; $RS = $SQL->getInstanceOf($dbms,$w_sq_idioma);
     $w_nome     = f($RS,'nome');
     $w_ativo    = f($RS,'ativo');
     $w_padrao   = f($RS,'padrao');
@@ -1275,7 +1275,7 @@ function Etnia() {
     $w_ativo          = $_REQUEST['w_ativo'];
     $w_codigo_siape   = $_REQUEST['w_codigo_siape'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getEtniaList::getInstanceOf($dbms,$p_nome,$p_ativo);
+    $SQL = new db_getEtniaList; $RS = $SQL->getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') {
     $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'codigo_siape','asc','nome','asc');
@@ -1283,7 +1283,7 @@ function Etnia() {
       $RS = SortArray($RS,'codigo_siape','asc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getEtniaData::getInstanceOf($dbms,$w_sq_etnia);
+    $SQL = new db_getEtniaData; $RS = $SQL->getInstanceOf($dbms,$w_sq_etnia);
     $w_nome         = f($RS,'nome');
     $w_ativo        = f($RS,'ativo');
     $w_codigo_siape = f($RS,'codigo_siape');
@@ -1460,7 +1460,7 @@ function Formacao() {
     $w_ativo     = $_REQUEST['w_ativo'];
     $w_ordem     = $_REQUEST['w_ordem'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getFormationList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
+    $SQL = new db_getFormationList; $RS = $SQL->getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'tipo','asc','ordem','asc','nome','asc');
@@ -1468,7 +1468,7 @@ function Formacao() {
       $RS = SortArray($RS,'tipo','asc','ordem','asc','nome','asc');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getFormationData::getInstanceOf($dbms,$w_sq_formacao);
+    $SQL = new db_getFormationData; $RS = $SQL->getInstanceOf($dbms,$w_sq_formacao);
     $w_nome     = f($RS,'nome');
     $w_tipo     = f($RS,'tipo');
     $w_ativo    = f($RS,'ativo');
@@ -1643,7 +1643,7 @@ function Grava() {
     case 'COTPENDER':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoTpEnder::getInstanceOf($dbms,$O, 
+        $SQL = new dml_CoTpEnder; $SQL->getInstanceOf($dbms,$O, 
           $_REQUEST['w_sq_tipo_endereco'],$_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
           $_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_email'],$_REQUEST['w_internet']);
 
@@ -1660,7 +1660,7 @@ function Grava() {
     case 'COTPFONE':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoTpFone::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoTpFone; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_telefone'],$_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1676,7 +1676,7 @@ function Grava() {
     case 'COTPPESSOA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoTpPessoa::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoTpPessoa; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1692,7 +1692,7 @@ function Grava() {
     case 'COTPDEF': 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoTpDef::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoTpDef; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_sq_grupo_deficiencia'],$_REQUEST['w_codigo'],
             $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1709,7 +1709,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (!(strpos('IA',$O)===false)) { 
-            $RS = db_getDeficGroupList::getInstanceOf($dbms, $_REQUEST['w_nome'], null, null);
+            $SQL = new db_getDeficGroupList; $RS = $SQL->getInstanceOf($dbms, $_REQUEST['w_nome'], null, null);
             if (count($RS)>0) {
               $w_erro = false;
               foreach($RS as $row) { 
@@ -1725,7 +1725,7 @@ function Grava() {
                 exit;
               }                      
             }
-            $RS = db_getDeficGroupList::getInstanceOf($dbms, null, $_REQUEST['w_codigo_externo'], null);
+            $SQL = new db_getDeficGroupList; $RS = $SQL->getInstanceOf($dbms, null, $_REQUEST['w_codigo_externo'], null);
             if (count($RS)>0) {
               $w_erro = false;
               foreach($RS as $row) { 
@@ -1742,7 +1742,7 @@ function Grava() {
               }                      
             }
         } 
-        dml_CoGrDef::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoGrDef; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_grupo_deficiencia'],$_REQUEST['w_nome'],
             $_REQUEST['w_codigo_externo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1759,7 +1759,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
-        $RS = db_getIdiomList::getInstanceOf($dbms,null,null);
+        $SQL = new db_getIdiomList; $RS = $SQL->getInstanceOf($dbms,null,null);
         foreach($RS as $row) {
           if(f($row,'padrao')=='S' && $_REQUEST['w_padrao']=='S') {
             if ($O=='I') $w_cont = $w_cont + 1;
@@ -1772,7 +1772,7 @@ function Grava() {
           ShowHTML('  history.back(1);');
           ScriptClose();
         } else {
-          dml_CoIdioma::getInstanceOf($dbms, $O,
+          $SQL = new dml_CoIdioma; $SQL->getInstanceOf($dbms, $O,
               $_REQUEST['w_sq_idioma'],$_REQUEST['w_nome'],
               $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
@@ -1789,7 +1789,7 @@ function Grava() {
     case 'COETNIA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoEtnia::getInstanceOf($dbms, $O,
+        $SQL = new dml_CoEtnia; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_etnia'],$_REQUEST['w_nome'],$_REQUEST['w_codigo_siape'],
             $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1805,7 +1805,7 @@ function Grava() {
     case 'COFORM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoForm::getInstanceOf($dbms,$O,
+        $SQL = new dml_CoForm; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_formacao'],$_REQUEST['w_tipo'],$_REQUEST['w_nome'],
             $_REQUEST['w_ordem'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');

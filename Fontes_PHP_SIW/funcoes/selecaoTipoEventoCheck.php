@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoEvento.php');
 // -------------------------------------------------------------------------
 function selecaoTipoEventoCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  $l_rs = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null,'S', 'REGISTROS');
+  $sql = new db_getTipoEvento; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null,'S', 'REGISTROS');
   $l_rs = SortArray($l_rs,'nm_servico','asc','ordem','asc','nome','asc');
   if (count($l_rs)>0) {
     if ($separador!='&nbsp;') ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b>'.$separador);

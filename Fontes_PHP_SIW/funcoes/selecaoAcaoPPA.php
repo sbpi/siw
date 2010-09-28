@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getAcaoPPA_IS.php');
 // =========================================================================
 // Montagem da seleção de ações do PPA(tabela SIGPLAN)
@@ -7,13 +7,13 @@ function selecaoAcaoPPA($label,$accesskey,$hint,$v_cliente,$v_ano,$v_programa,$v
   extract($GLOBALS);
   $l_chave = $v_programa.$v_acao.$v_subacao.$v_unidade;
   if ($restricao=='FINANCIAMENTO') {
-    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$v_cliente,$v_ano,$v_programa,$v_acao,null,$v_unidade,$restricao,$v_chave,null,$macro,$opcao);
+    $sql = new db_getAcaoPPA_IS; $RS = $sql->getInstanceOf($dbms,$v_cliente,$v_ano,$v_programa,$v_acao,null,$v_unidade,$restricao,$v_chave,null,$macro,$opcao);
     $RS = SortArray($RS,'descricao_acao','asc');
   } elseif ($restricao=='IDENTIFICACAO' || $restricao=='CONSULTA') {
-    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$v_cliente,$v_ano,null,null,null,null,$restricao,null,null,$macro,$opcao);
+    $sql = new db_getAcaoPPA_IS; $RS = $sql->getInstanceOf($dbms,$v_cliente,$v_ano,null,null,null,null,$restricao,null,null,$macro,$opcao);
     $RS = SortArray($RS,'descricao_acao','asc');
   } else {
-    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$v_cliente,$v_ano,$v_programa,$v_acao,null,$v_unidade,null,null,null,$macro,$opcao);
+    $sql = new db_getAcaoPPA_IS; $RS = $sql->getInstanceOf($dbms,$v_cliente,$v_ano,$v_programa,$v_acao,null,$v_unidade,null,null,null,$macro,$opcao);
     $RS = SortArray($RS,'descricao_acao','asc');
   } 
   if (!isset($hint))

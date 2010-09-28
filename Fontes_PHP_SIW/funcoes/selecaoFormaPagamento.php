@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getFormaPagamento.php');
 // -------------------------------------------------------------------------
 function selecaoFormaPagamento($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$atributo=null,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getFormaPagamento::getInstanceOf($dbms, $w_cliente, null, $chave_aux, $restricao,'S',null);
+  $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $chave_aux, $restricao,'S',null);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

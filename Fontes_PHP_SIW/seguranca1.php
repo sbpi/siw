@@ -52,7 +52,7 @@ include_once('funcoes/montaStringOpcao.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -124,11 +124,11 @@ function AcessoTramite() {
   $w_texto = opcaoMenu($w_sq_menu);
 
   // Complementa a string com o nome do trâmite
-  $RS1 = db_getTramiteData::getInstanceOf($dbms,$w_sq_siw_tramite);
+  $SQL = new db_getTramiteData; $RS1 = $SQL->getInstanceOf($dbms,$w_sq_siw_tramite);
   $w_texto = $w_texto.'<font color="#FF0000">'.f($RS1,'nome').'</font>';
 
   if ($O=='L') {
-    $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'USUARIO',null,null,null);
+    $SQL = new db_getTramiteUser; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'USUARIO',null,null,null);
     $RS = SortArray($RS,'logradouro','asc','nome_indice','asc');
   } 
 
@@ -207,7 +207,7 @@ function AcessoTramite() {
   ShowHTML('          <td>Opção:<br><b><font size=1 class="hl">'.substr($w_texto,0,strlen($w_texto)-4).'</font></b></td>');
   if ($w_sq_pessoa>'') {
     // Recupera o nome do usuário selecionado
-    $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
+    $SQL = new db_getPersonData; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
     ShowHTML('          <td align="right">Usuário:<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
   } 
 
@@ -285,7 +285,7 @@ function AcessoTramite() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if (($p_nome.$p_sq_menu.$p_sq_unidade)>'') {
-      $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'PESQUISA',$p_nome,$p_sq_unidade,$p_sq_menu);
+      $SQL = new db_getTramiteUser; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'PESQUISA',$p_nome,$p_sq_unidade,$p_sq_menu);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=2><font size=2><hr>');
       AbreForm('Form1',$w_pagina.'Grava','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
@@ -363,10 +363,10 @@ function Tramite() {
     $w_beneficiario     = $_REQUEST['w_beneficiario'];
     $w_gestor           = $_REQUEST['w_gestor'];
   } elseif ($O=='L') {
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null,null);
+    $SQL = new db_getTramiteList; $RS = $SQL->getInstanceOf($dbms,$w_sq_menu,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif ($O=='A' || $O=='E') {
-    $RS = db_getTramiteData::getInstanceOf($dbms,$w_sq_siw_tramite);
+    $SQL = new db_getTramiteData; $RS = $SQL->getInstanceOf($dbms,$w_sq_siw_tramite);
     $w_nome             = f($RS,'nome');
     $w_envia_mail       = f($RS,'envia_mail');
     $w_solicita_cc      = f($RS,'solicita_cc');
@@ -534,11 +534,11 @@ function Tramite() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_destinatario" value="S"> Sim <input '.$w_Disabled.' type="radio" name="w_destinatario" value="N" checked> Não');
     } 
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null,'S');
+    $SQL = new db_getTramiteList; $RS = $SQL->getInstanceOf($dbms,$w_sq_menu,null,null,'S');
     $RS = SortArray($RS,'ordem','asc');
     ShowHTML('          <td rowspan="3"><b>Fluxo de tramitação?</b>');
     foreach($RS as $row) {
-      $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_sq_siw_tramite,null,'FLUXO','S');
+      $SQL = new db_getTramiteList; $RS1 = $SQL->getInstanceOf($dbms,$w_sq_siw_tramite,null,'FLUXO','S');
       $w_checked = '';
       foreach($RS1 as $row1) {
         if(f($row1,'sq_siw_tramite_destino')==f($row,'sq_siw_tramite')) {
@@ -610,8 +610,8 @@ function AcessoMenu() {
   $w_texto = opcaoMenu($w_sq_menu);
 
   if ($O=='L') {
-    $RS  = db_getMenuUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'USUARIO',null,null,null);
-    $RS1 = db_getMenuUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'VINCULO',null,null,null);
+    $SQL  = new db_getMenuUser; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'USUARIO',null,null,null);
+    $SQL = new db_getMenuUser; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'VINCULO',null,null,null);
   } 
   Cabecalho();
   head();
@@ -684,7 +684,7 @@ function AcessoMenu() {
   ShowHTML('          <td>Opção:<br><b><font size=1 class="hl">'.substr($w_texto,0,strlen($w_texto)-4).'</font></b></td>');
   if ($w_sq_pessoa>'') {
     // Recupera o nome do usuário selecionado
-    $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
+    $SQL = new db_getPersonData; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
     ShowHTML('          <td align="right">Usuário:<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
   } 
   ShowHTML('    </TABLE>');
@@ -788,7 +788,7 @@ function AcessoMenu() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if (($p_nome.$p_sq_menu.$p_sq_unidade)>'') {
-      $RS = db_getMenuUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,$p_sq_menu,'PESQUISA',$p_nome,$p_sq_unidade,$p_sq_menu);
+      $SQL = new db_getMenuUser; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_menu,$p_sq_menu,'PESQUISA',$p_nome,$p_sq_unidade,$p_sq_menu);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=2><font size=2><hr>');
       AbreForm('Form1',$w_pagina.'Grava','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
@@ -915,13 +915,13 @@ function AcessoMenuPerfil() {
     ShowHTML('  <tr bgcolor="'.$conTrBgColor.'"><td colspan=2>');
     ShowHTML('    <table width="100%" border="0">');
 
-    $RS = db_getVincKindList::getInstanceOf($dbms,$w_cliente,'S','Física',null,null);
+    $SQL = new db_getVincKindList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,'S','Física',null,null);
     ShowHTML('      <tr valign="top"><td><b>Tipos de vínculo</b>:');
     foreach($RS as $row) {
       ShowHTML('          <br><INPUT TYPE="CHECKBOX" CLASS="STC" NAME="w_sq_tipo_vinculo[]" VALUE="'.f($row,'sq_tipo_vinculo').'">'.f($row,'nome'));
     } 
 
-    $RS = db_getAddressMenu::getInstanceOf($dbms,$w_cliente,$w_sq_menu,null);
+    $SQL = new db_getAddressMenu; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_menu,null);
     ShowHTML('          <td><b>Endereços</b>:');
     foreach($RS as $row) {
       ShowHTML('          <br><INPUT TYPE="CHECKBOX" CLASS="STC" NAME="w_sq_pessoa_endereco[]" VALUE="'.f($row,'sq_pessoa_endereco').'">'.f($row,'endereco'));
@@ -961,7 +961,7 @@ function Endereco() {
   $w_troca   = $_REQUEST['w_troca'];
   $w_sq_menu = $_REQUEST['w_sq_menu'];
 
-  $RS = db_getAddressList::getInstanceOf($dbms,$w_cliente,null,'FISICO', null);
+  $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,'FISICO', null);
   Cabecalho();
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Endereços</TITLE>');
@@ -1055,10 +1055,10 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
-            dml_putSgTraPes::getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_siw_tramite'],null);
+            $SQL = new dml_putSgTraPes; $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_siw_tramite'],null);
           } 
         } elseif ($O=='E') {
-          dml_putSgTraPes::getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_pessoa_endereco']);
+          $SQL = new dml_putSgTraPes; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_pessoa_endereco']);
         } 
         $R = $R.'&w_sq_menu='.$_REQUEST['w_sq_menu'];
         ScriptOpen('JavaScript');
@@ -1074,7 +1074,7 @@ function Grava() {
     case 'SIWTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_sq_menu'],null,null,null);
+        $SQL = new db_getTramiteList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_menu'],null,null,null);
         if(count($RS)>0) {
           foreach ($RS as $row) {
             if (f($row,'ordem')==$_REQUEST['w_ordem'] && f($row,'sq_siw_tramite')!=nvl($_REQUEST['w_sq_siw_tramite'],0)) {
@@ -1086,17 +1086,17 @@ function Grava() {
             }
           }  
         }
-        dml_SiwTramite::getInstanceOf($dbms,$O,$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_menu'],
+        $SQL = new dml_SiwTramite; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_menu'],
             $_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],
             $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail'],
             $_REQUEST['w_destinatario'],$_REQUEST['w_anterior'],$_REQUEST['w_beneficiario'],$_REQUEST['w_gestor']);
         
         if ($O!='E') {
           // Insere os tramites de fluxo
-          dml_putSiwTramiteFluxo::getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
+          $SQL = new dml_putSiwTramiteFluxo; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
           for ($i=1; $i<=count($_POST['w_sq_siw_tramite_destino'])-1; $i=$i+1) {
             if (Nvl($_POST['w_sq_siw_tramite_destino'][$i],'')>'') {
-               dml_putSiwTramiteFluxo::getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
+               $SQL = new dml_putSiwTramiteFluxo; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
             }
           }
         }
@@ -1116,10 +1116,10 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
-            dml_SgPesMen::getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_menu'],null);
+            $SQL = new dml_SgPesMen; $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_menu'],null);
           } 
         } elseif ($O=='E') {
-          dml_SgPesMen::getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
+          $SQL = new dml_SgPesMen; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
         } 
 
         $R=$R.'&w_sq_menu='.$_REQUEST['w_sq_menu'];
@@ -1139,11 +1139,11 @@ function Grava() {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa_endereco'])-1; $i=$i+1) {
             for ($j=0; $j<=count($_POST['w_sq_tipo_vinculo'])-1; $j=$j+1) {
-              dml_SgPerMen::getInstanceOf($dbms,$O,$_POST['w_sq_tipo_vinculo'][$j],$_REQUEST['w_sq_menu'],$_POST['w_sq_pessoa_endereco'][$i]);
+              $SQL = new dml_SgPerMen; $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_tipo_vinculo'][$j],$_REQUEST['w_sq_menu'],$_POST['w_sq_pessoa_endereco'][$i]);
             } 
           } 
         } elseif ($O=='E') {
-          dml_SgPerMen::getInstanceOf($dbms,$O,$_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
+          $SQL = new dml_SgPerMen; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
         } 
 
         $R = $R.'&w_sq_menu='.$_REQUEST['w_sq_menu'];
@@ -1161,11 +1161,11 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Inicialmente, desativa a opção em todos os endereços
-        dml_SiwMenEnd::getInstanceOf($dbms,'E',$_REQUEST['w_sq_menu'],null);
+        $SQL = new dml_SiwMenEnd; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_sq_menu'],null);
         // Em seguida, ativa apenas para os endereços selecionados
         for ($i=0; $i<=count($_POST['w_sq_pessoa_endereco'])-1; $i=$i+1) {
           if ($_REQUEST['w_sq_pessoa_endereco'][$i]>'') {
-            dml_SiwMenEnd::getInstanceOf($dbms,'I',$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco'][$i]);
+            $SQL = new dml_SiwMenEnd; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco'][$i]);
           } 
         } 
 

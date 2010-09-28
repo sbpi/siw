@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
 // =========================================================================
 // Montagem da seleção do tipo da data
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
 function selecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $w_tipos = '';
-  $RS1 = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'VERIFICATIPO');
+  $sql = new db_getDataEspecial; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'VERIFICATIPO');
 
   if (count($RS1)>0) {
     foreach ($RS1 as $row) {

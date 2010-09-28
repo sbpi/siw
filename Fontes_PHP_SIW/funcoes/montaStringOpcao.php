@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getLinkDataParents.php');
 // =========================================================================
 // Rotina que monta string da opção selecionada
 // -------------------------------------------------------------------------
 function montaStringOpcao($p_sq_menu) {
   extract($GLOBALS);
-  $RS1 = db_getLinkDataParents::getInstanceOf($dbms, $p_sq_menu);
+  $sql = new db_getLinkDataParents; $RS1 = $sql->getInstanceOf($dbms, $p_sq_menu);
   $w_texto = '';
   $w_Cont  = count($RS1);
   foreach($RS1 as $row1) {

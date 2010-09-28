@@ -53,7 +53,7 @@ include_once('funcoes/selecaoTipoArquivoTab.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -104,7 +104,7 @@ function Unidade() {
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
 
   // Verifica se a edição dos dados está liberada
-  $RS = db_getMenuData::getInstanceOf($dbms, $w_menu);
+  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if (nvl($w_troca,'')!='' && $O!='E') {
@@ -127,7 +127,7 @@ function Unidade() {
     $w_unidade_pagadora       = $_REQUEST['w_unidade_pagadora'];
     $w_email                  = $_REQUEST['w_email'];
   } elseif (strpos('EA',$O)!==false) {
-    $RS = db_getUorgData::getInstanceOf($dbms,$w_sq_unidade);
+    $SQL = new db_getUorgData; $RS = $SQL->getInstanceOf($dbms,$w_sq_unidade);
     $w_nome                   = f($RS,'nome');
     $w_sigla                  = f($RS,'sigla');
     $w_ordem                  = f($RS,'ordem');
@@ -206,7 +206,7 @@ function Unidade() {
     } 
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="0" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,'IS NULL',null,null,null);
+    $SQL = new db_getUorgList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,'IS NULL',null,null,null);
     $RS = SortArray($RS,'ordem','asc','nome','asc');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><b>Estrutura organizacional inexistente.</b></td></tr>');
@@ -230,7 +230,7 @@ function Unidade() {
         ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
         ShowHTML('</li>');
         ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-        $RS1 = db_getUorgList::getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
+        $SQL = new db_getUorgList; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc','nome','asc');
         foreach($RS1 as $row1) {
           $w_ContImg += 1;
@@ -246,7 +246,7 @@ function Unidade() {
           ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row1,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
           ShowHTML('   </li>');
           ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-          $RS2 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
+          $SQL = new db_getUorgList; $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
           $RS2 = SortArray($RS2,'ordem','asc','nome','asc');
           foreach($RS2 as $row2) {
             $w_ContImg += 1;
@@ -262,7 +262,7 @@ function Unidade() {
             ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row2,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
             ShowHTML('         </li>');
             ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-            $RS3 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
+            $SQL = new db_getUorgList; $RS3 = $SQL->getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
             $RS3 = SortArray($RS3,'ordem','asc','nome','asc');
             foreach($RS3 as $row3) {
               $w_ContImg += 1;
@@ -278,7 +278,7 @@ function Unidade() {
               ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row3,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
               ShowHTML('            </li>');
               ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-              $RS4 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
+              $SQL = new db_getUorgList; $RS4 = $SQL->getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
               $RS4 = SortArray($RS4,'ordem','asc','nome','asc');
               foreach($RS4 as $row4) {
                 $w_ContImg += 1;
@@ -294,7 +294,7 @@ function Unidade() {
                 ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row4,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                 ShowHTML('               </li>');
                 ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                $RS5 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
+                $SQL = new db_getUorgList; $RS5 = $SQL->getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
                 $RS5 = SortArray($RS5,'ordem','asc','nome','asc');
                 foreach($RS5 as $row5) {
                   $w_ContImg += 1;
@@ -310,7 +310,7 @@ function Unidade() {
                   ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row5,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                   ShowHTML('                  </li>');
                   ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                  $RS6 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
+                  $SQL = new db_getUorgList; $RS6 = $SQL->getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
                   $RS6 = SortArray($RS6,'ordem','asc','nome','asc');
                   foreach($RS6 as $row6) {
                     $w_ContImg += 1;
@@ -326,7 +326,7 @@ function Unidade() {
                     ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row6,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                     ShowHTML('                     </li>');
                     ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                    $RS7 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
+                    $SQL = new db_getUorgList; $RS7 = $SQL->getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
                     $RS7 = SortArray($RS7,'ordem','asc','nome','asc');
                     foreach($RS7 as $row7) {
                       $w_ContImg += 1;
@@ -342,7 +342,7 @@ function Unidade() {
                       ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row7,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                       ShowHTML('                        </li>');
                       ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                      $RS8 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
+                      $SQL = new db_getUorgList; $RS8 = $SQL->getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
                       $RS8 = SortArray($RS8,'ordem','asc','nome','asc');
                       foreach($RS8 as $row8) {
                         $w_ContImg += 1;
@@ -358,7 +358,7 @@ function Unidade() {
                         ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row8,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                         ShowHTML('                           </li>');
                         ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                        $RS9 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
+                        $SQL = new db_getUorgList; $RS9 = $SQL->getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
                         $RS9 = SortArray($RS9,'ordem','asc','nome','asc');
                         foreach($RS9 as $row9) {
                           $w_ContImg += 1;
@@ -471,7 +471,7 @@ function Localizacao() {
 
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
 
-  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,null,null,null,null);
+  $SQL = new db_getUorgList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_unidade,null,null,null,null);
   foreach ($RS as $row) $w_nome_unidade = f($row,'nome');
   
   if (nvl($w_troca,'')!='' && $O!='E') {
@@ -485,12 +485,12 @@ function Localizacao() {
     $w_telefone2            = $_REQUEST['w_telefone2'];
     $w_ativo                = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getaddressList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,'LISTALOCALIZACAO',null);
+    $SQL = new db_getaddressList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_unidade,'LISTALOCALIZACAO',null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $w_sq_localizacao       = $_REQUEST['w_sq_localizacao'];
     
-    $RS = db_getaddressList::getInstanceOf($dbms,$w_cliente,$w_sq_localizacao,'LOCALIZACAO',null);
+    $SQL = new db_getaddressList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_localizacao,'LOCALIZACAO',null);
     foreach ($RS as $row) {
       $w_sq_localizacao       = f($row,'sq_localizacao');
       $w_sq_pessoa_endereco   = f($row,'sq_pessoa_endereco');
@@ -638,7 +638,7 @@ function Documentos() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
-  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+  $SQL = new db_getUorgList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
   foreach ($RS as $row) $w_nome_unidade = f($row,'nome');
   
   if ($w_troca>'' && $O!='E') {
@@ -650,11 +650,11 @@ function Documentos() {
     $w_caminho   = $_REQUEST['w_caminho'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
-    $RS = db_getUorgAnexo::getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
+    $SQL = new db_getUorgAnexo; $RS = $SQL->getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
     $RS = SortArray($RS,'ordem','asc','nome','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado 
-    $RS = db_getUorgAnexo::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,$w_cliente);
+    $SQL = new db_getUorgAnexo; $RS = $SQL->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,$w_cliente);
     foreach ($RS as $row) {
       $w_tipo      = f($row,'sq_tipo_arquivo');
       $w_nome      = f($row,'nome');
@@ -754,7 +754,7 @@ function Documentos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" colspan="2" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  
@@ -807,7 +807,7 @@ function Responsavel() {
   $SG           = 'RESPONSAVEL';
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
   $p_sq_pessoa  = $_REQUEST['p_sq_pessoa'];
-  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,null,null,null,null);
+  $SQL = new db_getUorgList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_unidade,null,null,null,null);
   foreach ($RS as $row) $w_nome_unidade = f($row,'nome');
 
   if (nvl($w_troca,'')!='' && $O!='E') {
@@ -816,13 +816,13 @@ function Responsavel() {
     $w_inicio_titular       = $_REQUEST['w_inicio_titular'];
     $w_inicio_substituto    = $_REQUEST['w_inicio_substituto'];
   } elseif ($O=='L') {
-    $RS = db_getUorgResp::getInstanceOf($dbms,$w_sq_unidade);
+    $SQL = new db_getUorgResp; $RS = $SQL->getInstanceOf($dbms,$w_sq_unidade);
     foreach ($RS as $row) {
       $w_titular      = f($row,'titular2');
       $w_substituto   = f($row,'substituto2');
     }
   } elseif (($O=='A' || $O=='E')) {
-    $RS = db_getUorgResp::getInstanceOf($dbms,$w_sq_unidade);
+    $SQL = new db_getUorgResp; $RS = $SQL->getInstanceOf($dbms,$w_sq_unidade);
     foreach ($RS as $row) {
       $w_sq_pessoa            = f($row,'titular2');
       $w_sq_pessoa_substituto = f($row,'substituto2');
@@ -994,7 +994,7 @@ function BuscaUnidade() {
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
 
-  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$chaveaux,nvl($restricao,'ATIVO'),$w_nome,$w_sigla,$w_ano);
+  $SQL = new db_getUorgList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$chaveaux,nvl($restricao,'ATIVO'),$w_nome,$w_sigla,$w_ano);
   $RS = SortArray($RS,'nome','asc', 'co_uf', 'asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de unidade</TITLE>');
@@ -1139,7 +1139,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='E'){
-          $RS = db_getUorgResp::getInstanceOf($dbms,$_REQUEST['w_sq_unidade']);
+          $SQL = new db_getUorgResp; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_unidade']);
           foreach ($RS as $row) {
             if (f($row,'nm_titular')!=''){
               ScriptOpen('JavaScript');
@@ -1149,7 +1149,7 @@ function Grava() {
               exit();
             }
           }
-          $RS= db_getaddressList::getInstanceOf($dbms,$_REQUEST['w_cliente'],$_REQUEST['w_sq_unidade'],'LISTALOCALIZACAO',null);
+          $SQL = new db_getaddressList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_cliente'],$_REQUEST['w_sq_unidade'],'LISTALOCALIZACAO',null);
           if (count($RS)>0){
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe endereço cadastrado para a unidade!\');');
@@ -1158,7 +1158,7 @@ function Grava() {
             exit();
           }
         }  
-        dml_EoUnidade::getInstanceOf($dbms, $O,
+        $SQL = new dml_EoUnidade; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_unidade'],$_REQUEST['w_sq_tipo_unidade'],$_REQUEST['w_sq_area_atuacao'],$_REQUEST['w_sq_unidade_gestora'],
             $_REQUEST['w_sq_unidade_pai'],$_REQUEST['w_sq_unidade_pagadora'],$_REQUEST['w_sq_pessoa_endereco'],
             $_REQUEST['w_ordem'],$_REQUEST['w_email'],$_REQUEST['w_codigo'],$w_cliente,$_REQUEST['w_nome'],
@@ -1177,7 +1177,7 @@ function Grava() {
     case 'LUORG':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_EoLocal::getInstanceOf($dbms,$O,
+        $SQL = new dml_EoLocal; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_localizacao'],$_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_sq_unidade'],
             $_REQUEST['w_nome'],$_REQUEST['w_fax'],$_REQUEST['w_telefone'],$_REQUEST['w_ramal'],
             $_REQUEST['w_telefone2'],$_REQUEST['w_ativo']);
@@ -1194,7 +1194,7 @@ function Grava() {
     case 'RESPONSAVEL':  //CADASTRO DE REPONSÁVEL
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_EOResp::getInstanceOf($dbms, $O,
+        $SQL = new dml_EOResp; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_unidade'],$_REQUEST['w_fim_substituto'],$_REQUEST['w_sq_pessoa_substituto'],$_REQUEST['w_inicio_substituto'],
             $_REQUEST['w_fim_titular'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_inicio_titular']);
         ScriptOpen('JavaScript');
@@ -1233,7 +1233,7 @@ function Grava() {
               } 
               // Se já há um nome para o arquivo, mantém 
               if ($_REQUEST['w_atual']>'') {
-                $RS = db_getUorgAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+                $SQL = new db_getUorgAnexo; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
                 foreach ($RS as $row) {
                   if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                   if (strpos(f($row,'caminho'),'.')!==false) {
@@ -1261,12 +1261,12 @@ function Grava() {
           } 
           // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
           if ($O=='E' && $_REQUEST['w_atual']>'') {
-            $RS = db_getUorgAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+            $SQL = new db_getUorgAnexo; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
             foreach ($RS as $row) {
               if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
             }
           } 
-          dml_putUorgArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
+          $SQL = new dml_putUorgArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
                $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');

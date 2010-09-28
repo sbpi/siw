@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -48,7 +48,7 @@ include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -103,7 +103,7 @@ function Etapa() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
   $w_cabecalho  = f($RS,'titulo').' ('.$p_projeto.')';
 
   $w_sq_pessoa    = nvl($_REQUEST['w_sq_pessoa'],$w_usuario);
@@ -127,7 +127,7 @@ function Etapa() {
     $w_peso         = $_REQUEST['w_peso'];
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
+    $sql = new db_getTipoRestricao; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_cliente  = f($RS,'cliente');
@@ -209,7 +209,7 @@ function Etapa() {
     ShowHTML('  <li>Após o término da importação pode ser necessário ajustar os dados das etapas, tais como pesos, responsáveis etc.');
     ShowHTML('  </td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     ShowHTML('<tr><td colspan="3" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><ul><b><font color="#BC3131">ATENÇÃO:</font></b>');
     ShowHTML('  <li>Este procedimento irá recriar todas as etapas. O início e o fim do projeto será ajustado conforme os prazos das etapas.');
     ShowHTML('  <li>Vínculos entre as etapas e recursos, interessados ou restrições serão AUTOMATICAMENTE APAGADOS, sendo necessários recriá-los após a importação.');
@@ -250,7 +250,7 @@ function Etapa() {
     }
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Respo<u>n</u>sável pelas etapas:','N','Selecione o responsável pelas etapas na relação.',$w_sq_pessoa,null,'w_sq_pessoa','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&O=L&SG='.$SG.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
-    $RS_Pessoa = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+    $sql = new db_getPersonData; $RS_Pessoa = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
     $w_sq_unidade = f($RS_Pessoa,'sq_unidade');
     ShowHTML('              <td colspan=3><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr>');
     SelecaoUnidade('<U>S</U>etor responsável pelas etapas:','S','Selecione o setor responsável pela execução das etapas',$w_sq_unidade,null,'w_sq_unidade',null,null);    ShowHTML('                  </table>');
@@ -388,12 +388,12 @@ function Grava() {
               if ($i==0) {
                 // Se for gravar etapa, apaga todas as etapas existentes
                 $i = 1;
-                dml_putEtapaProject::getInstanceOf($dbms,'E',$_REQUEST['p_projeto'],null,
+                $SQL = new dml_putEtapaProject; $SQL->getInstanceOf($dbms,'E',$_REQUEST['p_projeto'],null,
                     null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,&$w_chave_nova);
                 ShowHTML('<br><br><b>Fase 2/4 - Remoção das etapas do projeto: completada');
                 flush();
               }
-              dml_putEtapaProject::getInstanceOf($dbms,'I',$_REQUEST['p_projeto'],$w_chave_pai,
+              $SQL = new dml_putEtapaProject; $SQL->getInstanceOf($dbms,'I',$_REQUEST['p_projeto'],$w_chave_pai,
                   $w_titulo,nvl($w_descricao,$w_titulo),$w_ordem,$w_inicio,$w_fim,$w_perc,
                   $_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_unidade'],$w_usuario,
                   $_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'],$_REQUEST['w_cidade'],
@@ -406,7 +406,7 @@ function Grava() {
             ShowHTML('<br><br><b>Fase 3/4 - Carga das etapas do projeto a partir do arquivo: completada');
             flush();
             // Se processou algum registro, ajusta os pacotes de trabalho
-            dml_putEtapaProject::getInstanceOf($dbms,'A',$_REQUEST['p_projeto'],null,
+            $SQL = new dml_putEtapaProject; $SQL->getInstanceOf($dbms,'A',$_REQUEST['p_projeto'],null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_peso'],&$w_chave_nova);
             ShowHTML('<br><br><b>Fase 4/4 - Indicação dos pacotes de trbalho: completada');
             flush();

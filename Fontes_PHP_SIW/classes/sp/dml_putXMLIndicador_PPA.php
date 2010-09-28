@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -41,7 +41,7 @@ class dml_putXMLIndicador_PPA {
                    'p_apuracao'                  =>array(tvl(str_replace('T',' ',$p_apuracao)),            B_VARCHAR,         20),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

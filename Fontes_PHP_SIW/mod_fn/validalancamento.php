@@ -29,7 +29,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
   // Verifica se o cliente tem o módulo financeiro contratado
-  $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$p_cliente,null,'FN');
+  $l_rs_modulo = new db_getSiwCliModLis; $l_rs_modulo = $l_rs_modulo->getInstanceOf($dbms,$p_cliente,null,'FN');
   if (count($l_rs_modulo)<=0) $l_financeiro='S'; else $l_financeiro='N';
   $l_erro='';
   $l_tipo='';
@@ -109,7 +109,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
     $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
     if (count($l_rs_rubrica)>0) {
-      $l_rs_menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNREVENT');
+      $l_rs_menu = new db_getLinkData; $l_rs_menu = $l_rs_menu->getInstanceOf($dbms,$w_cliente,'FNREVENT');
       $l_rs_tipo = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);
       foreach($l_rs_tipo as $l_row){$l_rs_tipo=$l_row; break;}
       if (count($l_rs_tipo)>0) {
@@ -190,7 +190,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
       // Se pagamento de viagem, verifica se há prestação de contas pendente
       if ((f($l_rs_tramite,'sigla')=='EE' || f($l_rs_tramite,'sigla')=='PP') && f($l_rs_solic,'sigla')=='FNDVIA') {
         // Recupera a vinculação do lançamento financeiro
-        $l_rsm = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+        $l_rsm = new db_getLinkData; $l_rsm = $l_rsm->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
         $l_rs1 = db_getSolicList::getInstanceOf($dbms,f($l_rsm,'sq_menu'),$w_usuario,f($l_rsm,'sigla'),5,
             null,null,null,null,'S',null,null,null,null,null,null, null, null,null,null,null,null,null,null,null,null,null,null,null,null, 
             f($l_rs_solic,'pessoa'));

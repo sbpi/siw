@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -34,7 +34,7 @@ class dml_putAcaoPPA {
                    'p_cod_programa'              =>array(tvl($l_cod_programa),                             B_VARCHAR,        50),
                    'p_cod_acao'                  =>array(tvl($l_cod_acao),                                 B_VARCHAR,        50)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

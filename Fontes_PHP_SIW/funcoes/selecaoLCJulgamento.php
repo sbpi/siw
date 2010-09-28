@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getLCCriterio.php');
 // =========================================================================
 // Montagem da seleção de julgamentos
 // -------------------------------------------------------------------------
 function selecaoLCJulgamento($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getLCCriterio::getInstanceOf($dbms,null,$w_cliente,null,'S',null,null,$restricao);
+  $sql = new db_getLCCriterio; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,'S',null,null,$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

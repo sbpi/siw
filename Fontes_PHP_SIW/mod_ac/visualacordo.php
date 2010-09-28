@@ -8,7 +8,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $l_html='';
   
   // Carrega o segmento do cliente
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente); 
   $w_segmento = f($RS_Cliente,'segmento');
   
   // Recupera os dados do acordo

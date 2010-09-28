@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getFoneList.php');
 // =========================================================================
 // Montagem da seleção dos telefones de uma pessoa
 // -------------------------------------------------------------------------
 function selecaoTelefone($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getFoneList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
+  $sql = new db_getFoneList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {

@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 // -------------------------------------------------------------------------
 function selecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$p_solic,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux, $p_solic, $restricao,'S');
+  $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $chaveAux, $p_solic, $restricao,'S');
   $RS = SortArray($RS,'ordem','asc');
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

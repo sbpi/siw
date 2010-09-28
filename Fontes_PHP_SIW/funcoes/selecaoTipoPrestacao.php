@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
 // =========================================================================
 // Montagem da seleção do tipo das prestacoes de contas

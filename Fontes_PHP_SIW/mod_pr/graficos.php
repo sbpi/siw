@@ -104,14 +104,14 @@ exit;
 // -------------------------------------------------------------------------
 function Hierarquico() {
   extract($GLOBALS);
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');
 
   $diagram = new DiagramExtended(gera_hierarquico(true));
   $data = $diagram->getNodePositions();
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
@@ -134,7 +134,7 @@ function echo_map($l_chave, &$node, $selected) {
   extract($GLOBALS);
 
   if (nvl($node['chave'],'')!='') {
-    $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,$node['chave'],'LISTA',null);
+    $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$l_chave,$node['chave'],'LISTA',null);
     foreach($RS as $row) { $RS = $row; break; }
     echo "<a style=\"TEXT-DECORATION: none\" HREF=\"javascript:this.status.value;\" onClick=\"window.open('{$conRootSIW}projeto.php?par=AtualizaEtapa&w_chave={$l_chave}&O=V&w_chave_aux=".f($RS,'sq_projeto_etapa')."&w_tipo={$p_tipo}&TP=Diagrama hierárquico &SG={$p_sg}','Etapa','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">?</div></a>\n";
   }
@@ -149,15 +149,15 @@ function echo_map($l_chave, &$node, $selected) {
 function Gera_Hierarquico($l_gera) {
   extract($GLOBALS);
 
-  $l_xml = '<?xml version="1.0" encoding="iso-8859-1"?>';
+  $l_xml = '<?phpxml version="1.0" encoding="iso-8859-1"?>';
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
 
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
   $l_xml .= chr(13).'  <node name="    '.base64encodeIdentificada(f($RS,'ac_titulo')).'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
   $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGE: '.formatNumber(f($RS,'ige'),2).'%';
 
   // Recupera as etapas principais
-  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
+  $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
   $w_level = 0;
   foreach($RS as $row) {
     $l_level = intVal(f($row,'level'));
@@ -207,11 +207,11 @@ function Gera_Hierarquico($l_gera) {
 // -------------------------------------------------------------------------
 function Gantt() {
   extract($GLOBALS);
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
@@ -338,7 +338,7 @@ function Gera_Gantt() {
   // THIS IS THE BEGINNING OF YOUR CHART SETTINGS
   //global definitions to graphic
   // change to you project data/needs
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
 
   $definitions['title_string'] = f($RS,'titulo'); //project title
   $definitions['locale'] = "pt_BR";//change to language you need -> en = english, pt_BR = Brazilian Portuguese etc
@@ -368,7 +368,7 @@ function Gera_Gantt() {
   // use loops to define these variables with database data
 
   // Recupera as etapas principais
-  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'LSTNIVEL',null);
+  $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'LSTNIVEL',null);
   $RS = SortArray($RS,'cd_ordem','asc');
   $i = 0;
   $j = 0;
@@ -381,7 +381,7 @@ function Gera_Gantt() {
     $definitions['groups']['group'][$i]['end'] = addDays(f($row,'fim_previsto'),1);
 
     // Recupera os pacotes de trabalho da etapa
-    $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row,'sq_projeto_etapa'),'ARVORE',null);
+    $sql = new db_getSolicEtapa; $RS1 = $sql->getInstanceOf($dbms,$w_chave,f($row,'sq_projeto_etapa'),'ARVORE',null);
     $RS1 = SortArray($RS1,'cd_ordem','asc');
     foreach($RS1 as $row1) {
       // Descarta se não for pacote de trabalho
@@ -470,7 +470,7 @@ function Gera_Gantt1() {
 include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
 include_once ($w_dir_volta."classes/jpgraph/jpgraph_gantt.php");
 
-$RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
+$sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
 //
 // The data for the graphs
 //

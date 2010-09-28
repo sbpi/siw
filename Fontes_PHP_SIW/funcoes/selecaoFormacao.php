@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getFormationList.php');
 // =========================================================================
 // Montagem da seleção de formação acadêmica
 // -------------------------------------------------------------------------
 function selecaoFormacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getFormationList::getInstanceOf($dbms,$chaveAux,null,null);
+  $sql = new db_getFormationList; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,null);
   $RS = SortArray($RS,'ordem','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

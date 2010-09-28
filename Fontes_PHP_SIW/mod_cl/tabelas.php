@@ -59,7 +59,7 @@ include_once($w_dir_volta.'funcoes/selecaoLCSituacao.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
@@ -108,12 +108,12 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-if ($P2>0)   $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
-else         $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+if ($P2>0)   { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
+else         { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu); }
 
 // Se for sub-menu, pega a configuração do pai
 if ($RS_Menu['ultimo_nivel']=='S') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 $RS_Param = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
@@ -1352,7 +1352,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putTipoMatServ::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),$_REQUEST['w_nome'],
+        $SQL = new dml_putTipoMatServ; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),$_REQUEST['w_nome'],
                 $_REQUEST['w_sigla'],$_REQUEST['w_classe'],$_REQUEST['w_gestora'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo_externo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1378,7 +1378,7 @@ function Grava() {
             break;
           } 
         }  
-        dml_putLCCriterio::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
+        $SQL = new dml_putLCCriterio; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],
            $_REQUEST['w_padrao'],$_REQUEST['w_item']);
         ScriptOpen('JavaScript');
@@ -1405,7 +1405,7 @@ function Grava() {
             break;
           } 
         }  
-        dml_putLCSituacao::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
+        $SQL = new dml_putLCSituacao; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],
            $_REQUEST['w_padrao'],$_REQUEST['w_publicar']);
         ScriptOpen('JavaScript');
@@ -1432,7 +1432,7 @@ function Grava() {
             break;
           } 
         }  
-        dml_putLCModEnq::getInstanceOf($dbms,$O,$_REQUEST['w_chave'], $_REQUEST['w_chave_aux'],
+        $SQL = new dml_putLCModEnq; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'], $_REQUEST['w_chave_aux'],
            $_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
@@ -1447,7 +1447,7 @@ function Grava() {
       case 'CLPARAM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCLParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_ano_corrente'],$_REQUEST['w_dias_validade_pesquisa'],$_REQUEST['w_dias_aviso_pesquisa'],
+        $SQL = new dml_putCLParametro; $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_ano_corrente'],$_REQUEST['w_dias_validade_pesquisa'],$_REQUEST['w_dias_aviso_pesquisa'],
             $_REQUEST['w_percentual_acrescimo'],$_REQUEST['w_compra_central'],$_REQUEST['w_pesquisa_central'],$_REQUEST['w_contrato_central'],
             $_REQUEST['w_banco_ata_central'],$_REQUEST['w_banco_preco_central'],$_REQUEST['w_codificacao_central'],
             $_REQUEST['w_pede_valor_pedido'],$_REQUEST['w_automatico'],$_REQUEST['w_prefixo'],
@@ -1477,7 +1477,7 @@ function Grava() {
             }
           }
         }
-        dml_putUnidade_CL::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_unidade_pai'],
+        $SQL = new dml_putUnidade_CL; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_unidade_pai'],
             $_REQUEST['w_realiza_compra'],$_REQUEST['w_solicita_compra'],$_REQUEST['w_registra_pesquisa'],
             $_REQUEST['w_registra_contrato'],$_REQUEST['w_registra_judicial'],$_REQUEST['w_controla_banco_ata'],
             $_REQUEST['w_controla_banco_preco'],$_REQUEST['w_codifica_item'],$_REQUEST['w_codificacao_restrita'],
@@ -1506,7 +1506,7 @@ function Grava() {
             exit;
           } 
         } 
-        dml_putCLUsuario::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave']);
+        $SQL = new dml_putCLUsuario; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

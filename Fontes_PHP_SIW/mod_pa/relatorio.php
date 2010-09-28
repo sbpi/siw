@@ -60,7 +60,7 @@ if ($_SESSION['LOGON'] != 'Sim') {
 }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -120,7 +120,7 @@ foreach ($RS_Parametro as $row) {
   break;
 }
 
-$RS_Menu = db_getMenuData::getInstanceOf($dbms, $w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms, $w_menu);
 
 Main();
 FechaSessao($dbms);
@@ -606,7 +606,7 @@ function Etiqueta() {
     if (count($RS1) > 0) {
       ShowHTML('<tr><td align="center" colspan=3><br><br><br><br>');
       // Recupera os dados do cliente
-      $RS_Cliente = db_getcustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+      $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
       // Recupera os dados do documento
       $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PADGERAL');
       //exibeArray($RS);
@@ -775,7 +775,7 @@ function EmitirEtiqueta() {
   $w_largura = 400;
 
   // Recupera os dados do cliente
-  $RS_Cliente = db_getcustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
   // Recupera os dados do documento
   $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PADGERAL');
   //HeaderEtiqueta();

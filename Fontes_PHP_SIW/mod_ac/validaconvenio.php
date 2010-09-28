@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de validação dos dados do convenio
 // -------------------------------------------------------------------------
@@ -37,7 +37,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
     }
   }
   // Verifica se o cliente tem o módulo de acordos contratado
-  $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$l_cliente,null,'AC');
+  $l_rs_modulo = new db_getSiwCliModLis; $l_rs_modulo = $l_rs_modulo->getInstanceOf($dbms,$l_cliente,null,'AC');
   if (count($l_rs_modulo)>0) $l_acordo='S'; else $l_acordo='N';
  
   // Recupera o trâmite atual da solicitação

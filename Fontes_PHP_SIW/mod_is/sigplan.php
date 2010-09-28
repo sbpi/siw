@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -95,7 +95,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoTabela.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -144,7 +144,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 $w_caminho  = $conFilePhysical.$w_cliente.'/';
-$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
 foreach($RS as $row){$RS=$row; break;}
 $w_sq_modulo = f($RS,'sq_modulo');
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
@@ -156,13 +156,13 @@ if (count($RS)>0) {
 } 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -872,7 +872,7 @@ function Mapeamento() {
 function Importacao() {
   extract($GLOBALS);
   $w_sq_esquema = $_REQUEST['w_sq_esquema'];
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
   $w_upload_maximo = f($RS,'upload_maximo');
   if ($O=='I') {
     // Recupera todos os ws_url para a listagem
@@ -1047,7 +1047,7 @@ function Exportacao() {
     // Configura o nome dos arquivo recebido e do arquivo registro
     $w_arquivo_processamento = f($RS,'nome').'.xml';
     $F1 = fopen($w_caminho.$w_arquivo_processamento, 'w');
-    fwrite($F1,utf8_encode('<?xml version="1.0" encoding="utf-8"?>').$crlf);
+    fwrite($F1,utf8_encode('<?phpxml version="1.0" encoding="utf-8"?>').$crlf);
     //fwrite($F1,utf8_encode('<'.f($RS,'no_raiz').' xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sigplan.gov.br/xml/">').$crlf);
     fwrite($F1,utf8_encode('<'.f($RS,'no_raiz').'>').$crlf);
     // Processa cada um dos esquemas recuperados
@@ -1205,55 +1205,55 @@ function Grava() {
                     }
                     $w_resultado='';
                     switch (f($row1,'nm_tabela')) {
-                      case 'IS_PPA_ESFERA':         dml_putXMLEsfera::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_PERIODICIDADE':  dml_putXMLPeriodicidade_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_UNIDADE_MEDIDA': dml_putXMLUnidade_Medida_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_ORGAO':          dml_putXMLOrgao_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_ORGAO_SIORG':    dml_putXMLOrgao_Siorg_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_UNIDADE':        dml_putXMLUnidade_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_TIPO_ACAO':      dml_putXMLTipo_Acao_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_TIPO_DESPESA':   dml_putXMLTipo_Despesa::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_TIPO_ATUALIZACAO':   dml_putXMLTipo_Atualizacao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_TIPO_PROGRAMA':  dml_putXMLTipo_Programa_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_TIPO_INCLUSAO_ACAO': dml_putXMLTipo_Inclusao_Acao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_NATUREZA':       dml_putXMLNatureza::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_FUNCAO':         dml_putXMLFuncao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_SUBFUNCAO':      dml_putXMLSubFuncao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_FONTE':          dml_putXMLFonte_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_REGIAO':             dml_putXMLREGIAO::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_MUNICIPIO':          dml_putXMLMunicipio::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_PRODUTO':        dml_putXMLProduto_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_PROGRAMA':       dml_putXMLPrograma_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_INDICADOR':      dml_putXMLIndicador_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_ACAO':           dml_putXMLAcao_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_LOCALIZADOR':    dml_putXMLLocalizador_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_DADO_FISICO':    dml_putXMLDadoFisico_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_PPA_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_BASE_GEOGRAFICA':dml_putXMLBase_Geografica::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_FONTE':          dml_putXMLFonte_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_OPCAO_ESTRAT':   dml_putXMLOpcao_Estrat::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_PERIODICIDADE':  dml_putXMLPeriodicidade::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_PRODUTO':        dml_putXMLProduto_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_TIPO_ACAO':      dml_putXMLTipo_Acao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_TIPO_ORGAO':     dml_putXMLTipo_Orgao_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_TIPO_PROGRAMA':  dml_putXMLTipo_Programa::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_TIPO_RESTRICAO': dml_putXMLTipo_Restricao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_TIPO_SITUACAO':  dml_putXMLTipo_Situacao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_UNIDADE_MEDIDA': dml_putXMLUnidade_Medida_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_MACRO_OBJETIVO': dml_putXMLMacro_Objetivo::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_ORGAO':          dml_putXMLOrgao_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'---','S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_UNIDADE':        dml_putXMLUnidade_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_PROGRAMA':       dml_putXMLPrograma_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32]);  if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_INDICADOR':      dml_putXMLIndicador_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ESFERA':         $SQL = new dml_putXMLEsfera; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_PERIODICIDADE':  $SQL = new dml_putXMLPeriodicidade_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_UNIDADE_MEDIDA': $SQL = new dml_putXMLUnidade_Medida_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ORGAO':          $SQL = new dml_putXMLOrgao_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ORGAO_SIORG':    $SQL = new dml_putXMLOrgao_Siorg_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_UNIDADE':        $SQL = new dml_putXMLUnidade_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_TIPO_ACAO':      $SQL = new dml_putXMLTipo_Acao_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_TIPO_DESPESA':   $SQL = new dml_putXMLTipo_Despesa; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_TIPO_ATUALIZACAO':   $SQL = new dml_putXMLTipo_Atualizacao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_TIPO_PROGRAMA':  $SQL = new dml_putXMLTipo_Programa_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_TIPO_INCLUSAO_ACAO': $SQL = new dml_putXMLTipo_Inclusao_Acao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_NATUREZA':       $SQL = new dml_putXMLNatureza; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_FUNCAO':         $SQL = new dml_putXMLFuncao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_SUBFUNCAO':      $SQL = new dml_putXMLSubFuncao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_FONTE':          $SQL = new dml_putXMLFonte_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_REGIAO':             $SQL = new dml_putXMLREGIAO; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_MUNICIPIO':          $SQL = new dml_putXMLMunicipio; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_PRODUTO':        $SQL = new dml_putXMLProduto_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_PROGRAMA':       $SQL = new dml_putXMLPrograma_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_INDICADOR':      $SQL = new dml_putXMLIndicador_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ACAO':           $SQL = new dml_putXMLAcao_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_LOCALIZADOR':    $SQL = new dml_putXMLLocalizador_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_DADO_FISICO':    $SQL = new dml_putXMLDadoFisico_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_DADO_FINANCEIRO':$SQL = new dml_putXMLDadoFinanceiro_PPA; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_BASE_GEOGRAFICA':$SQL = new dml_putXMLBase_Geografica; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_FONTE':          $SQL = new dml_putXMLFonte_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_OPCAO_ESTRAT':   $SQL = new dml_putXMLOpcao_Estrat; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_PERIODICIDADE':  $SQL = new dml_putXMLPeriodicidade; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_PRODUTO':        $SQL = new dml_putXMLProduto_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_ACAO':      $SQL = new dml_putXMLTipo_Acao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_ORGAO':     $SQL = new dml_putXMLTipo_Orgao_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_PROGRAMA':  $SQL = new dml_putXMLTipo_Programa; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_RESTRICAO': $SQL = new dml_putXMLTipo_Restricao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_SITUACAO':  $SQL = new dml_putXMLTipo_Situacao; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_UNIDADE_MEDIDA': $SQL = new dml_putXMLUnidade_Medida_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_MACRO_OBJETIVO': $SQL = new dml_putXMLMacro_Objetivo; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_ORGAO':          $SQL = new dml_putXMLOrgao_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'---','S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_UNIDADE':        $SQL = new dml_putXMLUnidade_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_PROGRAMA':       $SQL = new dml_putXMLPrograma_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32]);  if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_INDICADOR':      $SQL = new dml_putXMLIndicador_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
                       case 'IS_SIG_ACAO':           
                         // Só carrega ações que não sejam RAP (Restos a pagar)
-                        if ($w_param[38]=='N')  dml_putXMLAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44]);
+                        if ($w_param[38]=='N')  { $SQL = new dml_putXMLAcao_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44]); }
                         else                    $w_reg -= 1;
                         if($w_resultado>'')     $w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); 
                       break;
-                      case 'IS_SIG_DADO_FISICO':    dml_putXMLDadoFisico_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47],$w_param[48]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
-                      case 'IS_SIG_RESTRICAO_ACAO': dml_putXMLRestricaoAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_DADO_FISICO':    $SQL = new dml_putXMLDadoFisico_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_DADO_FINANCEIRO':$SQL = new dml_putXMLDadoFinanceiro_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47],$w_param[48]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_RESTRICAO_ACAO': $SQL = new dml_putXMLRestricaoAcao_SIG; $SQL->getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
                     } 
                   } 
                 }   
@@ -1268,7 +1268,7 @@ function Grava() {
             $w_tamanho_registro   = filesize($w_caminho.$w_arquivo_rejeicao);
             $w_tipo_registro      = '';
             // Grava o resultado da importação no banco de dados
-            dml_putDcOcorrencia::getInstanceOf($dbms,$O,
+            $SQL = new dml_putDcOcorrencia; $SQL->getInstanceOf($dbms,$O,
               $_REQUEST['w_sq_esquema'],$w_cliente,$w_usuario,$_REQUEST['w_data_arquivo'],
               basename($w_arquivo_processamento),basename($w_arquivo_processamento),$w_tamanho_recebido,$w_tipo_recebido,
               basename($w_arquivo_registro),basename($w_arquivo_rejeicao),$w_tamanho_registro,$w_tipo_registro,
@@ -1298,7 +1298,7 @@ function Grava() {
     case 'ISSIGIMP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putEsquema::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$w_sq_modulo,$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
+        $SQL = new dml_putEsquema; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$w_sq_modulo,$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
           $_REQUEST['w_ativo'],$_REQUEST['w_formato'],$_REQUEST['w_ws_servidor'],$_REQUEST['w_ws_url'],
           $_REQUEST['w_ws_acao'],$_REQUEST['w_ws_mensagem'],$_REQUEST['w_no_raiz'],null,null,null,null,0,null,null,null,null,null,null,null);
         ScriptOpen('JavaScript');
@@ -1314,7 +1314,7 @@ function Grava() {
     case 'ISSIGEXP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putEsquema::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$w_sq_modulo,$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
+        $SQL = new dml_putEsquema; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$w_sq_modulo,$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
           $_REQUEST['w_ativo'],$_REQUEST['w_formato'],$_REQUEST['w_ws_servidor'],$_REQUEST['w_ws_url'],
           $_REQUEST['w_ws_acao'],$_REQUEST['w_ws_mensagem'],$_REQUEST['w_no_raiz']);
         ScriptOpen('JavaScript');
@@ -1332,13 +1332,13 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_tabela'])-1; $i=$i+1) {
-            if ($_REQUEST['w_sq_tabela'][$i]>'') dml_putEsquemaTabela::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i]);
+            if ($_REQUEST['w_sq_tabela'][$i]>'') { $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i]); }
           } 
         } elseif ($O=='A') {
-          dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento']);
+          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento']);
         } elseif ($O=='E') {
-          dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
-          dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null);
+          $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
+          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
@@ -1353,10 +1353,10 @@ function Grava() {
     case 'ISSIGMAP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putEsquemaAtributo::getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
+        $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
-            if ($_REQUEST['w_sq_coluna'][$i]>'') dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i]);
+            if ($_REQUEST['w_sq_coluna'][$i]>'') { $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i]); }
           } 
         } 
         ScriptOpen('JavaScript');

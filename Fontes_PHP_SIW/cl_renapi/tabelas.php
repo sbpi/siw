@@ -67,7 +67,7 @@ include_once($w_dir_volta.'funcoes/selecaoServico.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -140,7 +140,7 @@ function Plano() {
   } elseif ($O != 'L' && ($O != 'I' || nvl($w_heranca,'nulo') != 'nulo')) {
     // Se for herança, atribui a chave da opção selecionada para w_chave
     if ($w_heranca>'') $w_chave = $w_heranca;
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_chave_pai        = f($RS,'sq_plano_pai');
     $w_titulo           = f($RS,'titulo');
@@ -215,7 +215,7 @@ function Plano() {
   Estrutura_Texto_Abre();
   if ($O=='M') {
     // Recupera os dados do plano estratégico para exibição no cabeçalho
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_titulo           = f($RS,'titulo');
     $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
@@ -240,7 +240,7 @@ function Plano() {
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'IS NULL');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'IS NULL');
     $w_contOut = 0;
     foreach($RS as $row) {
       $w_titulo  = f($row,'titulo');
@@ -262,7 +262,7 @@ function Plano() {
         ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row,'chave'));
+        $sql = new db_getPlanoEstrategico; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row,'chave'));
         foreach($RS1 as $row1) {
           $w_titulo = $w_titulo.' - '.f($row1,'titulo');
           if (f($row1,'Filho')>0) {
@@ -283,7 +283,7 @@ function Plano() {
             ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row1,'chave'));
+            $sql = new db_getPlanoEstrategico; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row1,'chave'));
             foreach($RS2 as $row2) {
               $w_titulo = $w_titulo.' - '.f($row2,'titulo');
               if (f($row2,'Filho')>0) {
@@ -304,7 +304,7 @@ function Plano() {
                 ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row2,'chave'));
+                $sql = new db_getPlanoEstrategico; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row2,'chave'));
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'titulo');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
@@ -474,7 +474,7 @@ function Plano() {
     ShowHTML('</FORM>');
   } elseif ($O=='M') {
     // Recupera as vinculações existentes
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENU');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENU');
     $RS = SortArray($RS,'nm_modulo','asc','nome','asc'); 
 
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Marque os serviços que poderão vincular-se a este plano.<li>Desmarque os serviços que não poderão vincular-se a este plano.</ul></b></font></td>');
@@ -563,11 +563,11 @@ function Natureza() {
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getNatureza_pe::getInstanceOf($dbms,null,$w_cliente,null,null);
+    $sql = new db_getNatureza_pe; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados chave informada
-    $RS = db_getNatureza_pe::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+    $sql = new db_getNatureza_pe; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
@@ -692,11 +692,11 @@ function Horizonte() {
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getHorizonte_pe::getInstanceOf($dbms,null,$w_cliente,null,null);
+    $sql = new db_getHorizonte_pe; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getHorizonte_pe::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+    $sql = new db_getHorizonte_pe; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_cliente  = f($RS,'cliente');
@@ -821,7 +821,7 @@ function Objetivo(){
   $w_plano     = $_REQUEST['w_plano'];
 
   // Recupera os dados do plano estratégico para exibição no cabeçalho
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_titulo           = f($RS,'titulo');
   $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
@@ -835,7 +835,7 @@ function Objetivo(){
     $w_ativo            = $_REQUEST['w_ativo'];
     $w_codigo           = $_REQUEST['w_codigo'];
   } elseif ($O=='L') {
-    $RS = db_getObjetivo_PE::getInstanceOf($dbms,$w_chave,null,$w_cliente,null,null,null,null);
+    $sql = new db_getObjetivo_PE; $RS = $sql->getInstanceOf($dbms,$w_chave,null,$w_cliente,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -843,7 +843,7 @@ function Objetivo(){
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (!(strpos('AEVT',$O)===false)) {
-    $RS = db_getObjetivo_PE::getInstanceOf($dbms,$w_chave,$w_chave_aux,$w_cliente,null,null,null,null);
+    $sql = new db_getObjetivo_PE; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,$w_cliente,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_nome      = f($RS,'nome');
     $w_sigla     = f($RS,'sigla');
@@ -1036,7 +1036,7 @@ function Telaplano(){
 
   $w_sq_plano=$_REQUEST['w_sq_plano'];
 
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   Cabecalho();
   head();
@@ -1060,7 +1060,7 @@ function Telaplano(){
   ShowHTML('      <tr valign="top"><td width="30%"><b>Objetivo:</b></td><td>'.crlf2br(f($RS,'missao')).'</td>');
 
   // Objetivos estratégicos
-  $RS = db_getObjetivo_PE::getInstanceOf($dbms,$w_sq_plano,null,$w_cliente,null,null,null,null);
+  $sql = new db_getObjetivo_PE; $RS = $sql->getInstanceOf($dbms,$w_sq_plano,null,$w_cliente,null,null,null,null);
   $RS = SortArray($RS,'nome','asc');
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Objetivos Estratégicos ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1> </b></font></td>');
   ShowHTML('      <tr><td align="center" colspan=3>');
@@ -1092,7 +1092,7 @@ function Telaplano(){
 
   $l_html = '';
   // Indicadores
-  $RS = db_getSolicIndicador::getInstanceOf($dbms,null,null,null,$w_sq_plano,null);
+  $sql = new db_getSolicIndicador; $RS = $sql->getInstanceOf($dbms,null,null,null,$w_sq_plano,null);
   $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -1159,7 +1159,7 @@ function Telaplano(){
   }
 
   // Metas
-  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,$w_sq_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,$w_sq_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'ordem','asc','titulo','asc');
   if (count($RS)>0) {
     $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -1207,7 +1207,7 @@ function Telaplano(){
           $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
         }
         $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
-        $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+        $sql = new db_getSolicMeta; $RSCron = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
         $RSCron = SortArray($RSCron,'inicio','asc');
         $i = 0;
         $w_previsto  = 0;
@@ -1273,7 +1273,7 @@ function Telaplano(){
 
 /*
   // Serviços
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Serviços ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1> </b></font></td>');
   ShowHTML('      <tr><td align="center" colspan=3>');
@@ -1312,7 +1312,7 @@ function Telaplano(){
 */
 
   // Documentos vinculados
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   if (count($RS)>0) {
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Estruturação</b></font>');
@@ -1321,7 +1321,7 @@ function Telaplano(){
     ShowHTML('         <hr NOSHADE color=#000000 SIZE=1></td>');
     ShowHTML('         </td>');
     foreach ($RS as $row) {
-      $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+      $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
       $RS1 = SortArray($RS1,'titulo','asc');
       if (count($RS1)>0) {
         ShowHTML('<tr><td align="center" colspan=3>');
@@ -1355,7 +1355,7 @@ function Telaplano(){
             ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'inicio'),9).'</td>');
             ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'fim'),9).'</td>');
             // Recupera os documentos vinculados
-            $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
             foreach($RS2 as $row2) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -1371,7 +1371,7 @@ function Telaplano(){
               ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'inicio'),9).'</td>');
               ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'fim'),9).'</td>');
               // Recupera os documentos vinculados
-              $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+              $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
               $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
               foreach($RS3 as $row3) {
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -1402,7 +1402,7 @@ function Telaplano(){
   ShowHTML('      </tr> ');
 
   // Arquivos
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,$w_sq_plano,null,null,null,null,'ARQUIVOS');  
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_plano,null,null,null,null,'ARQUIVOS');  
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Arquivos ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1> </b></font></td>');  
   ShowHTML('      <tr><td align="center" colspan=3>');
   ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" border=0 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1443,7 +1443,7 @@ function Arquivo() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_troca      = $_REQUEST['w_troca'];
 
-  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_titulo           = f($RS,'titulo');
   $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
@@ -1456,11 +1456,11 @@ function Arquivo() {
     $w_caminho   = $_REQUEST['w_caminho'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,'ARQUIVOS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,'ARQUIVOS');
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado 
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,'ARQUIVOS');
+    $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,'ARQUIVOS');
     foreach ($RS as $row) {
       $w_nome      = f($row,'nome');
       $w_descricao = f($row,'descricao');
@@ -1562,7 +1562,7 @@ function Arquivo() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b></font>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  
@@ -1615,7 +1615,7 @@ function TipoInter() {
     $w_descricao       = $_REQUEST['w_descricao'];
     $w_ativo           = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
-    $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,$w_servico,null,null,null,null, 'REGISTROS');
+    $sql = new db_getTipoInteressado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_servico,null,null,null,null, 'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1623,7 +1623,7 @@ function TipoInter() {
       $RS = SortArray($RS,'nm_servico','asc','ordem','asc','nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false)) {
-    $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,$w_servico,$w_chave,null,null,null,'REGISTROS');
+    $sql = new db_getTipoInteressado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_servico,$w_chave,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_servico          = f($RS,'sq_menu');
     $w_chave            = f($RS,'chave');
@@ -1798,7 +1798,7 @@ function TipoRecurso() {
   } elseif ($O != 'L' && $O != 'I') {
     // Se for herança, atribui a chave da opção selecionada para w_chave
     if ($w_copia>'') $w_chave = $w_copia;
-    $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_chave_pai      = f($RS,'sq_tipo_pai');
     $w_nome           = f($RS,'nome');
@@ -1855,7 +1855,7 @@ function TipoRecurso() {
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'IS NULL');
+    $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'IS NULL');
     $w_contOut = 0;
     foreach($RS as $row) {
       $w_nome  = f($row,'nome');
@@ -1874,7 +1874,7 @@ function TipoRecurso() {
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row,'chave'));
+        $sql = new db_getTipoRecurso; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row,'chave'));
         foreach($RS1 as $row1) {
           $w_nome .= ' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
@@ -1892,7 +1892,7 @@ function TipoRecurso() {
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row1,'chave'));
+            $sql = new db_getTipoRecurso; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row1,'chave'));
             foreach($RS2 as $row2) {
               $w_nome .= ' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
@@ -1910,7 +1910,7 @@ function TipoRecurso() {
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row2,'chave'));
+                $sql = new db_getTipoRecurso; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row2,'chave'));
                 foreach($RS3 as $row3) {
                   $w_nome .= ' - '.f($row3,'nome');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
@@ -2063,11 +2063,11 @@ function TipoIndicador() {
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,null,null,null,'REGISTROS');
+    $sql = new db_getTipoIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,'REGISTROS');
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'REGISTROS');
+    $sql = new db_getTipoIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_cliente  = f($RS,'cliente');
@@ -2194,7 +2194,7 @@ function UnidadeMedida() {
     $w_sigla           = $_REQUEST['w_sigla'];
     $w_ativo           = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
-    $RS = db_getUnidadeMedida::getInstanceOf($dbms,$w_cliente,null,null,null,null, 'REGISTROS');
+    $sql = new db_getUnidadeMedida; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null, 'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sigla','asc');
@@ -2202,7 +2202,7 @@ function UnidadeMedida() {
       $RS = SortArray($RS,'sigla','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false)) {
-    $RS = db_getUnidadeMedida::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
+    $sql = new db_getUnidadeMedida; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave            = f($RS,'chave');
     $w_nome             = f($RS,'nome');
@@ -2352,11 +2352,11 @@ function Unidade() {
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getUnidade_PE::getInstanceOf($dbms,$w_cliente,null,null,null);
+    $sql = new db_getUnidade_PE; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getUnidade_PE::getInstanceOf($dbms,$w_cliente,$w_chave,null,null);
+    $sql = new db_getUnidade_PE; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_nome         = f($RS,'nome');
     $w_sigla        = f($RS,'sigla');
@@ -2523,7 +2523,7 @@ function Grava() {
         // verifica se o plano respeita o período do pai e se não há nenhum plano "irmão" no mesmo período
         if (strpos('IA',$O)!==false && nvl($_REQUEST['w_chave_pai'],'nulo')!='nulo') {
           // verifica se o plano respeita o período do pai
-          $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave_pai'],null,null,null,null,null,'REGISTROS');
+          $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave_pai'],null,null,null,null,null,'REGISTROS');
           foreach ($RS as $row) {$RS = $row; break;}
           if (f($RS,'inicio')>toDate($_REQUEST['w_inicio']) || f($RS,'fim')<toDate($_REQUEST['w_fim'])) {
             ScriptOpen('JavaScript');
@@ -2535,7 +2535,7 @@ function Grava() {
 
           // verifica se não há nenhum plano "irmão" no mesmo período
 /**
-*           $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,'IRMAOS');
+*           $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,'IRMAOS');
 *           if (count($RS)>0) {
 *             ScriptOpen('JavaScript');
 *             ShowHTML('  alert(\'Período deste plano não pode sobrepor o período de nenhum outro plano com a mesma vinculação!\');');
@@ -2546,14 +2546,14 @@ function Grava() {
 */        } elseif ($O=='E') {
            // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
           if (count($RS)<=1) {
-            $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');
+            $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');
             foreach($RS as $row) {
               if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
             } 
           } 
         } 
 
-        dml_putPlanoEstrategico::getInstanceOf($dbms,$O,
+        $SQL = new dml_putPlanoEstrategico; $SQL->getInstanceOf($dbms,$O,
             $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],$_REQUEST['w_titulo'],
             $_REQUEST['w_missao'],$_REQUEST['w_valores'],$_REQUEST['w_visao_presente'],$_REQUEST['w_visao_futuro'],
             $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo'],$_REQUEST['w_heranca']);
@@ -2571,12 +2571,12 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Remove os registros existentes
-        dml_putPlano_Menu::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+        $SQL = new dml_putPlano_Menu; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 
         // Insere apenas os itens marcados
         for ($i=0; $i<=count($_POST['w_servico'])-1; $i=$i+1) {
           if (Nvl($_POST['w_servico'][$i],'')>'') {
-            dml_putPlano_Menu::getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
+            $SQL = new dml_putPlano_Menu; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
@@ -2592,7 +2592,7 @@ function Grava() {
     case 'PENATUREZA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putNatureza_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+        $SQL = new dml_putNatureza_pe; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -2606,7 +2606,7 @@ function Grava() {
     case 'PEHORIZONT':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putHorizonte_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+        $SQL = new dml_putHorizonte_pe; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -2622,10 +2622,10 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='T') {
           for ($i=0; $i<=count($_POST['w_objetivo'])-1; $i=$i+1)   {
-            dml_putObjetivo_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
+            $SQL = new dml_putObjetivo_pe; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
           } 
         } else {
-          dml_putObjetivo_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
+          $SQL = new dml_putObjetivo_pe; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
         }
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2663,7 +2663,7 @@ function Grava() {
               } 
               // Se já há um nome para o arquivo, mantém 
               if ($_REQUEST['w_atual']>'') {
-                $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_atual'],$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');
+                $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_atual'],$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');
                 foreach ($RS as $row) {
                   if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                   if (!(strpos(f($row,'caminho'),'.')===false)) {
@@ -2693,12 +2693,12 @@ function Grava() {
           } 
           // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
           if ($O=='E' && $_REQUEST['w_atual']>'') {
-            $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_atual'],$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');
+            $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_atual'],$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');
             foreach ($RS as $row) {
               if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
             }
           } 
-          dml_putSolicArquivo::getInstanceOf($dbms,$O,
+          $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,
             $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
@@ -2721,7 +2721,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
+          $sql = new db_getTipoInteressado; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de interessado com este nome!\');');
@@ -2731,7 +2731,7 @@ function Grava() {
           } 
 
           // Testa a existência do sigla
-          $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
+          $sql = new db_getTipoInteressado; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de interessado com esta sigla!\');');
@@ -2740,7 +2740,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
+          $sql = new db_getTipoInteressado; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum interessado de programa!\');');
@@ -2749,7 +2749,7 @@ function Grava() {
             break;
           } 
         } 
-        dml_putTipoInteressado::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
+        $SQL = new dml_putTipoInteressado; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
                 $_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2766,7 +2766,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_nome'],''),null,null,null,'EXISTE');
+          $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_nome'],''),null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de recurso com este nome!\');');
@@ -2776,7 +2776,7 @@ function Grava() {
           } 
 
           // Testa a existência do sigla
-          $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,Nvl($_REQUEST['w_sigla'],''),null,null,'EXISTE');
+          $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,Nvl($_REQUEST['w_sigla'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de recurso com esta sigla!\');');
@@ -2785,7 +2785,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,null,'VINCULADO');
+          $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum recurso!\');');
@@ -2794,7 +2794,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putTipoRecurso::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),$_REQUEST['w_nome'],
+        $SQL = new dml_putTipoRecurso; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),$_REQUEST['w_nome'],
                 $_REQUEST['w_sigla'],$_REQUEST['w_gestora'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2811,7 +2811,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
+          $sql = new db_getTipoIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de indicador com este nome!\');');
@@ -2820,7 +2820,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,'VINCULADO');
+          $sql = new db_getTipoIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum indicador!\');');
@@ -2829,7 +2829,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putTipoIndicador::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+        $SQL = new dml_putTipoIndicador; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -2845,7 +2845,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getUnidadeMedida::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
+          $sql = new db_getUnidadeMedida; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe unidade de medida com este nome!\');');
@@ -2855,7 +2855,7 @@ function Grava() {
           } 
 
           // Testa a existência do sigla
-          $RS = db_getUnidadeMedida::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
+          $sql = new db_getUnidadeMedida; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe unidade de medida com esta sigla!\');');
@@ -2864,7 +2864,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,null,'VINCULADO');
+          $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir esta unidade de medida. Ela está ligada a algum recurso!\');');
@@ -2873,7 +2873,7 @@ function Grava() {
             break;
           } 
         } 
-        dml_putUnidadeMedida::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
+        $SQL = new dml_putUnidadeMedida; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
                 $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2889,9 +2889,9 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
-          $RS = db_getUnidade_PE::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null,null);
+          $sql = new db_getUnidade_PE; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null,null);
           if (count($RS)==0) {
-            dml_putUnidade_PE::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_descricao'],$_REQUEST['w_planejamento'],$_REQUEST['w_execucao'],$_REQUEST['w_recursos'],$_REQUEST['w_ativo']);
+            $SQL = new dml_putUnidade_PE; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_descricao'],$_REQUEST['w_planejamento'],$_REQUEST['w_execucao'],$_REQUEST['w_recursos'],$_REQUEST['w_ativo']);
             ScriptOpen('JavaScript');
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
             ScriptClose();
@@ -2902,7 +2902,7 @@ function Grava() {
             RetornaFormulario('w_assinatura');
           } 
         } else {
-          dml_putUnidade_PE::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_descricao'],$_REQUEST['w_planejamento'],$_REQUEST['w_execucao'],$_REQUEST['w_recursos'],$_REQUEST['w_ativo']);
+          $SQL = new dml_putUnidade_PE; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_descricao'],$_REQUEST['w_planejamento'],$_REQUEST['w_execucao'],$_REQUEST['w_recursos'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();

@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getLocalList.php');
 // -------------------------------------------------------------------------
 function selecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  $RS = db_getLocalList::getInstanceOf($dbms, $w_cliente, $chaveAux, $restricao);
+  $sql = new db_getLocalList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chaveAux, $restricao);
 
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

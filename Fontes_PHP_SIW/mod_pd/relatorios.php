@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -44,7 +44,7 @@ include_once($w_dir_volta.'funcoes/selecaoCC.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -97,14 +97,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if ($RS_Menu['ultimo_nivel']=='S') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -140,11 +140,11 @@ function Rel_Limite() {
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
-    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+    $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
     $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'GRPDUNIDADE',4,
             null, null,null,null,null,null,null,$p_sq_unidade,null,null,null,null, null, null, null, null, null, null,
             null, null, null, null, $p_sqcc, $p_projeto, $p_atividade, null, $w_ano);
@@ -483,7 +483,7 @@ function Rel_Limite() {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade','VIAGEM','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto desejado na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoEtapa('Eta<u>p</u>a:','P','Selecione a etapa desejada na relação.',$p_atividade,$p_projeto,null,'p_atividade',null,null);

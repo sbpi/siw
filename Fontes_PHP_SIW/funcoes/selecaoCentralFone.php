@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getCentralTel.php');
 // =========================================================================
 // Montagem da seleção de centrais telefônicas
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getCentralTel.php');
 function selecaoCentralFone($label,$accesskey,$hint,$chave,$campo,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getCentralTel::getInstanceOf($dbms, null, null, null, null, null);
+  $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms, null, null, null, null, null);
 
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

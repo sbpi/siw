@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
 // =========================================================================
 // Montagem da seleção de pessoas para o módulo de tarifação telefônica
@@ -13,7 +13,7 @@ function selecaoPessoaTT($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   } 
   ShowHTML('          <option value="">---');
 
-  $RS = db_getPersonList::getInstanceOf($dbms, $chaveAux, $chave, $restricao, null, null, null, null);
+  $sql = new db_getPersonList; $RS = $sql->getInstanceOf($dbms, $chaveAux, $chave, $restricao, null, null, null, null);
   $RS = SortArray($RS,'nome_resumido','asc');
   foreach ($RS as $row) {
     if (nvl(f($row,'sq_pessoa'),0)==nvl($chave,0)) {

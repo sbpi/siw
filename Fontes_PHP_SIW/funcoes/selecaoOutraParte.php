@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getConvOutraParte.php');
 // =========================================================================
 // Montagem da seleção das outras partes de um contrato
 // -------------------------------------------------------------------------
 function selecaoOutraParte($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getConvOutraParte::getInstanceOf($dbms,null,$chaveAux,null,null);
+  $sql = new db_getConvOutraParte; $RS = $sql->getInstanceOf($dbms,null,$chaveAux,null,null);
   $RS = SortArray($RS,'nome_resumido','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

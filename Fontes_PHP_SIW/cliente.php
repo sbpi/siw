@@ -78,7 +78,7 @@ if (nvl($_REQUEST['w_usuario'],'nulo')!='nulo') $w_sq_pessoa            = $_REQU
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
@@ -129,7 +129,7 @@ switch ($O) {
 } 
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$SG);
+$SQL = new db_getLinkSubMenu; $RS = $SQL->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) $w_submenu='Existe'; else $w_submenu='';
 
 Main();
@@ -146,7 +146,7 @@ function Inicial() {
   global $w_Disabled;
 
   if ($O=='L') {
-    $RS = db_getSiwCliList::getInstanceOf($dbms,$p_pais,$p_uf,$p_cidade,$p_ativo,$p_nome);
+    $SQL = new db_getSiwCliList; $RS = $SQL->getInstanceOf($dbms,$p_pais,$p_uf,$p_cidade,$p_ativo,$p_nome);
     $RS = SortArray($RS,'nome_indice','asc');
   } 
 
@@ -336,7 +336,7 @@ function Geral() {
   } else {
     if (strpos('IAEV',$O)!==false) {
       // Recupera os dados do cliente a partir do CNPJ
-      $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+      $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
       if (count($RS)>0) {
         if ($O=='I') {
           // Se o cliente informado para inclusão já existir, apresenta mensagem de erro
@@ -372,7 +372,7 @@ function Geral() {
         } 
       } elseif ($O=='I' && nvl($w_cgccpf,'')!='') {
         // Recupera os dados do beneficiário em co_pessoa
-        $RS = db_getBenef::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null);
+        $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) {
           foreach($RS as $row) { $RS = $row; break; }
           $w_sq_pessoa              = f($RS,'sq_pessoa');
@@ -603,7 +603,7 @@ function Enderecos() {
     if ($_REQUEST['w_sq_pessoa']>'') {
       $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
     } elseif ($w_cgccpf>'') {
-      $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+      $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
       $w_sq_pessoa = f($RS,'sq_pessoa');
     } elseif ($_REQUEST['w_usuario']>'') {
       $w_sq_pessoa = $_REQUEST['w_usuario'];
@@ -633,11 +633,11 @@ function Enderecos() {
     $w_nome                 = $_REQUEST['w_nome'];
   } elseif ($O=='L') {
     // Recupera todos os endereços do cliente, independente do tipo
-    $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
+    $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
     $RS = SortArray($RS,'padrao','desc','tipo_endereco','asc','endereco','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getAddressData::getInstanceOf($dbms,$w_sq_pessoa_endereco);
+    $SQL = new db_getAddressData; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa_endereco);
     $w_logradouro           = f($RS,'logradouro');
     $w_cep                  = f($RS,'cep');
     $w_padrao               = f($RS,'padrao');
@@ -652,8 +652,8 @@ function Enderecos() {
   } 
 
   // Recupera os dados do cliente
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
-  $RS_Tipo = db_getAdressTypeList::getInstanceOf($dbms, '', null, null);
+  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
+  $SQL = new db_getAdressTypeList; $RS_Tipo = $SQL->getInstanceOf($dbms, '', null, null);
   $RS_Tipo = SortArray($RS_Tipo,'nm_tipo_pessoa','asc','nome','asc');
   //print_r($RS_Tipo);
   foreach($RS_Tipo as $row) {
@@ -762,7 +762,7 @@ function Enderecos() {
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
+    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       if (count($RS_Cliente)>0) {
@@ -845,7 +845,7 @@ function Telefones() {
     if ($_REQUEST['w_sq_pessoa']>'') {
       $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
     } elseif ($w_cgccpf>'') {
-      $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+      $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
       $w_sq_pessoa = f($RS,'sq_pessoa');
     } elseif ($_REQUEST['w_usuario']>'') {
       $w_sq_pessoa = $_REQUEST['w_usuario'];
@@ -868,11 +868,11 @@ function Telefones() {
     $w_numero           = $_REQUEST['w_numero'];
     $w_padrao           = $_REQUEST['w_padrao'];
   } elseif ($O=='L') {
-    $RS = db_getFoneList::getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
+    $SQL = new db_getFoneList; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
     $RS = SortArray($RS,'tipo_telefone','asc','numero','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados para edição
-    $RS = db_getFoneData::getInstanceOf($dbms,$w_sq_pessoa_telefone);
+    $SQL = new db_getFoneData; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa_telefone);
     $w_sq_pessoa            = f($RS,'sq_pessoa');
     $w_sq_pessoa_telefone   = f($RS,'sq_pessoa_telefone');
     $w_sq_tipo_telefone     = f($RS,'sq_tipo_telefone');
@@ -884,7 +884,7 @@ function Telefones() {
     $w_padrao               = f($RS,'padrao');
   } 
   // Recupera os dados da pessoa
-  $RS_Benef = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
+  $SQL = new db_getPersonData; $RS_Benef = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
 
   Cabecalho();
   head();
@@ -969,11 +969,11 @@ function Telefones() {
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
+    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa);
       if (count($RS)>0) {
         $w_pais     = f($RS,'sq_pais');
         $w_uf       = f($RS,'co_uf');
@@ -1053,7 +1053,7 @@ function ContasBancarias() {
     if ($_REQUEST['w_sq_pessoa']>'') {
       $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
     } elseif ($w_cgccpf>'') {
-      $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+      $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
       $w_sq_pessoa = f($RS,'sq_pessoa');
     } elseif ($_REQUEST['w_usuario']>'') {
       $w_sq_pessoa = $_REQUEST['w_usuario'];
@@ -1077,11 +1077,11 @@ function ContasBancarias() {
     $w_padrao       = $_REQUEST['w_padrao'];
   } elseif ($O=='L') {
     // Recupera as contas bancárias do cliente
-    $RS = db_getContaBancoList::getInstanceOf($dbms,$w_sq_pessoa,null,null);
+    $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa,null,null);
     $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados da conta bancária informada
-    $RS = db_getContaBancoData::getInstanceOf($dbms,$w_sq_pessoa_conta);
+    $SQL = new db_getContaBancoData; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa_conta);
     $w_banco        = f($RS,'sq_banco');
     $w_agencia      = f($RS,'agencia');
     $w_numero_conta = f($RS,'numero');
@@ -1095,7 +1095,7 @@ function ContasBancarias() {
 
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
-    $RS_Banco = db_getBankData::getInstanceOf($dbms, $w_sq_banco);
+    $SQL = new db_getBankData; $RS_Banco = $SQL->getInstanceOf($dbms, $w_sq_banco);
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
   Cabecalho();
@@ -1194,7 +1194,7 @@ function ContasBancarias() {
   } elseif (strpos('IAEV',$O)!==false) {
     if ($w_banco=='') {
       // Carrega os valores padrão para banco e agência
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa); 
+      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa); 
       if (count($RS)>0) {
         $w_banco=f($RS,'sq_banco');
         $w_agencia=f($RS,'codigo');
@@ -1299,7 +1299,7 @@ function Modulos() {
   if ($_REQUEST['w_sq_pessoa']>'') {
     $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
   } elseif ($w_cgccpf>'') {
-    $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+    $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
     $w_sq_pessoa = f($RS,'sq_pessoa');
   } 
 
@@ -1309,12 +1309,12 @@ function Modulos() {
     $w_sq_modulo = $_REQUEST['w_sq_modulo'];
   } elseif ($O=='L') {
     // Recupera os módulos contratados pelo cliente
-    $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_sq_pessoa,null,null);
+    $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa,null,null);
   } 
 
   if ($w_sq_modulo>'') {
     // Recupera os dados para edição
-    $RS = db_getModData::getInstanceOf($dbms,$w_sq_modulo);
+    $SQL = new db_getModData; $RS = $SQL->getInstanceOf($dbms,$w_sq_modulo);
     $w_nome             = f($RS,'nome');
     $w_sigla            = f($RS,'sigla');
     $w_objetivo_geral   = f($RS,'objetivo_geral');
@@ -1459,7 +1459,7 @@ function Configuracao() {
     if ($_REQUEST['w_sq_pessoa']>'') {
       $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
     } elseif ($w_cgccpf>'') {
-      $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+      $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
       $w_sq_pessoa = f($RS,'sq_pessoa');
     } elseif ($_REQUEST['w_usuario']>'') {
       $w_sq_pessoa = $_REQUEST['w_usuario'];
@@ -1509,7 +1509,7 @@ function Configuracao() {
     
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera a configuração do site do cliente
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa);
     $w_smtp_server      = f($RS,'smtp_server');
     $w_siw_email_nome   = f($RS,'siw_email_nome');
     $w_siw_email_conta  = f($RS,'siw_email_conta');
@@ -1780,12 +1780,12 @@ function Visual() {
   if ($_REQUEST['w_sq_pessoa']>'') {
     $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
   } else {
-    $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
+    $SQL = new db_getSiwCliData; $RS = $SQL->getInstanceOf($dbms,$w_cgccpf);
     $w_sq_pessoa = f($RS,'sq_pessoa');
   } 
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa); 
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa); 
   if (f($RS,'logo')>'') {
     $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   }  
@@ -1828,7 +1828,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //exibevariaveis();
-        dml_putSiwCliente::getInstanceOf($dbms,$O,
+        $SQL = new dml_putSiwCliente; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa'],$_SESSION['P_CLIENTE'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_inicio_atividade'],$_REQUEST['w_cgccpf'],$_REQUEST['w_sede'],$_REQUEST['w_inscricao_estadual'],
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
@@ -1840,7 +1840,7 @@ function Grava() {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-          $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+          $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
           ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         } 
         ScriptClose();
@@ -1856,7 +1856,7 @@ function Grava() {
         // Se o endereço a ser gravado foi indicado como padrão, verifica se não existe algum outro
         // nesta situação. Só pode haver um endereço padrão para a pessoa dentro de cada tipo de endereço.
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getAddressList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_endereco'],'ENDERECO',$_REQUEST['w_sq_tipo_endereco']);
+          $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_endereco'],'ENDERECO',$_REQUEST['w_sq_tipo_endereco']);
           if (count($RS)>0) {
             foreach($RS as $row) {
               if (f($row,'sq_pessoa_endereco')!=Nvl($_REQUEST['w_sq_pessoa_endereco'],0)) {
@@ -1870,7 +1870,7 @@ function Grava() {
         } 
       } 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCoPesEnd::getInstanceOf($dbms,$O,
+        $SQL = new dml_putCoPesEnd; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_endereco'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_cidade'],$_REQUEST['w_bairro'],$_REQUEST['w_cep'],$_REQUEST['w_padrao']);
 
@@ -1889,7 +1889,7 @@ function Grava() {
         // Se o telefone a ser gravado foi indicado como padrão, verifica se não existe algum outro
         // nesta situação. Só pode haver um telefone padrão para a pessoa.
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getFoneList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_telefone'],'TELEFONE',$_REQUEST['w_sq_tipo_telefone']);
+          $SQL = new db_getFoneList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_telefone'],'TELEFONE',$_REQUEST['w_sq_tipo_telefone']);
           if (count($RS)>0) {
             foreach($RS as $row) {
               if (f($row,'sq_pessoa_telefone')!=Nvl($_REQUEST['w_sq_pessoa_telefone'],0)) {
@@ -1903,7 +1903,7 @@ function Grava() {
         } 
       } 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCoPesTel::getInstanceOf($dbms,$O,
+        $SQL = new dml_putCoPesTel; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_telefone'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_telefone'],
             $_REQUEST['w_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_numero'],$_REQUEST['w_padrao']);
 
@@ -1922,7 +1922,7 @@ function Grava() {
         $w_mensagem = '';
         // Só pode haver uma conta padrão para a pessoa
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getContaBancoList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_conta'],'CONTASBANCARIAS');
+          $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_conta'],'CONTASBANCARIAS');
           if (count($RS)>0) {
             foreach($RS as $row) {
               if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0)) {
@@ -1933,7 +1933,7 @@ function Grava() {
           } 
         } 
         // Verifica se a agência informada existe para o banco selecionado
-        $RS = db_getBankHouseList::getInstanceOf($dbms,$_REQUEST['w_banco'],null,null,$_REQUEST['w_agencia']);
+        $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_banco'],null,null,$_REQUEST['w_agencia']);
         if (count($RS)<=0) {
           $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
           $w_volta = 'w_agencia';
@@ -1949,7 +1949,7 @@ function Grava() {
         } 
       } 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCoPesConBan::getInstanceOf($dbms,$O,
+        $SQL = new dml_putCoPesConBan; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
             $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_saldo'],
             $_REQUEST['w_ativo'], $_REQUEST['w_padrao']);
@@ -1966,7 +1966,7 @@ function Grava() {
       break;
     case 'CLMODULO':
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putSiwCliMod::getInstanceOf($dbms,$O,$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_pessoa']);
+        $SQL = new dml_putSiwCliMod; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_pessoa']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
@@ -2038,7 +2038,7 @@ function Grava() {
           ScriptClose();
           exit();
         } 
-        dml_putSiwCliConf::getInstanceOf($dbms,
+        $SQL = new dml_putSiwCliConf; $SQL->getInstanceOf($dbms,
             $_REQUEST['w_sq_pessoa'],null,null,null,null,null,$_REQUEST['w_smtp_server'],
             $_REQUEST['w_siw_email_nome'],$_REQUEST['w_siw_email_conta'],
             $_REQUEST['w_siw_email_senha'],$w_logo,$w_logo1,$w_fundo,'SERVIDOR',

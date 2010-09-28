@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoRecurso.php');
 // =========================================================================
 // Montagem da seleção de Tipos estratégicos
 // -------------------------------------------------------------------------
 function selecaoTipoSubordination($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$condicao) {
   extract($GLOBALS);
-  $RS = db_getTipoRecurso::getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, 'S', $restricao);
+  $sql = new db_getTipoRecurso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, 'S', $restricao);
   $RS = SortArray($RS,'nome_completo','asc'); 
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

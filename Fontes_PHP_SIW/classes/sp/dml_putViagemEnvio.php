@@ -23,7 +23,7 @@ class dml_putViagemEnvio {
                    'p_justificativa'             =>array(tvl($p_justificativa),                  B_VARCHAR,      2000),
                    'p_justif_dia_util'           =>array(tvl($p_justif_dia_util),                B_VARCHAR,      2000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

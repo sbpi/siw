@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getEoAAtuac.php');
 // =========================================================================
 // Montagem da seleção do tipo de unidade
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getEoAAtuac.php');
 function selecaoEOAreaAtuacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
 
-  $RS = db_getEOAAtuac::getInstanceOf($dbms, $chaveAux, null, 'S');
+  $sql = new db_getEOAAtuac; $RS = $sql->getInstanceOf($dbms, $chaveAux, null, 'S');
   $RS = SortArray($RS,'nome','asc');
   //$RS->Filter="ativo = 'S'";
   if (!isset($hint)) {

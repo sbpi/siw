@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTPRestricao_IS.php');
 // =========================================================================
 // Montagem da seleção dos tipos de restrições (esquema SIGPLAN)
 // -------------------------------------------------------------------------
 function selecaoTPRestricao_IS($label,$accesskey,$hint,$l_chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTPRestricao_IS::getInstanceOf($dbms,null,'S');
+  $sql = new db_getTPRestricao_IS; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 include_once('constants.inc');
 include_once('jscript.php');
@@ -58,7 +58,7 @@ include_once('funcoes/selecaoPessoa.php');
 if ($_SESSION['LOGON']!='Sim') EncerraSessao(); 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 //exibevariaveis();
@@ -141,7 +141,7 @@ function Informar(){
     $w_outra_parte_contato   = $_REQUEST['w_outra_parte_contato'];
     $w_sq_central_telefonica = $_REQUEST['w_sq_central_telefonica'];
   } elseif ($O=='L'){
-    $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,null,$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+    $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,null,$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
     if ($p_ordena==''){ 
       if ($P1==3) $RS = SortArray($RS,'phpdt_ordem','desc'); else $RS = SortArray($RS,'phpdt_ordem','asc'); 
     } else {
@@ -150,7 +150,7 @@ function Informar(){
     }
   } elseif ($O=='I' || $O=='A' || $O=='E'){
     // Recupera os dados da ligação
-    $RS = db_getCall::getInstanceOf($dbms,$w_cliente,$w_sq_ligacao,$w_usuario,$P1,'REGISTRO',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+    $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_ligacao,$w_usuario,$P1,'REGISTRO',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
     foreach($RS as $row) {
       $w_sq_cc                  = nvl(f($row,'sq_cc'),0);
       $w_assunto                = f($row,'assunto');
@@ -164,7 +164,7 @@ function Informar(){
     if ($O=='A'){
       $w_titulo='Selecione a pessoa responsável pela ligação e informe alguma observação para orientá-lo.';
     } elseif (nvl($w_trabalho,'')=='') {
-      $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,'HERANCA',$p_sq_cc,$p_outra_parte_contato,f($row,'numero'),$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,'HERANCA',$p_sq_cc,$p_outra_parte_contato,f($row,'numero'),$p_inicio,$p_fim,$p_ativo);
       if (count($RS) >= 0){
         foreach ($RS as $row) {
           $w_sq_cc                  = nvl(f($row,'sq_cc'),0);
@@ -376,7 +376,7 @@ function Informar(){
     ShowHTML('</tr>');
   } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') $w_Disabled='DISABLED';
-    $RS = db_getCall::getInstanceOf($dbms,$w_cliente,$w_sq_ligacao,$w_usuario,$P1,'DADOS',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+    $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_ligacao,$w_usuario,$P1,'DADOS',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
     foreach ($RS as $row) {
       ShowHTML('<tr><td align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
       ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -391,7 +391,7 @@ function Informar(){
       ShowHTML('          <td align="right">Valor:<br><b>'.number_format(f($row,'valor'),2,',','.').'</td>');
       ShowHTML('    </TABLE>');
       // Verifica se houve transferências da ligação, exibindo-as se existirem
-      $RS2 = db_getCall::getInstanceOf($dbms,$w_cliente,$w_sq_ligacao,$w_usuario,$P1,'LOG',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_ligacao,$w_usuario,$P1,'LOG',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
       if (count($RS2)>0) {
         ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr align="center"><td colspan=4><b>Transferências da ligação</td>');
@@ -436,7 +436,7 @@ function Informar(){
                  '  <td><b>Responsável'.chr(13).
                  '  <td><b>Contato'.chr(13).
                  '  <td><b>Tipo'.chr(13);
-        $RS2 = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,'HINT',null,null,f($row,'numero'),null,null,null);
+        $SQL = new db_getCall; $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,'HINT',null,null,f($row,'numero'),null,null,null);
         $RS2 = SortArray($RS2,'phpdt_ordem','desc');
         $l_count = 0;
         if (count($RS2)==0){
@@ -609,7 +609,7 @@ function Informar(){
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><hr>');
       if ($P1!=3){ 
             // Se não for arquivo
-        $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,'PESSOAS',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+        $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_usuario,$P1,'PESSOAS',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
         $RS = SortArray($RS,'dura_tot','desc');
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><b>Resumo comparativo por ligações particulares</b>&nbsp;&nbsp;&nbsp;');
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -654,7 +654,7 @@ function Informar(){
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br></td></tr>');
-      $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'GERAL',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'GERAL',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><b>Resumo geral</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -694,7 +694,7 @@ function Informar(){
       ShowHTML('    </TABLE>');
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
-      $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'CTCC',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'CTCC',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por Classificação</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -736,7 +736,7 @@ function Informar(){
       ShowHTML('    </TABLE>');
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
-      $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'MES',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'MES',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por mês</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -778,7 +778,7 @@ function Informar(){
       ShowHTML('    </TABLE>');
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
-      $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'DIASEMANA',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'DIASEMANA',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por dia da semana</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -820,7 +820,7 @@ function Informar(){
       ShowHTML('    </TABLE>');
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
-      $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'DIAMES',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+      $SQL = new db_getCall; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,$w_sq_usuario_central,$P1,'DIAMES',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por dia do mês</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -886,7 +886,7 @@ function Grava() {
     case 'LIGACAO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        db_putCall::getInstanceOf($dbms, $O,
+        $SQL = new db_putCall; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_ligacao'],$_REQUEST['w_destino'], $_REQUEST['w_sq_cc'], $_REQUEST['w_outra_parte_contato'],
             $_REQUEST['w_assunto'], $w_usuario, $_REQUEST['w_fax'], $_REQUEST['w_trabalho']);
         ScriptOpen('JavaScript');

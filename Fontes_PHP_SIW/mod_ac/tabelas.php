@@ -63,7 +63,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoPrestacao.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
@@ -112,12 +112,12 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-if ($P2>0)   $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
-else         $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+if ($P2>0)   { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
+else         { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu); }
 
 // Se for sub-menu, pega a configuração do pai
 if ($RS_Menu['ultimo_nivel']=='S') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -1827,7 +1827,7 @@ function Grava() {
             break;
           } 
         }
-        dml_putAgreeType::getInstanceOf($dbms, $O,
+        $SQL = new dml_putAgreeType; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_acordo'],$_REQUEST['w_sq_tipo_acordo_pai'],$_REQUEST['w_cliente'],
             $_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_modalidade'],
             $_REQUEST['w_prazo_indeterminado'],$_REQUEST['w_pessoa_juridica'],$_REQUEST['w_pessoa_fisica'],$_REQUEST['w_idec'],
@@ -1846,16 +1846,16 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
         if (!(strpos('IAE',$O)===false))  {
-          dml_putFormaPagamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
+          $SQL = new dml_putFormaPagamento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
                $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
           ScriptClose();
         } else {                  
            // Elimina todas as permissões existentes para depois incluir
-           dml_PutFormaPagamentoVinc::getInstanceOf($dbms, 'E',$_REQUEST['w_chave'],null);
+           $SQL = new dml_PutFormaPagamentoVinc; $SQL->getInstanceOf($dbms, 'E',$_REQUEST['w_chave'],null);
            for ($i=0; $i<=count($_POST['w_vinculo'])-1; $i=$i+1)   {
-             dml_PutFormaPagamentoVinc::getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], $_POST['w_vinculo'][$i]);
+             $SQL = new dml_PutFormaPagamentoVinc; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], $_POST['w_vinculo'][$i]);
            }
            ScriptOpen('JavaScript');
            ShowHTML('  window.close() ;'); 
@@ -1871,7 +1871,7 @@ function Grava() {
     case 'ACPARAM':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putACParametro::getInstanceOf($dbms,$w_cliente,
+        $SQL = new dml_putACParametro; $SQL->getInstanceOf($dbms,$w_cliente,
            $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'],
            $_REQUEST['w_numeracao'],$_REQUEST['w_dias_pagamento'],$_REQUEST['w_texto_pagamento']);     
         ScriptOpen('JavaScript');
@@ -1907,7 +1907,7 @@ function Grava() {
             break;
           } 
         }  
-        dml_putLCModalidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
+        $SQL = new dml_putLCModalidade; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),$_REQUEST['w_descricao'],$_REQUEST['w_fundamentacao'],
            $_REQUEST['w_minimo_pesquisas'],$_REQUEST['w_minimo_participantes'],$_REQUEST['w_propostas_validas'],
            $_REQUEST['w_certame'],$_REQUEST['w_enquadramento_inicial'],$_REQUEST['w_enquadramento_final'],
@@ -1936,7 +1936,7 @@ function Grava() {
             break;
           } 
         }  
-        dml_putLCFonteRecurso::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
+        $SQL = new dml_putLCFonteRecurso; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],
            $_REQUEST['w_padrao'],$_REQUEST['w_orcamentario'],$_REQUEST['w_codigo']);
         ScriptOpen('JavaScript');
@@ -1952,7 +1952,7 @@ function Grava() {
     case 'CT_ESPEC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {    
-        dml_putCTEspecificacao::getInstanceOf($dbms, $O, $_REQUEST['w_cliente'],
+        $SQL = new dml_putCTEspecificacao; $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_cliente'],
             $_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_cc'],$_REQUEST['w_ano'],
             $_REQUEST['w_codigo'],$_REQUEST['w_nome'],$_REQUEST['w_valor'],
             $_REQUEST['w_ultimo_nivel'],$_REQUEST['w_ativo']);
@@ -1989,7 +1989,7 @@ function Grava() {
             retornaFormulario('w_assinatura');
           } 
         } 
-        dml_putPrestacaoContas::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),$_REQUEST['w_nome'],
+        $SQL = new dml_putPrestacaoContas; $SQL->getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),$_REQUEST['w_nome'],
                 $_REQUEST['w_descricao'],$_REQUEST['w_tipo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta     = '../';
@@ -47,7 +47,7 @@ $w_copia         = $_REQUEST['w_copia'];
 $O               = $_REQUEST['R'];
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
@@ -99,9 +99,9 @@ if  ($SG!='TTUSUCTRL' && $SG!='TTTRONCO') {
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no href uma chamada para montagem do mesmo.
 if ($SG!='TTUSUCTRL' && $SG!='TTTRONCO') {
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 } else {
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
 } 
 if (count($RS)>0) {
   $w_submenu='Existe';
@@ -110,10 +110,10 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-$RS_menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_menu = new db_getMenuData; $RS_menu = $RS_menu->getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
 if ($RS_menu['ultimo_nivel']=='S') {
-  $RS_menu = db_getMenuData::getInstanceOf($dbms,$RS_menu,'sq_menu_pai');
+  $RS_menu = new db_getMenuData; $RS_menu = $RS_menu->getInstanceOf($dbms,$RS_menu,'sq_menu_pai');
 } 
 
 Main();
@@ -257,7 +257,7 @@ function LigacaoParticular(){
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><hr>');
         if ($P1!=3) {
           // Se não for arquivo              
-          $RS = db_getCall::getinstanceOf($dbms,$w_cliente,null,null,$P1,'PESSOAS', null, null, null, $p_inicio, $p_fim, $p_ativo);
+          $sql = new db_getCall; $RS = $sql->getinstanceOf($dbms,$w_cliente,null,null,$P1,'PESSOAS', null, null, null, $p_inicio, $p_fim, $p_ativo);
           $RS = SortArray($RS,'dura_tot','desc');
           ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><b>Resumo comparativo por ligações particulares</b>&nbsp;&nbsp;&nbsp;');
           ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -339,7 +339,7 @@ function listaTelefonica(){
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0){
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     ShowHTML('  <td rowspan=2><img align="left" src="'.LinkArquivo(null,$w_cliente,'img/logo'.substr((f($RS,'logo')),strpos(f($RS,'logo'),'.'),30),null,null,null,'EMBED').'">');
     ShowHTML('  <td align="right"><B><font size=5 color="#000000">');
     ShowHTML('Lista Telefônica');
@@ -381,7 +381,7 @@ function ResumoLigacaoParticular(){
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0) {
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'">');

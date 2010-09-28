@@ -15,7 +15,7 @@ function VisualListaTel($p_cliente){
   global $w_cor;
   
   // Lista Telefônica
-  $RS = db_getRamalUsuarioAtivo::getInstanceOf($dbms,$p_cliente);
+  $sql = new db_getRamalUsuarioAtivo; $RS = $sql->getInstanceOf($dbms,$p_cliente);
   if ($p_ordena==''){ 
     $RS = SortArray($RS,'nm_usuario_completo','asc');
   } else {

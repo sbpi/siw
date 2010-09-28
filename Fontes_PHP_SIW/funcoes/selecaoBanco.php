@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getBankList.php');
 // =========================================================================
 // Montagem da seleção do banco
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getBankList.php');
 function selecaoBanco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getBankList::getInstanceOf($dbms, null, null, 'S');
+  $sql = new db_getBankList; $RS = $sql->getInstanceOf($dbms, null, null, 'S');
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

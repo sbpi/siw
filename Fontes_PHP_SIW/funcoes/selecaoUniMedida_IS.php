@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getUniMedida_IS.php');
 // =========================================================================
 // Montagem da seleção das unidades de medidas (esquema SIGPLAN)
 // -------------------------------------------------------------------------
 function selecaoUniMedida_IS($label,$accesskey,$hint,$l_chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getUniMedida_IS::getInstanceOf($dbms,null,'S');
+  $sql = new db_getUniMedida_IS; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

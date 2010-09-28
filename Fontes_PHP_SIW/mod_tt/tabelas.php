@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -58,7 +58,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -105,9 +105,9 @@ if ($SG!='TTUSUCTRL' && $SG!='TTTRONCO' && $SG!='RAMUSR') {
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 if ($SG!='TTUSUCTRL' && $SG!='TTTRONCO' && $SG!='RAMUSR') {
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 } else {
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
 } 
 
 if (count($RS)>0) {
@@ -118,14 +118,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if ($RS_Menu['ultimo_nivel']=='S') {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -154,10 +154,10 @@ function centralTel() {
     $w_arquivo_bilhetes   = $_REQUEST['w_arquivo_bilhetes'];
     $w_recupera_bilhetes  = $_REQUEST['w_recupera_bilhetes'];
   } elseif ($O=='L') {
-    $RS = db_getCentralTel::getInstanceOf($dbms,null,$w_cliente,$p_sq_pessoa_endereco,null,null);
+    $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$p_sq_pessoa_endereco,null,null);
     $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc');
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
-    $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_pessoa_endereco,null,null);
+    $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_pessoa_endereco,null,null);
     foreach ($RS as $row) {
       $w_sq_pessoa_endereco   = f($row,'sq_pessoa_endereco');
       $w_arquivo_bilhetes     = f($row,'arquivo');
@@ -342,7 +342,7 @@ function Troncos() {
   $w_chaveAux           = $_REQUEST['w_chaveAux'];
 
   // Recupera sempre todos os registros
-  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
+  $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
   $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc');
   Cabecalho();
   head();
@@ -393,7 +393,7 @@ function Troncos() {
     ShowHTML('</table>');
   }
   if ($O=='L') {
-    $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_central_fone,$w_sq_pessoa_telefone,'TRONCO');
+    $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_central_fone,$w_sq_pessoa_telefone,'TRONCO');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
@@ -509,9 +509,9 @@ function Ramais() {
     $w_sq_central_fone  = $_REQUEST['w_sq_central_fone'];
     $w_codigo           = $_REQUEST['w_codigo'];
   } elseif ($O=='L') {
-    $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,null,null,null,null,null);
+    $sql = new db_getTTRamal; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null);
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
-    $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_central_fone,$w_codigo,null);
+    $sql = new db_getTTRamal; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_central_fone,$w_codigo,null);
     foreach ($RS as $row) {
       $w_chave            = f($row,'chave');
       $w_sq_central_fone  = f($row,'sq_central_fone');
@@ -684,7 +684,7 @@ function UsuarioCentral() {
   ShowHTML('          <td><br><b>Central Telefônica</td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Recupera sempre todos os registros
-  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
+  $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
   foreach ($RS as $row) {
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -703,7 +703,7 @@ function UsuarioCentral() {
   ShowHTML('</table>');
   ShowHTML('</table>');
   if ($O=='L') {
-    $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,'USER');
+    $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,'USER');
     $RS = SortArray($RS,'nm_usuario','asc');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<div align=center><center>');
@@ -757,7 +757,7 @@ function UsuarioCentral() {
     if ($O=='I') {
       selecaoPessoaTT('Usuá<u>r</u>io:','R',null,$w_sq_central_fone,$w_cliente,'w_usuario','TTUSUCENTRAL');
     } else {
-      $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
       ShowHTML('      <tr><td valign="top"><font size="1">Usuário: <br><b>'.f($RS,'nome').'</b>');
     }
     ShowHTML('      <tr><td valign="top"><font size="1"><b><u>C</u>odigo:   </b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="8"  MAXLENGTH="2"  VALUE="'.$w_codigo.'"></td>');
@@ -858,7 +858,7 @@ function RamalUsr() {
   ShowHTML('<div align=center><center>');
   ShowHTML('          <td><br><b>Ramal</td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null);
+  $sql = new db_getTTRamal; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null);
   foreach ($RS as $row) {
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -871,7 +871,7 @@ function RamalUsr() {
   ShowHTML('</table>');
   ShowHTML('</table>');
   if ($O=='L') {
-    $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'USER');
+    $sql = new db_getTTRamal; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'USER');
     if (nvl($_REQUEST['p_ordena'],'')>'') {
       $lista = explode(',',str_replace(' ',',',lower($_REQUEST['p_ordena'])));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','dt_fim','desc');
@@ -938,7 +938,7 @@ function RamalUsr() {
       SelecaoPessoa('Usua<u>r</u>io:','R',null,null,$w_chave,'w_chaveAux','TTUSURAMAL');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     } elseif ($O=='A') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
       ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
@@ -946,13 +946,13 @@ function RamalUsr() {
         ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       }
     } elseif ($O=='F') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
       ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     } else {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
       ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
@@ -1020,14 +1020,14 @@ function prefixo() {
     $w_controle     = $_REQUEST['w_controle'];
     $w_degrau       = $_REQUEST['w_degrau'];
   } elseif ($O=='L') {
-    $RS = db_getPrefixo::getInstanceOf($dbms,null,$p_prefixo,$p_uf);
+    $sql = new db_getPrefixo; $RS = $sql->getInstanceOf($dbms,null,$p_prefixo,$p_uf);
     if ($_REQUEST['p_ordena']>'') {
        $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc','prefixo','asc');
     } else {
        $RS = SortArray($RS,'prefixo','asc','localidade','asc');
     }
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
-    $RS = db_getPrefixo::getInstanceOf($dbms,$w_chave,null,null);
+    $sql = new db_getPrefixo; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null);
     foreach ($RS as $row) {
       $w_prefixo      = f($row,'prefixo');
       $w_localidade   = f($row,'localidade');
@@ -1275,7 +1275,7 @@ function Classificacao() {
   ShowHTML('    <table width="99%" border="0">');
   ShowHTML('      <tr valign="top">');
   ShowHTML('        <td colspan=2><b>Classificações:');  
-  $RS = db_getCentralTel::getInstanceOf($dbms,$w_sq_central_fone,$w_cliente,null,null,'CLASSIF');
+  $sql = new db_getCentralTel; $RS = $sql->getInstanceOf($dbms,$w_sq_central_fone,$w_cliente,null,null,'CLASSIF');
   $RS = SortArray($RS,'nm_pai','asc','nome','asc');
   $w_checked = '';
   foreach($RS as $row) {
@@ -1316,7 +1316,7 @@ function Grava() {
     case 'TTCENTRAL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTCentral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
+        $SQL = new dml_putTTCentral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
             $_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_arquivo_bilhetes'],$_REQUEST['w_recupera_bilhetes']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1331,7 +1331,7 @@ function Grava() {
     case 'TTTRONCO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTTronco::getInstanceOf($dbms,$O,$_REQUEST['w_chaveAux'],$_REQUEST['w_cliente'],
+        $SQL = new dml_putTTTronco; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chaveAux'],$_REQUEST['w_cliente'],
             $_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa_telefone'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET')).'\';');
@@ -1346,7 +1346,7 @@ function Grava() {
     case 'TTRAMAL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTRamal::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_central_fone'],$_REQUEST['w_codigo']);
+        $SQL = new dml_putTTRamal; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_central_fone'],$_REQUEST['w_codigo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1360,7 +1360,7 @@ function Grava() {
     case 'TTPREFIXO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTPrefixo::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_prefixo'],
+        $SQL = new dml_putTTPrefixo; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_prefixo'],
             $_REQUEST['w_localidade'],$_REQUEST['w_sigla'],$_REQUEST['w_uf'],$_REQUEST['w_ddd'],$_REQUEST['w_controle'],
             $_REQUEST['w_degrau']);
         ScriptOpen('JavaScript');
@@ -1376,7 +1376,7 @@ function Grava() {
     case 'TTUSUCTRL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTUsuarioCentral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
+        $SQL = new dml_putTTUsuarioCentral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
             $_REQUEST['w_usuario'],$_REQUEST['w_sq_central_fone'],$_REQUEST['w_codigo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_sq_central_fone='.$_REQUEST['w_sq_central_fone'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET')).'\';');
@@ -1391,7 +1391,7 @@ function Grava() {
     case 'RAMUSR':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTRamalUsuario::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
+        $SQL = new dml_putTTRamalUsuario; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
             $_REQUEST['w_chaveAux'],$_REQUEST['w_chaveAux2'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET')).'\';');
@@ -1413,7 +1413,7 @@ function Grava() {
             $w_sq_cc .= ','.$_REQUEST['w_sq_cc'][$i];
           }
         }
-        dml_putTTClassificacao::getInstanceOf($dbms,$w_sq_cc,$_REQUEST['w_sq_central_fone'],$w_cliente);
+        $SQL = new dml_putTTClassificacao; $SQL->getInstanceOf($dbms,$w_sq_cc,$_REQUEST['w_sq_central_fone'],$w_cliente);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Central&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

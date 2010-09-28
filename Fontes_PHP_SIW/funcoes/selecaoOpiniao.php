@@ -1,11 +1,11 @@
-<? 
+<?php 
 // =========================================================================
 // Montagem da seleção de opiniões
 // -------------------------------------------------------------------------
 function selecaoOpiniao($label,$accesskey,$hint,$chave,$cliente,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getOpiniao.php');
-  $l_RS = db_getOpiniao::getInstanceOf($dbms,null,$cliente,null,null,$restricao);
+  $sql = new db_getOpiniao; $l_RS = $sql->getInstanceOf($dbms,null,$cliente,null,null,$restricao);
   $l_RS = SortArray($l_RS,'ordem','asc','nome','asc');
   if ($atributo=='SELECT') {
     if (Nvl($label,'')>'') $l_label=$label.'<br>'; else $l_label='';

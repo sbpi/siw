@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getAlmoxarifado.php');
 // =========================================================================
 // Montagem da seleção de Tipos estratégicos
 // -------------------------------------------------------------------------
 function selecaoLocalSubordination($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$condicao) {
   extract($GLOBALS);
-  $RS = db_getAlmoxarifado::getInstanceOf($dbms, $w_cliente, $chave, $chave_aux, null, null, null, $restricao, 'S', null);
+  $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chave, $chave_aux, null, null, null, $restricao, 'S', null);
   
   $RS = SortArray($RS,'nome','asc'); 
   if (!isset($hint)) {

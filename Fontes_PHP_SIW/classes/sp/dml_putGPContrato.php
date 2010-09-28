@@ -62,7 +62,7 @@ class dml_putGPContrato {
                    'p_dias_experiencia'          =>array($p_dias_experiencia,                              B_INTEGER,        32)
                   );
                   //print_r($params);exit();
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

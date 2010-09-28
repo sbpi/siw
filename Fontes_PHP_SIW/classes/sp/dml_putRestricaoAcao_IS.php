@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -30,7 +30,7 @@ class dml_putRestricaoAcao_IS {
                    'p_observacao_controle'       =>array(tvl($p_observacao_controle),                      B_VARCHAR,      4000),
                    'p_observacao_monitor'        =>array(tvl($p_observacao_monitor),                       B_VARCHAR,      4000)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

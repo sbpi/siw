@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 // =========================================================================
 // Montagem da seleção de atividade
@@ -7,7 +7,7 @@ function selecaoAtividade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
   extract($GLOBALS);
   ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
   if ($chave>'') {
-    $RS1 = db_getSolicData::getInstanceOf($dbms,$chave,$restricao);
+    $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$chave,$restricao);
     if (strlen(Nvl(f($RS1,'assunto'),'-'))>50) $w_titulo = f($RS1,'sq_siw_solicitacao').' - '.substr(Nvl(f($RS1,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($RS1,'assunto'),'-');
   }
 

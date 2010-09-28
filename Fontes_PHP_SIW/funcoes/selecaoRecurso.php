@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getRecurso.php');
 // =========================================================================
 // Montagem da seleção dos recursos
 // -------------------------------------------------------------------------
 function selecaoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$chaveAux,$chaveAux2,null,null,'S',$restricao);
+  $sql = new db_getRecurso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$chaveAux,$chaveAux2,null,null,'S',$restricao);
   $RS = SortArray($RS,'nome','asc');
   $atributo = str_replace('onBlur','onChange',$atributo,$colspan=1);
   if (!isset($hint)) {

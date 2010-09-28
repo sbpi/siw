@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoDemanda.php'); 
 // =========================================================================
 // Montagem da seleção dos tipos de demanda
@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoDemanda.php');
 
 function selecaoTipoDemanda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTipoDemanda::getInstanceOf($dbms,null,$w_cliente,null,null,null,'S',$restricao);
+  $sql = new db_getTipoDemanda; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,'S',$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

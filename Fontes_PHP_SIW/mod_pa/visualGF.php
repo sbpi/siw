@@ -5,7 +5,7 @@
 function VisualGF($l_chave, $l_menu=null, $l_formato='WORD') {
   extract($GLOBALS);
 
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
   // Recupera os dados da solicitacao

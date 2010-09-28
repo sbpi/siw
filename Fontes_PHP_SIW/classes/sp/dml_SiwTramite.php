@@ -29,7 +29,7 @@ class dml_SiwTramite {
                    'p_beneficiario'    =>array($p_beneficiario,    B_VARCHAR,      1),
                    'p_gestor'          =>array($p_gestor,          B_VARCHAR,      1)
                   );
-     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

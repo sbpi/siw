@@ -63,7 +63,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -131,7 +131,7 @@ $p_chave_pai     = upper($_REQUEST['p_chave_pai']);
 $p_empenho       = lower($_REQUEST['p_empenho']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu='Existe';
 } else {
@@ -139,7 +139,7 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 
 Main();
 
@@ -159,45 +159,45 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $w_tipo=='WORD' || $w_tipo=='PDF') {
     $w_filtro='';
     if ($p_sq_menu>'') {
-      $RS = db_getMenuData::getInstanceOf($dbms,$p_sq_menu);
+      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$p_sq_menu);
       $w_filtro .= '<tr valign="top"><td align="right">Serviço <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_chave>'') $w_filtro .= '<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]';
     if ($p_prazo>'') $w_filtro .= ' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
     if ($p_solicitante>'') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Setor solicitante <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_uorg_resp>''){
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_uorg_resp);
       $w_filtro .= '<tr valign="top"><td align="right">Setor executor <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_pais>'') {
-      $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
+      $sql = new db_getCountryData; $RS = $sql->getInstanceOf($dbms,$p_pais);
       $w_filtro .= '<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
-      $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
+      $sql = new db_getRegionData; $RS = $sql->getInstanceOf($dbms,$p_regiao);
       $w_filtro .= '<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
-      $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
+      $sql = new db_getStateData; $RS = $sql->getInstanceOf($dbms,$p_pais,$p_uf);
       $w_filtro .= '<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_cidade>'') {
-      $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
+      $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$p_cidade);
       $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_prioridade>'') {
-      $RS = db_getOpiniao::getInstanceOf($dbms,null,$w_cliente,null,$p_prioridade, null);
+      $sql = new db_getOpiniao; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,$p_prioridade, null);
       foreach ($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Opinião <td>[<b>'.f($RS,'nome').'</b>]';
     }
@@ -209,7 +209,7 @@ function Gerencial() {
     if ($p_atraso=='S')   $w_filtro .= '<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
     if ($w_filtro>'')     $w_filtro  = '<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     
-    $RS1 = db_getSolicSR::getInstanceOf($dbms, $w_cliente, nvl($p_sq_menu,0),
+    $sql = new db_getSolicSR; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, nvl($p_sq_menu,0),
         $w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
@@ -372,7 +372,7 @@ function Gerencial() {
           case 'GRSREXEC':      ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
         } 
         if ($p_sq_menu>'') {
-          $RS2 = db_getTramiteList::getInstanceOf($dbms,$p_sq_menu,null,null,null);
+          $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$p_sq_menu,null,null,null);
           $RS2  = SortArray($RS2,'ordem','asc');
           $w_fase_exec = '';
           foreach($RS2 as $row) {
