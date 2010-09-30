@@ -22,7 +22,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$l_sg1);
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$l_sg1);
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
@@ -59,10 +59,10 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   if (count($l_rs_modulo)>0) $l_acordo='S'; else $l_acordo='N';
   
   // Recupera o trâmite atual da solicitação
-  $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
   // Recupera os dados da outra parte
-  $l_rs1 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $l_rs1 = $sql->getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   if (($l_rs1==0)) {
     $l_existe_rs1=0; 
   } else {
@@ -74,7 +74,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   }
 
   // Recupera os dados do preposto
-  $l_rs2 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $l_rs2 = $sql->getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   if (count($l_rs2)==0) {
     $l_existe_rs2=0; 
   } else {
@@ -86,7 +86,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   }
 
   // Recupera os dados das parcelas
-  $l_rs3 = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,'VALIDA',null,null,null,null,null,null,null);
+  $sql = new db_getAcordoParcela; $l_rs3 = $sql->getInstanceOf($dbms,$l_chave,null,'VALIDA',null,null,null,null,null,null,null);
   if (count($l_rs3)==0) {
     $l_existe_rs3=0; 
   } else {

@@ -75,7 +75,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -125,7 +125,7 @@ function Demonstrativo() {
     //ShowHTML('<tr><td colspan="4" align="right"  cellspacing=00><b>Ano</b>: '.$w_ano);
     ShowHTML('<tr><td colspan="4">');
     $w_acordo_atual = 0;
-    $RS_Solic = db_getSolicList::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,f($RS_Menu,'sigla'),4,
+    $sql = new db_getSolicList; $RS_Solic = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,f($RS_Menu,'sigla'),4,
                   null,null,null,null,null,null,null,null,null,null,$w_acordo,null,null,null,null,
                   null, null,null,null,null,null,null,null,null,null,null,null,null);
     if (count($RS_Solic)==0) {
@@ -139,7 +139,7 @@ function Demonstrativo() {
           ShowHTML('<tr><td bgcolor="#f0f0f0" colspan="2"><b>'.upper(f($row,'nome')).': '.f($row,'codigo_interno').' - '.f($row,'titulo').' ('.f($row,'sq_siw_solicitacao').')');
           ShowHTML('    <td bgcolor="#f0f0f0" colspan="2" align=right><b>PROCESSO: </b>'.nvl(f($row,'processo'),'---'));
           ShowHTML('<tr><td colspan="4"><hr NOSHADE color=#000000 size=4></td></tr>');
-          $RS_Outra = db_getConvOutraParte::getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null);
+          $sql = new db_getConvOutraParte; $RS_Outra = $sql->getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null);
           foreach($RS_Outra as $row1) ShowHTML('   <tr valign="top"><td><b>RAZÃO SOCIAL</b><td colspan="3">'.nvl(f($row1,'cnpj'),f($row,'cpf')).' - '.f($row1,'nm_pessoa').'</div></td></tr>');
           ShowHTML('   <tr valign="top"><td><b>OBJETO</b><td colspan=3>'.f($row,'objeto'));
           ShowHTML('   <tr valign="top">');
@@ -164,7 +164,7 @@ function Demonstrativo() {
           ShowHTML('       <td width="1%" nowrap><b>FONTE </b><td>'.nvl(f($row,'cd_lcfonte_recurso'),'---').' - '.nvl(f($row,'nm_lcfonte_recurso'),'---'));
           
           //Aditivos
-          $RS_Aditivo = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null,null,null,null);
+          $sql = new db_getAcordoAditivo; $RS_Aditivo = $sql->getInstanceOf($dbms,$w_cliente,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null,null,null,null);
           foreach($RS_Aditivo as $row2) {
             ShowHTML('   <tr valign="top"><td><b>'.f($row2,'codigo').'</b><td colspan="3">'.FormataDataEdicao(f($row2,'inicio'),5).' a '.FormataDataEdicao(f($row2,'fim'),5).' ('.f($row2,'duracao').' dias) - '.f($row2,'objeto'));
           }  
@@ -181,7 +181,7 @@ function Demonstrativo() {
           $w_valor_inicial  = f($row,'valor');
           $w_fim            = f($row,'fim_real');
           $w_sg_tramite     = f($row,'sg_tramite');
-          $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'RELJUR',null,'01/01/'.$w_ano,'31/12/'.$w_ano,null,null,null,null);
+          $sql = new db_getAcordoParcela; $RS_Parc = $sql->getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'RELJUR',null,'01/01/'.$w_ano,'31/12/'.$w_ano,null,null,null,null);
           $RS_Parc = SortArray($RS_Parc,'ordem','asc', 'dt_lancamento', 'asc', 'dt_nota', 'asc');
           if(count($RS_Parc)==0) {
             ShowHTML('   <tr><td colspan="4">');
@@ -193,7 +193,7 @@ function Demonstrativo() {
             ShowHTML('  </tr>');
           } else {
             // Recupera informações sobre as notas ligadas ao contrato ou a seus aditivos
-            $RS_Nota = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,f($row,'sq_siw_solicitacao'),null,null,null,'01/01/'.$w_ano,'31/12/'.$w_ano,null);
+            $sql = new db_getAcordoNota; $RS_Nota = $sql->getInstanceOf($dbms,$w_cliente,null,f($row,'sq_siw_solicitacao'),null,null,null,'01/01/'.$w_ano,'31/12/'.$w_ano,null);
             $RS_Nota = SortArray($RS_Nota,'data','asc', 'numero', 'asc');
             if (count($RS_Nota)>0) {
               $i = 0;

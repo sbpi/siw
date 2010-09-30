@@ -12,7 +12,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_segmento = f($RS_Cliente,'segmento');
   
   // Recupera os dados do acordo
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
   $w_tramite         = f($RS,'sq_siw_tramite');
   $w_tramite_ativo   = f($RS,'ativo');
   $w_valor_inicial   = f($RS,'valor');
@@ -238,7 +238,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     // Notas de empenho
     if($w_segmento=='Público' && substr($w_sigla,0,3)=='GCD') {
-      $RS1 = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null);
+      $sql = new db_getAcordoNota; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'data','desc', 'cd_aditivo','desc');
       if (count($RS1)>0) {
 	      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS DE EMPENHO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -317,7 +317,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     // Aditivos
     if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD') {
-      $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getAcordoAditivo; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'codigo','desc');
       if (count($RS1)>0) {
 	      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -382,7 +382,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 	      $l_html.=chr(13).'</tr>';
       }
     } elseif(substr($w_sigla,0,3)=='GCZ') {
-      $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getAcordoAditivo; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'codigo','desc');
       if (count($RS1)>0) {
 	      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -453,7 +453,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if     (substr($w_sigla,0,3)=='GCB')$l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BOLSISTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     elseif (substr($w_sigla,0,3)=='GCZ')$l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DETENTOR<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     else                                $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRA(S) PARTE(S)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RSQuery = db_getConvOutraParte::getInstanceOf($dbms,null,$l_chave,null,null);
+    $sql = new db_getConvOutraParte; $RSQuery = $sql->getInstanceOf($dbms,null,$l_chave,null,null);
     if (count($RSQuery)==0) {
       if     (substr($w_sigla,0,3)=='GCB') $l_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Bolsita não informado';
       elseif (substr($w_sigla,0,3)=='GCZ') $l_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Detentor não informado';
@@ -465,7 +465,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) $l_html.=chr(13).'          - '.f($row,'cpf').'</b>';
         else                                   $l_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         if ($l_P1==4) {
-          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+          $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
           if (f($RSQuery1,'sq_tipo_pessoa')==1) {
             $l_html.=chr(13).'      <tr><td colspan="2">';
@@ -592,7 +592,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         // Preposto
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==2 && $l_P1==4) {
           if ($w_tipo_visao!=2) {
-            $RSQuery1 = db_getConvPreposto::getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
+            $sql = new db_getConvPreposto; $RSQuery1 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
             $l_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Prepostos</td>';
             if (count($RSQuery1)==0) {
               $l_html.=chr(13).'      <tr><td colspan=2><font size=1><b>Prepostos não informados</b></font></td></tr>';
@@ -629,8 +629,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             }
           }
           // Representantes
-          //$RSQuery = db_getAcordoRep::getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
-          $RSQuery = db_getConvOutroRep::getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
+          $sql = new db_getAcordoRep; //$RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
+          $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
           $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
           $l_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Representantes</td>';
           if (count($RSQuery)==0) {
@@ -679,7 +679,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
   if ($O!='V') {
     // Parcelas
-    $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc', 'dt_lancamento', 'asc');
     if (count($RS)>0) {
       //$l_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
@@ -836,7 +836,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     } 
   
     //Listagem dos itens do pedido de compra
-    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
+    $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
     $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
     if (count($RS1)>0) {  
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -905,7 +905,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   
     if ($w_tipo_visao!=2 && $l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
       // Arquivos vinculados
-      $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
       $RS = SortArray($RS,'nome','asc');
       if (count($RS)>0) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

@@ -59,6 +59,7 @@ $w_pitce    = upper($_REQUEST['w_pitce']);
 $w_scale    = nvl($_REQUEST['w_scale'],'m');
 
 $w_assinatura   = upper($_REQUEST['w_assinatura']);
+
 $w_pagina       = 'graficos.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pe/';
@@ -104,7 +105,6 @@ exit;
 function Hierarquico() {
   extract($GLOBALS);
 
-
   $diagram = new DiagramExtended(gera_hierarquico(true));
   $data = $diagram->getNodePositions();
 
@@ -139,8 +139,6 @@ function echo_map($l_chave, &$node, $selected) {
 // -------------------------------------------------------------------------
 function Gera_Hierarquico($l_gera) {
   extract($GLOBALS);
-
-  include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
 
   $l_xml = '<?phpxml version="1.0" encoding="iso-8859-1"?>';
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
@@ -606,7 +604,7 @@ if($maiorData  != 0 &&  $menorData  != 9999999999){
   $activity->SetPattern(BAND_SOLID,"white");
   $activity->SetFillColor("white");
   $activity->SetHeight(0.001);
-  $graph->Add($activity);
+  $graph->AddObject($activity);
 }
 
 // Setup scale

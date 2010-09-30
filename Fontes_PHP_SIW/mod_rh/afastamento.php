@@ -97,7 +97,7 @@ function Afastamento() {
     $w_observacao               = $_REQUEST['w_observacao'];
   } else {
     if ($O=='L') {
-      $RS = db_getAfastamento::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['p_sq_tipo_afastamento'],$_REQUEST['p_sq_contrato_colaborador'],$_REQUEST['p_inicio_data'],$_REQUEST['p_fim_data'],null,null,null,null);
+      $sql = new db_getAfastamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['p_sq_tipo_afastamento'],$_REQUEST['p_sq_contrato_colaborador'],$_REQUEST['p_inicio_data'],$_REQUEST['p_fim_data'],null,null,null,null);
       if (Nvl($p_ordena,'') > '') {
         $lista = explode(',',str_replace(' ',',',$p_ordena));
         $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -105,7 +105,7 @@ function Afastamento() {
         $RS = SortArray($RS,'nome','asc'); 
       }    
     } elseif (!(strpos('AEV',$O)===false)) {
-      $RS = db_getAfastamento::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null,null,null,null);
+      $sql = new db_getAfastamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) {$RS = $row; break;}
       $w_chave                   = f($RS,'chave');
       $w_sq_tipo_afastamento     = f($RS,'sq_tipo_afastamento');
@@ -119,7 +119,7 @@ function Afastamento() {
     } 
   } 
   if (Nvl($w_sq_tipo_afastamento,'')>'' && (!(strpos('IA',$O)===false))) {
-      $RS1 = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,$w_sq_tipo_afastamento,null,null,null,null,'MODALIDADES');
+      $sql = new db_getGPTipoAfast; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_tipo_afastamento,null,null,null,null,'MODALIDADES');
       foreach($RS1 as $row){$RS1=$row; break;}
       if(f($RS1,'abate_banco_horas') != 'N'){
         $w_sg_afast = true;
@@ -336,7 +336,7 @@ function Afastamento() {
       ShowHTML(' contratado nas modalidades ');
       if (Nvl(f($RS1,'nm_modalidade'),'')>'') {
         $w_modalidades = $w_modalidades.'<b>'.trim(f($RS1,'nm_modalidade')).'</b>';
-        $RS2 = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,$w_sq_tipo_afastamento,null,null,null,null,'MODALIDADES');
+        $sql = new db_getGPTipoAfast; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_tipo_afastamento,null,null,null,null,'MODALIDADES');
         if (count($RS2)>0) {
           $i=0;
           foreach ($RS2 as $row2) {
@@ -449,7 +449,7 @@ function BuscaColaborador() {
   $chaveAux     = $_REQUEST['ChaveAux'];
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
-  $RS  = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,$w_nome,null,null,null,null,null,null,null,null,null,null,null,null,null); 
+  $sql  = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_nome,null,null,null,null,null,null,null,null,null,null,null,null,null); 
   $RS = SortArray($RS,'nome_resumido','asc');
   //foreach ($RS as $row) {$RS = $row; break;}
   Cabecalho();

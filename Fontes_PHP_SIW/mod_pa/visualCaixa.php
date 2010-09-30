@@ -8,7 +8,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
   $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
-  $RS_Dados = db_getCaixa::getInstanceOf($dbms,$l_chave,$w_cliente,null,null,null,null,null,null,null,null,'PASTA');
+  $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,null,null,null,null,null,null,null,null,'PASTA');
   $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
   
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';

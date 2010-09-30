@@ -7,7 +7,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   extract($GLOBALS);
 
   //Recupera as informações do sub-menu
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
   foreach ($RS as $row) {
     if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
     elseif (strpos(f($row,'sigla'),'GERAL')!==false)    $l_nome_menu['GERAL'] = upper(f($row,'nome'));
@@ -18,10 +18,10 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
   $l_html='';
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PADCAD');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'PADCAD');
   
   if (nvl(f($RS,'sq_solic_pai'),'')!='') {
-    $RS_Pai = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PADCAD');
+    $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PADCAD');
     if (f($RS,'tipo_juntada')=='A') $w_tipo_juntada = 'ANEXO AO PROCESSO '.f($RS_Pai,'protocolo');
     else                            $w_tipo_juntada = 'APENSO AO PROCESSO '.f($RS_Pai,'protocolo');
   }
@@ -136,7 +136,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     } 
 
     // Assuntos complementares
-    $RS1 = db_getDocumentoAssunto::getInstanceOf($dbms,$l_chave,null,'N',null);
+    $sql = new db_getDocumentoAssunto; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'N',null);
     $RS1 = SortArray($RS1,'principal','desc','nome','asc');
     if (count($RS1)>0 && $l_interessado=='S') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['ASSUNTO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -233,7 +233,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'       <td align="justify">'.formataDataEdicao(f($RS,'phpdt_juntada')).'</td></tr>';
   }
   
-  $RS_Juntado = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',5,
+  $sql = new db_getSolicList; $RS_Juntado = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',5,
       $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
       $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
       $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -273,7 +273,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
   if ($O=='T') {
     // Interessados na execução do documento
-    $RS1 = db_getDocumentoInter::getInstanceOf($dbms,$l_chave,null,'N',null);
+    $sql = new db_getDocumentoInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'N',null);
     $RS1 = SortArray($RS1,'principal','desc','nome','asc');
     if (count($RS1)>0 && $l_interessado=='S') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -302,7 +302,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     } 
 
     // Arquivos vinculados ao registro
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0 && $l_anexo=='S') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['ANEXO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -326,7 +326,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
     include_once($w_dir_volta.'classes/sp/db_getSolicPA.php');
     $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PAEMP');
-    $RS1 = db_GetSolicPA::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'EMPREST',4,
+    $sql = new db_GetSolicPA; $RS1 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'EMPREST',4,
         null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
         null, null, null, null, null, null, null,null, null, null, $l_chave);
     // Empréstimos
@@ -370,7 +370,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   // Encaminhamentos
   if ($l_ocorrencia=='S') {
     // Versões
-    $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,2,'LISTA');
+    $sql = new db_getSolicLog; $RS_Log = $sql->getInstanceOf($dbms,$l_chave,null,2,'LISTA');
     $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
     if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -399,7 +399,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     }
 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,0,'LISTA');
+    $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,0,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'desc');
     if (count($RS)>0 && $l_ocorrencia=='S') {
       $i=0;

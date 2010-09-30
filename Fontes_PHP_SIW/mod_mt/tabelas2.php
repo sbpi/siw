@@ -137,7 +137,7 @@ exit;
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -146,7 +146,7 @@ exit;
     }
   } elseif (!(strpos('AE',$O)===false) || nvl($w_troca,'')!='') {
     // Recupera os dados chave informada
-    $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
@@ -304,7 +304,7 @@ exit;
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getMeioTransporte::getInstanceOf($dbms,$w_cliente,null,null,null,null);
+    $sql = new db_getMeioTransporte; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -313,7 +313,7 @@ exit;
     }
   } elseif (!(strpos('AE',$O)===false) || $w_troca > '') {
     // Recupera os dados chave informada
-    $RS = db_getMeioTransporte::getInstanceOf($dbms,$w_cliente, null, $w_chave,null,null);
+    $sql = new db_getMeioTransporte; $RS = $sql->getInstanceOf($dbms,$w_cliente, null, $w_chave,null,null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
@@ -475,7 +475,7 @@ exit;
     $w_uf          = $_REQUEST['w_uf'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getValorDiaria::getInstanceOf($dbms,$w_cliente,null);
+    $sql = new db_getValorDiaria; $RS = $sql->getInstanceOf($dbms,$w_cliente,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_continente','desc','nm_pais','asc','nm_cidade','asc','nm_categoria_diaria','asc','nm_tipo_diaria','asc');
@@ -484,7 +484,7 @@ exit;
     }
   } elseif (!(strpos('AE',$O)===false) || $w_troca > '') {
     // Recupera os dados chave informada
-    $RS = db_getValorDiaria::getInstanceOf($dbms, $w_cliente, $w_chave);
+    $sql = new db_getValorDiaria; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave);
     foreach($RS as $row) { $RS = $row; break; }
     $w_nacional    = f($RS,'nacional');
     $w_continente  = f($RS,'continente');
@@ -679,7 +679,7 @@ exit;
     $w_limite_unidade    = $_REQUEST['w_limite_unidade'];
   } else {
     // Recupera os dados do parâmetro
-    $RS = db_getPDParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    $sql = new db_getPDParametro; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_sequencial         = f($RS,'sequencial');
@@ -794,14 +794,14 @@ exit;
     $w_ativo            = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera os parâmetros do módulo
-    $RS = db_getPDParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    $sql = new db_getPDParametro; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_limite_unidade     = f($RS,'limite_unidade');
     } 
 
     // Recupera todos os registros para a listagem
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,'VIAGEM',null,null,null);
+    $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'VIAGEM',null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -810,7 +810,7 @@ exit;
     }
   } elseif (!(strpos('AE',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_chave,'VIAGEM',null,null,$w_ano);
+    $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,'VIAGEM',null,null,$w_ano);
     foreach($RS as $row) { $RS = $row; break; }
     $w_nome             = f($RS,'nome');
     $w_sigla            = f($RS,'sigla');
@@ -954,7 +954,7 @@ exit;
   $w_ano    = $_REQUEST['w_ano'];
 
   // Recupera os dados da unidade
-  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+  $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
   foreach($RS as $row) { $RS = $row; break; }
   $w_nome  = f($RS,'nome');
   $w_sigla = f($RS,'sigla');
@@ -967,14 +967,14 @@ exit;
     $w_ano              = $_REQUEST['w_ano'];
   } elseif ($O=='L') {
     // Recupera os parâmetros do módulo
-    $RS = db_getPDParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    $sql = new db_getPDParametro; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_limite_unidade     = f($RS,'limite_unidade');
     } 
 
     // Recupera todos os registros para a listagem
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_chave,'PDUNIDLIM',null,null,null);
+    $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,'PDUNIDLIM',null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -983,7 +983,7 @@ exit;
     }
   } elseif (!(strpos('AE',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_chave,'PDUNIDLIM',null,null,$w_ano);
+    $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,'PDUNIDLIM',null,null,$w_ano);
     foreach($RS as $row) { $RS = $row; break; }
     $w_limite_passagem  = number_format(f($RS,'limite_passagem'),2,',','.');
     $w_limite_diaria    = number_format(f($RS,'limite_diaria'),2,',','.');
@@ -1143,7 +1143,7 @@ function Locais() {
   } elseif ($O != 'L' && $O != 'I') {
       // Se for herança, atribui a chave da opção selecionada para w_chave
     if ($w_copia>'') $w_chave = $w_copia;
-    $RS = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,null,'REGISTROS');
+    $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_chave_pai      = f($RS,'sq_local_pai');
     $w_nome           = f($RS,'nome');
@@ -1195,7 +1195,7 @@ function Locais() {
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'IS NULL');
+    $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'IS NULL');
     $w_contOut = 0;
     foreach($RS as $row) {
       $w_nome  = f($row,'nome');
@@ -1214,7 +1214,7 @@ function Locais() {
 //        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_chave_aux='.f($row,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row,'chave'));
+        $sql = new db_getAlmoxarifado; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row,'chave'));
         foreach($RS1 as $row1) {
           $w_nome .= ' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {          
@@ -1232,7 +1232,7 @@ function Locais() {
 //            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_chave_aux='.f($row1,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row1,'chave'));
+            $sql = new db_getAlmoxarifado; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row1,'chave'));
             foreach($RS2 as $row2) {
               $w_nome .= ' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
@@ -1250,7 +1250,7 @@ function Locais() {
 //                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_chave_aux='.f($row2,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row2,'chave'));
+                $sql = new db_getAlmoxarifado; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row2,'chave'));
                 foreach($RS3 as $row3) {
                   $w_nome .= ' - '.f($row3,'nome');
                   $w_Imagem=$w_ImagemPadrao;
@@ -1403,7 +1403,7 @@ function Usuario() {
 
   if ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,$w_chave,$SG,null,null,null,null);
+    $sql = new db_getPersonList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$SG,null,null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome_resumido','asc');
@@ -1512,7 +1512,7 @@ function Almoxarifado() {
     
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'OUTROS');
+    $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'OUTROS');
     
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -1522,8 +1522,8 @@ function Almoxarifado() {
     }
   } elseif (!(strpos('AE',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
-    $RS = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'OUTROS');
-    //$RS = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'OUTROS');
+    $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'OUTROS');
+    $sql = new db_getAlmoxarifado; //$RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'OUTROS');
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
@@ -1666,7 +1666,7 @@ function Grava() {
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
+          $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Somente pode existir uma companhia padrão!\');');
@@ -1675,7 +1675,7 @@ function Grava() {
             exit;
           } 
         }
-        $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null,null,null,null,null,$_REQUEST['w_chave'],null);
+        $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null,null,null,null,null,$_REQUEST['w_chave'],null);
         if (count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Companhia já cadastrada!\');');
@@ -1701,7 +1701,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
-          $RS = db_getAlmoxarifado::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_nome'],null,null,'OUTROS');
+          $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_nome'],null,null,'OUTROS');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Categoria já cadastrada!\');');
@@ -1729,7 +1729,7 @@ function Grava() {
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         //if ($_REQUEST['w_padrao']=='S') {
-          /*$RS = db_getMeioTransporte::getInstanceOf($dbms,$w_cliente,null,null,null);
+          $sql = new db_getMeioTransporte; /*$RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Somente pode existir uma companhia padrão!\');');
@@ -1738,7 +1738,7 @@ function Grava() {
             exit;
           }*/ 
         //} 
-        $RS = db_getMeioTransporte::getInstanceOf($dbms, $w_cliente, null, null, null, $_REQUEST['w_nome']);
+        $sql = new db_getMeioTransporte; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, $_REQUEST['w_nome']);
         if (count($RS)>0) {        
           foreach($RS as $row) { $RS = $row; break; }
           if (f($RS,'chave')!=nvl($_REQUEST['w_chave'],0)) {
@@ -1768,7 +1768,7 @@ function Grava() {
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         $w_erro = false;
-        $RS = db_getValorDiaria::getInstanceOf($dbms, $w_cliente, null);
+        $sql = new db_getValorDiaria; $RS = $sql->getInstanceOf($dbms, $w_cliente, null);
         foreach ($RS as $row) {
           if (f($row,'nacional')==$_REQUEST['w_nacional'] &&
               f($row,'continente')==intVal($_REQUEST['w_continente']) &&
@@ -1823,7 +1823,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
-        $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'VIAGEM',null,null,null);
+        $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'VIAGEM',null,null,null);
         if (count($RS)==0) {
           $SQL = new dml_putPDUnidade; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
@@ -1851,7 +1851,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
-        $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'PDUNIDLIM',null,null,$_REQUEST['w_ano']);
+        $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'PDUNIDLIM',null,null,$_REQUEST['w_ano']);
         if (count($RS)==0) {
           $SQL = new dml_putPDUnidLimite; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
           ScriptOpen('JavaScript');
@@ -1879,7 +1879,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
-        $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$SG,null,null,null,null);
+        $sql = new db_getPersonList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$SG,null,null,null,null);
         if (count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Usuário já cadastrado!\');');
@@ -1902,7 +1902,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
-        $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$SG,null,null,null,null);
+        $sql = new db_getPersonList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$SG,null,null,null,null);
         if (count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Usuário já cadastrado!\');');

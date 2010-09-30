@@ -144,7 +144,7 @@ function TipoArquivo() {
     $w_descricao       = $_REQUEST['w_descricao'];
     $w_ativo           = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
-    $RS = db_getTipoArquivo::getInstanceOf($dbms,$w_cliente,null,null,null,null, 'REGISTROS');
+    $sql = new db_getTipoArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null, 'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -152,7 +152,7 @@ function TipoArquivo() {
       $RS = SortArray($RS,'nm_servico','asc','ordem','asc','nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false)) {
-    $RS = db_getTipoArquivo::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
+    $sql = new db_getTipoArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave            = f($RS,'chave');
     $w_nome             = f($RS,'nome');
@@ -307,7 +307,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getTipoArquivo::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
+          $sql = new db_getTipoArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de arquivo com este nome!\');');
@@ -317,7 +317,7 @@ function Grava() {
           } 
 
           // Testa a existência do sigla
-          $RS = db_getTipoArquivo::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
+          $sql = new db_getTipoArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de arquivo com esta sigla!\');');
@@ -326,7 +326,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoArquivo::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
+          $sql = new db_getTipoArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum arquivo!\');');

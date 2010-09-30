@@ -95,7 +95,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 //w_menu            = RetornaMenu(w_cliente, SG) 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -121,18 +121,18 @@ function Gerencial() {
     $w_filtro = '';
     if ($p_sqcc>'') {
       $w_linha++;
-      $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
+      $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_sq_acao_ppa>'') {
       $w_linha++;
-      $RS = db_getAcaoPPA::getInstanceOf($dbms,$p_sq_acao_ppa,$w_cliente,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA; $RS = $sql->getInstanceOf($dbms,$p_sq_acao_ppa,$w_cliente,null,null,null,null,null,null,null,null,null);
       foreach ($RS as $row){$RS=$row; break;}
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação PPA <td>[<b>'.f($RS,'nome').' ('.f($RS,'codigo').')'.'</b>]';
     } 
     if ($p_sq_orprioridade>'') {
       $w_linha++;
-      $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,null,null,null);
+      $sql = new db_getOrPrioridade; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,null,null,null);
       foreach ($RS as $row){$RS=$row; break;}
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Iniciativa Prioritária <td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -146,22 +146,22 @@ function Gerencial() {
     }
     if ($p_solicitante>''){
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_uorg_resp>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_uorg_resp);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_mpog>'')       { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Selecionada SE/MS <td>[<b>'.$p_relevante.'</b>]'; }
@@ -175,7 +175,7 @@ function Gerencial() {
     if ($w_filtro>'')     { $w_linha++; $w_filtro = '<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
     switch ($p_agrega) {
       case 'GRPRPROJ':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto, null, null, null, null,$p_usu_resp,
@@ -184,7 +184,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'titulo','asc');
         break;
       case 'GRPRPROP':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,'GRPRPROP',5,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,'GRPRPROP',5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto, null, null, null, null,$p_usu_resp,
@@ -194,7 +194,7 @@ function Gerencial() {
         break;
       case 'GRPRRESP':
         
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto,null,null,null,null,$p_usu_resp,
@@ -203,7 +203,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_solic','asc');
         break;
       case 'GRPRRESPATU':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,'GRPRRESPATU',5,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,'GRPRRESPATU',5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto,null,null,null,null,$p_usu_resp,
@@ -212,7 +212,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_exec','asc');
         break;
       case 'GRPRCC':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto,null,null,null,null,$p_usu_resp,
@@ -222,7 +222,7 @@ function Gerencial() {
         break;
       case 'GRPRSETOR':
         $w_TP=$TP.' - Por setor responsável';
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto,null,null,null,null,$p_usu_resp,
@@ -231,7 +231,7 @@ function Gerencial() {
         break;
       case 'GRPRAREA':
         $w_TP=$TP.' - Por área';
-        $RS1 = db_getSolicGRA::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
+        $sql = new db_getSolicGRA; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto,null,null,null,null,$p_usu_resp,
@@ -240,7 +240,7 @@ function Gerencial() {
         break;
       case 'GRPRINTER':
         $w_TP=$TP.' - Por interessado';
-        $RS1 = db_getSolicGRI::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
+        $sql = new db_getSolicGRI; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                  $p_unidade,null,$p_ativo,$p_proponente,
                  $p_chave,$p_assunto,null,null,null,null,$p_usu_resp,
@@ -367,7 +367,7 @@ function Gerencial() {
           case 'GRPRAREA':            ShowHTML('    else document.Form.p_area.value=\''.$_REQUEST['p_area'].'\';');                  break;
           case 'GRPRINTER':           ShowHTML('    else document.Form.p_inter.value=\''.$_REQUEST['p_inter'].'\';');                break;
         }         
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);        
+        $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);        
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         foreach ($RS2 as $row2) {

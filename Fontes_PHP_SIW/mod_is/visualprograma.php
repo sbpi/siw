@@ -6,7 +6,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados do programa
-  $RS = db_getSolicData_IS::getInstanceOf($dbms,$l_chave,'ISPRGERAL');
+  $sql = new db_getSolicData_IS; $RS = $sql->getInstanceOf($dbms,$l_chave,'ISPRGERAL');
   foreach($RS as $row){$RS=$row; break;}
   //Se for para exibir só a ficha resumo do programa.
   if ($P1==1 || $P1==2 || $P1==3) {
@@ -43,12 +43,12 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Indicadores do programa
     // Recupera todos os registros para a listagem     
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
+    $sql = new db_getSolicIndic_IS; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
     $RS1 = SortArray($RS1,'ordem','asc');
     if (count($RS1)>0) {
       $l_cont=1;
       foreach($RS1 as $row1) {
-        $RS2 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,f($row1,'sq_indicador'),'REGISTRO',null,null);
+        $sql = new db_getSolicIndic_IS; $RS2 = $sql->getInstanceOf($dbms,$l_chave,f($row1,'sq_indicador'),'REGISTRO',null,null);
         foreach($RS2 as $row2){$RS2=$row2; break;}
         $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Indicador:</b></td>';
         $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($RS2,'titulo').'</b></td></tr>';
@@ -91,7 +91,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     } 
     // Listagem das restrições do programa
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS1 = db_getRestricao_IS::getInstanceOf($dbms,'ISPRRESTR',$l_chave,null);
+    $sql = new db_getRestricao_IS; $RS1 = $sql->getInstanceOf($dbms,'ISPRRESTR',$l_chave,null);
     $RS1 = SortArray($RS1,'phpdt_inclusao','desc');
     if (count($RS1)>0) {
       $l_cont=1;
@@ -112,7 +112,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Ações do programa
     // Recupera todos os registros para a listagem
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>AÇÕES DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
+    $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'chave','asc');
     if (count($RS1)>0) {
       // Se não foram selecionados registros, exibe mensagem  
@@ -141,7 +141,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     } 
     // Encaminhamentos
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+    $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc');
     if (count($RS)>0) {
       $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
@@ -298,7 +298,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     if (upper($l_orcamentaria)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO ORÇAMENTÁRIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_cont=1;
-      $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS,'cd_programa'),null,$w_ano,$w_cliente,'VALORFONTE');
+      $sql = new db_getPPADadoFinanc_IS; $RS1 = $sql->getInstanceOf($dbms,f($RS,'cd_programa'),null,$w_ano,$w_cliente,'VALORFONTE');
       if (count($RS1)<=0) {
         $l_html.=chr(13).'   <tr><td colspan="2">Nao existe nenhuma programação financeira para este programa</td></tr>';
       } else {
@@ -340,12 +340,12 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     if (upper($l_indicador)==upper('sim')) {
       // Recupera todos os registros para a listagem     
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
+      $sql = new db_getSolicIndic_IS; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
       $RS1 = SortArray($RS1,'ordem','asc');
       if (count($RS1)>0) {
         $l_cont=1;
         foreach($RS1 as $row) {
-          $RS2 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,f($row,'sq_indicador'),'REGISTRO',null,null);
+          $sql = new db_getSolicIndic_IS; $RS2 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_indicador'),'REGISTRO',null,null);
           foreach($RS2 as $row2){$RS=$row2; break;}
           $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Indicador:</b></td>';
           $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($row2,'titulo').'</b></td></tr>';
@@ -412,7 +412,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Listagem das restrições do programa
     if (upper($l_restricao)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getRestricao_IS::getInstanceOf($dbms,'ISPRRESTR',$l_chave,null);
+      $sql = new db_getRestricao_IS; $RS1 = $sql->getInstanceOf($dbms,'ISPRRESTR',$l_chave,null);
       $RS1 = SortArray($RS1,'phpdt_inclusao','desc');
       if (count($RS1)>0) {
         $l_cont=1;
@@ -434,7 +434,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Interessados na execução do programa
     if (upper($l_interessado)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS1 = SortArray($RS1,'nome_resumido','asc');
       if (count($RS1)>0) {
         $TP=RemoveTP($TP).' - Interessados';
@@ -446,7 +446,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Arquivos vinculados ao programa
     if (upper($l_anexo)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
       $RS1 = SortArray($RS1,'nome','asc');
       if (count($RS1)>0) {
         $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
@@ -472,7 +472,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     if (upper($l_acao)==upper('sim')) {
       // Recupera todos os registros para a listagem
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>AÇÕES DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'chave','asc');
       if (count($RS1)>0) {
         // Se não foram selecionados registros, exibe mensagem  
@@ -502,7 +502,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Encaminhamentos
     if (upper($l_ocorrencia)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+      $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc');
       if (count($RS)>0) {
         $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';

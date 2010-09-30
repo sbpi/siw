@@ -465,7 +465,7 @@ function somar_dias_uteis($str_data,$int_qtd_dias_somar = 7) {
 // -------------------------------------------------------------------------
 function Gera_Gantt1() {
   extract($GLOBALS);
-
+  
 // Gantt example
 include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
 include_once ($w_dir_volta."classes/jpgraph/jpgraph_gantt.php");
@@ -561,7 +561,7 @@ if($maiorData  != 0 &&  $menorData  != 9999999999){
 	$activity->SetPattern(BAND_SOLID,"white");
 	$activity->SetFillColor("white");
 	$activity->SetHeight(0.001);
-	$graph->Add($activity);
+	$graph->AddObject($activity);
 }
 
 // Setup scale

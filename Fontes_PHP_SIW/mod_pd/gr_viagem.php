@@ -148,12 +148,12 @@ function Gerencial() {
     $w_filtro='';
     if ($p_projeto>'') {
       $w_linha++;
-      $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
       $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
     } 
     if ($p_atividade>'') {
       $w_linha++;
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
@@ -161,44 +161,44 @@ function Gerencial() {
     if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade proponente <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Beneficiário<td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">CPF Beneficiário <td>[<b>'.$p_palavra.'</b>]'; }
     if ($p_sq_prop>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_sq_prop,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_sq_prop,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Beneficiário<td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_pais>'') {
       $w_linha++;
-      $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
+      $sql = new db_getCountryData; $RS = $sql->getInstanceOf($dbms,$p_pais);
       $w_filtro .= '<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
       $w_linha++;
-      $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
+      $sql = new db_getRegionData; $RS = $sql->getInstanceOf($dbms,$p_regiao);
       $w_filtro .= '<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
       $w_linha++;
-      $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
+      $sql = new db_getStateData; $RS = $sql->getInstanceOf($dbms,$p_pais,$p_uf);
       $w_filtro .= '<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_cidade>'')  {
       $w_linha++;
-      $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
+      $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$p_cidade);
       $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null,null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -209,7 +209,7 @@ function Gerencial() {
 
     switch ($p_agrega) {
       case 'GRPDCIAVIAGEM':
-        $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicViagem; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
             $p_atividade, $p_codigo, $p_orprior);
@@ -217,7 +217,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_cia_viagem','asc');
         break;
       case 'GRPDCIDADE':
-        $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicViagem; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
             $p_atividade, $p_codigo, $p_orprior);
@@ -225,7 +225,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_destino_ind','asc');
         break;
       case 'GRPDUNIDADE':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -234,7 +234,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
         break;
       case 'GRPDPROJ':
-        $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicViagem; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
             $p_atividade, $p_codigo, $p_orprior);
@@ -242,7 +242,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_projeto','asc');
         break;
       case 'GRPDDATA':
-        $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicViagem; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
             $p_atividade, $p_codigo, $p_orprior);
@@ -250,7 +250,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_mes','desc');
         break;
       case 'GRPDPROPOSTO':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -259,7 +259,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_prop_ind','asc');
         break;
       case 'GRPDTIPO':
-        $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -376,7 +376,7 @@ function Gerencial() {
           case 'GRPDPROPOSTO':  ShowHTML('    else document.Form.p_sq_prop.value=\''.$_REQUEST['p_sq_prop'].'\';');   break;
           case 'GRPDTIPO':      ShowHTML('    else document.Form.p_ativo.value=\''.$_REQUEST['p_ativo'].'\';');       break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
+        $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         foreach($RS2 as $row) {
@@ -798,12 +798,12 @@ function Conciliacao(){
     $w_filtro='';
     if ($p_projeto>'') {
       $w_linha++;
-      $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
       $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
     }
     if ($p_atividade>'') {
       $w_linha++;
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     }
@@ -812,12 +812,12 @@ function Conciliacao(){
     
     if ($p_cidade>'')  {
       $w_linha++;
-      $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
+      $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$p_cidade);
       $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
     }
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null,null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
     }
@@ -933,7 +933,7 @@ function Conciliacao(){
           case 'GRPDPROPOSTO':  ShowHTML('    else document.Form.p_sq_prop.value=\''.$_REQUEST['p_sq_prop'].'\';');   break;
           case 'GRPDTIPO':      ShowHTML('    else document.Form.p_ativo.value=\''.$_REQUEST['p_ativo'].'\';');       break;
         }
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
+        $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         foreach($RS2 as $row) {

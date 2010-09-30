@@ -93,7 +93,7 @@ if (nvl($_REQUEST['w_raiz'],'') > '') {
 
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -437,7 +437,7 @@ function Grava() {
           array_walk_recursive($lista,'flatArray',&$base);
 
           // Recupera os itens do menu
-          $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'L', null);
+          $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'L', null);
           $RS = SortArray($RS,'or_menu','asc');    
           ShowHTML('<b>Processando o menu</b>');
           ShowHTML('<DL>');
@@ -479,7 +479,7 @@ function Grava() {
                 if ($w_opcao=='atualiza') {
                   $w_diretorio  = nvl((substr(strrev($file['diretorio']),0,1)=='/') ? substr($file['diretorio'],0,-1) : $file['diretorio'],'/');
                   //echo '['.$w_cliente.'] ['.$_REQUEST['w_sq_sistema'].'] ['.$file['nome'].'] ['.$w_diretorio.'] ';
-                  $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,'existe',null,$_REQUEST['w_sq_sistema'],$file['nome'],$w_diretorio,null);
+                  $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,'existe',null,$_REQUEST['w_sq_sistema'],$file['nome'],$w_diretorio,null);
                   if (!count($RS)) {
                     $w_chave      = null;
                     $operacao     = 'I';

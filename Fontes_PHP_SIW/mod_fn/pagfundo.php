@@ -174,7 +174,7 @@ $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_sq_orprior   = $_REQUEST['p_sq_orprior'];
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -204,7 +204,7 @@ function Inicial() {
     if ((!(strpos(upper($R),'GR_')===false)) || (!(strpos(upper($R),'PROJETO')===false)) || ($w_tipo=='WORD')) {
       $w_filtro='';
       if ($p_projeto>'') {
-        $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
         if ($w_tipo=='WORD') {
           $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
         } else {
@@ -213,46 +213,46 @@ function Inicial() {
       } 
     }
     if ($p_sqcc>'') {
-      $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
+      $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
       $w_filtro .= '<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_chave>'') $w_filtro .= '<tr valign="top"><td align="right">Atividade nº <td>[<b>'.$p_chave.'</b>]';
     if ($p_prazo>'') $w_filtro .= ' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
     if ($p_solicitante>'') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_sq_orprior>''){
-      $RS = db_getTipoLancamento::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null);
+      $sql = new db_getTipoLancamento; $RS = $sql->getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null);
       foreach($RS as $row) {$RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo do lançamento <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uorg_resp>'') {
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_uorg_resp);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_pais>'') {
-      $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
+      $sql = new db_getCountryData; $RS = $sql->getInstanceOf($dbms,$p_pais);
       $w_filtro .= '<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
-      $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
+      $sql = new db_getRegionData; $RS = $sql->getInstanceOf($dbms,$p_regiao);
       $w_filtro .= '<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
-      $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
+      $sql = new db_getStateData; $RS = $sql->getInstanceOf($dbms,$p_pais,$p_uf);
       $w_filtro .= '<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
     }
     if ($p_cidade>'') {
-      $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
+      $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$p_cidade);
       $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
     }
     if ($p_prioridade>'') $w_filtro .= '<tr valign="top"><td align="right">Prioridade <td>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
@@ -266,13 +266,13 @@ function Inicial() {
   }
   if ($w_copia>'') {
     // Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
+    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, null, $p_sq_orprior);
   } else {
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
+    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -422,7 +422,7 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>');
+        if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f$$sql new new new ; sql').' = $sql->> ; ($$sqlobj_acordo = $sql->row,' = $sql->f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>');
         else                 ShowHTML('        '.f($row,'codigo_interno').''); 
         if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
           if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa_resumido')).'</td>');
@@ -469,7 +469,7 @@ function Inicial() {
                   ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                   /*
                   if (!(strpos($SG,'FNR')===false)) {
-                    $l_rs_rubrica = db_getsolicRubrica::getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
+                    $sql = new db_getsolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
                     if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                     else              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                   } else {
@@ -481,15 +481,15 @@ function Inicial() {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registro do pagamento.">Concluir</A>&nbsp');
               } elseif ($P1==2 || $P1==6) {
                  // Se for execução
-                $l_rs_solic   = db_getSolicData::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),$SG);
-                $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+                $sql   = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),$SG);
+                $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
                 if ($P1==2) {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-la.">AN</A>&nbsp');
                   if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
                     ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                     /*
                     if (!(strpos($SG,'FNR')===false)) {
-                      $l_rs_rubrica = db_getsolicRubrica::getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
+                      $sql = new db_getsolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
                       if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                       else              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                     } else {
@@ -760,8 +760,8 @@ function Geral() {
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
-    if ($w_copia>'') $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG);
-    else             $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    if ($w_copia>'') $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG);
+    else             $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
     if (count($RS)>0) {
       $w_sq_unidade           = f($RS,'sq_unidade');
       $w_observacao           = f($RS,'observacao');
@@ -823,7 +823,7 @@ function Geral() {
 
     if (nvl($w_copia,'')=='') {
       // Recupera dados do comprovante
-      $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
       $RS = SortArray($RS,'sq_tipo_documento','asc');
       foreach ($RS as $row) {$RS=$row; break;}
       $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
@@ -839,14 +839,14 @@ function Geral() {
 
   // Recupera a sigla do tipo do documento para tratar a Nota Fiscal
   if ($w_sq_tipo_documento>'') {
-    $RS2 = db_getTipoDocumento::getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente);
+    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente);
     foreach ($RS2 as $row) { $w_tipo = f($row,'sigla'); break; }
   } 
 
   // Tenta recuperar os dados do beneficiário
   if (Nvl($w_tipo_pessoa,'')!='' && (Nvl($w_pessoa,'')!='' || Nvl($_REQUEST['w_cpf'],'')!='' || Nvl($_REQUEST['w_cnpj'],'')!='')) {
     // Recupera os dados do proponente
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,$w_tipo_pessoa,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,$w_tipo_pessoa,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_cpf           = f($RS,'cpf');
@@ -862,7 +862,7 @@ function Geral() {
   // Recupera as possibilidades de vinculação
   $w_exige_relac = true;
   if (f($RS_Menu,'solicita_cc')=='N') {
-    $RS = db_getMenuRelac::getInstanceOf($dbms, $w_menu, null, null, null, 'SERVICO');
+    $sql = new db_getMenuRelac; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null, null, 'SERVICO');
     if (count($RS)==1) {
       $w_exige_relac = false;
       foreach($RS as $row) $w_sq_menu_relac = f($row,'sq_menu');
@@ -870,12 +870,12 @@ function Geral() {
   }
   
   // Recupera dados do fundo fixo
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
   
   if (nvl($w_solic_vinculo,'')!='') {
     // Recupera dados da solicitação de compra
     $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
-    $RS_Vinculo = db_getSolicCL::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),3,
+    $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),3,
         null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo, null, null, null, null, null, null,
         null, null, null, null, null, null, null,null, null, null, null);
     foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
@@ -1000,7 +1000,7 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai);
       }
     }
-    if (nvl(f($RS_Relac,'sigla'),'')!='') $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
+    if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
       
     if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') ShowHTML('         <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Pai,'processo').'"></td>');
     
@@ -1009,7 +1009,7 @@ function Geral() {
       ShowHTML('      <tr>');
       SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
       if (nvl($w_solic_vinculo,'')!='') {
-			  $RS_Compra = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
+			  $sql = new db_getSolicCL; $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
 									          $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
 				ShowHTML('      <tr valign="top">');
@@ -1041,7 +1041,7 @@ function Geral() {
     if ($w_tipo_pessoa==1) SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
 
     // Recupera o tipo de vínculo
-    $RS = db_getVincKindList::getInstanceOf($dbms, $w_cliente, 'S', (($w_tipo_pessoa==1) ? 'Física' : 'Jurídica'), 'Fornecedor', null);
+    $sql = new db_getVincKindList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'S', (($w_tipo_pessoa==1) ? 'Física' : 'Jurídica'), 'Fornecedor', null);
     foreach($RS as $row) { ShowHTML('<INPUT type="hidden" name="w_vinculo" value="'.f($row,'sq_tipo_vinculo').'">'); break; }
     
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1100,7 +1100,7 @@ function OutraParte() {
   $w_cnpj           = $_REQUEST['w_cnpj'];
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
   $w_pessoa_atual   = $_REQUEST['w_pessoa_atual'];
-  $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+  $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
   $w_dados_pai      = explode('|@|',f($RS1,'dados_pai'));
   $w_sigla_pai      = $w_dados_pai[5];
   
@@ -1182,7 +1182,7 @@ function OutraParte() {
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
   } elseif (strpos($_REQUEST['Botao'],'Alterar')===false && strpos($_REQUEST['Botao'],'Procurar')===false && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
     // Recupera os dados do beneficiário em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     if (count($RS) > 0) {
       $w_sq_pessoa            = f($RS,'sq_pessoa');
@@ -1234,7 +1234,7 @@ function OutraParte() {
 
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
-    $RS_Banco = db_getBankData::getInstanceOf($dbms, $w_sq_banco);
+    $sql = new db_getBankData; $RS_Banco = $sql->getInstanceOf($dbms, $w_sq_banco);
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
   Cabecalho();
@@ -1444,7 +1444,7 @@ function OutraParte() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,$w_tipo_pessoa,null,null,null,null,null,null,null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,$w_tipo_pessoa,null,null,null,null,null,null,null);
         $RS = SortArray($RS,'nm_pessoa','asc');
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1696,7 +1696,7 @@ function Excluir() {
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
@@ -1739,21 +1739,21 @@ function Encaminhamento() {
     $w_novo_tramite=$_REQUEST['w_novo_tramite'];
     $w_despacho=$_REQUEST['w_despacho'];
   } else {
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
     $w_tramite        = f($RS,'sq_siw_tramite');
     $w_sg_tramite_ant = f($RS,'sg_tramite');
     $w_novo_tramite   = f($RS,'sq_siw_tramite');
   }
    
   // Recupera os dados da solicitação
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
   
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
-  $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
+  $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
   $w_ativo      = f($RS,'ativo');
   if ($w_ativo == 'N') {
-    $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu,null, null,'S');
+    $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
       $w_novo_tramite = f($row,'sq_siw_tramite');
@@ -1884,7 +1884,7 @@ function EncAutomatico() {
     $w_justificativa    = $_REQUEST['w_justificativa'];
     $w_justif_dia_util  = $_REQUEST['w_justif_dia_util'];
   } else {
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
     $w_inicio           = f($RS,'inicio');
     $w_tramite          = f($RS,'sq_siw_tramite');
     $w_justificativa    = f($RS,'justificativa');
@@ -1895,12 +1895,12 @@ function EncAutomatico() {
   }
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
-  $RS = db_getTramiteData::getInstanceOf($dbms,$w_tramite);
+  $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_tramite);
   $w_sg_tramite = f($RS,'sigla');
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,$w_chave,'DEVFLUXO',null);
+    $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms,$w_tramite,$w_chave,'DEVFLUXO',null);
     $RS = SortArray($RS,'ordem','desc');
     foreach($RS as $row) { $RS = $row; break; }
     $w_novo_tramite = f($RS,'sq_siw_tramite');
@@ -2076,7 +2076,7 @@ function Anotar() {
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
@@ -2123,7 +2123,7 @@ function Concluir() {
   } 
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
   $w_tramite            = f($RS_Solic,'sq_siw_tramite');
   $w_conta              = f($RS_Solic,'sq_pessoa_conta');
   $w_valor_real         = number_format(f($RS_Solic,'valor'),2,',','.');
@@ -2131,7 +2131,7 @@ function Concluir() {
   $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
   $w_inicio             = FormataDataEdicao(time());
 
-  $RS_Conta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
+  $sql = new db_getContaBancoList; $RS_Conta = $sql->getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
   if (count($RS_Conta)>1) { 
     $w_exige_conta = true; 
   } else {
@@ -2143,16 +2143,16 @@ function Concluir() {
   }
   
   // Se ligado a projeto, recupera rubricas
-  $RS_Rub = db_getSolicRubrica::getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
+  $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
 
   // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
   if (strpos('REEMB',substr($SG,3))!==false) {
     // Recupera os documentos do lançamento
-    $RS_Doc = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
     
     if (count($RS_Doc)>0) {
       foreach($RS_Doc as $row) {
-        $RS_Item = db_getLancamentoItem::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+        $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
         foreach($RS_Item as $row1) {
           $w_sq_projeto_rubrica = f($row1,'sq_projeto_rubrica');
           break;
@@ -2164,7 +2164,7 @@ function Concluir() {
   
   // Se pagamento de viagem, recupera os dados da solicitação
   if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
-    $RS_Viagem = db_getSolicData::getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),'PDINICIAL');
+    $sql = new db_getSolicData; $RS_Viagem = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),'PDINICIAL');
     $w_inicio = formataDataEdicao(f($RS_Viagem,'inicio'));
   }
   
@@ -2323,7 +2323,7 @@ function FichaRubrica() {
   extract($GLOBALS);
   $w_sq_projeto_rubrica  = $_REQUEST['w_sq_projeto_rubrica'];
   // Recupera os dados do lançamento
-  $RS = db_getSolicRubrica::getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,null,null,'FICHA');
+  $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,null,null,'FICHA');
   foreach($RS as $row){$RS=$row; break;}
   Cabecalho();
   head();
@@ -2346,7 +2346,7 @@ function FichaRubrica() {
     ShowHTML('  <tr><td colspan="2"><font size="2">Rubrica: <b>'.f($RS,'codigo_rubrica').' - '.f($RS,'nm_rubrica').'</b></font></td>');
     ShowHTML('  <tr><td colspan="2"><font size="2">Classificação: <b>'.f($RS,'nm_cc').'</b></font></td>');
     ShowHTML('  <tr><td colspan="2">&nbsp</td></tr>');
-    $RS = db_getSolicRubrica::getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,null,null,'FICHA');
+    $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,null,null,'FICHA');
     $RS = SortArray($RS,'phpdt_vencimento','desc','sq_lancamento','desc');
     ShowHTML('  <tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('      <td align="right"><b>Registros existentes: '.count($RS));
@@ -2426,7 +2426,7 @@ function SolicMail($p_solic,$p_tipo) {
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
+  $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
@@ -2464,7 +2464,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'          <td>Valor:<br><b>'.number_format(Nvl(f($RSM,'valor'),0),2,',','.').' </b></td>';
     $w_html.=$crlf.'          </table>';
     // Outra parte
-    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'pessoa'),0),null,null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RSM1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'pessoa'),0),null,null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     if (count($RSM1) > 0) {
       foreach ($RSM1 as $row)
       $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRA PARTE</td>';
@@ -2490,24 +2490,24 @@ function SolicMail($p_solic,$p_tipo) {
       } 
       if (Nvl(f($RSM,'nm_cc'),'')>'') {
         // Se for vinculado a classificação, envia aos que participaram da tramitação
-        $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,null,'LISTA');
+        $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$p_solic,null,null,'LISTA');
         $RS = SortArray($RS,'phpdt_data','desc');
         foreach($RS as $row) {
           if (f($row,'sq_pessoa_destinatario')>'') {
             // Configura os destinatários da mensagem
-            $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
+            $sql = new db_getPersonData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
             $w_destinatarios .= f($RS1,'email').'|'.f($RS1,'nome').'; ';          } 
         } 
       } else {
         // Caso contrário envia para o responsável pelo projeto 
-        $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
+        $sql = new db_getUorgResp; $RS = $sql->getInstanceOf($dbms,f($RSM,'sq_unidade'));
         foreach($RS as $row){$RS=$row; break;}
         if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
         if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
       }
     }
     //Recupera o último log
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,null,'LISTA');
+    $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$p_solic,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
     foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');
@@ -2520,11 +2520,11 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html.=$crlf.'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
       $w_html.=$crlf.'          </table>';
       // Configura o destinatário da tramitação como destinatário da mensagem
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
       $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
     } 
     $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
-    $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     $w_html.='      <tr valign="top"><td>'.$crlf;
     $w_html.='         Para acessar o sistema use o endereço: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
     $w_html.='      </td></tr>'.$crlf;
@@ -2595,12 +2595,12 @@ function Grava() {
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,null,null,null,null,null,null,null,null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,null,null,null,null,null,null,null,null);
         foreach ($RS as $row) {$RS=$row; break;}
   
         if (nvl($_REQUEST['w_chave'],'')!='') {
           // Se a solicitação já existe, recupera os dados bancários
-          $RS1 = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
+          $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
           $w_pessoa_atual     = f($RS1,'pessoa');
           $w_conta            = f($RS1,'sq_pessoa_conta');
           $w_sq_banco         = f($RS1,'sq_banco');
@@ -2738,7 +2738,7 @@ function Grava() {
               $w_file,$w_tamanho,$w_tipo,$w_nome);
           //Rotina para gravação da imagem da versão da solicitacão no log.
           if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
-            $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+            $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_tramite']);
             $w_sg_tramite = f($RS,'sigla');
             if($w_sg_tramite=='CI') {
               $w_html = VisualLancamento($_REQUEST['w_chave'],'L',$w_usuario,$P1,'1');
@@ -2759,7 +2759,7 @@ function Grava() {
           null,null,null,null);
         //Rotina para gravação da imagem da versão da solicitacão no log.
         if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
-          $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+          $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_tramite']);
           $w_sg_tramite = f($RS,'sigla');
           if($w_sg_tramite=='CI') {
             $w_html = VisualLancamento($_REQUEST['w_chave'],'L',$w_usuario,$P1,'1');
@@ -2791,7 +2791,7 @@ function Grava() {
       } 
       //Rotina para gravação da imagem da versão da solicitacão no log.
       if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
-        $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+        $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_tramite']);
         $w_sg_tramite = f($RS,'sigla');
         if($w_sg_tramite=='CI') {
           ShowHTML(VisualLancamento($_REQUEST['w_chave'],'V',$w_usuario,$P1,$P4));
@@ -2813,7 +2813,7 @@ function Grava() {
   } elseif (!(strpos($SG,'CONC')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
       if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou este contrato para outra fase!\');');

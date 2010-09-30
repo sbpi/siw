@@ -114,7 +114,7 @@ $w_usuario = RetornaUsuario();
 $w_menu = RetornaMenu($w_cliente, 'PADCAD');
 $w_ano = RetornaAno();
 
-$RS_Parametro = db_getParametro::getInstanceOf($dbms, $w_cliente, 'PA', null);
+$sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms, $w_cliente, 'PA', null);
 foreach ($RS_Parametro as $row) {
   $RS_Parametro = $row;
   break;
@@ -149,7 +149,7 @@ function Tramitacao() {
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
+    $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
                     $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia,
                     $p_ini, $p_fim, 2, null);
     if (Nvl($p_ordena, '') > '') {
@@ -311,7 +311,7 @@ function Transferencia() {
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCaixa::getInstanceOf($dbms, $p_chave, $w_cliente, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $SG);
+    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $SG);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'sg_unidade', 'asc', 'numero', 'asc', 'pasta', 'asc', 'cd_assunto', 'asc', 'protocolo', 'asc');
@@ -490,7 +490,7 @@ function Etiqueta() {
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
+    $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
                     $p_prefixo, $p_numero, $p_ano, null, null, null, null, null, null, 2, null);
     $RS = SortArray($RS, 'sg_unidade', 'asc', 'ano_guia', 'desc', 'nu_guia', 'asc', 'protocolo', 'asc');
   }
@@ -608,7 +608,7 @@ function Etiqueta() {
       // Recupera os dados do cliente
       $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
       // Recupera os dados do documento
-      $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PADGERAL');
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PADGERAL');
       //exibeArray($RS);
       ShowHTML('<table cellpadding=0 cellspacing=0 border=1>');
       ShowHTML('<tr><td width="480"  height="200">');
@@ -777,7 +777,7 @@ function EmitirEtiqueta() {
   // Recupera os dados do cliente
   $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PADGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PADGERAL');
   //HeaderEtiqueta();
   Cabecalho();
   ShowHTML('<style>');

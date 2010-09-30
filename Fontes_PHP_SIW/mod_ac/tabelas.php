@@ -104,7 +104,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu='Existe';
 } else {
@@ -152,7 +152,7 @@ function TipoAcordo() {
       if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
         // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
         if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
-        $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,'ALTERA');
+        $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,'ALTERA');
         foreach($RS as $row) {
           $w_sq_tipo_acordo_pai   = f($row,'sq_tipo_acordo_pai');
           $w_nome                 = f($row,'nome');
@@ -165,7 +165,7 @@ function TipoAcordo() {
           $w_modalidade           = f($row,'modalidade');
         }
       } elseif ($O=='A' || nvl($w_troca,'') > '') {
-        $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,'ALTERA');
+        $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,'ALTERA');
         foreach($RS as $row) {
           $w_sq_tipo_acordo_pai   = f($row,'sq_tipo_acordo_pai');
           $w_nome                 = f($row,'nome');
@@ -235,7 +235,7 @@ function TipoAcordo() {
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
     
-    $RS = db_getAgreeType::getInstanceOf($dbms,null,null,$w_cliente,null,null,'PAI');
+    $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,null,null,$w_cliente,null,null,'PAI');
     $w_ContOut=0;
     foreach($RS as $row) {
       $w_titulo  = f($row,'sigla');
@@ -253,7 +253,7 @@ function TipoAcordo() {
         } 
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getAgreeType::getInstanceOf($dbms,f($row,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
+        $sql = new db_getAgreeType; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
         foreach($RS1 as $row1) {
           $w_titulo = $w_titulo.' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
@@ -270,7 +270,7 @@ function TipoAcordo() {
             } 
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getAgreeType::getInstanceOf($dbms,f($row1,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
+            $sql = new db_getAgreeType; $RS2 = $sql->getInstanceOf($dbms,f($row1,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
             foreach($RS2 as $row2) {
               $w_titulo = $w_titulo.' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
@@ -287,7 +287,7 @@ function TipoAcordo() {
                 } 
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getAgreeType::getInstanceOf($dbms,f($row2,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
+                $sql = new db_getAgreeType; $RS3 = $sql->getInstanceOf($dbms,f($row2,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'nome');
                   if (f($row3,'Filho')>0) {
@@ -304,7 +304,7 @@ function TipoAcordo() {
                     } 
                     ShowHTML('       </div></span>');
                     ShowHTML('   <div style="position:relative; left:12;">');
-                    $RS4 = db_getAgreeType::getInstanceOf($dbms,f($row3,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
+                    $sql = new db_getAgreeType; $RS4 = $sql->getInstanceOf($dbms,f($row3,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
                     foreach($RS4 as $row4) {
                       $w_titulo=$w_titulo.' - '.f($row4,'nome');
                       ShowHTML('<A HREF=#"'.f($row4,'sq_tipo_acordo').'"></A>');
@@ -528,7 +528,7 @@ function FormaPagamento(){
     $w_sigla    = $_REQUEST['w_sigla'];
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,null,null,'REGISTRO',null,null);
+    $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,'REGISTRO',null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -536,7 +536,7 @@ function FormaPagamento(){
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (!(strpos('AEVT',$O)===false && $w_troca=='')) {
-    $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,$w_chave,null,'REGISTRO',$w_ativo,null);
+    $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,'REGISTRO',$w_ativo,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
@@ -642,7 +642,7 @@ function FormaPagamento(){
     ShowHTML('</tr>');
     ShowHTML('</FORM>'); 
   } elseif (!(strpos('T',$O)===false)){
-    $RS = DB_GetMenuFormaPag::getInstanceOf($dbms, $w_chave, null);
+    $sql = new DB_GetMenuFormaPag; $RS = $sql->getInstanceOf($dbms, $w_chave, null);
     $i=0;
     foreach($RS as $row) {
       if ($i==0) $w_vinculo = f($row,'sq_menu');
@@ -662,7 +662,7 @@ function FormaPagamento(){
     ShowHTML('</TABLE>');
     ShowHTML('  <tr><td>&nbsp;');
     ShowHTML('      <tr><td><b>Vincular:</b><br>');
-    $RS1 = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', $chaveAux,null);
+    $sql = new db_getMenuList; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, 'X', $chaveAux,null);
     $RS1 = SortArray($RS1,'nome','asc');
     ShowHTML('      <tr><td><table width="100%" border="0">');
     ShowHTML('        <tr>');
@@ -731,7 +731,7 @@ function Parametros() {
     $w_texto_pagamento   = $_REQUEST['w_texto_pagamento']; 
   } else {
     // Recupera os dados do parâmetro
-    $RS = db_getACParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    $sql = new db_getACParametro; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_sequencial         = f($RS,'sequencial');
@@ -844,7 +844,7 @@ function Modalidades() {
     $w_contrato               = $_REQUEST['w_contrato'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
-    $RS = db_getLCModalidade::getInstanceOf($dbms, null, $w_cliente, null, null, null, null);
+    $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null, null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -853,7 +853,7 @@ function Modalidades() {
     }
   } elseif (!(strpos('AEV',$O)===false) || nvl($w_troca,'')!='') {
     //Recupera os dados da modalidade
-    $RS = db_getLCModalidade::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
+    $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {
       $w_nome                   = f($row,'nome');
       $w_sigla                  = f($row,'sigla');
@@ -1044,11 +1044,11 @@ function FonteRecurso() {
     $w_orcamentario         = $_REQUEST['w_orcamentario'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
-    $RS = db_getLCFonteRecurso::getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
+    $sql = new db_getLCFonteRecurso; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
     $RS = SortArray($RS,'nome','asc'); 
   } elseif (!(strpos('AEV',$O)===false) || nvl($w_troca,'')!='') {
     //Recupera os dados do endereço informado
-    $RS = db_getLCFonteRecurso::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null, null, null);
+    $sql = new db_getLCFonteRecurso; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null, null, null);
     foreach ($RS as $row) {
       $w_codigo               = f($row,'codigo');
       $w_nome                 = f($row,'nome');
@@ -1206,7 +1206,7 @@ function EspecDespesa() {
     if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
       // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
       if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
-      $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
+      $sql = new db_getCTEspecificacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
       foreach($RS as $row) {
         $w_chave_pai    = f($row,'chave_pai');
         $w_sq_cc        = f($row,'sq_cc');
@@ -1218,7 +1218,7 @@ function EspecDespesa() {
         $w_ativo        = f($row,'ativo');
       }
     } elseif ($O=='A' || nvl($w_troca,'')!='') {
-      $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
+      $sql = new db_getCTEspecificacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
       foreach($RS as $row) {
         $w_chave_pai    = f($row,'chave_pai');
         $w_sq_cc        = f($row,'sq_cc');
@@ -1291,7 +1291,7 @@ function EspecDespesa() {
     ShowHTML('</table>');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,$_SESSION['ANO'],null,null,null,'PAI');
+    $sql = new db_getCTEspecificacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,$_SESSION['ANO'],null,null,null,'PAI');
     $RS = SortArray($RS,'nm_ct_cc','asc'); 
     $w_ContOut = 0;
     $w_atual   = 0;
@@ -1316,7 +1316,7 @@ function EspecDespesa() {
         } 
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
+        $sql = new db_getCTEspecificacao; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,f($row,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
         foreach($RS1 as $row1) {
           $w_titulo = $w_titulo.' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
@@ -1333,7 +1333,7 @@ function EspecDespesa() {
             } 
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row1,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
+            $sql = new db_getCTEspecificacao; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,f($row1,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
             foreach($RS2 as $row2) {
               $w_titulo = $w_titulo.' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
@@ -1350,7 +1350,7 @@ function EspecDespesa() {
                 } 
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row2,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
+                $sql = new db_getCTEspecificacao; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,f($row2,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'nome');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
@@ -1440,7 +1440,7 @@ function EspecDespesa() {
     if(nvl($w_chave_pai,'')=='') {
       SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$w_sq_cc,null,'w_sq_cc','SIWSOLIC');
     } else {
-      $RS = db_getCTEspecificacao::getInstanceOf($dbms, $w_cliente, $w_chave_pai, null,null,null,null,null,null);
+      $sql = new db_getCTEspecificacao; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave_pai, null,null,null,null,null,null);
       foreach($RS as $row){$RS=$row; break;}
       ShowHTML('<INPUT type="hidden" name="w_sq_cc" value="'.f($row,'sq_cc').'">');
     }
@@ -1540,7 +1540,7 @@ function PrestacaoContas() {
   } elseif ($O != 'L' && $O != 'I') {
     // Se for herança, atribui a chave da opção selecionada para w_chave
     if ($w_copia>'') $w_chave = $w_copia;
-    $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'REGISTROS');
+    $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_chave_pai      = f($RS,'sq_prestacao_pai');
     $w_nome           = f($RS,'nome');
@@ -1598,7 +1598,7 @@ function PrestacaoContas() {
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'IS NULL');
+    $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'IS NULL');
     $w_contOut = 0;
     $_qtd_projeto = 0;
     foreach($RS as $row) {
@@ -1619,7 +1619,7 @@ function PrestacaoContas() {
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row,'chave'));
+        $sql = new db_getPrestacaoContas; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row,'chave'));
         foreach($RS1 as $row1) {
           $w_nome .= ' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
@@ -1637,7 +1637,7 @@ function PrestacaoContas() {
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row1,'chave'));
+            $sql = new db_getPrestacaoContas; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row1,'chave'));
             foreach($RS2 as $row2) {
               $w_nome .= ' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
@@ -1655,7 +1655,7 @@ function PrestacaoContas() {
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row2,'chave'));
+                $sql = new db_getPrestacaoContas; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row2,'chave'));
                 foreach($RS3 as $row3) {
                   $w_nome .= ' - '.f($row3,'nome');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
@@ -1749,7 +1749,7 @@ function PrestacaoContas() {
     if(nvl($w_chave_pai,'')=='') {
       selecaoTipoPrestacao('<u>T</u>ipo de prestação de contas:','T','Indique se o item é ligado a uma prestação de contas final o parcial.',$w_tipo,null,'w_tipo',null,null);
     } else {
-      $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,$w_chave_pai,null,null,null,null,'REGISTROS');
+      $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave_pai,null,null,null,null,'REGISTROS');
       foreach($RS as $row){$RS=$row; break;}
       ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.f($row,'tipo').'">');
     }
@@ -1809,7 +1809,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
+          $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de acordo com este nome!\');');
@@ -1818,7 +1818,7 @@ function Grava() {
             break;
           } 
           // Testa a existência do sigla
-          $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,null,upper(Nvl($_REQUEST['w_sigla'],'')),'EXISTE');
+          $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,null,upper(Nvl($_REQUEST['w_sigla'],'')),'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de acordo com esta sigla!\');');
@@ -1889,7 +1889,7 @@ function Grava() {
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getLCModalidade::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, 'EXISTE');
+          $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de modalidade com este nome!\');');
@@ -1898,7 +1898,7 @@ function Grava() {
             break;
           } 
           // Testa a existência do sigla
-          $RS = db_getLCModalidade::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, null ,upper(Nvl($_REQUEST['w_sigla'],'')),null, 'EXISTE');
+          $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, null ,upper(Nvl($_REQUEST['w_sigla'],'')),null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de modalidade com esta sigla!\');');
@@ -1927,7 +1927,7 @@ function Grava() {
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getLCFonteRecurso::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
+          $sql = new db_getLCFonteRecurso; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe fonte de recurso com este nome!\');');
@@ -1971,7 +1971,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
+          $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe prestação de contas com este nome neste nível!\');');
@@ -1980,7 +1980,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VINCULADO');
+          $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir esta prestação de contas. Ele está ligado a algum projeto!\');');

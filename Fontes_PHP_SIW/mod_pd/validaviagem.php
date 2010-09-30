@@ -22,7 +22,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$v_chave,$v_sg1);
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$v_chave,$v_sg1);
 
   // Se a solicitação informada não existir, abandona a execução
   if (($l_rs_solic==0)) {
@@ -37,30 +37,30 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   $l_tipo   = '';
 
   // Recupera o trâmite atual da solicitação
-  $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
   // Recupera os dados do beneficiário
-  $l_rs1 = db_getBenef::getInstanceOf($dbms,$v_cliente,Nvl(f($l_rs_solic,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $l_rs1 = $sql->getInstanceOf($dbms,$v_cliente,Nvl(f($l_rs_solic,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   $l_existe_rs1 = count($l_rs1);
   if ($l_existe_rs1>0) {
     foreach($l_rs1 as $l_row) { $l_rs1 = $l_row; break; }
   }
 
   // Recupera os parâmetros do módulo de viagem
-  $l_rs2 = db_getPDParametro::getInstanceOf($dbms,$v_cliente,null,null); 
+  $sql = new db_getPDParametro; $l_rs2 = $sql->getInstanceOf($dbms,$v_cliente,null,null); 
   $l_existe_rs2 = count($l_rs2);
 
   // Recupera os deslocamentos da viagem
-  $l_rs3 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'S', $v_sg2);
+  $sql = new db_getPD_Deslocamento; $l_rs3 = $sql->getInstanceOf($dbms,$v_chave, null, 'S', $v_sg2);
   $l_rs3 = SortArray($l_rs3,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   $l_existe_rs3 = count($l_rs3);
 
   // Recupera as vinculações da viagem
-  $l_rs4 = db_getPD_Vinculacao::getInstanceOf($dbms,$v_chave,null,null);
+  $sql = new db_getPD_Vinculacao; $l_rs4 = $sql->getInstanceOf($dbms,$v_chave,null,null);
   $l_existe_rs4 = count($l_rs4);
 
   // Recupera as diárias da solicitação de viagem
-  $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'S', 'PDDIARIA');
+  $sql = new db_getPD_Deslocamento; $l_rs5 = $sql->getInstanceOf($dbms,$v_chave, null, 'S', 'PDDIARIA');
   $l_existe_rs5 = count($l_rs5);
   $l_rs5 = SortArray($l_rs5,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   $l_i = 0;
@@ -72,7 +72,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   reset($l_rs5);
 
   // Recupera as diárias da prestação de contas de viagem
-  $l_rs6 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'P', 'PDDIARIA');
+  $sql = new db_getPD_Deslocamento; $l_rs6 = $sql->getInstanceOf($dbms,$v_chave, null, 'P', 'PDDIARIA');
   $l_existe_rs6 = count($l_rs6);
   $l_rs6 = SortArray($l_rs6,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   $l_i = 0;
@@ -213,7 +213,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
         if (f($l_rs_tramite,'sigla')=='AE' || f($l_rs_tramite,'sigla')=='VP') {
           if (f($l_rs_solic,'passagem')=='S') {
-            $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,null);
+            $sql = new db_getPD_Bilhete; $l_rs5 = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,null);
             if (count($l_rs5)==0) {
               $l_erro .= '<li>É obrigatório informar os bilhetes.';
               $l_tipo  = 0;
@@ -221,7 +221,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             
             if (f($l_rs_tramite,'sigla')=='AE' || (f($l_rs_tramite,'sigla')=='VP' && f($l_rs_solic,'cumprimento')!='C')) {
               // Pelo menos um bilhete deve ter trechos vinculados
-              $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,((f($l_rs_tramite,'sigla')=='AE') ? 'S' : 'P'),null);
+              $sql = new db_getPD_Deslocamento; $RS_Trecho = $sql->getInstanceOf($dbms,$v_chave,null,((f($l_rs_tramite,'sigla')=='AE') ? 'S' : 'P'),null);
               
               // Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
               $w_trecho = false;
@@ -238,7 +238,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           if (f($l_rs_tramite,'sigla')=='VP') {
             if (f($l_rs_solic,'reembolso')=='S') {
               // Valores a serem reembolsados
-              $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$v_chave,null,null,null);
+              $sql = new db_getPD_Reembolso; $RS_Reembolso = $sql->getInstanceOf($dbms,$v_chave,null,null,null);
 
               if (count($RS_Reembolso)==0) {
                 $l_erro .= '<li>É obrigatório informar os valores a serem reembolsados.';
@@ -286,7 +286,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
           if (f($l_rs_solic,'reembolso')=='S') {
             // Valores a serem reembolsados
-            $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$v_chave,null,null,null);
+            $sql = new db_getPD_Reembolso; $RS_Reembolso = $sql->getInstanceOf($dbms,$v_chave,null,null,null);
             if (count($RS_Reembolso)==0) {
               $l_erro .= '<li>É obrigatório informar os valores a serem reembolsados.';
               $l_tipo  = 0;

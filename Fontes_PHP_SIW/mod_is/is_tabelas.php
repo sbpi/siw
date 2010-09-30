@@ -112,11 +112,11 @@ function Natureza() {
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getNatureza_IS::getInstanceOf($dbms,null,$w_cliente,null,null);
+    $sql = new db_getNatureza_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
-    $RS = db_getNatureza_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+    $sql = new db_getNatureza_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
@@ -241,11 +241,11 @@ function Horizonte() {
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getHorizonte_IS::getInstanceOf($dbms,null,$w_cliente,null,null);
+    $sql = new db_getHorizonte_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
     // Recupera os dados do endereço informado
-    $RS = db_getHorizonte_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+    $sql = new db_getHorizonte_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_cliente  = f($RS,'cliente');
@@ -379,11 +379,11 @@ function Projetos() {
     $w_padrao        = $_REQUEST['w_padrao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getProjeto_IS::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,null,null,null,null,'CADASTRAMENTO',null);
+    $sql = new db_getProjeto_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,null,null,null,null,'CADASTRAMENTO',null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
-    $RS = db_getProjeto_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null,null,null,null,null,null,'CADASTRAMENTO',null);
+    $sql = new db_getProjeto_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null,null,null,null,null,null,'CADASTRAMENTO',null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave        = f($RS,'chave');
     $w_codigo       = f($RS,'codigo');
@@ -549,11 +549,11 @@ function Unidade() {
     $w_sigla    = $_REQUEST['sigla'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getIsUnidade_IS::getInstanceOf($dbms,null,$w_cliente,null,null);
+    $sql = new db_getIsUnidade_IS; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getIsUnidade_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+    $sql = new db_getIsUnidade_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_nome             = f($RS,'nome');
     $w_sigla            = f($RS,'sigla');
@@ -694,14 +694,14 @@ function Limites() {
   $w_chave  = $_REQUEST['w_chave'];
   $p_ordena = lower($_REQUEST['p_ordena']);
   // Recupera os dados da unidade selecionada  
-  $RS1 = db_getIsUnidade_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+  $sql = new db_getIsUnidade_IS; $RS1 = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_ano      = $_REQUEST['w_ano'];
     $w_limite   = $_REQUEST['w_limite'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getIsUnidadeLimite_IS::getInstanceOf($dbms,$w_chave,null,$w_cliente);
+    $sql = new db_getIsUnidadeLimite_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,null,$w_cliente);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -710,7 +710,7 @@ function Limites() {
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getIsUnidadeLimite_IS::getInstanceOf($dbms,$w_chave,$w_ano,$w_cliente);
+    $sql = new db_getIsUnidadeLimite_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_ano,$w_cliente);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_ano      = f($RS,'ano');
     $w_limite   = number_format(f($RS,'limite_orcamento'),2,',','.');
@@ -880,11 +880,11 @@ function OpcaoEstrategica() {
     $w_ativo     = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,null,null,null);
+    $sql = new db_getOpcaoEstrat_IS; $RS = $sql->getInstanceOf($dbms,null,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
-    $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,$w_chave,null,null);
+    $sql = new db_getOpcaoEstrat_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
@@ -1017,11 +1017,11 @@ function MacroObjetivo() {
     $w_chave_aux  = $_REQUEST['w_chave_aux'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,null,null,null,null);
+    $sql = new db_getMacroObjetivo_IS; $RS = $sql->getInstanceOf($dbms,null,null,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
-    $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,$w_chave,$w_opcao,null,null);
+    $sql = new db_getMacroObjetivo_IS; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_opcao,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_opcao    = f($RS,'cd_opcao');   
@@ -1203,7 +1203,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
-          $RS = db_getIsUnidade_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null);
+          $sql = new db_getIsUnidade_IS; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null);
           if (count($RS)==0) {
             $SQL = new dml_putIsUnidade_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
             ScriptOpen('JavaScript');
@@ -1233,7 +1233,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //ExibeVariaveis
         if ($O=='I') {
-          $RS = db_getIsUnidadeLimite_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano'],$w_cliente);
+          $sql = new db_getIsUnidadeLimite_IS; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano'],$w_cliente);
           if (count($RS)==0) {
             $SQL = new dml_putIsUnidadeLimite_IS; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
             ScriptOpen('JavaScript');
@@ -1262,7 +1262,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' && $_REQUEST['w_chave']>'') {
-          $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null);
+          $sql = new db_getOpcaoEstrat_IS; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null);
           foreach ($RS as $row) {$RS = $row; break;}          
           if (f($RS,'chave')==$_REQUEST['w_chave']) {
           //if (count($RS)>0) {
@@ -1273,7 +1273,7 @@ function Grava() {
           }
         } elseif ($O=='E') {
           // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
-          $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null);
+          $sql = new db_getMacroObjetivo_IS; $RS = $sql->getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null);
           // Mais de um registro de log significa que deve ser cancelada, e não excluída.
           // Nessa situação, não é necessário excluir os arquivos.
           foreach ($RS as $row) {$RS = $row; break;}
@@ -1299,7 +1299,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' && $_REQUEST['w_chave']>'') {
-          $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null);
+          $sql = new db_getMacroObjetivo_IS; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null);
           foreach ($RS as $row) {$RS = $row; break;}
           if (f($RS,'chave')==$_REQUEST['w_chave']) {
             ScriptOpen('JavaScript');

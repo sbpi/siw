@@ -89,7 +89,7 @@ switch ($O) {
 } 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu='Existe';
 } else {
@@ -118,7 +118,7 @@ function Usuario() {
   $w_sq_usuario = $_REQUEST['w_sq_usuario'];
   if ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getUsuario::getInstanceOf($dbms,$w_cliente,$w_sq_usuario,$w_chave);
+    $sql = new db_getUsuario; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_usuario,$w_chave);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -249,7 +249,7 @@ function Tabela() {
   $w_sq_usuario         = $_REQUEST['w_sq_usuario'];
   $w_sq_relacionamento  = $_REQUEST['w_sq_relacionamento'];
   if ($O=='L') {
-    $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,null,null,$w_chave,$w_sq_usuario,null,null,null);
+    $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_chave,$w_sq_usuario,null,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nome','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -300,7 +300,7 @@ function Tabela() {
     } 
     ShowHTML('</tr>');
   } elseif ($O=='NIVEL2') {
-    $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null,null);
+    $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     head();
@@ -335,7 +335,7 @@ function Tabela() {
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML(ExibeIndice(null,$w_sq_tabela,'nm_indice asc'));
     ShowHTML('  </table></td></tr>');
-    $RS = db_getRelacionamento::getInstanceOf($dbms,$w_cliente,null,null,$w_sq_tabela,$w_chave,null);
+    $sql = new db_getRelacionamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_sq_tabela,$w_chave,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
     Cabecalho();
     ShowHTML('<tr><td><HR>');
@@ -377,7 +377,7 @@ function Tabela() {
     ShowHTML(ExibeTrigger(null,$w_sq_usuario,$w_sq_tabela,'nm_trigger asc'));
     ShowHTML('  </table></td></tr>');
     $w_cor='';
-    $RS = db_getSPTabs::getInstanceOf($dbms,null,$w_sq_tabela);
+    $sql = new db_getSPTabs; $RS = $sql->getInstanceOf($dbms,null,$w_sq_tabela);
     $RS = SortArray($RS,'nm_sp_tipo','asc','nm_usuario','asc','nome','asc');
     Cabecalho();
     ShowHTML('<tr><td><HR>');
@@ -407,7 +407,7 @@ function Tabela() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('</table>');
-    $RS = db_getProcTabela::getInstanceOf($dbms,null,$w_sq_tabela);
+    $sql = new db_getProcTabela; $RS = $sql->getInstanceOf($dbms,null,$w_sq_tabela);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<tr><td><HR>');
@@ -452,7 +452,7 @@ function Trigger() {
   $w_sq_tabela  = $_REQUEST['w_sq_tabela'];
   $w_sq_trigger = $_REQUEST['w_sq_trigger'];
   if ($O=='L') {
-    $RS = db_getTrigger::getInstanceOf($dbms,$w_cliente,$w_sq_trigger,$w_sq_tabela,$w_sq_usuario,$w_chave);
+    $sql = new db_getTrigger; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_trigger,$w_sq_tabela,$w_sq_usuario,$w_chave);
     $RS = SortArray($RS,'nm_usuario','asc','nm_trigger','asc','nm_tabela','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -505,7 +505,7 @@ function StoredProcedure() {
   $w_sq_sp      = $_REQUEST['w_sq_sp'];
   $w_sq_usuario = $_REQUEST['w_sq_usuario'];
   if ($O=='L') {
-    $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,null,null,null,$w_sq_usuario,$w_chave,null,null);
+    $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,$w_sq_usuario,$w_chave,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_sp_tipo','asc','nm_sp','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -549,7 +549,7 @@ function StoredProcedure() {
     } 
     ShowHTML('</tr>');
   } elseif ($O=='NIVEL2') {
-    $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,$w_sq_sp,null,null,$w_sq_usuario,$w_chave,null,null);
+    $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_sp,null,null,$w_sq_usuario,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
@@ -577,7 +577,7 @@ function StoredProcedure() {
     ShowHTML('</TABLE>');
     Rodape();
     $w_cor='';
-    $RS = db_getSpParametro::getInstanceOf($dbms,$w_sq_sp,null,null);
+    $sql = new db_getSpParametro; $RS = $sql->getInstanceOf($dbms,$w_sq_sp,null,null);
     $RS = SortArray($RS,'ord_sp_param','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
@@ -609,7 +609,7 @@ function StoredProcedure() {
     ShowHTML('</table>');
     ShowHTML('</center>');
     $w_cor='';
-    $RS = db_getSpTabs::getInstanceOf($dbms,$w_sq_sp,null);
+    $sql = new db_getSpTabs; $RS = $sql->getInstanceOf($dbms,$w_sq_sp,null);
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
@@ -637,7 +637,7 @@ function StoredProcedure() {
     ShowHTML('</table>');
     ShowHTML('</center>');
     $w_cor='';
-    $RS = db_getSpSP::getInstanceOf($dbms,$w_sq_sp,$w_chave_aux);
+    $sql = new db_getSpSP; $RS = $sql->getInstanceOf($dbms,$w_sq_sp,$w_chave_aux);
     $RS = SortArray($RS,'nm_usuario_pai','asc','nm_pai','asc','nm_usuario_filha','asc','nm_filha','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
@@ -676,7 +676,7 @@ function StoredProcedure() {
     ShowHTML('</table>');
     ShowHTML('</center>');
     $w_cor='';
-    $RS = db_getProcSp::getInstanceOf($dbms,null,$w_sq_sp);
+    $sql = new db_getProcSp; $RS = $sql->getInstanceOf($dbms,null,$w_sq_sp);
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
@@ -722,7 +722,7 @@ function Indice() {
   $w_sq_usuario = $_REQUEST['w_sq_usuario'];
   $w_sq_tabela  = $_REQUEST['w_sq_tabela'];
   if ($O=='L') {
-    $RS = db_getIndice::getInstanceOf($dbms,$w_cliente,$w_sq_indice,null,$w_sq_usuario,$w_chave,null,$w_sq_tabela);
+    $sql = new db_getIndice; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_indice,null,$w_sq_usuario,$w_chave,null,$w_sq_tabela);
     $RS = SortArray($RS,'nm_indice','asc','nm_usuario','asc','nm_tabela','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
@@ -781,7 +781,7 @@ function Coluna() {
   $w_sq_coluna  = $_REQUEST['w_sq_coluna'];
   $w_sq_usuario = $_REQUEST['w_sq_usuario'];
   if ($O=='L') {
-    $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
+    $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_coluna','asc','nm_tabela','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -840,7 +840,7 @@ function Coluna() {
     } 
     ShowHTML('</tr>');
   }elseif ($O=='NIVEL2') {
-    $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,$w_sq_coluna,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
+    $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_coluna,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     head();
@@ -865,7 +865,7 @@ function Coluna() {
       break;
     }
     $w_cor='';
-    $RS = db_getIndiceCols::getInstanceOf($dbms,null,$w_sq_coluna);
+    $sql = new db_getIndiceCols; $RS = $sql->getInstanceOf($dbms,null,$w_sq_coluna);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
@@ -909,7 +909,7 @@ function Arquivo() {
   $w_troca      = $_REQUEST['w_troca'];
   $w_sq_arquivo = $_REQUEST['w_sq_arquivo'];
   if ($O=='L') {
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,null,$w_chave,null,null,null);
+    $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -959,7 +959,7 @@ function Arquivo() {
     } 
     ShowHTML('</tr>');
   }elseif ($O=='NIVEL2') {
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null,null);
+    $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     head();
@@ -986,7 +986,7 @@ function Arquivo() {
     ShowHTML('</TABLE>');
     Rodape();
     $w_cor='';
-    $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
+    $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -1029,7 +1029,7 @@ function Procedure() {
   $w_sq_arquivo     = $_REQUEST['w_sq_arquivo'];
   $w_sq_procedure   = $_REQUEST['w_sq_procedure'];
   if ($O=='L') {
-    $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
+    $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1077,7 +1077,7 @@ function Procedure() {
     } 
     ShowHTML('</tr>');
   } elseif ($O=='NIVEL2') {
-    $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
+    $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     head();
@@ -1103,7 +1103,7 @@ function Procedure() {
     ShowHTML('  </TABLE>');
     ShowHTML('</TABLE>');
     $w_cor='';
-    $RS = db_getProcSP::getInstanceOf($dbms,$w_sq_procedure,null);
+    $sql = new db_getProcSP; $RS = $sql->getInstanceOf($dbms,$w_sq_procedure,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1132,7 +1132,7 @@ function Procedure() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     $w_cor='';
-    $RS = db_getProcTabs::getInstanceOf($dbms,$w_sq_procedure,null);
+    $sql = new db_getProcTabs; $RS = $sql->getInstanceOf($dbms,$w_sq_procedure,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1161,7 +1161,7 @@ function Procedure() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     $w_cor='';
-    $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
+    $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1210,7 +1210,7 @@ function Relacionamento() {
   $w_sq_relacionamento  = $_REQUEST['w_sq_relacionamento'];
   $w_sq_tabela          = $_REQUEST['w_sq_tabela'];
   if ($O=='NIVEL2') {
-    $RS = db_getRelacionamento::getInstanceOf($dbms,$w_cliente,$w_sq_relacionamento,null,$w_sq_tabela,$w_chave,null);
+    $sql = new db_getRelacionamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_relacionamento,null,$w_sq_tabela,$w_chave,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
     Cabecalho();
     head();
@@ -1236,7 +1236,7 @@ function Relacionamento() {
     }
     ShowHTML('</TABLE>');
     $w_cor='';
-    $RS = db_getRelacCols::getInstanceOf($dbms,$w_sq_relacionamento,null);
+    $sql = new db_getRelacCols; $RS = $sql->getInstanceOf($dbms,$w_sq_relacionamento,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1282,7 +1282,7 @@ function Relacionamento() {
 // -------------------------------------------------------------------------
 function ExibeTabela($l_sq_usuario,$l_sq_tabela,$l_ordena) {
   extract($GLOBALS);
-  $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,null,null,$l_sq_tabela,$l_sq_usuario,null,null,null);
+  $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$l_sq_tabela,$l_sq_usuario,null,null,null);
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
@@ -1315,7 +1315,7 @@ function ExibeTabela($l_sq_usuario,$l_sq_tabela,$l_ordena) {
 // -------------------------------------------------------------------------
 function ExibeColuna($l_sq_usuario,$l_sq_tabela,$l_ordena) {
   extract($GLOBALS);
-  $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,null,$l_sq_tabela,null,null,$l_sq_usuario,null,null);
+  $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$l_sq_tabela,null,null,$l_sq_usuario,null,null);
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
@@ -1372,7 +1372,7 @@ function ExibeColuna($l_sq_usuario,$l_sq_tabela,$l_ordena) {
 // -------------------------------------------------------------------------
 function ExibeIndice($l_sq_usuario,$l_sq_tabela,$l_ordena) {
   extract($GLOBALS);
-  $RS = db_getIndiceTabs::getInstanceOf($dbms,null,$l_sq_usuario,null,$l_sq_tabela);
+  $sql = new db_getIndiceTabs; $RS = $sql->getInstanceOf($dbms,null,$l_sq_usuario,null,$l_sq_tabela);
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
@@ -1415,7 +1415,7 @@ function ExibeIndice($l_sq_usuario,$l_sq_tabela,$l_ordena) {
 // -------------------------------------------------------------------------
 function ExibeTrigger($l_sistema,$l_sq_usuario,$l_sq_tabela,$l_ordena) {
   extract($GLOBALS);
-  $RS = db_getTrigger::getInstanceOf($dbms,$w_cliente,null,$l_sq_tabela,$l_sq_usuario,$w_chave);
+  $sql = new db_getTrigger; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$l_sq_tabela,$l_sq_usuario,$w_chave);
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
@@ -1458,7 +1458,7 @@ function ExibeTrigger($l_sistema,$l_sq_usuario,$l_sq_tabela,$l_ordena) {
 // -------------------------------------------------------------------------
 function ExibeSP($l_sistema,$l_sq_usuario,$l_sq_sp,$l_ordena) {
   extract($GLOBALS);
-  $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,null,null,null,$w_sq_usuario,$w_chave,null,null);
+  $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,$w_sq_usuario,$w_chave,null,null);
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($row,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';

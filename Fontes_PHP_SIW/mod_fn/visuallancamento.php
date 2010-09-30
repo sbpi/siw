@@ -7,7 +7,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Recupera os dados do lançamento
-  $RS = db_getSolicData::getInstanceOf($dbms,$v_chave,substr($SG,0,3).'GERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$v_chave,substr($SG,0,3).'GERAL');
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_tramite_ativo = f($RS,'ativo');
   $w_SG            = f($RS,'sigla');
@@ -65,7 +65,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
     } elseif (f($RS_Menu,'sigla')=='FNDFUNDO') {
       // Recupera dados do fundo fixo
-      $RS_Solic = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'FNDFIXO');
+      $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'FNDFIXO');
 
       $l_html.=chr(13).'      <tr><td width="30%"><b>Fundo fixo: </b></td>';
       if (Nvl(f($RS,'dados_pai'),'')!='') {
@@ -77,7 +77,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
         // Recupera dados da solicitação de compra
         $RS_Vinculo = new db_getLinkData; $RS_Vinculo = $RS_Vinculo->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
-        $RS_Vinculo = db_getSolicCL::getInstanceOf($dbms,f($RS_Vinculo,'sq_menu'),$w_usuario,f($RS_Vinculo,'sigla'),3,
+        $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,f($RS_Vinculo,'sq_menu'),$w_usuario,f($RS_Vinculo,'sigla'),3,
             null,null,null,null,null,null,null,null,null,null,f($RS,'sq_solic_vinculo'), null, null, null, null, null, null,
             null, null, null, null, null, null, null,null, null, null, null);
         foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
@@ -179,7 +179,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     } 
 
     // Outra parte
-    $RS_Query = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     foreach ($RS_Query as $row) {$RS_Query = $row; break;}
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (count($RS_Query)<=0) {
@@ -298,7 +298,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   }
     
   // Notas
-  $RS = db_getLancamentoDoc::getInstanceOf($dbms,$v_chave,null,'NOTA');
+  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,'NOTA');
   $RS = SortArray($RS,'data','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -344,7 +344,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   } 
 
   // Documentos
-  $RS = db_getLancamentoDoc::getInstanceOf($dbms,$v_chave,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,'DOCS');
   $RS = SortArray($RS,'data','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -374,13 +374,13 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $w_cor=$w_TrBgColor;
     $w_total=0;
     foreach ($RS as $row) {
-      $RS2 = db_getImpostoDoc::getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
+      $sql = new db_getImpostoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'calculo','asc','esfera','asc','nm_imposto','asc');
       if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
-        $RS3 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null);
+        $sql = new db_getLancamentoRubrica; $RS3 = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null);
         $RS3 = SortArray($RS3,'cd_rubrica_origem','asc');
       } else {
-        $RS3 = db_getLancamentoItem::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+        $sql = new db_getLancamentoItem; $RS3 = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
         $RS3 = SortArray($RS3,'ordem','asc','codigo_rubrica','asc');
       }
       if (count($RS2)<=0) {
@@ -489,7 +489,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
 
   // Rubricas
   if($w_qtd_rubrica>0) {
-    $RS = db_getLancamentoItem::getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
+    $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
     $RS = SortArray($RS,'rubrica','asc');
     if (count($RS)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RUBRICAS E VALORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -524,7 +524,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
   }    
   // Arquivos vinculados
-  $RS = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
+  $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
   $RS = SortArray($RS,'nome','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

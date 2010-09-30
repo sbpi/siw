@@ -87,7 +87,7 @@ $w_ano      = RetornaAno();
 $p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 
 if (count($RS)>0) {
   $w_submenu='Existe';
@@ -145,7 +145,7 @@ function Rel_Limite() {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'GRPDUNIDADE',4,
+    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'GRPDUNIDADE',4,
             null, null,null,null,null,null,null,$p_sq_unidade,null,null,null,null, null, null, null, null, null, null,
             null, null, null, null, $p_sqcc, $p_projeto, $p_atividade, null, $w_ano);
     $RS = SortArray($RS,'sq_unidade_resp','asc');
@@ -201,14 +201,14 @@ function Rel_Limite() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><font size="1"><b>Área de planejamento:</b></font></td><td><font size="1">'.f($RS1,'nome').' - '.f($RS1,'sigla').'</font></td>');
     } else {
       ShowHTML('<tr><td width="15%"><font size="1"><b>Área de planejamento:</b></font></td><td><font size="1">Todas</font></td>');
     } 
 
     if ($p_projeto>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1) { $RS1 = $row1; break; }
       ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td nowrap><font size="1">'.$p_projeto.' - '.f($RS1,'ds_programa').'</font></td></tr>');
     } else {
@@ -216,7 +216,7 @@ function Rel_Limite() {
     } 
 
     if ($p_atividade>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1) { $RS1 = $row1; break; }
       ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">'.substr($p_atividade,4,4).' - '.f($RS1,'descricao_acao').'</font></td>');
     } else {
@@ -267,21 +267,21 @@ function Rel_Limite() {
           ShowHTML('<tr><td colspan="2"><div align="center">');
           ShowHTML('<table border="0" width="100%">');
           if ($p_sq_unidade>'') {
-            $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+            $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
             ShowHTML('<tr><td width="15%"><font size="1"><b>Área de planejamento:</b></font></td><td><font size="1">'.f($RS1,'nome').' - '.f($RS1,'sigla').'</font></td>');
           } else {
             ShowHTML('<tr><td width="15%"><font size="1"><b>Área de planejamento:</b></font></td><td><font size="1">Todas</font></td>');
           } 
 
           if ($p_projeto>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
+            $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
             ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td nowrap><font size="1">'.$p_projeto.' - '.f($RS1,'ds_programa').'</font></td></tr>');
           } else {
             ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td><font size="1">Todos</font></td></tr>');
           } 
 
           if ($p_atividade>'') {
-            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
+            $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
             ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">'.substr($p_atividade,4,4).' - '.f($RS1,'descricao_acao').'</font></td>');
           } else {
             ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">Todas</font></td>');
@@ -378,14 +378,14 @@ function Rel_Limite() {
             ShowHTML('<tr><td colspan="2"><div align="center">');
             ShowHTML('<table border="0" width="100%">');
             if ($p_sq_unidade>'') {
-              $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+              $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
               ShowHTML('<tr><td width="15%"><font size="1"><b>Área de planejamento:</b></font></td><td><font size="1">'.f($RS1,'nome').' - '.f($RS1,'sigla').'</font></td>');
             } else {
               ShowHTML('<tr><td width="15%"><font size="1"><b>Área de planejamento:</b></font></td><td><font size="1">Todas</font></td>');
             } 
 
             if ($p_projeto>'') {
-              $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
+              $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
               foreach($RS1 as $row1) { $RS1 = $row1; break; }
               ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td nowrap><font size="1">'.$p_projeto.' - '.f($RS1,'ds_programa').'</font></td></tr>');
             } else {
@@ -393,7 +393,7 @@ function Rel_Limite() {
             } 
 
             if ($p_atividade>'') {
-              $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
+              $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
               foreach($RS1 as $row1) { $RS1 = $row1; break; }
               ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">'.substr($p_atividade,4,4).' - '.f($RS1,'descricao_acao').'</font></td>');
             } else {

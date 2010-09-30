@@ -69,7 +69,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -257,7 +257,7 @@ function ResultSql() {
     
       $command = upper(substr(trim($v),0,strpos(trim($v),' ')));
       if ($command=='SELECT') {
-        $RS = db_exec::getInstanceOf($conObj, $v, &$numRows);
+        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows);
         if (count($RS) > 0) {
            ShowHTML($numRows.' registros selecionados<br />');
            ShowHTML('<table border="1">');
@@ -280,7 +280,7 @@ function ResultSql() {
            ShowHTML('Nenhum registro encontrado<br />');
         }      
       } elseif (false!==strpos('INSERT,UPDATE,DELETE',$command)) {
-        $RS = db_exec::getInstanceOf($conObj, $v, &$numRows);
+        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows);
         ShowHTML('<p>'.$numRows.' registros processados</p>');
       } elseif ($command=='EXEC') {
         $sp = substr($v,strpos($v,' ')+1);

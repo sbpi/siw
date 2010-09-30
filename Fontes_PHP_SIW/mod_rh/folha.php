@@ -106,7 +106,7 @@ foreach ($RS as $row)
   $w_mod_pd = 'S';
 
 // Recupera os parâmetros do módulo de pessoal
-$RS_Parametro = db_getGPParametro::getInstanceOf($dbms, $w_cliente, null, null);
+$sql = new db_getGPParametro; $RS_Parametro = $sql->getInstanceOf($dbms, $w_cliente, null, null);
 foreach ($RS_Parametro as $row) {$RS_Parametro = $row; break;}
 
 Main();
@@ -134,13 +134,13 @@ function Inicial() {
   $w_dia_atual = date('j', time());
 
   // Verifica se o usuário deve aprovar folhas de ponto do mês indicado
-  $RSUorg = db_getGPFolhaPontoMensal::getInstanceOf($dbms, $w_usuario, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), 'APROVACAO');
+  $sql = new db_getGPFolhaPontoMensal; $RSUorg = $sql->getInstanceOf($dbms, $w_usuario, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), 'APROVACAO');
 
   //Recupera os dados do contrato
   if (nvl($w_chave, '')!='') {
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms, $w_cliente, $w_chave, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
+    $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
   } else {
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms, $w_cliente, null, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
+    $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms, $w_cliente, null, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
     $RSContrato = SortArray($RSContrato, 'fim', 'asc');
   }
   foreach ($RSContrato as $row) { $RSContrato = $row; break;  }
@@ -174,13 +174,13 @@ function Inicial() {
 
 
   //Informações da folha de ponto diária
-  $RSFolha = db_getGPFolhaPontoDiario::getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
+  $sql = new db_getGPFolhaPontoDiario; $RSFolha = $sql->getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
   foreach ($RSFolha as $row) {
     $w_dias[intVal(substr(formataDataEdicao(f($row, 'data')), 0, 2))] = $row;
   }
 
   //Informações da folha de ponto mensal
-  $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
+  $sql = new db_getGPFolhaPontoMensal; $RSMensal = $sql->getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
   foreach ($RSMensal as $row) {$RSMensal = $row; break;  }
   $w_total = Nvl(f($RSMensal, 'horas_trabalhadas'), '00:00');
   $w_extras = Nvl(f($RSMensal, 'horas_extras'), '00:00');
@@ -222,7 +222,7 @@ function Inicial() {
 
   //Recupera datas especiais do mês
   include_once($w_dir_volta . 'classes/sp/db_getDataEspecial.php');
-  $RS_Ano = db_getDataEspecial::getInstanceOf($dbms, $w_cliente, null, date('Y', $w_dt_inicio), 'S', null, null, null);
+  $sql = new db_getDataEspecial; $RS_Ano = $sql->getInstanceOf($dbms, $w_cliente, null, date('Y', $w_dt_inicio), 'S', null, null, null);
   $RS_Ano = SortArray($RS_Ano, 'data_formatada', 'asc');
   foreach ($RS_Ano as $row) {
     if (date('m/Y', f($row, 'data_formatada'))==$w_mes) {
@@ -233,7 +233,7 @@ function Inicial() {
 
   if ($w_mod_pd=='S') {
     $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
-    $RS_Viagem = db_getSolicList::getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
+    $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
                     formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);
     $RS_Viagem = SortArray($RS_Viagem, 'inicio', 'desc', 'fim', 'desc');
@@ -354,7 +354,7 @@ function Inicial() {
   }
 
   //Recupera afastamentos do mês
-  $RS_Afast = db_getAfastamento::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null, null, formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null);
+  $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null, null, formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null);
   $RS_Afast = SortArray($RS_Afast, 'inicio_data', 'desc', 'inicio_periodo', 'asc', 'fim_data', 'desc', 'inicio_periodo', 'asc');
   foreach ($RS_Afast as $row) {
     $w_ini_afast = f($row, 'inicio_data');
@@ -494,7 +494,7 @@ function Inicial() {
     $w_ano = $_REQUEST['w_ano'];
     $w_percentual = $_REQUEST['w_percentual'];
   } elseif ($O=='L') {
-    //$RS = db_getGpFolha::getInstanceOf($dbms, $w_chave,$w_mes);
+    $sql = new db_getGpFolha; //$RS = $sql->getInstanceOf($dbms, $w_chave,$w_mes);
     //$RS = SortArray($RS,'data','asc');
   }
 
@@ -1104,7 +1104,7 @@ function Lista() {
   $w_dia_atual = date('j', time());
 
   // Recupera folhas de ponto do mês indicado, das pessoas geridas pelo usuário
-  $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms, $w_usuario, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), 'APROVACAO');
+  $sql = new db_getGPFolhaPontoMensal; $RSMensal = $sql->getInstanceOf($dbms, $w_usuario, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), 'APROVACAO');
   $RSMensal = SortArray($RSMensal, 'nm_unidade', 'asc', 'nm_pessoa', 'asc');
   if (count($w_contrato) > 0) {
     $i = 0;
@@ -1294,9 +1294,9 @@ function Visual() {
 
   //Recupera os dados do contrato
   if (nvl($w_chave, '')!='') {
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms, $w_cliente, $w_chave, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
+    $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
   } else {
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms, $w_cliente, null, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
+    $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms, $w_cliente, null, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
     $RSContrato = SortArray($RSContrato, 'fim', 'asc');
   }
   foreach ($RSContrato as $row) { $RSContrato = $row; break;  }
@@ -1330,13 +1330,13 @@ function Visual() {
 
 
   //Informações da folha de ponto diária
-  $RSFolha = db_getGPFolhaPontoDiario::getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
+  $sql = new db_getGPFolhaPontoDiario; $RSFolha = $sql->getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
   foreach ($RSFolha as $row) {
     $w_dias[intVal(substr(formataDataEdicao(f($row, 'data')), 0, 2))] = $row;
   }
 
   //Informações da folha de ponto mensal
-  $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
+  $sql = new db_getGPFolhaPontoMensal; $RSMensal = $sql->getInstanceOf($dbms, $w_contrato, substr($w_mes, 3, 4) . substr($w_mes, 0, 2), null);
   foreach ($RSMensal as $row) {$RSMensal = $row; break;  }
   $w_total = Nvl(f($RSMensal, 'horas_trabalhadas'), '00:00');
   $w_extras = Nvl(f($RSMensal, 'horas_extras'), '00:00');
@@ -1378,7 +1378,7 @@ function Visual() {
 
   //Recupera datas especiais do mês
   include_once($w_dir_volta . 'classes/sp/db_getDataEspecial.php');
-  $RS_Ano = db_getDataEspecial::getInstanceOf($dbms, $w_cliente, null, date('Y', $w_dt_inicio), 'S', null, null, null);
+  $sql = new db_getDataEspecial; $RS_Ano = $sql->getInstanceOf($dbms, $w_cliente, null, date('Y', $w_dt_inicio), 'S', null, null, null);
   $RS_Ano = SortArray($RS_Ano, 'data_formatada', 'asc');
   foreach ($RS_Ano as $row) {
     if (date('m/Y', f($row, 'data_formatada'))==$w_mes) {
@@ -1389,7 +1389,7 @@ function Visual() {
 
   if ($w_mod_pd=='S') {
     $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
-    $RS_Viagem = db_getSolicList::getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
+    $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
                     formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);
     $RS_Viagem = SortArray($RS_Viagem, 'inicio', 'desc', 'fim', 'desc');
@@ -1509,7 +1509,7 @@ function Visual() {
   }
 
   //Recupera afastamentos do mês
-  $RS_Afast = db_getAfastamento::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null, null, formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null);
+  $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null, null, formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null);
   $RS_Afast = SortArray($RS_Afast, 'inicio_data', 'desc', 'inicio_periodo', 'asc', 'fim_data', 'desc', 'inicio_periodo', 'asc');
   foreach ($RS_Afast as $row) {
     $w_ini_afast = f($row, 'inicio_data');

@@ -26,7 +26,7 @@ function ValidaColaborador($p_cliente,$p_sq_pessoa,$p_sq_contrato_colaborador,$p
   // Esta primeira parte verifica o afastamento
   //-----------------------------------------------------------------------------------
   // Verifica se há afastamento cadastrado para este colaborador
-  $l_rs_afast = db_getAfastamento::getInstanceOf($dbms,$p_cliente,null,null,null,$p_sq_contrato_colaborador,$p_encerramento,$p_encerramento,null,null,null,null);
+  $sql = new db_getAfastamento; $l_rs_afast = $sql->getInstanceOf($dbms,$p_cliente,null,null,null,$p_sq_contrato_colaborador,$p_encerramento,$p_encerramento,null,null,null,null);
   if ((count($l_rs_afast)>0)) {
     foreach ($l_rs_afast as $row) {
       $l_cont+=1;
@@ -36,7 +36,7 @@ function ValidaColaborador($p_cliente,$p_sq_pessoa,$p_sq_contrato_colaborador,$p
   // Esta segunda parte verifica as viagens
   //-----------------------------------------------------------------------------------
   // Verifica se há viagens cadastradas para este colaborador
-  $l_rs_viagem = db_getViagemBenef::getInstanceOf($dbms,null,$p_cliente,$p_sq_pessoa,null,null,null,$p_encerramento,$p_encerramento,null);
+  $sql = new db_getViagemBenef; $l_rs_viagem = $sql->getInstanceOf($dbms,null,$p_cliente,$p_sq_pessoa,null,null,null,$p_encerramento,$p_encerramento,null);
   if (!($l_rs_viagem==0)) {
     foreach ($l_rs_viagem as $row) {
       if (Nvl(f($row,'sq_viagem'),'')>'') {

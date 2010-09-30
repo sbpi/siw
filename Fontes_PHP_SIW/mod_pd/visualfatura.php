@@ -1,5 +1,4 @@
 <?php
-
 // =========================================================================
 // Rotina de visualização dos dados do cliente
 // -------------------------------------------------------------------------
@@ -20,7 +19,7 @@ function visualFatura($w_sq_cliente, $p_fatura, $w_usuario, $P1, $w_embed) {
   $w_troca = $_REQUEST['w_troca'];
   $p_ordena = $_REQUEST['p_ordena'];
 
-  $RS = db_getPD_Fatura::getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
+  $sql = new db_getPD_Fatura; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
                   $p_codigo, $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
                   $p_ini_emibil, $p_fim_emibil, 'TODOS');
 
@@ -71,7 +70,7 @@ function visualFatura($w_sq_cliente, $p_fatura, $w_usuario, $P1, $w_embed) {
     $l_html.=chr(13) . '        <td>' . f($RS, 'nm_resp_imp') . '</td>';
 
   //Detalhamento da fatura
-  $RS = db_getPD_Fatura::getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
+  $sql = new db_getPD_Fatura; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
                   $p_codigo, $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
                   $p_ini_emibil, $p_fim_emibil, 'OUTROS');
 
@@ -148,7 +147,7 @@ function visualFatura($w_sq_cliente, $p_fatura, $w_usuario, $P1, $w_embed) {
   } elseif (strtoupper($tp_fatura) == 'AÉREOS') {
 
     //Detalhamento da fatura
-    $RS = db_getPD_Fatura::getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
+    $sql = new db_getPD_Fatura; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
                     $p_codigo, $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
                     $p_ini_emibil, $p_fim_emibil, 'BILHETE');
 

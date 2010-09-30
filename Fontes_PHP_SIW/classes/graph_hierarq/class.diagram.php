@@ -80,6 +80,7 @@
          **/
         function Diagram($xml_file = '') {
             global $conFontPath;
+            
             $this->font['name'] = imageloadfont($conFontPath.'Courier.gdf');
             if (strlen($xml_file) > 0) {
                 $this->loadXmlFile($xml_file);

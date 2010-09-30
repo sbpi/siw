@@ -123,7 +123,7 @@ $w_ano      = RetornaAno();
 
 $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
 
-$RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'PA',null);
+$sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'PA',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
 
 Main();
@@ -165,7 +165,7 @@ function Inicial() {
   
   if ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, 
+    $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, 
         $p_ini, $p_fim, 2, null);
     if (Nvl($p_ordena,'')>'') {
@@ -354,9 +354,9 @@ function Alterar() {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
       // Recupera os dados da ação
       if ($w_copia>'') {
-        $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG);
       } else {
-        $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
       } 
       if (count($RS)>0) {
         $w_protocolo          = f($RS,'protocolo');
@@ -389,7 +389,7 @@ function Alterar() {
 
   // Configura variáveis de controle para processos e circulares
   if (nvl($w_especie_documento,'')!='') {
-    $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,$w_especie_documento,$w_cliente,null,null,null,null);
+    $sql = new db_getEspecieDocumento_PA; $RS = $sql->getInstanceOf($dbms,$w_especie_documento,$w_cliente,null,null,null,null);
     foreach ($RS as $row) { $RS = $row; break; }
     if (f($RS,'sigla')=='PROC') {
       $w_processo = 'S';
@@ -407,7 +407,7 @@ function Alterar() {
   
   if (nvl($w_assunto,'')=='') {
     // Só pode haver um registro para classificação provisória
-    $RS_Assunto = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,'PROVISORIO');
+    $sql = new db_getAssunto_PA; $RS_Assunto = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,'PROVISORIO');
     foreach($RS_Assunto as $row) { $RS_Assunto = $row; break; }
     if (count($RS_Assunto)>0) $w_assunto = f($RS_Assunto,'sq_assunto');
   }
@@ -548,7 +548,7 @@ function Alterar() {
     SelecaoAssuntoRadio('C<u>l</u>assificação:','L','Clique na lupa para selecionar a classificação do documento.',$w_assunto,null,'w_assunto','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"');
     ShowHTML('           </table>');
     if (nvl($w_assunto,'')!='') {
-      $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_assunto,null,null,null,null,null,null,null,null,'REGISTROS');
+      $sql = new db_getAssunto_PA; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_assunto,null,null,null,null,null,null,null,null,'REGISTROS');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center">');
       ShowHTML('          <TABLE WIDTH="100%" BORDER="0">');
       ShowHTML('            <tr bgcolor="#DADADA">');
@@ -619,7 +619,7 @@ function Central() {
   $p_fim          = $_REQUEST['p_fim'];
   
   if ($O=='L') {
-    $RS = db_getCaixa::getInstanceOf($dbms,$p_chave,$w_cliente,null,null,null,$p_unid_autua,$p_nu_guia,$p_ano_guia,$p_ini,$p_fim,$SG);
+    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms,$p_chave,$w_cliente,null,null,null,$p_unid_autua,$p_nu_guia,$p_ano_guia,$p_ini,$p_fim,$SG);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
@@ -845,7 +845,7 @@ function Autuar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) {
     $w_processo  = f($RS,'processo');
     $w_descricao = nvl($_REQUEST['w_descricao'],f($RS,'descricao'));
@@ -923,7 +923,7 @@ function Autuar() {
   ShowHTML('    <tr><td colspan=2><b>DADOS DA AUTUAÇÃO</b></td></tr>');
   ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('    <tr><td width="30%">Data da autuação:<td><b>'.formataDataEdicao(time()).'</b></td></tr>');
-  $RS_Unid = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+  $sql = new db_getUorgData; $RS_Unid = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
   ShowHTML('    <tr><td width="30%">Unidade autuadora:<td><b>'.f($RS_Unid,'nome').'</b></td></tr>');
   ShowHTML('    <tr><td width="30%">Usuário autuador:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
   SelecaoUnidade('<U>U</U>nidade interessada:','U','Selecione a unidade interessada na autuação do processo.',$w_unidade_autua,null,'w_unidade_autua','MOD_PA',null,1,'<td>');
@@ -954,7 +954,7 @@ function Anexar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
 
   Cabecalho();
   head();
@@ -1046,7 +1046,7 @@ function Apensar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
@@ -1139,7 +1139,7 @@ function Desmembrar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
@@ -1215,7 +1215,7 @@ function Desmembrar() {
   ShowHTML('   <tr><td>Data do documento:</td>');
   ShowHTML('       <td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>');
 
-  $RS_Juntado = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',5,
+  $sql = new db_getSolicList; $RS_Juntado = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',5,
       $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
       $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
       $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -1337,12 +1337,12 @@ function ArqSetorial() {
   }
   
   // Verifica se a unidade de lotação do usuário está cadastrada na relação de unidades do módulo
-  $RS_Prot = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,'MOD_PA_PROT',null,null,$w_ano);
+  $sql = new db_getUorgList; $RS_Prot = $sql->getInstanceOf($dbms,$w_cliente,null,'MOD_PA_PROT',null,null,$w_ano);
   foreach($RS_Prot as $row) { $RS_Prot = $row; break; }
   
   if ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
+    $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $_SESSION['LOTACAO'], $p_nu_guia, $p_ano_guia, null, null, 2, 
         null);
     if (Nvl($p_ordena,'')>'') {
@@ -1522,7 +1522,7 @@ function ArqSetorial() {
       ShowHTML('    <tr><td colspan=3><b>DADOS DO ARQUIVAMENTO</b></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('    <tr><td width="30%">Data do arquivamento:<td colspan=2><b>'.formataDataEdicao(time()).'</b></td></tr>');
-      $RS_Unid = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+      $sql = new db_getUorgData; $RS_Unid = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
       ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td colspan=2><b>'.f($RS_Unid,'nome').'</b></td></tr>');
       ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>'.$_SESSION['NOME'].'</b></td></tr>');
       ShowHTML('    <tr valign="top"><td width="30%">Acondicionamento:<td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');    
@@ -1579,7 +1579,7 @@ function Arquivar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) $w_processo = f($RS,'processo');
 
   Cabecalho();
@@ -1636,7 +1636,7 @@ function Arquivar() {
   ShowHTML('    <tr><td colspan=3><b>DADOS DO ARQUIVAMENTO</b></td></tr>');
   ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('    <tr><td width="30%">Data do arquivamento:<td colspan=2><b>'.formataDataEdicao(time()).'</b></td></tr>');
-  $RS_Unid = db_getUorgData::getInstanceOf($dbms,f($RS,'unidade_int_posse'));
+  $sql = new db_getUorgData; $RS_Unid = $sql->getInstanceOf($dbms,f($RS,'unidade_int_posse'));
   ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td colspan=2><b>'.f($RS_Unid,'nome').'</b></td></tr>');
   ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>'.$_SESSION['NOME'].'</b></td></tr>');
   ShowHTML('    <tr valign="top"><td width="30%">Acondicionamento:<td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');    
@@ -1665,7 +1665,7 @@ function Eliminar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
@@ -1728,7 +1728,7 @@ function Eliminar() {
   ShowHTML('    <tr><td colspan=2><b>DADOS DA ELIMINAÇÃO</b></td></tr>');
   ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('    <tr><td width="30%">Data do arquivamento:<td><b>'.formataDataEdicao(time()).'</b></td></tr>');
-  $RS_Unid = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+  $sql = new db_getUorgData; $RS_Unid = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
   ShowHTML('    <tr><td width="30%">Unidade responsável:<td><b>'.f($RS_Unid,'nome').'</b></td></tr>');
   ShowHTML('    <tr><td width="30%">Usuário responsável:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
 
@@ -1757,7 +1757,7 @@ function Emprestar() {
   $w_chave = $_REQUEST['w_chave'];
 
   // Recupera os dados do documento
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
@@ -1864,18 +1864,18 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='E') {
-        $RS = db_getSolicLog::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,'LISTA');
+        $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,'LISTA');
         // Mais de um registro de log significa que deve ser cancelada, e não excluída.
         // Nessa situação, não é necessário excluir os arquivos.
         if (count($RS)<=1) {
-          $RS = db_getSolicAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],null,$w_cliente);
+          $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,$w_cliente);
           foreach($RS as $row) { {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));} 
           } 
         }
       } else { 
 	      // Grava baseline do documento
-	      $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PADCAD');
+	      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],'PADCAD');
 	      $w_html = VisualDocumento($_REQUEST['w_chave'],'T',$_SESSION['SQ_PESSOA'],$P1,'WORD','S','S','S','S','S','S','S','S','S','N');
 	      CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),f($RS,'sq_siw_tramite'));
       }

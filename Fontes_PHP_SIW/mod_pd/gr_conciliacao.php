@@ -172,7 +172,7 @@ function Conciliacao() {
 
   if ($O == 'L' || $O == 'V' || $p_tipo == 'WORD' || $p_tipo == 'PDF') {
     $w_filtro = '';
-    $RS1 = db_getPD_Fatura::getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
+    $sql = new db_getPD_Fatura; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
                     $p_codigo, $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
                     $p_ini_emibil, $p_fim_emibil, 'TODOS');
     if (nvl($p_ordena, '') > '') {
@@ -196,7 +196,7 @@ function Conciliacao() {
     }
     if ($p_cia_trans > '') {
       $w_linha++;
-      $RS = db_getCiaTrans::getInstanceOf($dbms, $w_cliente, $p_cia_trans, null, null, null, null, null, null, null, null, null);
+      $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_cia_trans, null, null, null, null, null, null, null, null, null);
       foreach ($RS as $row) {
         $RS = $row;
         break;
@@ -205,7 +205,7 @@ function Conciliacao() {
     }
     if ($p_agencia > '') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $p_agencia, null, null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_agencia, null, null);
       $w_filtro .= '<tr valign="top"><td align="right">Agência de viagem <td>[<b>' . f($RS, 'nome_resumido') . '</b>]';
     }
     if ($p_ini_emibil > '') {

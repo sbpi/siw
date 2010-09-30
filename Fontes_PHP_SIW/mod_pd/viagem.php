@@ -215,7 +215,7 @@ $p_fase = explodeArray($_REQUEST['p_fase']);
 $p_sqcc = upper($_REQUEST['p_sqcc']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $SG);
 if (count($RS) > 0) {
   $w_submenu = 'Existe';
 } else {
@@ -263,11 +263,11 @@ function Inicial() {
     if (strpos(upper($R), 'GR_') !== false || strpos(upper($R), 'PROJETO') !== false) {
       $w_filtro = '';
       if ($p_projeto > '') {
-        $RS = db_getSolicData::getInstanceOf($dbms, $p_projeto, 'PJGERAL');
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $p_projeto, 'PJGERAL');
         $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave=' . $p_projeto . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" title="Exibe as informações do projeto.">' . f($RS, 'titulo') . '</a></b>]';
       }
       if ($p_atividade > '') {
-        $RS = db_getSolicEtapa::getInstanceOf($dbms, $p_projeto, $p_atividade, 'REGISTRO', null);
+        $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms, $p_projeto, $p_atividade, 'REGISTRO', null);
         foreach ($RS as $row) {
           $RS = $row;
           break;
@@ -279,11 +279,11 @@ function Inicial() {
       if ($p_assunto > '')
         $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>' . $p_assunto . '</b>]';
       if ($p_solicitante > '') {
-        $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $p_solicitante, null, null);
+        $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_solicitante, null, null);
         $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>' . f($RS, 'nome_resumido') . '</b>]';
       }
       if ($p_unidade > '') {
-        $RS = db_getUorgData::getInstanceOf($dbms, $p_unidade);
+        $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms, $p_unidade);
         $w_filtro .= '<tr valign="top"><td align="right">Unidade proponente <td>[<b>' . f($RS, 'nome') . '</b>]';
       }
       if ($p_proponente > '')
@@ -291,27 +291,27 @@ function Inicial() {
       if ($p_palavra > '')
         $w_filtro .= '<tr valign="top"><td align="right">CPF beneficiário <td>[<b>' . $p_palavra . '</b>]';
       if ($p_sq_prop > '') {
-        $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $p_sq_prop, null, null);
+        $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_sq_prop, null, null);
         $w_filtro .= '<tr valign="top"><td align="right">Beneficiário<td>[<b>' . f($RS, 'nome_resumido') . '</b>]';
       }
       if ($p_pais > '') {
-        $RS = db_getCountryData::getInstanceOf($dbms, $p_pais);
+        $sql = new db_getCountryData; $RS = $sql->getInstanceOf($dbms, $p_pais);
         $w_filtro .= '<tr valign="top"><td align="right">País <td>[<b>' . f($RS, 'nome') . '</b>]';
       }
       if ($p_regiao > '') {
-        $RS = db_getRegionData::getInstanceOf($dbms, $p_regiao);
+        $sql = new db_getRegionData; $RS = $sql->getInstanceOf($dbms, $p_regiao);
         $w_filtro .= '<tr valign="top"><td align="right">Região <td>[<b>' . f($RS, 'nome') . '</b>]';
       }
       if ($p_uf > '') {
-        $RS = db_getStateData::getInstanceOf($dbms, $p_pais, $p_uf);
+        $sql = new db_getStateData; $RS = $sql->getInstanceOf($dbms, $p_pais, $p_uf);
         $w_filtro .= '<tr valign="top"><td align="right">Estado <td>[<b>' . f($RS, 'nome') . '</b>]';
       }
       if ($p_cidade > '') {
-        $RS = db_getCityData::getInstanceOf($dbms, $p_cidade);
+        $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms, $p_cidade);
         $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>' . f($RS, 'nome') . '</b>]';
       }
       if ($p_usu_resp > '') {
-        $RS = db_getCiaTrans::getInstanceOf($dbms, $w_cliente, $p_usu_resp, null, null, null, null, null, null, null, null, null);
+        $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_usu_resp, null, null, null, null, null, null, null, null, null);
         foreach ($RS as $row) {
           $RS = $row;
           break;
@@ -336,19 +336,19 @@ function Inicial() {
 
     if ($w_copia > '') {
       // Se for cópia, aplica o filtro sobre todas as missões visíveis pelo usuário
-      $RS = db_getSolicList::getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, $SG, 3,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, $SG, 3,
                       $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante,
                       $p_unidade, $p_prioridade, $p_ativo, $p_proponente,
                       $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
                       $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, $p_sq_prop);
     } else {
       if (Nvl($_REQUEST['p_agrega'], '') == 'GRPDCIAVIAGEM' || Nvl($_REQUEST['p_agrega'], '') == 'GRPDCIDADE' || Nvl($_REQUEST['p_agrega'], '') == 'GRPDDATA') {
-        $RS = db_getSolicViagem::getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, Nvl($_REQUEST['p_agrega'], $SG), 3,
+        $sql = new db_getSolicViagem; $RS = $sql->getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, Nvl($_REQUEST['p_agrega'], $SG), 3,
                         $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante, $p_unidade, $p_prioridade, $p_ativo, $p_proponente,
                         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo,
                         $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, $p_orprior);
       } else {
-        $RS = db_getSolicList::getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, Nvl($_REQUEST['p_agrega'], $SG), $P1,
+        $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, Nvl($_REQUEST['p_agrega'], $SG), $P1,
                         $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante,
                         $p_unidade, $p_prioridade, $p_ativo, $p_proponente,
                         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -443,7 +443,7 @@ function Inicial() {
     if ($P1 == 1 && $w_copia == '') {
       // Se for cadastramento e não for resultado de busca para cópia
       if ($w_submenu > '') {
-        $RS1 = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, $_REQUEST['SG']);
+        $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['SG']);
         foreach ($RS1 as $row) {
           $RS1 = $row;
           break;
@@ -546,7 +546,7 @@ function Inicial() {
             // Se não for acompanhamento
             if ($w_copia > '') {
               // Se for listagem para cópia
-              $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, $_REQUEST['SG']);
+              $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['SG']);
               foreach ($RS as $row1) {
                 $RS = $row1;
                 break;
@@ -715,7 +715,7 @@ function Geral() {
   $w_erro = '';
 
   // Verifica as possibilidades de vinculação do serviço
-  $RS_Relac = db_getMenuRelac::getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), 'S', 'S', 'S', 'SERVICO');
+  $sql = new db_getMenuRelac; $RS_Relac = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), 'S', 'S', 'S', 'SERVICO');
   if (f($RS_Menu, 'solicita_cc') == 'N' && count($RS_Relac) == 1) {
     foreach ($RS_Relac as $row) {
       $w_sq_menu_relac = f($row, 'sq_menu');
@@ -773,9 +773,9 @@ function Geral() {
     if (strpos('AEV', $O) !== false || $w_copia > '') {
       // Recupera os dados da solicitação
       if ($w_copia > '') {
-        $RS = db_getSolicData::getInstanceOf($dbms, $w_copia, $SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_copia, $SG);
       } else {
-        $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, $SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
       }
       if (count($RS) > 0) {
         $w_sq_unidade_resp = f($RS, 'sq_unidade_resp');
@@ -834,7 +834,7 @@ function Geral() {
 
   // Se não puder cadastrar para outros, carrega os dados do usuário logado
   if ($w_cadgeral == 'N') {
-    $RS = db_getBenef::getInstanceOf($dbms, $w_cliente, null, $_SESSION['USERNAME'], null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $_SESSION['USERNAME'], null, null, null, 1, null, null, null, null, null, null, null);
     if (count($RS) > 0) {
       foreach ($RS as $row) {
         $RS = $row;
@@ -852,7 +852,7 @@ function Geral() {
     $RS_Relac = new db_getMenuData; $RS_Relac = $RS_Relac->getInstanceOf($dbms, $w_sq_menu_relac);
 
   // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
 
   Cabecalho();
   head();
@@ -961,7 +961,7 @@ function Geral() {
         SelecaoSolic('Vinculação:', null, null, $w_cliente, $w_chave_pai, $w_sq_menu_relac, f($RS_Menu, 'sq_menu'), 'w_chave_pai', f($RS_Relac, 'sigla'), 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"');
         if (f($RS_Relac, 'sg_modulo') == 'PR' && nvl($w_chave_pai, '') != '') {
           // Exibe saldos das rubricas
-          $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, null, 'ORCAM_SIT');
+          $sql = new db_getPD_Financeiro; $RS_Fin = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, null, 'ORCAM_SIT');
           $RS_Fin = SortArray($RS_Fin, 'cd_rubrica', 'asc', 'nm_rubrica', 'asc', 'nm_lancamento', 'asc');
           ShowHTML('<tr><td colspan=3><b>Disponibilidade orçamentária:</b>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="1" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
@@ -997,7 +997,7 @@ function Geral() {
     ShowHTML('      <tr valign="top">');
     if ($w_sq_unidade_resp == '') {
       // Recupera todos os registros para a listagem
-      $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $_SESSION['LOTACAO'], 'VIAGEMUNID', null, null, $w_ano);
+      $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $_SESSION['LOTACAO'], 'VIAGEMUNID', null, null, $w_ano);
       if (count($RS) > 0) {
         foreach ($RS as $row) {
           $RS = $row;
@@ -1166,7 +1166,7 @@ function OutraParte() {
   $w_pessoa_atual = $_REQUEST['w_pessoa_atual'];
   $w_tipo_pessoa = $_REQUEST['w_tipo_pessoa'];
 
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, $SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
 
   // Verifica se há necessidade de informar os dados para pagamento das diárias
   if (nvl(f($RS, 'diaria'), '') != '' || f($RS, 'hospedagem') != 'N' || f($RS, 'veiculo') != 'N') {
@@ -1254,7 +1254,7 @@ function OutraParte() {
   } else {
     if (strpos($_REQUEST['Botao'], 'Alterar') === false && strpos($_REQUEST['Botao'], 'Procurar') === false && ($O == 'A' || $w_sq_pessoa > '' || $w_cpf > '' || $w_cnpj > '')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $RS = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null);
+      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null);
       if (count($RS) > 0) {
         foreach ($RS as $row) {
           $RS = $row;
@@ -1303,7 +1303,7 @@ function OutraParte() {
 
   // Recupera a sigla da forma de pagamento e, se necessário, recupera a conta padrão do beneficiário
   if (nvl($w_sq_forma_pag, '') != '') {
-    $RS_Forma_Pag = db_getFormaPagamento::getInstanceOf($dbms, $w_cliente, $w_sq_forma_pag, null, 'REGISTRO', null, null);
+    $sql = new db_getFormaPagamento; $RS_Forma_Pag = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_forma_pag, null, 'REGISTRO', null, null);
     foreach ($RS_Forma_Pag as $row) {
       $RS_Forma_Pag = $row;
       break;
@@ -1313,7 +1313,7 @@ function OutraParte() {
     if (strpos('CREDITO,DEPOSITO', $w_forma_pagamento) !== false) {
 
       if (Nvl($w_sq_banco, '') == '' && Nvl($w_nr_conta, '') == '') {
-        $RS = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null);
         if (count($RS) > 0) {
 
           foreach ($RS as $row) {
@@ -1334,7 +1334,7 @@ function OutraParte() {
 
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco, '') > '') {
-    $RS_Banco = db_getBankData::getInstanceOf($dbms, $w_sq_banco);
+    $sql = new db_getBankData; $RS_Banco = $sql->getInstanceOf($dbms, $w_sq_banco);
     $w_exige_operacao = f($RS_Banco, 'exige_operacao');
   }
   Cabecalho();
@@ -1553,7 +1553,7 @@ function OutraParte() {
         ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'">'); */
       ShowHTML('      </table>');
       if ($w_nome > '') {
-        $RS = db_getBenef::getInstanceOf($dbms, $w_cliente, null, null, null, null, $w_nome, 1, null, null, null, null, null, null, null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, $w_nome, 1, null, null, null, null, null, null, null);
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
         ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1726,7 +1726,7 @@ function Trechos() {
   $w_chave_aux = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados da solicitação e do cliente
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, $SG);
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, $SG);
   $w_cidade_padrao = f($RS_Cliente, 'sq_cidade_padrao');
 
   if ($P1 == 1 || strpos($R, 'ALTSOLIC') !== false)
@@ -1754,10 +1754,10 @@ function Trechos() {
     $w_aero_orig = $_REQUEST['w_aero_orig'];
     $w_aero_dest = $_REQUEST['w_aero_dest'];
   } elseif ($O == 'L') {
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
     $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   } elseif (strpos('AE', $O) !== false) {
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, $w_chave_aux, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, $w_tipo_reg, $SG);
     foreach ($RS as $row) {
       $RS = $row;
       break;
@@ -1783,7 +1783,7 @@ function Trechos() {
   }
   if ($O == 'I') {
     if ($w_pais_orig == '') {
-      $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+      $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
       $RS1 = SortArray($RS1, 'phpdt_saida', 'desc', 'phpdt_chegada', 'desc');
       if (count($RS1) == 0) {
         // Carrega os valores padrão para país, estado e cidade
@@ -1805,7 +1805,7 @@ function Trechos() {
     }
   }
 
-  $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+  $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
   $RS1 = SortArray($RS1, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   $w_tot_trechos = count($RS1);
   if (count($RS1)) {
@@ -2027,14 +2027,14 @@ function Bilhetes() {
   $w_chave_aux = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados da solicitação e do cliente
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
   if (f($RS_Solic, 'sg_tramite') == 'AE')
     $w_tipo_reg = 'S'; else
     $w_tipo_reg = 'P';
 
   // Trechos da solicitação
-  $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, 'COTPASS');
+  $sql = new db_getPD_Deslocamento; $RS_Trecho = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, 'COTPASS');
   $RS_Trecho = SortArray($RS_Trecho, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
 
   if ($w_troca > '') {
@@ -2054,10 +2054,10 @@ function Bilhetes() {
     $w_faturado = $_REQUEST['w_faturado'];
     $w_observacao = $_REQUEST['w_observacao'];
   } elseif ($O == 'L') {
-    $RS = db_getPD_Bilhete::getInstanceOf($dbms, $w_chave, null, null, null, null, null, null, null);
+    $sql = new db_getPD_Bilhete; $RS = $sql->getInstanceOf($dbms, $w_chave, null, null, null, null, null, null, null);
     $RS = SortArray($RS, 'data', 'asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
   } elseif (strpos('AE', $O) !== false) {
-    $RS = db_getPD_Bilhete::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null, null, null, null);
+    $sql = new db_getPD_Bilhete; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null, null, null, null);
     foreach ($RS as $row) {
       $RS = $row;
       break;
@@ -2147,7 +2147,7 @@ function Bilhetes() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2320,7 +2320,7 @@ function AltSolic() {
   $w_chave_aux = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados da solicitação e do cliente
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_nm_diaria = f($RS_Solic, 'nm_diaria');
   $w_fim_semana = nvl($_REQUEST['w_fim_semana'], f($RS_Solic, 'diaria_fim_semana'));
 
@@ -2342,7 +2342,7 @@ function AltSolic() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2367,7 +2367,7 @@ function AltSolic() {
   }
 
   ShowHTML('<tr><td><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'S', 'PDTRECHO');
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', 'PDTRECHO');
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   ShowHTML('<tr><td><table width="100%" border="0">');
   ShowHTML('  <tr><td colspan="2">');
@@ -2404,7 +2404,7 @@ function AltSolic() {
   }
   ShowHTML('</table>');
 
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'S', 'PDDIARIA');
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', 'PDDIARIA');
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   $i = 0;
   foreach ($RS as $row) {
@@ -2589,7 +2589,7 @@ function RegistroAlteracao() {
   $w_chave_aux = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados da solicitação e do cliente
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
   if ($w_troca > '') {
     // Se for recarga da página
@@ -2606,10 +2606,10 @@ function RegistroAlteracao() {
     $w_cargo = $_REQUEST['w_cargo'];
     $w_data = $_REQUEST['w_data'];
   } elseif ($O == 'L') {
-    $RS = db_getPD_Alteracao::getInstanceOf($dbms, $w_chave, null, null, null, null, null, null);
+    $sql = new db_getPD_Alteracao; $RS = $sql->getInstanceOf($dbms, $w_chave, null, null, null, null, null, null);
     $RS = SortArray($RS, 'autorizacao_data', 'asc', 'chave', 'asc');
   } elseif (strpos('AE', $O) !== false) {
-    $RS = db_getPD_Alteracao::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null, null, null);
+    $sql = new db_getPD_Alteracao; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null, null, null);
     foreach ($RS as $row) {
       $RS = $row;
       break;
@@ -2695,7 +2695,7 @@ function RegistroAlteracao() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2839,9 +2839,9 @@ function ImprimeAlteracao() {
     $p_logo = 'img/logo' . substr(f($RS_Logo, 'logo'), (strpos(f($RS_Logo, 'logo'), '.') ? strpos(f($RS_Logo, 'logo'), '.') + 1 : 0) - 1, 30);
   }
 
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
-  $RS = db_getPD_Alteracao::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null, null, null);
+  $sql = new db_getPD_Alteracao; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null, null, null);
   foreach ($RS as $row) {
     $RS = $row;
     break;
@@ -2882,7 +2882,7 @@ function ImprimeAlteracao() {
   ShowHTML('    <td align="center" style="font-size:12px"><br>ANEXO IV - ALTERAÇÕES - Reemissão<br><br></td>');
   ShowHTML('</table>');
 
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2941,7 +2941,7 @@ function Vinculacao() {
   $p_sigla = Nvl($_REQUEST['p_sigla'], 'GDPCAD');
 
   if ($O == 'L') {
-    $RS = db_getPD_Vinculacao::getInstanceOf($dbms, $w_chave, null, null);
+    $sql = new db_getPD_Vinculacao; $RS = $sql->getInstanceOf($dbms, $w_chave, null, null);
     $RS = SortArray($RS, 'inicio', 'asc');
   }
   Cabecalho();
@@ -3152,7 +3152,7 @@ function Vinculacao() {
       ShowHTML(MontaFiltro('POST'));
       // Recupera os registros
       $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $p_sigla);
-      $RS = db_getSolicList::getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, f($RS, 'sigla'), 4,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, f($RS, 'sigla'), 4,
                       $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante,
                       $p_unidade, $p_prioridade, $p_ativo, $p_proponente,
                       $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -3248,7 +3248,7 @@ function DadosFinanceiros() {
 
   $w_chave = $_REQUEST['w_chave'];
   $w_menu = $_REQUEST['w_menu'];
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_adicional = Nvl(formatNumber(f($RS, 'valor_adicional')), 0);
   $w_desc_alimentacao = Nvl(formatNumber(f($RS, 'desconto_alimentacao')), 0);
   $w_desc_transporte = Nvl(formatNumber(f($RS, 'desconto_transporte')), 0);
@@ -3399,7 +3399,7 @@ function DadosFinanceiros() {
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -3433,7 +3433,7 @@ function DadosFinanceiros() {
   ShowHTML('        <td><b>Valor R$: </b><input type="text" name="w_vlr_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . formatNumber(Nvl(f($RS, 'valor_transporte'), 0)) . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-transporte."></td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da viagem/cálculo das diárias</td>');
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'S', $SG);
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', $SG);
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   if (count($RS) > 0) {
     $i = 1;
@@ -3514,7 +3514,7 @@ function PagamentoDiaria() {
 
   $w_chave = $_REQUEST['w_chave'];
   $w_menu = $_REQUEST['w_menu'];
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_adicional = Nvl(formatNumber(f($RS, 'valor_adicional')), 0);
   $w_desc_alimentacao = Nvl(formatNumber(f($RS, 'desconto_alimentacao')), 0);
   $w_desc_transporte = Nvl(formatNumber(f($RS, 'desconto_transporte')), 0);
@@ -3666,7 +3666,7 @@ function PagamentoDiaria() {
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -3700,7 +3700,7 @@ function PagamentoDiaria() {
   ShowHTML('        <td><b>Valor R$: </b><input type="text" name="w_vlr_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . formatNumber(Nvl(f($RS, 'valor_transporte'), 0)) . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-transporte."></td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da viagem/cálculo das diárias</td>');
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'S', $SG);
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', $SG);
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   if (count($RS) > 0) {
     $i = 1;
@@ -3783,7 +3783,7 @@ function Diarias() {
   $w_menu = $_REQUEST['w_menu'];
 
   // Recupera os dados da solicitação
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
   if ($P1 == 1 || strpos($R, 'ALTSOLIC') !== false)
     $w_tipo_reg = 'S'; else
@@ -3862,7 +3862,7 @@ function Diarias() {
     $w_chegada_internacional = $_REQUEST['w_chegada_internacional'];
     $w_origem_nacional = $_REQUEST['w_origem_nacional'];
   } elseif ($O == 'L') {
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
     $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
     $i = 0;
     foreach ($RS as $row) {
@@ -3932,7 +3932,7 @@ function Diarias() {
 
 
     // Reconfigura o máximo de diárias para o primeiro trecho
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
     $RS = SortArray($RS, 'phpdt_saida', 'asc');
     foreach ($RS as $row) {
       if (f($row, 'sq_deslocamento') == $w_desloc_saida) {
@@ -3953,9 +3953,9 @@ function Diarias() {
       $w_max_diaria -= 0.5;
   }
   // Recupera as possibilidades de vinculação financeira para diárias, hospedagens e locações de veículo
-  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, 'S', null, null, null, null, null, null, null);
-  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, 'S', null, null, null, null, null, null);
-  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, null, 'S', null, null, null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Dia = $sql->getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, 'S', null, null, null, null, null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Hsp = $sql->getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, 'S', null, null, null, null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Vei = $sql->getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, null, 'S', null, null, null, null, null);
 
   Cabecalho();
   head();
@@ -4239,7 +4239,7 @@ function Diarias() {
     ShowHTML('        <tr><td valign="top" colspan="2">');
     ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -4550,7 +4550,7 @@ function Diarias_Solic() {
   $w_menu = $_REQUEST['w_menu'];
 
   // Recupera os dados da solicitação
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
   if (f($RS_Solic, 'sg_tramite') != 'VP')
     $w_tipo_reg = 'S'; else
@@ -4630,7 +4630,7 @@ function Diarias_Solic() {
     $w_calc_vei_qtd = $_REQUEST['w_calc_vei_qtd'];
     $w_calc_vei_txt = $_REQUEST['w_calc_vei_txt'];
   } elseif ($O == 'L') {
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
     $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
     $i = 0;
     foreach ($RS as $row) {
@@ -4702,7 +4702,7 @@ function Diarias_Solic() {
     $w_max_veiculo = ceil((toDate(formataDataEdicao($w_vei_dev)) - toDate(formataDataEdicao($w_vei_ret))) / 86400);
 
     // Reconfigura o máximo de diárias para o primeiro trecho
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
     $RS = SortArray($RS, 'phpdt_saida', 'asc');
     foreach ($RS as $row) {
       if (f($row, 'saida') != f($row, 'chegada'))
@@ -4711,7 +4711,7 @@ function Diarias_Solic() {
     }
 
     // Reconfigura o máximo de diárias para o último trecho
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
     $RS = SortArray($RS, 'phpdt_chegada', 'desc');
     if (count($RS) > 2) {
       foreach ($RS as $row) {
@@ -4729,9 +4729,9 @@ function Diarias_Solic() {
       $w_max_diaria -= 0.5;
   }
   // Recupera as possibilidades de vinculação financeira para diárias, hospedagens e locações de veículo
-  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, 'S', null, null, null, null, null, null, null);
-  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, 'S', null, null, null, null, null, null);
-  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, null, 'S', null, null, null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Dia = $sql->getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, 'S', null, null, null, null, null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Hsp = $sql->getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, 'S', null, null, null, null, null, null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Vei = $sql->getInstanceOf($dbms, $w_cliente, null, f($RS_Solic, 'sq_solic_pai'), null, null, null, null, 'S', null, null, null, null, null);
 
   Cabecalho();
   head();
@@ -4926,7 +4926,7 @@ function Diarias_Solic() {
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -5441,7 +5441,7 @@ function Encaminhamento() {
     $w_envio_regular = $_REQUEST['w_envio_regular'];
     $w_fim_semana = $_REQUEST['w_fim_semana'];
   } else {
-    $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, $SG);
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
     $w_inicio = f($RS, 'inicio');
     $w_tramite = f($RS, 'sq_siw_tramite');
     $w_justificativa = f($RS, 'justificativa');
@@ -5453,13 +5453,13 @@ function Encaminhamento() {
   }
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
-  $RS = db_getTramiteData::getInstanceOf($dbms, $w_tramite);
+  $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms, $w_tramite);
   $w_sg_tramite = f($RS, 'sigla');
   $w_ativo = f($RS, 'ativo');
 
   if ($w_sg_tramite != 'CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
-    $RS = db_getTramiteList::getInstanceOf($dbms, $w_tramite, $w_chave, 'DEVFLUXO', null);
+    $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_tramite, $w_chave, 'DEVFLUXO', null);
     $RS = SortArray($RS, 'ordem', 'desc');
     foreach ($RS as $row) {
       $RS = $row;
@@ -5665,7 +5665,7 @@ function Anotar() {
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, $SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="' . f($RS, 'sq_siw_tramite') . '">');
   ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
@@ -5710,7 +5710,7 @@ function Concluir() {
   }
 
   //Recupera a data da primeira saída
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'S', 'DADFIN');
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', 'DADFIN');
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   if (!count($RS) <= 0) {
     $w_inicio_real = f($RS, 'saida');
@@ -5721,7 +5721,7 @@ function Concluir() {
   }
 
   //Recupera os dados da solicitacao de passagens e diárias
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, substr($SG, 0, 3) . 'GERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, substr($SG, 0, 3) . 'GERAL');
   $w_tramite = f($RS, 'sq_siw_tramite');
   Cabecalho();
   head();
@@ -5795,7 +5795,7 @@ function InformarPassagens() {
   $w_chave = $_REQUEST['w_chave'];
   $w_menu = $_REQUEST['w_menu'];
 
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_valor_passagem = formatNumber(f($RS, 'valor_passagem'));
   $w_pta = f($RS, 'pta');
   $w_emissao_bilhete = FormataDataEdicao(f($RS, 'emissao_bilhete'));
@@ -5855,7 +5855,7 @@ function InformarPassagens() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -5871,7 +5871,7 @@ function InformarPassagens() {
   ShowHTML('    <tr bgcolor="' . $conTrBgColor . '"><td>');
   ShowHTML('      <table width="99%" border="0">');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Bilhete de passagem</td>');
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'S', $SG);
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', $SG);
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   if (count($RS) > 0) {
     $i = 1;
@@ -5944,7 +5944,7 @@ function InformarCotacao() {
   $w_chave = $_REQUEST['w_chave'];
   $w_menu = $_REQUEST['w_menu'];
 
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_valor = nvl($_REQUEST['w_valor'], formatNumber(f($RS, 'cotacao_valor')));
   $w_observacao = nvl($_REQUEST['w_observacao'], f($RS, 'cotacao_observacao'));
   Cabecalho();
@@ -5976,7 +5976,7 @@ function InformarCotacao() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -6017,7 +6017,7 @@ function InformarCotacao() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_menu   = $_REQUEST['w_menu'];
 
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PDGERAL');
   $w_valor_passagem     = formatNumber(f($RS,'valor_passagem'));
   $w_pta                = f($RS,'pta');
   $w_emissao_bilhete    = FormataDataEdicao(f($RS,'emissao_bilhete'));
@@ -6064,7 +6064,7 @@ function InformarCotacao() {
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
   ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
   ShowHTML('          </TABLE></td></tr>');
@@ -6077,7 +6077,7 @@ function InformarCotacao() {
   ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('      <table width="99%" border="0">');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cotação de Trechos</td>');
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'S',$SG);
+  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'S',$SG);
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RS)>0) {
   $i = 1;
@@ -6166,7 +6166,7 @@ function SolicMail($p_solic, $p_tipo) {
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-  $RSM = db_getSolicData::getInstanceOf($dbms, $p_solic, 'PDGERAL');
+  $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms, $p_solic, 'PDGERAL');
   if (f($RS, 'envia_mail_tramite') == 'S' && (f($RS_Menu, 'envia_email') == 'S') && (f($RSM, 'envia_mail') == 'S')) {
     $l_solic = $p_solic;
     $l_menu = f($RSM, 'sq_menu');
@@ -6221,7 +6221,7 @@ function SolicMail($p_solic, $p_tipo) {
     $w_html .= $crlf . '</tr>';
 
     //Recupera o último log
-    $RS = db_getSolicLog::getInstanceOf($dbms, $p_solic, null, null, 'LISTA');
+    $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms, $p_solic, null, null, 'LISTA');
     $RS = SortArray($RS, 'phpdt_data', 'desc', 'despacho', 'desc');
     foreach ($RS as $row) {
       $RS = $row;
@@ -6239,7 +6239,7 @@ function SolicMail($p_solic, $p_tipo) {
       $w_html .= $crlf . '          </table>';
     }
     $w_html .= $crlf . '      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
-    $RS = db_getCustomerSite::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+    $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
     $w_html .= '      <tr valign="top"><td>' . $crlf;
     $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="' . f($RS, 'logradouro') . '" target="_blank">' . f($RS, 'Logradouro') . '</a></b></li>' . $crlf;
     $w_html .= '      </td></tr>' . $crlf;
@@ -6271,10 +6271,10 @@ function SolicMail($p_solic, $p_tipo) {
       $w_assunto = 'Tramitação - ' . $w_nome;
     }
     // Configura os destinatários da mensagem
-    $RS = db_getTramiteResp::getInstanceOf($dbms, $p_solic, null, null);
+    $sql = new db_getTramiteResp; $RS = $sql->getInstanceOf($dbms, $p_solic, null, null);
     if (!count($RS) <= 0) {
       foreach ($RS as $row) {
-        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row, 'sq_pessoa'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($row, 'sq_pessoa'), $w_cliente, null);
         foreach ($RS_Mail as $row_mail) {
           $RS_Mail = $row_mail;
         }
@@ -6285,7 +6285,7 @@ function SolicMail($p_solic, $p_tipo) {
     }
     if (f($RSM, 'st_sol') == 'S') {
       // Recupera o e-mail do responsável
-      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM, 'solicitante'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RSM, 'solicitante'), $w_cliente, null);
       foreach ($RS_Mail as $row_mail) {
         $RS_Mail = $row_mail;
       }
@@ -6295,7 +6295,7 @@ function SolicMail($p_solic, $p_tipo) {
     }
     if (f($RSM, 'st_prop') == 'S') {
       // Recupera o e-mail do beneficiário
-      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM, 'sq_prop'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RSM, 'sq_prop'), $w_cliente, null);
       foreach ($RS_Mail as $row_mail) {
         $RS_Mail = $row_mail;
       }
@@ -6399,11 +6399,11 @@ function Anexo() {
     $w_caminho = $_REQUEST['w_caminho'];
   } elseif ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicAnexo::getInstanceOf($dbms, $w_chave, null, $w_cliente);
+    $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente);
     $RS = SortArray($RS, 'nome', 'asc');
   } elseif (strpos('AEV', $O) !== false && $w_troca == '') {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicAnexo::getInstanceOf($dbms, $w_chave, $w_chave_aux, $w_cliente);
+    $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, $w_cliente);
     foreach ($RS as $row) {
       $w_nome = f($row, 'nome');
       $w_descricao = f($row, 'descricao');
@@ -6546,7 +6546,7 @@ function PrestarContas() {
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_chave_pai = f($RS, 'sq_solic_pai');
   $w_diarias = f($RS, 'diaria');
   $w_nm_diaria = f($RS, 'nm_diaria');
@@ -6554,10 +6554,10 @@ function PrestarContas() {
   $w_reembolso_bd = f($RS, 'reembolso');
 
   // Recupera as possibilidades de vinculação financeira do reembolso
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, 'S', null, null);
+  $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, 'S', null, null);
 
   // Recupera as possibilidades de vinculação financeira da devolução de valores
-  $RS_Fin_Dev = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, 'S', null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Dev = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, 'S', null);
 
   if ($w_troca > '') {
     // Se for recarga da página
@@ -6679,7 +6679,7 @@ function PrestarContas() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . '</td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -6745,7 +6745,7 @@ function PrestarContas() {
     ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="N" ' . ((nvl($w_ressarcimento, 'N') == 'N') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
     if ($w_ressarcimento == 'S') {
       // Recupera os dados do parâmetro
-      $RS = db_getFNParametro::getInstanceOf($dbms, $w_cliente, null, null);
+      $sql = new db_getFNParametro; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null);
       if (count($RS) > 0) {
         foreach ($RS as $row) {
           $RS = $row;
@@ -6753,7 +6753,7 @@ function PrestarContas() {
         }
         $w_devolucao = f($RS, 'texto_devolucao');
       }
-      $RSConta = db_getContaBancoList::getInstanceOf($dbms, $w_cliente, null, 'CONTADEV');
+      $sql = new db_getContaBancoList; $RSConta = $sql->getInstanceOf($dbms, $w_cliente, null, 'CONTADEV');
       if (count($RS) > 0) {
         $i = 0;
         foreach ($RSConta as $row) {
@@ -6810,7 +6810,7 @@ function PrestarContas() {
     ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="N" ' . (($w_ressarcimento == 'N') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
     if ($w_ressarcimento == 'S') {
       // Recupera os dados do parâmetro
-      $RS = db_getFNParametro::getInstanceOf($dbms, $w_cliente, null, null);
+      $sql = new db_getFNParametro; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null);
       if (count($RS) > 0) {
         foreach ($RS as $row) {
           $RS = $row;
@@ -6818,7 +6818,7 @@ function PrestarContas() {
         }
         $w_devolucao = f($RS, 'texto_devolucao');
       }
-      $RSConta = db_getContaBancoList::getInstanceOf($dbms, $w_cliente, null, 'CONTADEV');
+      $sql = new db_getContaBancoList; $RSConta = $sql->getInstanceOf($dbms, $w_cliente, null, 'CONTADEV');
       if (count($RS) > 0) {
         $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
         $contas .= '<tr>';
@@ -6873,7 +6873,7 @@ function PrestarContas() {
 
   if (nvl($w_cumprimento, '') != '' && $w_reembolso == 'S' && $w_reembolso_bd == 'S') {
     // Valores a serem reembolsados
-    $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms, $w_chave, null, null, null);
+    $sql = new db_getPD_Reembolso; $RS_Reembolso = $sql->getInstanceOf($dbms, $w_chave, null, null, null);
     $RS_Reembolso = SortArray($RS_Reembolso, 'sg_moeda', 'asc');
 
     ShowHTML('    <tr><td colspan="2"><br><br><b>Valores a serem reembolsados (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'ReembValor&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDVALRB' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font>');
@@ -6905,7 +6905,7 @@ function PrestarContas() {
 
   if ($w_cumprimento == 'P' && $w_cumprimento_bd == 'P') {
     ShowHTML('<tr><td colspan="2"><br><br><b>Deslocamentos efetivamente cumpridos: (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
     $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
     ShowHTML('  <tr><td colspan="2">');
     ShowHTML('      <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
@@ -6944,8 +6944,8 @@ function PrestarContas() {
 
   if (strpos('IPC', nvl($w_cumprimento, 'nulo')) !== false) {
     ShowHTML('<tr><td colspan="2"><br><br><b>Anexos do relatório (máximo de 15.123 KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-    //$RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
-    $RS = db_getSolicRelAnexo::getInstanceOf($dbms, $w_chave, null, $w_cliente);
+    $sql = new db_getPD_Deslocamento; //$RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
+    $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente);
     //exibeArray($RS);
     $RS = SortArray($RS, 'nome', 'asc', 'tamanho', 'asc');
     ShowHTML('  <tr><td colspan="2">');
@@ -6980,7 +6980,7 @@ function PrestarContas() {
   }
 
   if ($w_cumprimento == 'P' && $w_cumprimento_bd == 'P' && nvl($w_diarias, '') != '') {
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms, $w_chave, null, 'P', 'PDDIARIA');
+    $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDDIARIA');
     $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
     $i = 0;
     foreach ($RS as $row) {
@@ -7169,15 +7169,15 @@ function Reembolso() {
   $w_erro = '';
 
   // Recupera os dados da solicitação
-  $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_chave_pai = f($RS, 'sq_solic_pai');
   $w_or_tramite = f($RS, 'or_tramite');
 
   // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, 'S', null, null);
+  $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, 'S', null, null);
 
   // Recupera as possibilidades de vinculação financeira da devolução de valores
-  $RS_Fin_Dev = db_getPD_Financeiro::getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, 'S', null);
+  $sql = new db_getPD_Financeiro; $RS_Fin_Dev = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, 'S', null);
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -7263,7 +7263,7 @@ function Reembolso() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . '</td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -7316,7 +7316,7 @@ function Reembolso() {
   ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="N" ' . (($w_ressarcimento == 'N') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
   if ($w_ressarcimento == 'S') {
     // Recupera os dados do parâmetro
-    $RS = db_getFNParametro::getInstanceOf($dbms, $w_cliente, null, null);
+    $sql = new db_getFNParametro; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null);
     if (count($RS) > 0) {
       foreach ($RS as $row) {
         $RS = $row;
@@ -7324,7 +7324,7 @@ function Reembolso() {
       }
       $w_devolucao = f($RS, 'texto_devolucao');
     }
-    $RSConta = db_getContaBancoList::getInstanceOf($dbms, $w_cliente, null, 'CONTADEV');
+    $sql = new db_getContaBancoList; $RSConta = $sql->getInstanceOf($dbms, $w_cliente, null, 'CONTADEV');
     if (count($RS) > 0) {
       $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
       $contas .= '<tr>';
@@ -7383,7 +7383,7 @@ function Reembolso() {
 
   if ($w_reembolso == 'S' && $w_reembolso_bd == 'S') {
     // Valores a serem reembolsados
-    $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms, $w_chave, null, null, null);
+    $sql = new db_getPD_Reembolso; $RS_Reembolso = $sql->getInstanceOf($dbms, $w_chave, null, null, null);
     $RS_Reembolso = SortArray($RS_Reembolso, 'sg_moeda', 'asc');
 
     ShowHTML('    <tr><td><br><br><b>Valores a serem reembolsados (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'ReembValor&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDVALRB' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font>');
@@ -7451,12 +7451,12 @@ function ReembolsoValor() {
   $w_chave_aux = $_REQUEST['w_chave_aux'];
 
   // Recupera os dados da solicitação e do cliente
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms, $w_chave, $SG);
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, $SG);
   $w_cidade_padrao = f($RS_Cliente, 'sq_cidade_padrao');
 
   // Se viagem nacional, seleciona BRL automaticamente.
   if (f($RS_Solic, 'internacional') == 'N') {
-    $RS_Moeda = db_getMoeda::getInstanceOf($dbms, null, null, null, null, 'BRL');
+    $sql = new db_getMoeda; $RS_Moeda = $sql->getInstanceOf($dbms, null, null, null, null, 'BRL');
     foreach ($RS_Moeda as $row) {
       $RS_Moeda = $row;
       break;
@@ -7478,7 +7478,7 @@ function ReembolsoValor() {
     $w_valor_autorizado = $_REQUEST['w_valor_autorizado'];
     $w_observacao = $_REQUEST['w_observacao'];
   } elseif (strpos('AE', $O) !== false) {
-    $RS = db_getPD_Reembolso::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null);
+    $sql = new db_getPD_Reembolso; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null);
     foreach ($RS as $row) {
       $RS = $row;
       break;
@@ -7548,7 +7548,7 @@ function ReembolsoValor() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -7637,7 +7637,7 @@ function Grava() {
     case 'PDRELANEXO':
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         if ($O == 'E') {
-          $RS = db_getSolicRelAnexo::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_cliente);
+          $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_cliente);
           foreach ($RS as $row) {
             if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho')))
             //echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
@@ -7659,7 +7659,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         if ($O == 'E') {
-          $RS = db_getSolicAnexo::getInstanceOf($dbms, $_REQUEST['w_chave'], null, $w_cliente);
+          $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], null, $w_cliente);
           foreach ($RS as $row) {
             if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'))) {
               echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
@@ -7924,7 +7924,7 @@ function Grava() {
               }
               // Se já há um nome para o arquivo, mantém
               if ($_REQUEST['w_atual'] > '') {
-                $RS = db_getSolicAnexo::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_atual'], $w_cliente);
+                $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_atual'], $w_cliente);
                 foreach ($RS as $row) {
                   if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho')))
                     unlink($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
@@ -7956,7 +7956,7 @@ function Grava() {
           }
           // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.
           if ($O == 'E' && $_REQUEST['w_atual'] > '') {
-            $RS = db_getSolicAnexo::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_atual'], $w_cliente);
+            $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_atual'], $w_cliente);
             foreach ($RS as $row) {
               if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho')))
                 unlink($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
@@ -8004,7 +8004,7 @@ function Grava() {
               }
               // Se já há um nome para o arquivo, mantém
               if ($_REQUEST['w_atual'] > '') {
-                $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
+                $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
                 if (file_exists($conFilePhysical . $w_cliente . '/' . f($RS, 'cm_arquivo')))
                   unlink($conFilePhysical . $w_cliente . '/' . f($RS, 'cm_arquivo'));
                 if (strpos(f($RS, 'cm_arquivo'), '.') !== false) {
@@ -8034,7 +8034,7 @@ function Grava() {
           }
           // Se for remoção do arquivo do disco.
           if ($_REQUEST['w_exclui_arquivo'] > '' || $_REQUEST['w_cumprimento'] == 'C') {
-            $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
+            $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
             if (file_exists($conFilePhysical . $w_cliente . '/' . nvl(f($RS, 'cm_arquivo'), 'x')))
               unlink($conFilePhysical . $w_cliente . '/' . f($RS, 'cm_arquivo'));
           }
@@ -8104,7 +8104,7 @@ function Grava() {
               }
               // Se já há um nome para o arquivo, mantém
               if ($_REQUEST['w_atual'] > '') {
-                $RS = db_getPD_Alteracao::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], null, null, null, null, null);
+                $sql = new db_getPD_Alteracao; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], null, null, null, null, null);
                 foreach ($RS as $row) {
                   $RS = $row;
                   break;
@@ -8138,7 +8138,7 @@ function Grava() {
           }
           // Se for remoção do arquivo do disco.
           if ($_REQUEST['w_exclui_arquivo'] > '' || $O == 'E') {
-            $RS = db_getPD_Alteracao::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], null, null, null, null, null);
+            $sql = new db_getPD_Alteracao; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], null, null, null, null, null);
             foreach ($RS as $row) {
               $RS = $row;
               break;
@@ -8195,7 +8195,7 @@ function Grava() {
               }
               // Se já há um nome para o arquivo, mantém
               if ($_REQUEST['w_atual'] > '') {
-                $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
+                $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
                 if (file_exists($conFilePhysical . $w_cliente . '/' . f($RS, 'cm_arquivo_comprovante')))
                   unlink($conFilePhysical . $w_cliente . '/' . f($RS, 'cm_arquivo_comprovante'));
                 if (strpos(f($RS, 'cm_arquivo_comprovante'), '.') !== false) {
@@ -8225,7 +8225,7 @@ function Grava() {
           }
           // Se for remoção do arquivo do disco.
           if ($_REQUEST['w_exclui_arquivo'] > '' || $_REQUEST['w_cumprimento'] == 'C') {
-            $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
+            $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDGERAL');
             if (file_exists($conFilePhysical . $w_cliente . '/' . nvl(f($RS, 'cm_arquivo_comprovante'), 'x')))
               unlink($conFilePhysical . $w_cliente . '/' . f($RS, 'cm_arquivo_comprovante'));
           }
@@ -8257,7 +8257,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         // Verifica se a moeda indicada já foi informada em outro lançamento
-        $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms, $_REQUEST['w_chave'], null, null, null);
+        $sql = new db_getPD_Reembolso; $RS_Reembolso = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], null, null, null);
         foreach ($RS_Reembolso as $row) {
           if (f($row, 'sq_moeda') == $_REQUEST['w_moeda'] && (f($row, 'chave') != nvl($_REQUEST['w_chave_aux'], 0))) {
             ScriptOpen('JavaScript');
@@ -8296,7 +8296,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         if ((false !== (strpos(upper($_SERVER['HTTP_CONTENT_TYPE']), 'MULTIPART/FORM-DATA'))) || (false !== (strpos(upper($_SERVER['CONTENT_TYPE']), 'MULTIPART/FORM-DATA')))) {
           // Verifica se outro usuário já enviou a solicitação
-          $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDINICIAL');
+          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDINICIAL');
           if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite']) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!\');');
@@ -8356,7 +8356,7 @@ function Grava() {
             ScriptClose();
           }
         } else {
-          $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDINICIAL');
+          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDINICIAL');
           if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite']) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!\');');
@@ -8366,15 +8366,15 @@ function Grava() {
           } else {
             // Verifica o próximo trâmite
             if ($_REQUEST['w_envio'] == 'N') {
-              $RS = db_getTramiteList::getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'PROXIMO', null);
+              $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'PROXIMO', null);
             } else {
-              $RS = db_getTramiteList::getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'ANTERIOR', null);
+              $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'ANTERIOR', null);
             }
             foreach ($RS as $row) {
               $RS = $row;
               break;
             }
-            $RS1 = db_getTramiteSolic::getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS, 'sq_siw_tramite'), null, null);
+            $sql = new db_getTramiteSolic; $RS1 = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS, 'sq_siw_tramite'), null, null);
             if (count($RS1) <= 0) {
               foreach ($RS1 as $row) {
                 $RS1 = $row;
@@ -8393,7 +8393,7 @@ function Grava() {
                               $_REQUEST['w_envio'], $_REQUEST['w_despacho'], $_REQUEST['w_justificativa'], $_REQUEST['w_justif_dia_util']);
             }
             if ($_REQUEST['w_tramite'] != $_REQUEST['w_novo_tramite']) {
-              $RS = db_getTramiteData::getInstanceOf($dbms, $_REQUEST['w_tramite']);
+              $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite']);
               $w_sg_tramite = f($RS, 'sigla');
               if ($w_sg_tramite == 'CI' || ($w_sg_tramite == 'DF' || $w_sg_tramite == 'AE' || $w_sg_tramite == 'PC' || $w_sg_tramite == 'VP')) {
                 $w_html = VisualViagem($_REQUEST['w_chave'], 'L', $w_usuario, $P1, '1');
@@ -8427,7 +8427,7 @@ function Grava() {
     case 'PDCONC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
-        $RS = db_getSolicData::getInstanceOf($dbms, $_REQUEST['w_chave'], $SG);
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $SG);
         if (f($RS, 'concluida') == 'S') {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: Outro usuário já concluiu esta solicitação!\');');

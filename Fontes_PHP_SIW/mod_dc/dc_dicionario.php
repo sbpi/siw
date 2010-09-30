@@ -113,9 +113,9 @@ switch ($O) {
   default:  $w_TP=$TP." - Listagem";
 } 
 if ($SG!='TRIGEVENTO' && $SG!='DCSPTAB' && $SG!='DCSPSP' && $SG!='DCSPPARAM')
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 else 
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
 if (count($RS)>0) {
   $w_submenu='Existe';
 } else {
@@ -156,7 +156,7 @@ function Arquivos() {
     $w_sq_arquivo   = $_REQUEST['w_sq_arquivo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sistema,$p_nome,null, $p_tipo_arquivo);
+    $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sistema,$p_nome,null, $p_tipo_arquivo);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_arquivo','asc');    
@@ -165,7 +165,7 @@ function Arquivos() {
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null);
+    $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null);
     foreach ($RS as $row) {
       $w_sq_sistema   = f($row,'sq_sistema');
       $w_nome         = lower(f($row,'nm_arquivo'));
@@ -365,7 +365,7 @@ function Colunas() {
     $w_sq_usuario       = $_REQUEST['w_sq_usuario'];
   }elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,null,$p_sq_tabela,$p_sq_dado_tipo,$p_sq_sistema,$p_sq_usuario,$p_nome,null);
+    $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$p_sq_tabela,$p_sq_dado_tipo,$p_sq_sistema,$p_sq_usuario,$p_nome,null);
     if ($p_sq_tabela=='') {
       SortArray($RS,'nm_coluna','asc');
     } else {
@@ -373,7 +373,7 @@ function Colunas() {
     } 
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_tabela,$w_sq_dado_tipo,null,null,null,null);
+    $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_tabela,$w_sq_dado_tipo,null,null,null,null);
     foreach ($RS as $row) {
       $w_sq_tabela    = f($row,'sq_tabela');
       $w_sq_dado_tipo = f($row,'sq_dado_tipo');
@@ -599,11 +599,11 @@ function Procedure() {
     $w_descricao    = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,null,$p_sq_arquivo,$p_sq_sistema,$p_sq_sp_tipo,$p_nome);
+    $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$p_sq_arquivo,$p_sq_sistema,$p_sq_sp_tipo,$p_nome);
     SortArray($RS,'nm_procedure','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+    $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
     foreach($RS as $row) {
       $w_sq_arquivo   = f($row,'sq_arquivo');
       $w_sq_sistema   = f($row,'sq_sistema');
@@ -796,11 +796,11 @@ function Relacionamento() {
     $w_sq_sistema       = $_REQUEST['w_sq_sistema'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getRelacionamento::getInstanceOf($dbms,$w_cliente,null,$p_nome,$p_sq_tabela,$p_sq_sistema,$p_sq_usuario);
+    $sql = new db_getRelacionamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$p_nome,$p_sq_tabela,$p_sq_sistema,$p_sq_usuario);
     $RS = SortArray($RS,'nm_relacionamento','asc','nm_usuario_tab_filha','asc','nm_tabela_filha','asc','nm_usuario_tab_pai','asc','nm_tabela_pai','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     //Recupera os dados do Endereço informado
-    $RS = db_getRelacionamento::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+    $sql = new db_getRelacionamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
     foreach($RS as $row) {
       $w_nome             = f($row,'nm_relacionamento');
       $w_descricao        = f($row,'ds_relacionamento');
@@ -994,11 +994,11 @@ function Sistema() {
     $w_sigla        = $_REQUEST['w_sigla'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSistema::getInstanceOf($dbms,null,$w_cliente);
+    $sql = new db_getSistema; $RS = $sql->getInstanceOf($dbms,null,$w_cliente);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getSistema::getInstanceOf($dbms,$w_chave,$w_cliente);
+    $sql = new db_getSistema; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente);
     foreach($RS as $row) {
       $w_nome      = f($row,'nome');
       $w_sigla     = f($row,'sigla');
@@ -1136,11 +1136,11 @@ function StoredProcedure() {
     $w_descricao    = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sp_tipo,$p_sq_usuario,$p_sq_sistema,$p_nome,null);
+    $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sp_tipo,$p_sq_usuario,$p_sq_sistema,$p_nome,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_sp','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {    
     // Recupera os dados do Endereço informado
-    $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,$w_chave,null,$p_sq_sp_tipo,$p_sq_usuario,$p_sq_sistema,$p_nome,null);
+    $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,$p_sq_sp_tipo,$p_sq_usuario,$p_sq_sistema,$p_nome,null);
     foreach($RS as $row) {
       $w_sq_sp_tipo   = f($row,'sq_sp_tipo');
       $w_sq_usuario   = f($row,'sq_usuario');
@@ -1330,11 +1330,11 @@ function Tabela() {
     $w_sq_sistema       = $_REQUEST['w_sq_sistema'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sistema,$p_sq_usuario,$p_sq_tabela_tipo,$p_nome,null);
+    $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sistema,$p_sq_usuario,$p_sq_tabela_tipo,$p_nome,null);
     $RS = SortArray($RS,'sg_sistema','asc','nm_usuario','asc','nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
+    $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
     foreach($RS as $row) {
       $w_nome             = f($row,'nome');
       $w_descricao        = f($row,'descricao');
@@ -1523,11 +1523,11 @@ function Trigger() {
     $w_descricao    = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTrigger::getInstanceOf($dbms,$w_cliente,$p_chave,$p_sq_tabela,$p_sq_usuario,$p_sq_sistema);
+    $sql = new db_getTrigger; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_chave,$p_sq_tabela,$p_sq_usuario,$p_sq_sistema);
     $RS = SortArray($RS,'nm_trigger','asc','nm_tabela','asc');
     } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getTrigger::getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_tabela,$w_sq_usuario,$w_sq_sistema);
+    $sql = new db_getTrigger; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_tabela,$w_sq_usuario,$w_sq_sistema);
     foreach($RS as $row) {
       $w_sq_tabela    = f($row,'sq_tabela');
       $w_sq_usuario   = f($row,'sq_usuario');
@@ -1714,11 +1714,11 @@ function Usuario() {
     $w_sq_sistema   = $_REQUEST['w_sq_sistema'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getUsuario::getInstanceOf($dbms,$w_cliente,null,$w_sq_sistema);
+    $sql = new db_getUsuario; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_sistema);
     $RS = SortArray($RS,'sg_sistema','asc','nome','asc');
     } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do usuário informado
-    $RS = db_getUsuario::getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_sistema);
+    $sql = new db_getUsuario; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_sistema);
     foreach($RS as $row) {
       $w_nome         = f($row,'nome');
       $w_descricao    = f($row,'descricao');
@@ -1859,11 +1859,11 @@ function Indice() {
     $w_nome             = $_REQUEST['w_nome'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getIndice::getInstanceOf($dbms,$w_cliente,null,$p_sq_indice_tipo,$p_sq_usuario,$p_sq_sistema,$p_nome,$p_sq_tabela);
+    $sql = new db_getIndice; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$p_sq_indice_tipo,$p_sq_usuario,$p_sq_sistema,$p_nome,$p_sq_tabela);
     $RS = SortArray($RS,'nm_indice','asc','nm_usuario','asc','nm_tabela','asc');
     } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getIndice::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
+    $sql = new db_getIndice; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach($RS as $row) {
       $w_sq_indice_tipo   = f($row,'sq_indice_tipo');
       $w_sq_usuario       = f($row,'sq_usuario');
@@ -2048,7 +2048,7 @@ function Evento() {
   $w_chave     = $_REQUEST['w_chave'];
   $w_chave_aux = $_REQUEST['w_chave_aux'];
   $w_chave_pai = $_REQUEST['w_chave_pai'];
-  $RS = db_getTrigEvento::getInstanceOf($dbms,$w_chave,null);
+  $sql = new db_getTrigEvento; $RS = $sql->getInstanceOf($dbms,$w_chave,null);
   $RS = SortArray($RS,'nm_evento','asc');
   Cabecalho();
   head();
@@ -2142,7 +2142,7 @@ function SPTabs() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   // Recupera as tabelas vinculadas à SP informada
-  $RS = db_getSPTabs::getInstanceOf($dbms,$w_chave,null);
+  $sql = new db_getSPTabs; $RS = $sql->getInstanceOf($dbms,$w_chave,null);
   $RS = SortArray($RS,'nm_usuario_tabela','asc','nm_tabela','asc');
   Cabecalho();
   head();
@@ -2178,7 +2178,7 @@ function SPTabs() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Exibe os dados da SP
-  $RS1 = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
+  $sql = new db_getStoredProcedure; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
   $RS1 = SortArray($RS1,'chave','asc');
   if (count($RS1)>0) {
     foreach ($RS1 as $row1) {
@@ -2292,7 +2292,7 @@ function SPSP() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_tipo       = '';
   //Recupera sempre todos os registros
-  $RS = db_getSPSP::getInstanceOf($dbms,$w_chave,$w_chave_aux);
+  $sql = new db_getSPSP; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux);
   $RS = SortArray($RS,'nm_pai','asc','nm_filha','asc');
   if (count($RS)>0) {
     foreach ($RS as $row) {
@@ -2336,7 +2336,7 @@ function SPSP() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Exibe os dados da SP
-  $RS1 = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
+  $sql = new db_getStoredProcedure; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
   $RS1 = SortArray($RS1,'chave','asc');
   if (count($RS1)>0) {
     foreach ($RS1 as $row1) {
@@ -2468,9 +2468,9 @@ function SPParam() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   //Recupera sempre todos os registros
   if ($O=='L') {
-    $RS = db_getSPParametro::getInstanceOf($dbms,$w_chave,null,null);
+    $sql = new db_getSPParametro; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null);
   } else {
-    $RS = db_getSPParametro::getInstanceOf($dbms,null,$w_chave_aux,null);
+    $sql = new db_getSPParametro; $RS = $sql->getInstanceOf($dbms,null,$w_chave_aux,null);
     if ($O=='E') {
       foreach ($RS as $row) {
         $w_sq_dado_tipo   = f($row,'sq_dado_tipo');
@@ -2514,7 +2514,7 @@ function SPParam() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Exibe os dados da SP
-  $RS1 = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
+  $sql = new db_getStoredProcedure; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null);
   $RS1 = SortArray($RS1,'chave','asc');
   if (count($RS1)>0) {
     foreach ($RS1 as $row1) {
@@ -2663,7 +2663,7 @@ function Grava() {
           ShowHTML('<HR>');
           flush();
           // Recupera os dados do usuário informado
-          $RS = db_getUsuario::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null);
+          $sql = new db_getUsuario; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null);
           foreach ($RS as $row) {
             ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/relogio.gif" align="center"> <b>Aguarde: dicionarização automática do usuário '.f($row,'nome').' do sistema '.f($row,'sg_sistema').' em andamento...</b><br><br><br><br><br><br><br><br><br><br></center></div>');
             Rodape();

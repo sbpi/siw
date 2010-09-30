@@ -76,7 +76,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -144,11 +144,11 @@ function Rel_Unidades() {
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('   <tr><td colspan="2"><table border=0>');
       if ($p_unidade) {
-        $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$p_unidade);;
+        $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$p_unidade);;
         ShowHTML('     <tr valign="top"><td>UNIDADE:<td>'.f($RS_Unidade,'nome').'</td></tr>');
       }
       if ($p_endereco) {
-        $RS_Endereco = db_getAddressList::getInstanceOf($dbms, $w_cliente, $p_endereco, 'FISICO', null);
+        $sql = new db_getAddressList; $RS_Endereco = $sql->getInstanceOf($dbms, $w_cliente, $p_endereco, 'FISICO', null);
         foreach ($RS_Endereco as $row) {$RS_Endereco=$row; break;}
         ShowHTML('     <tr valign="top"><td>ENDERECO:<td>'.f($RS_Endereco,'nome').'</td></tr>');
       }
@@ -158,7 +158,7 @@ function Rel_Unidades() {
     $w_unidade_atual = 0;
     $w_restricao = 'RELATORIO';
     if (nvl($p_exibe_filho,'N')=='S') $w_restricao = 'RELATSUB';
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,$w_restricao,null,null,$p_endereco);
+    $sql = new db_getUorgList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_unidade,$w_restricao,null,null,$p_endereco);
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
@@ -213,7 +213,7 @@ function Rel_Unidades() {
           }
           // Locais
           if ($p_locais=='S') {
-            $RS1 = db_getaddressList::getInstanceOf($dbms,$w_cliente,f($row,'sq_unidade'),'LISTALOCALIZACAO',null);
+            $sql = new db_getaddressList; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,f($row,'sq_unidade'),'LISTALOCALIZACAO',null);
             if (count($RS1)>0) {
               ShowHTML('      <tr><td colspan="2"><br><b>Locais ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
               ShowHTML('  <tr><td  colspan="2"><table width="100%" border="1">');
@@ -239,7 +239,7 @@ function Rel_Unidades() {
           }
           // Usuários
           if ($p_usuarios=='S') {
-            $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,null,null,'S',null,null,null,null,null);
+            $sql = new db_getUserList; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,null,null,'S',null,null,null,null,null);
             $RS1 = SortArray($RS1,'nome','asc');
             if (count($RS1)>0) {
               ShowHTML('      <tr><td colspan="2"><br><b>Pessoas ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');

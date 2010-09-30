@@ -14,7 +14,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $w_segmento = f($RS,'segmento');
   
   // Recupera os dados do acordo
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
   $w_or_tramite      = f($RS,'or_tramite');
   $w_tramite         = f($RS,'sq_siw_tramite');
   $w_tramite_ativo   = f($RS,'ativo');
@@ -27,7 +27,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $w_internacional   = f($RS,'internacional');
 
   // Execução financeira da viagem
-  $RSF = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
+  $sql = new db_getSolicList; $RSF = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
         null,null,null,null,null,null,null,null,null,null,$l_chave, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null);
         
@@ -86,7 +86,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
       if(nvl(f($RS,'sq_solic_pai'),'')!='' && f($RS,'ativo')=='S') {
         // Exibe saldos das rubricas
-        $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS,'sq_solic_pai'),null,null,null,null,null,null,null,null,null,'ORCAM_SIT');
+        $sql = new db_getPD_Financeiro; $RS_Fin = $sql->getInstanceOf($dbms,$w_cliente,null,f($RS,'sq_solic_pai'),null,null,null,null,null,null,null,null,null,'ORCAM_SIT');
         $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
         $l_html.=chr(13).'      <tr valign="top"><td><b>Disponibilidade orçamentária:</b></td>';
         $l_html.=chr(13).'      <td><table width=100%  border="1" bordercolor="#00000">';
@@ -155,7 +155,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     // Dados do proposto
     if ($l_proposto='S') {
-      $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getBenef; $RSQuery = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
       
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BENEFICIÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (count($RSQuery)==0) {
@@ -233,7 +233,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Vinculações a atividades
-    $RS1 = db_getPD_Vinculacao::getInstanceOf($dbms,$l_chave,null,null);
+    $sql = new db_getPD_Vinculacao; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null);
     $RS1 = SortArray($RS1,'inicio','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -295,7 +295,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     
     // Deslocamentos
     if($l_deslocamento=='S') {
-      $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDGERAL');
+      $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'S','PDGERAL');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ROTEIRO PREVISTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
       $l_html.=chr(13).'      <tr><td colspan="2">';
@@ -347,7 +347,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'</tr>';
 
       if (f($RS,'cumprimento')!='C' && f($RS,'cumprimento')!='N') {
-        $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDGERAL');
+        $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'P','PDGERAL');
         $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ROTEIRO REALIZADO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
@@ -402,7 +402,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     // Diárias, hospedagens e veículos
     if($l_diaria=='S') {
-      $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
+      $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       $i = 0;
       foreach($RS1 as $row) {
@@ -555,7 +555,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
       if (f($RS,'cumprimento')!='C') {
         unset($w_trechos);
-        $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
+        $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
         $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
         $i = 0;
         foreach($RS1 as $row) {
@@ -708,7 +708,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
     
     // Alterações de viagem
-    $RS1 = db_getPD_Alteracao::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
+    $sql = new db_getPD_Alteracao; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'autorizacao_data','asc', 'chave', 'asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALTERAÇÕES DE VIAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -762,7 +762,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     if($l_diaria=='S' && $w_or_tramite>5) {
       unset($w_trechos);
       unset($w_tot_diaria_S);
-      $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
+      $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       if (count($RS1)>0) {
         $i = 0;
@@ -936,7 +936,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     if($l_diaria=='S' && $w_or_tramite>=10) {
       unset($w_trechos);
       unset($w_tot_diaria_P);
-      $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
+      $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       if (count($RS1)>0) {
         $i = 0;
@@ -1180,7 +1180,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.='R$ 0,00</td>';
       } else {
         // Valores a serem reembolsados
-        $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$l_chave,null,null,null);
+        $sql = new db_getPD_Reembolso; $RS_Reembolso = $sql->getInstanceOf($dbms,$l_chave,null,null,null);
         $RS_Reembolso = SortArray($RS_Reembolso,'sg_moeda','asc');
         
         $l_html.=chr(13).'      <table border="1" bordercolor="#00000">';
@@ -1247,7 +1247,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     if ($w_or_tramite>5) {
       // Bilhete de passagem
-      $RS1 = db_getPD_Bilhete::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
+      $sql = new db_getPD_Bilhete; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
       if (count($RS1)>0) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BILHETES EMITIDOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -1329,7 +1329,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
 
       // Prepara array de impressão dos dados orçamentários
-      $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null,'ORCAM_PREV');
+      $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null,'ORCAM_PREV');
       $RS_Financ = SortArray($RS_Financ,'cd_rubrica','asc','sg_moeda','asc');
       if (count($RS_Financ)>0) {
         $i       = -1;
@@ -1351,7 +1351,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         }
       }
       // Prepara array de impressão dos dados financeiros
-      $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null,'FINANC_PREV');
+      $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null,'FINANC_PREV');
       $RS_Financ = SortArray($RS_Financ,'nm_lancamento','asc','sg_moeda','asc');
       if (count($RS_Financ)>0) {
         $i       = -1;
@@ -1497,7 +1497,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
 
       // Exibe outros valores associados à viagem
-      $RS1 = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null, null,
+      $sql = new db_getPD_Fatura; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null, null,
         null, null, null, null, null, null, null, null, null, 'OUTROS');
       $RS1 = SortArray($RS1,'nr_fatura','asc','nm_tipo_reg','asc', 'inicio_reg', 'asc', 'fim_reg', 'asc');
       if (count($RS1)>0) {
@@ -1539,7 +1539,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     } 
     
     // Arquivos vinculados
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

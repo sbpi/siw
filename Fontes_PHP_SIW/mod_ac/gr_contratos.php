@@ -183,12 +183,12 @@ function Gerencial() {
     }    
     if ($p_atividade>'') {
       $w_linha++;
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
       $w_filtro.='<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     }     
     if ($p_sqcc>'') {
       $w_linha++;
-      $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
+      $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Classificação <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_chave>'') {$w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Contrato nº <td><font size=1>[<b>'.$p_chave.'</b>]'; }
@@ -196,48 +196,48 @@ function Gerencial() {
     if ($p_prazo>'') {$w_linha++; $w_filtro.=' <tr valign="top"><td align="right"><font size=1>Prazo para conclusão até <td><font size=1>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Responsável <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Unidade responsável <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_sq_orprior>''){
       $w_linha++;
-      $RS = db_getAgreeType::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null,null,'ALTERA');
+      $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null,null,'ALTERA');
       foreach($RS as $row) {$RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo do acordo <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uorg_resp>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_uorg_resp);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Unidade atual <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_pais>'') {
       $w_linha++;
-      $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
+      $sql = new db_getCountryData; $RS = $sql->getInstanceOf($dbms,$p_pais);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>País <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
       $w_linha++;
-      $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
+      $sql = new db_getRegionData; $RS = $sql->getInstanceOf($dbms,$p_regiao);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Região <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
       $w_linha++;
-      $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
+      $sql = new db_getStateData; $RS = $sql->getInstanceOf($dbms,$p_pais,$p_uf);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Estado <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_cidade>'') {
       $w_linha++;
-      $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
+      $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$p_cidade);
       $w_filtro.='<tr valign="top"><td align="right"><font size=1>Cidade <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_prioridade>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Prioridade <td><font size=1>[<b>'.RetornaPrioridade($p_prioridade).'</b>]'; }
@@ -254,7 +254,7 @@ function Gerencial() {
     if ($p_empenho>'')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Número do empenho<td><font size=1>[<b>'.$p_empenho .'</b>]'; }
     if ($p_processo>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Número do processo<td><font size=1>[<b>'.$p_processo.'</b>]'; }
     if ($w_filtro>'')   { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>'; }
-    $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+    $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
@@ -471,7 +471,7 @@ function Gerencial() {
           case $sigla.'TITULO':    ShowHTML('    else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\';');           break;
           case $sigla.'LOCAL':     ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');                break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
+        $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         $w_fase_conc='';

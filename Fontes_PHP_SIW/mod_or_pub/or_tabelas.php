@@ -131,11 +131,11 @@ function Iniciativa() {
     $w_padrao       = $_REQUEST['w_padrao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getOrPrioridadeList::getInstanceOf($dbms,null,$w_cliente,null);
+    $sql = new db_getOrPrioridadeList; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
     // Recupera os dados do endereço informado
-    $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,$w_chave,null,null,null);
+    $sql = new db_getOrPrioridade; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_chave,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_codigo      = f($RS,'codigo');
     $w_nome        = f($RS,'nome');
@@ -292,11 +292,11 @@ function PPA() {
     $w_selecionada_relevante  = $_REQUEST['w_selecionada_relevante'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getAcaoPPA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getAcaoPPA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordena','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getAcaoPPA::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getAcaoPPA; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_codigo                = f($RS,'codigo');
     $w_nome                  = f($RS,'nome');
@@ -487,7 +487,7 @@ function Rel_PPA() {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     // Recupera todos os registros para a listagem
-    $RS = db_getAcaoPPA::getInstanceOf($dbms,null,$w_cliente,$p_sq_acao_ppa_pai,$p_sq_acao_ppa,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante,null,null,null,null);
+    $sql = new db_getAcaoPPA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$p_sq_acao_ppa_pai,$p_sq_acao_ppa,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante,null,null,null,null);
     $RS = SortArray($RS,'ordena','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -720,7 +720,7 @@ function Rel_PPA() {
           if ($p_metas>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-            $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    f($row,'chave'),null);
@@ -730,7 +730,7 @@ function Rel_PPA() {
               $w_linha+=1;
             } else {
               foreach ($RS2 as $row2){$RS2=$row2; break;}
-              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
+              $sql = new db_getSolicEtapa; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)<=0){
                 // Se não foram selecionados registros, exibe mensagem
@@ -756,7 +756,7 @@ function Rel_PPA() {
           } if ($p_tarefas>'') {  
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-            $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    f($row,'chave'),null);
@@ -767,7 +767,7 @@ function Rel_PPA() {
             } else {
               foreach ($RS2 as $row2){$RS2=$row2; break;}
               $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORPCAD');
-              $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+              $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                      null,null,null,null,null,null,null,$p_prioridade,null,null,
                      null,null,null,null,null,null,null,null,null,null,null,null, 
                      f($RS2,'sq_siw_solicitacao'),null,null,null);                                                 
@@ -839,7 +839,7 @@ function Rel_PPA() {
           } if ($p_sq_unidade_resp>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-            $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    null,null,null,null,null,null,null,null,null,null,null,null,
                    f($row,'chave'),null);
@@ -1013,7 +1013,7 @@ function Rel_Iniciativa() {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     // Recupera todos os registros para a listagem
-    $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante);
+    $sql = new db_getOrPrioridade; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante);
     $RS = SortArray($RS,'ordem','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -1214,7 +1214,7 @@ function Rel_Iniciativa() {
             ShowHTML('   <tr><td colspan='.$w_col_word.'>');
             ShowHTML('     <table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-            $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                     null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null, f($row,'chave'));
@@ -1224,7 +1224,7 @@ function Rel_Iniciativa() {
               $w_linha+=1;
             } else {
               foreach ($RS2 as $row2){$RS2=$row2; break;}
-              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
+              $sql = new db_getSolicEtapa; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)<=0) {
                 // Se não foram selecionados registros, exibe mensagem
@@ -1252,7 +1252,7 @@ function Rel_Iniciativa() {
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-            $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                     null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null, f($row,'chave'));
@@ -1263,7 +1263,7 @@ function Rel_Iniciativa() {
             } else {
               foreach($RS2 as $row2){$RS2=$row2; break;}
               $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORPCAD');
-              $RS3= db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+              $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                       null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,f($RS2,'sq_siw_solicitacao'),null,
                       null,null);
@@ -1333,7 +1333,7 @@ function Rel_Iniciativa() {
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-            $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+            $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                     null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null, f($row,'chave'));
@@ -1502,7 +1502,7 @@ function Rel_Sintetico_IP() {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     // Recupera todos os registros para a listagem
-    $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante);
+    $sql = new db_getOrPrioridade; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante);
     $RS = SortArray($RS,'ordem','asc');
   } if ($w_tipo_rel=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
@@ -1630,7 +1630,7 @@ function Rel_Sintetico_IP() {
         } 
         //Montagem da lista das ações
         $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-        $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+        $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                null,null,null,null,$p_atraso,null,null,null,null,null,f($row,'sq_siw_solicitacao'),
                null,null,null,null,null,null,null,null,null,null,null,null,null,null,f($row,'chave'));
         $RS2 = SortArray($RS2,'phpdt_fim','asc','prioridade','asc');
@@ -1670,7 +1670,7 @@ function Rel_Sintetico_IP() {
           //End If
           $w_visao = 0;
           if ($w_visao<2) {
-            $RS3 = db_getSolicEtapa::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
+            $sql = new db_getSolicEtapa; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
             if ($p_programada>'' && $p_exequivel>'' && $p_fim_previsto>'') {        
               $RS3->Filter='programada = \''.$p_programada.'\' and exequivel = \''.$p_exequivel.'\' and fim_previsto < \''.time().'\' and perc_conclusao < 100';
             } elseif ($p_programada>'' && $p_exequivel>'') {
@@ -1735,7 +1735,7 @@ function Rel_Sintetico_IP() {
                 } 
                 ShowHTML('      <td nowrap align="center">'.Nvl(f($RS3,'unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.number_format(f($RS3,'quantidade'),0,',','.').'</td>');
-                $RS4 = db_getEtapaMensal::getInstanceOf($dbms,f($RS3,'sq_projeto_etapa'));
+                $sql = new db_getEtapaMensal; $RS4 = $sql->getInstanceOf($dbms,f($RS3,'sq_projeto_etapa'));
                 $RS4 = SortArray($RS4,'referencia','desc');
                 if (count($RS4)>0) {
                   if (f($RS3,'cumulativa')=='S') {
@@ -1761,7 +1761,7 @@ function Rel_Sintetico_IP() {
                     } 
                     ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                     ShowHTML('      <td nowrap align="right" >'.number_format(f($row3,'quantidade'),0,',','.').'</td>');
-                    $RS4 = db_getEtapaMensal::getInstanceOf($dbms,f($row3,'sq_projeto_etapa'));
+                    $sql = new db_getEtapaMensal; $RS4 = $sql->getInstanceOf($dbms,f($row3,'sq_projeto_etapa'));
                     $RS4 = SortArray($RS4,'referencia','desc');
                     if (count($RS4)>0) {
                       if (f($row3,'cumulativa')=='S') {
@@ -1895,7 +1895,7 @@ function Rel_Sintetico_PPA() {
         $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);  
     } 
     // Recupera todos os registros para a listagem
-    $RS = db_getAcaoPPA::getInstanceOf($dbms,null,$w_cliente,$p_sq_acao_ppa_pai,$p_sq_acao_ppa,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante,null,null,null,null);
+    $sql = new db_getAcaoPPA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$p_sq_acao_ppa_pai,$p_sq_acao_ppa,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante,null,null,null,null);
     $RS = SortArray($RS,'ordena','asc');
   } if ($w_tipo_rel=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
@@ -1959,7 +1959,7 @@ function Rel_Sintetico_PPA() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan="1" colspan="2"><b>Programas</td>');
     ShowHTML('          <td rowspan="1" colspan="2"><b>Ações</td>');
-    $RS1 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+    $sql = new db_getOrImport; $RS1 = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
     $RS1 = SortArray($RS1,'phpdt_data_arquivo','desc');
     ShowHTML('          <td rowspan="1" colspan="5"><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS1,'data_arquivo')),'-').'</td>');
     ShowHTML('          <td rowspan="1" colspan="6"><b>Metas</td>');
@@ -2014,7 +2014,7 @@ function Rel_Sintetico_PPA() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
           ShowHTML('          <td rowspan="1" colspan="2"><b>Programas</td>');
           ShowHTML('          <td rowspan="1" colspan="2"><b>Ações</td>');
-          $RS1 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+          $sql = new db_getOrImport; $RS1 = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
           $RS1 = SortArray($RS1,'phpdt_data_arquivo','desc');
           ShowHTML('          <td rowspan="1" colspan="5"><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS1,'data_arquivo')),'-').'</td>');
           ShowHTML('          <td rowspan="1" colspan="6"><b>Metas</td>');
@@ -2040,7 +2040,7 @@ function Rel_Sintetico_PPA() {
         if (Nvl(f($row,'sq_acao_ppa_pai'),'')!='') {
           //Montagem da lista das ações
           $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ORCAD');
-          $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+          $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
                  null,null,null,null,$p_atraso,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                  null,null,null,null,null,null,null,null,null,null,null,null,f($row,'chave'),null);
           $RS2 = SortArray($RS2,'phpdt_fim','asc','prioridade','asc');
@@ -2053,7 +2053,7 @@ function Rel_Sintetico_PPA() {
             $w_teste_acoes = 1;
             $w_visao = 0;
             if ($w_visao<2) {
-              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
+              $sql = new db_getSolicEtapa; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)>0) {
                 $w_teste_metas = 1;
@@ -2120,7 +2120,7 @@ function Rel_Sintetico_PPA() {
                   } 
                   ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                   ShowHTML('      <td nowrap align="right">'.f($row3,'quantidade').'</td>');
-                  $RS4 = db_getEtapaMensal::getInstanceOf($dbms,f($row3,'sq_projeto_etapa'));
+                  $sql = new db_getEtapaMensal; $RS4 = $sql->getInstanceOf($dbms,f($row3,'sq_projeto_etapa'));
                   $RS4 = SortArray($RS4,'phpdt_referencia','desc');
                   if (count($RS4)>0) {
                     if (f($row3,'cumulativa')=='S') {

@@ -257,7 +257,8 @@ else {
 // Make GD sanity check
 //
 if( !function_exists("imagetypes") || !function_exists('imagecreatefromstring') ) {
-    JpGraphError::Raise("This PHP installation is not configured with the GD library. Please recompile PHP with GD support to run JpGraph. (Neither function imagetypes() nor imagecreatefromstring() does exist)");
+    $obj = new JpGraphError;
+    $obj->Raise("This PHP installation is not configured with the GD library. Please recompile PHP with GD support to run JpGraph. (Neither function imagetypes() nor imagecreatefromstring() does exist)");
 }
 
 //
@@ -290,7 +291,8 @@ if( USE_LIBRARY_GD2 === 'auto' ) {
 	$GLOBALS['copyfunc'] = 'imagecopyresized';
     }
     else {
-	JpGraphError::Raise(" Your PHP installation does not seem to have the required GD library. Please see the PHP documentation on how to install and enable the GD library.");
+	  $obj = new JpGraphError;
+    $obj->Raise(" Your PHP installation does not seem to have the required GD library. Please see the PHP documentation on how to install and enable the GD library.");
     }
 }
 else {
@@ -380,14 +382,14 @@ class JpGraphErrObjectImg extends JpGraphErrObject {
 	$aMsg = wordwrap($aMsg,55);
 	$lines = substr_count($aMsg,"\n");
 
-	// Create the error icon GD
-	$erricon = Image::CreateFromString(base64_decode($img_iconerror));   
-
 	// Create an image that contains the error text.
 	$w=400; 	
 	$h=100 + 15*max(0,$lines-3);
 
 	$img = new Image($w,$h);
+
+  // Create the error icon GD
+  $erricon = $img->CreateFromString(base64_decode($img_iconerror));
 
 	// Drop shadow
 	$img->SetColor("gray");
@@ -455,8 +457,8 @@ class JpGraphErrObjectImg extends JpGraphErrObject {
 //
 function _phpErrorHandler($errno,$errmsg,$filename, $linenum, $vars) {
     // Respect current error level
-    if( $errno & error_reporting() ) {
-	JpGraphError::Raise('In '.basename($filename).'#'.$linenum."\n".$errmsg);
+    if( $errno && error_reporting() ) {
+	$obj = new JpGraphError; $obj->Raise('In '.basename($filename).'#'.$linenum."\n".$errmsg);
     }
 }
 
@@ -468,9 +470,8 @@ if( INSTALL_PHP_ERR_HANDLER ) {
 //Check if there were any warnings, perhaps some wrong includes by the
 //user
 //
-//var_dump($GLOBALS);
 if( isset($GLOBALS['php_errormsg']) && CATCH_PHPERRMSG ) {
-    JpGraphError::Raise("General PHP error : ".$GLOBALS['php_errormsg']);
+  $obj = new JpGraphError; $obj->Raise("General PHP error : ".$GLOBALS['php_errormsg']);
 }
 
 
@@ -490,8 +491,9 @@ function GenImgName() {
     elseif( $supported & IMG_GIF ) $img_format="gif";
     elseif( $supported & IMG_JPG ) $img_format="jpeg";
 
-    if( !isset($_SERVER['PHP_SELF']) )
-	JpGraphError::Raise(" Can't access PHP_SELF, PHP global variable. You can't run PHP from command line if you want to use the 'auto' naming of cache or image files.");
+    if( !isset($_SERVER['PHP_SELF']) ) {
+	$obj = new JpGraphError; $obj->Raise(" Can't access PHP_SELF, PHP global variable. You can't run PHP from command line if you want to use the 'auto' naming of cache or image files.");
+    }
     $fname = basename($_SERVER['PHP_SELF']);
     if( !empty($_SERVER['QUERY_STRING']) ) {
 	$q = @$_SERVER['QUERY_STRING'];
@@ -512,7 +514,7 @@ class LanguageConv {
 		$aTxt = convert_cyr_string($aTxt, "w", "k"); 
 	    }
 	    $isostring = convert_cyr_string($aTxt, "k", "i");
-	    $unistring = LanguageConv::iso2uni($isostring);
+	    $obj = new LanguageConv; $unistring = $obj->iso2uni($isostring);
 	    return $unistring;
 	}
 	elseif( $aFF === FF_SIMSUN ) {
@@ -525,7 +527,7 @@ class LanguageConv {
 	}
 	elseif( $aFF === FF_CHINESE ) {
 	    if( !function_exists('iconv') ) {
-		JpGraphError::Raise('Usage of FF_CHINESE (FF_BIG5) font family requires that your PHP setup has the iconv() function. By default this is not compiled into PHP (needs the "--width-iconv" when configured).');
+		$obj = new JpGraphError; $obj->Raise('Usage of FF_CHINESE (FF_BIG5) font family requires that your PHP setup has the iconv() function. By default this is not compiled into PHP (needs the "--width-iconv" when configured).');
 	    }
 	    return iconv('BIG5','UTF-8',$aTxt);
 	}
@@ -617,7 +619,7 @@ class DateLocale {
 	//$pLocale = setlocale(LC_TIME, 0); // get current locale for LC_TIME
 	//$res = @setlocale(LC_TIME, $aLocale);
 	//if ( ! $res ){
-	//    JpGraphError::Raise("You are trying to use the locale ($aLocale) which your PHP installation does not support. Hint: Use '' to indicate the default locale for this geographic region.");
+	//    $obj = new JpGraphError; $obj->Raise("You are trying to use the locale ($aLocale) which your PHP installation does not support. Hint: Use '' to indicate the default locale for this geographic region.");
 	//    return FALSE;
 	//}
  
@@ -694,15 +696,17 @@ class FuncGenerator {
 	    $t = 'for($i='.$aXMin.'; $i<='.$aXMax.'; $i += '.$this->iStepSize.') {$ya[]='.$this->iFunc.';$xa[]='.$this->iXFunc.';}';
 	elseif( $this->iFunc != '' )
 	    $t = 'for($x='.$aXMin.'; $x<='.$aXMax.'; $x += '.$this->iStepSize.') {$ya[]='.$this->iFunc.';$xa[]=$x;} $x='.$aXMax.';$ya[]='.$this->iFunc.';$xa[]=$x;';
-	else
-	    JpGraphError::Raise('FuncGenerator : No function specified. ');
+	else {
+	    $obj = new JpGraphError; $obj->Raise('FuncGenerator : No function specified. ');
+	}
 			
 	@eval($t);
 		
 	// If there is an error in the function specifcation this is the only
 	// way we can discover that.
-	if( empty($xa) || empty($ya) )
-	    JpGraphError::Raise('FuncGenerator : Syntax error in function specification ');
+	if( empty($xa) || empty($ya) ) {
+	    $obj = new JpGraphError; $obj->Raise('FuncGenerator : Syntax error in function specification ');
+	}
 				
 	return array($xa,$ya);
     }
@@ -832,7 +836,7 @@ class Graph {
 	}
 
 	if( !is_numeric($aWidth) || !is_numeric($aHeight) ) {
-	    JpGraphError::Raise('Image width/height argument in Graph::Graph() must be numeric');
+	    $obj = new JpGraphError; $obj->Raise('Image width/height argument in Graph::Graph() must be numeric');
 	}
 		
 	// Automatically generate the image file name based on the name of the script that
@@ -939,7 +943,7 @@ class Graph {
 	$this->img->SetCenter(floor($this->img->width/2),floor($this->img->height/2));
 	$this->SetAngle(90);
 	if( empty($this->yaxis) || empty($this->xaxis) ) {
-	    JpgraphError::Raise('You must specify what scale to use with a call to Graph::SetScale()');
+	    $obj = new JpGraphError; $obj->Raise('You must specify what scale to use with a call to Graph::SetScale()');
 	}
 	$this->xaxis->SetLabelAlign('right','center');
 	$this->yaxis->SetLabelAlign('center','bottom');
@@ -951,8 +955,9 @@ class Graph {
 
     // Add a plot object to the graph
     function Add(&$aPlot) {
-	if( $aPlot == null )
-	    JpGraphError::Raise("Graph::Add() You tried to add a null plot to the graph.");
+	if( $aPlot == null ) {
+	    $obj = new JpGraphError; $obj->Raise("Graph::Add() You tried to add a null plot to the graph.");
+	}
 	if( is_array($aPlot) && count($aPlot) > 0 )
 	    $cl = strtolower(get_class($aPlot[0]));
 	else
@@ -982,8 +987,9 @@ class Graph {
 
     // Add plot to second Y-scale
     function AddY2(&$aPlot) {
-	if( $aPlot == null )
-	    JpGraphError::Raise("Graph::AddY2() You tried to add a null plot to the graph.");	
+	if( $aPlot == null ) {
+	    $obj = new JpGraphError; $obj->Raise("Graph::AddY2() You tried to add a null plot to the graph.");
+	}	
 
 	if( is_array($aPlot) && count($aPlot) > 0 )
 	    $cl = strtolower(get_class($aPlot[0]));
@@ -1003,8 +1009,9 @@ class Graph {
     // Add plot to second Y-scale
     function AddY($aN,&$aPlot) {
 
-	if( $aPlot == null )
-	    JpGraphError::Raise("Graph::AddYN() You tried to add a null plot to the graph.");	
+	if( $aPlot == null ) {
+	    $obj = new JpGraphError; $obj->Raise("Graph::AddYN() You tried to add a null plot to the graph.");
+	}	
 
 	if( is_array($aPlot) && count($aPlot) > 0 )
 	    $cl = strtolower(get_class($aPlot[0]));
@@ -1019,8 +1026,9 @@ class Graph {
     
     // Add text object to the graph
     function AddText(&$aTxt,$aToY2=false) {
-	if( $aTxt == null )
-	    JpGraphError::Raise("Graph::AddText() You tried to add a null text to the graph.");		
+	if( $aTxt == null ) {
+	    $obj = new JpGraphError; $obj->Raise("Graph::AddText() You tried to add a null text to the graph.");
+	}		
 	if( $aToY2 ) {
 	    if( is_array($aTxt) ) {
 		for($i=0; $i < count($aTxt); ++$i )
@@ -1041,8 +1049,9 @@ class Graph {
 	
     // Add a line object (class PlotLine) to the graph
     function AddLine(&$aLine,$aToY2=false) {
-	if( $aLine == null )
-	    JpGraphError::Raise("Graph::AddLine() You tried to add a null line to the graph.");	
+	if( $aLine == null ) {
+	    $obj = new JpGraphError; $obj->Raise("Graph::AddLine() You tried to add a null line to the graph.");
+	}	
 
 	if( $aToY2 ) {
  	    if( is_array($aLine) ) {
@@ -1064,8 +1073,9 @@ class Graph {
 
     // Add vertical or horizontal band
     function AddBand(&$aBand,$aToY2=false) {
-	if( $aBand == null )
-	    JpGraphError::Raise(" Graph::AddBand() You tried to add a null band to the graph.");
+	if( $aBand == null ) {
+	    $obj = new JpGraphError; $obj->Raise(" Graph::AddBand() You tried to add a null band to the graph.");
+	}
 
 	if( $aToY2 ) {
 	    if( is_array($aBand) ) {
@@ -1111,14 +1121,14 @@ class Graph {
     function SetBackgroundImage($aFileName,$aBgType=BGIMG_FILLPLOT,$aImgFormat="auto") {
 
 	if( $GLOBALS['gd2'] && !USE_TRUECOLOR ) {
-	    JpGraphError::Raise("You are using GD 2.x and are trying to use a background images on a non truecolor image. To use background images with GD 2.x you <b>must</b> enable truecolor by setting the USE_TRUECOLOR constant to TRUE. Due to a bug in GD 2.0.1 using any truetype fonts with truecolor images will result in very poor quality fonts.");
+	    $obj = new JpGraphError; $obj->Raise("You are using GD 2.x and are trying to use a background images on a non truecolor image. To use background images with GD 2.x you <b>must</b> enable truecolor by setting the USE_TRUECOLOR constant to TRUE. Due to a bug in GD 2.0.1 using any truetype fonts with truecolor images will result in very poor quality fonts.");
 	}
 
 	// Get extension to determine image type
 	if( $aImgFormat == "auto" ) {
 	    $e = explode('.',$aFileName);
 	    if( !$e ) {
-		JpGraphError::Raise('Incorrect file name for Graph::SetBackgroundImage() : '.$aFileName.' Must have a valid image extension (jpg,gif,png) when using autodetection of image type');
+		$obj = new JpGraphError; $obj->Raise('Incorrect file name for Graph::SetBackgroundImage() : '.$aFileName.' Must have a valid image extension (jpg,gif,png) when using autodetection of image type');
 	    }
 
 	    $valid_formats = array('png', 'jpg', 'gif');
@@ -1127,7 +1137,7 @@ class Graph {
 		$aImgFormat = 'jpg';
 	    }
 	    elseif (!in_array($aImgFormat, $valid_formats) )  {
-		JpGraphError::Raise('Unknown file extension ($aImgFormat) in Graph::SetBackgroundImage() for filename: '.$aFileName);
+		$obj = new JpGraphError; $obj->Raise('Unknown file extension ($aImgFormat) in Graph::SetBackgroundImage() for filename: '.$aFileName);
 	    }    
 	}
 
@@ -1208,8 +1218,9 @@ class Graph {
     function SetScale($aAxisType,$aYMin=1,$aYMax=1,$aXMin=1,$aXMax=1) {
 	$this->axtype = $aAxisType;
 
-	if( $aYMax < $aYMin || $aXMax < $aXMin )
-	    JpGraphError::Raise('Graph::SetScale(): Specified Max value must be larger than the specified Min value.');
+	if( $aYMax < $aYMin || $aXMax < $aXMin ) {
+	    $obj = new JpGraphError; $obj->Raise('Graph::SetScale(): Specified Max value must be larger than the specified Min value.');
+	}
 
 	$yt=substr($aAxisType,-3,3);
 	if( $yt=="lin" )
@@ -1220,8 +1231,9 @@ class Graph {
 	}
 	elseif( $yt=="log" )
 	    $this->yscale = new LogScale($aYMin,$aYMax);
-	else
-	    JpGraphError::Raise("Unknown scale specification for Y-scale. ($aAxisType)");
+	else {
+	    $obj = new JpGraphError; $obj->Raise("Unknown scale specification for Y-scale. ($aAxisType)");
+	}
 			
 	$xt=substr($aAxisType,0,3);
 	if( $xt == "lin" || $xt == "tex" ) {
@@ -1237,8 +1249,9 @@ class Graph {
 	}
 	elseif( $xt == "log" )
 	    $this->xscale = new LogScale($aXMin,$aXMax,"x");
-	else
-	    JpGraphError::Raise(" Unknown scale specification for X-scale. ($aAxisType)");
+	else {
+	    $obj = new JpGraphError; $obj->Raise(" Unknown scale specification for X-scale. ($aAxisType)");
+	}
 
 	$this->xaxis = new Axis($this->img,$this->xscale);
 	$this->yaxis = new Axis($this->img,$this->yscale);
@@ -1258,7 +1271,7 @@ class Graph {
 	elseif( $aAxisType=="log" ) {
 	    $this->y2scale = new LogScale($aY2Min,$aY2Max);
 	}
-	else JpGraphError::Raise("JpGraph: Unsupported Y2 axis type: $aAxisType\nMust be one of (lin,log,int)");
+	else { $obj = new JpGraphError; $obj->Raise("JpGraph: Unsupported Y2 axis type: $aAxisType\nMust be one of (lin,log,int)"); }
 			
 	$this->y2axis = new Axis($this->img,$this->y2scale);
 	$this->y2axis->scale->ticks->SetDirection(SIDE_LEFT); 
@@ -1285,7 +1298,7 @@ class Graph {
 	elseif( $aAxisType=="log" ) {
 	    $this->ynscale[$aN] = new LogScale($aYMin,$aYMax);
 	}
-	else JpGraphError::Raise("JpGraph: Unsupported Y axis type: $aAxisType\nMust be one of (lin,log,int)");
+	else {$obj = new JpGraphError; $obj->Raise("JpGraph: Unsupported Y axis type: $aAxisType\nMust be one of (lin,log,int)"); }
 			
 	$this->ynaxis[$aN] = new Axis($this->img,$this->ynscale[$aN]);
 	$this->ynaxis[$aN]->scale->ticks->SetDirection(SIDE_LEFT); 
@@ -1316,7 +1329,7 @@ class Graph {
 		$this->ytick_factor=100;			
 		break;		
 	    default:
-		JpGraphError::Raise("JpGraph: Unsupported Tick density: $densy");
+		$obj = new JpGraphError; $obj->Raise("JpGraph: Unsupported Tick density: $densy");
 	}
 	switch( $aXDensity ) {
 	    case TICKD_DENSE:
@@ -1332,7 +1345,7 @@ class Graph {
 		$this->xtick_factor=60;								
 		break;		
 	    default:
-		JpGraphError::Raise("JpGraph: Unsupported Tick density: $densx");
+		$obj = new JpGraphError; $obj->Raise("JpGraph: Unsupported Tick density: $densx");
 	}		
     }
 	
@@ -1430,7 +1443,7 @@ class Graph {
 			return true;
 		    }
 		    else
-			JpGraphError::Raise(" Can't open cached CSIM \"$basecsim\" for reading.");
+			$obj = new JpGraphError; $obj->Raise(" Can't open cached CSIM \"$basecsim\" for reading.");
 		}
 	    }
 	}
@@ -1462,7 +1475,7 @@ class Graph {
 		// Check that apache can write to directory specified
 
 		if( file_exists($dir) && !is_writeable($dir) ) {
-		    JpgraphError::Raise('Apache/PHP does not have permission to write to the CSIM cache directory ('.$dir.'). Check permissions.');
+		    $obj = new JpGraphError; $obj->Raise('Apache/PHP does not have permission to write to the CSIM cache directory ('.$dir.'). Check permissions.');
 		}
 		
 		// Make sure directory exists
@@ -1480,12 +1493,12 @@ class Graph {
 		    echo $htmlwrap;
 		}
 		else
-		    JpGraphError::Raise(" Can't write CSIM \"$basecsim\" for writing. Check free space and permissions.");
+		    $obj = new JpGraphError; $obj->Raise(" Can't write CSIM \"$basecsim\" for writing. Check free space and permissions.");
 	    }
 	    else {
 
 		if( $aScriptName=='' ) {
-		    JpGraphError::Raise('Missing script name in call to StrokeCSIM(). You must specify the name of the actual image script as the first parameter to StrokeCSIM().');
+		    $obj = new JpGraphError; $obj->Raise('Missing script name in call to StrokeCSIM(). You must specify the name of the actual image script as the first parameter to StrokeCSIM().');
 		    exit();
 		}
 
@@ -1678,7 +1691,7 @@ class Graph {
 
 	// Fist make a sanity check that user has specified a scale
 	if( empty($this->yscale) ) {
-	    JpGraphError::Raise('You must specify what scale to use with a call to Graph::SetScale().');
+	    $obj = new JpGraphError; $obj->Raise('You must specify what scale to use with a call to Graph::SetScale().');
 	}
 
 	// Start by adjusting the margin so that potential titles will fit.
@@ -1728,7 +1741,7 @@ class Graph {
 	$n = count($this->ynaxis);
 	for($i=0; $i<$n	; ++$i ) {
 	  if( $this->ynplots == null || $this->ynplots[$i] == null) {
-	    JpGraphError::Raise("No plots for Y-axis nbr:$i");
+	    $obj = new JpGraphError; $obj->Raise("No plots for Y-axis nbr:$i");
 	  } 
 	  $m = count($this->ynplots[$i]); 
 	  for($j=0; $j < $m; ++$j ) {
@@ -1748,12 +1761,13 @@ class Graph {
 	    $e = "Can't draw unspecified Y-scale.<br>\nYou have either:<br>\n";
 	    $e .= "1. Specified an Y axis for autoscaling but have not supplied any plots<br>\n";
 	    $e .= "2. Specified a scale manually but have forgot to specify the tick steps";
-	    JpGraphError::Raise($e);
+	    $obj = new JpGraphError; $obj->Raise($e);
 	}
 		
 	// Bail out if no plots and no specified X-scale
-	if( (!$this->xscale->IsSpecified() && count($this->plots)==0 && count($this->y2plots)==0) )
-	    JpGraphError::Raise("<strong>JpGraph: Can't draw unspecified X-scale.</strong><br>No plots.<br>");
+	if( (!$this->xscale->IsSpecified() && count($this->plots)==0 && count($this->y2plots)==0) ) {
+	    $obj = new JpGraphError; $obj->Raise("<strong>JpGraph: Can't draw unspecified X-scale.</strong><br>No plots.<br>");
+	}
 
 	//Check if we should autoscale y-axis
 	if( !$this->yscale->IsSpecified() && count($this->plots)>0 ) {
@@ -2100,7 +2114,7 @@ class Graph {
 					$this->img->plotheight+1,$this->img->plotwidth);
 	    }
 	    else {
-		JpGraphError::Raise('You have enabled clipping. Cliping is only supported for graphs at 0 or 90 degrees rotation. Please adjust you current angle (='.$this->img->a.' degrees) or disable clipping.');
+		$obj = new JpGraphError; $obj->Raise('You have enabled clipping. Cliping is only supported for graphs at 0 or 90 degrees rotation. Please adjust you current angle (='.$this->img->a.' degrees) or disable clipping.');
 	    }
 	    $this->img->Destroy();
 	    $this->img->SetCanvasH($oldimage);
@@ -2182,7 +2196,7 @@ class Graph {
 	    if( $this->iImgTrans ) {
 		if( !class_exists('ImgTrans') ) {
 		    require_once('jpgraph_imgtrans.php');
-		    //JpGraphError::Raise('In order to use image transformation you must include the file jpgraph_imgtrans.php in your script.');
+		    //$obj = new JpGraphError; $obj->Raise('In order to use image transformation you must include the file jpgraph_imgtrans.php in your script.');
 		}
 	       
 		$tform = new ImgTrans($this->img->img);
@@ -2237,7 +2251,7 @@ class Graph {
 		    $rightpos = SIDE_RIGHT;
 		    break;
 		default:
-	            JpGRaphError::Raise('Unknown AxisStyle() : '.$this->iAxisStyle);
+	            $obj = new JpGraphError; $obj->Raise('Unknown AxisStyle() : '.$this->iAxisStyle);
 	            break;
 	    }
 	    $this->xaxis->SetPos('min');
@@ -2308,7 +2322,7 @@ class Graph {
 	if( ( $ext == 'jpg' && !($supported & IMG_JPG) ) ||
 	    ( $ext == 'gif' && !($supported & IMG_GIF) ) ||
 	    ( $ext == 'png' && !($supported & IMG_PNG) ) ) {
-	    JpGraphError::Raise('The image format of your background image ('.$aFile.') is not supported in your system configuration. ');
+	    $obj = new JpGraphError; $obj->Raise('The image format of your background image ('.$aFile.') is not supported in your system configuration. ');
 	}
 
 
@@ -2327,12 +2341,12 @@ class Graph {
 	    $t = " Background image seems to be of different type (has different file extension)".
 		 " than specified imagetype. Specified: '".
 		$aImgFormat."'File: '".$aFile."'";
-	    JpGraphError::Raise($t);
+	    $obj = new JpGraphError; $obj->Raise($t);
 	}
 
 	$img = @$f($aFile);
 	if( !$img ) {
-	    JpGraphError::Raise(" Can't read background image: '".$aFile."'");   
+	    $obj = new JpGraphError; $obj->Raise(" Can't read background image: '".$aFile."'");   
 	}
 	return $img;
     }	
@@ -2369,7 +2383,7 @@ class Graph {
 
     function StrokeFrameBackground() {
 	if( $this->background_image != "" && $this->background_cflag != "" ) {
-	    JpGraphError::Raise('It is not possible to specify both a background image and a background country flag.');
+	    $obj = new JpGraphError; $obj->Raise('It is not possible to specify both a background image and a background country flag.');
 	}
 	if( $this->background_image != "" ) {
 	    $bkgimg = $this->LoadBkgImage($this->background_image_format);
@@ -2379,8 +2393,7 @@ class Graph {
 	}
 	elseif( $this->background_cflag != "" ) {
 	    if( ! class_exists('FlagImages') ) {
-		JpGraphError::Raise('In order to use Country flags as
-	backgrounds you must include the "jpgraph_flags.php" file.');
+		$obj = new JpGraphError; $obj->Raise('In order to use Country flags as backgrounds you must include the "jpgraph_flags.php" file.');
 	    }
 	    $fobj = new FlagImages(FLAGSIZE4);
 	    $dummy='';
@@ -2438,7 +2451,7 @@ class Graph {
 		$this->StrokeFrame();
 		break;
 	    default:
-		JpGraphError::Raise(" Unknown background image layout");
+		$obj = new JpGraphError; $obj->Raise(" Unknown background image layout");
 	}			
 	$this->img->SetAngle($aa);		
     }
@@ -2630,7 +2643,7 @@ class Graph {
 		$this->title->margin += $this->framebeveldepth ;
 	    }
 	    else {
-		JpGraphError::Raise('Unknown title background style.');
+		$obj = new JpGraphError; $obj->Raise('Unknown title background style.');
 	    }
 
 	    if( $this->titlebackground_framestyle === 3 ) {
@@ -2738,7 +2751,7 @@ class Graph {
 	$this->subsubtitle->Stroke($this->img);
 
 	// ... and fancy title
-	$this->tabtitle->Stroke($this->img);
+	$this->tabtitle->StrokeImg($this->img);
 
     }
 
@@ -2855,7 +2868,7 @@ class Graph {
        } while( ++$i < $n && !is_numeric($min) );
 	
 	if( !is_numeric($min) || !is_numeric($max) ) {
-           JpGraphError::Raise('Cannot use autoscaling since it is impossible to determine a valid min/max value  of the Y-axis (only null values).');
+           $obj = new JpGraphError; $obj->Raise('Cannot use autoscaling since it is impossible to determine a valid min/max value  of the Y-axis (only null values).');
 	}
 
 	list($xmax,$max) = $aPlots[0]->Max();
@@ -2916,12 +2929,12 @@ class TTF {
     function File($family,$style=FS_NORMAL) {
 	
 	if( $family == FF_HANDWRT || $family==FF_BOOK ) {
-	    JpGraphError::Raise('Font families FF_HANDWRT and FF_BOOK are no longer available due to copyright problem with these fonts. Fonts can no longer be distributed with JpGraph. Please download fonts from http://corefonts.sourceforge.net/');
+	    $obj = new JpGraphError; $obj->Raise('Font families FF_HANDWRT and FF_BOOK are no longer available due to copyright problem with these fonts. Fonts can no longer be distributed with JpGraph. Please download fonts from http://corefonts.sourceforge.net/');
 	}
 
 	$fam = @$this->font_files[$family];
 	if( !$fam ) {
-	    JpGraphError::Raise(
+	    $obj = new JpGraphError; $obj->Raise(
 	    "Specified TTF font family (id=$family) is unknown or does not exist. ".
 	    "Please note that TTF fonts are not distributed with JpGraph for copyright reasons.". 
 	    " You can find the MS TTF WEB-fonts (arial, courier etc) for download at ".
@@ -2929,10 +2942,11 @@ class TTF {
 	}
 	$f = @$fam[$style];
 
-	if( $f==='' )
-	    JpGraphError::Raise('Style "'.$this->style_names[$style].'" is not available for font family '.$this->font_files[$family][FS_NORMAL].'.');
+	if( $f==='' ) {
+	    $obj = new JpGraphError; $obj->Raise('Style "'.$this->style_names[$style].'" is not available for font family '.$this->font_files[$family][FS_NORMAL].'.');
+	}
 	if( !$f ) {
-	    JpGraphError::Raise("Unknown font style specification [$fam].");
+	    $obj = new JpGraphError; $obj->Raise("Unknown font style specification [$fam].");
 	}
 
 	if ($family >= FF_MINCHO && $family <= FF_PGOTHIC) {
@@ -2942,7 +2956,7 @@ class TTF {
 	}
 
 	if( file_exists($f) === false || is_readable($f) === false ) {
-	    JpGraphError::Raise("Font file \"$f\" is not readable or does not exist.");
+	    $obj = new JpGraphError; $obj->Raise("Font file \"$f\" is not readable or does not exist.");
 	}
 	return $f;
     }
@@ -3014,7 +3028,7 @@ class Text {
     // Create new text at absolute pixel coordinates
     function Text($aTxt="",$aXAbsPos=0,$aYAbsPos=0) {
 	if( ! is_string($aTxt) ) {
-	    JpGraphError::Raise('First argument to Text::Text() must be s atring.');
+	    $obj = new JpGraphError; $obj->Raise('First argument to Text::Text() must be s atring.');
 	}
 	$this->t = $aTxt;
 	$this->x = round($aXAbsPos);
@@ -3029,7 +3043,7 @@ class Text {
     }
 	
     // Alias for Pos()
-    function SetPos($aXAbsPos=0,$aYAbsPos=0,$aHAlign="left",$aVAlign="top") {
+    function SetPosAlign($aXAbsPos=0,$aYAbsPos=0,$aHAlign="left",$aVAlign="top") {
 	$this->Pos($aXAbsPos,$aYAbsPos,$aHAlign,$aVAlign);
     }
     
@@ -3141,7 +3155,7 @@ class Text {
 	    $this->dir = 0;
 	elseif( $aDirection=="v" )
 	    $this->dir = 90;
-	else JpGraphError::Raise(" Invalid direction specified for text.");
+	else { $obj = new JpGraphError; $obj->Raise(" Invalid direction specified for text."); }
     }
 	
     // Total width of text
@@ -3270,7 +3284,7 @@ class GraphTabTitle extends Text{
     }
 
     function SetPos($aAlign) {
-	$this->align = $aAlign;
+    	$this->align = $aAlign;
     }
     
     function SetWidth($aWidth) {
@@ -3286,7 +3300,7 @@ class GraphTabTitle extends Text{
 	$this->corner = $aD ;
     }
 
-    function Stroke($aImg) {
+    function StrokeImg($aImg) {
 	if( $this->hide ) 
 	    return;
 	$this->boxed = false;
@@ -3420,7 +3434,7 @@ class SuperScriptText extends Text {
     }
 
     // Total width of text
-    function GetWidth(&$aImg) {
+    function GetWidthRef(&$aImg) {
 	$aImg->SetFont($this->font_family,$this->font_style,$this->font_size);
 	$w = $aImg->GetTextWidth($this->t);
 	$aImg->SetFont($this->sfont_family,$this->sfont_style,$this->sfont_size);
@@ -3430,7 +3444,7 @@ class SuperScriptText extends Text {
     }
 	
     // Hight of font (approximate the height of the text)
-    function GetFontHeight(&$aImg) {
+    function GetFontHeightRef(&$aImg) {
 	$aImg->SetFont($this->font_family,$this->font_style,$this->font_size);	
 	$h = $aImg->GetFontHeight();
 	$aImg->SetFont($this->sfont_family,$this->sfont_style,$this->sfont_size);
@@ -3439,7 +3453,7 @@ class SuperScriptText extends Text {
     }
 
     // Hight of text
-    function GetTextHeight(&$aImg) {
+    function GetTextHeightRef(&$aImg) {
 	$aImg->SetFont($this->font_family,$this->font_style,$this->font_size);
 	$h = $aImg->GetTextHeight($this->t);
 	$aImg->SetFont($this->sfont_family,$this->sfont_style,$this->sfont_size);
@@ -3466,7 +3480,7 @@ class SuperScriptText extends Text {
 		$sy = $this->y - $h;
 		break;
 	    default:
-		JpGraphError::Raise('PANIC: Internal error in SuperScript::Stroke(). Unknown vertical alignment for text');
+		$obj = new JpGraphError; $obj->Raise('PANIC: Internal error in SuperScript::Stroke(). Unknown vertical alignment for text');
 		exit();
 	}
 
@@ -3481,7 +3495,7 @@ class SuperScriptText extends Text {
 		$sx = $this->x;
 		break;
 	    default:
-		JpGraphError::Raise('PANIC: Internal error in SuperScript::Stroke(). Unknown horizontal alignment for text');
+		$obj = new JpGraphError; $obj->Raise('PANIC: Internal error in SuperScript::Stroke(). Unknown horizontal alignment for text');
 		exit();
 	}
 
@@ -3684,7 +3698,7 @@ class Grid {
 	    }
 	}	
 	else {
-	    JpGraphError::Raise('Internal error: Unknown grid axis ['.$this->scale->type.']');
+	    $obj = new JpGraphError; $obj->Raise('Internal error: Unknown grid axis ['.$this->scale->type.']');
 	}
 	return true;
     }
@@ -3842,8 +3856,9 @@ class Axis {
     // Utility function to set the direction for tick marks
     function SetTickDirection($aDir) {
     	// Will be deprecated from 1.7    	
-    	if( ERR_DEPRECATED )
-	    JpGraphError::Raise('Axis::SetTickDirection() is deprecated. Use Axis::SetTickSide() instead');
+    	if( ERR_DEPRECATED ) {
+	    $obj = new JpGraphError; $obj->Raise('Axis::SetTickDirection() is deprecated. Use Axis::SetTickSide() instead');
+    	}
 	$this->scale->ticks->SetSide($aDir);
     }
     
@@ -3859,8 +3874,9 @@ class Axis {
 	
     // How far from the axis should the labels be drawn
     function SetTickLabelMargin($aMargin) {
-	if( ERR_DEPRECATED )    	
-	    JpGraphError::Raise('SetTickLabelMargin() is deprecated. Use Axis::SetLabelMargin() instead.');
+	if( ERR_DEPRECATED ) {
+	    $obj = new JpGraphError; $obj->Raise('SetTickLabelMargin() is deprecated. Use Axis::SetLabelMargin() instead.');
+	}
       	$this->tick_label_margin=$aMargin;
     }
 
@@ -3872,7 +3888,7 @@ class Axis {
     // at $start
     // DEPRECATED FUNCTION: USE SetTextTickInterval() INSTEAD
     function SetTextTicks($step,$start=0) {
-	JpGraphError::Raise(" SetTextTicks() is deprecated. Use SetTextTickInterval() instead.");		
+	$obj = new JpGraphError; $obj->Raise(" SetTextTicks() is deprecated. Use SetTextTickInterval() instead.");		
     }
 
     // Specify that every $step of the ticks should be displayed starting
@@ -3885,16 +3901,18 @@ class Axis {
     // Specify that every $step tick mark should have a label 
     // should be displayed starting
     function SetTextLabelInterval($aStep) {
-	if( $aStep < 1 )
-	    JpGraphError::Raise(" Text label interval must be specified >= 1.");
+	if( $aStep < 1 ) {
+	    $obj = new JpGraphError; $obj->Raise(" Text label interval must be specified >= 1.");
+	}
 	$this->label_step=$aStep;
     }
 	
     // Which side of the axis should the labels be on?
     function SetLabelPos($aSidePos) {
     	// This will be deprecated from 1.7
-	if( ERR_DEPRECATED )    	
-	    JpGraphError::Raise('SetLabelPos() is deprecated. Use Axis::SetLabelSide() instead.');
+	if( ERR_DEPRECATED ) {    	
+	    $obj = new JpGraphError; $obj->Raise('SetLabelPos() is deprecated. Use Axis::SetLabelSide() instead.');
+	}
 	$this->labelPos=$aSidePos;
     }
     
@@ -3959,7 +3977,7 @@ class Axis {
 	    elseif($this->title_adjust=="low")
 		$this->title->Pos($this->img->left_margin,$y,"left","top");
 	    else {	
-		JpGraphError::Raise('Unknown alignment specified for X-axis title. ('.$this->title_adjust.')');
+		$obj = new JpGraphError; $obj->Raise('Unknown alignment specified for X-axis title. ('.$this->title_adjust.')');
 	    }
 	}
 	elseif( $this->scale->type == "y" ) {
@@ -3992,8 +4010,9 @@ class Axis {
 		$this->title->Pos($x,($this->img->height-$this->img->top_margin-$this->img->bottom_margin)/2+$this->img->top_margin,$halign,"center");
 	    elseif($this->title_adjust=="low")
 		$this->title->Pos($x,$this->img->height-$this->img->bottom_margin,$halign,"bottom");
-	    else	
-		JpGraphError::Raise('Unknown alignment specified for Y-axis title. ('.$this->title_adjust.')');
+	    else	{
+		$obj = new JpGraphError; $obj->Raise('Unknown alignment specified for Y-axis title. ('.$this->title_adjust.')');
+	    }
 		
 	}
 	$this->scale->ticks->Stroke($this->img,$this->scale,$pos);
@@ -4107,7 +4126,7 @@ class Axis {
 		else {
 		    // scale->type == "y"
 		    //if( $this->label_angle!=0 ) 
-		    //JpGraphError::Raise(" Labels at an angle are not supported on Y-axis");
+		    //$obj = new JpGraphError; $obj->Raise(" Labels at an angle are not supported on Y-axis");
 		    if( $this->labelPos == SIDE_LEFT ) { // To the left of y-axis					
 			if( $this->label_halign=='' && $this->label_valign=='')	
 			    $this->img->SetTextAlign("right","center");
@@ -4227,8 +4246,9 @@ class Ticks {
     // Specify number of decimals in automatic labels
     // Deprecated from 1.4. Use SetFormatString() instead
     function SetPrecision($aPrecision) { 	
-    	if( ERR_DEPRECATED )
-	    JpGraphError::Raise('Ticks::SetPrecision() is deprecated. Use Ticks::SetLabelFormat() (or Ticks::SetFormatCallback()) instead');
+    	if( ERR_DEPRECATED ) {
+	    $obj = new JpGraphError; $obj->Raise('Ticks::SetPrecision() is deprecated. Use Ticks::SetLabelFormat() (or Ticks::SetFormatCallback()) instead');
+    	}
 	$this->precision=$aPrecision;
     }
 
@@ -4298,7 +4318,7 @@ class LinearTicks extends Ticks {
 	    $aMinStep=$aMajStep;
     	
 	if( $aMajStep <= 0 || $aMinStep <= 0 ) {
-	    JpGraphError::Raise(" Minor or major step size is 0. Check that you haven't
+	    $obj = new JpGraphError; $obj->Raise(" Minor or major step size is 0. Check that you haven't
 				got an accidental SetTextTicks(0) in your code.<p>
 				If this is not the case you might have stumbled upon a bug in JpGraph.
 				Please report this and if possible include the data that caused the
@@ -4315,8 +4335,9 @@ class LinearTicks extends Ticks {
 	$maj_step_abs = $scale->scale_factor*$this->major_step;		
 	$min_step_abs = $scale->scale_factor*$this->minor_step;		
 
-	if( $min_step_abs==0 || $maj_step_abs==0 ) 
-	    JpGraphError::Raise("A plot has an illegal scale. This could for example be that you are trying to use text autoscaling to draw a line plot with only one point or that the plot area is too small. It could also be that no input data value is numeric (perhaps only '-' or 'x')");
+	if( $min_step_abs==0 || $maj_step_abs==0 ) { 
+	    $obj = new JpGraphError; $obj->Raise("A plot has an illegal scale. This could for example be that you are trying to use text autoscaling to draw a line plot with only one point or that the plot area is too small. It could also be that no input data value is numeric (perhaps only '-' or 'x')");
+	}
 	$limit = $scale->scale_abs[1];	
 	$nbrmajticks=floor(1.000001*(($scale->GetMaxVal()-$scale->GetMinVal())/$this->major_step))+1;
 	$first=0;
@@ -4587,8 +4608,9 @@ class LinearScale {
 
     // Specify scale "grace" value (top and bottom)
     function SetGrace($aGraceTop,$aGraceBottom=0) {
-	if( $aGraceTop<0 || $aGraceBottom < 0  )
-	    JpGraphError::Raise(" Grace must be larger then 0");
+	if( $aGraceTop<0 || $aGraceBottom < 0  ) {
+	    $obj = new JpGraphError; $obj->Raise(" Grace must be larger then 0");
+	}
 	$this->gracetop=$aGraceTop;
 	$this->gracebottom=$aGraceBottom;
     }
@@ -4613,8 +4635,9 @@ class LinearScale {
     // Translate between world and screen
     function Translate($aCoord) {
 	if( !is_numeric($aCoord) ) {
-	    if( $aCoord != '' && $aCoord != '-' && $aCoord != 'x' ) 
-		JpGraphError::Raise('Your data contains non-numeric values.');
+	    if( $aCoord != '' && $aCoord != '-' && $aCoord != 'x' ) { 
+		$obj = new JpGraphError; $obj->Raise('Your data contains non-numeric values.');
+	    }
 	    return 0;
 	}
 	else {
@@ -4626,8 +4649,9 @@ class LinearScale {
     // to know the relative position (in pixels) on the axis
     function RelTranslate($aCoord) {
 	if( !is_numeric($aCoord) ) {
-	    if( $aCoord != '' && $aCoord != '-' && $aCoord != 'x'  ) 
-		JpGraphError::Raise('Your data contains non-numeric values.');
+	    if( $aCoord != '' && $aCoord != '-' && $aCoord != 'x'  ) { 
+		$obj = new JpGraphError; $obj->Raise('Your data contains non-numeric values.');
+	    }
 	    return 0;
 	}
 	else { 
@@ -4655,7 +4679,7 @@ class LinearScale {
 	if( is_numeric($this->autoscale_min) ) {
 	    $min = ceil($this->autoscale_min);
 	    if( $min >= $max ) {
-		JpGraphError::Raise('You have specified a min value with SetAutoMin() which is larger than the maximum value used for the scale. This is not possible.');
+		$obj = new JpGraphError; $obj->Raise('You have specified a min value with SetAutoMin() which is larger than the maximum value used for the scale. This is not possible.');
 		die();
 	    }
 	}
@@ -4663,7 +4687,7 @@ class LinearScale {
 	if( is_numeric($this->autoscale_max) ) {
 	    $max = ceil($this->autoscale_max);
 	    if( $min >= $max ) {
-		JpGraphError::Raise('You have specified a max value with SetAutoMax() which is smaller than the miminum value used for the scale. This is not possible.');
+		$obj = new JpGraphError; $obj->Raise('You have specified a max value with SetAutoMax() which is smaller than the miminum value used for the scale. This is not possible.');
 		die();
 	    }
 	}
@@ -4788,7 +4812,7 @@ class LinearScale {
 	if( is_numeric($this->autoscale_min) ) {
 	    $min = $this->autoscale_min;
 	    if( $min >= $max ) {
-		JpGraphError::Raise('You have specified a min value with SetAutoMin() which is larger than the maximum value used for the scale. This is not possible.');
+		$obj = new JpGraphError; $obj->Raise('You have specified a min value with SetAutoMin() which is larger than the maximum value used for the scale. This is not possible.');
 		die();
 	    }
 	    if( abs($min-$max ) < 0.00001 )
@@ -4798,7 +4822,7 @@ class LinearScale {
 	if( is_numeric($this->autoscale_max) ) {
 	    $max = $this->autoscale_max;
 	    if( $min >= $max ) {
-		JpGraphError::Raise('You have specified a max value with SetAutoMax() which is smaller than the miminum value used for the scale. This is not possible.');
+		$obj = new JpGraphError; $obj->Raise('You have specified a max value with SetAutoMax() which is smaller than the miminum value used for the scale. This is not possible.');
 		die();
 	    }
 	    if( abs($min-$max ) < 0.00001 )
@@ -4908,7 +4932,7 @@ class LinearScale {
 		
 	if( $this->world_size<=0 ) {
 	    // This should never ever happen !!
-	    JpGraphError::Raise("JpGraph Fatal Error:<br>
+	    $obj = new JpGraphError; $obj->Raise("JpGraph Fatal Error:<br>
 		 You have unfortunately stumbled upon a bug in JpGraph. <br>
 		 It seems like the scale range is ".$this->world_size." [for ".
 				$this->type." scale] <br>
@@ -5000,11 +5024,11 @@ class LinearScale {
 	
     function IntCalcTicks($maxsteps,$min,$max,$a,$majend=true) {
 	$diff=$max-$min; 
-	if( $diff==0 )
-	    JpGraphError::Raise('Can\'t automatically determine ticks since min==max.');
-	else
+	if( $diff==0 ) {
+	    $obj = new JpGraphError; $obj->Raise('Can\'t automatically determine ticks since min==max.');
+	} else {
 	    $ld=floor(log10($diff));
-		
+	}
 	// Gravitate min towards zero if we are close		
 	if( $min>0 && $min < pow(10,$ld) ) $min=0;
 		
@@ -5042,11 +5066,11 @@ class LinearScale {
     function IntCalcTicksFreeze($maxsteps,$min,$max,$a) {
 	// Same as IntCalcTick but don't change min/max values
 	$diff=$max-$min; 
-	if( $diff==0 )
-	    JpGraphError::Raise('Can\'t automatically determine ticks since min==max.');
-	else
+	if( $diff==0 ) {
+	    $obj = new JpGraphError; $obj->Raise('Can\'t automatically determine ticks since min==max.');
+	} else {
 	    $ld=floor(log10($diff));
-		
+	}
 	if( $ld == 0 ) $ld=1;
 	
 	if( $a == 1 ) 
@@ -5568,16 +5592,17 @@ class RGB {
 		$adj = 0.0 + substr($aColor,$pos+1);
 		$aColor = substr($aColor,0,$pos);
 	    }
-	    if( $adj < 0 )
-		JpGraphError::Raise('Adjustment factor for color must be > 0');
-
+	    if( $adj < 0 ) {
+		$obj = new JpGraphError; $obj->Raise('Adjustment factor for color must be > 0');
+	    }
 	    if (substr($aColor, 0, 1) == "#") {
 		$r = hexdec(substr($aColor, 1, 2));
 		$g = hexdec(substr($aColor, 3, 2));
 		$b = hexdec(substr($aColor, 5, 2));
 	    } else {
-      		if(!isset($this->rgb_table[$aColor]) )
-		    JpGraphError::Raise(" Unknown color: $aColor");
+      		if(!isset($this->rgb_table[$aColor]) ) {
+		    $obj = new JpGraphError; $obj->Raise(" Unknown color: $aColor");
+      		}
 		$tmp=$this->rgb_table[$aColor];
 		$r = $tmp[0];
 		$g = $tmp[1];
@@ -5607,7 +5632,7 @@ class RGB {
 		return $aColor;
 	}
 	else
-	    JpGraphError::Raise(" Unknown color specification: $aColor , size=".count($aColor));
+	    $obj = new JpGraphError; $obj->Raise(" Unknown color specification: $aColor , size=".count($aColor));
     }
 	
     // Compare two colors
@@ -5631,7 +5656,7 @@ class RGB {
 	    $aAlpha = $a;
 	if( $GLOBALS['gd2'] ) {
 	    if( $aAlpha < 0 || $aAlpha > 1 ) {
-		JpGraphError::Raise('Alpha parameter for color must be between 0.0 and 1.0');
+		$obj = new JpGraphError; $obj->Raise('Alpha parameter for color must be between 0.0 and 1.0');
 		exit(1);
 	    }
 	    return imagecolorresolvealpha($this->img, $r, $g, $b, round($aAlpha * 127));
@@ -5683,7 +5708,7 @@ class Image {
 	$this->SetAutoMargin();		
 
 	if( !$this->SetImgFormat($aFormat) ) {
-	    JpGraphError::Raise("JpGraph: Selected graphic format is either not supported or unknown [$aFormat]");
+	    $obj = new JpGraphError; $obj->Raise("JpGraph: Selected graphic format is either not supported or unknown [$aFormat]");
 	}
 	$this->ttf = new TTF();
 	$this->langconv = new LanguageConv();
@@ -5696,7 +5721,7 @@ class Image {
 
     function CreateRawCanvas($aWidth=0,$aHeight=0) {
 	if( $aWidth <= 1 || $aHeight <= 1 ) {
-	    JpGraphError::Raise("Illegal sizes specified for width or height when creating an image, (width=$aWidth, height=$aHeight)");
+	    $obj = new JpGraphError; $obj->Raise("Illegal sizes specified for width or height when creating an image, (width=$aWidth, height=$aHeight)");
 	}
 	if( @$GLOBALS['gd2']==true && USE_TRUECOLOR ) {
 	    $this->img = @imagecreatetruecolor($aWidth, $aHeight);
@@ -5781,7 +5806,7 @@ class Image {
 		($fromHeight != -1 && ($fromHeight != $fromHeight)) ) {
 		// Create a new canvas that will hold the re-scaled original from image
 		if( $toWidth <= 1 || $toHeight <= 1 ) {
-		    JpGraphError::Raise('Illegal image size when copying image. Size for copied to image is 1 pixel or less.');
+		    $obj = new JpGraphError; $obj->Raise('Illegal image size when copying image. Size for copied to image is 1 pixel or less.');
 		}
 		if( @$GLOBALS['gd2']==true && USE_TRUECOLOR ) {
 		    $tmpimg = @imagecreatetruecolor($toWidth, $toHeight);
@@ -5789,7 +5814,7 @@ class Image {
 		    $tmpimg = @imagecreate($toWidth, $toHeight);	
 		}	    
 		if( $tmpimg < 1 ) {
-		    JpGraphError::Raise('Failed to create temporary GD canvas. Out of memory ?');
+		    $obj = new JpGraphError; $obj->Raise('Failed to create temporary GD canvas. Out of memory ?');
 		}
 		$this->CopyCanvasH($tmpimg,$fromImg,0,0,0,0,
 				   $toWidth,$toHeight,$fromWidth,$fromHeight);
@@ -5827,8 +5852,9 @@ class Image {
     function SetAlphaBlending($aFlg=true) {
 	if( $GLOBALS['gd2'] )
 	    ImageAlphaBlending($this->img,$aFlg);
-	else 
-	    JpGraphError::Raise('You only seem to have GD 1.x installed. To enable Alphablending requires GD 2.x or higher. Please install GD or make sure the constant USE_GD2 is specified correctly to reflect your installation. By default it tries to autodetect what version of GD you have installed. On some very rare occasions it may falsely detect GD2 where only GD1 is installed. You must then set USE_GD2 to false.');
+	else { 
+	    $obj = new JpGraphError; $obj->Raise('You only seem to have GD 1.x installed. To enable Alphablending requires GD 2.x or higher. Please install GD or make sure the constant USE_GD2 is specified correctly to reflect your installation. By default it tries to autodetect what version of GD you have installed. On some very rare occasions it may falsely detect GD2 where only GD1 is installed. You must then set USE_GD2 to false.');
+	}
     }
 
 	
@@ -5862,7 +5888,7 @@ class Image {
 
 	    // Check that this PHP has support for TTF fonts
 	    if( !function_exists('imagettfbbox') ) {
-		JpGraphError::Raise('This PHP build has not been configured with TTF support. You need to recompile your PHP installation with FreeType support.');
+		$obj = new JpGraphError; $obj->Raise('This PHP build has not been configured with TTF support. You need to recompile your PHP installation with FreeType support.');
 		exit();
 	    }
 	    $this->font_file = $this->ttf->File($this->font_family,$this->font_style);
@@ -5881,7 +5907,7 @@ class Image {
 	    if( $angle==0 ) {
 		$h = imagefontheight($this->font_family);
 		if( $h === false ) {
-		    JpGraphError::Raise('You have a misconfigured GD font support. The call to imagefontwidth() fails.');
+		    $obj = new JpGraphError; $obj->Raise('You have a misconfigured GD font support. The call to imagefontwidth() fails.');
 		}
 
 		return $n*$h;
@@ -5889,7 +5915,7 @@ class Image {
 	    else {
 		$w = @imagefontwidth($this->font_family);
 		if( $w === false ) {
-		    JpGraphError::Raise('You have a misconfigured GD font support. The call to imagefontwidth() fails.');
+		    $obj = new JpGraphError; $obj->Raise('You have a misconfigured GD font support. The call to imagefontwidth() fails.');
 		}
 
 		return $m*$w;
@@ -5931,7 +5957,7 @@ class Image {
 	    if( $angle==0 ) {
 		$w = @imagefontwidth($this->font_family);
 		if( $w === false ) {
-		    JpGraphError::Raise('You have a misconfigured GD font support. The call to imagefontwidth() fails.');
+		    $obj = new JpGraphError; $obj->Raise('You have a misconfigured GD font support. The call to imagefontwidth() fails.');
 		}
 		return $m*$w;
 	    }
@@ -5939,7 +5965,7 @@ class Image {
 		// 90 degrees internal so height becomes width
 		$h = @imagefontheight($this->font_family); 
 		if( $h === false ) {
-		    JpGraphError::Raise('You have a misconfigured GD font support. The call to imagefontheight() fails.');
+		    $obj = new JpGraphError; $obj->Raise('You have a misconfigured GD font support. The call to imagefontheight() fails.');
 		}
 		return $n*$h;
 	    }
@@ -5967,7 +5993,7 @@ class Image {
 	if( !is_numeric($dir) ) {
 	    if( $dir=="h" ) $dir=0;
 	    elseif( $dir=="v" ) $dir=90;
-	    else JpGraphError::Raise(" Unknown direction specified in call to StrokeBoxedText() [$dir]");
+	    else { $obj = new JpGraphError; $obj->Raise(" Unknown direction specified in call to StrokeBoxedText() [$dir]"); }
 	}
 		
 	if( $this->font_family >= FF_FONT0 && $this->font_family <= FF_FONT2+1) {	
@@ -6037,8 +6063,9 @@ class Image {
 
     function _StrokeBuiltinFont($x,$y,$txt,$dir=0,$paragraph_align="left",&$aBoundingBox,$aDebug=false) {
 
-	if( is_numeric($dir) && $dir!=90 && $dir!=0) 
-	    JpGraphError::Raise(" Internal font does not support drawing text at arbitrary angle. Use TTF fonts instead.");
+	if( is_numeric($dir) && $dir!=90 && $dir!=0) { 
+	    $obj = new JpGraphError; $obj->Raise(" Internal font does not support drawing text at arbitrary angle. Use TTF fonts instead.");
+	}
 
 	$h=$this->GetTextHeight($txt);
 	$fh=$this->GetFontHeight();
@@ -6119,7 +6146,7 @@ class Image {
     function GetTTFBBox($aTxt,$aAngle=0) {
 	$bbox = @ImageTTFBBox($this->font_size,$aAngle,$this->font_file,$aTxt);
 	if( $bbox === false ) {
-	    JpGraphError::Raise("There is either a configuration problem with TrueType or a problem reading font file (".$this->font_file."). Make sure file exists and is in a readable place for the HTTP process. (If 'basedir' restriction is enabled in PHP then the font file must be located in the document root.). It might also be a wrongly installed FreeType library. Try uppgrading to at least FreeType 2.1.13 and recompile GD with the correct setup so it can find the new FT library.");
+	    $obj = new JpGraphError; $obj->Raise("There is either a configuration problem with TrueType or a problem reading font file (".$this->font_file."). Make sure file exists and is in a readable place for the HTTP process. (If 'basedir' restriction is enabled in PHP then the font file must be located in the document root.). It might also be a wrongly installed FreeType library. Try uppgrading to at least FreeType 2.1.13 and recompile GD with the correct setup so it can find the new FT library.");
 	}
 	return $bbox;
     }
@@ -6131,7 +6158,7 @@ class Image {
 	$aTxt = $this->AddTxtCR($aTxt);
 
 	if( !is_readable($this->font_file) ) {
-	    JpGraphError::Raise('Can not read font file ('.$this->font_file.') in call to Image::GetBBoxTTF. Please make sure that you have set a font before calling this method and that the font is installed in the TTF directory.');
+	    $obj = new JpGraphError; $obj->Raise('Can not read font file ('.$this->font_file.') in call to Image::GetBBoxTTF. Please make sure that you have set a font before calling this method and that the font is installed in the TTF directory.');
 	}
 	$bbox = $this->GetTTFBBox($aTxt,$aAngle);
 
@@ -6366,8 +6393,9 @@ class Image {
 	// Do special language encoding
 	$txt = $this->langconv->Convert($txt,$this->font_family);
 
-	if( !is_numeric($dir) )
-	    JpGraphError::Raise(" Direction for text most be given as an angle between 0 and 90.");
+	if( !is_numeric($dir) ) {
+	    $obj = new JpGraphError; $obj->Raise(" Direction for text most be given as an angle between 0 and 90.");
+	}
 			
 	if( $this->font_family >= FF_FONT0 && $this->font_family <= FF_FONT2+1) {	
 	    $this->_StrokeBuiltinFont($x,$y,$txt,$dir,$paragraph_align,$boundingbox,$debug);
@@ -6375,8 +6403,9 @@ class Image {
 	elseif($this->font_family >= _FF_FIRST && $this->font_family <= _FF_LAST)  {
 	    $this->_StrokeTTF($x,$y,$txt,$dir,$paragraph_align,$boundingbox,$debug);
 	}
-	else
-	    JpGraphError::Raise(" Unknown font font family specification. ");
+	else {
+	    $obj = new JpGraphError; $obj->Raise(" Unknown font font family specification. ");
+	}
 	return $boundingbox;
     }
 	
@@ -6388,8 +6417,9 @@ class Image {
 	$this->plotwidth=$this->width - $this->left_margin-$this->right_margin ; 
 	$this->plotheight=$this->height - $this->top_margin-$this->bottom_margin ;
 	if( $this->width  > 0 && $this->height > 0 ) {
-	    if( $this->plotwidth < 0  || $this->plotheight < 0 )
-		JpGraphError::raise("To small plot area. ($lm,$rm,$tm,$bm : $this->plotwidth x $this->plotheight). With the given image size and margins there is to little space left for the plot. Increase the plot size or reduce the margins.");
+	    if( $this->plotwidth < 0  || $this->plotheight < 0 ) {
+		$obj = new JpGraphError; $obj->Raise("To small plot area. ($lm,$rm,$tm,$bm : $this->plotwidth x $this->plotheight). With the given image size and margins there is to little space left for the plot. Increase the plot size or reduce the margins.");
+	    }
 	}
     }
 
@@ -6402,7 +6432,7 @@ class Image {
 	$this->current_color=$this->rgb->allocate($color,$aAlpha);
 	if( $this->current_color == -1 ) {
 	    $tc=imagecolorstotal($this->img);
-	    JpGraphError::Raise("Can't allocate any more colors.
+	    $obj = new JpGraphError; $obj->Raise("Can't allocate any more colors.
 				Image has already allocated maximum of <b>$tc colors</b>. 
 				This might happen if you have anti-aliasing turned on
 				together with a background image or perhaps gradient fill 
@@ -6434,13 +6464,14 @@ DEFINE(\"USE_APPROX_COLORS\",true);
 	    $this->SetColor($color);
 	}
 	else {
-	    JpGraphError::Raise("Color specified as empty string in PushColor().");
+	    $obj = new JpGraphError; $obj->Raise("Color specified as empty string in PushColor().");
 	}
     }
 	
     function PopColor() {
-	if($this->colorstackidx<1)
-	    JpGraphError::Raise(" Negative Color stack index. Unmatched call to PopColor()");
+	if($this->colorstackidx<1) {
+	    $obj = new JpGraphError; $obj->Raise(" Negative Color stack index. Unmatched call to PopColor()");
+	}
 	$this->current_color=$this->colorstack[--$this->colorstackidx];
 	$this->current_color_name=$this->colorstack[--$this->colorstackidx];
     }
@@ -6473,8 +6504,9 @@ DEFINE(\"USE_APPROX_COLORS\",true);
     }
 
     function _AdjBrightContrast($img,$bright,$contr=0) {
-	if( $bright < -1 || $bright > 1 || $contr < -1 || $contr > 1 )
-	    JpGraphError::Raise(" Parameters for brightness and Contrast out of range [-1,1]");		
+	if( $bright < -1 || $bright > 1 || $contr < -1 || $contr > 1 ) {
+	    $obj = new JpGraphError; $obj->Raise(" Parameters for brightness and Contrast out of range [-1,1]");
+	}		
 	$nbr = imagecolorstotal ($img);
 	for( $i=0; $i<$nbr; ++$i ) {
 	    $colarr = imagecolorsforindex ($img,$i);
@@ -6795,7 +6827,7 @@ DEFINE(\"USE_APPROX_COLORS\",true);
 				
 		$bc = @imagecolorsforindex($this->img,imagecolorat($this->img,$x>>16,$y>>16));
 		if( $bc <= 0 ) {
-		    JpGraphError::Raise('Problem with color palette and your GD setup. Please disable anti-aliasing or use GD2 with true-color. If you have GD2 library installed please make sure that you have set the USE_GD2 constant to true and that truecolor is enabled.');
+		    $obj = new JpGraphError; $obj->Raise('Problem with color palette and your GD setup. Please disable anti-aliasing or use GD2 with true-color. If you have GD2 library installed please make sure that you have set the USE_GD2 constant to true and that truecolor is enabled.');
 		}
 		$bc=array($bc["red"],$bc["green"],$bc["blue"]);
 				
@@ -6818,7 +6850,7 @@ DEFINE(\"USE_APPROX_COLORS\",true);
 				
 		$bc = @imagecolorsforindex($this->img,imagecolorat($this->img,$x>>16,$y>>16));
 		if( $bc <= 0 ) {
-		    JpGraphError::Raise('Problem with color palette and your GD setup. Please disable anti-aliasing or use GD2 with true-color. If you have GD2 library installed please make sure that you have set the USE_GD2 constant to true and truecolor is enabled.');
+		    $obj = new JpGraphError; $obj->Raise('Problem with color palette and your GD setup. Please disable anti-aliasing or use GD2 with true-color. If you have GD2 library installed please make sure that you have set the USE_GD2 constant to true and truecolor is enabled.');
 
 		}
 
@@ -6839,17 +6871,18 @@ DEFINE(\"USE_APPROX_COLORS\",true);
     // Set line style dashed, dotted etc
     function SetLineStyle($s) {
 	if( is_numeric($s) ) {
-	    if( $s<1 || $s>4 ) 
-		JpGraphError::Raise(" Illegal numeric argument to SetLineStyle(): ($s)");
+	    if( $s<1 || $s>4 ) { 
+		$obj = new JpGraphError; $obj->Raise(" Illegal numeric argument to SetLineStyle(): ($s)");
+	    }
 	}
 	elseif( is_string($s) ) {
 	    if( $s == "solid" ) $s=1;
 	    elseif( $s == "dotted" ) $s=2;
 	    elseif( $s == "dashed" ) $s=3;
 	    elseif( $s == "longdashed" ) $s=4;
-	    else JpGraphError::Raise(" Illegal string argument to SetLineStyle(): $s");
+	    else { $obj = new JpGraphError; $obj->Raise(" Illegal string argument to SetLineStyle(): $s"); }
 	}
-	else JpGraphError::Raise(" Illegal argument to SetLineStyle $s");
+	else { $obj = new JpGraphError; $obj->Raise(" Illegal argument to SetLineStyle $s"); }
 	$this->line_style=$s;
     }
 	
@@ -6869,7 +6902,7 @@ DEFINE(\"USE_APPROX_COLORS\",true);
 		$this->DashedLine($x1,$y1,$x2,$y2,8,6);
 		break;
 	    default:
-		JpGraphError::Raise(" Unknown line style: $this->line_style ");
+		$obj = new JpGraphError; $obj->Raise(" Unknown line style: $this->line_style ");
 		break;
 	}
     }
@@ -6959,7 +6992,7 @@ DEFINE(\"USE_APPROX_COLORS\",true);
     function FilledPolygon($pts) {
 	$n=count($pts);
 	if( $n == 0 ) {
-	    JpGraphError::Raise('NULL data specified for a filled polygon. Check that your data is not NULL.');
+	    $obj = new JpGraphError; $obj->Raise('NULL data specified for a filled polygon. Check that your data is not NULL.');
 	}
 	for($i=0; $i < $n; ++$i) 
 	    $pts[$i] = round($pts[$i]);
@@ -7120,7 +7153,7 @@ DEFINE(\"USE_APPROX_COLORS\",true);
     function FillToBorder($x,$y,$aBordColor) {
 	$bc = $this->rgb->allocate($aBordColor);
 	if( $bc == -1 ) {
-	    JpGraphError::Raise('Image::FillToBorder : Can not allocate more colors');
+	    $obj = new JpGraphError; $obj->Raise('Image::FillToBorder : Can not allocate more colors');
 	    exit();
 	}
 	imagefilltoborder($this->img,round($x),round($y),$bc,$this->current_color);
@@ -7210,7 +7243,7 @@ HTTP headers have already been sent.</font></td></tr><tr><td><b>Explanation:</b>
 		$res = @$func($this->img);
 	}
 	if( !$res )
-	    JpGraphError::Raise("Can't create or stream image to file $aFile Check that PHP has enough permission to write a file to the current directory.");
+	    $obj = new JpGraphError; $obj->Raise("Can't create or stream image to file $aFile Check that PHP has enough permission to write a file to the current directory.");
     }
 		
     // Clear resource tide up by image
@@ -7231,11 +7264,11 @@ HTTP headers have already been sent.</font></td></tr><tr><td><b>Explanation:</b>
 		$this->img_format="jpeg";
 	    elseif( $supported & IMG_GIF )
 		$this->img_format="gif";
-	    else
-		JpGraphError::Raise(" Your PHP (and GD-lib) installation does not appear to support any known graphic formats.".
+	    else {
+		$obj = new JpGraphError; $obj->Raise(" Your PHP (and GD-lib) installation does not appear to support any known graphic formats.".
 				    "You need to first make sure GD is compiled as a module to PHP. If you also want to use JPEG images".
 				    "you must get the JPEG library. Please see the PHP docs for details.");
-				
+	    }
 	    return true;
 	}
 	else {
@@ -7253,8 +7286,9 @@ HTTP headers have already been sent.</font></td></tr><tr><td><b>Explanation:</b>
 	    }
 	    else 
 		$tst=false;
-	    if( !$tst )
-		JpGraphError::Raise(" Your PHP installation does not support the chosen graphic format: $aFormat");
+	    if( !$tst ) {
+		$obj = new JpGraphError; $obj->Raise(" Your PHP installation does not support the chosen graphic format: $aFormat");
+	    }
 	}
     }	
 } // CLASS
@@ -7335,7 +7369,7 @@ class RotImage extends Image {
 	parent::Arc($xc,$yc,$w,$h,$s,$e);
     }
 
-    function FilledArc($xc,$yc,$w,$h,$s,$e) {
+    function FilledArcRot($xc,$yc,$w,$h,$s,$e) {
 	list($xc,$yc) = $this->Rotate($xc,$yc);
 	$s += $this->a;
 	$e += $this->a;
@@ -7461,8 +7495,9 @@ class ImgStreamCache {
 		$aStrokeFileName = GenImgName();
 	    if( file_exists($aStrokeFileName) ) {
 		// Delete the old file
-		if( !@unlink($aStrokeFileName) )
-		    JpGraphError::Raise(" Can't delete cached image $aStrokeFileName. Permission problem?");
+		if( !@unlink($aStrokeFileName) ) {
+		    $obj = new JpGraphError; $obj->Raise(" Can't delete cached image $aStrokeFileName. Permission problem?");
+		}
 	    }
 	    $aImage->Stream($aStrokeFileName);
 	    return;
@@ -7477,19 +7512,21 @@ class ImgStreamCache {
 		    // and the file exists and is still valid (no timeout)
 		    // then do nothing, just return.
 		    $diff=time()-filemtime($aCacheFileName);
-		    if( $diff < 0 )
-			JpGraphError::Raise(" Cached imagefile ($aCacheFileName) has file date in the future!!");
+		    if( $diff < 0 ) {
+			$obj = new JpGraphError; $obj->Raise(" Cached imagefile ($aCacheFileName) has file date in the future!!");
+		    }
 		    if( $this->timeout>0 && ($diff <= $this->timeout*60) ) 
 			return;		
 		}			
-		if( !@unlink($aCacheFileName) )
-		    JpGraphError::Raise(" Can't delete cached image $aStrokeFileName. Permission problem?");
+		if( !@unlink($aCacheFileName) ) {
+		    $obj = new JpGraphError; $obj->Raise(" Can't delete cached image $aStrokeFileName. Permission problem?");
+		}
 		$aImage->Stream($aCacheFileName);	
 	    }
 	    else {
 		$this->MakeDirs(dirname($aCacheFileName));
 		if( !is_writeable(dirname($aCacheFileName)) ) {
-		    JpGraphError::Raise('PHP has not enough permissions to write to the cache file '.$aCacheFileName.'. Please make sure that the user running PHP has write permission for this file if you wan to use the cache system with JpGraph.');
+		    $obj = new JpGraphError; $obj->Raise('PHP has not enough permissions to write to the cache file '.$aCacheFileName.'. Please make sure that the user running PHP has write permission for this file if you wan to use the cache system with JpGraph.');
 		}
 		$aImage->Stream($aCacheFileName);
 	    }
@@ -7500,8 +7537,9 @@ class ImgStreamCache {
 		$res = @chgrp($aCacheFileName,CACHE_FILE_GROUP);
 	    if( CACHE_FILE_MOD != "" )
 		$res = @chmod($aCacheFileName,CACHE_FILE_MOD);
-	    if( !$res )
-		JpGraphError::Raise(" Can't set permission for cached image $aStrokeFileName. Permission problem?");
+	    if( !$res ) {
+		$obj = new JpGraphError; $obj->Raise(" Can't set permission for cached image $aStrokeFileName. Permission problem?");
+	    }
 			
 	    $aImage->Destroy();
 	    if( $aInline ) {
@@ -7510,8 +7548,9 @@ class ImgStreamCache {
 		    fpassthru($fh);
 		    return;
 		}
-		else
-		    JpGraphError::Raise(" Cant open file from cache [$aFile]"); 
+		else {
+		    $obj = new JpGraphError; $obj->Raise(" Cant open file from cache [$aFile]");
+		} 
 	    }
 	}
 	elseif( $aInline ) {
@@ -7537,8 +7576,9 @@ class ImgStreamCache {
 		    fpassthru($fh);
 		    return true;
 		}
-		else
-		    JpGraphError::Raise(" Can't open cached image \"$aCacheFileName\" for reading.");
+		else {
+		    $obj = new JpGraphError; $obj->Raise(" Can't open cached image \"$aCacheFileName\" for reading.");
+		}
 	    }
 	} 
 	return false;
@@ -7554,8 +7594,9 @@ class ImgStreamCache {
 	    $aFile = dirname($aFile);
 	}
 	for ($i = sizeof($dirs)-1; $i>=0; $i--) {
-	    if(! @mkdir($dirs[$i],0777) )
-		JpGraphError::Raise(" Can't create directory $aFile. Make sure PHP has write permission to this directory.");
+	    if(! @mkdir($dirs[$i],0777) ) {
+		$obj = new JpGraphError; $obj->Raise(" Can't create directory $aFile. Make sure PHP has write permission to this directory.");
+	    }
 	    // We also specify mode here after we have changed group. 
 	    // This is necessary if Apache user doesn't belong the
 	    // default group and hence can't specify group permission
@@ -7564,8 +7605,9 @@ class ImgStreamCache {
 		$res=true;
 		$res =@chgrp($dirs[$i],CACHE_FILE_GROUP);
 		$res &= @chmod($dirs[$i],0777);
-		if( !$res )
-		    JpGraphError::Raise(" Can't set permissions for $aFile. Permission problems?");
+		if( !$res ) {
+		    $obj = new JpGraphError; $obj->Raise(" Can't set permissions for $aFile. Permission problems?");
+		}
 	    }
 	}
 	return true;
@@ -7692,8 +7734,9 @@ class Legend {
 
 
     function Pos($aX,$aY,$aHAlign="right",$aVAlign="top") {
-	if( !($aX<1 && $aY<1) )
-	    JpGraphError::Raise(" Position for legend must be given as percentage in range 0-1");
+	if( !($aX<1 && $aY<1) ) {
+	    $obj = new JpGraphError; $obj->Raise(" Position for legend must be given as percentage in range 0-1");
+	}
 	$this->xpos=$aX;
 	$this->ypos=$aY;
 	$this->halign=$aHAlign;
@@ -8072,8 +8115,9 @@ class Plot {
 // CONSTRUCTOR
     function Plot(&$aDatay,$aDatax=false) {
 	$this->numpoints = count($aDatay);
-	if( $this->numpoints==0 )
-	    JpGraphError::Raise("Empty input data array specified for plot. Must have at least one data point.");
+	if( $this->numpoints==0 ) {
+	    $obj = new JpGraphError; $obj->Raise("Empty input data array specified for plot. Must have at least one data point.");
+	}
 	$this->coords[0]=$aDatay;
 	if( is_array($aDatax) )
 	    $this->coords[1]=$aDatax;
@@ -8087,7 +8131,7 @@ class Plot {
     // "virtual" function which must be implemented by
     // the subclasses
     function Stroke(&$aImg,&$aXScale,&$aYScale) {
-	JpGraphError::Raise("JpGraph: Stroke() must be implemented by concrete subclass to class Plot");
+	$obj = new JpGraphError; $obj->Raise("JpGraph: Stroke() must be implemented by concrete subclass to class Plot");
     }
 
     function HideLegend($f=true) {
@@ -8117,8 +8161,9 @@ class Plot {
     // "Virtual" function which gets called before any scale
     // or axis are stroked used to do any plot specific adjustment
     function PreStrokeAdjust(&$aGraph) {
-	if( substr($aGraph->axtype,0,4) == "text" && (isset($this->coords[1])) )
-	    JpGraphError::Raise("JpGraph: You can't use a text X-scale with specified X-coords. Use a \"int\" or \"lin\" scale instead.");
+	if( substr($aGraph->axtype,0,4) == "text" && (isset($this->coords[1])) ) {
+	    $obj = new JpGraphError; $obj->Raise("JpGraph: You can't use a text X-scale with specified X-coords. Use a \"int\" or \"lin\" scale instead.");
+	}
 	return true;	
     }
 	
@@ -8171,7 +8216,7 @@ class Plot {
 	if( count($y) > 0 ) {
 	    /*
 	    if( !isset($y[0]) ) {
-		JpGraphError::Raise('The input data array must have consecutive values from position 0 and forward. The given y-array starts with empty values (NULL)');
+		$obj = new JpGraphError; $obj->Raise('The input data array must have consecutive values from position 0 and forward. The given y-array starts with empty values (NULL)');
 		//$y[0] = 0;
 // Change in 1.5.1 Don't treat this as an error any more. Just silently convert to 0
 // Change in 1.17 Treat his as an error again !! This is the right way to do !!
@@ -8290,8 +8335,9 @@ class PlotLine {
 	    $ypos_abs=$aYScale->Translate($this->scaleposition);
 	    $aImg->Line($xmin_abs, $ypos_abs, $xmax_abs, $ypos_abs);
 	}
-	else
-	    JpGraphError::Raise(" Illegal direction for static line");
+	else {
+	    $obj = new JpGraphError; $obj->Raise(" Illegal direction for static line");
+	}
     }
 }
 

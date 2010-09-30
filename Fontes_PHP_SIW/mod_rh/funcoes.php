@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getBankHouseList.php');
 // -------------------------------------------------------------------------
 function SelecaoIdioma($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getIdiomList::getInstanceOf($dbms,null,'S');
+  $sql = new db_getIdiomList; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'Nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -29,7 +29,7 @@ include_once($w_dir_volta.'classes/sp/db_getEtniaList.php');
 // -------------------------------------------------------------------------
 function SelecaoEtnia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getEtniaList::getInstanceOf($dbms,null,'S');
+  $sql = new db_getEtniaList; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'codigo_siape','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -53,7 +53,7 @@ include_once($w_dir_volta.'classes/sp/db_getDeficiencyList.php');
 // -------------------------------------------------------------------------
 function SelecaoDeficiencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getDeficiencyList::getInstanceOf($dbms,null,'S');
+  $sql = new db_getDeficiencyList; $RS = $sql->getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'sq_grupo_defic','asc','nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -78,7 +78,7 @@ include_once($w_dir_volta.'classes/sp/db_getCivStateList.php');
 
 function SelecaoEstadoCivil($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getCivStateList::getInstanceOf($dbms,$restricao);
+  $sql = new db_getCivStateList; $RS = $sql->getInstanceOf($dbms,$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -102,7 +102,7 @@ include_once($w_dir_volta.'classes/sp/db_getFormationList.php');
 // -------------------------------------------------------------------------
 function SelecaoFormacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getFormationList::getInstanceOf($dbms,$chaveAux,null,null);
+  $sql = new db_getFormationList; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,null);
   $RS = SortArray($RS,'ordem','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -126,7 +126,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoPostoList.php');
 // -------------------------------------------------------------------------
 function SelecaoTipoPosto2($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,null,null);
+  $sql = new db_getTipoPostoList; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
   $RS = SortArray($RS,'descricao','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.'>');
@@ -253,10 +253,10 @@ include_once($w_dir_volta.'classes/sp/db_getGPTipoAfast.php');
 function SelecaoTipoAfastamento($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   if ($restricao=='AFASTAMENTO') {
-    $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,null,'S',null,null,$restricao);
+    $sql = new db_getGPTipoAfast; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,'S',null,null,$restricao);
     $RS = SortArray($RS,'nome','asc');
   } else {
-    $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
+    $sql = new db_getGPTipoAfast; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
     $RS = SortArray($RS,'nome','asc');
   } if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -280,7 +280,7 @@ include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
 // -------------------------------------------------------------------------
 function SelecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'nome_resumido','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -319,7 +319,7 @@ include_once($w_dir_volta.'classes/sp/db_getGPModalidade.php');
 // -------------------------------------------------------------------------
 function SelecaoModalidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,$restricao);
+  $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -344,7 +344,7 @@ include_once($w_dir_volta.'classes/sp/db_getCargo.php');
 
 function SelecaoCargo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,null,null,null,null,'S',$restricao);
+  $sql = new db_getCargo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,'S',$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

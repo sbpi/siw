@@ -85,7 +85,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 $w_caminho  = $conFilePhysical.$w_cliente.'/';
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -124,7 +124,7 @@ function Inicial() {
     $w_situacao         = $_REQUEST['w_situacao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getORImport::getInstanceOf($dbms,$w_chave,$w_cliente,$p_responsavel,$p_dt_ini,$p_dt_fim,$p_imp_ini,$p_imp_fim);
+    $sql = new db_getORImport; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,$p_responsavel,$p_dt_ini,$p_dt_fim,$p_imp_ini,$p_imp_fim);
     $RS = SortArray($RS,'phpdt_data_arquivo','desc');
   } 
   Cabecalho();
@@ -407,7 +407,7 @@ function Grava() {
             }
             if ($w_erro==0) {
               // Verifica se o programa/ação existe para o cliente
-              $RS = db_getAcaoPPA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,$w_programa,$w_acao,null);
+              $sql = new db_getAcaoPPA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,$w_programa,$w_acao,null);
               if (count($RS)<=0) {
                 fwrite($F1,'=== Programa/ação não encontrado'.$w_result);
                 $w_erro = 1;

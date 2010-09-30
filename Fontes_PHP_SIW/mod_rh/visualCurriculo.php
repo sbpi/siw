@@ -7,7 +7,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
   if ($O=='L') {
     // Se for listagem dos dados
     // Identificação pessoal
-    $RS = db_getCV::getInstanceOf($dbms,$p_cliente,$p_usuario,'CVIDENT','DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$p_cliente,$p_usuario,'CVIDENT','DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (Nvl(f($RS,'inclusao'),'')=='') {
       $html = '<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Curriculum não informado.</b><br><br><br><br><br><br><br><br><br><br></center></div>';
@@ -91,7 +91,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'      <tr><td valign="top">Sociedade profissional ou atividades ligadas a assuntos cívicos, públicos ou internacionais das quais faz parte:</td><td valign="top"><b>'.Nvl(f($RS,'atividades_civicas'),'---').' </b></td>';
       $html.=chr(13).'          </table>';
       // Telefones
-      $RS = db_getFoneList::getInstanceOf($dbms,$p_usuario,null,null,null);
+      $sql = new db_getFoneList; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,null,null);
       $RS = SortArray($RS,'tipo_telefone','asc','numero','asc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>TELEFONES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -123,7 +123,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'  </td>';
       $html.=chr(13).'</tr>';
       //Endereços de e-mail e internet
-      $RS = db_getAddressList::getInstanceOf($dbms,$p_usuario,null,'EMAILINTERNET',null);
+      $sql = new db_getAddressList; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,'EMAILINTERNET',null);
       $RS = SortArray($RS,'tipo_endereco','asc', 'endereco','asc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>ENDEREÇO DE E-MAIL E INTERNET<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
@@ -151,7 +151,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'         </table></td></tr>';
       //Endereços físicos
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $RS = db_getAddressList::getInstanceOf($dbms,$p_usuario,null,'FISICO',null);
+      $sql = new db_getAddressList; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,'FISICO',null);
       $RS = SortArray($RS,'endereco','asc');
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>ENDEREÇO FÍSICOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       if (count($RS)<=0) {
@@ -179,7 +179,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
         $html.=chr(13).'          </table></td></tr>';
       } 
       // Escolaridade
-      $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'ACADEMICA');
+      $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,'ACADEMICA');
       $RS = SortArray($RS,'ordem','desc', 'inicio','desc');
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>ESCOLARIDADE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $html.=chr(13).'<tr><td align="center" colspan=3>';
@@ -214,7 +214,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'  </td>';
       $html.=chr(13).'</tr>';
       // Extensão acadêmica
-      $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'CURSO');
+      $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,'CURSO');
       $RS = SortArray($RS,'ordem','desc','carga_horaria','desc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>EXTENSÃO ACADÊMICA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
@@ -250,7 +250,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'  </td>';
       $html.=chr(13).'</tr>';
       // Produção técnica
-      $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'PRODUCAO');
+      $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,'PRODUCAO');
       $RS = SortArray($RS,'ordem','desc','data','desc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>PRODUÇÃO TÉCNICA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
@@ -284,7 +284,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'  </td>';
       $html.=chr(13).'</tr>';
       // Idiomas
-      $RS = db_getCVIdioma::getInstanceOf($dbms,$p_usuario,null);
+      $sql = new db_getCVIdioma; $RS = $sql->getInstanceOf($dbms,$p_usuario,null);
       $RS = SortArray($RS,'nome','acs');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>IDIOMAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
@@ -318,7 +318,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'  </td>';
       $html.=chr(13).'</tr>';
       // Contas bancárias
-      $RS = db_getContaBancoList::getInstanceOf($dbms,$p_usuario,null,null);
+      $sql = new db_getContaBancoList; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,null);
       $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>CONTAS BANCÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
@@ -358,7 +358,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       // Experiencia profissional
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>EXPERIÊNCIA PROFISSIONAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
-      $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'EXPERIENCIA');
+      $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$p_usuario,null,'EXPERIENCIA');
       $RS = SortArray($RS,'entrada','desc');
       $html.=chr(13).'      <tr><td align="center" colspan="3">';
       $html.=chr(13).'        <TABLE WIDTH="99%" border="0">';
@@ -390,7 +390,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
           $html.=chr(13).'          <tr> ';
           $html.=chr(13).'          <tr><td valign="top" colspan=3><b>Atividades desempenhadas: <br></b>'.f($row,'atividades').'</td></tr>';
           // Cargos da experiência profissional
-          $RS = db_getCVAcadForm::getInstanceOf($dbms,$RS1,f($RS,'sq_cvpesexp'),null,'CARGO');
+          $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$RS1,f($RS,'sq_cvpesexp'),null,'CARGO');
           if (!count($RS)<=0){
             $html.=chr(13).'      <tr><td valign="top">Cargos:<br></td></tr>';
             $html.=chr(13).'      <tr><td align="center" colspan="3">';

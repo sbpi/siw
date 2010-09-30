@@ -2,7 +2,7 @@
 setlocale(LC_ALL, 'pt_BR');
 mb_language('en');
 date_default_timezone_set('America/Sao_Paulo');
-
+echo getenv('NLS_DATE_FORMAT');
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";

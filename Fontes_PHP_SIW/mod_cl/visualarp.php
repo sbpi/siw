@@ -8,7 +8,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $l_html='';
   $w_erro='';
   // Recupera os dados da solicitacao
-  $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,5,
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$l_usuario,$SG,5,
           null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
@@ -82,7 +82,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          </table></td></tr>';    
     
     // Objetivos estratégicos
-    $RS1 = db_getSolicObjetivo::getInstanceOf($dbms,$v_chave,null,null);
+    $sql = new db_getSolicObjetivo; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,null);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -105,7 +105,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     
     //Listagem dos itens do pedido de compra
-    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
+    $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
     $RS1 = SortArray($RS1,'numero_ata','asc','ordem_ata','asc','nome','asc'); 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     if (count($RS1)==0) {
@@ -185,7 +185,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
 
         // Exibe pesquisas de preço
-        $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,f($row,'sq_material'),null,null,null,null,null,null,null,null,null,null,(($w_tramite_ativo=='S' && $w_sg_tramite!='EE') ? 'S' : null),null,null,$v_chave,null,null,'PESQSOLIC');
+        $sql = new db_getMatServ; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,f($row,'sq_material'),null,null,null,null,null,null,null,null,null,null,(($w_tramite_ativo=='S' && $w_sg_tramite!='EE') ? 'S' : null),null,null,$v_chave,null,null,'PESQSOLIC');
         $l_rs = SortArray($l_rs,'phpdt_fim','desc','valor_unidade','asc','nm_fornecedor','asc'); 
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DEMONSTRATIVO DE PESQUISAS DE PREÇO ('.count($l_rs).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         if (count($l_rs)==0) {
@@ -253,7 +253,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if ($l_O=='L' || $l_O=='V') {
     // Se for listagem dos dados
     // Arquivos vinculados
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  

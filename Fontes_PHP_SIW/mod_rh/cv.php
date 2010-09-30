@@ -154,7 +154,7 @@ function Inicial() {
   $p_sq_formacao = $_REQUEST['p_sq_formacao'];
   if ($O=='L') {
     // Recupera os currículos existentes na base de dados
-    $RS = db_getCVList::getInstanceOf($dbms,$w_cliente,$p_sq_formacao,$p_sq_idioma,$p_sexo,$p_nome);
+    $sql = new db_getCVList; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_sq_formacao,$p_sq_idioma,$p_sexo,$p_nome);
     $RS = SortArray($RS,'nome_resumido', 'asc');
   }
   Cabecalho();
@@ -277,7 +277,7 @@ function Identificacao() {
     $w_cpf    = $_REQUEST['w_cpf'];
     if ($w_cpf>'' || (Nvl($_REQUEST['w_sq_pessoa'],'')>'') || (Nvl($_REQUEST['w_chave'],'')>'')) {
       if ($w_cpf > '') {
-        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
+        $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
         if (count($RS)>0) {
           $w_chave  = f($RS,'sq_pessoa');
         } else {
@@ -290,7 +290,7 @@ function Identificacao() {
       $w_chave = $w_usuario;
     }
     if (Nvl($w_chave,'')>'' && $O=='I'){
-      $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       if (count($RS)>0) {
         ScriptOpen('JavaScript');
         ShowHTML(' alert(\'Colaborador já cadastrado!\');');
@@ -340,7 +340,7 @@ function Identificacao() {
     } 
   } else {
     // Recupera os dados do currículo a partir da chave 
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_chave,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_chave,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (count($RS)>0) {
       $w_sq_estado_civil    = f($RS,'sq_estado_civil');
@@ -366,7 +366,7 @@ function Identificacao() {
       $w_nome = null;
       $O ='I';
     } if (Nvl($P1,0)==1 && Nvl($w_chave,'')>'') {
-        $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS as $row) {$RS=$row; break;}
         if (!(count($RS)<=0)) {
           $w_sq_contrato_colaborador = f($RS,'sq_contrato_colaborador');
@@ -431,7 +431,7 @@ function Identificacao() {
     ShowHTML('  }');
     if (Nvl($P1,0)==1 && Nvl($w_sq_contrato_colaborador,'')=='') {
       if (Nvl($w_modalidade_contrato,'')>'') {
-        $RS1 = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$w_modalidade_contrato,null,null,null,null,null);
+        $sql = new db_getGPModalidade; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_modalidade_contrato,null,null,null,null,null);
         foreach ($RS1 as $row){
           if (f($row,'username')=='P' || f($row,'username')=='S') {
             $w_username_pessoa = f($row,'username');
@@ -633,7 +633,7 @@ function Historico() {
   $w_chave      = $w_usuario;
   $w_readonly   = '';
   $w_erro       = '';
-  $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_chave,0),$SG,'DADOS');
+  $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_chave,0),$SG,'DADOS');
   foreach ($RS as $row) {$RS=$row; break;}
   if (Nvl(f($RS,'inclusao'),'')=='') {
     ScriptOpen('JavaScript');
@@ -661,7 +661,7 @@ function Historico() {
     $w_familiar                     = $_REQUEST['w_familiar'];
   } else {
     // Recupera os dados do currículo a partir da chave
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,$w_chave,$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$SG,'DADOS');
     foreach($RS as $row){$RS=$row; break;}
     if (count($RS)>0) {
       $w_residencia_outro_pais          = f($RS,'residencia_outro_pais');
@@ -792,7 +792,7 @@ function Idiomas() {
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
   if (Nvl($P1,0)!=1) {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -809,11 +809,11 @@ function Idiomas() {
     $w_conversacao  = $_REQUEST['w_conversacao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCVIdioma::getInstanceOf($dbms,$w_usuario,null);
+    $sql = new db_getCVIdioma; $RS = $sql->getInstanceOf($dbms,$w_usuario,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do registro informado
-    $RS = db_getCVIdioma::getInstanceOf($dbms,$w_usuario,$w_chave);
+    $sql = new db_getCVIdioma; $RS = $sql->getInstanceOf($dbms,$w_usuario,$w_chave);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_nm_idioma    = f($RS,'nome');
     $w_chave        = f($RS,'sq_idioma');
@@ -956,7 +956,7 @@ function Experiencia() {
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
   if (Nvl($P1,0)!=1) {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (Nvl(f($row,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -984,10 +984,10 @@ function Experiencia() {
     $w_ultimo_salario         = $_REQUEST['w_ultimo_salario'];
   } if ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'EXPERIENCIA');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,null,'EXPERIENCIA');
     $RS = SortArray($RS,'saida','asc','entrada','desc');
   } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'EXPERIENCIA');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,$w_chave,'EXPERIENCIA');
     foreach ($RS as $row) {$RS=$row;    break;}
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     if (Nvl(f($RS,'nm_area'),'')=='') {
@@ -1200,7 +1200,7 @@ function Cargos() {
   $w_sq_cvpescargo  = $_REQUEST['w_sq_cvpescargo'];
   $w_sq_cvpesexp    = $_REQUEST['w_sq_cvpesexp'];
   if (Nvl($P1,0)!=1) {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach($RS as $row) { $RS = $row; break; }
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -1209,14 +1209,14 @@ function Cargos() {
       ScriptClose();   
     }
   } 
-  $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_sq_cvpesexp,'EXPERIENCIA');
+  $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,$w_sq_cvpesexp,'EXPERIENCIA');
   foreach($RS as $row) { $RS = $row; break; }
   $w_nome_empregador = f($RS,'empregador'); 
   if ($O=='L') {
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,null,'CARGO');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_sq_cvpesexp,null,'CARGO');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera o conjunto de informações comum a todos os serviços
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,$w_sq_cvpescargo,'CARGO');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_sq_cvpesexp,$w_sq_cvpescargo,'CARGO');
     foreach($RS as $row) { $RS = $row; break; }
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     $w_nm_area              = f($RS,'nm_area');
@@ -1364,7 +1364,7 @@ function Escolaridade() {
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
   if (Nvl($P1,0)!=1) {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -1385,11 +1385,11 @@ function Escolaridade() {
     $w_fim                  = $_REQUEST['w_fim'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'ACADEMICA');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,null,'ACADEMICA');
     $RS = SortArray($RS,'ordem','desc','inicio','desc');
   } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'ACADEMICA');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,$w_chave,'ACADEMICA');
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     if (Nvl(f($RS,'nm_area'),'')=='') {
@@ -1560,7 +1560,7 @@ function Extensao() {
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
   if (Nvl($P1,0)!=1) {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (Nvl(f($row,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -1580,11 +1580,11 @@ function Extensao() {
     $w_conclusao            = $_REQUEST['w_conclusao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'CURSO');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,null,'CURSO');
     $RS = SortArray($RS,'ordem','desc','carga_horaria','desc');
   } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'CURSO');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,$w_chave,'CURSO');
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     $w_nm_area              = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
@@ -1737,7 +1737,7 @@ function Producao() {
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
   if (Nvl($P1,0)!=1) {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -1754,11 +1754,11 @@ function Producao() {
     $w_data                 = $_REQUEST['w_data'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'PRODUCAO');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,null,'PRODUCAO');
     $RS = SortArray($RS,'ordem','desc','data','desc');
   } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'PRODUCAO');
+    $sql = new db_getCVAcadForm; $RS = $sql->getInstanceOf($dbms,$w_usuario,$w_chave,'PRODUCAO');
     foreach ($RS as $row) {$RS=$row;    break;}
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     $w_nm_area              = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
@@ -1954,9 +1954,9 @@ function BuscaAreaConhecimento() {
   ShowHTML('</form>');
   if ($w_nome >'') {
     if ($P1==1) {
-      $RS = db_getKnowArea::getInstanceOf($dbms,null,$w_nome,'A');
+      $sql = new db_getKnowArea; $RS = $sql->getInstanceOf($dbms,null,$w_nome,'A');
     } else {
-      $RS = db_getKnowArea::getInstanceOf($dbms,null,$w_nome,'C');
+      $sql = new db_getKnowArea; $RS = $sql->getInstanceOf($dbms,null,$w_nome,'C');
     } 
     $RS = SortArray($RS,'nome','asc');
     ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
@@ -2049,7 +2049,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Recupera os dados do currículo a partir da chave
-        $RS = db_getCV_Pessoa::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_cpf']);
+        $sql = new db_getCV_Pessoa; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_cpf']);
         if ($O=='I' && count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('alert(\'CPF já cadastrado. Acesse seu currículo usando a opção "Seu currículo" no menu principal.\');');
@@ -2103,7 +2103,7 @@ function Grava() {
         //Se for inclusão de colaborador, deve incluir o contrato
         if (Nvl($P1,0)==1 && Nvl($_REQUEST['w_sq_contrato_colaborador'],'')=='') {
           if (Nvl($_REQUEST['w_modalidade_contrato'],'')!='') {
-            $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
+            $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
             foreach ($RS as $row){
               if(Nvl(f($row,'ferias'),'') == 'S'){
                 $ferias = 'S';

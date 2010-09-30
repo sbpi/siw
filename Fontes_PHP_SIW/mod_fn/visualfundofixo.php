@@ -7,7 +7,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Recupera os dados do lançamento
-  $RS = db_getSolicData::getInstanceOf($dbms,$v_chave,$SG);
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$v_chave,$SG);
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_tramite_ativo = f($RS,'ativo');
   $w_SG            = f($RS,'sigla');
@@ -126,7 +126,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     } 
 
     // Outra parte
-    $RS_Query = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     foreach ($RS_Query as $row) {$RS_Query = $row; break;}
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>SUPRIDO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (count($RS_Query)<=0) {
@@ -250,7 +250,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     
   // Pagamentos vinculados
   $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'FNDFUNDO');
-  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+  $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
          null,null,null,null,null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,$v_chave,null,null,null);
   $RS1 = SortArray($RS1,'fim','asc');
@@ -289,12 +289,12 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
       // Recupera o comprovante ligado ao pagamento.
       // Pagamentos de fundo fixo só podem ter um comprovante ligados a eles
-      $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'DOCS');
       $RS2 = SortArray($RS2,'data','asc');
       foreach($RS2 as $row2) { $RS2 = $row2; break; }
       $l_html.=chr(13).'      <tr valign="top">';
       $l_html.=chr(13).'        <td align="center">'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-      if ($w_tipo!='WORD') $l_html.=chr(13).'        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>';
+      if ($w_tipo!='WORD') $l_html.=chr(13).'        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f$$sql new new new ; sql').' = $sql->> ; ($$sqlobj_acordo = $sql->row,' = $sql->f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>';
       else                 $l_html.=chr(13).'        '.f($row,'codigo_interno').'';
       $l_html.=chr(13).'        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($RS2,'data'),5),'-').'</td>';
       $l_html.=chr(13).'        <td>'.f($RS2,'nm_tipo_documento').'</td>';
@@ -322,7 +322,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   } 
 
   // Arquivos vinculados
-  $RS = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
+  $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
   $RS = SortArray($RS,'nome','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

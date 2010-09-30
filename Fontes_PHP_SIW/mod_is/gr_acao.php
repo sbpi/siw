@@ -100,7 +100,7 @@ $p_selecao_mp       = upper($_REQUEST['p_selecao_mp']);
 $p_selecao_se       = upper($_REQUEST['p_selecao_se']);
 $p_tamanho          = upper($_REQUEST['p_tamanho']);
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -125,13 +125,13 @@ function Gerencial() {
     $w_filtro='';
     if ($p_sq_acao_ppa>'') {
       $w_linha++;
-      $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_sq_acao_ppa,0,4),substr($p_sq_acao_ppa,4,4),null,substr($p_sq_acao_ppa,12,17),null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_sq_acao_ppa,0,4),substr($p_sq_acao_ppa,4,4),null,substr($p_sq_acao_ppa,12,17),null,null,null,null,null);
       foreach($RS as $row){$RS=$row; break;}
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação <td>[<b>'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'descricao_acao').' ('.f($RS,'ds_unidade').')</b>]';
     } 
     if ($p_sq_isprojeto>'') {
       $w_linha++;
-      $RS = db_getProjeto_IS::getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getProjeto_IS; $RS = $sql->getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null);
       foreach($RS as $row){$RS=$row; break;}
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Programa interno<td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -139,22 +139,22 @@ function Gerencial() {
     if ($p_prazo>'') { $w_linha++; $w_filtro=$w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_uorg_resp>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_uorg_resp);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_selecao_mp>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Selecionada SPI/MP <td>[<b>'.$p_selecao_se.'</b>]'; }
@@ -167,7 +167,7 @@ function Gerencial() {
     if ($p_atraso=='S')        { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td><b>Apenas atrasadas</b>]'; }
     if ($p_qtd_restricao=='S') { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas ações com restrição</b>]'; }
     if ($w_filtro>'')          { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
-    $RS1 = db_getSolicList_IS::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+    $sql = new db_getSolicList_IS; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_qtd_restricao,$p_proponente,$p_chave,$p_assunto,
             null,null,null,null,$p_usu_resp,$p_uorg_resp,$p_palavra,
@@ -305,7 +305,7 @@ function Gerencial() {
           case 'GRISARESPATU':  ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
           case 'GRISASETOR':    ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');           break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
+        $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec = '';
         foreach ($RS2 as $row2) {

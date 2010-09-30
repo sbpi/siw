@@ -21,16 +21,16 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
   if (1==1) {
     // Se for listagem dos dados
     // Identificação pessoal
-    $RS = db_getCV::getInstanceOf($dbms,$l_cliente,$l_usuario,'CVIDENT','DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$l_cliente,$l_usuario,'CVIDENT','DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
         
     // Recupera os dados do colaborador a partir do código da pessoa
-    $RSDocumentacao = db_getGPColaborador::getInstanceOf($dbms,$l_cliente,$l_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getGPColaborador; $RSDocumentacao = $sql->getInstanceOf($dbms,$l_cliente,$l_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RSDocumentacao as $row) {$RSDocumentacao = $row; break;}   
     
    
     //Recupera os dados dos contratos do colaborador
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$l_usuario,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms,$w_cliente,null,$l_usuario,null,null,null,null,null,null,null,null,null,null);
     $RSContrato = SortArray($RSContrato,'inicio','desc');
     if (Nvl(f($RS,'inclusao'),'')=='') {
       $html.= '<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Curriculum não informado.</b><br><br><br><br><br><br><br><br><br><br></center></div>';
@@ -134,7 +134,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.=chr(13).'          <td valign="top"><b>Observações</b></td>';
       $html.=chr(13).'      <td>'.Nvl(f($RSDocumentacao,'observacoes'),'---').' </td></tr>';
       
-      $RSPensao = db_getGpPensionista::getInstanceOf($dbms,null,$w_cliente,$w_usuario);
+      $sql = new db_getGpPensionista; $RSPensao = $sql->getInstanceOf($dbms,null,$w_cliente,$w_usuario);
       $RSPensao = SortArray($RSPensao,'nome','asc');
       if (count($RSPensao)) {
         $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PENSIONISTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -145,7 +145,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $html.=chr(13).'              <td>'.f($row,'tipo_pensao').': '.formatNumber(f($row,'valor')).'</td></tr>';
           $html.=chr(13).'          <tr><td><b>Período de pagamento:</b></td>'; 
           $html.=chr(13).'              <td>'.formataDataEdicao(f($row,'inicio')).((nvl(f($row,'fim'),'')=='') ? ' em diante' : ' a '.formataDataEdicao(f($row,'fim'))).'</td></tr>';
-          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'chave'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+          $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'chave'),0),null,null,null,null,1,null,null,null,null,null,null,null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
           $html.=chr(13).'      <tr><td colspan="2">';
           $html.=chr(13).'          <tr><td><b>Sexo:</b></td>'; 
@@ -176,7 +176,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $html.=chr(13).'          <tr valign="top">';
           $html.=chr(13).'            <td><b>Telefones:</b></td><td>'.$w_telefone.'</td></tr>';
           // Recupera os dados bancários do pensionista
-          $RSConta = db_getContaBancoList::getInstanceOf($dbms,f($row,'chave'),null,null);
+          $sql = new db_getContaBancoList; $RSConta = $sql->getInstanceOf($dbms,f($row,'chave'),null,null);
           if (count($RSConta)>0) {
             foreach($RSConta as $row2) { 
               if (f($row2,'padrao')=='S') {
@@ -228,10 +228,10 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
 	        }                
 	
 	        //Recupera os dados do vínculo do colaborador
-	        $RSVinculo = db_getVincKindData::getInstanceOf($dbms, f($row,'sq_tipo_vinculo'));
+	        $sql = new db_getVincKindData; $RSVinculo = $sql->getInstanceOf($dbms, f($row,'sq_tipo_vinculo'));
 	
 	        //Recupera os dados da modalidade do contrato
-	        $RSModalidade = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,f($row,'sq_modalidade_contrato'),null,null,'S',null,null);
+	        $sql = new db_getGPModalidade; $RSModalidade = $sql->getInstanceOf($dbms,$w_cliente,f($row,'sq_modalidade_contrato'),null,null,'S',null,null);
 	        foreach($RSModalidade as $row1){$RSModalidade = $row1; break;}
 	        
           $html.=chr(13).'        <tr><td width="30%"><br><b>Matrícula:</b></td>';
@@ -299,7 +299,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $html.=chr(13).'          <td width="15%" bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
           $html.=chr(13).'        </tr>';
                     
-          $RSSalario = db_getGpAlteracaoSalario::getInstanceOf($dbms, f($row,'chave'), null, null, null, null);
+          $sql = new db_getGpAlteracaoSalario; $RSSalario = $sql->getInstanceOf($dbms, f($row,'chave'), null, null, null, null);
           if(count($RSSalario) > 0){
             foreach($RSSalario as $row){
               $html.=chr(13).'        <tr align="center">';
@@ -321,7 +321,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Percentual</b></div></td>';
           $html.=chr(13).'        </tr>';                    
           
-          $RSDesempenho = db_getGpDesempenho::getInstanceOf($dbms, f($row,'chave'),null);        
+          $sql = new db_getGpDesempenho; $RSDesempenho = $sql->getInstanceOf($dbms, f($row,'chave'),null);        
           if(count($RSDesempenho) > 0){
             foreach($RSDesempenho as $row){
               $html.=chr(13).'<tr>';
@@ -335,7 +335,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $html.=chr(13).'    </table><br>';
           
           //Resumo da folha de ponto mensal
-          $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms,f($row,'chave'),null,null);
+          $sql = new db_getGPFolhaPontoMensal; $RSMensal = $sql->getInstanceOf($dbms,f($row,'chave'),null,null);
           $RSMensal = SortArray($RSMensal,'mes','desc');
           if (count($RSMensal)) {
 	          $html.=chr(13).'      </tr>';
@@ -373,7 +373,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
 
         // Exibe as viagens do colaborador
 	      $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-        $RS_Viagem = db_getSolicList::getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$l_usuario,'PD',4,
+        $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$l_usuario,'PD',4,
             formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
             null, null, null, null, null, null, null,null, null, null, null, null, null, null, $l_usuario);
         $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
@@ -407,7 +407,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
         }
 	
         // Exibe afastamentos do usuário logado
-	      $RS_Afast = db_getAfastamento::getInstanceOf($dbms,$w_cliente,$l_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
+	      $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms,$w_cliente,$l_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
         $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc');
         if (count($RS_Afast)>0) {
           // Mostra os períodos de indisponibilidade
@@ -435,7 +435,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       }
       
       // Contas bancárias do usuário
-      $RS = db_getContaBancoList::getInstanceOf($dbms,$l_usuario,null,null);
+      $sql = new db_getContaBancoList; $RS = $sql->getInstanceOf($dbms,$l_usuario,null,null);
       $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
       $html.=chr(13).'      <table width="99%"><tr><td colspan="2"><br><font size="2"><b>CONTAS BANCÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'<tr><td align="center" colspan=3>';
@@ -474,7 +474,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       
       
       // Telefones
-      $RS = db_getFoneList::getInstanceOf($dbms,$l_usuario,null,null,null);
+      $sql = new db_getFoneList; $RS = $sql->getInstanceOf($dbms,$l_usuario,null,null,null);
       $RS = SortArray($RS,'tipo_telefone','asc','numero','asc');
       $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TELEFONES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'<tr><td align="center" colspan=3>';
@@ -503,7 +503,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.=chr(13).'  </td>';
       $html.=chr(13).'</tr>';
       //Endereços de e-mail e internet
-      $RS = db_getAddressList::getInstanceOf($dbms,$l_usuario,null,'EMAILINTERNET',null);
+      $sql = new db_getAddressList; $RS = $sql->getInstanceOf($dbms,$l_usuario,null,'EMAILINTERNET',null);
       $RS = SortArray($RS,'tipo_endereco','asc', 'endereco','asc');
       $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ENDEREÇOS DE E-MAIL E INTERNET<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'      <tr><td align="center" colspan="3">';
@@ -532,7 +532,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.=chr(13).'         </table>';
       //Endereços físicos
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $RS = db_getAddressList::getInstanceOf($dbms,$l_usuario,null,'FISICO',null);
+      $sql = new db_getAddressList; $RS = $sql->getInstanceOf($dbms,$l_usuario,null,'FISICO',null);
       $RS = SortArray($RS,'endereco','asc');
       $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ENDEREÇOS FÍSICOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (count($RS)<=0) {

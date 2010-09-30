@@ -94,7 +94,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -133,7 +133,7 @@ function Gerencial() {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'GERENCIAL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
+    $sql = new db_getSolicMeta_IS; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,'GERENCIAL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
   } 
 
   Cabecalho();
@@ -182,20 +182,20 @@ function Gerencial() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
     } else {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -296,7 +296,7 @@ function Gerencial() {
           $o = 0;
           $w_prog_atual = f($row,'cd_programa');
           $w_acao_atual  = '';
-          $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,f($row,'sq_programa'),null,'LISTA',null,null);
+          $sql = new db_getSolicIndic_IS; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_programa'),null,'LISTA',null,null);
           $RS1 = SortArray($RS1,'ordem','asc');
           if (count($RS1)>0) {
             $w_indicador   = '        <table border=1 width="100%" cellpadding=0>'.$crlf.
@@ -331,7 +331,7 @@ function Gerencial() {
           eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode($link.\' Ação \'.f($row,\'cd_acao\').\' - \'.f($row,\'nm_acao\'),false, null, null));');
           $w_acao_atual = f($row,'cd_acao');
           // Recupera as metas
-          $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($row,'sq_acao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
+          $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,f($row,'sq_acao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
           $RS3 = SortArray($RS3,'ordem','asc');
           if (count($RS3)>0) {
             $w_meta = '        <table border=1 width="100%" cellpadding=0>'.$crlf.
@@ -359,7 +359,7 @@ function Gerencial() {
 
           // Recupera as tarefas
           $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISTCAD');
-          $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+          $sql = new db_getSolicList_IS; $RS3 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                     null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                     null,null,null,null,null,null,null,null,null,nvl(f($row,'sq_acao'),0),null,
                     null,null,null,null,$w_ano);
@@ -414,7 +414,7 @@ function Gerencial() {
 
           // Recupera os projetos
           $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PJCAD');
-          $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'PJCAD',4,
+          $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'PJCAD',4,
                   null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                   null,null,null,null,null,null,null,nvl(f($row,'sq_acao'),0), null);
 
@@ -598,8 +598,9 @@ function Rel_PPA() {
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
-    if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
-    else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
+	$sql = new db_getAcaoPPA_IS; 
+    if ($p_cd_programa>'' && $p_codigo=='') $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
+    else                                    $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -845,7 +846,7 @@ function Rel_PPA() {
           if ($p_metas>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-            $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+            $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
                       f($row,'cd_acao'),null,substr(f($row,'chave'),8,4),$w_ano);
@@ -855,7 +856,7 @@ function Rel_PPA() {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$w_col_word.' align="center"><b>Não foram encontrados registros(metas).</b></td></tr>');
               $w_linha += 1;
             } else {
-              $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
+              $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)<=0) {
                 // Se não foram selecionados registros, exibe mensagem
@@ -883,7 +884,7 @@ function Rel_PPA() {
           if ($p_tarefas>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-            $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+            $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
                       f($row,'cd_acao'),null,substr(f($row,'chave'),8,4),$w_ano);
@@ -894,7 +895,7 @@ function Rel_PPA() {
               $w_linha += 1;
             } else {       
               $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISTCAD');
-              $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+              $sql = new db_getSolicList_IS; $RS3 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,f($RS2,'sq_siw_solicitacao'),null,
                       null,null,null,null,$w_ano);
@@ -952,7 +953,7 @@ function Rel_PPA() {
           if ($p_sq_unidade_resp>'') {
             ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-            $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+            $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
                       f($row,'acao'),null,substr(f($row,'chave'),8,4),$w_ano);
@@ -1098,7 +1099,7 @@ function Rel_Projeto(){
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem     
-    $RS = db_getProjeto_IS::getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,$p_selecao_mp,$p_selecao_se,null,$p_siw_solic);
+    $sql = new db_getProjeto_IS; $RS = $sql->getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,$p_selecao_mp,$p_selecao_se,null,$p_siw_solic);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1266,7 +1267,7 @@ function Rel_Projeto(){
             ShowHTML('   <tr><td colspan='.$w_col_word.'>');
             ShowHTML('     <table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-            $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+            $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,f($row,'chave'),null,$w_ano);
@@ -1276,7 +1277,7 @@ function Rel_Projeto(){
               $w_linha += 1;
             } else {
               foreach($RS2 as $row2){$RS2=$row2; break;}
-              $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,null,null,null);
+              $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,null,null,null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)<=0) {
                 // Se não foram selecionados registros, exibe mensagem
@@ -1304,7 +1305,7 @@ function Rel_Projeto(){
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-            $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+            $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,$w_sq_siw_solicitacao,null,
                       null,null,null,null,null,null,null,null,null,null,null,null,
                       null,f($row,'chave'),null,$w_ano);
@@ -1315,7 +1316,7 @@ function Rel_Projeto(){
             } else {
               foreach($RS2 as $row2){$RS2=$row2; break;}
               $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISTCAD');
-              $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+              $sql = new db_getSolicList_IS; $RS3 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
                       null,null,null,null,null,null,null,null,null,f($RS2,'sq_siw_solicitacao'),null,
                       null,null,null,null,$w_ano);
@@ -1379,7 +1380,7 @@ function Rel_Projeto(){
             ShowHTML('     <tr><td colspan='.$w_col_word.'>');
             ShowHTML('       <table border=1 width="100%">');
             $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-            $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+            $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                       null,null,null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                       null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                       null,f($row,'chave'),null,$w_ano);
@@ -1502,7 +1503,7 @@ function Rel_Programa() {
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
+    $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1663,7 +1664,7 @@ function Rel_Programa() {
         if ($p_indicador>'') {
           ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
           $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISPCAD');
-          $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+          $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     f($row,'cd_programa'),null,null,$w_ano);
@@ -1673,7 +1674,7 @@ function Rel_Programa() {
             $w_linha += 1;
           } else {
             foreach($RS2 as $row2){$RS2=$row2; break;}
-            $RS3 = db_getSolicIndic_IS::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LISTA',null,null);
+            $sql = new db_getSolicIndic_IS; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LISTA',null,null);
             $RS3 = SortArray($RS3,'ordem','asc');
             if (count($RS3)<=0) {
               // Se não foram selecionados registros, exibe mensagem
@@ -1701,7 +1702,7 @@ function Rel_Programa() {
         if ($p_sq_unidade_resp>'') {
           ShowHTML('      <tr><td><td colspan='.$w_col_word.'><table border=1 width="100%">');
           $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISPCAD');
-          $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+          $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,null,
                     f($row,'cd_programa'),null,null,$w_ano);
@@ -1813,7 +1814,7 @@ function Rel_Sintetico_PR() {
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
-    $RS = db_getProjeto_IS::getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,$p_selecao_mp,$p_selecao_se,null,$p_siw_solic);
+    $sql = new db_getProjeto_IS; $RS = $sql->getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,$p_selecao_mp,$p_selecao_se,null,$p_siw_solic);
     $RS = SortArray($RS,'ordem','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -1931,7 +1932,7 @@ function Rel_Sintetico_PR() {
         }
         //Montagem da lista das ações
         $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISACAD');
-        $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+        $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                 null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
                 null,null,null,null,null,null,null,null,null,null,null,null,
                 null,f($row,'chave'),null,$w_ano);
@@ -1945,7 +1946,7 @@ function Rel_Sintetico_PR() {
           $w_teste_acoes=1;
           $w_visao=0;
           if ($w_visao<2) {
-            $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,$p_exequivel,$p_programada,$p_fim_previsto);
+            $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,$p_exequivel,$p_programada,$p_fim_previsto);
             $RS3 = SortArray($RS3,'ordem','asc');
             if (count($RS3)>0) {
               $w_teste_metas=1;
@@ -1994,7 +1995,7 @@ function Rel_Sintetico_PR() {
                   else                      ShowHTML('      <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                   ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                   ShowHTML('      <td nowrap align="right" >'.number_format(Nvl(f($row3,'quantidade'),0),2,',','.').'</td>');
-                  $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row3,'sq_meta'));
+                  $sql = new db_getMetaMensal_IS; $RS4 = $sql->getInstanceOf($dbms,f($row3,'sq_meta'));
                   $RS4 = SortArray($RS4,'phpdt_referencia','desc');
                   if (count($RS4)>0) {
                     if (f($row3,'cumulativa')=='S') {
@@ -2130,8 +2131,9 @@ function Rel_Sintetico_PPA() {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
-    else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
+    $sql = new db_getAcaoPPA_IS; 
+	if ($p_cd_programa>'' && $p_codigo=='') $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
+    else                                    $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
     $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -2194,7 +2196,7 @@ function Rel_Sintetico_PPA() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan="1" colspan="2"><b>Programas</td>');
     ShowHTML('          <td rowspan="1" colspan="2"><b>Ações</td>');
-    $RS1 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+    $sql = new db_getOrImport; $RS1 = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
     $RS1 = SortArray($RS1,'phpdt_data_arquivo','desc');
     foreach($RS1 as $row1){$RS1=$row1; break;}
     if (count($RS1)>0) {
@@ -2254,7 +2256,7 @@ function Rel_Sintetico_PPA() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
           ShowHTML('          <td rowspan="1" colspan="2"><b>Programas</td>');
           ShowHTML('          <td rowspan="1" colspan="2"><b>Ações</td>');
-          $RS1 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+          $sql = new db_getOrImport; $RS1 = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
           $RS1 = SortArray($RS1,'phpdt_data_arquivo','desc');
           foreach($RS1 as $row1){$RS1=$row1; break;}
           if (count($RS1)>0)    ShowHTML('          <td rowspan="1" colspan="4"><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS1,'data_arquivo')),'-').'</td>');
@@ -2281,7 +2283,7 @@ function Rel_Sintetico_PPA() {
         } 
         //Montagem da lista das ações
         $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOF($dbms,$w_cliente,'ISACAD');
-        $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+        $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                   null,null,null,null,$p_atraso,null,null,null,null,null,null,null,
                   null,null,null,null,null,null,null,null,null,null,null,substr(f($row,'chave'),0,4),
                   f($row,'cd_acao'),null,substr(f($row,'chave'),8,4),$w_ano);
@@ -2294,7 +2296,7 @@ function Rel_Sintetico_PPA() {
           $w_teste_acoes=1;
           $w_visao=0;
           if ($w_visao<2) {
-            $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,$p_programada,$p_exequivel,null,$p_fim_previsto);
+            $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,$p_programada,$p_exequivel,null,$p_fim_previsto);
             $RS3 = SortArray($RS3,'ordem','asc');
             if (count($RS3)>0) {
               $w_teste_metas=1;
@@ -2352,7 +2354,7 @@ function Rel_Sintetico_PPA() {
                 else                      ShowHTML('<td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                 ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.f($row3,'quantidade').'</td>');
-                $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row3,'sq_meta'));
+                $sql = new db_getMetaMensal_IS; $RS4 = $sql->getInstanceOf($dbms,f($row3,'sq_meta'));
                 $RS4 = SortArray($RS4,'phpdt_referencia','desc');
                 if (count($RS4)>0) {
                   if (f($row3,'cumulativa')=='S') {
@@ -2490,7 +2492,7 @@ function Rel_Sintetico_Prog() {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
+    $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
     $RS = SortArray($RS,'ds_programa','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -2609,7 +2611,7 @@ function Rel_Sintetico_Prog() {
         } 
         //Montagem da lista de programa
         $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'ISPCAD');
-        $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+        $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                 null,null,null,null,$p_atraso,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,
                 f($row,'cd_programa'),null,null,$w_ano);
@@ -2622,7 +2624,7 @@ function Rel_Sintetico_Prog() {
           $w_teste_programas=1;
           $w_visao=0;
           if ($w_visao<2) {
-            $RS3 = db_getSolicIndic_IS::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LISTA',$p_loa,$p_exequivel);
+            $sql = new db_getSolicIndic_IS; $RS3 = $sql->getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LISTA',$p_loa,$p_exequivel);
             $RS3 = SortArray($RS3,'ordem','asc');
             if (count($RS3)>0)                      $w_teste_indicador=1;
             elseif ($p_loa=='' && $p_exequivel=='') $w_teste_indicador=3;
@@ -2767,7 +2769,7 @@ function Rel_Gerencial_Acao() {
     } 
     ShowHTML('</TD></TR>');
     ShowHTML('</FONT></B></TD></TR></TABLE>');
-    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,null,null);
+    $sql = new db_getAcaoPPA_IS; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,null,null);
     foreach ($RS as $row){$RS=$row; break;}
     if (Nvl(f($RS,'sq_siw_solicitacao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -2851,7 +2853,7 @@ function Rel_Gerencial_Prog() {
     } 
     ShowHTML('</TD></TR>');
     ShowHTML('</FONT></B></TD></TR></TABLE>');
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+    $sql = new db_getProgramaPPA_IS; $RS = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
     foreach ($RS as $row){$RS=$row; break;}
     if (Nvl(f($RS,'sq_siw_solicitacao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -3015,7 +3017,7 @@ function Rel_Metas() {
     $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
-  $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
+  $sql = new db_getSolicMeta_IS; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
   $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc','cd_subacao','asc');
   foreach($RS as $row){$RS=$row; break;}
   if ($w_tipo_rel=='WORD') {
@@ -3071,20 +3073,20 @@ function Rel_Metas() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
     } else {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -3140,7 +3142,7 @@ function Rel_Metas() {
       ShowHTML('    <tr><td colspan="13"><div align="center"><b>Não foram encontrados registros</b></div></td></tr>');
     } else {
       // Listagem das metas de acordo com o filtro selecionado na tela de filtragem
-      $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
+      $sql = new db_getSolicMeta_IS; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
       $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc','cd_subacao','asc');
       foreach($RS as $row) {
         if ($w_linha>19 && $w_tipo_rel=='WORD') {
@@ -3163,20 +3165,20 @@ function Rel_Metas() {
           ShowHTML('<tr><td colspan="2"><div align="center">');
           ShowHTML('<table border="0" width="100%">');
           if ($p_sq_unidade>'') {
-            $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+            $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
             ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
           } else {
             ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
           } 
           if ($p_cd_programa>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+            $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
           } else {
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
           } 
           if ($p_cd_acao>'') {
-            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+            $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
           } else {
@@ -3520,7 +3522,7 @@ function Rel_Det_Tarefa() {
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
-  $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
+  $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
           null,null,null,null,null,null,
           $p_sq_unidade,null,null,null,
           null,null,null,null,null,null,null,
@@ -3587,20 +3589,20 @@ function Rel_Det_Tarefa() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
     } else {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -3742,7 +3744,7 @@ function Rel_Det_Acao() {
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   }
   $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISACAD');
-  $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISACAD',4,
+  $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISACAD',4,
           null,null,null,null,null,null,
           $p_sq_unidade,null,null,null,
           null,null,null,null,null,null,null,
@@ -3821,20 +3823,20 @@ function Rel_Det_Acao() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
     } else {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     }
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -3981,7 +3983,7 @@ function Rel_Det_Prog() {
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISPCAD');
-  $RS4 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISPCAD',4,
+  $sql = new db_getSolicList_IS; $RS4 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISPCAD',4,
             null,null,null,null,null,null,
             $p_sq_unidade,null,null,null,
             null,null,null,null,null,null,null,
@@ -4059,13 +4061,13 @@ function Rel_Det_Prog() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
     } else {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
@@ -4100,14 +4102,14 @@ function Rel_Det_Prog() {
           ShowHTML('<tr><td colspan="2"><div align="center">');
           ShowHTML('<table border="0" width="100%">');
           if ($p_sq_unidade>'') {
-            $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+            $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('<tr><td width="20%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
           } else {
             ShowHTML('<tr><td width="20%"><b>Área de planejamento:</b></td><td>Todas</td>');
           } 
           if ($p_cd_programa>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+            $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('    <td width="20%"><b>Programa:</b></td><td>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
           } else {
@@ -4219,7 +4221,7 @@ function Rel_Limite() {
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
-  $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
+  $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
           null,null,null,null,null,null,
           $p_sq_unidade,null,null,null,
           null,null,null,null,null,null,null,
@@ -4273,20 +4275,20 @@ function Rel_Limite() {
     ShowHTML('<tr><td colspan="2"><div align="center">');
     ShowHTML('<table border="0" width="100%">');
     if ($p_sq_unidade>'') {
-      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
     } else {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+      $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -4329,20 +4331,20 @@ function Rel_Limite() {
           ShowHTML('<tr><td colspan="2"><div align="center">');
           ShowHTML('<table border="0" width="100%">');
           if ($p_sq_unidade>'') {
-            $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+            $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
             ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
           } else {
             ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
           } 
           if ($p_cd_programa>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+            $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
           } else {
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
           }
           if ($p_cd_acao>'') {
-            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+            $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
           } else {
@@ -4387,7 +4389,7 @@ function Rel_Limite() {
       if (upper($w_det_tarefa)==upper('sim')) {
         ShowHTML('<br><br><br><tr><td colspan="2"><div align="center"><font size="3"><b>DETALHAMENTO DAS TAREFAS</b></font></div></td></tr>');
         $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
-        $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
+        $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
                 null,null,null,null,null,null,
                 $p_sq_unidade,null,null,null,
                 null,null,null,null,null,null,null,
@@ -4418,20 +4420,20 @@ function Rel_Limite() {
               ShowHTML('<tr><td colspan="2"><div align="center">');
               ShowHTML('<table border="0" width="100%">');
               if ($p_sq_unidade>'') {
-                $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+                $sql = new db_getUorgData; $RS1 = $sql->getInstanceOf($dbms,$p_sq_unidade);
                 ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
               } else {
                 ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
               } 
               if ($p_cd_programa>'') {
-                $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+                $sql = new db_getProgramaPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
                 foreach($RS1 as $row1){$RS1=$row1; break;}
                 ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
               } else {
                 ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
               } 
               if ($p_cd_acao>'') {
-                $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+                $sql = new db_getAcaoPPA_IS; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
                 foreach($RS1 as $row1){$RS1=$row1; break;}
                 ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
               } else {

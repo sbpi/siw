@@ -154,12 +154,12 @@ function Gerencial() {
     $w_filtro='';
     if ($p_projeto>'') {
       $w_linha++;
-      $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
       $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
     } 
     if ($p_atividade>'') {
       $w_linha++;
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
@@ -167,12 +167,12 @@ function Gerencial() {
     if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_uf>'') {
       $w_linha++;
-      $RS = db_getLCSituacao::getInstanceOf($dbms, $p_uf, $w_cliente, null, null, null, null, null, null);
+      $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, $p_uf, $w_cliente, null, null, null, null, null, null);
       foreach ($RS as $row) {
         $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Situação do certame <td>[<b>'.f($row,'nome').'</b>]';
         break;
@@ -180,20 +180,20 @@ function Gerencial() {
     } 
     if ($p_unidade>'') {
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade solicitante <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Material<td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Número do certame <td>[<b>'.$p_palavra.'</b>]'; }
     if ($p_pais>'') {
       $w_linha++;
-      $RS = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,$p_pais,null,null,null,null,null,null,'REGISTROS');
+      $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_pais,null,null,null,null,null,null,'REGISTROS');
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo de material/serviço<td>[<b>'.f($RS,'nome_completo').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getLCModalidade::getInstanceOf($dbms, $p_usu_resp, $w_cliente, null, null, null, null);
+      $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms, $p_usu_resp, $w_cliente, null, null, null, null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Modalidade<td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -211,7 +211,7 @@ function Gerencial() {
 
     switch ($p_agrega) {
       case 'GRCLABERTURA':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -221,7 +221,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'data_abertura','asc');
         break;
       case 'GRCLAUTORIZ':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -231,7 +231,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'data_autorizacao','asc');
         break;
       case 'GRCLUNIDADE':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -241,7 +241,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
         break;
       case 'GRCLPROJ':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -251,7 +251,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'dados_pai','asc');
         break;
       case 'GRCLMODAL':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -261,7 +261,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');
         break;
       case 'GRCLENQ':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -271,7 +271,7 @@ function Gerencial() {
         $RS1 = SortArray($RS1,'nm_enquadramento','asc');
         break;
       case 'GRCLSITUACAO':
-        $RS1 = db_getSolicCL::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -392,7 +392,7 @@ function Gerencial() {
           case 'GRCLMODAL':     ShowHTML('    else document.Form.p_usu_resp.value="'.$_REQUEST['p_usu_resp'].'";'); break;
           case 'GRCLSITUACAO':  ShowHTML('    else document.Form.p_uf.value="'.$_REQUEST['p_uf'].'";');             break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
+        $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         foreach($RS2 as $row) {

@@ -101,7 +101,7 @@ switch ($O) {
 if($O=='') $O='L';
 if ($P1==1) $p_tipo='I'; else $p_tipo='E';
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -155,7 +155,7 @@ function Inicial() {
     
   } elseif ($O=='L') {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,null,$w_sq_modulo,$p_nome,$p_tipo,$p_formato,$p_dt_ini,$p_dt_fim,$p_ref_ini,$p_ref_fim);
+    $sql = new db_getEsquema; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_sq_modulo,$p_nome,$p_tipo,$p_formato,$p_dt_ini,$p_dt_fim,$p_ref_ini,$p_ref_fim);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -164,7 +164,7 @@ function Inicial() {
     }
   } elseif (!(strpos('AE',$O)===false)) {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+    $sql = new db_getEsquema; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
     foreach($RS as $row){$RS=$row; break;}
     $w_sq_esquema   = f($RS,'sq_esquema');
     $w_sq_modulo    = f($RS,'sq_modulo');
@@ -445,7 +445,7 @@ function Tabela() {
   $p_sq_usuario         = $_REQUEST['p_sq_usuario'];
   $p_sq_tabela_tipo     = $_REQUEST['p_sq_tabela_tipo'];
   //Recupera os dados do esquema para a montagem do cabeçalho
-  $RS1 = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+  $sql = new db_getEsquema; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
   foreach($RS1 as $row){$RS1=$row; break;}
   if ($w_troca>'') {
     // Se for recarga da página
@@ -457,7 +457,7 @@ function Tabela() {
     $p_sq_tabela_tipo   = $_REQUEST['p_sq_tabela_tipo'];
   } elseif ($O=='L') {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,null);
+    $sql = new db_getEsquemaTabela; $RS = $sql->getInstanceOf($dbms,null,$w_sq_esquema,null);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -465,11 +465,11 @@ function Tabela() {
       $RS = SortArray($RS,'ordem','asc','nm_tabela','asc','or_coluna','asc');
     }
   } elseif (!(strpos('I',$O)===false)) {
-    $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,$p_sq_sistema,$p_sq_usuario,$p_sq_tabela_tipo,$p_nome,$SG);
+    $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,$p_sq_sistema,$p_sq_usuario,$p_sq_tabela_tipo,$p_nome,$SG);
     $RS = SortArray($RS,'sg_sistema','asc','nm_usuario','asc','nome','asc');
   } elseif (!(strpos('A',$O)===false)) {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
+    $sql = new db_getEsquemaTabela; $RS = $sql->getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
     foreach($RS as $row){$RS=$row; break;}
     $w_ordem            = f($RS,'ordem');
     $w_elemento         = f($RS,'elemento');
@@ -590,7 +590,7 @@ function Tabela() {
   ShowHTML('          <td>Formato: <b>'.f($RS1,'nm_formato').'</b></td>');
   ShowHTML('          <td>Ativo: <b>'.f($RS1,'nm_ativo').'</b></td>');
   if (!(strpos('AM',$O)===false)) {
-    $RS1 = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
+    $sql = new db_getEsquemaTabela; $RS1 = $sql->getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
     foreach($RS1 as $row){$RS1=$row; break;}
     ShowHTML('      <tr><td colspan="3">Tabela: <b>'.Nvl(f($RS1,'nm_tabela'),'---').'</font></b></td>');
   } 
@@ -788,7 +788,7 @@ function Mapeamento() {
     $w_valor_default    = $_REQUEST['w_valor_default'];    
   } elseif ($O=='I') {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,null,null,null,$w_sq_esquema_tabela);
+    $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,null,null,null,$w_sq_esquema_tabela);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -796,7 +796,7 @@ function Mapeamento() {
       $RS = SortArray($RS,'ordem','asc','nm_coluna','asc');
     }
   }
-  $RS1 = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+  $sql = new db_getEsquema; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
   foreach($RS1 as $row){$RS1=$row; break;}
   $w_formato = f($RS1,'formato');
   Cabecalho();
@@ -924,7 +924,7 @@ function Mapeamento() {
   ShowHTML('          <td>Tipo: <b>'.f($RS1,'nm_tipo').'</b></td>');
   ShowHTML('          <td>Formato: <b>'.f($RS1,'nm_formato').'</b></td>');
   ShowHTML('          <td>Ativo: <b>'.f($RS1,'nm_ativo').'</b></td>');
-  $RS1 = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
+  $sql = new db_getEsquemaTabela; $RS1 = $sql->getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
   foreach($RS1 as $row){$RS1=$row; break;}
   ShowHTML('      <tr><td colspan="3">Tabela: <b>'.Nvl(f($RS1,'nm_tabela'),'---').'</font></b></td>');
   ShowHTML('    </TABLE>');
@@ -972,7 +972,7 @@ function Mapeamento() {
         $w_cont+=1;
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        $RS1 = db_getEsquemaAtributo::getInstanceOf($dbms,null,$w_sq_esquema_tabela,null,f($row,'chave'));
+        $sql = new db_getEsquemaAtributo; $RS1 = $sql->getInstanceOf($dbms,null,$w_sq_esquema_tabela,null,f($row,'chave'));
         foreach($RS1 as $row1){$RS1=$row1; break;}
         if (count($RS1)>0) {
           ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_coluna[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');" CHECKED>');
@@ -1034,7 +1034,7 @@ function Importacao() {
   $w_upload_maximo = f($RS,'upload_maximo');
   if ($O=='I') {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+    $sql = new db_getEsquema; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
     foreach($RS as $row){$RS=$row; break;}
   } elseif (!(strpos('AE',$O)===false)) { } 
   Cabecalho();
@@ -1171,19 +1171,19 @@ function Registro() {
   $w_sq_tabela          = $_REQUEST['w_sq_tabela'];
   $w_registro           = $_REQUEST['w_registro'];
   //Recupera os dados do esquema para a montagem do cabeçalho
-  $RS1 = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+  $sql = new db_getEsquema; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
   foreach($RS1 as $row){$RS1=$row; break;}
   if ($w_troca>'') {
     // Se for recarga da página
     $w_valor            = $_REQUEST['w_valor'];
   } elseif ($O=='L') {
     // Recupera todos os ws_url para a listagem
-    $RS = db_getEsquemaInsert::getInstanceOf($dbms,null,null,$w_sq_esquema_tabela,null,null);
+    $sql = new db_getEsquemaInsert; $RS = $sql->getInstanceOf($dbms,null,null,$w_sq_esquema_tabela,null,null);
     $RS = SortArray($RS,'registro','asc','or_coluna','asc');
   } elseif (!(strpos('IA',$O)===false)) {
-    $RS = db_getEsquemaAtributo::getInstanceOf($dbms,null,$w_sq_esquema_tabela,null,null);
+    $sql = new db_getEsquemaAtributo; $RS = $sql->getInstanceOf($dbms,null,$w_sq_esquema_tabela,null,null);
     $RS = SortArray($RS,'ordem','asc','nm_coluna','asc');
-    //$RS = db_getColuna::getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,null,null,null,$w_sq_esquema_tabela);
+    $sql = new db_getColuna; //$RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,null,null,null,$w_sq_esquema_tabela);
     //$RS = SortArray($RS,'ordem','asc','nm_coluna','asc');
   } 
   Cabecalho();
@@ -1215,7 +1215,7 @@ function Registro() {
   ShowHTML('          <td>Tipo: <b>'.f($RS1,'nm_tipo').'</b></td>');
   ShowHTML('          <td>Formato: <b>'.f($RS1,'nm_formato').'</b></td>');
   ShowHTML('          <td>Ativo: <b>'.f($RS1,'nm_ativo').'</b></td>');
-  $RS1 = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
+  $sql = new db_getEsquemaTabela; $RS1 = $sql->getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
   foreach($RS1 as $row){$RS1=$row; break;}
   ShowHTML('      <tr><td colspan="3">Tabela: <b>'.Nvl(f($RS1,'nm_tabela'),'---').'</font></b></td>');
   ShowHTML('    </TABLE>');
@@ -1298,7 +1298,7 @@ function Registro() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');        
         if($O=='A') {
-          $RS1 = db_getEsquemaInsert::getInstanceOf($dbms,null,null,$w_sq_esquema_tabela, f($row,'sq_coluna'),$w_registro);
+          $sql = new db_getEsquemaInsert; $RS1 = $sql->getInstanceOf($dbms,null,null,$w_sq_esquema_tabela, f($row,'sq_coluna'),$w_registro);
           foreach($RS1 as $row1){$RS1=$row1; break;}
           if (count($RS1)>0) {
             $w_valor = f($RS1,'valor');
@@ -1353,11 +1353,11 @@ function Script() {
     $w_caminho      = $_REQUEST['w_caminho'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
-    $RS = db_getEsquemaScript::getInstanceOf($dbms,$w_sq_esquema,null,$w_cliente);
+    $sql = new db_getEsquemaScript; $RS = $sql->getInstanceOf($dbms,$w_sq_esquema,null,$w_cliente);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado 
-    $RS = db_getEsquemaScript::getInstanceOf($dbms,$w_sq_esquema,$w_sq_arquivo,$w_cliente);
+    $sql = new db_getEsquemaScript; $RS = $sql->getInstanceOf($dbms,$w_sq_esquema,$w_sq_arquivo,$w_cliente);
     foreach($RS as $row) {$RS=$row; break;}
     $w_nome         = f($RS,'nome');
     $w_descricao    = f($RS,'descricao');
@@ -1395,7 +1395,7 @@ function Script() {
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  $RS1 = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+  $sql = new db_getEsquema; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
   foreach($RS1 as $row){$RS1=$row; break;}
   ShowHTML('<tr><td colspan=3 bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1705,7 +1705,7 @@ function Grava() {
             } 
             // Se já há um nome para o arquivo, mantém 
             if ($_REQUEST['w_atual']>'') {
-              $RS = db_getEsquemaScript::getInstanceOf($dbms,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_arquivo'],$w_cliente);
+              $sql = new db_getEsquemaScript; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_arquivo'],$w_cliente);
               foreach ($RS as $row) {
                 if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                 if (!(strpos(f($row,'caminho'),'.')===false)) {
@@ -1728,7 +1728,7 @@ function Grava() {
         } 
         // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
         if ($O=='E' && $_REQUEST['w_atual']>'') {
-          $RS = db_getEsquemaScript::getInstanceOf($dbms,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_arquivo'],$w_cliente);
+          $sql = new db_getEsquemaScript; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_arquivo'],$w_cliente);
           foreach ($RS as $row) {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
@@ -1791,7 +1791,7 @@ function Grava() {
    break;
    case 'GERAARQ':
       // Recupera informações dos esquemas ativos
-      $RS_Esquema = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_esquema,null,null,null,null,null,null,null,null);
+      $sql = new db_getEsquema; $RS_Esquema = $sql->getInstanceOf($dbms,$w_cliente,null,$w_esquema,null,null,null,null,null,null,null,null);
       $RS_Esquema = SortArray($RS_Esquema,'nome','asc');
 
       $w_raiz_conf = $conFilePhysical.$w_cliente.'/etl_conf/';
@@ -1842,7 +1842,7 @@ function Grava() {
           $l_arquivo .= ''.$crlf;
           $i = 0;
           // Recupera informações dos esquemas ativos
-          $RS_Tabela = db_getEsquemaTabela::getInstanceOf($dbms,null,f($row_esquema,'sq_esquema'),null);
+          $sql = new db_getEsquemaTabela; $RS_Tabela = $sql->getInstanceOf($dbms,null,f($row_esquema,'sq_esquema'),null);
           $RS_Tabela = SortArray($RS_Tabela,'ordem','asc','nm_tabela','asc','or_coluna','asc');
           $w_atual = '';
           foreach($RS_Tabela as $row_tabela) {
@@ -1855,7 +1855,7 @@ function Grava() {
                 $l_arquivo .= '  \''.f($row_tabela,'nm_tabela').'\' =>'.$crlf;
               } else {
                 $l_arquivo .= '                                   )'.$crlf;
-                $RS_Insert = db_getEsquemaInsert::getInstanceOf($dbms,null,null,$w_atual,null,null);
+                $sql = new db_getEsquemaInsert; $RS_Insert = $sql->getInstanceOf($dbms,null,null,$w_atual,null,null);
                 $RS_Insert = SortArray($RS_Insert,'registro','asc','or_coluna','asc');
                 $j = 0;
                 $w_reg_atual = '';
@@ -1904,7 +1904,7 @@ function Grava() {
           }
           if ($i > 0) {
             $l_arquivo .= '                                   )'.$crlf;
-            $RS_Insert = db_getEsquemaInsert::getInstanceOf($dbms,null,null,$w_atual,null,null);
+            $sql = new db_getEsquemaInsert; $RS_Insert = $sql->getInstanceOf($dbms,null,null,$w_atual,null,null);
             $RS_Insert = SortArray($RS_Insert,'registro','asc','or_coluna','asc');
             $j = 0;
             $w_reg_atual = '';
@@ -1930,7 +1930,7 @@ function Grava() {
             $l_arquivo .= ');'.$crlf;
           }
           $i = 0;
-          $RS_Script = db_getEsquemaScript::getInstanceOf($dbms,f($row_esquema,'sq_esquema'),null,$w_cliente);
+          $sql = new db_getEsquemaScript; $RS_Script = $sql->getInstanceOf($dbms,f($row_esquema,'sq_esquema'),null,$w_cliente);
           $RS_Script = SortArray($RS_Script,'ordem','asc');
           foreach($RS_Script as $row_script) {
             if ($i==0) {

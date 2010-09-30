@@ -97,7 +97,7 @@ function Inicial(){
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     // Recupera todos os registros para a listagem
-    $RS = db_getLancamento::getInstanceOf($dbms,$w_cliente,$SG,FormataDataEdicao($p_dt_ini),FormataDataEdicao($p_dt_fim),null,null,null,null,null,'EE,ER');
+    $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG,FormataDataEdicao($p_dt_ini),FormataDataEdicao($p_dt_fim),null,null,null,null,null,'EE,ER');
     $RS = SortArray($RS,'vencimento','asc','tipo','asc');
   } 
   if ($w_tipo_rel=='WORD') {

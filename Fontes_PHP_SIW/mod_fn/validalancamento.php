@@ -19,7 +19,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$p_sg1);
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$p_sg1);
   //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento.
@@ -34,7 +34,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   $l_erro='';
   $l_tipo='';
   // Recupera o trâmite atual da solicitação
-  $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
   //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento independente da fase e em alguns casos quando a fase for
@@ -49,7 +49,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
-  $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
   if (count($l_rs1)<=0) {
     $l_existe_rs1=0;
   } else {
@@ -57,7 +57,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     $l_item = false;    
     foreach($l_rs1 as $l_row) {
       if (nvl(f($l_rs_solic,'tipo_rubrica'),0)!=4 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=5) {
-        $l_rs2 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
+        $sql = new db_getLancamentoRubrica; $l_rs2 = $sql->getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if($l_existe_rs2>0) {
           $l_valor_rubrica=0;
@@ -69,7 +69,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
         }
       } elseif (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
         if (f($l_row,'detalha_item')=='S') $l_item = true;
-        $l_rs2 = db_getLancamentoItem::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
+        $sql = new db_getLancamentoItem; $l_rs2 = $sql->getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
           $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.formatNumber(Nvl(f($l_row,'total_item'),0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
@@ -95,7 +95,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   // 4 - Se o lançamento tem notas, verifica se o valor do lançamento é igual à soma dos valores das notas
-  $l_rs3 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'NOTA');
+  $sql = new db_getLancamentoDoc; $l_rs3 = $sql->getInstanceOf($dbms,$l_chave,null,'NOTA');
   if (count($l_rs3)<=0) {
     $l_existe_rs3=0;
   } else { 
@@ -107,10 +107,10 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
-    $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
     if (count($l_rs_rubrica)>0) {
       $l_rs_menu = new db_getLinkData; $l_rs_menu = $l_rs_menu->getInstanceOf($dbms,$w_cliente,'FNREVENT');
-      $l_rs_tipo = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);
+      $sql = new db_getLancamentoProjeto; $l_rs_tipo = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);
       foreach($l_rs_tipo as $l_row){$l_rs_tipo=$l_row; break;}
       if (count($l_rs_tipo)>0) {
         if (f($l_rs_tipo,'sg_tramite')<>'AT') {
@@ -122,7 +122,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }  
   if (count($l_rs_tramite)>0) {
     // Recupera os dados da pessoa
-    $l_rs1 = db_getBenef::getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $l_rs1 = $sql->getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null,null,null,null,null,null,null);
     if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
     foreach ($l_rs1 as $row){$l_rs1 = $row; break;}
     if ($l_existe_rs1==0) {
@@ -165,7 +165,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
       $l_erro=$l_erro;
       if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE' || f($l_rs_solic,'sigla')=='FNDREEMB') {
         // 4 - Recupera os documentos associados ao lançamento
-        $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
+        $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
         if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
         if ($l_existe_rs1==0) {
           // 5 - Verifica se foi informado pelo menos um documento
@@ -181,7 +181,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
       } elseif ((Nvl(f($l_rs_tramite,'sigla'),'---')=='AT')&&(Nvl(f($l_rs_solic,'tipo_rubrica'),0)==1)) {
         // Verifica se o tipo de movimentação é dotação inicial e se for nao pode haver retorno 
         // para fases anteriores se houver outros lancamentos ativos.
-        $l_rs1 = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_solic,'sq_menu'),'LANCAMENTOS');
+        $sql = new db_getLancamentoProjeto; $l_rs1 = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_solic,'sq_menu'),'LANCAMENTOS');
         if(count($l_rs1)>0) {
           $l_erro=$l_erro.'<li>O envio deste lançamento só pode ser feito após o cancelamento de todos os outros lançamentos deste projeto.';
           $l_tipo=0;
@@ -191,7 +191,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
       if ((f($l_rs_tramite,'sigla')=='EE' || f($l_rs_tramite,'sigla')=='PP') && f($l_rs_solic,'sigla')=='FNDVIA') {
         // Recupera a vinculação do lançamento financeiro
         $l_rsm = new db_getLinkData; $l_rsm = $l_rsm->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-        $l_rs1 = db_getSolicList::getInstanceOf($dbms,f($l_rsm,'sq_menu'),$w_usuario,f($l_rsm,'sigla'),5,
+        $sql = new db_getSolicList; $l_rs1 = $sql->getInstanceOf($dbms,f($l_rsm,'sq_menu'),$w_usuario,f($l_rsm,'sigla'),5,
             null,null,null,null,'S',null,null,null,null,null,null, null, null,null,null,null,null,null,null,null,null,null,null,null,null, 
             f($l_rs_solic,'pessoa'));
         $l_rs1 = SortArray($l_rs1,'codigo_interno','asc');

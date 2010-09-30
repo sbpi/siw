@@ -22,7 +22,7 @@ function ValidaTriagem($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_sg_tra
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$l_sg1);
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$l_sg1);
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';

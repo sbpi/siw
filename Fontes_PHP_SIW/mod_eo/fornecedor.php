@@ -101,7 +101,7 @@ switch ($O) {
 } 
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) $w_submenu='Existe'; else $w_submenu='';
 // Recupera a configuração do serviço
 if ($P2 > 0) { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
@@ -123,7 +123,7 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   if ($O=='L') {
-    $RS_Benef = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$p_nome,null,null,null,null,$p_pais,$p_regiao,$p_uf,$p_cidade,'NUSUARIO');
+    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$p_nome,null,null,null,null,$p_pais,$p_regiao,$p_uf,$p_cidade,'NUSUARIO');
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS_Benef = SortArray($RS_Benef,$lista[0],$lista[1],'nome_indice','desc');
@@ -161,7 +161,7 @@ function Inicial() {
   if ($O=='L') {
   ShowHTML('<tr><td>');    
   if ($w_submenu>'') {
-    $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+    $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
     foreach($RS1 as $row) {
       ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       break;
@@ -322,7 +322,7 @@ function Geral() {
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];    
   } elseif ($O=='A' || $w_sq_pessoa>'') {
     // Recupera os dados do beneficiário em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) {
         $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -349,7 +349,7 @@ function Geral() {
       }
     } 
   } elseif ($O=='P') {
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'nome_indice','asc');
   }
   Cabecalho();
@@ -622,7 +622,7 @@ function Grava() {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_tipo_pessoa']==1) {
             // Verifica se já existe pessoa física com o CPF informado
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -631,7 +631,7 @@ function Grava() {
               exit;
             }
             // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) {
                 if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
@@ -649,7 +649,7 @@ function Grava() {
             }
           } else {
             // Verifica se já existe pessoa jurídica com o CNPJ informado
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
@@ -658,7 +658,7 @@ function Grava() {
               exit;
             }
             // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) {
                 if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {

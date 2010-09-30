@@ -7,7 +7,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
   global $w_Disabled;
   $l_html='';
   // Recupera os dados da ação
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'PJGERAL');
   // O código abaixo foi comentado em 23/11/2004, devido à mudança na regra definida pelo usuário,
   // que agora permite visão geral para todos os usuários
   // Recupera o tipo de visão do usuário
@@ -68,7 +68,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       $l_html .=chr(13).'      <tr><td valign="top"><b>Recurso programado:</b></td>';
       $l_html .=chr(13).'        <td>'.number_format(f($RS,'valor'),2,',','.').'</td></tr>';
     } 
-    $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'Solicitante'),null,null);
+    $sql = new db_getPersonData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,f($RS,'Solicitante'),null,null);
     if ($P4==1) {
       $l_html .=chr(13).'      <tr><td valign="top"><b>Responsável monitoramento:</b></td>';
       $l_html .=chr(13).'        <td>'.f($RS,'nm_sol').'</td></tr>';
@@ -86,7 +86,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Metas da ação
       // Recupera todos os registros para a listagem     
-      $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'LSTNULL',null);
+      $sql = new db_getSolicEtapa; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LSTNULL',null);
       $RS1 = SortArray($RS1,'ordem','asc');
       if (count($RS1)>0) {
         // Se não foram selecionados registros, exibe mensagem
@@ -133,10 +133,10 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
     } 
     if ($w_tipo_visao==0) {
       //Financiamento
-      $RS1 = db_getFinancAcaoPPA::getInstanceOf($dbms,$l_chave,$w_cliente,null);
+      $sql = new db_getFinancAcaoPPA; $RS1 = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,null);
       if (f($RS,'cd_ppa')>'') {
         $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>FINANCIAMENTO</b>';
-        $RS2 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+        $sql = new db_getOrImport; $RS2 = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
         $RS2 = SortArray($RS2,'phpdt_data_arquivo','desc');
         foreach($RS2 as $row2){$RS2=$row2; break;}
         $l_html .=chr(13).'          <font size="2"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fonte: SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.FormataDataEdicao(f($RS2,'phpdt_data_arquivo'),3).'<hr NOSHADE color=#000000 SIZE=1></b>';  
@@ -179,7 +179,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         $l_html .=chr(13).'         </table></td></tr>';
       } elseif (count($RS1)>0) {
         $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="left" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>&nbsp;Financiamento</b>';
-        $RS2 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+        $sql = new db_getOrImport; $RS2 = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
         $RS2 = SortArray($RS2,'data_arquivo','desc');
         $l_html .=chr(13).'          <font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fonte: SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS2,'data_arquivo')),'-').'</td></tr>';
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
@@ -211,7 +211,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       } 
       // Listagem das tarefas na visualização da ação, rotina adquirida apartir da rotina exitente na Projetoativ.php para listagem das tarefas
       $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORPCAD');
-      $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ORPCAD',5,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ORPCAD',5,
             null,null,null,null,null,null,
             null,null,null,null,
             null,null,null,null,null,null,null,
@@ -408,7 +408,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       } 
       if ($w_tipo_visao==0 || $w_tipo_visao==1) {
         // Outras iniciativas
-        $RS1 = db_getOrPrioridadeList::getInstanceOf($dbms,$l_chave,$w_cliente,null);
+        $sql = new db_getOrPrioridadeList; $RS1 = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,null);
         $RS1 = SortArray($RS1,'Existe','desc');
         if (count($RS1)>0) {
           $i=0;
@@ -449,7 +449,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
     } 
     if ($w_tipo_visao==0) {
       //Financiamento
-      $RS1 = db_getFinancAcaoPPA::getInstanceOf($dbms,$l_chave,RetornaCliente(),null);
+      $sql = new db_getFinancAcaoPPA; $RS1 = $sql->getInstanceOf($dbms,$l_chave,RetornaCliente(),null);
       if (f($RS,'cd_ppa')>'') {
         $l_html .=chr(13).'       <tr><td colspan="2"><br><font size="2"><b>FINANCIAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
@@ -511,7 +511,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         //w_html = w_html & VbCrLf & '          </table>'
       } 
       // Interessados na execução da ação    
-      $RS = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $sql = new db_getSolicInter; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'nome_resumido','asc');
       if (count($RS)>0) {
         $TP=RemoveTP($TP).' - Interessados';
@@ -536,7 +536,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         //w_html = w_html & VbCrLf & '         </table></td></tr>'
       } 
       // Áreas envolvidas na execução da ação
-      $RS = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $sql = new db_getSolicAreas; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'nome','asc');
       if (count($RS)>0) {
         $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ÁREAS/INSTITUIÇÕES ENVOLVIDAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -556,14 +556,14 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       } 
       // Etapas da ação    
       // Recupera todos os registros para a listagem
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'LISTA',null);
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA',null);
       $RS = SortArray($RS,'ordem','asc');
       // Recupera o código da opção de menu  a ser usada para listar as atividades
       $w_p2='';
       foreach($RS as $row) {
         if (Nvl(f($row,'P2'),0)>0) $w_p2=f($row,'P2');
       } 
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'LSTNULL',null);
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LSTNULL',null);
       $RS = SortArray($RS,'ordem','asc');
       if (count($RS)>0) {
         // Se não foram selecionados registros, exibe mensagem
@@ -574,7 +574,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           $l_html .=chr(13).'    document.Form.p_projeto.value=projeto;';
           $l_html .=chr(13).'    document.Form.p_atividade.value=etapa;';
           $l_html .=chr(13).'    document.Form.p_agrega.value=\'GRDMETAPA\';';
-          $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_P2,null,null,null);
+          $sql = new db_getTramiteList; $RS1 = $sql->getInstanceOf($dbms,$w_P2,null,null,null);
           $RS1 = SortArray($RS1,'ordem','asc');
           $l_html .=chr(13).'    document.Form.p_fase.value=\'\';';
           $w_fases='';
@@ -614,22 +614,22 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         foreach($RS as $row) {
           $l_html .=chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>',null,'PROJETO');
           // Recupera as etapas vinculadas ao nível acima
-          $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
+          $sql = new db_getSolicEtapa; $RS1 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
           $RS1 = SortArray($RS1,'ordem','asc');
           foreach($RS1 as $row1) {
             $l_html .=chr(13).EtapaLinha($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),null,null,'PROJETO');
              // Recupera as etapas vinculadas ao nível acima
-            $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
+            $sql = new db_getSolicEtapa; $RS2 = $sql->getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
             $RS2 = SortArray($RS2,'ordem','asc');
             foreach($RS2 as $row2) {
               $l_html .=chr(13).EtapaLinha($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),'<b>',null,'PROJETO');
               // Recupera as etapas vinculadas ao nível acima
-              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
+              $sql = new db_getSolicEtapa; $RS3 = $sql->getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
               $RS3 = SortArray($RS3,'ordem','asc');
               foreach($RS3 as $row3) {
                 $l_html .=chr(13).EtapaLinha($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),'<b>',null,'PROJETO');
                   // Recupera as etapas vinculadas ao nível acima
-                $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
+                $sql = new db_getSolicEtapa; $RS4 = $sql->getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
                 $RS4 = SortArray($RS4,'ordem','asc');
                 foreach($RS4 as $row4) {
                   $l_html .=chr(13).EtapaLinha($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),'<b>',null,'PROJETO');
@@ -644,7 +644,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       } 
       // Listagem das tarefas na visualização da ação, rotina adquirida apartir da rotina exitente na projetoativ.php para listagem das tarefas
       $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORPCAD');
-      $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ORPCAD',5,
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ORPCAD',5,
               null,null,null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,
               null,null,null,null,null,$l_chave,null,null,null);
@@ -694,7 +694,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
   //      $l_html .=chr(13).'         </table></td></tr>';
       } 
       // Recursos envolvidos na execução da ação
-      $RS = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $sql = new db_getSolicRecurso; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'tipo','asc','nome','asc');
       if (count($RS)>0) {
         $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RECURSOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -719,7 +719,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       // Se for listagem dos dados 
       if ($w_tipo_visao!=2) {
         // Arquivos vinculados
-        $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+        $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
         $RS = SortArray($RS,'nome','asc');
         if (count($RS)>0) {
           $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -744,7 +744,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         } 
       } 
       // Encaminhamentos
-      $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+      $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
       $l_html .=chr(13).'     <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIA E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';

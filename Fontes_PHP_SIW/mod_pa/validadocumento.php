@@ -21,7 +21,7 @@ function ValidaDocumento($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tram
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,'PADCAD');
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,'PADCAD');
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';

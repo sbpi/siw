@@ -78,7 +78,7 @@ switch ($O) {
   default:  $w_TP=$TP.' - Listagem';    break;
 } 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu='Existe';
 } else {
@@ -108,11 +108,11 @@ function Eventos() {
     $w_descricao = $_REQUEST['w_descricao'];
   }elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getEventoTrigger::getInstanceOf($dbms,null);
+    $sql = new db_getEventoTrigger; $RS = $sql->getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getEventoTrigger::getInstanceOf($dbms,$w_chave);
+    $sql = new db_getEventoTrigger; $RS = $sql->getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
       $w_nome      = f($row,'nome');
       $w_descricao = f($row,'descricao');
@@ -229,11 +229,11 @@ function TipoDado() {
     $w_descricao = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoDado::getInstanceOf($dbms,null);
+    $sql = new db_getTipoDado; $RS = $sql->getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoDado::getInstanceOf($dbms,$w_chave);
+    $sql = new db_getTipoDado; $RS = $sql->getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
       $w_nome       = f($row,'nome');
       $w_descricao  = f($row,'descricao');
@@ -351,11 +351,11 @@ function TipoIndice() {
     $w_descricao = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoIndice::getInstanceOf($dbms,null);
+    $sql = new db_getTipoIndice; $RS = $sql->getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoIndice::getInstanceOf($dbms,$w_chave);
+    $sql = new db_getTipoIndice; $RS = $sql->getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
       $w_nome       = f($row,'nome');
       $w_descricao  = f($row,'descricao');
@@ -477,11 +477,11 @@ function TipoSP() {
     $w_descricao = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoSP::getInstanceOf($dbms,null);
+    $sql = new db_getTipoSP; $RS = $sql->getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoSP::getInstanceOf($dbms,$w_chave);
+    $sql = new db_getTipoSP; $RS = $sql->getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
       $w_nome=f($row,'nome');
       $w_descricao=f($row,'descricao');
@@ -602,11 +602,11 @@ function tipotabela() {
     $w_descricao = $_REQUEST['w_descricao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoTabela::getInstanceOf($dbms,null);
+    $sql = new db_getTipoTabela; $RS = $sql->getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoTabela::getInstanceOf($dbms,$w_chave);
+    $sql = new db_getTipoTabela; $RS = $sql->getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
       $w_nome=f($row,'nome');
       $w_descricao=f($row,'descricao');

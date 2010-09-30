@@ -21,7 +21,7 @@ function ValidaEmprestimo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tra
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicPA::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$l_sg1,3,
+  $sql = new db_getSolicPA; $l_rs_solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$l_sg1,3,
           null,null,null,null,null,null,null,null,null,null,
           $l_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
@@ -33,7 +33,7 @@ function ValidaEmprestimo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tra
   $l_tipo='';  
 
   // Recupera os itens do pedido de empréstimo
-  $l_rs_item = db_getPAEmpItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null);
+  $sql = new db_getPAEmpItem; $l_rs_item = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null);
   
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer

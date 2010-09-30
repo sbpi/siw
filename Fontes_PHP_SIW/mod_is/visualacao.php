@@ -6,7 +6,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da ação
-  $RS1 = db_getSolicData_IS::getInstanceOf($dbms,$l_chave,'ISACGERAL');
+  $sql = new db_getSolicData_IS; $RS1 = $sql->getInstanceOf($dbms,$l_chave,'ISACGERAL');
   foreach($RS1 as $row1) {$RS1=$row1; break;}
   //Se for para exibir só a ficha resumo da ação.
   if ($P1==1 || $P1==2 || $P1==3) {
@@ -66,12 +66,12 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'nm_tramite'),'-').'</td></tr>';
     // Listagem das metas da ação
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
+    $sql = new db_getSolicMeta_IS; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
     $RS2 = SortArray($RS2,'ordem','asc');
     if (count($RS2)>0) {
       $l_cont=1;
       foreach ($RS2 as $row2) {
-        $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
+        $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
         foreach ($RS3 as $row3){$RS3=$row3; break;}
         $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Meta:</b></td>';
         if (Nvl(f($RS3,'descricao_subacao'),'')>'') $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($row2,'titulo').'('.f($RS3,'descricao_subacao').')</b></td></tr>';
@@ -117,7 +117,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     } 
     // Listagem das restrições da ação
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS2 = db_getRestricao_IS::getInstanceOf($dbms,'ISACRESTR',$l_chave,null);
+    $sql = new db_getRestricao_IS; $RS2 = $sql->getInstanceOf($dbms,'ISACRESTR',$l_chave,null);
     $RS2 = SortArray($RS2,'inclusao','desc');
     if (count($RS2)>0) {
       $l_cont=1;
@@ -138,7 +138,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Listagem das tarefa na visualização da ação, rotina adquirida apartir da rotina exitente na tarefa.php para listagem das tarefa     
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
     $RS2 = new db_getLinkData; $RS2 = $RS2->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
-    $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',4,
+    $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',4,
              null,null,null,null,null,null,
              null,null,null,null,
              null,null,null,null,null,null,null,
@@ -187,7 +187,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     } 
     //Encaminhamentos
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+    $sql = new db_getSolicLog; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
     $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
     $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
     $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
@@ -288,7 +288,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
         $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol_comp')).'</td></tr>';
       } 
       if (Nvl(f($RS1,'cd_acao'),'')>'') {
-        $RS2 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS1,'cd_ppa_pai'),f($RS1,'cd_acao'),null,f($RS1,'cd_unidade'),null,null,null,null,null);
+        $sql = new db_getAcaoPPA_IS; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,f($RS1,'cd_ppa_pai'),f($RS1,'cd_acao'),null,f($RS1,'cd_unidade'),null,null,null,null,null);
         foreach ($RS2 as $row2) {$RS2=$row2; break;}
         $l_html.=chr(13).'   <tr><td><b>Função:</b></td>';
         $l_html.=chr(13).'       <td>'.f($RS2,'ds_funcao').'</td></tr>';
@@ -407,7 +407,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO ORÇAMENTÁRIA<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       if (Nvl(f($RS1,'cd_acao'),'')>'') {
         if (f($RS1,'cd_tipo_acao')!=3) {
-          $RS2 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS1,'cd_acao'),f($RS1,'cd_unidade'),$w_ano,$w_cliente,'VALORTOTALMENSAL');
+          $sql = new db_getPPADadoFinanc_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'cd_acao'),f($RS1,'cd_unidade'),$w_ano,$w_cliente,'VALORTOTALMENSAL');
           foreach ($RS2 as $row2){$RS2=$row2; break;}
           if (count($RS2)>0) {
             $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
@@ -479,7 +479,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
             $l_html.=chr(13).'     </table></div></td></tr>';
           } 
           $l_cont=1;
-          $RS2 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS1,'cd_acao'),f($RS1,'cd_unidade'),$w_ano,$w_cliente,'VALORFONTEACAO');
+          $sql = new db_getPPADadoFinanc_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'cd_acao'),f($RS1,'cd_unidade'),$w_ano,$w_cliente,'VALORFONTEACAO');
           if (count($RS2)<=0) {
             $l_html.=chr(13).'   <tr><td colspan="2">Nao existe nenhum valor para esta ação</td></tr>';
           } else {
@@ -524,12 +524,12 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Listagem das metas da ação
     if (upper($l_meta)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
+      $sql = new db_getSolicMeta_IS; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
       $RS2 = SortArray($RS2,'ordem','asc');
       if (count($RS2)>0) {
         $l_cont=1;
         foreach ($RS2 as $row2) {
-          $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
+          $sql = new db_getSolicMeta_IS; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
           foreach ($RS3 as $row3){$RS3=$row3; break;}
           $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Meta:</b></td>';
           if (Nvl(f($RS3,'descricao_subacao'),'')>'')    $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($row2,'titulo').'('.f($RS3,'descricao_subacao').')</b></td></tr>';
@@ -576,7 +576,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
           $l_html.=chr(13).'       <td width="20%" bgColor="#f0f0f0"><div align="center"><b>Realizado</b></div></td>';
           $l_html.=chr(13).'       <td width="30%" bgColor="#f0f0f0"><div align="center"><b>Financeiro Realizado</b></div></td>';
           if (count($RS3)>0) {
-            $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row2,'sq_meta'));
+            $sql = new db_getMetaMensal_IS; $RS4 = $sql->getInstanceOf($dbms,f($row2,'sq_meta'));
             $l_realizado_1  ='';
             $l_revisado_1   ='';
             $l_realizado_2  ='';
@@ -721,7 +721,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Listagem das restrições da ação
     if (upper($l_restricao)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS2 = db_getRestricao_IS::getInstanceOf($dbms,'ISACRESTR',$l_chave,null);
+      $sql = new db_getRestricao_IS; $RS2 = $sql->getInstanceOf($dbms,'ISACRESTR',$l_chave,null);
       $RS2 = SortArray($RS2,'inclusao','desc');
       if (count($RS2)>0) {
         $l_cont=1;
@@ -744,7 +744,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     if ($l_tarefa==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS2 = new db_getLinkData; $RS2 = $RS2->getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
-    $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',3,
+    $sql = new db_getSolicList_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',3,
              null,null,null,null,null,null,
              null,null,null,null,
              null,null,null,null,null,null,null,
@@ -879,7 +879,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Interessados na execução da ação
     if (upper($l_interessado)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS1 = SortArray($RS1,'nome_resumido','asc');
       if (count($RS1)>0) {
         $TP = RemoveTP($TP).' - Interessados';
@@ -891,7 +891,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Arquivos vinculados
     if (upper($l_anexo)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
       $RS1 = SortArray($RS1,'nome','asc');
       if (count($RS1)>0) {
         $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
@@ -916,7 +916,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Encaminhamentos
     if (upper($l_ocorrencia)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+      $sql = new db_getSolicLog; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
       $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
       $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';

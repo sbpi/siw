@@ -92,7 +92,7 @@ function Imposto() {
     $w_dia_pagamento  = $_REQUEST['w_dia_pagamento'];
     $w_ativo          = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getImposto::getInstanceOf($dbms,null,$w_cliente);
+    $sql = new db_getImposto; $RS = $sql->getInstanceOf($dbms,null,$w_cliente);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'fim','asc','prioridade','asc');
@@ -100,7 +100,7 @@ function Imposto() {
       $RS = SortArray($RS,'nome','asc');
     }
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getImposto::getInstanceOf($dbms,$w_chave,$w_cliente);
+    $sql = new db_getImposto; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente);
     foreach($RS as $row) {$RS = $row; break;}
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
@@ -271,7 +271,7 @@ function Documento(){
     $w_item           = $_REQUEST['w_item'];
     $w_ativo          = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getTipoDocumento::getInstanceOf($dbms,null,$w_cliente);
+    $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'receita','desc');
@@ -279,7 +279,7 @@ function Documento(){
       $RS = SortArray($RS,'receita','desc','nome','asc');
     }
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
-    $RS = db_getTipoDocumento::getInstanceOf($dbms,$w_chave,$w_cliente);
+    $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
@@ -433,9 +433,9 @@ function Lancamento() {
     $w_despesa      = $_REQUEST['w_despesa'];
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getTipoLancamento::getInstanceOf($dbms,null,null,$w_cliente,'ARVORE');
+    $sql = new db_getTipoLancamento; $RS = $sql->getInstanceOf($dbms,null,null,$w_cliente,'ARVORE');
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getTipoLancamento::getInstanceOf($dbms,$w_chave,null,$w_cliente,null);
+    $sql = new db_getTipoLancamento; $RS = $sql->getInstanceOf($dbms,$w_chave,null,$w_cliente,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_chave        = f($RS,'chave');
     $w_pai          = f($RS,'sq_tipo_lancamento_pai');
@@ -602,7 +602,7 @@ function Parametros() {
     $w_fundo_data        = $_REQUEST['w_fundo_data'];
   } else {
     // Recupera os dados do parâmetro
-    $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    $sql = new db_getFNParametro; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_sequencial         = f($RS,'sequencial');

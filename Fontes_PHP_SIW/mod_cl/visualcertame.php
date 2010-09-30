@@ -11,7 +11,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_cliente_arp = f($RS,'ata_registro_preco');
   
   // Recupera os dados da solicitacao
-  $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $l_tramite        = f($RS,'sq_siw_tramite');
@@ -107,7 +107,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     
     // Arquivos vinculados
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -158,7 +158,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     
     // Objetivos estratégicos
-    $RS1 = db_getSolicObjetivo::getInstanceOf($dbms,$v_chave,null,null);
+    $sql = new db_getSolicObjetivo; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,null);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -210,7 +210,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
         }
         
-        $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'VENCEDOR');
+        $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'VENCEDOR');
         $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VENCEDORES</b></font></td></tr>';  
         $l_html.=chr(13).'      <tr><td colspan="2">';
@@ -259,7 +259,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     } 
 
     //Listagem dos itens da licitação
-    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
+    $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
     $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc','dados_pai','asc'); 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
@@ -372,7 +372,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   }
 
   //Listagem das cotações da licitação
-  $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'COTACAO');
+  $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'COTACAO');
   $RS1 = SortArray($RS1,'nome','asc','valor_unidade','asc');
   $exibe=false;
   foreach($RS1 as $row) { 
@@ -427,8 +427,8 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   }
   
   //Listagem dos itens da licitação
-  $RSOrc = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICPREVORC');
-  $RSFin = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICPREVFIN'); 
+  $sql = new db_getCLSolicItem; $RSOrc = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICPREVORC');
+  $sql = new db_getCLSolicItem; $RSFin = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICPREVFIN'); 
   if ($RSOrc || $RSFin) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PREVISÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan=2><table width="100%" border=0 cellpadding=0 cellspacing=5><tr valign="top">';
@@ -487,7 +487,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   }
   
   //Listagem das propostas da licitação
-  $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
+  $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
   $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
   $exibe=false;
   foreach($RS1 as $row) { 
@@ -564,7 +564,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     
   // Se for listagem dos dados
   if ($l_O=='L' || $l_O=='V') {
-    $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
+    $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
       null,null,null,null,null,null,null,null,null,null,$v_chave, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null, null);
     $RS1 = SortArray($RS1,'inclusao','asc', 'codigo_interno', 'asc');

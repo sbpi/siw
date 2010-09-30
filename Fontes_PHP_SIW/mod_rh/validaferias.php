@@ -19,7 +19,7 @@ function ValidaFerias($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$p_sg1);
+  $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$p_sg1);
   //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento.
@@ -34,7 +34,7 @@ function ValidaFerias($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite
   $l_erro='';
   $l_tipo='';
   // Recupera o trâmite atual da solicitação
-  $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
 
   $l_erro=$l_tipo.$l_erro;

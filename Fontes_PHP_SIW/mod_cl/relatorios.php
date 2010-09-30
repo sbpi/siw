@@ -72,7 +72,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -119,13 +119,13 @@ function Rel_ItensAta() {
       if ($p_codigo>'')  $w_filtro.='<tr valign="top"><td align="right">Código <td>[<b>'.$p_codigo.'</b>] em qualquer parte';
       if ($p_nome>'')    $w_filtro.='<tr valign="top"><td align="right">Nome <td>[<b>'.$p_nome.'</b>] em qualquer parte';
       if ($p_tipo_material>'') {
-        $RS = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
+        $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
         foreach ($RS as $row) { $RS = $row; break; }
         $w_filtro.='<tr valign="top"><td align="right">Tipo <td>[<b>'.f($RS,'nome_completo').'</b>]';
       } 
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,'S',null,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,$p_numero_ata,$p_acrescimo,'RELATORIO');
+    $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,'S',null,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,$p_numero_ata,$p_acrescimo,'RELATORIO');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'numero_ata','asc','nr_item_ata','asc');

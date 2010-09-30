@@ -6,7 +6,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  $RS1 = db_getSolicData_IS::getInstanceof($dbms,$l_chave,'ISTAGERAL');
+  $sql = new db_getSolicData_IS; $RS1 = $sql->getInstanceof($dbms,$l_chave,'ISTAGERAL');
   foreach($RS1 as $row){$RS1=$row; break;}
   $l_html.=chr(13).'      <tr><td colspan=\'2\'><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan=\'2\'  bgcolor=\'#f0f0f0\'><div align=justify><font size=\'2\'><b>TAREFA: '.f($RS1,'sq_siw_solicitacao').' - '.f($RS1,'titulo').'</b></font></div></td></tr>';
@@ -16,7 +16,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     $l_html.=chr(13).'      <tr><td colspan=\'2\'><br><font size=\'2\'><b>IDENTIFICAÇÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (Nvl(f($RS1,'nm_projeto'),'')>'') {
       // Recupera os dados da ação
-      $RS2 = db_getSolicData_IS::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),'ISACGERAL');
+      $sql = new db_getSolicData_IS; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),'ISACGERAL');
       foreach($RS2 as $row){$RS2=$row; break;}
       // Se a ação no PPA for informada, exibe.
       if (Nvl(f($RS2,'cd_acao'),'')>'') {
@@ -97,7 +97,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
   // Arquivos vinculados ao programa
   if (upper($l_anexo)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan=\'2\'><br><font size=\'2\'><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS2 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS2 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS2 = SortArray($RS2,'nome','asc');
     if (count($RS2)>0) {
       $l_html.=chr(13).'   <tr><td colspan=\'2\'><div align=\'center\'>';
@@ -122,7 +122,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
   // Encaminhamentos
   if (upper($l_ocorrencia)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+    $sql = new db_getSolicLog; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
     $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
     $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
     $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';

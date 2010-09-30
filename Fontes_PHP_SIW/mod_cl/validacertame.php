@@ -22,7 +22,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$l_sg1,3,
+  $sql = new db_getSolicCL; $l_rs_solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$l_sg1,3,
                   null,null,null,null,null,null,null,null,null,null,
                   $l_chave,null,null,null,null,null,null,
                   null,null,null,null,null,null,null,null,null,null,null);
@@ -35,10 +35,10 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   $l_tipo='';  
 
   // Recupera o trâmite atual da solicitação
-  $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
   
   // Recupera os itens do certame
-  $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
+  $sql = new db_getCLSolicItem; $l_rs_item = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
   // Verifica se já foi inserido os itens na licitacao
   if (count($l_rs_item)==0) {
     $l_erro.='<li>Informe pelo um item para licitação.';
@@ -53,7 +53,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
       }
     } elseif(f($l_rs_tramite,'sigla')=='PP') {
       // Verifica se cada item possui no minimo duas pesquisas de preço
-      $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
+      $sql = new db_getCLSolicItem; $l_rs_pesquisa = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
       if(count($l_rs_pesquisa)>0) {
         foreach($l_rs_pesquisa as $row) {
           if (f($row,'qtd')<f($l_rs_solic,'minimo_pesquisas')) {
@@ -70,7 +70,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
     } elseif(f($l_rs_tramite,'sigla')=='EE')  {
       $l_exibe=false;
       if(nvl(f($l_rs_solic,'certame'),'')=='N') {
-        $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOG');
+        $sql = new db_getCLSolicItem; $l_rs_pesquisa = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOG');
         foreach($l_rs_pesquisa as $row) {
           if (f($row,'qt_propostas')==0) {
             $l_erro .= '<li>A licitação não tem nenhuma proposta.';

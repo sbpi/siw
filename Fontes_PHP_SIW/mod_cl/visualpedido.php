@@ -7,7 +7,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Recupera os dados da solicitacao
-  $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,5,
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$l_usuario,$SG,5,
           null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
@@ -105,7 +105,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     
     // Objetivos estratégicos
-    $RS1 = db_getSolicObjetivo::getInstanceOf($dbms,$v_chave,null,null);
+    $sql = new db_getSolicObjetivo; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,null);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -128,7 +128,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     
     //Listagem dos itens do pedido de compra
-    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'nm_tipo_material','asc','nm_tipo_material','asc','nome','asc');
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
@@ -206,7 +206,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if ($l_O=='L' || $l_O=='V') {
     // Se for listagem dos dados
     // Arquivos vinculados
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  

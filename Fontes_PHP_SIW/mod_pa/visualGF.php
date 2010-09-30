@@ -9,13 +9,13 @@ function VisualGF($l_chave, $l_menu=null, $l_formato='WORD') {
 
   // Recupera os dados da guia
   // Recupera os dados da solicitacao
-  $RS1 = db_getSolicPA::getInstanceOf($dbms,null,$l_usuario,'PAEMP',5,
+  $sql = new db_getSolicPA; $RS1 = $sql->getInstanceOf($dbms,null,$l_usuario,'PAEMP',5,
           null,null,null,null,null,null,null,null,null,null,
           $l_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   
-  $RS_Dados = db_getPAEmpItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null);
+  $sql = new db_getPAEmpItem; $RS_Dados = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null);
   $RS_Dados = SortArray($RS_Dados,'ano','asc','protocolo','asc');
   
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';

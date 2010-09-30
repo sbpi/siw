@@ -104,7 +104,7 @@ function TipoDemanda() {
     $w_ativo      = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoDemanda::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
+    $sql = new db_getTipoDemanda; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
     if(nvl($p_ordena,'')!=''){
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -114,7 +114,7 @@ function TipoDemanda() {
     
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoDemanda::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null);
+    $sql = new db_getTipoDemanda; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave      = f($RS,'chave');
     $w_cliente    = f($RS,'cliente');
@@ -263,7 +263,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='E') {
-          $RS = db_getTipoDemanda::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null,null,null,'VINCULADO');
+          $sql = new db_getTipoDemanda; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null,null,null,'VINCULADO');
           foreach($RS as $row) { $RS = $row; break; }
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
@@ -273,7 +273,7 @@ function Grava() {
             break;
           }
         } else  {
-          $RS = db_getTipoDemanda::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],null,null,'EXISTE');
+          $sql = new db_getTipoDemanda; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de demanda com esse nome ou sigla!\');');

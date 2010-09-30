@@ -11,7 +11,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $w_segmento     = f($RS,'segmento');
   $w_nome_cliente = f($RS,'nome_resumido');
   // Recupera os dados do acordo
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
   $w_tramite        = f($RS,'sq_siw_tramite');
   $w_tramite_ativo  = f($RS,'ativo');
   $w_valor_inicial  = f($RS,'valor');
@@ -195,7 +195,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'          </table>';    
     } 
     // Outra parte
-    $RSQuery = db_getConvOutraParte::getInstanceOf($dbms,null,$l_chave,null,null);
+    $sql = new db_getConvOutraParte; $RSQuery = $sql->getInstanceOf($dbms,null,$l_chave,null,null);
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (count($RSQuery)==0) {
       $l_html.=chr(13).'      <tr><td colspan=7 align="center"><font size=1>Outra parte não informada';
@@ -208,7 +208,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $l_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         $l_html.=chr(13).'         <br>Tipo:<b> '.f($row,'nm_tipo');
         // Preposto
-        $RSQuery1 = db_getConvPreposto::getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
+        $sql = new db_getConvPreposto; $RSQuery1 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
         $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Preposto</td>';
         if (count($RSQuery1)==0) {
           $l_html.=chr(13).'      <tr><td colspan=7><font size=1>Preposto não informado';
@@ -233,8 +233,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           }
         }             
         // Representantes
-        //$RSQuery = db_getAcordoRep::getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
-        $RSQuery = db_getConvOutroRep::getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
+        $sql = new db_getAcordoRep; //$RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
+        $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
         $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
         $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Representantes</td>';
         if (count($RSQuery)==0) {
@@ -291,7 +291,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     } 
   } 
   // Parcelas
-  $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'ordem','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -369,7 +369,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   } 
   if ($l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
     // Arquivos vinculados
-    $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS = SortArray($RS,'nome','asc');
     if (count($RS)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -399,7 +399,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
 
   // Projetos vinculados ao programa
   $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
-  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+  $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
          null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
   $RS1 = SortArray($RS1,'titulo','asc','prioridade','asc');
@@ -458,7 +458,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   }    
   // Acompanhamento Financeiro
   $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PJCAD');
-  $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$l_usuario,'PJCAD',3,
+  $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$l_usuario,'PJCAD',3,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,null,null,$l_chave,null);
   $RS2 = SortArray($RS2,'titulo','asc');
@@ -467,7 +467,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     foreach ($RS2 as $row2){
-      $RS = db_getSolicRubrica::getInstanceOf($dbms,f($row2,'sq_siw_solicitacao'),null,null,null,null,null,null,null,null);
+      $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,f($row2,'sq_siw_solicitacao'),null,null,null,null,null,null,null,null);
       $RS = SortArray($RS,'codigo','asc');
       if (count($RS)>0) {
         if($l_P4!=1) $l_html .= chr(13).'          <tr><td colspan=9>Projeto: <b><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="_blank">'.f($row2,'titulo').' ('.f($row2,'sq_siw_solicitacao').')</a></b></td>';

@@ -7,7 +7,7 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Recupera os dados da solicitacao
-  $RS = db_getSolicPA::getInstanceOf($dbms,null,$l_usuario,$SG,5,
+  $sql = new db_getSolicPA; $RS = $sql->getInstanceOf($dbms,null,$l_usuario,$SG,5,
           null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
@@ -59,7 +59,7 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   
   if ($l_O!='X') {
     //Listagem dos itens do pedido de compra. Não exibido quando operação igual a X (conclusão do pedido).
-    $RS1 = db_getPAEmpItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null);
+    $sql = new db_getPAEmpItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null);
     $RS1 = SortArray($RS1,'ano','asc','protocolo','asc'); 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';

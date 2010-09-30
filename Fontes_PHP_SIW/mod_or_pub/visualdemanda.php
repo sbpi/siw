@@ -7,7 +7,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
   global $w_Disabled;
   $l_html='';
   // Recupera os dados da tarefa
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'GDGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'GDGERAL');
   // O código abaixo foi comentado em 23/11/2004, devido à mudança na regra definida pelo usuário,
   // que agora permite visão geral para todos os usuários
   // Recupera o tipo de visão do usuário
@@ -51,7 +51,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
 
     if (nvl(f($RS,'nm_projeto'),'')>'') {
       // Recupera os dados da ação
-      $RS1 = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PJGERAL');
+      $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PJGERAL');
       // Se a ação no PPA for informada, exibe.
       if (nvl(f($RS1,'sq_acao_ppa'),'')>'') {
         $l_html .=chr(13).'  <tr><td width="30%"><b>Programa PPA:</b></td>';
@@ -154,7 +154,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
       //w_html = w_html & VbCrLf & '          </table>'
     } 
     // Interessados na execução da tarefa
-    $RS = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicInter; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'nome_resumido','asc');
     if (count($RS)>0) {
       $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NO EXECUÇÃOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -176,7 +176,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
       $l_html .=chr(13).'         </table></td></tr>';
     } 
     // Áreas envolvidas na execução da tarefa
-    $RS = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicAreas; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'nome','asc');
     if (count($RS)>0) {
       $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ÁREAS/INSTITUIÇÕES ENVOLVIDAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -200,7 +200,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
     // Se for listagem dos dados
     if ($w_tipo_visao!=2) {
       // Arquivos vinculados
-      $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
       $RS = SortArray($RS,'nome','asc');
       if(count($RS)>0) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -225,7 +225,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
       } 
     } 
     // Encaminhamentos
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
+    $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
     $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html .=chr(13).'      <tr><td align="center" colspan="2">';

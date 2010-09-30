@@ -72,7 +72,7 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -102,7 +102,7 @@ function Rel_Bolsista() {
   $p_mes    = strval($_REQUEST['p_mes']);
   $p_ano    = $_REQUEST['p_ano'];
   if (nvl($p_chave,'')>'') {
-    $RS1 = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
+    $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$p_chave,'PJGERAL');
     $w_inicio     = f($RS1,'inicio');
     $w_fim        = f($RS1,'fim');
     if(f($RS1,'meses_projeto')==0)  $w_meses = 1;
@@ -123,15 +123,15 @@ function Rel_Bolsista() {
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   if($p_tipo=='F') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,null);
+    $sql = new db_getRelBolsista; $RS = $sql->getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'or_tema','asc','or_nivel','asc','nm_bolsista','asc','phpdt_vencimento','asc');
   } elseif($p_tipo=='T') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,'TEMA');
+    $sql = new db_getRelBolsista; $RS = $sql->getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,'TEMA');
     $RS = SortArray($RS,'or_tema','asc','or_nivel','asc','nm_bolsista','asc','phpdt_vencimento','asc');
   } elseif($p_tipo=='M') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,'MENSAL');
+    $sql = new db_getRelBolsista; $RS = $sql->getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,'MENSAL');
   } elseif($p_tipo=='R') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,$p_mes,$p_ano,'RESUMO1');
+    $sql = new db_getRelBolsista; $RS = $sql->getInstanceOf($dbms,$p_chave,null,null,null,null,$p_mes,$p_ano,'RESUMO1');
     $RS = SortArray($RS,'or_tema','asc','or_nivel','asc','nm_bolsista','asc','phpdt_vencimento','asc');
   }
   if ($w_tipo_rel=='WORD') {
@@ -277,7 +277,7 @@ function Rel_Bolsista() {
             ShowHTML('<tr><td colspan="2"><div align="center">');
             ShowHTML('<table border="0" width="100%">');
             if (nvl($p_chave,'')>'') {
-              $RS1 = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
+              $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$p_chave,'PJGERAL');
               ShowHTML('<tr><td width="15%"><b>Projeto:</b></td><td>'.f($RS1,'titulo').' - '.f($RS1,'sigla').'</td>');
             } 
             ShowHTML('</ul></td></tr></table>');
@@ -338,7 +338,7 @@ function Rel_Bolsista() {
 
             // Recupera e acumula os valores mensais do bolsista
             // Acumula também valores totais para uso no final da impressão
-            $RS1 = db_getRelBolsista::getInstanceOf($dbms,$p_chave,f($row,'outra_parte'),null,null,null,null,null,null);
+            $sql = new db_getRelBolsista; $RS1 = $sql->getInstanceOf($dbms,$p_chave,f($row,'outra_parte'),null,null,null,null,null,null);
             $RS1 = SortArray($RS1,'phpdt_vencimento','asc');
             unset($w_valor);
             foreach($RS1 as $row1) {
@@ -921,7 +921,7 @@ function Rel_Bolsista() {
         $w_relatorio[($w_linha+3)][1] = 'TOTAL GERAL';
         $w_relatorio[($w_linha+3)][2] = ($w_vr_total_bev + $w_vr_total_dtiev);
         $w_relatorio[($w_linha+3)][3] = ($w_qtd_total_bev + $w_qtd_total_dtiev);
-        $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,$p_mes,$p_ano,'RESUMO1');
+        $sql = new db_getRelBolsista; $RS = $sql->getInstanceOf($dbms,$p_chave,null,null,null,null,$p_mes,$p_ano,'RESUMO1');
         $w_linha       = 1;
         $w_nivel_atual = 0;
         foreach($RS as $row) {

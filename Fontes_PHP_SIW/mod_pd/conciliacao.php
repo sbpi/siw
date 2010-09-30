@@ -93,7 +93,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 $w_caminho  = $conFilePhysical.$w_cliente.'/';
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+$sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
   $w_submenu = 'Existe';
 } else {
@@ -132,12 +132,12 @@ function Inicial() {
     $w_rejeitados       = $_REQUEST['w_rejeitados'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getPDImportacao::getInstanceOf($dbms,$w_chave,$w_cliente,$p_responsavel,$p_dt_ini,$p_dt_fim,$p_imp_ini,$p_imp_fim,null);
+    $sql = new db_getPDImportacao; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,$p_responsavel,$p_dt_ini,$p_dt_fim,$p_imp_ini,$p_imp_fim,null);
     $RS = SortArray($RS,'phpdt_data_arquivo','desc','phpdt_data_importacao','desc');
   } 
   
   // Verifica quantas agências de viagens estão cadastradas
-  $RS1 = db_getPersonList::getInstanceOf($dbms, $w_cliente, null, 'FORNECPD', null, null, null, null);
+  $sql = new db_getPersonList; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, null, 'FORNECPD', null, null, null, null);
   $w_qtd_agencia = count($RS1);
   if ($w_qtd_agencia==1) {
     foreach($RS1 as $row1) $w_agencia = f($row1,'sq_pessoa');
@@ -752,11 +752,11 @@ function Grava() {
           if ($_REQUEST['w_tipo']==0) { // Fatura de bilhetes aéreos
             if (is_array($F2[""])) {
               // Recupera dados da agência de viagens emissora da fatura
-              $RS_Agencia = db_getPersonList::getInstanceOf($dbms, $w_cliente, $_REQUEST['w_agencia'], 'TODOS', null, null, null, null);
+              $sql = new db_getPersonList; $RS_Agencia = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_agencia'], 'TODOS', null, null, null, null);
               foreach($RS_Agencia as $row) { $RS_Agencia = $row; break; }
               
               // Recupera a tabela de descontos da agência informada
-              $RS_Desconto = db_getDescontoAgencia::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_agencia'],null,null,null,null,'S');
+              $sql = new db_getDescontoAgencia; $RS_Desconto = $sql->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_agencia'],null,null,null,null,'S');
               $RS_Desconto = SortArray($RS_Desconto,'nome','asc','faixa_inicio','asc');
               
               // Varre o arquivo recebido, linha a linha
@@ -786,7 +786,7 @@ function Grava() {
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Número da fatura: '.$w_result; 
                 } else {
-                  $RS_Fatura = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,null,
+                  $sql = new db_getPD_Fatura; $RS_Fatura = $sql->getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,null,
                                   null, null, null, null, null, null, null, null, null, null, null);
                   if (count($RS_Fatura)>0) {
                     foreach($RS_Fatura as $row1) { $RS_Fatura = $row1; break; } 
@@ -871,7 +871,7 @@ function Grava() {
                   
                   $w_erro.=$crlf.'Cia aérea: '.$w_result; 
                 } else {
-                  $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,$w_cia,'S',null,null,null,null,null,null);
+                  $sql = new db_getCiaTrans; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_cia,'S',null,null,null,null,null,null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Cia aérea: na base de dados não há companhia com a sigla "'.$w_cia.'"';
                   } elseif (count($RS)>1) {
@@ -889,7 +889,7 @@ function Grava() {
                 } else {
                   // Verifica se o projeto existe
                   $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
-                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
+                  $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
                   }
@@ -918,7 +918,7 @@ function Grava() {
                   }
                   if ($w_hn_cia) {
                     // Verificações se a companhia aérea for localizada na base de dados
-                    $RS_Bilhete = db_getPD_Bilhete::getInstanceOf($dbms,null,null,null,null,$w_bilhete,$w_hn_cia,'S',null);
+                    $sql = new db_getPD_Bilhete; $RS_Bilhete = $sql->getInstanceOf($dbms,null,null,null,null,$w_bilhete,$w_hn_cia,'S',null);
                     $w_hn_bilhete  = '';
                     $w_hn_solic    = '';
                     $w_solicitacao = '';
@@ -934,7 +934,7 @@ function Grava() {
                       if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
                         $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
                       }
-                      $RS_FatBil = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
+                      $sql = new db_getPD_Fatura; $RS_FatBil = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
                                     null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
                       if (count($RS_FatBil)>0) {
                         foreach($RS_FatBil as $row1) { $RS_FatBil = $row1; break; } 
@@ -1145,7 +1145,7 @@ function Grava() {
           } else { // Faturas de hospedagens, locações de veículos e seguros viagem
             if (is_array($F2[""])) {
               // Recupera dados da agência de viagens emissora da fatura
-              $RS_Agencia = db_getPersonList::getInstanceOf($dbms, $w_cliente, $_REQUEST['w_agencia'], 'TODOS', null, null, null, null);
+              $sql = new db_getPersonList; $RS_Agencia = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_agencia'], 'TODOS', null, null, null, null);
               foreach($RS_Agencia as $row) { $RS_Agencia = $row; break; }
               
               // Varre o arquivo recebido, linha a linha
@@ -1178,7 +1178,7 @@ function Grava() {
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Número da fatura: '.$w_result; 
                 } else {
-                  $RS_Fatura = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,null,
+                  $sql = new db_getPD_Fatura; $RS_Fatura = $sql->getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,null,
                                   null, null, null, null, null, null, null, null, null, null, 'OUTROS');
                   if (count($RS_Fatura)>0) {
                     foreach($RS_Fatura as $row1) { $RS_Fatura = $row1; break; } 
@@ -1264,7 +1264,7 @@ function Grava() {
                 } else {
                   // Verifica se o projeto existe
                   $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
-                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
+                  $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
                   }
@@ -1289,7 +1289,7 @@ function Grava() {
                 } else {
                   // Verifica se o código da viagem existe
                   $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_solic, null);
+                  $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_solic, null);
                   $w_hn_solic    = '';
                   $w_solicitacao = '';
                   if (count($RS)==0) {

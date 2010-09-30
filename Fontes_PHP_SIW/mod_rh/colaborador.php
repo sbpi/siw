@@ -114,7 +114,7 @@ $w_usuario     = RetornaUsuario();
 $w_menu        = RetornaMenu($w_cliente,$SG);
 
 // Recupera os parâmetros do módulo de pessoal
-$RS_Parametro = db_getGPParametro::getInstanceOf($dbms,$w_cliente,null,null);
+$sql = new db_getGPParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,null,null);
 foreach ($RS_Parametro as $row) {$RS_Parametro = $row; break;}
 if (nvl(f($RS_Parametro,'vinculacao_contrato'),'')!='') $w_exige_cc = true; else $w_exige_cc = false;
 
@@ -147,7 +147,7 @@ function Inicial() {
   $w_cpf                    = upper($_REQUEST['w_cpf']);
   $w_botao                  = upper($_REQUEST['w_botao']);
   if ($O=='L') {
-    $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$p_contrato_colaborador,null,$p_ativo,$p_modalidade_contrato,$p_unidade_lotacao,$p_filhos_lotacao,$p_unidade_exercicio,$p_filhos_exercicio,$p_afastamento,$p_dt_ini,$p_dt_fim,$p_ferias,$p_viagem,null,'COLABORADOR');
+    $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_contrato_colaborador,null,$p_ativo,$p_modalidade_contrato,$p_unidade_lotacao,$p_filhos_lotacao,$p_unidade_exercicio,$p_filhos_exercicio,$p_afastamento,$p_dt_ini,$p_dt_fim,$p_ferias,$p_viagem,null,'COLABORADOR');
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome_resumido_ind','asc');
@@ -155,9 +155,9 @@ function Inicial() {
       $RS = SortArray($RS,'nome_resumido_ind','asc');
     }
   } elseif ($O=='E') {
-    $RS = db_getCV::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'CVIDENT','DADOS');
+    $sql = new db_getCV; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'CVIDENT','DADOS');
     foreach($RS as $row){$RS=$row; break;}
-    $RS1 = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getGPContrato; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null);
     foreach($RS1 as $row){$RS1=$row; break;}
     $w_erro = ValidaColaborador($w_cliente,$w_sq_pessoa,f($RS1,'chave'),null);
   }
@@ -316,7 +316,7 @@ function Inicial() {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="" checked> Tanto faz');
     } 
     ShowHTML('      <tr><td><b>Afastado por:</b><br>');
-    $RS1 = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,null);
+    $sql = new db_getGPTipoAfast; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,null);
     $RS1 = SortArray($RS1,'nome','asc');
     ShowHTML('      <tr><td><table width="100%" border="0">');
     ShowHTML('        <tr>');
@@ -383,7 +383,7 @@ function Inicial() {
 
 
     if ($w_nome>'') {
-      $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,null,'PESSOA',$w_nome,null,null,null);
+      $sql = new db_getPersonList; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PESSOA',$w_nome,null,null,null);
       $RS = SortArray($RS,'nome','asc');
       ShowHTML('<tr><td colspan=3>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -507,17 +507,17 @@ function Remuneracao() {
   $w_chave_aux           = $_REQUEST['w_chave_aux'];
   //exibeVariaveis();
   //Recupera os dados do contrato
-  $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
   if ($w_troca> '' && $O!='E') {
     $w_data_alteracao = $_REQUEST['w_data_alteracao'];
     $w_novo_valor     = $_REQUEST['w_novo_valor'];
     $w_funcao         = $_REQUEST['w_funcao'];
     $w_motivo         = $_REQUEST['w_motivo'];
   }elseif ($O=='L') {
-    $RS = db_getGpAlteracaoSalario::getInstanceOf($dbms, $w_chave, null, null, null, null);
+    $sql = new db_getGpAlteracaoSalario; $RS = $sql->getInstanceOf($dbms, $w_chave, null, null, null, null);
     $RS = SortArray($RS,'data_alteracao','desc');
   } elseif (!(strpos('AEV',$O)===false) || $w_troca > '') {
-    $RS = db_getGpAlteracaoSalario::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null);
+    $sql = new db_getGpAlteracaoSalario; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null);
     foreach ($RS as $row) {
       $w_data_alteracao       = formataDataEdicao(f($row,'data_alteracao'));
       $w_novo_valor           = formatNumber(f($row,'novo_valor'),2);
@@ -729,16 +729,16 @@ function Desempenho() {
   $w_chave               = $_REQUEST['w_chave'];
 
   //Recupera os dados do contrato
-  $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RSContrato as $row) {$RSContrato = $row; break;}
   if ($w_troca> '' && $O!='E') {
     $w_ano                 = $_REQUEST['w_ano'];
     $w_percentual          = $_REQUEST['w_percentual'];
   }elseif ($O=='L') {
-    $RS = db_getGpDesempenho::getInstanceOf($dbms, $w_chave,null);
+    $sql = new db_getGpDesempenho; $RS = $sql->getInstanceOf($dbms, $w_chave,null);
     $RS = SortArray($RS,'ano','desc');
   } elseif (!(strpos('AEV',$O)===false) || $w_troca>'') {
-    $RS = db_getGpDesempenho::getInstanceOf($dbms, $w_chave, $w_ano);
+    $sql = new db_getGpDesempenho; $RS = $sql->getInstanceOf($dbms, $w_chave, $w_ano);
     foreach ($RS as $row) {
       $w_ano        = f($row,'ano');
       $w_percentual = f($row,'percentual');
@@ -855,7 +855,7 @@ function Desempenho() {
       $w_Disabled =' DISABLED ';
     } elseif (!(strpos('IA',$O)===false)) {
       $w_ativo = 0;
-      $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,$w_chave,null);
+      $sql = new db_getGPContrato; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,$w_chave,null);
       if (count($RS)>0) {
         foreach ($RS as $row) {
           if ((Nvl(f($row,'fim'),'')=='') && ($w_chave!=f($row,'chave'))) $w_ativo+=1;
@@ -961,7 +961,7 @@ function Documentacao() {
     $w_observacoes        = $_REQUEST['w_observacoes'];
   } else {
     // Recupera os dados do colaborador a partir do código da pessoa
-    $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     if (count($RS)>0) {
       $w_ctps_numero       = f($RS,'ctps_numero');
@@ -1175,7 +1175,7 @@ function Pensao(){
     $w_observacao           = $_REQUEST['w_observacao'];
   } elseif (strpos('AE',$O)!==false) {
     // Recupera os dados da pensão
-    $RS = db_getGpPensionista::getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
+    $sql = new db_getGpPensionista; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
     foreach($RS as $row) { $RS = $row; break; }
     $w_dados_pagamento = true;
     if (count($RS)>0) {
@@ -1188,7 +1188,7 @@ function Pensao(){
     }  
 
     // Recupera os dados do pensionista em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_sq_pessoa            = f($RS,'sq_pessoa');
@@ -1212,7 +1212,7 @@ function Pensao(){
     }
     
     // Recupera os dados bancários do pensionista
-    $RSConta = db_getContaBancoList::getInstanceOf($dbms,$w_sq_pessoa,null,null);
+    $sql = new db_getContaBancoList; $RSConta = $sql->getInstanceOf($dbms,$w_sq_pessoa,null,null);
     if (count($RSConta)>0) {
       foreach($RSConta as $row) { $RSConta = $row; break; }
       $w_sq_banco   = f($RSConta,'sq_banco');
@@ -1223,11 +1223,11 @@ function Pensao(){
   }
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
-    $RS_Banco = db_getBankData::getInstanceOf($dbms, $w_sq_banco);
+    $sql = new db_getBankData; $RS_Banco = $sql->getInstanceOf($dbms, $w_sq_banco);
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
 
-  $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
   $RSContrato = SortArray($RSContrato,'inicio','desc');
   $w_doe = time();
   foreach($RSContrato as $row) {
@@ -1340,7 +1340,7 @@ function Pensao(){
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   
   If($O=='L'){
-    $RS = db_getGpPensionista::getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
+    $sql = new db_getGpPensionista; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -1386,7 +1386,7 @@ function Pensao(){
   } elseif (strpos('IAE',$O)!==false) {
     if ($O=='I' and nvl($_REQUEST['w_cpf'],'')!='') {
       // Verifica se já existe pessoa física com o CPF informado
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],null,null,$w_tipo_pessoa,null,null,null,null,null,null,null);
+      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],null,null,$w_tipo_pessoa,null,null,null,null,null,null,null);
       if (count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -1437,7 +1437,7 @@ function Pensao(){
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,1,null,null,null,null,null,null,null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,1,null,null,null,null,null,null,null);
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1598,7 +1598,7 @@ function Familiares(){
 
   } elseif (strpos('AE',$O)!==false) {
     // Recupera os dados da pensão
-    $RS = db_getGpFamiliares::getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
+    $sql = new db_getGpFamiliares; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
     foreach($RS as $row) { $RS = $row; break; }
     if (count($RS)>0) {
       $w_sq_pessoa      = f($RS,'chave');
@@ -1669,7 +1669,7 @@ function Familiares(){
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
 
   If($O=='L'){
-    $RS = db_getGpFamiliares::getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
+    $sql = new db_getGpFamiliares; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa,$w_cliente,$w_usuario);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
@@ -1726,7 +1726,7 @@ function Familiares(){
     ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
     if ($O=='L') {
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,1,null,null,null,null,null,null,null);
+      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,1,null,null,null,null,null,null,null);
       ShowHTML('<tr><td colspan=3>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1884,10 +1884,10 @@ function Contrato() {
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
   if ($O=='L') {
-    $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getGPContrato; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'inicio','desc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getGPContrato; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,$w_usuario,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     if (count($RS)>0) {
       $w_chave               = f($RS,'chave');
@@ -2133,7 +2133,7 @@ function Contrato() {
       $w_Disabled =' DISABLED ';
     } elseif (!(strpos('IA',$O)===false)) {
       $w_ativo = 0;
-      $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,$w_chave,null);
+      $sql = new db_getGPContrato; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,$w_chave,null);
       if (count($RS)>0) {
         foreach ($RS as $row) {
           if ((Nvl(f($row,'fim'),'')=='') && ($w_chave!=f($row,'chave'))) $w_ativo+=1;
@@ -2159,7 +2159,7 @@ function Contrato() {
     SelecaoCargo('<u>C</u>argo:','C','Selecione o cargo.',$w_posto_trabalho,null,'w_posto_trabalho',null,null);
     SelecaoModalidade('M<u>o</u>dalidade de contratação:','O',null,$w_modalidade_contrato,null,'w_modalidade_contrato',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'\'; document.Form.w_troca.value=\'w_modalidade_contrato\'; document.Form.submit();"');
     if (Nvl($w_modalidade_contrato,'')>'') {
-      $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$w_modalidade_contrato,null,null,null,null,null);
+      $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_modalidade_contrato,null,null,null,null,null);
       foreach ($RS as $row){
         if (f($row,'username')=='P') {
           $w_username_pessoa = 'S';
@@ -2253,7 +2253,7 @@ function Contrato() {
 
 
     //Informações da folha de ponto diária
-    //$RSFolha = db_getGPFolhaPontoDiario::getInstanceOf($dbms,$w_contrato,null,null);
+    $sql = new db_getGPFolhaPontoDiario; //$RSFolha = $sql->getInstanceOf($dbms,$w_contrato,null,null);
     ShowHTML('<tr><td colspan="3"><fieldset class="rh_fieldset"><legend><big>Jornada de trabalho</big></legend><table width="100%">');
     ShowHTML('  <tr><td colspan="4"><br></td></tr>');
     ShowHTML('  <tr valign="middle" align="center">');
@@ -2412,7 +2412,7 @@ function Visual1() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_sq_pessoa  =  $_REQUEST['w_sq_pessoa'];
-  $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) {$RS = $row; break;}
   Cabecalho();
   head();
@@ -2572,7 +2572,7 @@ function Grava() {
               Rodape();
             }
           } else {
-            $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,$_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],null,null);
+            $sql = new db_getGPContrato; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,$_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],null,null);
             if(count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('alert(\'Já existe contrato cadastrado para o período informado!\');');
@@ -2593,9 +2593,9 @@ function Grava() {
                 $_REQUEST['w_seguro_saude'],$_REQUEST['w_seguro_odonto'],$_REQUEST['w_seguro_vida'],$_REQUEST['w_plano_saude'],$_REQUEST['w_plano_odonto'],$_REQUEST['w_plano_vida'],
                 $_REQUEST['w_observacao_beneficios']);
           if (!(strpos('I',$O)===false)) {
-            $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
+            $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
             if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
-              $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+              $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
               $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'I',$w_usuario,$w_cliente,f($RS,'nome'),f($RS,'nome_resumido'),$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                     f($RS,'sq_tipo_vinculo'),'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
                     f($RS,'cpf'),f($RS,'email'),null,null,null);
@@ -2617,7 +2617,7 @@ function Grava() {
     case 'CODES':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $RS = db_getGPDesempenho::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);
+        $sql = new db_getGPDesempenho; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);
         if(count($RS)>0 && $O=='I') {
           ScriptOpen('JavaScript');
           ShowHTML('alert(\'O percentual de desempenho para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
@@ -2639,7 +2639,7 @@ function Grava() {
     case 'COREM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        //$RS = db_getGPAlteracaoSalario::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);
+        $sql = new db_getGPAlteracaoSalario; //$RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);
         /*if(count($RS)>0 && $O=='I') {
          ScriptOpen('JavaScript');
          ShowHTML('alert(\'O percentual de AlteracaoSalario para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');

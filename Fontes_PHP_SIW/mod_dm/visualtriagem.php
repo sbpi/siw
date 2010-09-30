@@ -8,7 +8,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
   include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 
   //Recupera as informações do sub-menu
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
+  $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
   foreach ($RS as $row) {
     if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
     elseif (strpos(f($row,'sigla'),'AREAS')!==false)    $l_nome_menu['AREAS'] = upper(f($row,'nome'));
@@ -24,7 +24,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
 
   $l_html = '';
   // Recupera os dados da demanda
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'GDTGERAL');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'GDTGERAL');
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_tramite_ativo = f($RS,'ativo');
   $w_sg_tramite    = f($RS,'sg_tramite');
@@ -44,12 +44,12 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     // Se for solicitante, executor ou cadastrador, tem visão completa
     $w_tipo_visao=0;
   } else {
-    $RSQuery = db_getSolicInter::getInstanceOf($dbms,$l_chave,$w_usuario,'REGISTRO');
+    $sql = new db_getSolicInter; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,$w_usuario,'REGISTRO');
     if (count($RSQuery)>0) {
       // Se for interessado, verifica a visão cadastrada para ele.
       $w_tipo_visao = f($RSQuery,'tipo_visao');
     } else {
-      $RSQuery = db_getSolicAreas::getInstanceOf($dbms,$l_chave,$sq_lotacao_session,'REGISTRO');
+      $sql = new db_getSolicAreas; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,$sq_lotacao_session,'REGISTRO');
       if (!($RSQuery==0)) {
         // Se for de uma das unidades envolvidas, tem visão parcial
         $w_tipo_visao=1;
@@ -136,7 +136,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
       $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
       $l_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
 
-      $RSQuery = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+      $sql = new db_getSolicList; $RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
               null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
               null, null, null, null,null, null, null, f($RS,'sq_siw_solicitacao'), null);
       $RSQuery = SortArray($RSQuery,'fim','asc','prioridade','asc');
@@ -200,7 +200,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     } 
 
     // Recursos
-    $RS1 = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicRecursos; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'nm_tipo_recurso','asc','nm_recurso','asc'); 
     if (count($RS1)>0) {
       $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RECURSOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -263,7 +263,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     } 
 
     // Interessados na execução do projeto (formato novo)
-    $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'ordena','asc','or_tipo_interessado','asc','nome','asc');
     if (count($RS1)>0 && $l_nome_menu['RESP']!='') {
       $l_cont = 0;
@@ -320,7 +320,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     } 
 
     // Interessados na execução da demanda (formato antigo)
-    $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicInter; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0 && $l_nome_menu['INTERES']!='') {
       foreach ($RS1 as $row) {
@@ -346,7 +346,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     } 
 
     // Áreas envolvidas na execução da demanda
-    $RS1 = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $sql = new db_getSolicAreas; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0 && $l_nome_menu['AREAS']!='') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -370,7 +370,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
   if ($operacao=='L' || $operacao=='V') {
     // Se for listagem dos dados
     // Arquivos vinculados
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0 && $l_nome_menu['ANEXO']!='') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['ANEXO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  

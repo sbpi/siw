@@ -119,7 +119,7 @@ function ModalidadeCont() {
     $w_horas_extras = $_REQUEST['w_horas_extras'];
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
+    $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -127,7 +127,7 @@ function ModalidadeCont() {
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
+    $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
@@ -357,7 +357,7 @@ function DireitoFerias() {
     $w_dias_ferias       = $_REQUEST['w_dias_ferias'];
     $w_ativo             = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
-    $RS = db_getGpFeriasDias::getInstanceOf($dbms,null,$w_cliente,null);
+    $sql = new db_getGpFeriasDias; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -365,7 +365,7 @@ function DireitoFerias() {
       $RS = SortArray($RS,'faixa_inicio','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getGPFeriasDias::getInstanceOf($dbms,$w_chave, $w_cliente, null);
+    $sql = new db_getGPFeriasDias; $RS = $sql->getInstanceOf($dbms,$w_chave, $w_cliente, null);
     
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave             = f($RS,'chave');
@@ -529,7 +529,7 @@ function Tipoafast() {
     $w_falta             = $_REQUEST['w_falta'];
     $w_ativo             = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
-    $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
+    $sql = new db_getGPTipoAfast; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -537,7 +537,7 @@ function Tipoafast() {
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
+    $sql = new db_getGPTipoAfast; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave             = f($RS,'chave');
     $w_nome              =  f($RS,'nome');
@@ -694,7 +694,7 @@ function Tipoafast() {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_periodo" value="A" checked> Datas <br><input '.$w_Disabled.' type="radio" name="w_periodo" value="D"> Dias <br><input '.$w_Disabled.' type="radio" name="w_periodo" value="H"> Horas');
     } 
     if ($O=='I') {
-      $RS1 = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,'TPAFASTAMENTO');
+      $sql = new db_getGPModalidade; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,'TPAFASTAMENTO');
       ShowHTML('          <td rowspan=2><b>Modalidades de contratação vinculadas:</b><br>');
       if (count($RS1)> 0) {
         foreach($RS1 as $row) {
@@ -702,7 +702,7 @@ function Tipoafast() {
         } 
       } 
     } elseif ($O=='A' || $O=='E') {
-      $RS1 = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,null,null,'S',$w_chave,'TPAFASTAMENTO');     
+      $sql = new db_getGPModalidade; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,'S',$w_chave,'TPAFASTAMENTO');     
       ShowHTML('          <td rowspan=2><b>Modalidades de contratação vinculadas:</b><br>');
       if (count($RS1)> 0) {
         foreach($RS1 as $row) {
@@ -779,7 +779,7 @@ function DataEspecial() {
     $w_expediente     = $_REQUEST['w_expediente'];
     $w_ativo          = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
+    $sql = new db_getDataEspecial; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -788,7 +788,7 @@ function DataEspecial() {
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
 
-    $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
+    $sql = new db_getDataEspecial; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave         = f($RS,'chave');
     $w_sq_pais       = f($RS,'sq_pais');
@@ -877,25 +877,25 @@ function DataEspecial() {
           ShowHTML('        <td align="left">'.f($row,'nome').'</td>');
           ShowHTML('        <td align="left">'.RetornaTipoData(f($row,'tipo')).'</td>');
           if (Nvl(f($row,'sq_cidade'),'')>'') {
-            $RS1 = db_getCountryData::getInstanceOf($dbms,f($row,'sq_pais'));
+            $sql = new db_getCountryData; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_pais'));
             if (f($RS1,'padrao')=='S') {
-              $RS2 = db_getCityData::getInstanceOf($dbms,f($row,'sq_cidade'));
+              $sql = new db_getCityData; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_cidade'));
               ShowHTML('        <td align="left">'.f($RS2,'nome').' - '.f($RS2,'co_uf').'</td>');
             } else {
-              $RS2 = db_getCityData::getInstanceOf($dbms,f($row,'sq_cidade'));
+              $sql = new db_getCityData; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_cidade'));
               ShowHTML('        <td align="left">'.f($RS2,'nome').' - '.f($RS1,'nome').'</td>');
             } 
           } elseif (Nvl(f($row,'co_uf'),'')>''){  
-            $RS1 = db_getCountryData::getInstanceOf($dbms,f($row,'sq_pais'));
+            $sql = new db_getCountryData; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_pais'));
             if (f($RS1,'padrao')=='S') {
-              $RS2 = db_getStateData::getInstanceOf($dbms,f($row,'sq_pais'),f($row,'co_uf'));
+              $sql = new db_getStateData; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_pais'),f($row,'co_uf'));
               ShowHTML('        <td align="left">'.f($RS2,'co_uf').'</td>');
             } else {
-              $RS2 = db_getStateData::getInstanceOf($dbms,f($row,'sq_pais'),f($row,'co_uf'));
+              $sql = new db_getStateData; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_pais'),f($row,'co_uf'));
               ShowHTML('        <td align="left">'.f($RS2,'co_uf').' - '.f($RS1,'nome').'</td>');
             } 
           } elseif (Nvl(f($row,'sq_pais'),'')>'') {
-            $RS1 = db_getCountryData::getInstanceOf($dbms,f($row,'sq_pais'));
+            $sql = new db_getCountryData; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_pais'));
             ShowHTML('        <td align="left">'.f($RS1,'nome').'</td>');
           }  elseif (f($row,'abrangencia')=='O') {
             ShowHTML('        <td align="left">Organização</td>');
@@ -1036,7 +1036,7 @@ function Parametros() {
     $w_limite_diario_extras = $_REQUEST['w_limite_diario_extras'];
     $w_dias_perda_ferias    = $_REQUEST['w_dias_perda_ferias'];
   } else {
-    $RS = db_getGPParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    $sql = new db_getGPParametro; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     if (count($RS)>0) {
       $w_sq_unidade_gestao    = f($RS,'sq_unidade_gestao');
@@ -1214,7 +1214,7 @@ function Cargo() {
     $w_ativo          = $_REQUEST['w_ativo'];
     $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
   } elseif ($O=='L') {
-    $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,null,$w_sq_tipo,$w_nome,$w_sq_formacao,$w_ativo,null);
+    $sql = new db_getCargo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_tipo,$w_nome,$w_sq_formacao,$w_ativo,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1222,7 +1222,7 @@ function Cargo() {
       $RS = SortArray($RS,'nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
+    $sql = new db_getCargo; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave        = f($RS,'chave');
     $w_sq_tipo      = f($RS,'sq_tipo_posto');
@@ -1433,7 +1433,7 @@ function Grava() {
 // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          $RS = db_getGPFeriasDias::getInstanceOf($dbms,null,$w_cliente,null);
+          $sql = new db_getGPFeriasDias; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null);
           $erro = false;
           foreach($RS as $row) {
             $inicio = f($row,'faixa_inicio');  
@@ -1474,7 +1474,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_sigla'],$_REQUEST['w_nome'],null,null,'VERIFICASIGLANOME');
+          $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_sigla'],$_REQUEST['w_nome'],null,null,'VERIFICASIGLANOME');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe modalidade com este nome ou sigla!\');');
@@ -1482,7 +1482,7 @@ function Grava() {
             ScriptClose();  
           } 
         } elseif ($O=='E') {
-          $RS = db_getGPModalidade::getInstanceOf($dbms,null,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VERIFICAMODALIDADES');
+          $sql = new db_getGPModalidade; $RS = $sql->getInstanceOf($dbms,null,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VERIFICAMODALIDADES');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe contrato associado a esta modalidade, não sendo possível sua exclusão!\');');
@@ -1508,7 +1508,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_sigla'],$_REQUEST['w_nome'],null,null,'VERIFICASIGLANOME');
+          $sql = new db_getGPTipoAfast; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_sigla'],$_REQUEST['w_nome'],null,null,'VERIFICASIGLANOME');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de afastamento com este nome ou sigla!\');');
@@ -1516,7 +1516,7 @@ function Grava() {
             ScriptClose(); 
           } 
         } elseif ($O=='E') {
-          $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VERIFICAAFASTAMENTO');
+          $sql = new db_getGPTipoAfast; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VERIFICAAFASTAMENTO');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe afastamento cadastrado para este tipo!\');');
@@ -1552,7 +1552,7 @@ function Grava() {
             $w_arq_texto  = $w_ano.'.txt';
 
             // Recupera as datas especiais do ano informado
-            $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
+            $sql = new db_getDataEspecial; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
             $RS = SortArray($RS,'data_formatada','asc');
             if (count($RS)>0) {
               $w_lista='';
@@ -1671,7 +1671,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_nome'],null,null,'VERIFICANOME');
+          $sql = new db_getCargo; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_nome'],null,null,'VERIFICANOME');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe cargo com este nome!\');');
@@ -1679,7 +1679,7 @@ function Grava() {
             ScriptClose();
           } 
         } elseif ($O=='E') {
-          $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VERIFICACONTRATO');                                               
+          $sql = new db_getCargo; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VERIFICACONTRATO');                                               
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe contrato de colaborador associado a este cargo, não sendo possível sua exclusão!\');');

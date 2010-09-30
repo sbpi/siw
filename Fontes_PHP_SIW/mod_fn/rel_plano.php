@@ -114,7 +114,7 @@ function Inicial() {
   }
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getLancamento::getInstanceOf($dbms, $w_cliente, substr($SG, 0, 3), $p_dt_ini, $p_dt_fim, $p_pg_ini, $p_pg_fim, $p_co_ini, $p_co_fim, $w_sq_pessoa, 'EE,ER');
+    $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, substr($SG, 0, 3), $p_dt_ini, $p_dt_fim, $p_pg_ini, $p_pg_fim, $p_co_ini, $p_co_fim, $w_sq_pessoa, 'EE,ER');
     if (nvl($p_ordena, '') != '') {
       $RS = SortArray($RS, lower($lista[0]), lower($lista[1]), 'codigo_interno', 'asc');
     } else {
@@ -406,7 +406,7 @@ function Inicial() {
     ShowHTML('      <tr><td valign="top"><br><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="p_nome" VALUE="' . $p_nome . '" SIZE="20" MaxLength="20">');
     ShowHTML('              <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.O.value=\'P\'; document.Form.target=\'\'; if (Validacao(document.Form)) {document.Form.submit();}">');
     if ($p_nome > '') {
-      $RS = db_getBenef::getInstanceOf($dbms, $w_cliente, null, null, null, null, $p_nome, null, null, null, null, null, null, null, null);
+      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, $p_nome, null, null, null, null, null, null, null, null);
       $RS = SortArray($RS, 'nm_pessoa', 'asc');
       ShowHTML('      <tr><td valign="top"><b><u>P</u>essoa:</b><br><SELECT ACCESSKEY="P" CLASS="STS" NAME="w_sq_pessoa">');
       ShowHTML('          <option value="">---');

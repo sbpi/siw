@@ -4,7 +4,7 @@
 // -------------------------------------------------------------------------
 function visualfornecedor($l_sq_pessoa,$O) {
   extract($GLOBALS);
-  $l_RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$l_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $l_RS = $sql->getInstanceOf($dbms,$w_cliente,$l_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($l_RS as $row){$l_RS=$row; break;}
   // Se for listagem dos dados
   $w_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
@@ -42,7 +42,7 @@ function visualfornecedor($l_sq_pessoa,$O) {
   }
 
   //Endereços de e-mail e internet
-  $l_RS = db_getAddressList::getInstanceOf($dbms,$l_sq_pessoa,null,'EMAILINTERNET',null);
+  $sql = new db_getAddressList; $l_RS = $sql->getInstanceOf($dbms,$l_sq_pessoa,null,'EMAILINTERNET',null);
   $l_RS = SortArray($l_RS,'tipo_endereco','asc','padrao','desc','endereco','asc');
   if(count($l_RS)>0) {
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ENDEREÇOS DE E-MAIL E INTERNET<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -66,7 +66,7 @@ function visualfornecedor($l_sq_pessoa,$O) {
   } 
 
   //Endereços físicos
-  $l_RS = db_getAddressList::getInstanceOf($dbms,$l_sq_pessoa,null,'FISICO',null);
+  $sql = new db_getAddressList; $l_RS = $sql->getInstanceOf($dbms,$l_sq_pessoa,null,'FISICO',null);
   $l_RS = SortArray($l_RS,'padrao','desc','logradouro','asc');
   if (count($l_RS)>0) {
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ENDEREÇOS FÍSICOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -86,7 +86,7 @@ function visualfornecedor($l_sq_pessoa,$O) {
   } 
   
   //Telefones
-  $l_RS = db_getFoneList::getInstanceOf($dbms,$l_sq_pessoa,null,null,null);
+  $sql = new db_getFoneList; $l_RS = $sql->getInstanceOf($dbms,$l_sq_pessoa,null,null,null);
   $l_RS = SortArray($l_RS,'tipo_telefone','asc','cidade','asc','padrao','desc','numero','asc');
   if (count($l_RS)>0) {
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TELEFONES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -115,7 +115,7 @@ function visualfornecedor($l_sq_pessoa,$O) {
     $w_html.=chr(13).'         </table></td></tr>';
   } 
   //Contas bancárias
-  $l_RS = db_getContaBancoList::getInstanceOf($dbms,$l_sq_pessoa,null,null);
+  $sql = new db_getContaBancoList; $l_RS = $sql->getInstanceOf($dbms,$l_sq_pessoa,null,null);
   $l_RS = SortArray($l_RS,'tipo_conta','asc','padrao','desc','banco','asc','numero','asc');
   if (count($l_RS)>0) {
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>CONTAS BANCÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

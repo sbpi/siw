@@ -121,7 +121,7 @@ if (f($RS_Menu,'ultimo_nivel') == 'S') {
 } 
 
 // Recupera os parâmetros do módulo de compras e licitações
-$RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
+$sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'CL',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row;}
 
 Main();
@@ -163,7 +163,7 @@ function Inicial() {
       if ($p_codigo>'')     $w_filtro.='<tr valign="top"><td align="right">Código <td>[<b>'.$p_codigo.'</b>] em qualquer parte';
       if ($p_nome>'')    $w_filtro.='<tr valign="top"><td align="right">Nome <td>[<b>'.$p_nome.'</b>] em qualquer parte';
       if ($p_tipo_material>'') {
-        $RS = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
+        $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
         foreach ($RS as $row) { $RS = $row; break; }
         $w_filtro.='<tr valign="top"><td align="right">Tipo <td>[<b>'.f($RS,'nome_completo').'</b>]';
       } 
@@ -192,8 +192,8 @@ function Inicial() {
       }
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    if($P1==1) $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
-    else       $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
+    if($P1==1) $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
+    else       $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');
@@ -201,7 +201,7 @@ function Inicial() {
       $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     }
   } elseif (strpos('MCAEV',$O)!==false) {
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_gestora         = f($RS,'unidade_gestora');
     $w_tipo_material   = f($RS,'sq_tipo_material');
@@ -220,7 +220,7 @@ function Inicial() {
 
   // Recupera informações sobre o tipo do material ou serviço
   if (nvl($w_tipo_material,'')!='') {
-    $RS_Tipo = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,$w_tipo_material,null,null,null,null,null,null,'REGISTROS');
+    $sql = new db_getTipoMatServ; $RS_Tipo = $sql->getInstanceOf($dbms,$w_cliente,$w_tipo_material,null,null,null,null,null,null,'REGISTROS');
     foreach ($RS_Tipo as $row) { $RS_Tipo = $row; break; }
     $w_classe = f($RS_Tipo,'classe');
   } 
@@ -524,7 +524,7 @@ function PesquisaPreco() {
   $p_campo          = $_REQUEST['p_campo'];
 
   // Recupera os dados do item
-  $RS_Item = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getMatServ; $RS_Item = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Item as $row){$RS_Item=$row; break;}
 
   if ($w_troca>'' && $O!='E') {
@@ -574,7 +574,7 @@ function PesquisaPreco() {
     $w_origem               = $_REQUEST['w_origem'];
   } elseif ($O=='A' || nvl($w_sq_pessoa,'')!='' || $O=='I' || nvl($w_troca,'')!='') {
     // Recupera os dados do fornecedor em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) {
         $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -618,7 +618,7 @@ function PesquisaPreco() {
       }
     }
   } elseif ($O=='L') {  
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
+    $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_fornecedor','asc');
@@ -626,7 +626,7 @@ function PesquisaPreco() {
       $RS = SortArray($RS,'phpdt_fim','desc','nm_fornecedor','asc');
     }    
   } elseif ($O=='P') {
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_forn,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_forn,null,null,null,null,null,null,null,null);
   } 
 
   Cabecalho();
@@ -834,7 +834,7 @@ function PesquisaPreco() {
     if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED '; 
     //Recupera os dados do item
     if(nvl($w_chave_aux,'')=='') {
-      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item   = f($row,'nome');
@@ -844,7 +844,7 @@ function PesquisaPreco() {
         break;
       }
     } else {
-      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
+      $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
       //exibeArray($RS);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
@@ -1107,7 +1107,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   extract($GLOBALS);
 
   // Recupera os dados do material ou serviço
-  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getMatServ; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($l_rs as $row) { $l_rs = $row; break; }
 
   // Se for listagem dos dados
@@ -1131,7 +1131,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
 
   if (f($RS_Cliente,'ata_registro_preco')=='S') {
     // Exibe atas de registro de preço onde o item esteja disponível
-    $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
+    $sql = new db_getMatServ; $l_rs1 = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
     $l_rs1 = SortArray($l_rs1,'numero_ata','asc','nr_item_ata','asc'); 
  
     $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
@@ -1213,7 +1213,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
 
 
   // Exibe pesquisas de preço
-  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null,'PESQMAT');
+  $sql = new db_getMatServ; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null,'PESQMAT');
   $l_rs = SortArray($l_rs,'phpdt_fim','desc','valor_unidade','asc','nm_fornecedor','asc'); 
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PESQUISAS DE PREÇO VÁLIDAS ('.count($l_rs).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   if (count($l_rs)==0) {
@@ -1268,7 +1268,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
@@ -1282,7 +1282,7 @@ function Grava() {
 
           if (nvl($_REQUEST['w_codigo_interno'],'nulo')!='nulo') {
             // Testa a existência do código
-            $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) { $RS = $row; break; }
               if (f($RS,'existe')>0) {
@@ -1295,7 +1295,7 @@ function Grava() {
             }
           }
         } elseif ($O=='E') {
-          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este material ou serviço. Ele está ligado a algum documento!\');');
@@ -1326,7 +1326,7 @@ function Grava() {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_tipo_pessoa']==1) {
             // Verifica se já existe pessoa física com o CPF informado
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -1335,7 +1335,7 @@ function Grava() {
               exit;
             }
             // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) {
                 if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
@@ -1353,7 +1353,7 @@ function Grava() {
             }
           } else {
             // Verifica se já existe pessoa jurídica com o CNPJ informado
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
@@ -1362,7 +1362,7 @@ function Grava() {
               exit;
             }
             // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) {
                 if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {
