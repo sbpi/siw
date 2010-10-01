@@ -5,7 +5,7 @@
 function visualCliente($w_sq_cliente,$O) {
   extract($GLOBALS);
 
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente);
 
   if ($O=='L') {
     // Se for listagem dos dados
@@ -165,7 +165,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Módulos contratados
-    $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente,null,null);
+    $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente,null,null);
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Módulos Contratados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -218,7 +218,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Configuração da aplicação
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente);
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Configuração da Aplicação</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%">');
@@ -247,7 +247,7 @@ function visualCliente($w_sq_cliente,$O) {
     //Funcionalidades
     $w_imagemPadrao='images/Folder/SheetLittle.gif';
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Funcionalidades</td>');
-    $RS = new db_getLinkDataUser; $RS = $RS->getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
+    $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -269,17 +269,17 @@ function visualCliente($w_sq_cliente,$O) {
         if (f($row,'Filho')>0) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
-          $RS1 = new db_getLinkDataUser; $RS1 = $RS1->getInstanceOf($dbms,$w_sq_cliente,0,f($row,'sq_menu'));
+          $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_sq_cliente,0,f($row,'sq_menu'));
           foreach ($RS1 as $row1) {
             if (f($row1,'Filho')>0) {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
               ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
-              $RS2 = new db_getLinkDataUser; $RS2 = $RS2->getInstanceOf($dbms,$w_sq_cliente,0,f($row1,'sq_menu'));
+              $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_sq_cliente,0,f($row1,'sq_menu'));
               foreach ($RS2 as $row2) {
                 if (f($row2,'Filho')>0) {
                   ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
                   ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
-                  $RS3 = new db_getLinkDataUser; $RS3 = $RS3->getInstanceOf($dbms,$w_sq_cliente,0,f($row2,'sq_menu'));
+                  $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_sq_cliente,0,f($row2,'sq_menu'));
                   foreach ($RS3 as $row3) {
                     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
                     ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));

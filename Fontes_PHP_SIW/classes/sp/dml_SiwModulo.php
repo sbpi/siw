@@ -18,7 +18,7 @@ class dml_SiwModulo {
                    'objetivo_geral' =>array($objetivo_geral,    B_VARCHAR,   4000),
                    'ordem'          =>array($ordem,             B_VARCHAR,      4)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

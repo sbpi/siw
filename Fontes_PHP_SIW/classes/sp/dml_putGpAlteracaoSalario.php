@@ -21,7 +21,7 @@ class dml_putGpAlteracaoSalario {
                    'p_funcao'                    =>array(tvl($p_funcao),                         B_VARCHAR,        90),
                    'p_motivo'                    =>array(tvl($p_motivo),                         B_VARCHAR,       255)     
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

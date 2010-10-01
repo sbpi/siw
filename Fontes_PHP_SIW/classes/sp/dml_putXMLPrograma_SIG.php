@@ -46,7 +46,7 @@ class dml_putXMLPrograma_SIG {
                    'p_atuap_sit_atual'           =>array(tvl($p_atual_sit_atual),                          B_DATE,           32),
                    'p_coment_execucao'           =>array(tvl(substr($p_coment_execucao,0,3999)),           B_VARCHAR,      4000)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0);
      if(!$l_rs->executeQuery()) { 

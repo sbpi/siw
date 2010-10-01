@@ -57,7 +57,7 @@ function formulario($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2
       else
         ShowHTML('          <td valign="top" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       $l_cont = 0;
-      $l_RS1 = new db_getMenuData; $l_RS1 = $l_RS1->getInstanceOf($dbms,$chaveAux);
+      $sql = new db_getMenuData; $l_RS1 = $sql->getInstanceOf($dbms,$chaveAux);
       $l_sigla = f($l_RS1,'sigla');
       foreach ($l_RS as $l_row1) {
         if ($l_sigla==='GCCCAD') {

@@ -116,13 +116,13 @@ else  $w_submenu='';
  
 // Recupera a configuração do serviço
 if ($P2>0 && $SG!='CVVISUAL') {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); 
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2); 
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -376,7 +376,7 @@ function Identificacao() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_pais=='') {
     // Carrega os valores padrão para país, estado e cidade
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     $w_pais   = f($RS,'sq_pais');
     $w_uf     = f($RS,'co_uf');
     $w_cidade = f($RS,'sq_cidade_padrao');
@@ -1637,7 +1637,7 @@ function Visualizar() {
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR>');
   if ($P2==0) {
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     ShowHTML('  <TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,'/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'">');
   } 
   ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">');

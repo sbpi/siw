@@ -35,7 +35,7 @@ class dml_putAcordoDadosAdicionais {
                    'p_condicao'              =>array(tvl($p_condicao),                             B_VARCHAR,      4000),
                    'p_valor_caucao'          =>array(toNumber(tvl($p_valor_caucao)),               B_NUMERIC,      18,2)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

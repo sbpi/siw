@@ -94,7 +94,7 @@ $w_cliente = RetornaCliente();
 $w_usuario = RetornaUsuario();
 $w_menu    = $P2;
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 Main();
 FechaSessao($dbms);
 exit;
@@ -364,7 +364,7 @@ function Gerencial() {
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));  
         switch ($p_agrega) {
@@ -701,7 +701,7 @@ function Gerencial() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ORCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ORCAD');
     SelecaoProjeto('Açã<u>o</u>:','O','Selecione a ação da tarefa na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',null);
     ShowHTML('</table>');
     if (f($RS_Menu,'solicita_cc')=='S') {

@@ -92,7 +92,7 @@ if (count($_POST) > 0) {
 	  $w_ano      = RetornaAno();
 
     // Retorna os dados do menu
-	  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 	  
     $w_erro     = '';
     // Testa os dados recebidos
@@ -150,7 +150,7 @@ if (count($_POST) > 0) {
             $w_atraso  = 0;
             $w_conc   = 0;
 			      // Recupera os projetos do programa
-			      $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PJCAD');
+			      $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
             $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
 			          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
 			          $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,

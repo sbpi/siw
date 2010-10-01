@@ -20,7 +20,7 @@ class dml_putContasRegistro {
                    'p_observacao'          =>array(tvl($p_observacao),                          B_VARCHAR,       2000),
                    'p_usuario'             =>array(tvl($p_usuario),                             B_INTEGER,        32)
                    );     
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

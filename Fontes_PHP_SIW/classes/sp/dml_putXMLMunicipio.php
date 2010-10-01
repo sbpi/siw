@@ -16,7 +16,7 @@ class dml_putXMLMunicipio {
                    'p_regiao'                    =>array(tvl($p_regiao),                                   B_VARCHAR,         2),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        50)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

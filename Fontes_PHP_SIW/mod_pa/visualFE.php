@@ -5,7 +5,7 @@
 function VisualFE($l_chave, $l_menu=null, $l_formato='WORD') {
   extract($GLOBALS);
 
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
   // Recupera os dados da solicitacao

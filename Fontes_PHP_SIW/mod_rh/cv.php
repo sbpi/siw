@@ -129,13 +129,13 @@ default:      $w_TP=$TP.' - Listagem';    break;
 } 
 // Recupera a configuração do serviço
 if ($P2>0 && $SG!='CVVISUAL') {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); 
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2); 
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -480,7 +480,7 @@ function Identificacao() {
   if (strpos('IAEV',$O)!==false) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -2011,7 +2011,7 @@ function Visualizar() {
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR>');
   if ($P2==0) {
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     ShowHTML('  <TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,'/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'">');    
   } 
   ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">Curriculum Vitae</FONT>');
@@ -2147,7 +2147,7 @@ function Grava() {
           ShowHTML('  top.location.href=\''.montaURL_JS($w_dir,$R).'\';');
         } else {
           if (Nvl($P1,0)==1) {
-            $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$RS1,$w_menu);
+            $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$RS1,$w_menu);
             ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_usuario='.$w_chave_nova.'&w_sq_pessoa='.$w_chave_nova.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG=COINICIAL&TP='.RemoveTP($TP).MontaFiltro('GET')).'\';');
           } else {
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_usuario='.$_REQUEST['w_chave'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

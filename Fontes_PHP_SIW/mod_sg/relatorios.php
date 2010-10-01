@@ -90,13 +90,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -599,7 +599,7 @@ function TelaUsuarioRel() {
   ShowHTML('      <td><table border=0 width="100%">');
   ShowHTML('      <tr><td><br><font size="2"><b>OPÇÕES DO MENU<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
   $w_imagemPadrao='images/Folder/SheetLittle.gif';
-  $RS = new db_getLinkDataUser; $RS = $RS->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
+  $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
   ShowHTML('      <tr><td align="center" colspan="2">');
   ShowHTML('        <table width=100%>');
   if (count($RS)==0) {
@@ -609,17 +609,17 @@ function TelaUsuarioRel() {
       if (f($row,'Filho')>0) {
         ShowHTML('      <tr valign="top">');
         ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
-        $RS1 = new db_getLinkDataUser; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
+        $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
         foreach ($RS1 as $row1) {
           if (f($row1,'Filho')>0) {
             ShowHTML('      <tr valign="top">');
             ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
-            $RS2 = new db_getLinkDataUser; $RS2 = $RS2->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
+            $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
             foreach ($RS2 as $row2) {
               if (f($row2,'Filho')>0) {
                 ShowHTML('      <tr valign="top">');
                 ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
-                $RS3 = new db_getLinkDataUser; $RS3 = $RS3->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
+                $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
                 foreach ($RS3 as $row3) {
                   ShowHTML('      <tr valign="top">');
                   ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));

@@ -39,7 +39,7 @@ class dml_putEsquema {
                    'p_envia_mail'                =>array(tvl($p_envia_mail),                               B_VARCHAR,       255),
                    'p_lista_mail'                =>array(tvl($p_lista_mail),                               B_VARCHAR,       255)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

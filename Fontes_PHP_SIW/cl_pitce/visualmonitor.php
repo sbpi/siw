@@ -31,19 +31,19 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
   $l_html='';
   // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N';
 
   // Verifica se o cliente tem o módulo de viagens contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N';
 
   // Verifica se o cliente tem o módulo planejamento estratégico
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N';
   
   // Verifica se o cliente tem o módulo financeiro
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'FN');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'FN');
   if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
 
   // Recupera os dados do projeto
@@ -266,7 +266,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           $l_html.=chr(13).'  function lista (projeto, etapa) {';
           $l_html.=chr(13).'    document.Form1.p_projeto.value=projeto;';
           $l_html.=chr(13).'    document.Form1.p_atividade.value=etapa;';
-          $RSQuery1 = new db_getMenuData; $RSQuery1 = $RSQuery1->getInstanceOf($dbms,$w_p2);
+          $sql = new db_getMenuData; $RSQuery1 = $sql->getInstanceOf($dbms,$w_p2);
           $l_html.=chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
           $l_html.=chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
           $l_html.=chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        

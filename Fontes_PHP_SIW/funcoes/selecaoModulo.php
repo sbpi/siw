@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 // -------------------------------------------------------------------------
 function selecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $chaveAux, $restricao, null);
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $chaveAux, $restricao, null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

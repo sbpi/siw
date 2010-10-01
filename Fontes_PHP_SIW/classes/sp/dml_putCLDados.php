@@ -44,7 +44,7 @@ class dml_putCLDados {
                    'p_observacao'             =>array(tvl($p_observacao),                         B_VARCHAR,      2000),
                    'p_fundo_fixo'             =>array(tvl($p_fundo_fixo),                         B_VARCHAR,         1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

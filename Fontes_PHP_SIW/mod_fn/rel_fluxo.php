@@ -92,7 +92,7 @@ function Inicial(){
     $p_dt_ini = First_Day(toDate('01/'.$p_mes_fluxo.'/'.$p_ano_fluxo));
     $p_dt_fim = Last_Day(toDate('27/'.$p_mes_fluxo.'/'.$p_ano_fluxo));
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 

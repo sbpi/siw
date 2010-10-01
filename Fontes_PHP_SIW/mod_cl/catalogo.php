@@ -111,13 +111,13 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera as informações do cliente
-$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 
 // Recupera as informações da opçao de menu;
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 // Recupera os parâmetros do módulo de compras e licitações
@@ -192,8 +192,9 @@ function Inicial() {
       }
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    if($P1==1) $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
-    else       $sql = new db_getMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
+    $sql = new db_getMatServ;
+    if($P1==1) $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
+    else       $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');

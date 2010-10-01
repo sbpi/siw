@@ -150,7 +150,7 @@ function Usuarios() {
   $p_dirigente        = upper($_REQUEST['p_dirigente']);
 
   
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms, $w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='L') {
@@ -296,7 +296,7 @@ function Usuarios() {
 
     ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr>');
-    $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms, $w_cliente);
+    $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $w_cliente);
     selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'N','p_uf',null,null);
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
     ShowHTML('        <tr valign="top">');
@@ -449,7 +449,7 @@ function Menu() {
         // Se for herança, atribui a chave da opção selecionada para w_sq_menu
         if ($w_heranca>'') $w_sq_menu=$w_heranca;
 
-        $RS = new db_getMenuData; $RS = $RS->getInstanceof($dbms, $w_sq_menu);
+        $sql = new db_getMenuData; $RS = $sql->getInstanceof($dbms, $w_sq_menu);
         $w_sq_menu_pai          = f($RS,'sq_menu_pai');
         $w_descricao            = f($RS,'nome');
         $w_link                 = f($RS,'link');
@@ -2074,7 +2074,7 @@ function NovaSenha() {
   $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
   $w_html .= '         Orientações e observações:<br>'.$crlf;
   $w_html .= '         <ol>'.$crlf;
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if ($w_tipo=='B'){
     $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
     $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;

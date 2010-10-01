@@ -19,7 +19,7 @@ class dml_putSolicInfGeral {
                    'p_fim'                      =>array(tvl($p_fim),                  B_DATE,           32),
                    'p_valor'                    =>array(toNumber(tvl($p_valor)),      B_NUMERIC,      18,2)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

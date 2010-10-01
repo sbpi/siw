@@ -118,7 +118,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera os dados do cliente
-$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 define(GoogleMapsKey, f($RS_Cliente,'googlemaps_key')); 
 
 Main();
@@ -178,7 +178,7 @@ function inicial(){
   if (nvl($w_projeto,'')!=='' or (nvl($w_origem,'')!='')) {
     if (nvl($w_origem,'')=='') {
       // Recupera todos os endereços do cliente, independente do tipo
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
       $sql = new db_getSolicList; $RS_Projeto = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
           null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
           null,null,null,null, null, null, null);
@@ -194,7 +194,7 @@ function inicial(){
         } elseif ($p_servico=='PLANOEST') {
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos vinculados a planos estratégicos</b>]';
         } else {
-          $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$p_servico);
+          $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$p_servico);
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
         }
       } elseif (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
@@ -250,7 +250,7 @@ function inicial(){
       if ($p_atraso=='S') $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
       if ($w_filtro>'') $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
   
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
       $sql = new db_getSolicList; $RS_Projeto = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 

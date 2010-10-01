@@ -20,7 +20,7 @@ class dml_putOpiniao {
                    'p_sigla'                     =>array(tvl($p_sigla),                                    B_VARCHAR,         3),
                    'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,         2)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

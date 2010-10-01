@@ -511,7 +511,7 @@ function Benef() {
             } else {
                 ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
             }
-            $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'SGUSU');
+            $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'SGUSU');
             ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.f($RS,'link').'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.f($RS,'P1').'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
             ShowHTML('          </td>');
             ShowHTML('      </tr>');
@@ -1108,7 +1108,7 @@ function Grava() {
               // Se a autenticação não for na aplicação, o nome de usuário deve existir no repositório indicado
               if (($O=='I' || $_REQUEST['w_username_ant']!= $_REQUEST['w_username']) && strpos('AO',$_REQUEST['w_tipo_autenticacao'])!==false) {
                 include_once('classes/ldap/ldap.php');
-                $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
+                $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
                         
                 if ($_REQUEST['w_tipo_autenticacao']=='A') {
                   // Recupera dados para conexão ao MS-AD
@@ -1217,7 +1217,7 @@ function Grava() {
                 $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
                 $w_html .= '         Orientações e observações:<br>'.$crlf;
                 $w_html .= '         <ol>'.$crlf;
-                $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+                $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
                 if (strpos('AO',$_REQUEST['w_tipo_autenticacao'])===false){
                   $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
                   $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
@@ -1281,7 +1281,7 @@ function Grava() {
               }
             }
             // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-            $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+            $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
             ScriptOpen('JavaScript');
             if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
               if ($w_resultado>'') {

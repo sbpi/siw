@@ -100,7 +100,7 @@ $w_usuario = RetornaUsuario();
 $w_menu = RetornaMenu($w_cliente, $SG);
 
 // Verifica se o cliente tem o módulo de viagens
-$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'PD');
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, 'PD');
 $w_mod_pd = 'N';
 foreach ($RS as $row)
   $w_mod_pd = 'S';
@@ -232,7 +232,7 @@ function Inicial() {
   }
 
   if ($w_mod_pd=='S') {
-    $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
+    $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
     $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
                     formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);
@@ -1388,7 +1388,7 @@ function Visual() {
   }
 
   if ($w_mod_pd=='S') {
-    $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
+    $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
     $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4,
                     formataDataEdicao($w_dt_inicio), formataDataEdicao($w_dt_fim), null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);

@@ -104,17 +104,17 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 // Verifica se o cliente tem o módulo de planejamento estratégico contratado
-$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PE');
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PE');
 if (count($RS)>0) $w_mod_pe='S'; else $w_mod_pe='N';
 
 Main();
@@ -149,7 +149,7 @@ function Rel_Progresso() {
   if ($O=='L') {
 
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
@@ -585,7 +585,7 @@ function Rel_Progresso() {
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top">');
@@ -656,7 +656,7 @@ function Rel_Executivo() {
  
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }    
@@ -1045,7 +1045,7 @@ function Rel_Executivo() {
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top">');
@@ -1297,7 +1297,7 @@ function Rel_Projeto() {
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     /*
@@ -1583,7 +1583,7 @@ function Rel_Atualizacao() {
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');

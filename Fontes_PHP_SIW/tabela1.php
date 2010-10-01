@@ -96,7 +96,7 @@ function TipoVinculo() {
   $w_sq_tipo_vinculo    = $_REQUEST['w_sq_tipo_vinculo'];
   $p_ordena             = $_REQUEST['p_ordena'];
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
@@ -343,7 +343,7 @@ function ParSeguranca() {
     $w_dias_vigencia_senha    = $_REQUEST['w_dias_vigencia_senha'];
     $w_dias_aviso_expiracao   = $_REQUEST['w_dias_aviso_expiracao'];
   } else {
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     $w_tamanho_minimo_senha   = f($RS,'tamanho_min_senha');
     $w_tamanho_maximo_senha   = f($RS,'tamanho_max_senha');
     $w_maximo_tentativas      = f($RS,'maximo_tentativas');

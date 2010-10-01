@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicList_IS.php');
 // -------------------------------------------------------------------------
 function selecaoTarefa($label,$accesskey,$hint,$cliente,$ano,$p_chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ISTCAD');
+  $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ISTCAD');
   $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',3,
           null,null,null,null,null,null,
           null,null,null,null,

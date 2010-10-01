@@ -17,7 +17,7 @@ class dml_putXMLRegiao {
                    'p_uf'                        =>array(tvl($p_uf),                                       B_VARCHAR,        20),
                    'p_regiao'                    =>array(tvl($p_regiao),                                   B_VARCHAR,         2)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

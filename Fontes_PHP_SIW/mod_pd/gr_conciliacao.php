@@ -155,7 +155,7 @@ $p_ini_emibil = $_REQUEST['p_ini_emibil'];
 $p_fim_emibil = $_REQUEST['p_fim_emibil'];
 
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms, $w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms, $w_menu);
 
 Main();
 
@@ -402,7 +402,7 @@ function Conciliacao() {
 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
-    //$RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    //$sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     //SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$w_cliente,$p_projeto,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'p_projeto',f($RS,'sigla'),null,null,'<BR />',2);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');

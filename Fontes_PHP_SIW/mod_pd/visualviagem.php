@@ -10,7 +10,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $l_html='';
   
   // Carrega o segmento do cliente
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente); 
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente); 
   $w_segmento = f($RS,'segmento');
   
   // Recupera os dados do acordo

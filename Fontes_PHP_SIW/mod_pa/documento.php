@@ -166,13 +166,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 $sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'PA',null);
@@ -245,7 +245,7 @@ function Inicial() {
       if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
       if ($w_filtro>'')           $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PADCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PADCAD');
     if ($w_copia>'') {
       // Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
       $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
@@ -758,7 +758,7 @@ function Geral() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -856,7 +856,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan="5">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+      $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     }
     ShowHTML('          </td>');
@@ -1261,7 +1261,7 @@ function Anexos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -1332,7 +1332,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     $w_consulta         = upper(nvl($w_consulta,'N'));
   }
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='PDF') {
     headerpdf(f($RS_Menu,'nome'),$w_pag);
@@ -1342,7 +1342,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     CabecalhoWord($w_cliente,f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
   } else {
-    $RS_Cab = new db_getLinkData; $RS_Cab = $RS_Cab->getInstanceOf($dbms,$w_cliente,'PADCAD');
+    $sql = new db_getLinkData; $RS_Cab = $sql->getInstanceOf($dbms,$w_cliente,'PADCAD');
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Cab,'nome').'</TITLE>');
@@ -1779,7 +1779,7 @@ function Concluir() {
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,f($RS_Menu,'sigla'));
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
@@ -2124,7 +2124,7 @@ function Tramitacao() {
   foreach($RS_Prot as $row) { $RS_Prot = $row; break; }
 
   // Recupera os dados da unidade central de arquivo
-  $RS_Arq = $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,f($RS_Parametro,'arquivo_central'));
+  $sql = new db_getUorgData; $RS_Arq = $sql->getInstanceOf($dbms,f($RS_Parametro,'arquivo_central'));
   
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_autuar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') ||  
@@ -3647,13 +3647,13 @@ function Grava() {
         }
 
 	      // Recupera os dados para montagem correta do menu
-        $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
+        $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms,$w_menu);
         ShowHTML('  parent.menu.location=\''.montaURL_JS('','menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento='.$w_codigo.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
       } elseif ($O=='E') {
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       } 
       ScriptClose();
@@ -3735,7 +3735,7 @@ function Grava() {
       } 
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -3911,7 +3911,7 @@ function Grava() {
         if (nvl($w_nu_guia,'')=='') {
           ShowHTML('  alert(\'O protocolo já está disponível na sua unidade.\\nSe unidade de origem e de destino são iguais, o recebimento automático!\');');
 		      // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-		      $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
+		      $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$SG);
 		      ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         } else {
           ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');

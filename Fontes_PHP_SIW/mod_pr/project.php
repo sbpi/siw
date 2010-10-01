@@ -209,7 +209,7 @@ function Etapa() {
     ShowHTML('  <li>Após o término da importação pode ser necessário ajustar os dados das etapas, tais como pesos, responsáveis etc.');
     ShowHTML('  </td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     ShowHTML('<tr><td colspan="3" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><ul><b><font color="#BC3131">ATENÇÃO:</font></b>');
     ShowHTML('  <li>Este procedimento irá recriar todas as etapas. O início e o fim do projeto será ajustado conforme os prazos das etapas.');
     ShowHTML('  <li>Vínculos entre as etapas e recursos, interessados ou restrições serão AUTOMATICAMENTE APAGADOS, sendo necessários recriá-los após a importação.');

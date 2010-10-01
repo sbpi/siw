@@ -4,7 +4,7 @@
 // -------------------------------------------------------------------------
 function selecaoTipoAutenticacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
     extract($GLOBALS);
-    $l_rs = new db_getCustomerData; $l_rs = $l_rs->getInstanceOf($dbms,$chaveAux);
+    $sql = new db_getCustomerData; $l_rs = $sql->getInstanceOf($dbms,$chaveAux);
     
     $ad = Nvl(f($l_rs,'ad_domain_controlers'),null);
     $ol = Nvl(f($l_rs,'ol_domain_controlers'),null);

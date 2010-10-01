@@ -19,7 +19,7 @@ class dml_putRespAcao {
                    'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

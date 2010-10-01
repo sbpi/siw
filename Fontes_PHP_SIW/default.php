@@ -87,17 +87,17 @@ function Valida() {
     extract($GLOBALS);
     
     $w_erro=0;
-    $RS = new db_verificaUsuario; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
+    $sql = new db_verificaUsuario; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
     if ($RS==0) {
       $w_erro=1;
     } else {
-      $RS = new DB_GetUserData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);        
+      $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);        
       $w_tipo = f($RS,'tipo_autenticacao');
       if ($w_tipo == 'B' || $par=='Senha') { // O segundo teste evita autenticação da senha no LDAP
         if ($wDsSenha>'') { $w_erro= new db_verificaSenha; $w_erro = $w_erro->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha); }
       } else {
         include_once('classes/ldap/ldap.php');
-        $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);      
+        $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);      
 
         if ($w_tipo=='A') {
           $array = array(            
@@ -154,13 +154,13 @@ function Valida() {
       ScriptClose();
     } else {
       // Recupera informações do cliente, relativas ao envio de e-mail
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
       $_SESSION['SMTP_SERVER']     = f($RS, 'smtp_server');
       $_SESSION['SIW_EMAIL_CONTA'] = f($RS, 'siw_email_conta');
       $_SESSION['SIW_EMAIL_SENHA'] = f($RS,'siw_email_senha');
 
       // Recupera informações a serem usadas na montagem das telas para o usuário
-      $RS = new DB_GetUserData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
+      $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
       $_SESSION['USERNAME']        = f($RS,'USERNAME');
       $_SESSION['SQ_PESSOA']       = f($RS,'SQ_PESSOA');
       $_SESSION['NOME']            = f($RS,'NOME');
@@ -210,7 +210,7 @@ function Valida() {
           if ($RS['interno']=='S') {
               ShowHTML('  top.location.href=\'cl_cespe/trabalho.php?par=mesa&TP=Acompanhamento\';');
           } else {
-             $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], 'PJCADP');
+             $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], 'PJCADP');
              ShowHTML('  location.href=\''.$RS['link'].'&O=&P1='.$RS['P1'].'&P2='.$RS['P2'].'&P3='.$RS['P3'].'&P4='.$RS['P4'].'&TP='.$RS['nome'].'&SG='.$RS['sigla'].'\';');
           }
         } else {
@@ -240,7 +240,7 @@ function Valida() {
           $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
         }
         $w_html .= '         <ul>'.$crlf;
-        $RS = new db_getCustomerSite; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+        $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
         $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
         DesconectaBD();
         $w_html .= '         <li>Nome de usuário: <b>'.$_SESSION['USERNAME'].'</b></li>'.$crlf;
@@ -255,7 +255,7 @@ function Valida() {
         $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
         $w_html .= '         Orientações e observações:<br>'.$crlf;
         $w_html .= '         <ol>'.$crlf;
-        $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+        $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
         if ($w_tipo=='B'){
           $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
           $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;

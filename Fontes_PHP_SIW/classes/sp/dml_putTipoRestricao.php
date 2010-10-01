@@ -19,7 +19,7 @@ class dml_putTipoRestricao {
                    'p_codigo'                    =>array(tvl($p_codigo),                                   B_VARCHAR,        30),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

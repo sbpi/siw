@@ -113,7 +113,7 @@ function ExibeDocs() {
   $l    = 1;
   if ($SG=='' || ($SG > '' && ($O=='L'||$O=='P'))) {
 
-    $RS = new db_getLinkDataUser; $RS = $RS->getInstanceOf($dbms, $p_cliente, $sq_pessoa, 'IS NULL');
+    $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms, $p_cliente, $sq_pessoa, 'IS NULL');
     foreach ($RS as $row) {
       
       $w_titulo = f($row,'nome');
@@ -122,14 +122,14 @@ function ExibeDocs() {
 
         eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),false));');
 
-        $RS1 = new db_getLinkDataUser; $RS1 = $RS1->getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row,'sq_menu'));
+        $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row,'sq_menu'));
         foreach ($RS1 as $row1) {
           $w_titulo .= ' - '.f($row1,'NOME');
           if (f($row1,'Filho') >0) {
 
             eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),false));');
 
-            $RS2 = new db_getLinkDataUser; $RS2 = $RS2->getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row1,'sq_menu'));
+            $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row1,'sq_menu'));
             foreach ($RS2 as $row2) {
 
               $w_titulo .= ' - '.f($row2,'NOME');
@@ -137,7 +137,7 @@ function ExibeDocs() {
 
                 eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),false));');
 
-                $RS3 = new db_getLinkDataUser; $RS3 = $RS3->getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row2,'sq_menu'));
+                $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row2,'sq_menu'));
                 foreach ($RS3 as $row3) {
 
                   $w_titulo .= ' - '.f($row3,'NOME');
@@ -221,13 +221,13 @@ function ExibeDocs() {
     if ($_REQUEST['w_documento']>'') 
        $w_descricao=$_REQUEST['w_documento'];
     else {
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $p_cliente, $SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $p_cliente, $SG);
       $w_descricao=f($RS,'NOME');
     }
     
     $node1 = &$root->addItem(new XNode($w_descricao,false,null,null,null,null,true));
 
-    $RS = new db_getLinkSubMenu; $RS = $RS->getInstanceOf($dbms, $p_cliente, $SG);
+    $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $p_cliente, $SG);
    
     foreach ($RS as $row) {    
       $w_titulo = $TP.' - '.f($row,'nome');
@@ -251,7 +251,7 @@ function ExibeDocs() {
 
       $i = $i +1;
     }
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $p_cliente, $SG);
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $p_cliente, $SG);
     $node2 = &$root->addItem(new XNode('Nova consulta',$w_pagina.$par.'&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP($TP).'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').MontaFiltro('GET'),$w_Imagem,$w_Imagem));
     $node3 = &$root->addItem(new XNode('Menu','menu.php?par=ExibeDocs',$w_Imagem,$w_Imagem));
     $i = 4;
@@ -282,10 +282,10 @@ function ExibeDocs() {
   ShowHTML('<BASEFONT FACE="Verdana, Helvetica, Sans-Serif" SIZE="2">');
   // Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
 
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $p_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $p_cliente);
   print '<BODY topmargin=0 bgcolor="#FFFFFF" BACKGROUND="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'fundo'),null,null,null,'EMBED').'" BGPROPERTIES="FIXED" text="#000000" link="#000000" vlink="#000000" alink="#FF0000" ';
   if ($SG=='' && nvl($_REQUEST['content'],'')=='') {
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $p_cliente, 'MESA');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $p_cliente, 'MESA');
     if (count($RS)>0) {
       if (f($RS,'IMAGEM')>'') {
         ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP=<img src='.f($RS,'IMAGEM').' BORDER=0>'.f($RS,'nome').'&SG='.f($RS,'SIGLA').'"\'> ');
@@ -297,10 +297,10 @@ function ExibeDocs() {
     }
   } else {
     if ($O=='L'||$O=='P') {
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $p_cliente, $SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $p_cliente, $SG);
       ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP='.$_REQUEST['TP'].' - '.f($RS,'nome').'&SG='.f($RS,'SIGLA').'&O='.$_REQUEST['O'].MontaFiltro('GET').'";\'>');
     } else {
-      $RS = new db_getLinkDataParent; $RS = $RS->getInstanceOf($dbms, $p_cliente, $SG);
+      $sql = new db_getLinkDataParent; $RS = $sql->getInstanceOf($dbms, $p_cliente, $SG);
       $RS = SortArray($RS,'ordem','asc','nome','asc');
 
       foreach($RS as $row) {
@@ -320,12 +320,12 @@ function ExibeDocs() {
 
   ShowHTML('  <CENTER><table border=0 cellpadding=0 height="80" width="100%">');
   ShowHTML('      <tr><td width="100%" valign="center" align="center">');
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $p_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $p_cliente);
   ShowHTML('         <img src="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'logo1'),null,null,null,'EMBED').'" vspace="0" hspace="0" border="1"></td></tr>');
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
   ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b>');
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) ShowHTML('          <br>Exercício:<b>'.$_SESSION['ANO'].'</b></TD>');
   if($w_cliente!="14014" && $w_cliente!="11134") ShowHTML('          <td align="right"><a class="hl" href="help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
   ShowHTML('          </table>');
@@ -347,14 +347,14 @@ function TrocaSenha() {
   extract($GLOBALS);
 
   // Recupera os dados do cliente
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $p_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $p_cliente);
   $w_minimo     = f($RS,'tamanho_min_senha');
   $w_maximo     = f($RS,'tamanho_max_senha');
   $w_vigencia   = f($RS,'dias_vig_senha');
   $w_aviso      = f($RS,'dias_aviso_expir');
 
   // Recupera os dados do usuário
-  $RS = new db_getUserData; $RS = $RS->getInstanceOf($dbms, $p_cliente, $_SESSION["USERNAME"]);
+  $sql = new db_getUserData; $RS = $sql->getInstanceOf($dbms, $p_cliente, $_SESSION["USERNAME"]);
   $w_tipo_autenticacao = f($RS,'tipo_autenticacao');
 
   if ($P1==1) { 
@@ -519,7 +519,7 @@ function Vinculacao() {
   ShowHTML('</TABLE>');
   ShowHTML('  <tr><td>&nbsp;');
   if ($O=='L') {
-    $RS = new db_getMenuRelac; $RS = $RS->getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
+    $sql = new db_getMenuRelac; $RS = $sql->getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
     ShowHTML('<tr><td>');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <a class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
@@ -560,7 +560,7 @@ function Vinculacao() {
     ShowHTML('  </table>');
   } else {
     if($O=='A')$w_Disabled='DISABLED';
-    $RS = new db_getMenuRelac; $RS = $RS->getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
+    $sql = new db_getMenuRelac; $RS = $sql->getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
     $i=0;
     foreach($RS as $row) {
       if ($i==0) $w_sq_tramite = f($row,'sq_siw_tramite');
@@ -667,7 +667,7 @@ function Grava() {
     break;
   }
   // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms, $_SESSION["P_CLIENTE"], 'MESA');
+  $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION["P_CLIENTE"], 'MESA');
   ScriptOpen('JavaScript');
   if (f(RS1,'IMAGEM') > '')
      ShowHTML('  location.href=\''.f($RS1,'LINK').'&P1='.f($RS1,'P1').'&P2='.f($RS1,'P2').'&P3='.f($RS1,'P3').'&P4='.f($RS1,'P4').'&TP=<img src='.f($RS1,'IMAGEM').' BORDER=0>'.f($RS1,'NOME').'&SG='.f($RS1,'SIGLA').'\'; ');
@@ -682,7 +682,7 @@ function Grava() {
 // -------------------------------------------------------------------------
 function Sair() {
   extract($GLOBALS);
-  $RS = new db_getCustomerSite; $RS = $RS->getInstanceOf($dbms, $p_cliente);
+  $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $p_cliente);
 
   // Se a geração de log estiver ativada, registra.
   if ($conLog) {

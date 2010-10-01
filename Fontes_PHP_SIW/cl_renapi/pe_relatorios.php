@@ -98,13 +98,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -126,7 +126,7 @@ function Rel_Executivo() {
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
@@ -185,7 +185,7 @@ function Rel_Executivo() {
         }
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
         $sql = new db_getPrograma; //$RS1 = $sql->getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
-        $RS2 = new db_getLinkData; $RS2 = $RS2->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+        $sql = new db_getLinkData; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
         $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
         $RS1 = SortArray($RS1,'titulo','asc');
         if (count($RS1)==0) {
@@ -499,7 +499,7 @@ function Rel_Programas() {
     }
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
-    $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+    $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
     $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($RS1,'sq_menu'), $w_usuario, f($RS1,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
     $RS1 = SortArray($RS1,'or_modulo','asc', 'or_servico', 'asc', 'sq_solic_pai', 'asc', 'codigo_interno', 'asc'); 
     if (count($RS1)==0) {

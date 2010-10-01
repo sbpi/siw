@@ -752,7 +752,7 @@ function Geral() {
   $w_erro       = '';
 
   // Recupera os dados do cliente
-  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Verifica se o cliente tem o módulo de acordos contratado
   $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');

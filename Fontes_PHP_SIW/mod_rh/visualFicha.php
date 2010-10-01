@@ -372,7 +372,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
 	      }
 
         // Exibe as viagens do colaborador
-	      $RSMenu_Viagem = new db_getLinkData; $RSMenu_Viagem = $RSMenu_Viagem->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+	      $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
         $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$l_usuario,'PD',4,
             formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
             null, null, null, null, null, null, null,null, null, null, null, null, null, null, $l_usuario);

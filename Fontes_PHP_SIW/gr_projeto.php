@@ -130,10 +130,10 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
 // Recupera os dados do cliente
-$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 
 Main();
 
@@ -151,12 +151,12 @@ function Gerencial() {
   $w_linha = 0;
 
   // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
   // Verifica se o cliente tem o módulo viagens contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
   if ($O=='L' || $O=='V' || $p_tipo=='WORD' || $p_tipo=='PDF') {
 
@@ -172,7 +172,7 @@ function Gerencial() {
       case 'GRPRPRIO':    $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Prioridade</b>]';        break;
       case 'GRPRLOCAL':   $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>UF</b>]';                break;
       default:
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,substr($p_agrega,4));
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,substr($p_agrega,4));
         $w_linha++; 
         $w_filtro.='<tr valign="top"><td align="right">Agregado por '.f($RS2,'nome');
         break;
@@ -189,7 +189,7 @@ function Gerencial() {
       } elseif ($p_servico=='PLANOEST') {
         $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos vinculados a planos estratégicos</b>]';
       } else {
-        $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$p_servico);
+        $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$p_servico);
         $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
       }
     } elseif (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
@@ -307,7 +307,7 @@ function Gerencial() {
         $RS1  = SortArray($RS1,'co_uf','asc');
         break;
       default:
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,substr($p_agrega,4));
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,substr($p_agrega,4));
         $w_TP .= ' - Por '.f($RS2,'nome');
 
         $RS1  = SortArray($RS1,'dados_pai','asc');
@@ -463,7 +463,7 @@ function Gerencial() {
         ShowHTML('    if (conc >= 0) document.Form.p_fase.value='.$w_fase_conc.';');
         ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$p_fase.'\'; ');
         ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         if (f($RS_Cliente,'georeferencia')=='S' && count($RS1)>0) {
           ShowHTML('    if (document.getElementById("w_origem").checked) {');
           ShowHTML('      document.Form.action="mod_gr/exibe.php?par=inicial";');
@@ -994,7 +994,7 @@ function ImprimeCabecalho() {
     case 'GRPRPRIO':    ShowHTML('          <td><b>Prioridade</td>');           break;
     case 'GRPRLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
     default:
-      $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,substr($p_agrega,4));
+      $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,substr($p_agrega,4));
       ShowHTML('          <td><b>'.f($RS2,'nome').'</td>');
   } 
   ShowHTML('          <td><b>Total</td>');

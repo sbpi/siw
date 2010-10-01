@@ -27,7 +27,7 @@ class dml_putAcaoMeta_IS {
                    'p_quantidade'                =>array(toNumber(tvl($p_quantidade)),                     B_NUMERIC,      18,2),
                    'p_unidade_medida'            =>array($p_unidade_medida,                                B_VARCHAR,        30)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

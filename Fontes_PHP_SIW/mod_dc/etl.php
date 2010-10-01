@@ -109,13 +109,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -1030,7 +1030,7 @@ function Mapeamento() {
 function Importacao() {
   extract($GLOBALS);
   $w_sq_esquema = $_REQUEST['w_sq_esquema'];
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   $w_upload_maximo = f($RS,'upload_maximo');
   if ($O=='I') {
     // Recupera todos os ws_url para a listagem
@@ -1463,7 +1463,7 @@ function Script() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -1744,7 +1744,7 @@ function Grava() {
       } 
       ScriptOpen('JavaScript');
      // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -1779,7 +1779,7 @@ function Grava() {
        ShowHTML('  alert(\'Importação executada com sucesso!\');');
 
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-       $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'TIMPORT');
+       $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'TIMPORT');
        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS1,'sigla').MontaFiltro('GET')).'\';');
        ScriptClose();
      } else {

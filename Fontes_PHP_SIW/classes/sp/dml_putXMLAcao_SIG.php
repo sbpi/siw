@@ -58,7 +58,7 @@ class dml_putXMLAcao_SIG {
                    'p_outras_fontes'             =>array(tvl($p_outras_fontes),                            B_VARCHAR,         1),
                    'p_cd_sof_ref'                =>array(tvl($p_cd_sof_ref),                               B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -433,7 +433,7 @@ function Agencia() {
   global $w_Disabled;
   $p_sq_banco = upper($_REQUEST['p_sq_banco']);
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O!='I' && $p_sq_banco=='') $O='P';
@@ -656,7 +656,7 @@ function Agencia() {
 function Banco() {
   extract($GLOBALS);
   global $w_Disabled;
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   $w_sq_banco      = $_REQUEST['w_sq_banco'];
   $p_ordena        = $_REQUEST['p_ordena'];

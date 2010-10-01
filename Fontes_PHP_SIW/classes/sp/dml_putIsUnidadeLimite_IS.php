@@ -17,7 +17,7 @@ class dml_putIsUnidadeLimite_IS {
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,         4),
                    'p_limite'                    =>array(toNumber(tvl($p_limite)),                         B_NUMERIC,      18,2)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

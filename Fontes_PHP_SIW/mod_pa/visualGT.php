@@ -5,7 +5,7 @@
 function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato='WORD') {
   extract($GLOBALS);
 
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
   $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$p_chave,$w_cliente,null,null,null,$l_unidade,$l_nu_guia,$l_ano_guia,null,null,'PASTA');

@@ -17,7 +17,7 @@ class dml_putSiwTramiteFluxo {
                      'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
                      'p_destino'                   =>array(tvl($p_destino),                                  B_INTEGER,        18)
                     );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

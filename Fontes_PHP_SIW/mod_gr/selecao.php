@@ -75,7 +75,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera os dados do cliente
-$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 define(GoogleMapsKey, f($RS_Cliente,'googlemaps_key')); 
 
 Main();

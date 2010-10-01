@@ -102,7 +102,7 @@ if (count($RS)>0) {
   $w_submenu = '';
 }
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 Main();
 FechaSessao($dbms);
 exit;
@@ -384,7 +384,7 @@ function Gerencial() {
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {

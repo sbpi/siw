@@ -7,7 +7,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
 
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   $w_cliente_arp = f($RS,'ata_registro_preco');
   
   // Recupera os dados da solicitacao

@@ -138,7 +138,7 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
 Main();
 
@@ -156,18 +156,18 @@ function Gerencial() {
   $w_linha = 0;
   
   // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
 
   // Verifica se o cliente tem o módulo viagens contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
 
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
 
   // Verifica se o cliente tem o módulo de planejamento estratégico
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PE');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PE');
   if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
   
   if ($O=='L' || $O=='V' || $p_tipo=='WORD' || $p_tipo=='PDF') {
@@ -455,7 +455,7 @@ function Gerencial() {
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Protocolo',5,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         ShowHTML('<input type="Hidden" name="p_tipo" value="">');
@@ -856,7 +856,7 @@ function Gerencial() {
     // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
     if ($SG=='PROJETO') {
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
       SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$p_chave_pai,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_chave_pai','PJLIST','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
       ShowHTML('      </tr>');
       ShowHTML('      <tr>');

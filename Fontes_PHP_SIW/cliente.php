@@ -652,7 +652,7 @@ function Enderecos() {
   } 
 
   // Recupera os dados do cliente
-  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
   $SQL = new db_getAdressTypeList; $RS_Tipo = $SQL->getInstanceOf($dbms, '', null, null);
   $RS_Tipo = SortArray($RS_Tipo,'nm_tipo_pessoa','asc','nome','asc');
   //print_r($RS_Tipo);
@@ -973,7 +973,7 @@ function Telefones() {
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa);
       if (count($RS)>0) {
         $w_pais     = f($RS,'sq_pais');
         $w_uf       = f($RS,'co_uf');
@@ -1194,7 +1194,7 @@ function ContasBancarias() {
   } elseif (strpos('IAEV',$O)!==false) {
     if ($w_banco=='') {
       // Carrega os valores padrão para banco e agência
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa); 
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa); 
       if (count($RS)>0) {
         $w_banco=f($RS,'sq_banco');
         $w_agencia=f($RS,'codigo');
@@ -1309,7 +1309,7 @@ function Modulos() {
     $w_sq_modulo = $_REQUEST['w_sq_modulo'];
   } elseif ($O=='L') {
     // Recupera os módulos contratados pelo cliente
-    $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa,null,null);
+    $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa,null,null);
   } 
 
   if ($w_sq_modulo>'') {
@@ -1509,7 +1509,7 @@ function Configuracao() {
     
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera a configuração do site do cliente
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa);
     $w_smtp_server      = f($RS,'smtp_server');
     $w_siw_email_nome   = f($RS,'siw_email_nome');
     $w_siw_email_conta  = f($RS,'siw_email_conta');
@@ -1785,7 +1785,7 @@ function Visual() {
   } 
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_sq_pessoa); 
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa); 
   if (f($RS,'logo')>'') {
     $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   }  
@@ -1840,7 +1840,7 @@ function Grava() {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-          $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+          $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
           ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         } 
         ScriptClose();

@@ -30,7 +30,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   } 
 
   // Verifica se o cliente tem o módulo de viagens contratado
-  $l_rs_modulo = new db_getSiwCliModLis; $l_rs_modulo = $l_rs_modulo->getInstanceOf($dbms,$v_cliente,null,'PD');
+  $sql = new db_getSiwCliModLis; $l_rs_modulo = $sql->getInstanceOf($dbms,$v_cliente,null,'PD');
   if (!($l_rs_modulo==0)) $l_viagem='S'; else $l_viagem='N';
 
   $l_erro   = '';
@@ -125,7 +125,34 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 */
     if (f($l_rs_tramite,'sigla')=='CI' || f($l_rs_tramite,'sigla')=='DF' || f($l_rs_tramite,'sigla')=='AE') {
           // Cadastramento inicial, cotação de viagem e emissão de bilhetes deve verificar deslocamentos e diárias
-      
+
+        if(f($l_rs_solic,'passagem')=='N'){
+          $l_erro1 = 0;
+        }else{
+          $l_erro1 = 1;
+        }
+        foreach ($l_rs3 as $row) {
+          if(f($l_rs_solic,'passagem')=='S'){
+            if(f($row,'passagem')=='S'){
+              $l_erro1 = 0;
+              break;
+            }
+          }else{
+            if(f($row,'passagem')=='S'){
+              $l_erro1 = 2;
+              break;
+            }
+          }
+        }
+        // Verifica se foram cadastrados pelo menos 2 deslocamentos
+        if ($l_erro1==1) {
+          $l_erro .= '<li>Na tela de dados gerais foi informada a necessidade de passagens, mas nenhum deslocamento confirma essa necessidade.';
+          $l_tipo  = 0;
+        } elseif ($l_erro1==2) {
+          $l_erro .= '<li>Na tela de dados gerais foi informado que não há necessidade de passagens, mas pelo menos um deslocamento indica essa necessidade.';
+          $l_tipo  = 0;
+        }
+
           // Verifica se foram cadastrados pelo menos 2 deslocamentos
           if ($l_existe_rs3<2) {
             $l_erro .= '<li>É obrigatório informar pelo menos 2 deslocamentos.';

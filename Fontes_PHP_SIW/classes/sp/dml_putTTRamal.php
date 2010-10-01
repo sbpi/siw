@@ -17,7 +17,7 @@ class dml_putTTRamal {
                    'p_sq_central_fone'           =>array(tvl($p_sq_central_fone),                          B_INTEGER,        18),
                    'p_codigo'                   =>array(tvl($p_codigo),                                    B_VARCHAR,         4)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -104,7 +104,7 @@ function Unidade() {
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
 
   // Verifica se a edição dos dados está liberada
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms, $w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if (nvl($w_troca,'')!='' && $O!='E') {
@@ -754,7 +754,7 @@ function Documentos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" colspan="2" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  

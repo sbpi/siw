@@ -29,7 +29,7 @@ class dml_putCLPesqFornecedor {
                      'p_material'                  =>array(tvl($p_material),                                 B_INTEGER,        32),
                      'p_origem'                    =>array($p_origem,                                        B_VARCHAR,         2)
                     );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

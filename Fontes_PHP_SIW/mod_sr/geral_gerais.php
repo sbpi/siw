@@ -151,7 +151,7 @@
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_cidade=='') {
       // Carrega o valores padrão para cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_cidade   = f($RS,'sq_cidade_padrao');
     } 
     if (!(strpos('EV',$O)===false)) {
@@ -224,7 +224,7 @@
       ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar" onClick="document.Form.w_envio.value=\'N\';">');
       ShowHTML('            <input class="STB" type="submit" name="btEnvio" value="Gravar e Enviar" onClick="document.Form.w_envio.value=\'S\'; confirm(\'Confirma gravação e envio automático da solicitação para a próxima fase?\nSe sim, a assinatura eletrônica deve ser informada.\');">');
     }
-    $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+    $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

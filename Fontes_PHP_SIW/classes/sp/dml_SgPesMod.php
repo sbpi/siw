@@ -17,7 +17,7 @@ class dml_sgpesMod {
                    'p_sq_modulo'                 =>array($sq_modulo,                                       B_INTEGER,        32),
                    'p_sq_endereco'               =>array($sq_endereco,                                     B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

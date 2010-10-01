@@ -104,11 +104,11 @@ switch ($O) {
 $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) $w_submenu='Existe'; else $w_submenu='';
 // Recupera a configuração do serviço
-if ($P2 > 0) { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
-else { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu); }
+if ($P2 > 0) { $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2); }
+else { $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu); }
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
   // Se for sub-menu, pega a configuração do pai
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 
@@ -690,11 +690,11 @@ function Grava() {
       ScriptOpen('JavaScript');
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
-        $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
+        $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms,$w_menu);
         ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.$w_chave_nova.'&w_menu='.$w_menu.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.RemoveTP($TP)).'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       }         
       ScriptClose();

@@ -158,13 +158,13 @@ if (count($RS)>0) {
 }
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -220,7 +220,7 @@ function Inicial() {
       if ($p_qtd_restricao=='S') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas ações com restrição</b>]';
       if ($w_filtro>'')     $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ISACAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ISACAD');
     if ($w_copia>'') {
       // Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
       $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
@@ -532,7 +532,7 @@ function Inicial() {
     if ($P1!=1 || $O=='C') {
       // Se não for cadastramento ou se for cópia
       // Recupera dados da opção das ações
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ISACAD');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ISACAD');
       ShowHTML('      <tr valign="top"><td colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('      <tr valign="top">');
       SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,null,null,$p_sq_acao_ppa,null,'p_sq_acao_ppa',null,null,null,$w_menu,null,null);
@@ -762,7 +762,7 @@ function Geral() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -784,7 +784,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_justificativa" value="'.$w_justificativa.'">');
     ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
     //Passagem da cidade padrão como brasília, pelo retidara do impacto geográfico da tela
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.f($RS,'sq_cidade_padrao').'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
@@ -836,7 +836,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+      $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -982,7 +982,7 @@ function RecursoProgramado() {
     ShowHTML('<INPUT type="hidden" name="w_sq_acao_ppa" value="'.$w_sq_acao_ppa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_isprojeto" value="'.$w_sq_isprojeto.'">');
     //Passagem da cidade padrão como brasília, pelo retidara do impacto geográfico da tela
-    $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente);
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.f($RS1,'sq_cidade_padrao').'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
@@ -1198,7 +1198,7 @@ function RecursoProgramado() {
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ISACAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ISACAD');
     SelecaoAcao('Açã<u>o</u>:','O','Selecione a ação na relação.',$w_cliente,$w_ano,null,null,null,null,'w_chave','ACAO',null,null);
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
@@ -1506,7 +1506,7 @@ function ProgramacaoQualitativa() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
-      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+      $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
@@ -3080,7 +3080,7 @@ function Anexos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
@@ -3120,7 +3120,7 @@ function VisualNovo() {
   $w_chave  =$_REQUEST['w_chave'];
   $w_tipo   =upper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']); else Cabecalho();
   head();
@@ -3158,7 +3158,7 @@ function Visual() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']); else Cabecalho();
   head();
@@ -3486,7 +3486,7 @@ function Concluir() {
   foreach($RS as $row) {
     if (f($RS,'perc_conclusao')!=100) $w_cont_m=$w_cont_m+1;
   } 
-  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'ISTCAD');
+  $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ISTCAD');
   $sql = new db_getSolicList_IS; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',5,
           null,null,null,null,null,null,
           null,null,null,null,
@@ -3593,7 +3593,7 @@ function Metalinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
@@ -3792,7 +3792,7 @@ function RestricaoMail($l_solic,$l_descricao,$l_tl_restricao,$l_providencia,$l_t
     } 
   } 
   // Prepara os dados necessários ao envio
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if ($l_tipo=='I') {
     // Inclusão 
     $w_assunto='Inclusão de restrição da ação';
@@ -3980,14 +3980,14 @@ function Grava() {
         if (Nvl($_REQUEST['w_sq_acao_ppa'],'')=='') ShowHTML('  alert(\'Ação '.$w_chave_nova.' cadastrada com sucesso!\');');
         else                                        ShowHTML('  alert(\'Ação '.substr($_REQUEST['w_sq_acao_ppa'],12,5).'.'.substr($_REQUEST['w_sq_acao_ppa'],0,4).'.'.substr($_REQUEST['w_sq_acao_ppa'],4,4).' cadastrada com sucesso!\');');
         // Recupera os dados para montagem correta do menu
-        $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms,$w_menu);
+        $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms,$w_menu);
         ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
       } elseif ($O=='E') {
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       } else {
         if ($SG=='VLRAGERAL') $O='P';
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       } 
       ScriptClose();
@@ -4003,7 +4003,7 @@ function Grava() {
       $SQL = new dml_putRespAcao_IS; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave_aux'],$_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],$_REQUEST['w_tipo']);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -4022,11 +4022,11 @@ function Grava() {
       ScriptOpen('JavaScript');
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
-        $RS1 = new db_getMenuData; $RS1 = $RS1->getInsatnceOf($dbms,$w_menu);
+        $sql = new db_getMenuData; $RS1 = $sql->getInsatnceOf($dbms,$w_menu);
         ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       }
       ScriptClose();
@@ -4051,7 +4051,7 @@ function Grava() {
       }
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -4068,7 +4068,7 @@ function Grava() {
         $w_cliente,$w_ano,$_REQUEST['w_obs_financ']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
     } else {
@@ -4135,7 +4135,7 @@ function Grava() {
       if ($O=='I' || $O=='E') RestricaoMail($_REQUEST['w_chave'],$_REQUEST['w_descricao'],$_REQUEST['w_cd_tipo_restricao'],$_REQUEST['w_providencia'],$O);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -4150,7 +4150,7 @@ function Grava() {
       $SQL = new dml_putProjetoInter; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_tipo_visao'],$_REQUEST['w_envia_email']);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -4228,7 +4228,7 @@ function Grava() {
       } 
       ScriptOpen('JavaScript');
      // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
@@ -4253,7 +4253,7 @@ function Grava() {
         if ($P1==1) {
           // Se for envio da fase de cadastramento, remonta o menu principal
           // Recupera os dados para montagem correta do menu
-          $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+          $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
           ScriptOpen('JavaScript');
           ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET')).'\';');
           ScriptClose();

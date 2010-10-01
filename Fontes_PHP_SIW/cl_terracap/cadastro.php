@@ -105,7 +105,7 @@ if (count($_POST) > 0) {
 	  $w_ano      = RetornaAno();
 
     // Retorna os dados do menu
-	  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 	  
     $w_erro     = '';
     // Testa os dados recebidos

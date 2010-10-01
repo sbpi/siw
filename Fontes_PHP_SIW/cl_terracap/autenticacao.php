@@ -15,7 +15,7 @@ function Valida() {
       if ($w_senha>'') { $sql = new db_verificaSenha; $w_erro = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$w_username,$w_senha); }
     } else {
       include_once('classes/ldap/ldap.php');
-      $RS1 = new db_getCustomerData; $RS1 = $RS1->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);      
+      $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);      
 
       if ($w_tipo=='A') {
         $array = array(            
@@ -56,7 +56,7 @@ function Valida() {
     return $w_msg;
   } else {
     // Recupera informações do cliente, relativas ao envio de e-mail
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
     $_SESSION['SMTP_SERVER']     = f($RS, 'smtp_server');
     $_SESSION['SIW_EMAIL_CONTA'] = f($RS, 'siw_email_conta');
     $_SESSION['SIW_EMAIL_SENHA'] = f($RS,'siw_email_senha');

@@ -112,7 +112,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera os dados da opção selecionada
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 Main();
 FechaSessao($dbms); 
 exit;
@@ -257,8 +257,8 @@ function Restricao() {
       ShowHTML('    </ul></b></font></td>');
       ShowHTML('<tr><td>');
       ShowHTML('  <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_problema='.$w_problema.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      $RS_Tarefa = new db_getLinkData; $RS_Tarefa = $RS_Tarefa->getInstanceOf($dbms,$w_cliente,'GDPCAD');
-      $RS_Tramite = new db_getLinkData; $RS_Tramite = $RS_Tramite->getInstanceOf($dbms,f($RS_Tarefa,'sq_menu'),null,'S');
+      $sql = new db_getLinkData; $RS_Tarefa = $sql->getInstanceOf($dbms,$w_cliente,'GDPCAD');
+      $sql = new db_getLinkData; $RS_Tramite = $sql->getInstanceOf($dbms,f($RS_Tarefa,'sq_menu'),null,'S');
       foreach($RS_Tramite as $row){$RS_Tramite=$row; break;}
       if(RetornaMarcado(f($RS_Tarefa,'sq_menu'),$w_usuario,null,f($RS_Tarefa,'sq_siw_tramite'))>0) {
         ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">Tarefas</a>&nbsp');
@@ -701,7 +701,7 @@ function ComentarioEtapa() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  elseif ($O=='V') {
@@ -764,7 +764,7 @@ function ComentarioEtapa() {
 function ComentarioMail($p_solic,$p_etapa,$p_coment) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if (1==1) {//(f($RS,'envia_mail_tramite')=='S') {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
@@ -1016,7 +1016,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_row     = 1;
   $l_col     = 1;
 
-  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'GDPCAD');
+  $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'GDPCAD');
   $sql = new db_getSolicList; $RS_Ativ = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'GDPCAD',4,
            null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,null,null,null,null,null,$l_chave_aux,null,null);

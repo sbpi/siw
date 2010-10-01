@@ -123,13 +123,13 @@ $p_processo     = upper($_REQUEST['p_processo']);
 $p_agrega       = upper($_REQUEST['p_agrega']);
 $p_tamanho      = upper($_REQUEST['p_tamanho']);
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
 // Recupera a configuração do serviço de origem
-$RS_Menu_Origem = new db_getMenuData; $RS_Menu_Origem = $RS_Menu_Origem->getInstanceOf($dbms,$P2);
+$sql = new db_getMenuData; $RS_Menu_Origem = $sql->getInstanceOf($dbms,$P2);
 
 // Carrega o segmento do cliente
-$RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente); 
+$sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente); 
 $w_segmento = f($RS,'segmento');
 
 Main();
@@ -424,7 +424,7 @@ function Gerencial() {
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Contrato',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
@@ -808,10 +808,10 @@ function Gerencial() {
         // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') {
-        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
+        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
         $w_atributo = 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"';
       } else {
-        $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
       }
       SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
       ShowHTML('      </tr>');

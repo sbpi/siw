@@ -16,7 +16,7 @@ class dml_putDicionario {
                    'p_sg_sistema'                =>array($p_sg_sistema,                                    B_VARCHAR,        50),
                    'p_sg_usuario'                =>array($p_sg_usuario,                                    B_VARCHAR,        50)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

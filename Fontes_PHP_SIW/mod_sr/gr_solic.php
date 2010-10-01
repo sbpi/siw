@@ -139,7 +139,7 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
 Main();
 
@@ -159,7 +159,7 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $w_tipo=='WORD' || $w_tipo=='PDF') {
     $w_filtro='';
     if ($p_sq_menu>'') {
-      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$p_sq_menu);
+      $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$p_sq_menu);
       $w_filtro .= '<tr valign="top"><td align="right">Serviço <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_chave>'') $w_filtro .= '<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]';

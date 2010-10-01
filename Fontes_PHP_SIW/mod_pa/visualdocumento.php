@@ -325,7 +325,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     } 
 
     include_once($w_dir_volta.'classes/sp/db_getSolicPA.php');
-    $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PAEMP');
+    $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'PAEMP');
     $sql = new db_GetSolicPA; $RS1 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'EMPREST',4,
         null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
         null, null, null, null, null, null, null,null, null, null, $l_chave);

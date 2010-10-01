@@ -20,7 +20,7 @@ class dml_eOResp {
                    'p_sq_pessoa'                 =>array($sq_pessoa,                                       B_INTEGER,        32),
                    'p_inicio_titular'            =>array(tvl($inicio_titular),                             B_DATE,           15)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -21,7 +21,7 @@ class dml_putGpPontoMensal {
                    'p_horas_banco'              =>array(tvl($p_horas_banco),                  B_VARCHAR,        32),
                    'p_gestor'                   =>array(tvl($p_gestor),                       B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

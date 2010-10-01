@@ -156,7 +156,7 @@ function Mesa() {
   extract($GLOBALS);
 
   // Recupera os dados do cliente
-  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 
   Cabecalho();
   head();
@@ -498,7 +498,7 @@ function Alerta() {
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms,$w_cliente,'MESA');
+  $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms,$w_cliente,'MESA');
   ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
   ShowHTML('<tr><td colspan=2><hr>');
   ShowHTML('</table>');
@@ -616,7 +616,7 @@ function Arquivos() {
   ShowHTML('   <tr><td>&nbsp;</td>');
   ShowHTML('       <td>');
   ShowHTML('       <input class="STB" type="submit" name="Botao" value="BUSCAR" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
-  $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms, $w_cliente, 'MESA');
+  $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms, $w_cliente, 'MESA');
   ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
   ShowHTML('   </td></tr>');
   ShowHTML('</FORM>');
@@ -762,7 +762,7 @@ function Calendario() {
     ShowHTML('   <tr>');
     ShowHTML('     <td><b>Recuperar</b><td>');
     ShowHTML('          <input type="CHECKBOX" name="p_agenda" value="S" '.((nvl($p_agenda,'')!='') ? 'checked': '').'> Agenda de ação');
-    $RS_Projeto = new db_getLinkData; $RS_Projeto = $RS_Projeto->getInstanceOf($dbms,$w_cliente,'EVCAD');
+    $sql = new db_getLinkData; $RS_Projeto = $sql->getInstanceOf($dbms,$w_cliente,'EVCAD');
     SelecaoTipoEventoCheck(null,null,null,$p_tipo_evento,f($RS_Projeto,'sq_menu'),'p_tipo_evento[]',null,null,null,'&nbsp;');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');

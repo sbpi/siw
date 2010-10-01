@@ -144,7 +144,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 $w_caminho  = $conFilePhysical.$w_cliente.'/';
-$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
 foreach($RS as $row){$RS=$row; break;}
 $w_sq_modulo = f($RS,'sq_modulo');
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
@@ -156,13 +156,13 @@ if (count($RS)>0) {
 } 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 Main();
 FechaSessao($dbms);
@@ -872,7 +872,7 @@ function Mapeamento() {
 function Importacao() {
   extract($GLOBALS);
   $w_sq_esquema = $_REQUEST['w_sq_esquema'];
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   $w_upload_maximo = f($RS,'upload_maximo');
   if ($O=='I') {
     // Recupera todos os ws_url para a listagem
@@ -1053,7 +1053,7 @@ function Exportacao() {
     // Processa cada um dos esquemas recuperados
     for ($j=1; $j<=$w_cont; $j=$j+1) {
       $sql = new DatabaseQueriesFactory; $RS2 = $sql->getInstanceOf($w_sql[$j], $dbms, null, DB_TYPE);
-      if(!$RS2->executeQuery()) die("Cannot query"); else $RS2 = $RS2->getResultData();
+      if(!$RS2->executeQuery()) die("Cannot query"); else $RS2 = $sql->getResultData();
       foreach($RS2 as $row2) {
         fwrite($F1,utf8_encode('  <'.$w_elemento[$j].'>').$crlf);
         // Processa cada um dos atributos recuperados

@@ -22,7 +22,7 @@ class dml_putDadosAcaoPPA_IS {
                    'p_empenhado'                 =>array(toNumber(tvl($p_empenhado)),                      B_NUMERIC,      18,2),
                    'p_liquidado'                 =>array(toNumber(tvl($p_liquidado)),                      B_NUMERIC,      18,2)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

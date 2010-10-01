@@ -16,7 +16,7 @@ class dml_putMenuRelac {
                    'p_servico_fornecedor'   =>array($p_servico_fornecedor,  B_INTEGER,     32),
                    'p_sq_siw_tramite'       =>array($p_sq_siw_tramite,      B_INTEGER,     32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

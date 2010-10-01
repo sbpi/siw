@@ -372,7 +372,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
   }
 
   // Estruturação do programa
-  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+  $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
   $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ESTRUTURA',7,
          null,null,null,null,null,null,null,null,null,null,$l_chave,
          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);

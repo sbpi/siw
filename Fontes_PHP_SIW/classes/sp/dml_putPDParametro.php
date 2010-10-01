@@ -24,7 +24,7 @@ class dml_putPDParametro {
                    'p_limite_unidade'            =>array(tvl($p_limite_unidade),                           B_VARCHAR,         1),
                    'p_cadastrador_geral'         =>array(tvl($p_cadastrador_geral),                        B_VARCHAR,         1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

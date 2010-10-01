@@ -25,7 +25,7 @@ class dml_putProjetoEnvio {
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,       255)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

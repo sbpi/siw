@@ -224,26 +224,26 @@ if (count($RS) > 0) {
 
 // Recupera a configuração do serviço
 if ($P2 > 0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms, $P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms, $P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms, $w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms, $w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu, 'ultimo_nivel') == 'S') {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms, f($RS_Menu, 'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu_pai'));
 }
 
 $w_cadgeral = RetornaCadastrador_PD(f($RS_Menu, 'sq_menu'), $w_usuario);
 
 // Verifica se o cliente tem o módulo de protocolo e arquivo
-$RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, 'PA');
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, 'PA');
 if (count($RS) > 0)
   $w_mod_pa = 'S'; else
   $w_mod_pa='N';
 
 // Recupera os dados do cliente
-$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms, $w_cliente);
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms, $w_cliente);
 
 Main();
 
@@ -329,9 +329,9 @@ function Inicial() {
     }
 
     if ($SG == 'PDALTERA') {
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
     } else {
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $SG);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $SG);
     }
 
     if ($w_copia > '') {
@@ -634,8 +634,8 @@ function Inicial() {
       ShowHTML('<INPUT type="hidden" name="w_copia" value="OK">');
     }
     ShowHTML('     <tr valign="top">');
-    $RSF = new db_getLinkData; $RSF = $RSF->getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    $RSC = new db_getLinkData; $RSC = $RSC->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
+    $sql = new db_getLinkData; $RSF = $sql->getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    $sql = new db_getLinkData; $RSC = $sql->getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
     SelecaoSolic('Pro<u>j</u>eto:', 'J', 'Selecione o projeto da atividade na relação.', $w_cliente, $p_projeto, f($RSF, 'sq_menu'), f($RSC, 'sq_menu'), 'p_projeto', f($RSF, 'sigla'), null, null, '<BR />', 2);
     ShowHTML('     </tr>');
     ShowHTML('     <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -849,7 +849,7 @@ function Geral() {
     }
   }
   if (nvl($w_sq_menu_relac, 0) > 0)
-    $RS_Relac = new db_getMenuData; $RS_Relac = $RS_Relac->getInstanceOf($dbms, $w_sq_menu_relac);
+    $sql = new db_getMenuData; $RS_Relac = $sql->getInstanceOf($dbms, $w_sq_menu_relac);
 
   // Recupera as possibilidades de vinculação financeira
   $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
@@ -1127,7 +1127,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan="4">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if ($O == 'I') {
-      $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms, $w_menu);
+      $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms, $w_menu);
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&w_copia=' . $w_copia . '&O=L&SG=' . f($RS, 'sigla') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . MontaFiltro('GET')) . '\';" name="Botao" value="Cancelar">');
     }
     ShowHTML('          </td>');
@@ -2833,7 +2833,7 @@ function ImprimeAlteracao() {
   $w_chave_aux = $_REQUEST['w_chave_aux'];
 
   include_once($w_dir_volta . 'classes/sp/db_getCustomerData.php');
-  $RS_Logo = new db_getCustomerData; $RS_Logo = $RS_Logo->getInstanceOf($dbms, $w_cliente);
+  $sql = new db_getCustomerData; $RS_Logo = $sql->getInstanceOf($dbms, $w_cliente);
 
   if (f($RS_Logo, 'logo') > '') {
     $p_logo = 'img/logo' . substr(f($RS_Logo, 'logo'), (strpos(f($RS_Logo, 'logo'), '.') ? strpos(f($RS_Logo, 'logo'), '.') + 1 : 0) - 1, 30);
@@ -3116,7 +3116,7 @@ function Vinculacao() {
     // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
     if ($p_sigla == 'GDPCAD') {
       ShowHTML('      <tr><td colspan=3><table border=0 width="90%" cellspacing=0><tr valign="top">');
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, 'PJCAD');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PJCAD');
       SelecaoProjeto('Pro<u>j</u>eto:', 'J', 'Selecione o projeto da atividade na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), null, null, null, 'p_projeto', f($RS_Menu, 'sq_menu'), 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
       ShowHTML('      </tr>');
       ShowHTML('      <tr>');
@@ -3134,7 +3134,7 @@ function Vinculacao() {
     SelecaoCidade('<u>C</u>idade:', 'C', null, $p_cidade, $p_pais, $p_uf, 'p_cidade', null, null);
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><font size="1"><b>Conclusão en<u>t</u>re:</b><br><input ' . $w_Disabled . ' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim_i . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim_i') . ' e <input ' . $w_Disabled . ' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim_f . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim_f') . '</td>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $p_sigla);
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_sigla);
     SelecaoFaseCheck('Recuperar fases:', 'S', null, $p_fase, f($RS, 'sq_menu'), 'p_fase[]', null, null);
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -3151,7 +3151,7 @@ function Vinculacao() {
       ShowHTML('<INPUT type="hidden" name="w_operacao" value="">');
       ShowHTML(MontaFiltro('POST'));
       // Recupera os registros
-      $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $p_sigla);
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $p_sigla);
       $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS, 'sq_menu'), $w_usuario, f($RS, 'sigla'), 4,
                       $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante,
                       $p_unidade, $p_prioridade, $p_ativo, $p_proponente,
@@ -6165,7 +6165,7 @@ function SolicMail($p_solic, $p_tipo) {
   extract($GLOBALS);
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
   $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms, $p_solic, 'PDGERAL');
   if (f($RS, 'envia_mail_tramite') == 'S' && (f($RS_Menu, 'envia_email') == 'S') && (f($RSM, 'envia_mail') == 'S')) {
     $l_solic = $p_solic;
@@ -6257,7 +6257,7 @@ function SolicMail($p_solic, $p_tipo) {
     $w_html .= '</BODY>' . $crlf;
     $w_html .= '</HTML>' . $crlf;
     // Prepara os dados necessários ao envio
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
     if ($p_tipo == 1 || $p_tipo == 3) {
       // Inclusão ou Conclusão
       if ($p_tipo == 1)
@@ -6715,7 +6715,7 @@ function PrestarContas() {
       ShowHTML('    <tr><td colspan="2"><textarea ' . $w_Disabled . ' name="w_nota_conclusao" class="STI" ROWS=5 cols=75>' . $w_nota_conclusao . '</TEXTAREA></td>');
     }
 
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $w_cliente);
     ShowHTML('      <tr><td colspan="2"><br><b>Relatório de viagem:</b></font></td></tr>');
     ShowHTML('      <tr><td colspan="2"><textarea ' . $w_Disabled . ' name="w_relatorio" class="STI" ROWS=5 cols=75>' . $w_relatorio . '</TEXTAREA></td>');
 
@@ -7677,7 +7677,7 @@ function Grava() {
                         &$w_chave_nova, $w_copia, &$w_codigo);
         if ($O == 'I') {
           // Recupera os dados para montagem correta do menu
-          $RS1 = new db_getMenuData; $RS1 = $RS1->getInstanceOf($dbms, $w_menu);
+          $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms, $w_menu);
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'' . $w_codigo . ' cadastrada com sucesso!\');');
           ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=A&w_chave=' . $w_chave_nova . '&w_documento=' . $w_codigo . '&R=' . $R . '&SG=' . f($RS1, 'sigla') . '&TP=' . RemoveTP($TP)) . '\';');
@@ -7688,7 +7688,7 @@ function Grava() {
           ScriptClose();
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $SG);
+          $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $SG);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS1, 'link') . '&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
           ScriptClose();
@@ -7785,7 +7785,7 @@ function Grava() {
         ScriptOpen('JavaScript');
         if ($P1 == 1) {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-          $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms, $w_cliente, $SG);
+          $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $SG);
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS1, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         } else {
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
@@ -8405,7 +8405,7 @@ function Grava() {
             if ($P1 == 1) {
               // Se for envio da fase de cadastramento, remonta o menu principal
               // Recupera os dados para montagem correta do menu
-              $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms, $w_menu);
+              $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms, $w_menu);
               ScriptOpen('JavaScript');
               ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . MontaFiltro('GET')) . '\';');
               ScriptClose();

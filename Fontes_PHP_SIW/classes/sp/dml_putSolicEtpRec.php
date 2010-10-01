@@ -15,7 +15,7 @@ class dml_putSolicEtpRec {
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

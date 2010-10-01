@@ -25,7 +25,7 @@ class dml_putColuna {
                    'p_obrigatorio'               =>array(tvl($p_obrigatorio),                              B_VARCHAR,         1),
                    'p_valor_padrao'              =>array(tvl($p_valor_padrao),                             B_VARCHAR,       255)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

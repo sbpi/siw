@@ -41,7 +41,7 @@ class dml_PutGPPensionista  {
                    'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),     
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,        1000)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

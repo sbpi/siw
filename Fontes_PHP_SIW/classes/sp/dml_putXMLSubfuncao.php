@@ -16,7 +16,7 @@ class dml_putXMLSubfuncao {
                    'p_funcao'                    =>array(tvl($p_funcao),                                   B_VARCHAR,         2),
                    'p_desc'                      =>array(tvl($p_desc),                                     B_VARCHAR,       120)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

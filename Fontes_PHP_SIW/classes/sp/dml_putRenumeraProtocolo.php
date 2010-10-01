@@ -18,7 +18,7 @@ class dml_putRenumeraProtocolo {
                    'p_numero'               =>array($p_numero,                             B_INTEGER,        32),
                    'p_ano'                  =>array($p_ano,                                B_VARCHAR,        4)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

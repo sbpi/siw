@@ -18,7 +18,7 @@ class dml_putSolicIndicador {
                    'p_plano'                     =>array($p_plano,                                         B_INTEGER,        32),
                    'p_indicador'                 =>array($p_indicador,                                     B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

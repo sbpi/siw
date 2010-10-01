@@ -21,7 +21,7 @@ class dml_putProjetoInfo {
                    'p_indicadores'               =>array(tvl($p_indicadores),                              B_VARCHAR,      2000),
                    'p_objetivo'                  =>array(tvl($p_objetivo),                                 B_VARCHAR,      2000)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

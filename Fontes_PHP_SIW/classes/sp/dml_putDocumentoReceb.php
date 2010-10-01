@@ -18,7 +18,7 @@ class dml_putDocumentoReceb {
                    'p_ano_guia'             =>array(tvl($p_ano_guia),                           B_INTEGER,        32),
                    'p_observacao'           =>array(tvl($p_observacao),                         B_VARCHAR,      2000)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

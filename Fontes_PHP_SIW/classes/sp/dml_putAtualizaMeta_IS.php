@@ -20,7 +20,7 @@ class dml_putAtualizaMeta_IS {
                    'p_justificativa_inex'        =>array(tvl($p_justificativa_inex),                       B_VARCHAR,      4000),
                    'p_outras_medidas'            =>array(tvl($p_outras_medidas),                           B_VARCHAR,      4000)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

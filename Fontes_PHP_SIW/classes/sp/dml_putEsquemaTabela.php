@@ -20,7 +20,7 @@ class dml_putEsquemaTabela {
                    'p_elemento'                  =>array(tvl($p_elemento),                                 B_VARCHAR,        50),
                    'p_remove_registro'           =>array(tvl($p_remove_registro),                          B_VARCHAR,         1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

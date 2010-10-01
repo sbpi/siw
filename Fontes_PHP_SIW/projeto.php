@@ -409,7 +409,7 @@ function Inicial() {
     if ($P1 == 1 && $w_copia == '') {
       // Se for cadastramento e não for resultado de busca para cópia
       if ($w_submenu > '') {
-        $RS1 = new db_getLinkSubMenu; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+        $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
 
         foreach($RS1 as $row) {
           if ($w_embed!='WORD') ShowHTML('    <a accesskey="I" class="SS" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
@@ -532,7 +532,7 @@ function Inicial() {
             // Se não for acompanhamento
             if ($w_copia > '') {
               // Se for listagem para cópia
-              $RS1 = new db_getLinkSubMenu; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+              $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
               foreach($RS1 as $row1) { $RS1 = $row1; break; }
               ShowHTML('          <a class="HL" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
             } elseif ($P1==1) {
@@ -560,7 +560,7 @@ function Inicial() {
                 } 
                 ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
                 if (f($row,'sg_tramite')=='EE') {
-                  $RS2 = new db_getContasCronograma; $RS2 = $RS2->getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null);
+                  $sql = new db_getContasCronograma; $RS2 = $sql->getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null);
                   if(count($RS2)>0) ShowHTML('          <A class="HL" HREF="'.$w_pagina.'PrestacaoContas&R='.$w_pagina.'PrestacaoContas'.'&O=P&w_siw_solicitacao='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Prestação contas&SG=PJPREST'.MontaFiltro('GET').'" title="Inseri a prestação de contas do projeto." target="Prestacao">PC</A>&nbsp');
                   ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução do projeto.">CO</A>&nbsp');
                 } 
@@ -741,7 +741,7 @@ function Geral() {
   $w_erro       = '';
 
   // Recupera os dados do cliente
-  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Verifica se o cliente tem o módulo de acordos contratado
   $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');
@@ -1030,7 +1030,7 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
       }
     }
-    $RS_Pai = new db_getSolicData; $RS_Pai = $RS_Pai->getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
+    $sql = new db_getSolicData; $RS_Pai  = $sql->getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
     if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
       if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');
     } else {
@@ -1463,11 +1463,11 @@ function AnexosEtapas() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan=2 align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  $RS_Solic = new db_getSolicData; $RS_Solic = $RS_Solic->getInstanceOf($dbms,$w_chave,$SG);
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
   ShowHTML('        <tr valign="top">');
   ShowHTML('          <td colspan=3>Projeto: <b>'.f($RS_Solic,'titulo').' ('.$w_chave.')</td>');
   ShowHTML('        <tr valign="top">');
-  $RS_Etp = new db_getSolicEtapa; $RS_Etp = $RS_Etp->getInstanceOf($dbms,$w_chave,$w_etapa,'REGISTRO',null);
+  $sql = new db_getSolicEtapa; $RS_Etp = $sql->getInstanceOf($dbms,$w_chave,$w_etapa,'REGISTRO',null);
   foreach ($RS_Etp as $row) {
     ShowHTML('          <td>Etapa: <b>'.MontaOrdemEtapa($w_etapa).' - '.f($row,'titulo').'</td>');
     ShowHTML('          <td>Início: <b>'.FormataDataEdicao(f($row,'inicio_previsto')).'</td>');
@@ -1697,7 +1697,7 @@ function Rubrica() {
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
-      $RS2 = new db_getSolicData; $RS2 = $RS2->getInstanceOf($dbms,$w_chave,'PJGERAL');
+      $sql = new db_getSolicData; $RS2 = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
       $w_valor_projeto = f($RS2,'valor');
       $w_total_previsto = 0;
       $w_total_real     = 0;      
@@ -1840,7 +1840,7 @@ function AtualizaRubrica() {
     }
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do cronograma
-    $RS_Cronograma = new db_getCronograma; $RS_Cronograma = $RS_Cronograma->getInstanceOf($dbms,$w_chave_rub,null,null,null);
+    $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,$w_chave_rub,null,null,null);
 
     // Recupera todos os dados do projeto e rubrica
     $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_rub,null,null,null,null,null,null,null);
@@ -2088,7 +2088,7 @@ function Etapas() {
   // Define o valor default do campo "Base geográfica" como "Organizacional"
   if ($w_pacote=='S' && $O=='I' && nvl($w_base,'')=='') $w_base = 5;
   
-  $RS_Projeto = new db_getSolicData; $RS_Projeto = $RS_Projeto->getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_inicio_pai = formataDataEdicao(f($RS_Projeto,'inicio'));
   $w_fim_pai    = formataDataEdicao(f($RS_Projeto,'fim'));
   $w_valor_pai  = formatNumber(f($RS_Projeto,'valor'));
@@ -2195,11 +2195,11 @@ function Etapas() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    $RS1 = new db_getSolicData; $RS1 = $RS1->getInstanceOf($dbms,$w_chave,'PJGERAL');
+    $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    $RS_Tarefa = new db_getLinkData; $RS_Tarefa = $RS_Tarefa->getInstanceOf($dbms,$w_cliente,'GDPCAD');
-    $RS_Tramite = new db_getLinkData; $RS_Tramite = $RS_Tramite->getInstanceOf($dbms,f($RS_Tarefa,'sq_menu'),null,'S');
+    $sql = new db_getLinkData; $RS_Tarefa = $sql->getInstanceOf($dbms,$w_cliente,'GDPCAD');
+    $sql = new db_getLinkData; $RS_Tramite = $sql->getInstanceOf($dbms,f($RS_Tarefa,'sq_menu'),null,'S');
     foreach($RS_Tramite as $row){$RS_Tramite=$row; break;}
     if(RetornaMarcado(f($RS_Tarefa,'sq_menu'),$w_usuario,null,f($RS_Tarefa,'sq_siw_tramite'))>0) {
       ShowHTML('        <a accesskey="T" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"><u>T</u>arefas</a>&nbsp');
@@ -2231,7 +2231,7 @@ function Etapas() {
     } else {
       // Etapas do projeto
       // Recupera todos os registros para a listagem
-      $RS1 = new db_getSolicEtapa; $RS1 = $RS1->getInstanceOf($dbms,$w_chave,null,'LISTA',null);
+      $sql = new db_getSolicEtapa; $RS1 = $sql->getInstanceOf($dbms,$w_chave,null,'LISTA',null);
       $RS1 = SortArray($RS1,'ordem','asc');
       // Recupera o código da opção de menu  a ser usada para listar as tarefas
       $w_p2 = '';
@@ -2253,7 +2253,7 @@ function Etapas() {
         ShowHTML('    document.Form.P2.value=\''.w_p2.'\';');
         ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
         ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
-        $RS1 = new db_getTramiteList; $RS1 = $RS1->getInstanceOf($dbms,$w_p2,null,null,null);
+        $sql = new db_getTramiteList; $RS1 = $sql->getInstanceOf($dbms,$w_p2,null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         ShowHTML('    document.Form.p_fase.value=\'\';');
         $w_fases='';
@@ -2276,7 +2276,7 @@ function Etapas() {
         ShowHTML('    document.Form.P2.value=\''.w_p3.'\';');
         ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
         ShowHTML('    document.Form.p_agrega.value=\''.substr(f($RS1,'sigla'),0,3).'ETAPA\';');
-        $RS1 = new db_getTramiteList; $RS1 = $RS1->getInstanceOf($dbms,$w_p3,null,null,null);
+        $sql = new db_getTramiteList; $RS1 = $sql->getInstanceOf($dbms,$w_p3,null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         ShowHTML('    document.Form.p_fase.value=\'\';');
         $w_fases='';
@@ -2405,7 +2405,7 @@ function Etapas() {
     ShowHTML('      <tr valign="top">');
     if($O=='I') {
       SelecaoPessoa('Respo<u>n</u>sável pela etapa:','N','Selecione o responsável pela etapa na relação.',$w_sq_pessoa,null,'w_sq_pessoa','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
-      $RS_Pessoa = new db_getPersonData; $RS_Pessoa = $RS_Pessoa->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+      $sql = new db_getPersonData; $RS_Pessoa = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
       $w_sq_unidade = f($RS_Pessoa,'sq_unidade');
     } else {
       SelecaoPessoa('Respo<u>n</u>sável pela etapa:','N','Selecione o responsável pela etapa na relação.',$w_sq_pessoa,null,'w_sq_pessoa','USUARIOS');
@@ -2879,7 +2879,7 @@ function AtualizaEtapa() {
         ShowHTML('    document.Form.p_projeto.value=projeto;');
         ShowHTML('    document.Form.p_atividade.value=etapa;');
         ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
-        $RS1 = new db_getTramiteList; $RS1 = $RS1->getInstanceOf($dbms,$w_p2,null,null,null);
+        $sql = new db_getTramiteList; $RS1 = $sql->getInstanceOf($dbms,$w_p2,null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         ShowHTML('    document.Form.p_fase.value=\'\';');
         $w_fases = '';
@@ -2958,7 +2958,7 @@ function AtualizaEtapa() {
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
 
     // Exibe os dados da etapa
-    $RS_Etapa = new db_getSolicEtapa; $RS_Etapa = $RS_Etapa->getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null);
+    $sql = new db_getSolicEtapa; $RS_Etapa = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null);
     foreach ($RS_Etapa as $row_etapa) { $RS_Etapa = $row_etapa; break; }
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%">');
     ShowHTML('          <tr valign="top">');
@@ -3971,7 +3971,7 @@ function PrestacaoContas() {
     ShowHTML('<INPUT type="hidden" name="w_siw_solicitacao" value="'.$w_siw_solicitacao.'">');
     ShowHTML('<INPUT type="hidden" name="w_prestacao_contas[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_observacao[]" value="">');    
-    $RS_Cron = new db_getContasCronograma; $RS_Cron = $RS_Cron->getInstanceOf($dbms,$p_contas_cronograma,$w_siw_solicitacao,null,null,null,null,null,null);
+    $sql = new db_getContasCronograma; $RS_Cron = $sql->getInstanceOf($dbms,$p_contas_cronograma,$w_siw_solicitacao,null,null,null,null,null,null);
     foreach($RS_Cron as $row){$RS_Cron=$row; break;}
     ShowHTML('      <tr valign="top"><td colspan=3>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -3994,23 +3994,23 @@ function PrestacaoContas() {
       $w_contOut = $w_contOut+1;
       if (f($row,'Filho')>0) {
         ShowHTML('      <tr valign="top"><td colspan=3><b><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'</b>');
-        $RS1 = new db_getPrestacaoContas; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row,'chave'));
+        $sql = new db_getPrestacaoContas; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row,'chave'));
         foreach($RS1 as $row1) {
           $w_nome .= ' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
             $w_contOut=$w_contOut+1;
             ShowHTML('      <tr valign="top"><td colspan=3><b>&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome').'</b>');
-            $RS2 = new db_getPrestacaoContas; $RS2 = $RS2->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row1,'chave'));
+            $sql = new db_getPrestacaoContas; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row1,'chave'));
             foreach($RS2 as $row2) {
               $w_nome .= ' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
                 $w_contOut = $w_contOut+1;
                 ShowHTML('      <tr valign="top"><td colspan=3><b>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome').'</b>');
-                $RS3 = new db_getPrestacaoContas; $RS3 = $RS3->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row2,'chave'));
+                $sql = new db_getPrestacaoContas; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,f($row2,'chave'));
                 foreach($RS3 as $row3) {
                   $w_nome .= ' - '.f($row3,'nome');
                   ShowHTML('      <tr valign="top"><td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/SheetLittle.gif" border=0 align="center"> '.f($row3,'nome').'</b>');                  
-                  $RS_Cron = new db_getContasRegistro; $RS_Cron = $RS_Cron->getInstanceOf($dbms,null,f($row3,'chave'),$p_contas_cronograma,null);
+                  $sql = new db_getContasRegistro; $RS_Cron = $sql->getInstanceOf($dbms,null,f($row3,'chave'),$p_contas_cronograma,null);
                   foreach($RS_Cron as $row_cron){$RS_Cron=$row_cron; break;}
                   ShowHTML('<INPUT type="hidden" name="w_prestacao_contas[]" value="'.f($row3,'chave').'">');
                   ShowHTML('      <td>');
@@ -4028,7 +4028,7 @@ function PrestacaoContas() {
               } else {
                 $w_Imagem=$w_ImagemPadrao;
                 ShowHTML('      <tr valign="top"><td><b>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/SheetLittle.gif" border=0 align="center"> '.f($row2,'nome').'</b>');
-                $RS_Cron = new db_getContasRegistro; $RS_Cron = $RS_Cron->getInstanceOf($dbms,null,f($row2,'chave'),$p_contas_cronograma,null);
+                $sql = new db_getContasRegistro; $RS_Cron = $sql->getInstanceOf($dbms,null,f($row2,'chave'),$p_contas_cronograma,null);
                 foreach($RS_Cron as $row_cron){$RS_Cron=$row_cron; break;}
                 ShowHTML('<INPUT type="hidden" name="w_prestacao_contas[]" value="'.f($row2,'chave').'">');
                 ShowHTML('      <td nowrap>');
@@ -4047,7 +4047,7 @@ function PrestacaoContas() {
           } else {
             $w_Imagem=$w_ImagemPadrao;
             ShowHTML('      <tr valign="top"><td><b>&nbsp;&nbsp;<img src="images/Folder/SheetLittle.gif" border=0 align="center"> '.f($row1,'nome').'</b>');
-            $RS_Cron = new db_getContasRegistro; $RS_Cron = $RS_Cron->getInstanceOf($dbms,null,f($row1,'chave'),$p_contas_cronograma,null);
+            $sql = new db_getContasRegistro; $RS_Cron = $sql->getInstanceOf($dbms,null,f($row1,'chave'),$p_contas_cronograma,null);
             foreach($RS_Cron as $row_cron){$RS_Cron=$row_cron; break;}
             ShowHTML('<INPUT type="hidden" name="w_prestacao_contas[]" value="'.f($row1,'chave').'">');
             ShowHTML('      <td>');
@@ -4067,7 +4067,7 @@ function PrestacaoContas() {
         $w_Imagem=$w_ImagemPadrao;
         ShowHTML('      <tr valign="top"><td><b><img src="images/Folder/SheetLittle.gif" border=0 align="center"> '.f($row,'nome').'</b>');
         ShowHTML('    <BR>');
-        $RS_Cron = new db_getContasRegistro; $RS_Cron = $RS_Cron->getInstanceOf($dbms,null,f($row,'chave'),$p_contas_cronograma,null);
+        $sql = new db_getContasRegistro; $RS_Cron = $sql->getInstanceOf($dbms,null,f($row,'chave'),$p_contas_cronograma,null);
         foreach($RS_Cron as $row_cron){$RS_Cron=$row_cron; break;}
         ShowHTML('<INPUT type="hidden" name="w_prestacao_contas[]" value="'.f($row,'chave').'">');
         if (nvl(f($RS_Cron,'pendencia'),'')=='S') {
@@ -4558,7 +4558,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   //  $l_img .= exibeImagemAnexo($l_arquivo);
   //}
   if (nvl($l_chave_aux,'')!='') {
-    $RS_Query = new db_getSolicEtpRec; $RS_Query = $RS_Query->getInstanceOf($dbms,$l_chave_aux,null,'EXISTE');
+    $sql = new db_getSolicEtpRec; $RS_Query = $sql->getInstanceOf($dbms,$l_chave_aux,null,'EXISTE');
     if (count($RS_Query) > 0) {
       $l_recurso = $l_recurso.chr(13).'      <tr valign="top"><td colspan=8>Recurso(s): ';
       foreach($RS_Query as $row) {
@@ -4686,7 +4686,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   //if ($l_arquivo>0) {
   //  $l_img .= exibeImagemAnexo($l_arquivo);
   //}
-  $RS_Query = new db_getSolicEtpRec; $RS_Query = $RS_Query->getInstanceOf($dbms,$l_chave_aux,null,'EXISTE');
+  $sql = new db_getSolicEtpRec; $RS_Query = $sql->getInstanceOf($dbms,$l_chave_aux,null,'EXISTE');
   if (count($RS_Query)>0) {
     $l_recurso = $l_recurso.chr(13).'      <tr valign="top"><td colspan=8>Recurso(s): ';
     foreach($RS_Query as $row) {
@@ -4694,7 +4694,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     } 
   } 
   // Recupera os contratos que o usuário pode ver
-  $l_rs = new db_getLinkData; $l_rs = $l_rs->getInstanceOf($dbms, $w_cliente, 'GCBCAD');
+  $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, 'GCBCAD');
   $SQL = new db_getSolicList; $RS_Contr = $SQL->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
@@ -4703,7 +4703,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $l_row += count($RS_Contr);
 
   // Recupera as tarefas que o usuário pode ver
-  $l_rs = new db_getLinkData; $l_rs = $l_rs->getInstanceOf($dbms, $w_cliente, 'GDPCAD');
+  $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, 'GDPCAD');
   $SQL = new db_getSolicList; $RS_Ativ = $SQL->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
@@ -4852,7 +4852,7 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   $l_col     = 1;
 
   // Recupera as tarefas que o usuário pode ver
-  $RS_Ativ = new db_getSolicRestricao; $RS_Ativ = $RS_Ativ->getInstanceOf($dbms,$l_chave_aux, null, null, null, null, null, 'TAREFA');
+  $sql = new db_getSolicRestricao; $RS_Ativ = $sql->getInstanceOf($dbms,$l_chave_aux, null, null, null, null, null, 'TAREFA');
   foreach($RS as $row){$RS = $row; Break;}
 
   if ($l_qtd > '') $l_row += count($RS_Ativ);
@@ -4919,7 +4919,7 @@ function SolicMail($p_solic,$p_tipo) {
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   // Recupera os dados do projeto
-  $RSM = new db_getSolicData; $RSM = $RSM->getInstanceOf($dbms,$p_solic,'PJGERAL');
+  $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,'PJGERAL');
   //Teste se o cliente envia email e verifica se o serviço envia email.
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
@@ -4992,7 +4992,7 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html .= $crlf.'        <td>'.f($RS,'destinatario').'</td></tr>';
       $w_html .= $crlf.'      <tr><td><b>Despacho:</b></td>';
       $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if(f($RS_Mail,'tramitacao')=='S') {
         // Configura o destinatário da tramitação como destinatário da mensagem
@@ -5019,7 +5019,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= '</HTML>'.$crlf;
     // Recupera o e-mail do responsável
     if(f($RSM,'st_sol')=='S') {
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RSM,'solicitante'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RSM,'solicitante'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
         $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
@@ -5029,14 +5029,14 @@ function SolicMail($p_solic,$p_tipo) {
     $sql = new db_getUorgResp; $RS = $sql->getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
     if(f($RS,'st_titular')=='S') {
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
         $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
       }
     }
     if(f($RS,'st_substituto')=='S') {
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
         $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
@@ -5046,7 +5046,7 @@ function SolicMail($p_solic,$p_tipo) {
     $sql = new db_getSolicInter; $RS = $sql->getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
       if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
           $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
@@ -5056,17 +5056,17 @@ function SolicMail($p_solic,$p_tipo) {
     // Recuperar o e-mail do titular e substituto das áreas envolvidas
     $sql = new db_getSolicAreas; $RS = $sql->getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
-      $RS1 = new db_getUorgResp; $RS1 = $RS1->getInstanceOf($dbms,f($row,'sq_unidade'));
+      $sql = new db_getUorgResp; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_unidade'));
       foreach($RS1 as $row1){$RS1=$row1; break;}
       if(f($RS1,'st_titular')=='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS1,'titular2'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS1,'titular2'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
           $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
         }
       }
       if(f($RS1,'st_substituto')=='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS1,'substituto2'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS1,'substituto2'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
           $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';
@@ -5077,7 +5077,7 @@ function SolicMail($p_solic,$p_tipo) {
     $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_solic,null,'LISTA',null);
     foreach($RS as $row) {
       if(f($row,'pacote_trabalho')=='S' && f($row,'st_resp')=='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS1,'sq_pessoa'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS1,'sq_pessoa'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
           $w_destinatarios .= f($row,'email').'|'.f($row,'nm_resp').'; ';
@@ -5125,7 +5125,7 @@ function EtapaMail($p_solic) {
     $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>COMUNICADO DE RESPONSABILIDADE POR ETAPA</b><br><br><td></tr>'.$crlf;
     $w_html .= '      <tr valign="top"><td><b><font size=2 color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
     // Recupera os dados do projeto
-    $RSM = new db_getSolicData; $RSM = $RSM->getInstanceOf($dbms,$p_solic,'PJGERAL');
+    $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,'PJGERAL');
     $w_nome = f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
     $l_menu = f($RSM,'sq_menu');
     $w_html .= $crlf.'<tr><td align="center">';
@@ -5191,7 +5191,7 @@ function EtapaMail($p_solic) {
 
     // Recupera o e-mail do responsável
     if(f($RSM,'st_sol')=='S') {
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if(f($RS_Mail,'responsabilidade')=='S') {
         $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
@@ -5201,14 +5201,14 @@ function EtapaMail($p_solic) {
     $sql = new db_getUorgResp; $RS = $sql->getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
     if(f($RS,'st_titular')=='S') {
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if (f($RS_Mail,'responsabilidade')=='S') {
         $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
       }
     }
     if(f($RS,'st_substituto')=='S') {
-      $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
       foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
       if (f($RS_Mail,'responsabilidade')=='S') {
         $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
@@ -5217,21 +5217,21 @@ function EtapaMail($p_solic) {
     $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_solic,null,'LISTA',null);
     foreach($RS as $row) {
       if(f($row,'st_resp')=='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (f($RS_Mail,'responsabilidade')=='S') {
           $w_destinatarios .= f($row,'email').'|'.f($row,'nm_resp').'; ';
         }
       }
       if(nvl(f($row,'titular'),'')!='' && f($row,'st_tit_resp')=='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($row,'titular'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($row,'titular'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (f($RS_Mail,'responsabilidade')=='S') {
           $w_destinatarios .= f($row,'em_tit_resp').'|'.f($row,'nm_tit_resp').'; ';
         }
       }
       if(nvl(f($row,'substituto'),'')!='' && f($row,'st_sub_resp')=='S') {
-        $RS_Mail = new DB_GetUserMail; $RS_Mail = $RS_Mail->getInstanceOf($dbms, $l_menu, f($row,'substituto'), $w_cliente, null);
+        $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $l_menu, f($row,'substituto'), $w_cliente, null);
         foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
         if (f($RS_Mail,'responsabilidade')=='S') {
           $w_destinatarios .= f($row,'em_sub_resp').'|'.f($row,'nm_sub_resp').'; ';
@@ -5322,7 +5322,7 @@ function Grava() {
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-        $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       } 
@@ -5340,7 +5340,7 @@ function Grava() {
       $SQL = new dml_putProjetoDescritivo; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,$_REQUEST['w_objetivo_superior'],$_REQUEST['w_descricao'],
           $_REQUEST['w_exclusoes'],$_REQUEST['w_premissas'], $_REQUEST['w_restricoes'],$_REQUEST['w_justificativa']);
      // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-     $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+     $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
      ScriptOpen('JavaScript');
      ShowHTML('  location.href=\''.f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
      ScriptClose();

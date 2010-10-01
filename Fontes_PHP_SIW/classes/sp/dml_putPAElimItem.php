@@ -17,7 +17,7 @@ class dml_putPAElimItem {
                    'p_solic'                =>array(tvl($p_solic),                B_INTEGER,        32),
                    'p_eliminacao'           =>array($p_eliminacao,                B_DATE,           32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

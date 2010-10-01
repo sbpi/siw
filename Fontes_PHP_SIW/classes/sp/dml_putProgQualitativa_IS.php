@@ -24,7 +24,7 @@ class dml_putProgQualitativa_IS {
                    'p_metodologia'               =>array(tvl($p_metodologia),                              B_VARCHAR,      2000),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        30)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

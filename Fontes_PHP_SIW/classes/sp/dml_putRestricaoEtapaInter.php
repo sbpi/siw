@@ -16,7 +16,7 @@ class dml_putRestricaoEtapaInter {
                    'p_chave'                     =>array(tvl($p_chave),                                  B_INTEGER,        32),
                    'p_sq_projeto_etapa'          =>array(tvl($p_sq_projeto_etapa),                         B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

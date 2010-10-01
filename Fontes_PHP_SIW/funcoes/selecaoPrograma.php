@@ -15,7 +15,7 @@ function selecaoPrograma($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$ca
     ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
 
-    $rs_menu = new db_getLinkData; $rs_menu = $rs_menu->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+    $sql = new db_getLinkData; $rs_menu = $sql->getInstanceOf($dbms,$w_cliente,'PEPROCAD');
     $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($rs_menu,'sq_menu'), $w_usuario, 'PELIST', 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux2, $chaveAux);
     $RS = SortArray($RS,'titulo','asc');
     foreach($RS as $row) {

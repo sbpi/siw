@@ -16,7 +16,7 @@ class dml_putConfPJ {
                    'p_solic'                  =>array(tvl($p_solic),                            B_INTEGER,        32),
                    'p_exibe_relatorio'        =>array(tvl($p_exibe_relatorio),                  B_VARCHAR,         1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

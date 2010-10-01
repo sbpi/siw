@@ -23,7 +23,7 @@ class dml_putAcordoTermo {
                    'p_prestacao_contas'          =>array(tvl($p_prestacao_contas),                         B_VARCHAR,         1),
                    'p_codigo_externo'            =>array(tvl($p_codigo_externo),                           B_VARCHAR,        60)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -181,7 +181,7 @@ function Inicial() {
     selecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,null,'<td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PJCAD');
     SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, 1, null, '<td>');
     ShowHTML('   </tr>');
     //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
@@ -218,7 +218,7 @@ function Inicial() {
     ShowHTML('   <tr><td>&nbsp;</td>');
     ShowHTML('       <td>');
     ShowHTML('       <input class="STB" type="submit" name="Botao" value="BUSCAR" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
-    $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms, $w_cliente, 'MESA');
+    $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms, $w_cliente, 'MESA');
     ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
     ShowHTML('   </td></tr>');
     ShowHTML('</FORM>');

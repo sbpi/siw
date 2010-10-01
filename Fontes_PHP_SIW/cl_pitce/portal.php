@@ -182,7 +182,7 @@ function Calendario() {
   }  
   
   // Recupera os tipos de evento desejados e monta string
-  $RS_Projeto = new db_getLinkData; $RS_Projeto = $RS_Projeto->getInstanceOf($dbms,$w_cliente,'EVCAD');
+  $sql = new db_getLinkData; $RS_Projeto = $sql->getInstanceOf($dbms,$w_cliente,'EVCAD');
   $sql = new db_getTipoEvento; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,f($RS_Projeto,'sq_menu'),null,null,null,'S', 'REGISTROS');
   $l_rs = SortArray($l_rs,'nm_servico','asc','ordem','asc','nome','asc');
   $p_tipo_evento = '';

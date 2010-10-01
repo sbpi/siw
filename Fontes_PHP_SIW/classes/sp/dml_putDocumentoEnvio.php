@@ -36,7 +36,7 @@ class dml_putDocumentoEnvio {
                    'p_ano_guia'                 =>array(&$p_ano_guia,                               B_INTEGER,        32),
                    'p_unidade_autuacao'         =>array(&$p_unidade_autuacao,                       B_INTEGER,        32)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -18,7 +18,7 @@ class dml_putAcordoNotaCancel {
                    'p_data'                      =>array(tvl($p_data),                                     B_DATE,           32),
                    'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2)
                    );     
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

@@ -157,14 +157,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
 } else {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -184,7 +184,7 @@ function Inicial() {
     if (($P1==3) || ($w_tipo=='WORD')) {
       $w_filtro='';
       if ($p_sq_menu>'') {
-        $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$p_sq_menu);
+        $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$p_sq_menu);
         $w_filtro .= '<tr valign="top"><td align="right">Serviço <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_chave>'') $w_filtro .= '<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]';
@@ -235,7 +235,7 @@ function Inicial() {
       if ($w_filtro>'')     $w_filtro  = '<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
 
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
     if ($w_copia>'') {
       // Se for cópia, aplica o filtro sobre todas as solicitações visíveis pelo usuário
       $sql = new db_getSolicGP; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
@@ -798,7 +798,7 @@ function Geral() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_cidade=='') {
       // Carrega o valores padrão para cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_cidade   = f($RS,'sq_cidade_padrao');
     } 
     if (!(strpos('EV',$O)===false)) {
@@ -858,7 +858,7 @@ function Geral() {
       ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar" onClick="document.Form.w_envio.value=\'N\';">');
       //ShowHTML('            <input class="STB" type="submit" name="btEnvio" value="Gravar e Enviar" onClick="document.Form.w_envio.value=\'S\'; confirm(\'Confirma gravação e envio automático da solicitação para a próxima fase?\nSe sim, a assinatura eletrônica deve ser informada.\');">');
     }
-    $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+    $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -887,7 +887,7 @@ function Visual() {
   $w_chave = $_REQUEST['w_chave'];
   $w_tipo  = upper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') {
     $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
@@ -932,7 +932,7 @@ function EmiteOS() {
   $w_tipo  = upper(trim($_REQUEST['w_tipo']));
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') {
     $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
@@ -1353,7 +1353,7 @@ function Anotar() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</td>');
   ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
   ShowHTML('      <tr><td valign="top"><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="STI" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
@@ -1495,7 +1495,7 @@ function DadosExecucao() {
   ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('      <tr><td align="center" colspan="2">');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
@@ -1601,7 +1601,7 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,$SG);
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     // Recupera os dados da solicitação

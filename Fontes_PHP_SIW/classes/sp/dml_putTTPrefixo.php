@@ -22,7 +22,7 @@ class dml_putTTPrefixo  {
                    'p_controle'                  =>array(tvl($p_controle),                                 B_VARCHAR,        16),
                    'p_degrau'                    =>array(tvl($p_degrau),                                   B_VARCHAR,         3)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

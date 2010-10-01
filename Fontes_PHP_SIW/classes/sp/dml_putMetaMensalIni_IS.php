@@ -28,7 +28,7 @@ class dml_putMetaMensalIni_IS {
                    'p_cronogramado_11'           =>array(toNumber(tvl($l_cronogramado_11)),                 B_NUMERIC,      18,4),
                    'p_cronogramado_12'           =>array(toNumber(tvl($l_cronogramado_12)),                 B_NUMERIC,      18,4)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

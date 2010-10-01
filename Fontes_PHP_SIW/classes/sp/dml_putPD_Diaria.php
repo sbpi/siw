@@ -59,7 +59,7 @@ class dml_putPD_Diaria {
                    'p_texto_hospedagem'       =>array(tvl($p_texto_hospedagem),             B_VARCHAR,       500),
                    'p_texto_veiculo'          =>array(tvl($p_texto_veiculo),                B_VARCHAR,       500)
      );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

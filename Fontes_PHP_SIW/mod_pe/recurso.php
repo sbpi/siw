@@ -108,10 +108,10 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 // Recupera as informações da opçao de menu;
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();
@@ -317,7 +317,7 @@ function Inicial	() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     if ($p_volta=='MESA') {
-      $RS_Volta = new db_getLinkData; $RS_Volta = $RS_Volta->getInstanceOf($dbms,$w_cliente,$p_volta);
+      $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms,$w_cliente,$p_volta);
       if ($w_tipo!='WORD')  ShowHTML('<tr><td align="right" colspan=3><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
     } 
     if ($w_tipo!='WORD')

@@ -110,7 +110,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Recupera os dados do cliente
-$RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente);
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
 
 Main();
 

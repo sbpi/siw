@@ -151,8 +151,8 @@ $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 
 // Recupera a configuração do serviço
-if ($P2 > 0) { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
-else { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu); }
+if ($P2 > 0) { $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2); }
+else { $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu); }
 
 Main();
 FechaSessao($dbms);
@@ -168,10 +168,10 @@ function Vinculacao() {
   $w_chave=$_REQUEST['w_chave'];
 
   // Recupera os dados do cliente
-  $RS_Cliente = new db_getCustomerData; $RS_Cliente = $RS_Cliente->getInstanceOf($dbms,$w_cliente );
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente );
 
   // Verifica se o cliente tem o módulo financeiro
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'FN');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'FN');
   if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
 
   if ($O=='L') {
@@ -186,7 +186,7 @@ function Vinculacao() {
         if ($p_servico=='CLASSIF') {
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
         } else {
-          $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$p_servico);
+          $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$p_servico);
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
         }
       } elseif (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
@@ -632,7 +632,7 @@ function ConfiguraViagem() {
   // Recupera as vinculações existentes
   $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
   
   $w_texto = ExibeImagemSolic(f($RS1,'sigla'),f($RS1,'inicio'),f($RS1,'fim'),f($RS1,'inicio_real'),f($RS1,'fim_real'),f($RS1,'aviso_prox_conc'),f($RS1,'aviso'),f($RS1,'sg_tramite'), null).
              ' '.exibeSolic($w_dir,f($RS1,'sq_siw_solicitacao'),nvl(f($RS1,'codigo_interno'),f($RS1,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($RS1,'restricao'),'P')).
@@ -808,7 +808,7 @@ function ConfiguraCompra() {
   // Recupera as vinculações existentes
   $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
 
-  $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
   
   $w_texto = ExibeImagemSolic(f($RS1,'sigla'),f($RS1,'inicio'),f($RS1,'fim'),f($RS1,'inicio_real'),f($RS1,'fim_real'),f($RS1,'aviso_prox_conc'),f($RS1,'aviso'),f($RS1,'sg_tramite'), null).
              ' '.exibeSolic($w_dir,f($RS1,'sq_siw_solicitacao'),nvl(f($RS1,'codigo_interno'),f($RS1,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($RS1,'restricao'),'P')).

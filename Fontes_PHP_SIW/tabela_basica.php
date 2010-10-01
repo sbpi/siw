@@ -115,7 +115,7 @@ function TipoEndereco() {
   $w_sq_tipo_endereco   = $_REQUEST['w_sq_tipo_endereco'];
   $p_ordena             = $_REQUEST['p_ordena'];
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='') $O='L';
@@ -518,7 +518,7 @@ function TipoPessoa() {
   $w_sq_tipo_pessoa = $_REQUEST['w_sq_tipo_pessoa'];
   $p_ordena         = $_REQUEST['p_ordena'];
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao=f($RS,'libera_edicao');
 
   if ($O=='') $O='L';

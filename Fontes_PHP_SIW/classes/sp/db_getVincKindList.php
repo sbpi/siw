@@ -18,7 +18,7 @@ class db_getVincKindList {
                    'p_interno'      =>array($p_interno,     B_VARCHAR,      1),
                    'p_result'       =>array(null,           B_CURSOR,      -1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die('Cannot query.'); }
      else {
        error_reporting($l_error_reporting); 

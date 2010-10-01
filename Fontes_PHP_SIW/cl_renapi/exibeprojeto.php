@@ -21,19 +21,19 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   }
   $l_html='';
   // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N';
 
   // Verifica se o cliente tem o módulo de viagens contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N';
 
   // Verifica se o cliente tem o módulo planejamento estratégico
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N';
   
   // Verifica se o cliente tem o módulo financeiro
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'FN');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'FN');
   if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
 
   // Recupera os dados do projeto
@@ -754,7 +754,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     } 
   } 
   // Recupera os contratos que o usuário pode ver
-  $l_rs = new db_getLinkData; $l_rs = $l_rs->getInstanceOf($dbms, $w_cliente, 'GCBCAD');
+  $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, 'GCBCAD');
   $sql = new db_getSolicList; $RS_Contr = $sql->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
@@ -763,7 +763,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $l_row += count($RS_Contr);
 
   // Recupera as tarefas que o usuário pode ver
-  $l_rs = new db_getLinkData; $l_rs = $l_rs->getInstanceOf($dbms, $w_cliente, 'GDPCAD');
+  $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, 'GDPCAD');
   $sql = new db_getSolicList; $RS_Ativ = $sql->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,

@@ -7,7 +7,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Carrega o segmento do cliente
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente); 
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente); 
   $w_segmento     = f($RS,'segmento');
   $w_nome_cliente = f($RS,'nome_resumido');
   // Recupera os dados do acordo
@@ -398,7 +398,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   } 
 
   // Projetos vinculados ao programa
-  $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,'PJCAD');
+  $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
   $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
          null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
@@ -457,7 +457,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'      <tr><td colspan="2"><font size="1">Observação: a listagem exibe apenas os projetos nos quais você tenha alguma permissão.</font></td></tr>';
   }    
   // Acompanhamento Financeiro
-  $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,'PJCAD');
+  $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
   $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$l_usuario,'PJCAD',3,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,null,null,$l_chave,null);

@@ -22,7 +22,7 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
       }
     }
   } elseif(Nvl($restricao,'')=='NUMERADOR') {
-    $RS = $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
+    $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
   } else {
     if (Nvl($chaveAux,'')>'') { $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'XVINC', $chaveAux, $modulo); }
     else                      { $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'X', $chaveAux, $modulo); }

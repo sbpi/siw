@@ -81,7 +81,7 @@ function Help() {
   $w_sq_modulo = $_REQUEST['w_sq_modulo'];
 
   if ($w_sq_modulo == '') {
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $SG);
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $SG);
     $w_modulo = f($RS,'sq_modulo');
   } else {
     $w_modulo = $w_sq_modulo;
@@ -91,7 +91,7 @@ function Help() {
   $w_nome_modulo    = f($RS,'Nome');
   $w_objetivo_geral = f($RS,'objetivo_geral');
 
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms, $w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $w_cliente);
   $w_segmento       = f($RS,'sq_segmento');
 
 
@@ -322,11 +322,11 @@ function Pagina() {
   extract($GLOBALS);
 
   if ($w_menu == '') {
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms, $w_cliente, $SG);
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $SG);
     $w_modulo = f($RS,'sq_modulo');
-    $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,f($RS,'sq_menu'));
+    $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS,'sq_menu'));
   } else {
-    $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+    $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
     $w_modulo = f($RS_Menu,'sq_modulo');
   } 
 
@@ -412,7 +412,7 @@ function Menu() {
 
   if ($O=='L') {
      // Recupera os módulos contratados pelo cliente
-     $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms, $w_cliente, null, null);
+     $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null);
   }
   
   Cabecalho();

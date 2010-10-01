@@ -55,7 +55,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
       $l_tipo=0;
   }
   // Verifica se o cliente tem o módulo de acordos contratado
-  $l_rs_modulo = new db_getSiwCliModLis; $l_rs_modulo = $l_rs_modulo->getInstanceOf($dbms,$l_cliente,null,'AC');
+  $sql = new db_getSiwCliModLis; $l_rs_modulo = $sql->getInstanceOf($dbms,$l_cliente,null,'AC');
   if (count($l_rs_modulo)>0) $l_acordo='S'; else $l_acordo='N';
   
   // Recupera o trâmite atual da solicitação

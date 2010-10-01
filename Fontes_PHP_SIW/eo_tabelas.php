@@ -93,7 +93,7 @@ function AreaAtuacao(){
   $p_nome   = upper($_REQUEST['p_nome']);
   $p_ativo  = upper($_REQUEST['p_ativo']);
   $p_ordena = $_REQUEST['p_ordena'];
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E') {
     $w_nome   = $_REQUEST['w_nome'];
@@ -286,7 +286,7 @@ function TipoUnidade() {
   $p_ativo  = upper($_REQUEST['p_ativo']);
   $p_ordena = $_REQUEST['p_ordena'];
  
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao=f($RS,'libera_edicao');
 
   if ($w_troca>'' && $O!='E') {

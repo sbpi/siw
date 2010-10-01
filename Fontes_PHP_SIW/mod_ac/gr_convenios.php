@@ -125,13 +125,13 @@ $p_sq_menu_relac = upper($_REQUEST['p_sq_menu_relac']);
 $p_chave_pai     = upper($_REQUEST['p_chave_pai']);
 
 // Recupera a configuração do serviço
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
 // Recupera a configuração do serviço de origem
-$RS_Menu_Origem = new db_getMenuData; $RS_Menu_Origem = $RS_Menu_Origem->getInstanceOf($dbms,$P2);
+$sql = new db_getMenuData; $RS_Menu_Origem = $sql->getInstanceOf($dbms,$P2);
 
 // Carrega o segmento do cliente
-$RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente); 
+$sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente); 
 $w_segmento = f($RS,'segmento');
 
 Main();
@@ -149,18 +149,18 @@ function Gerencial() {
   $w_linha = 0;
   
   // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'AC');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
 
   // Verifica se o cliente tem o módulo viagens contratado
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PD');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
 
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'IS');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
 
   // Verifica se o cliente tem o módulo de planejamento estratégico
-  $RS = new db_getSiwCliModLis; $RS = $RS->getInstanceOf($dbms,$w_cliente,null,'PE');
+  $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PE');
   if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
   
   if ($O=='L' || $O=='V' || $O=='W' || $p_tipo=='WORD' || $p_tipo=='PDF') {
@@ -439,7 +439,7 @@ function Gerencial() {
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
-        $RS2 = new db_getMenuData; $RS2 = $RS2->getInstanceOf($dbms,$P2);
+        $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Contrato',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {

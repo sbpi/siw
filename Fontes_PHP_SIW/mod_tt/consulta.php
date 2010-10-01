@@ -110,10 +110,10 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-$RS_menu = new db_getMenuData; $RS_menu = $RS_menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_menu = $sql->getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
 if ($RS_menu['ultimo_nivel']=='S') {
-  $RS_menu = new db_getMenuData; $RS_menu = $RS_menu->getInstanceOf($dbms,$RS_menu,'sq_menu_pai');
+  $sql = new db_getMenuData; $RS_menu = $sql->getInstanceOf($dbms,$RS_menu,'sq_menu_pai');
 } 
 
 Main();
@@ -339,7 +339,7 @@ function listaTelefonica(){
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0){
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     ShowHTML('  <td rowspan=2><img align="left" src="'.LinkArquivo(null,$w_cliente,'img/logo'.substr((f($RS,'logo')),strpos(f($RS,'logo'),'.'),30),null,null,null,'EMBED').'">');
     ShowHTML('  <td align="right"><B><font size=5 color="#000000">');
     ShowHTML('Lista Telefônica');
@@ -381,7 +381,7 @@ function ResumoLigacaoParticular(){
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0) {
-    $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'">');

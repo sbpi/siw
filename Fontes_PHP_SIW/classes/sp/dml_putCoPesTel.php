@@ -20,7 +20,7 @@ class dml_PutCoPesTel {
                    'p_cidade'           =>array($p_cidade,          B_NUMERIC,     32),
                    'p_padrao'           =>array($p_padrao,          B_VARCHAR,      1)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

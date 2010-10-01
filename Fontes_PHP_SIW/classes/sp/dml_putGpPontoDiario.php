@@ -23,7 +23,7 @@ class dml_putGpPontoDiario {
                    'p_horas_trabalhadas'          =>array(tvl($p_horas_trabalhadas),              B_VARCHAR,        32),     
                    'p_saldo_diario'               =>array(tvl($p_saldo_diario),                   B_VARCHAR,        32)     
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

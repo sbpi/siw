@@ -19,7 +19,7 @@ class dml_putTabela {
                    'p_sq_sistema'                =>array(tvl($p_sq_sistema),                               B_INTEGER,        32),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        30)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

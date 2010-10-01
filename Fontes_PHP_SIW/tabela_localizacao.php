@@ -100,7 +100,7 @@ function Cidade() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
@@ -348,7 +348,7 @@ function Estado() {
   $p_ativo      = upper($_REQUEST['p_ativo']);
   $p_ordena     = lower($_REQUEST['p_ordena']);
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O!='I' && $p_sq_pais=='') $O='P';
@@ -594,7 +594,7 @@ function Regiao() {
   $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
   $p_ordena     = lower($_REQUEST['p_ordena']);
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E')  {
     $w_nome         = $_REQUEST['w_nome'];
@@ -794,7 +794,7 @@ function Pais() {
   $p_sigla  = upper($_REQUEST['p_sigla']);
   $p_ordena = lower($_REQUEST['p_ordena']);
 
-  $RS = new db_getMenuData; $RS = $RS->getInstanceOf($dbms,$w_menu);
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E')  {
     $w_nome         = $_REQUEST['w_nome'];

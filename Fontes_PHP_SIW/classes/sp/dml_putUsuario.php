@@ -18,7 +18,7 @@ class dml_putUsuario {
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        30),
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,      4000)
                   );
-     $l_rs = new DatabaseQueriesFactory; $l_rs = $l_rs->getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 

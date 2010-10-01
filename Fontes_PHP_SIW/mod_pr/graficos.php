@@ -111,7 +111,7 @@ function Hierarquico() {
   $data = $diagram->getNodePositions();
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
@@ -211,7 +211,7 @@ function Gantt() {
   $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');
 
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();

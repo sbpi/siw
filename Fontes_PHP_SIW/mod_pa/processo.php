@@ -121,7 +121,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,'PADCAD');
 $w_ano      = RetornaAno();
 
-$RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu);
+$sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
 $sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'PA',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
@@ -480,7 +480,7 @@ function Alterar() {
   if (!(strpos('IAEV',$O)===false)) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
-      $RS = new db_getCustomerData; $RS = $RS->getInstanceOf($dbms,$w_cliente);
+      $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_pais   = f($RS,'sq_pais');
       $w_uf     = f($RS,'co_uf');
       $w_cidade = f($RS,'sq_cidade_padrao');
@@ -579,7 +579,7 @@ function Alterar() {
     ShowHTML('    <tr><td colspan=5 align="center"><hr>');
     ShowHTML('      <tr><td align="center" colspan="5">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
-    $RS = new db_getLinkData; $RS = $RS->getInstanceOf($dbms,$w_cliente,$SG);
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG);
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -1893,7 +1893,7 @@ function Grava() {
 
       ScriptOpen('JavaScript');
       // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-      $RS1 = new db_getLinkData; $RS1 = $RS1->getInstanceOf($dbms,$w_cliente,$SG);
+      $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$SG);
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } else {

@@ -267,7 +267,7 @@ function imprimir(){
   $w_chave  = $_REQUEST['w_chave'];
 
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
-  $RS_Logo = new db_getCustomerData; $RS_Logo = $RS_Logo->getInstanceOf($dbms,$w_cliente);
+  $sql = new db_getCustomerData; $RS_Logo = $sql->getInstanceOf($dbms,$w_cliente);
 
   if (f($RS_Logo,'logo')>'') {
     $p_logo='/img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
@@ -1757,7 +1757,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Testa a existência do novo protocolo
-        $RS_Menu = new db_getLinkData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_cliente,'PADCAD');
+        $sql = new db_getLinkData; $RS_Menu = $sql->getInstanceOf($dbms,$w_cliente,'PADCAD');
         // Verifica se o protocolo atual existe
         $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
               Nvl(substr($_REQUEST['w_protocolo'],0,5),''), Nvl(substr($_REQUEST['w_protocolo'],6,6),''), 

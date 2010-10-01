@@ -123,8 +123,8 @@ $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 
 // Recupera a configuração do serviço
-if ($P2 > 0) { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$P2); }
-else { $RS_Menu = new db_getMenuData; $RS_Menu = $RS_Menu->getInstanceOf($dbms,$w_menu); }
+if ($P2 > 0) { $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2); }
+else { $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu); }
 
 Main();
 FechaSessao($dbms);
