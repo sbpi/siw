@@ -1,5 +1,4 @@
 <?php
-
 header('Expires: ' . -1500);
 $session = $_REQUEST['sid'];
 session_id($session); // reestabele-ce a sessão
@@ -9,7 +8,6 @@ $w_dir_volta = '../';
 require_once($w_dir_volta . 'funcoes.php');
 include_once($w_dir_volta . 'classes/db/abreSessao.php');
 include_once($w_dir_volta . 'classes/sp/dml_putSolicRelAnexo.php');
-
 
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
@@ -45,25 +43,21 @@ $w_cliente = $_REQUEST['w_cliente'];
 
 
 if (!empty($_FILES)) {
+  include_once($w_dir_volta . 'classes/mimetype/class.mime.php');
+  
   $tempFile = $_FILES['Filedata']['tmp_name'];
-  $finfo = finfo_open(FILEINFO_MIME_TYPE);
-  $_FILES['Filedata']['type'] = finfo_file($finfo, $tempFile);
-  finfo_close($finfo);
+  $w_file = str_replace('.tmp','',basename($_FILES['Filedata']['tmp_name']));
+  if (strpos($_FILES['Filedata']['name'],'.')!==false) {
+    $w_file = $w_file.substr($_FILES['Filedata']['name'],(strrpos($_FILES['Filedata']['name'],'.') ? strrpos($_FILES['Filedata']['name'],'.')+1 : 0)-1,10);
+  }
+  $mime = new MIMETypes();
+  $w_tipo = $mime->getMimeType($tempFile);
   $targetPath = $w_caminho . '/';
-  $targetFile = str_replace('//', '/', $targetPath) . str_replace(" ", "_", $_FILES['Filedata']['name']);
+  $targetFile = str_replace('//', '/', $targetPath) . $w_file; //utf8_decode(str_replace(" ", "_", $_FILES['Filedata']['name']));
   $w_tamanho = $_FILES['Filedata']['size'];
-  $w_nome = str_replace(" ", "_", $_FILES['Filedata']['name']);
-  $w_tipo = $_FILES['Filedata']['type'];
-
-  // $fileTypes  = str_replace('*.','',$_REQUEST['fileext']);
-  // $fileTypes  = str_replace(';','|',$fileTypes);
-  // $typesArray = explode('\|',$fileTypes);
-  // $fileParts  = pathinfo($_FILES['Filedata']['name']);
-  // if (in_array($fileParts['extension'],$typesArray)) {
-  // Uncomment the following line if you want to make the directory if it doesn't exist
-  // mkdir(str_replace('//','/',$targetPath), 0755, true);
+  $w_nome = str_replace(" ", "_", utf8_decode($_FILES['Filedata']['name']));
   if (move_uploaded_file($tempFile, $targetFile)) {
-    $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, 'I', $w_cliente, $w_chave, null, $w_nome, null, $w_nome, $w_tamanho, $w_tipo, $w_nome);
+    $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, 'I', $w_cliente, $w_chave, null, $w_nome, null, $w_file, $w_tamanho, $w_tipo, $w_nome);
   }
   echo "1";
 

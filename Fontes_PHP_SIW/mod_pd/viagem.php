@@ -6342,8 +6342,8 @@ function relAnexo() {
   //ShowHTML('      "folder": "' . $conRootSIW . 'classes/uploadify/uploads-folder",');
   ShowHTML('      "buttonText": "Selecionar",');
   ShowHTML('      "scriptData": {"w_caminho":"' . DiretorioCliente($w_cliente) . '", "w_cumprimento":"' . $w_cumprimento . '", "w_chave":"' . $w_chave . '", "w_cliente":"' . $w_cliente . '", "dbms":"' . $_SESSION['DBMS'] . '", "sid":"' . session_id() . '"},');
-  ShowHTML('      "onAllComplete" : function(event,data) {alert(data.filesUploaded  + " arquivos(" + data.allBytesLoaded + " bytes) adicionados com sucesso.");document.location.href="' . $w_dir . $w_pagina . 'PrestarContas&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDREEMB&w_chave=' . $w_chave . '&O=L' . '&w_cumprimento=' . $w_cumprimento . '";},');
-  //ShowHTML('      "onComplete" : function(event, queueID, fileObj, response, data) {alert(fileObj.name + response + data);},');
+  ShowHTML('      "onAllComplete" : function(event,data) {alert(data.filesUploaded  + " arquivos(" + data.allBytesLoaded + " bytes) adicionados com sucesso.");document.location.href="' . montaURL_JS($w_dir, $w_pagina . 'PrestarContas&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDREEMB&w_chave=' . $w_chave . '&O=L' . '&w_cumprimento=' . $w_cumprimento) . '";},');
+//  ShowHTML('      "onComplete" : function(event, queueID, fileObj, response, data) {alert(fileObj.name + response + data);},');
   ShowHTML('      "multi": "true",');
   ShowHTML('      "cancelImg": "' . $conRootSIW . 'classes/uploadify/cancel.png"');
   ShowHTML('  });');
@@ -6362,7 +6362,7 @@ function relAnexo() {
   ShowHTML('          <br><br>Observações:<ul style="line-height:150%">');
   ShowHTML('<li>Pode-se usar a tecla <b>Ctrl</b> para selecionar mais de um arquivo no mesmo diretório.</li>');
   ShowHTML('<li>O botão <b>Limpar fila</b> limpa a fila de arquivos selecionados(ainda não anexados), caso se deseje descarta-los.</li>');
-  ShowHTML('<li>O botão <img border="0" src="http://192.168.0.12/siw/classes/uploadify/cancel.png"> para excluir arquivos específicos da lista.</li>');
+  ShowHTML('<li>O botão <img border="0" src="images/cancel.png"> para excluir arquivos específicos da lista.</li>');
   ShowHTML('</ul></td></tr>');
   ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr valign="top">');
@@ -6951,7 +6951,7 @@ function PrestarContas() {
     ShowHTML('  <tr><td colspan="2">');
     ShowHTML('      <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    ShowHTML('          <td width="1%"><b>Nº.</td>');
+    ShowHTML('          <td width="1%"><b>Nº</td>');
     ShowHTML('          <td><b>Título</td>');
     ShowHTML('          <td><b>Tipo</td>');
     ShowHTML('          <td><b>KB</td>');
@@ -6965,7 +6965,7 @@ function PrestarContas() {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
         ShowHTML('        <td align="center"><b>' . $i++ . '</b></td>');
-        ShowHTML('        <td>' . LinkArquivo(null, $w_cliente, f($row, 'caminho'), null, null, f($row,'nome'), null) . '</td>');
+        ShowHTML('        <td>' . LinkArquivo('HL', $w_cliente, f($row, 'chave_aux'), null, null, f($row,'nome'), null) . '</td>');
         //ShowHTML('        <td><a target="_blank" href="' . $conFileVirtual . $w_cliente . '/' . f($row, 'caminho') . '">' . f($row, 'nome') . '</a></td>');
         ShowHTML('        <td align="center">' . nvl(f($row, 'tipo'), '---') . '</td>');
         ShowHTML('        <td align="center">' . round(f($row, 'tamanho') / 1024, 1) . '</td>');

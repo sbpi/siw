@@ -739,6 +739,8 @@ Fontes_PHP_SIW/classes/menu/xPandMenu.css -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.js -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.php -text
 Fontes_PHP_SIW/classes/menu/xPandPrint.css -text
+Fontes_PHP_SIW/classes/mimetype/class.mime.php -text
+Fontes_PHP_SIW/classes/mimetype/class.types.php -text
 Fontes_PHP_SIW/classes/pd4ml/Pd4Php.class -text
 Fontes_PHP_SIW/classes/pd4ml/Pd4Php.java -text
 Fontes_PHP_SIW/classes/pd4ml/pd4ml.jar -text
@@ -1892,7 +1894,6 @@ Fontes_PHP_SIW/mod_pd/gr_conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/gr_viagem.php -text
 Fontes_PHP_SIW/mod_pd/relatorios.php -text
 Fontes_PHP_SIW/mod_pd/tabelas.php -text
-Fontes_PHP_SIW/mod_pd/upload.php -text
 Fontes_PHP_SIW/mod_pd/validaviagem.php -text
 Fontes_PHP_SIW/mod_pd/viagem.php -text
 Fontes_PHP_SIW/mod_pd/visualfatura.php -text
