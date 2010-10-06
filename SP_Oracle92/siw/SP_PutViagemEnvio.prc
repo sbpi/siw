@@ -161,9 +161,9 @@ create or replace procedure SP_PutViagemEnvio
              'Devolução de valores da '||x.codigo_interno||'.' as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
-             'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, z.nm_lancamento,
+             'Registro gerado automaticamente pelo sistema de viagens' as observacao,
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
-             x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento,
+             x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, x2.sq_tipo_lancamento, x2.nm_lancamento,
              x3.sq_tipo_pessoa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
@@ -175,30 +175,21 @@ create or replace procedure SP_PutViagemEnvio
                                                      x1.ressarcimento_valor > 0
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
-             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
-                               from siw_solicitacao                a
-                                    inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite)
-                                    inner   join fn_lancamento     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                                      inner join fn_lancamento_doc d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                            )                 x2 on (x.sq_siw_solicitacao   = x2.sq_solic_pai and 
-                                                     instr(lower(x2.descricao),'devolução')>0
-                                                    )
-             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento as sq_lancamento, d.sq_lancamento_doc,
-                                    e.nome as nm_lancamento
+             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, 
+                                    d.sq_lancamento_doc, e.nome as nm_lancamento
                                from siw_solicitacao                 a
-                                    inner   join siw_tramite        b on (a.sq_siw_tramite     = b.sq_siw_tramite)
+                                    inner   join siw_tramite        b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
                                     inner   join fn_lancamento      c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                                       inner join fn_lancamento_doc  d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
                                       inner join fn_tipo_lancamento e on (c.sq_tipo_lancamento = e.sq_tipo_lancamento)
-                            )                 z on (x.sq_siw_solicitacao    = z.sq_solic_pai and 
-                                                     (x5.sigla <> 'EE' or (x5.sigla = 'EE' and instr(lower(z.descricao),'adiantamento')>0 and instr(lower(z.descricao),'diferença')=0))
+                            )                 x2 on (x.sq_siw_solicitacao   = x2.sq_solic_pai and 
+                                                     instr(lower(x2.descricao),'devolução')>0
                                                     ),
              fn_tipo_documento             y
        where w.sq_pessoa          = w_cliente
          and w.sigla              = 'FNREVENT'
          and x.sq_siw_solicitacao = p_chave
-         and y.sigla              = 'VG'
-         and z.sq_lancamento      = case when x2.sq_financeiro is null then z.sq_lancamento else x2.sq_tipo_lancamento end;
+         and y.sigla              = 'VG';
 
    cursor c_ressarcimento_item is
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
@@ -594,7 +585,7 @@ begin
                                   p_cidade             => crec.sq_cidade,
                                   p_projeto            => crec.sq_solic_pai,
                                   p_observacao         => crec.observacao,
-                                  p_sq_tipo_lancamento => crec.sq_lancamento,
+                                  p_sq_tipo_lancamento => crec.sq_tipo_lancamento,
                                   p_sq_forma_pagamento => crec.sq_forma_pagamento,
                                   p_sq_tipo_pessoa     => crec.sq_tipo_pessoa,
                                   p_tipo_rubrica       => 4, -- receitas

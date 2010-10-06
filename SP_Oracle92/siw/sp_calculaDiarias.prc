@@ -10,6 +10,7 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
   w_fim       date;
   w_ultimo    number(18) := 0;
   w_tot_dia   number(5,2);
+  w_compromisso_saida   varchar2(1);
   w_compromisso_retorno varchar2(1);
   w_internacional       varchar2(1);
   w_fim_semana          varchar2(1);
@@ -83,7 +84,7 @@ begin
   End If;
    
   -- Recupera o início e o fim da viagem
-  select min(trunc(a.saida)), max(trunc(a.chegada)) into w_inicio, w_fim 
+  select min(trunc(a.saida)), max(trunc(a.chegada)), to_number(to_char(min(a.saida),'hh24mi')) into w_inicio, w_fim, w_ini_hora
     from pd_deslocamento        a
          join   siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao 
            join siw_tramite     c on b.sq_siw_tramite     = c.sq_siw_tramite 
@@ -119,7 +120,7 @@ begin
      i := 0;
      -- Calcula as diárias
      for crec in c_deslocamentos (p_chave, w_atual) loop
-       If w_tot_dia < 1  Then
+       If w_tot_dia < 1 Then
          -- Verifica diária em fim de semana
          If (w_fim_semana = 'S' or (w_fim_semana = 'N' and to_char(crec.saida,'d') not in (1,7) and to_char(w_atual,'d') not in (1,7))) Then 
             If w_cont = 1 Then
@@ -132,8 +133,8 @@ begin
                --    Toda e qualquer saída será computada com o 1 diária internacional
                
                If i = 0 Then
-                 -- Grava o horário da primeira saída
-                 w_ini_hora := to_number(to_char(w_inicio,'hh24mi'));
+                 -- Grava o compromisso da primeira saída
+                 w_compromisso_saida := crec.compromisso;
                End If;
                
                select count(distinct a.sq_deslocamento) into w_existe
@@ -149,7 +150,7 @@ begin
                   If crec.diaria_inicio = 'S' Then
                      If crec.destino_nacional = 'N' Then 
                         diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;
-                     Elsif crec.compromisso = 'N' or w_ini_hora > 1800
+                     Elsif w_compromisso_saida = 'N' or w_ini_hora > 1800
                         Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; w_tot_dia := w_tot_dia + 0.5;
                         Else diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;   w_tot_dia := w_tot_dia + 1;
                      End If;
@@ -216,7 +217,12 @@ begin
                              diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; 
                              If crec.diaria_fim is null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;    w_tot_dia := w_tot_dia + 0.5; End If;
                           End If;
-                          If crec.diaria_fim = 'S' and w_sq_diaria is not null Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 0.5; w_tot_dia := w_tot_dia + 0.5; End If;
+                          If crec.diaria_fim = 'S' and w_sq_diaria is not null Then 
+                             If trunc(crec.saida) <> trunc(crec.chegada) 
+                                Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; w_tot_dia := w_tot_dia + 1;
+                                Else diarias(w_sq_diaria) := diarias(w_sq_diaria) + 0.5; w_tot_dia := w_tot_dia + 0.5;
+                             End If;
+                          End If;
                        End If;
                     End If;
                  End If;

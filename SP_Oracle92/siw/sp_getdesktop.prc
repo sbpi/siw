@@ -31,7 +31,10 @@ begin
                                          inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
                                          inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                          from siw_solicitacao x
-                                                              inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
+                                                              inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
+                                                                                           y.sq_pessoa      = p_cliente and
+                                                                                           y.sigla          <> 'PADCAD'
+                                                                                          )
                                                       )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    where c.sq_pessoa = p_cliente
                                      and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
@@ -51,8 +54,11 @@ begin
                                  inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu)
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
                                  inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
-                                                 from siw_solicitacao x
-                                                      inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
+                                                 from siw_solicitacao        x
+                                                      inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
+                                                                                   y.sq_pessoa      = p_cliente and
+                                                                                   y.sigla          <> 'PADCAD'
+                                                                                  )
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
