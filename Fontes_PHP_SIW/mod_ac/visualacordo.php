@@ -51,13 +51,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     if ($w_mod_pa=='S') {
       if ($w_embed!='WORD' && nvl(f($RS,'protocolo_siw'),'')!='') {
-        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a><td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" nowrap><font size="2"><b>PROCESSO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a><td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
       } else {
-        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" nowrap><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
       }
     } elseif ($w_segmento=='Público' && (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) { 
       if (substr($w_sigla,0,3)=='GCA') $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').' ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
-      else                        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
+      else                        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" nowrap><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
     } else {
       if (substr($w_sigla,0,3)=='GCA') $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
       else                        $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify<font size="2"><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
@@ -128,11 +128,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <tr><td><b>Unidade responsável monitoramento:</b></td>';
       $l_html.=chr(13).'              <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     } 
-    // Se for visão completa
-    if ($w_tipo_visao==0 && substr($w_sigla,0,3)!='GCA') {
-      $l_html.=chr(13).'          <tr><td valign="top"><b>Valor:</b></td>';
-      $l_html.=chr(13).'              <td>'.formatNumber(f($RS,'valor')).' </td></tr>';
-    } 
+    $l_html.=chr(13).'          <tr><td valign="top"><b>Valor:</b></td>';
+    $l_html.=chr(13).'              <td>'.formatNumber(f($RS,'valor')).' </td></tr>';
     if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ') {
       $l_html.=chr(13).'          <tr><td><b>Vigência:</b></td>';
       $l_html.=chr(13).'              <td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).' (contrato e aditivos)</td></tr>';

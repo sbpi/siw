@@ -1230,6 +1230,25 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.nvl(CRLF2BR(f($RS,'ressarcimento_observacao')),'---').'</td></tr>';
       } 
       if (f($RS,'cumprimento')!='C') $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Relatório de viagem:</b></td><td>'.nvl(CRLF2BR(f($RS,'relatorio')),'---').'</td></tr>';
+      // Arquivos vinculados
+      $sql = new db_getSolicRelAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $RS1 = SortArray($RS1,'nome','asc');
+      if (count($RS1)>0) {
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Anexos:</b></td>';
+//        $l_html.=chr(13).'      <br><font size="2"><b>ARQUIVOS ANEXADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        $l_html.=chr(13).'        <td>';
+        $w_cor=$w_TrBgColor;
+        $l_html.'<ul>';
+        foreach($RS1 as $row) {
+          if ($l_tipo!='WORD') {
+            $l_html.=chr(13).'<li>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null);
+          } else {
+            $l_html.=chr(13).'<li>'.f($row,'nome');
+          }
+          $l_html.=chr(13).'('.(round(f($row,'tamanho')/1024,1)).'KB)</li>';
+        }
+        $l_html.'</ul>';
+      }
       if (nvl(f($RS,'sq_relatorio_viagem'),'')!='') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Anexo do relatório:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_relatorio_viagem'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo'),null).'</td>';
       }
@@ -1565,8 +1584,8 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      </tr>';
       } 
       $l_html.=chr(13).'         </table></td></tr>';
-    } 
-    
+    }
+
     // Arquivos gerados para a PCD
     if (1==0) {//($l_anexo = 'S' && $w_or_tramite > 5) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   

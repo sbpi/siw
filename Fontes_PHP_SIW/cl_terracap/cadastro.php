@@ -146,7 +146,11 @@ if (count($_POST) > 0) {
           $p_uorg_resp, $w_codigo, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
           null, null, $p_empenho, $p_processo);
       
-      if (count($RS)==0) {
+      $w_cont = 0;
+      foreach($RS as $row) {
+        if (f($row,'codigo_interno')==$w_codigo) $w_cont++;
+      }
+      if ($w_cont==0) {
         /* Dados recebidos pelo método POST e já configurados
         $w_codigo           = f($RS,'cd_programa');
         $w_titulo           = f($RS,'titulo');

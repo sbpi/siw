@@ -2571,7 +2571,6 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   );
   $email_message->AddAlternativeMultipart($alternative_parts);
 */
-
   //send your e-mail
   if ($conEnviaMail) {
     $error = $email_message->Send();

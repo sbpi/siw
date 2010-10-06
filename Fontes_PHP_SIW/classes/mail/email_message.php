@@ -586,7 +586,7 @@ class email_message_class
       $length=strlen($address);
       for($position=0;$position<$length;)
       {
-        $match=explode($this->email_address_pattern,strtolower(substr($address,$position)),2);
+        $match=split($this->email_address_pattern,strtolower(substr($address,$position)),2);
         if(count($match)<2)
           break;
         $position+=strlen($match[0]);
@@ -3093,7 +3093,7 @@ class email_message_class
 
   Function GetHeadersAndBody(&$headers, &$body)
   {
-    $headers=$this->headers;
+  $headers=$this->headers;
     if(strcmp($this->mailer,""))
     {
       $headers["X-Mailer"]=$this->mailer;

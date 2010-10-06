@@ -1721,7 +1721,7 @@ class PHPMailer {
           $directory = dirname($url);
           ($directory == '.')?$directory='':'';
           $cid = 'cid:' . md5($filename);
-          $fileParts = explode("\.", $filename);
+          $fileParts = preg_split("\.", $filename);
           $ext = $fileParts[1];
           $mimeType = $this->_mime_types($ext);
           if ( strlen($basedir) > 1 && substr($basedir,-1) != '/') { $basedir .= '/'; }
