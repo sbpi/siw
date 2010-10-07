@@ -165,7 +165,7 @@ begin
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
-                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.inclusao,           b.ultima_alteracao,            coalesce(b2.quitacao, b.conclusao) as conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      dados_solic(b.sq_siw_solicitacao) as dados_solic,
