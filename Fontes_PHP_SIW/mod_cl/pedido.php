@@ -905,7 +905,7 @@ function Geral() {
     //SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
     //ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');    
     ShowHTML('<INPUT type="hidden" name="w_prioridade" value="'.$w_prioridade.'">');
-    ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
+    //ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
     if ($w_pede_valor_pedido=='S') ShowHTML('            <td colspan="3"><b><u>V</u>alor estimado:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado para a solicitação."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservações:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');

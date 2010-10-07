@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
 // -------------------------------------------------------------------------
 function selecaoAssunto($label,$accesskey,$hint,$chave,$chaveAux,$campo,$descricao,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $sql = new db_getAssunto_PA; $RS = $sql->getInstanceOf($dbms,$w_cliente,$chave,null,null,$descricao,null,null,null,null,'S',$restricao);
+  $sql = new db_getAssunto_PA; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,$descricao,null,null,null,null,'S',$restricao);
   $RS = SortArray($RS,'descricao','asc');
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
