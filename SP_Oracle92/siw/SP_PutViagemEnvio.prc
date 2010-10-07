@@ -163,7 +163,7 @@ create or replace procedure SP_PutViagemEnvio
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao,
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
-             x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, x2.sq_tipo_lancamento, x2.nm_lancamento,
+             x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, z.sq_tipo_lancamento, z.nm_lancamento,
              x3.sq_tipo_pessoa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
@@ -171,8 +171,7 @@ create or replace procedure SP_PutViagemEnvio
              siw_solicitacao                   x
              inner     join siw_tramite       x5 on (x.sq_siw_tramite       = x5.sq_siw_tramite)
              inner     join pd_missao         x1 on (x.sq_siw_solicitacao   = x1.sq_siw_solicitacao and
-                                                     x1.ressarcimento       = 'S' and
-                                                     x1.ressarcimento_valor > 0
+                                                     x1.ressarcimento       = 'S'
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, 
@@ -185,11 +184,22 @@ create or replace procedure SP_PutViagemEnvio
                             )                 x2 on (x.sq_siw_solicitacao   = x2.sq_solic_pai and 
                                                      instr(lower(x2.descricao),'devolução')>0
                                                     ),
-             fn_tipo_documento             y
+             fn_tipo_documento             y,
+             (select sq_tipo_lancamento, nome as nm_lancamento
+                from (select sq_tipo_lancamento, nome
+                        from fn_tipo_lancamento k
+                       where k.receita                = 'S'
+                         and k.sq_tipo_lancamento_pai is null
+                         and k.ativo                  = 'S'
+                      order by k.nome
+                     ) k1
+               where rownum = 1
+             )                             z
        where w.sq_pessoa          = w_cliente
          and w.sigla              = 'FNREVENT'
          and x.sq_siw_solicitacao = p_chave
          and y.sigla              = 'VG';
+
 
    cursor c_ressarcimento_item is
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
