@@ -111,7 +111,7 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
                 m.sq_projeto,         m.nm_projeto,
-                case when (b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                    a
                   inner          join  eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer   join  eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade  and

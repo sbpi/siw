@@ -1153,7 +1153,7 @@ begin
                 d5.limite_passagem, d5.limite_diaria,
                 to_char(r.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida, to_char(r.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
                 pd_retornatrechos(b.sq_siw_solicitacao) as trechos,
-                case when (b1.sigla in ('PC','AP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                a
                 inner         join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left        join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
