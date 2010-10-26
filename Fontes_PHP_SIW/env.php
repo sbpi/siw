@@ -3,17 +3,22 @@
     <title>PHP 5</title> 
   </head>
   <body>
-<table border=0><tr><td>
-<pre>
+<table border=1><tr valign="top"><td nowrap><font face="Courier New">
 <?php
-echo 'Sistema operacional: '.PHP_OS;
-echo '<br>Módulos instalados: ';
-print_r(get_loaded_extensions());
+echo 'S.O.:<br><b>'.PHP_OS.'</b>';
+echo '<br><br>Módulos: ';
+$mod = get_loaded_extensions();
+foreach($mod as $k => $v) $mods[strtolower($v)] = $k;
+kSort($mods);
+$i=0;
+foreach($mods as $k => $v) echo '<br>['.$i++.'] => '.$k;
 ?>
-</pre>
+</font><td>
+<?php
+phpinfo(); 
+?>
+</td>
 </table>
-    <?php 
-    phpinfo(); 
-    ?>
   </body>
 </html>
+?>
