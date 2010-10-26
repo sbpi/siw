@@ -2373,6 +2373,8 @@ function toNumber($valor) {
       } else {
         $l_valor = str_replace(',','.',str_replace('.','',$valor));
       }
+    } else {
+      $l_valor = str_replace('.','',$valor);
     }
   }
   return $l_valor;
