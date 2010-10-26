@@ -472,8 +472,8 @@ function Inicial() {
           ShowHTML('        <td>'.Nvl(f($row,'descricao'),'-').'</td>');
         } else {
           if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-          else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
+          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.$w_titulo.'</strike></td>');
+          else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'descricao')).'">'.$w_titulo.'</td>');
         }
         //ShowHTML('        <td align="center">'.f($row,'prazo_guarda').'</font></td>');
         //ShowHTML('        <td align="center" '.((f($row,'provisorio')=='S') ? '' : 'title="'.f($row,'nm_final').'"').'>'.((f($row,'provisorio')=='S') ? '&nbsp;' : f($row,'sg_final')).'</font></td>');
@@ -2442,8 +2442,8 @@ function Tramitacao() {
           ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_doc').'</td>');
           if ($w_tipo=='') {
             if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-            if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-            else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
+            if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.$w_titulo.'</strike></td>');
+            else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.$w_titulo.'</td>');
           } else {
             ShowHTML('        <td width="50%"><font color="#BC3131"><b>'.$w_msg.'</b></font></td>');
           }
@@ -2754,7 +2754,7 @@ function TramitCentral() {
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_doc').'</td>');
         if (strlen(Nvl(f($row,'observacao_setorial'),'-'))>50) $w_titulo=substr(Nvl(f($row,'observacao_setorial'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'observacao_setorial'),'-');
-        ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'observacao_setorial')).'">'.htmlspecialchars($w_titulo).'</td>');
+        ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'observacao_setorial')).'">'.$w_titulo.'</td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.formataDataEdicao(f($row,'data_setorial'),5).'</td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.f($row,'data_limite_doc').'</td>');
         if (nvl(f($row,'nr_caixa'),'')!='') {
@@ -2985,8 +2985,8 @@ function Classificacao() {
         }
         ShowHTML('        </td>');
         if (strlen(Nvl(f($row,'descricao'),'-'))>500) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,500).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-        else                            ShowHTML('        <td title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'">'.htmlspecialchars($w_titulo).'</td>');
+        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'"><strike>'.$w_titulo.'</strike></td>');
+        else                            ShowHTML('        <td title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'">'.$w_titulo.'</td>');
         ShowHTML('        <td>'.f($row,'nm_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
         ShowHTML('        <td>'.f($row,'numero_original').'</td>');

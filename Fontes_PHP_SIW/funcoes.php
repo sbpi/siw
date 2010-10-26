@@ -1147,21 +1147,21 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
     }
   } else {
     if ($l_tipo=='IDE') {
-      if ($l_andamento < 70)                           $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
-      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
-      else                                             $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDE fora da faixa desejável (abaixo de 70%)." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDE próximo da faixa desejável (de 70% a 89,99% ou acima de 120%)." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDE na faixa desejável (de 90% a 120%)." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     } elseif ($l_tipo=='IDC') {
-      if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
-      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
-      else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável (abaixo de 70%)." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável (de 70% a 89,99% ou acima de 120%)." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDC na faixa desejável (de 90% a 120%)." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     } elseif ($l_tipo=='IDCC') {
-      if ($l_andamento < 75)                           $l_string .= '<img title="IDCC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
-      elseif ($l_andamento <= 100)                     $l_string .= '<img title="IDCC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
-      else                                             $l_string .= '<img title="IDCC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      if ($l_andamento < 75)                           $l_string .= '<img title="IDCC próximo da faixa desejável (de 70% a 99,99%)." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento <= 100)                     $l_string .= '<img title="IDCC na faixa desejável (acima de 100%)." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDCC fora da faixa desejável (abaixo de 70%)." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
     } elseif ($l_tipo=='IDEC') {
-      if ($l_andamento < 70)                           $l_string .= '<img title="IDEC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
-      elseif ($l_andamento < 90)                       $l_string .= '<img title="IDEC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
-      else                                             $l_string .= '<img title="IDEC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDEC fora da faixa desejável (abaixo de 70%)." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento < 90)                       $l_string .= '<img title="IDEC próximo da faixa desejável (de 70% a 89,99% ou acima de 120%)." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDEC na faixa desejável (acima de 90%)." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     }
   }
   return $l_string;
@@ -2362,7 +2362,20 @@ function toSQLDate($date) {
 // valor: string contendo o valor
 // -------------------------------------------------------------------------
 function toNumber($valor) {
-  if ($_SESSION['DBMS']==2) return str_replace(',','.',str_replace('.','',$valor)); else return str_replace('.','',$valor);
+  $l_valor = $valor;
+  if ($_SESSION['DBMS']==2) {
+    $l_valor = str_replace(',','.',str_replace('.','',$valor)); 
+  } else {
+    if ($_SESSION['DBMS']==1 || $_SESSION['DBMS']==3 || $_SESSION['DBMS']==5) {
+      $territorio = substr(getenv('NLS_LANG'),strpos(getenv('NLS_LANG'),'_')+1,(strpos(getenv('NLS_LANG'),'.')-1-strpos(getenv('NLS_LANG'),'_')));
+      if ($territorio=='BRAZIL') {
+        $l_valor = str_replace('.','',$valor);
+      } else {
+        $l_valor = str_replace(',','.',str_replace('.','',$valor));
+      }
+    }
+  }
+  return $l_valor;
 }
 
 // =========================================================================
@@ -2590,7 +2603,6 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
 
 function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments=null){
   extract($GLOBALS);
-  date_default_timezone_set('America/Sao_Paulo');
   include_once($w_dir_volta.'classes/mailAlternative/class.phpmailer.php');
 
   $mail             = new PHPMailer();
@@ -2872,8 +2884,8 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
           $w_html .= chr(10).'<tr valign="top"><td align="right">'.$w_chave.'=><td>['.$w_valor[0].']';
         }
       }
+      $w_html .= chr(10).'</table></DT><br>';
     }
-    $w_html .= chr(10).'</table></DT><br>';
     
     $w_html .= chr(10).'<DT>Variáveis de servidor:<table border=0>';
     $w_html .= chr(10).'<tr valign="top"><td align="right">SCRIPT_NAME=><td>['.$_SERVER['SCRIPT_NAME'].']';
@@ -2889,11 +2901,11 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'</table></DT><br>';
 
     $w_html .= chr(10).'<DT>Dados do formulário:<table border=0>';
-    foreach($_POST as $chv => $vlr) { if (lower($chv)!='w_assinatura') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
+    foreach($_POST as $chv => $vlr) { if (lower($chv)!='w_assinatura' && lower($chv)!='password') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
     $w_html .= chr(10).'</table></DT><br>';
 
     $w_html .= chr(10).'<DT>Variáveis de sessão:<table border=0>';
-    foreach($_SESSION as $chv => $vlr) { if (strpos(upper($chv),'SENHA') !== true) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; } }
+    foreach($_SESSION as $chv => $vlr) { if (strpos(upper($chv),'SENHA')===false && strpos(upper($chv),'PASSWORD')===false) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; } }
     $w_html .= chr(10).'</table></DT>';
     
     $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
@@ -2953,7 +2965,7 @@ function Rodape() {
     ShowHTML('</center>');
   }
   else { ShowHTML('<HR>'); }
-  ShowHTML('<script language="javascript" type="text/javascript" src="js/tooltip.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/tooltip.js"></script>');
   ShowHTML('</BODY>');
   ShowHTML('</HTML>');
 
@@ -3309,16 +3321,16 @@ function f($rs, $fld) {
   }
   if (isset($rs[lower($fld)])) {
     if (strpos(upper($rs[upper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[lower($fld)])));
-    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[lower($fld)]));
+      return str_replace('<','&lt;',str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[lower($fld)]))));
+    } else return str_replace('<','&lt;',str_replace('"','&quot;',str_replace('.asp','.php',$rs[lower($fld)])));
   } elseif (isset($rs[upper($fld)])) {
     if (strpos(upper($rs[upper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[upper($fld)])));
-    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[upper($fld)]));
+      return str_replace('<','&lt;',str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[upper($fld)]))));
+    } else return str_replace('<','&lt;',str_replace('"','&quot;',str_replace('.asp','.php',$rs[upper($fld)])));
   } elseif (isset($rs[$fld])) {
     if (strpos(upper($rs[upper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[$fld])));
-    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[$fld]));
+      return str_replace('<','&lt;',str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[$fld]))));
+    } else return str_replace('<','&lt;',str_replace('"','&quot;',str_replace('.asp','.php',$rs[$fld])));
   } else return null;
 }
 
@@ -3775,12 +3787,12 @@ function BodyOpen($cProperties) {
      }
    }
 
-   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
-   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
-   ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
-   ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
-   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
-   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
+   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/ajax.js"></script>');
+   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/ajax-dynamic-content.js"></script> ');
+   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
+   ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />');
+   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
+   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
 
 
@@ -3797,13 +3809,13 @@ function BodyOpen($cProperties) {
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
    extract($GLOBALS);
 
-   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
-   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
-   ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
-   ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
+   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/ajax.js"></script>');
+   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/ajax-dynamic-content.js"></script> ');
+   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
+   ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />');
 
-   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
-   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
+   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
+   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
@@ -3829,14 +3841,14 @@ function BodyOpenClean($cProperties) {
     $wProperties = ' onLoad=\'required();\' ';
   }
 
-  ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
-  ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
-  ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
-  ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
-  ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="js/swfobject.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.uploadify.v2.1.0.min.js"></script>');
+  ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/ajax.js"></script>');
+  ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/ajax-dynamic-content.js"></script> ');
+  ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
+  ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/swfobject.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.uploadify.v2.1.0.min.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.

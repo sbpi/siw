@@ -1,9 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL ^ E_NOTICE);
-echo phpinfo(INFO_GENERAL);
-echo phpinfo(INFO_ENVIRONMENT);
-print_r(get_loaded_extensions());
 include_once('constants.inc');
 $w_dir_volta = $conDiretorio.'/';
 

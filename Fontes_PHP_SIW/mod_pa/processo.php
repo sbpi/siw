@@ -1508,8 +1508,8 @@ function ArqSetorial() {
           ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>');
           ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_doc').'</td>');
           if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-          else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
+          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.$w_titulo.'</strike></td>');
+          else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.$w_titulo.'</td>');
         }
         ShowHTML('      </tr>');
         $i += 1;

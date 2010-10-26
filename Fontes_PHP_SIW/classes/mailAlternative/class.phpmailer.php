@@ -474,7 +474,7 @@ class PHPMailer {
       $to .= $this->AddrFormat($this->to[$i]);
     }
 
-    $toArr = explode(',', $to);
+    $toArr = split(',', $to);
 
     $params = sprintf("-oi -f %s", $this->Sender);
     if ($this->Sender != '' && strlen(ini_get('safe_mode'))< 1) {
@@ -592,11 +592,10 @@ class PHPMailer {
     $hosts = explode(';', $this->Host);
     $index = 0;
     $connection = ($this->smtp->Connected());
-
     /* Retry while there is no connection */
     while($index < count($hosts) && $connection == false) {
       $hostinfo = array();
-      if(preg_match('/^(.+):([0-9]+)$/i', $hosts[$index], $hostinfo)) {
+      if(eregi('^(.+):([0-9]+)$', $hosts[$index], $hostinfo)) {
         $host = $hostinfo[1];
         $port = $hostinfo[2];
       } else {
@@ -1236,14 +1235,14 @@ class PHPMailer {
             return false;
         }
 }
-    if (PHP_VERSION < 5) {
+    if (PHP_VERSION < 6) {
       $magic_quotes = get_magic_quotes_runtime();
       set_magic_quotes_runtime(0);
     }
     $file_buffer  = file_get_contents($path);
     $file_buffer  = $this->EncodeString($file_buffer, $encoding);
     fclose($fd);
-    if (PHP_VERSION < 5) { set_magic_quotes_runtime($magic_quotes); }
+    if (PHP_VERSION < 6) { set_magic_quotes_runtime($magic_quotes); }
     return $file_buffer;
   }
 
@@ -1721,7 +1720,7 @@ class PHPMailer {
           $directory = dirname($url);
           ($directory == '.')?$directory='':'';
           $cid = 'cid:' . md5($filename);
-          $fileParts = preg_split("\.", $filename);
+          $fileParts = split("\.", $filename);
           $ext = $fileParts[1];
           $mimeType = $this->_mime_types($ext);
           if ( strlen($basedir) > 1 && substr($basedir,-1) != '/') { $basedir .= '/'; }

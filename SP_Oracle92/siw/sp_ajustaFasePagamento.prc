@@ -1,12 +1,12 @@
 create or replace procedure sp_ajustaFasePagamento(p_cliente in number, p_pessoa in number default null, p_todos in varchar2 default null) is
   cursor c_dados is
      -- Recupera pagamentos de diárias em execução, de pessoas com pendência de prestação de contas de viagens
-     select w.sq_siw_solicitacao, w1.cadastrador, w2.sq_menu, g.sq_siw_tramite as pp, h.sq_siw_tramite as ee, count(*) as atraso_pc
+     select w.sq_siw_solicitacao, w1.cadastrador, w2.sq_menu, g.sq_siw_tramite as pp, h.sq_siw_tramite as ee, w5.codigo_interno
        from fn_lancamento                      w
             inner     join siw_solicitacao     w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
               inner   join siw_menu            w2 on (w1.sq_menu            = w2.sq_menu and 
                                                       w2.sigla              = 'FNDVIA' and
-                                                      w2.sq_pessoa          = p_cliente
+                                                      w2.sq_pessoa          = &p_cliente
                                                      )
                 inner join siw_tramite         g  on (w2.sq_menu            = g.sq_menu and g.sigla = 'PP')
                 inner join siw_tramite         h  on (w2.sq_menu            = h.sq_menu and h.sigla = 'EE')
@@ -16,10 +16,10 @@ create or replace procedure sp_ajustaFasePagamento(p_cliente in number, p_pessoa
               inner   join pd_categoria_diaria w7 on (w4.diaria             = w7.sq_categoria_diaria)
               inner   join siw_solicitacao     w5 on (w4.sq_siw_solicitacao = w5.sq_siw_solicitacao)
                 inner join siw_tramite         w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite)
-      where w6.sigla in ('PC','AP')
+      where w6.sigla in ('PC','AP','VP')
         and 0        > soma_dias(w2.sq_pessoa,trunc(w5.fim),w7.dias_prestacao_contas + 1,'U') - trunc(sysdate)
-       and (coalesce(p_todos,'-') = 'TODOS' or (coalesce(p_todos,'-') <> 'TODOS' and w.pessoa = coalesce(p_pessoa,0)))
-     group by w.sq_siw_solicitacao, w1.cadastrador, w2.sq_menu, g.sq_siw_tramite, h.sq_siw_tramite;
+       and (coalesce(&p_todos,'-') = 'TODOS' or (coalesce(&p_todos,'-') <> 'TODOS' and w.pessoa = coalesce(&p_pessoa,0)))
+     order by w.sq_siw_solicitacao, w1.cadastrador, w2.sq_menu, g.sq_siw_tramite, h.sq_siw_tramite, w5.inclusao;
 begin
   for crec in c_dados loop
      -- Coloca os pagamentos pendentes de prestação de contas

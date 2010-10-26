@@ -426,7 +426,7 @@ function Inicial() {
         ShowHTML('        <td width="1%" nowrap>');
         ShowHTML(ExibeImagemSolic('GD',f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
-        ShowHTML('        <td>'.htmlspecialchars(f($row,'justificativa')).'</td>');
+        ShowHTML('        <td>'.f($row,'justificativa').'</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'fim')).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');

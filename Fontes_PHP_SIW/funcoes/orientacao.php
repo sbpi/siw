@@ -1,12 +1,12 @@
 <?php
-
-include_once("../constants.inc");
-include_once("../funcoes.php");
+include_once('../constants.inc');
+include_once('../funcoes.php');
 $p_tipo = upper($_REQUEST['p_tipo']);
 header("Cache-Control: no-cache, must-revalidate",false);
+
+ShowHTML('<script src="'.$conRootSIW.'js/jquery.js"></script>');
+ShowHTML('<script src="'.$conRootSIW.'js/funcoes.js"></script>');
 ?>
-<script src="js/jquery.js"></script>
-<script src="js/funcoes.js"></script>
 <html>
 <head>
 <style>

@@ -534,9 +534,9 @@ function Inicial() {
             $w_descricao = substr(Nvl(f($row, 'descricao'), '-'), 0, 50) . '...'; else
             $w_descricao=Nvl(f($row, 'descricao'), '-');
           if (f($row, 'sg_tramite') == 'CA')
-            ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . htmlspecialchars($w_descricao) . '</strike></td>');
+            ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . $w_descricao . '</strike></td>');
           else
-            ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '">' . htmlspecialchars($w_descricao) . '</td>');
+            ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_descricao . '</td>');
         }
         if ($P1 > 1)
           ShowHTML('        <td nowrap>' . f($row, 'nm_tramite') . '</td>');
@@ -848,8 +848,10 @@ function Geral() {
       $w_vinculo = f($RS, 'sq_tipo_vinculo');
     }
   }
-  if (nvl($w_sq_menu_relac, 0) > 0)
+
+  if (nvl($w_sq_menu_relac, 0) > 0) {
     $sql = new db_getMenuData; $RS_Relac = $sql->getInstanceOf($dbms, $w_sq_menu_relac);
+  }
 
   // Recupera as possibilidades de vinculação financeira
   $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
@@ -7244,6 +7246,10 @@ function Reembolso() {
     Validate('w_rubrica', 'Rubrica para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
     Validate('w_lancamento', 'Tipo de lançamento para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
   }
+  ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
+  ShowHTML('    alert("ATENÇÃO: Foi informado outro anexo do relatório de viagem.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
+  ShowHTML('  }');
+  
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');

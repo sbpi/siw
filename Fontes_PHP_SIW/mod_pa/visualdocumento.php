@@ -351,7 +351,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       foreach($RS1 as $row) {
         $l_html.=chr(13).'       <tr valign="top">';
         $l_html.=chr(13).'           <td nowrap>'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null).' '.f($row,'codigo_interno').'&nbsp;</td>';
-        $l_html.=chr(13).'           <td>'.htmlspecialchars(f($row,'justificativa')).'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'justificativa').'</td>';
         if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nm_solic').'</td>';
         else                    $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
         if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'sg_unidade_resp').'</td>';

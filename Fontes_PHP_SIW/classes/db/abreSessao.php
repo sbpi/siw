@@ -10,8 +10,8 @@ include_once("ConnectionManagerFactory.php");
 
 class abreSessao {
    function getInstanceOf($DB_TYPE) {
-     $dbms = new ConnectionManagerFactory; 
-     $dbms = $dbms->getInstanceOf($DB_TYPE);
+     $conn = new ConnectionManagerFactory; 
+     $dbms = $conn->getInstanceOf($DB_TYPE);
      $dbms->doConnection();
      $dbms->selectDatabase();
      if ($DB_TYPE==MSSQL) { ini_set('mssql.datetimeconvert', 0);}

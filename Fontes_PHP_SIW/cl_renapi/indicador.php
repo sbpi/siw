@@ -316,7 +316,6 @@ function FramesAfericao() {
   extract($GLOBALS);
   ShowHTML('<HTML> ');
   ShowHTML('  <HEAD> ');
-  ShowHTML('  <link rel="shortcut icon" href="'.$conRootSIW.'favicon.ico" type="image/ico" />');
   Estrutura_CSS($w_cliente);
   ShowHTML('  <TITLE>'.$conSgSistema.' - Indicadores</TITLE> ');
   ShowHTML('  </HEAD> ');

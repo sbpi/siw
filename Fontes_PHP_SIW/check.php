@@ -24,7 +24,7 @@ array_push($arrayReq,array(
 // Funções específicas
 array_push($arrayFun,array('texto' => 'imagefilledrectangle' ,'param' => 'imagefilledrectangle','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'ldap_delete' ,'param' => 'ldap_delete','funcao'=> true,'test'=> true));
-array_push($arrayFun,array('texto' => 'oci_connect' ,'param' => 'oci_connect','funcao'=> true,'test'=> true));
+array_push($arrayFun,array('texto' => 'oci_new_connect' ,'param' => 'oci_new_connect','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'mb_language' ,'param' => 'mb_language','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'openssl_pkcs7_sign' ,'param' => 'openssl_pkcs7_sign','funcao'=> true,'test'=> true));
 //array_push($arrayFun,array('texto' => 'mcrypt_module_open' ,'param' => 'mcrypt_module_open','funcao'=> true,'test'=> true));
@@ -143,7 +143,7 @@ function checkBanco() {
   $saida .= 'Resultado do teste de conexão:<br>';
   ob_start();
   $l_error_reporting = error_reporting(); error_reporting(E_ALL);
-  $ret = oci_connect(ORA9_DB_USERID,ORA9_DB_PASSWORD,ORA9_SERVER_NAME);
+  $ret = oci_new_connect(ORA9_DB_USERID,ORA9_DB_PASSWORD,ORA9_SERVER_NAME);
   var_dump($ret);
   $texto .= ob_get_contents();
   error_reporting($l_error_reporting);

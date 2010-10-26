@@ -131,7 +131,6 @@ begin
            where a.pacote_trabalho    = 'S'
             and a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa = p_chave_aux2));
-
    ElsIf p_restricao = 'ETAPA' or p_restricao = 'PACOTES' Then
       -- Recupera todas as etapas de uma questão
       open p_result for 

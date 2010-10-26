@@ -429,12 +429,12 @@ function Inicial() {
         } else {
           if ($w_embed!='WORD' && strlen(Nvl($w_texto,'-'))>50) $w_titulo = substr(Nvl($w_texto,'-'),0,50).'...'; else $w_titulo = Nvl($w_texto,'-');
           if (f($row,'sg_tramite')=='CA') {
-            ShowHTML('        <td title="'.htmlspecialchars($w_texto).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+            ShowHTML('        <td title="'.htmlspecialchars($w_texto).'"><strike>'.$w_titulo.'</strike></td>');
           } else {
-            ShowHTML('        <td title="'.htmlspecialchars($w_texto).'">'.htmlspecialchars($w_titulo).'</td>');
+            ShowHTML('        <td title="'.htmlspecialchars($w_texto).'">'.$w_titulo.'</td>');
           } 
         }
-        ShowHTML('        <td title="'.htmlspecialchars($w_texto).'">'.htmlspecialchars(f($row,'justificativa')).'</td>');
+        ShowHTML('        <td title="'.htmlspecialchars($w_texto).'">'.f($row,'justificativa').'</td>');
         if ($P1!=1) ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         if ($w_embed!='WORD') {
           ShowHTML('        <td align="top" nowrap>');

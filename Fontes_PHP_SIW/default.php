@@ -91,7 +91,7 @@ function Valida() {
     if ($RS==0) {
       $w_erro=1;
     } else {
-      $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);        
+      $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
       $w_tipo = f($RS,'tipo_autenticacao');
       if ($w_tipo == 'B' || $par=='Senha') { // O segundo teste evita autenticação da senha no LDAP
         if ($wDsSenha>'') { $w_erro= new db_verificaSenha; $w_erro = $w_erro->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha); }
@@ -112,7 +112,7 @@ function Valida() {
               'account_suffix'        => f($RS1,'ol_account_sufix')    ,               
           );
         }
-                
+
         $adldap = new adLDAP($array);
                                                                                                                                                          
         if(!$adldap->authenticate($wNoUsuario,$wDsSenha)){
@@ -436,7 +436,5 @@ function Main() {
         $_SESSION['P_CLIENTE']=$_POST['p_cliente'];
         Valida();
     }
-
 }
-
 ?>

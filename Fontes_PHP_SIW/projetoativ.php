@@ -499,9 +499,9 @@ function Inicial() {
         } else {
           if ($w_tipo!='WORD' && strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
           if (f($row,'sg_tramite')=='CA') {
-            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'"><strike>'.$w_titulo.'</strike></td>');
           } else {
-            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
+            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.$w_titulo.'</td>');
           } 
         } 
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
@@ -2261,7 +2261,7 @@ function BuscaAtividade() {
           }
           ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
           if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
-          ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
+          ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.$w_titulo.'</td>');
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
           ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.$w_titulo.'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
           ShowHTML('      </tr>');
@@ -2296,7 +2296,7 @@ function BuscaAtividade() {
         }
         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
-        ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
+        ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.$w_titulo.'</td>');
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
         ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.str_replace("\r\n"," ",$w_titulo).'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
         ShowHTML('      </tr>');

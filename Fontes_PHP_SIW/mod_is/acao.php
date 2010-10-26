@@ -403,9 +403,9 @@ function Inicial() {
         } else {
           if (strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'titulo'),'-');
           if (f($row,'sg_tramite')=='CA') {
-            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'"><strike>'.$w_titulo.'</strike></td>');
           } else {
-            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
+            ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.$w_titulo.'</td>');
           } 
         }
         ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio')).'</td>');

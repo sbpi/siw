@@ -503,8 +503,8 @@ function Inicial() {
             ShowHTML('        <td>'.Nvl(f($row,'titulo'),'-').'</td>');
           } else {
             if (strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'titulo'),'-');
-            if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-            else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'">'.htmlspecialchars($w_titulo).'</td>');
+            if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'"><strike>'.$w_titulo.'</strike></td>');
+            else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'">'.$w_titulo.'</td>');
           } 
           if ($_SESSION['INTERNO']=='S') {
             if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');

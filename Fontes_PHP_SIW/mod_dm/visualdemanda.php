@@ -163,7 +163,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario,$l_tipo=null) {
         if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($row,'nm_solic').'</td>';
         else                $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
         if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
-        $l_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>';
+        $l_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.$w_titulo.'</td>';
         $l_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
         $l_html.=chr(13).'          <td>'.f($row,'nm_tramite').'</td>';
         $l_html.=chr(13).'        </tr>';
