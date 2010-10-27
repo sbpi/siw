@@ -33,12 +33,12 @@ begin
             coalesce(g.complemento, g1.complemento) as complemento, 
             coalesce(g.bairro, g1.bairro) as bairro, 
             coalesce(g.cep, g1.cep) as cep, 
-            coalesce(h.sq_cidade, h1.sq_cidade,b1.sq_cidade,f1.sq_cidade,l1.sq_cidade) as sq_cidade, 
-            coalesce(h.nome,h1.nome) as nm_cidade, 
-            coalesce(h.co_uf, h1.co_uf, b1.co_uf,f1.co_uf,l1.co_uf) as co_uf,
-            coalesce(h.sq_pais,h1.sq_pais,b1.sq_pais,f1.sq_pais,l1.sq_pais) as sq_pais,
-            coalesce(m.padrao,m1.padrao) as pd_pais, 
-            coalesce(m.nome,m1.nome) as nm_pais,
+            coalesce(h.sq_cidade, h1.sq_cidade,b1.sq_cidade,f1.sq_cidade,l1.sq_cidade,i1.sq_cidade) as sq_cidade, 
+            coalesce(h.nome,h1.nome,i1.nome) as nm_cidade, 
+            coalesce(h.co_uf, h1.co_uf, b1.co_uf,f1.co_uf,l1.co_uf,i1.co_uf) as co_uf,
+            coalesce(h.sq_pais,h1.sq_pais,b1.sq_pais,f1.sq_pais,l1.sq_pais,i1.sq_pais) as sq_pais,
+            coalesce(m.padrao,m1.padrao,i2.padrao) as pd_pais, 
+            coalesce(m.nome,m1.nome,i2.nome) as nm_pais,
             coalesce(i.email, n.email) as email,
             coalesce(j.cpf,n.username) as cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
             j.sq_pais_passaporte, j.sexo,
@@ -122,7 +122,7 @@ begin
                        )                        g1 on (a.sq_pessoa         = g1.sq_pessoa)
             left join  co_cidade                h1 on (g1.sq_cidade        = h1.sq_cidade)
             left join  co_pais                  m1 on (h1.sq_pais          = m1.sq_pais)
-            left join  (select w.sq_pessoa, logradouro email
+            left join  (select w.sq_pessoa, w.sq_cidade, w.logradouro as email
                           from co_pessoa_endereco            w
                                inner   join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
                                inner   join co_pessoa        y on (w.sq_pessoa          = y.sq_pessoa)
@@ -132,6 +132,8 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        i on (a.sq_pessoa          = i.sq_pessoa)
+            left join  co_cidade               i1 on (i.sq_cidade          = i1.sq_cidade)
+            left join  co_pais                 i2 on (i1.sq_pais           = i2.sq_pais)
             left join co_pessoa_fisica          j on (a.sq_pessoa          = j.sq_pessoa)
               left join co_pais                 o on (o.sq_pais            = j.sq_pais_passaporte)
             left join co_pessoa_juridica        k on (a.sq_pessoa          = k.sq_pessoa)
