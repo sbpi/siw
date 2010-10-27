@@ -180,7 +180,11 @@ begin
          and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_unid_posse is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
-         and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim+1))
+         and (p_ini        is null or (p_ini         is not null and ((p_restricao <> 'PACLASSIF'  and d.envio  between p_ini and p_fim+1) or
+                                                                      (p_restricao =  'PACLASSIF'  and b.inicio between p_ini and p_fim+1)
+                                                                     )
+                                      )
+             )
          and (p_tipo       = 1 or (p_tipo      = 2 and b1.acesso > 0))
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
