@@ -29,14 +29,18 @@ create or replace procedure sp_putDocumentoGeral
     p_chave_nova          out number,
     p_codigo_interno      in out varchar2
    ) is
-   w_cliente number(18);
-   w_arq     varchar2(4000) := ', ';
-   w_chave   number(18);
-   w_log_sol number(18);
-   w_log_esp number(18);
-   w_ativ    number(18);
-   w_cidade  number(18) := p_cidade;
-   w_cont    number(18);
+   w_sequencial number(18) := 0;
+   w_cliente    number(18);
+   w_arq        varchar2(4000) := ', ';
+   w_chave      number(18);
+   w_log_sol    number(18);
+   w_log_esp    number(18);
+   w_ativ       number(18);
+   w_cidade     number(18) := p_cidade;
+   w_cont       number(18);
+   w_ano        number(4);
+   w_dv         number(2);
+   w_reg        pa_parametro%rowtype;
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
@@ -102,15 +106,6 @@ begin
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
       );
-           
-      If p_codigo is null Then
-         -- Recupera o código interno  do acordo, gerado por trigger
-         select prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2) into p_codigo_interno 
-           from pa_documento 
-          where sq_siw_solicitacao = w_chave;
-      Else
-         p_codigo_interno := p_codigo;
-      End If;
 
       -- Se o projeto foi copiado de outra, grava os dados complementares
       If p_copia is not null Then
@@ -248,6 +243,62 @@ begin
       End If;
    End If;
    
+   If p_operacao = 'I' Then
+          
+      -- Recupera os parâmetros do cliente informado
+      select * into w_reg from pa_parametro where cliente = w_cliente;
+  
+      If to_char(p_data_recebimento,'yyyy') <=  2009 Then
+        
+         -- Configura o ano do registro para o ano informado na data de início.
+         w_ano := to_number(to_char(p_data_recebimento,'yyyy'));
+             
+         -- Verifica se já há algum registro no ano informado na data de recebimento.
+         -- Se tiver, verifica o próximo sequencial. Caso contrário, usa 1.
+         select count(*) into w_cont 
+           from pa_documento a 
+          where to_char(a.data_recebimento,'yyyy') = w_ano
+            and a.cliente                            = w_cliente;
+                
+         If w_cont = 0 Then
+            w_sequencial := 1;
+         Else
+            select coalesce(max(b.numero_documento),0)+1 into w_sequencial
+              from siw_solicitacao         a
+                   inner join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+             where b.ano     = w_ano
+               and b.cliente = w_cliente;
+         End If;
+             
+         -- Recupera o código interno  do acordo, gerado por trigger
+         select prefixo||'.'||substr(1000000+w_sequencial,2,6)||'/'||w_ano into p_codigo_interno 
+           from pa_documento 
+          where sq_siw_solicitacao = w_chave;
+         
+         -- Calcula o DV do protocolo
+         w_dv             := validaCnpjCpf(p_codigo_interno,'gerar');
+         
+         -- Gera o número do protocolo para devolver à rotina de gravação
+         p_codigo_interno := p_codigo_interno||'-'||w_dv;
+         
+         update pa_documento
+            set numero_documento = w_sequencial,
+                ano              = w_ano,
+                digito           = w_dv
+          where sq_siw_solicitacao = w_chave;
+      Else
+         -- Recupera o código interno  do acordo, gerado por trigger
+         select prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2) into p_codigo_interno 
+           from pa_documento 
+          where sq_siw_solicitacao = w_chave;
+      End If;
+   Elsif p_operacao <> 'E' Then
+      -- Recupera o código interno  do acordo, gerado por trigger
+      select prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2) into p_codigo_interno 
+        from pa_documento 
+       where sq_siw_solicitacao = p_chave;
+   End If;
+
    -- Devolve a chave
    If p_chave is not null
       Then p_chave_nova := p_chave;

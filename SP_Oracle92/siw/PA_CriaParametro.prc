@@ -1,5 +1,6 @@
 create or replace procedure PA_CriaParametro
    (p_unidade    in  number, 
+    p_data       in  date,
     p_numero_doc out varchar2
    ) is
    w_ano        number(4);
@@ -24,6 +25,11 @@ begin
   If to_char(sysdate,'yyyy') > w_reg.ano_corrente Then
      w_ano        := to_char(sysdate,'yyyy');
      w_sequencial := 1;
+  Elsif to_char(p_data,'yyyy') < 2009 Then
+     -- Configura o ano do acordo para o ano informado na data de início
+     -- e usa um sequencial qualquer, que será ajustado depois
+     w_ano        := to_number(to_char(p_data,'yyyy'));
+     w_sequencial := 0;
   Else
      w_ano        := w_reg.ano_corrente;
      -- Se já houver documento com o sequencial gerado, incrementa 1 e testa novamente,
