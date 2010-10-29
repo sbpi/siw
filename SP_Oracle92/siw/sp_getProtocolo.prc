@@ -264,7 +264,8 @@ begin
                  left        join (select x.sq_siw_solicitacao, max(x.sq_documento_log) as sq_documento_log
                                      from pa_documento_log           x
                                           inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                    where y.sq_menu        = p_menu
+                                    where y.sq_menu = p_menu
+                                      and 0         = instr(x.resumo,'*** RECUSADO')
                                     group by x.sq_siw_solicitacao
                                   )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
                  left        join (select x.sq_documento_pai, count(*) as qtd
@@ -306,7 +307,9 @@ begin
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
          and (p_despacho   is null or (p_despacho    is not null and 
-                                       (b4.ativo = 'S' or (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null)) and
+                                       ((b4.ativo = 'S' and (d1.sigla <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and p_numero is not null))) or 
+                                        (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null)
+                                       ) and
                                        ((p_despacho not in (a1.despacho_autuar,
                                                             a1.despacho_anexar,
                                                             a1.despacho_apensar,
