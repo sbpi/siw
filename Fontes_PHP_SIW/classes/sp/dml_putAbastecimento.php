@@ -17,7 +17,7 @@ class dml_putAbastecimento {
                      'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
                      'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        18),
                      'p_data'                      =>array(tvl($p_data),                                     B_DATE,           32),
-                     'p_hodometro'                 =>array(tvl($p_hodometro),                               B_NUMERIC,       7,2),
+                     'p_hodometro'                 =>array(tonumber(tvl($p_hodometro)),                      B_NUMERIC,       7,2),
                      'p_litros'                    =>array(toNumber(tvl($p_litros)),                         B_NUMERIC,      18,2),
                      'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                      'p_local'                     =>array($p_local,                                         B_VARCHAR,        60)

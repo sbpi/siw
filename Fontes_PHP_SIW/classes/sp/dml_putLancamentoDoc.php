@@ -24,9 +24,9 @@ class dml_putLancamentoDoc {
                    'p_retencao'                  =>array(tvl($p_retencao),                                 B_VARCHAR,         1),
                    'p_tributo'                   =>array(tvl($p_tributo),                                  B_VARCHAR,         1),
                    'p_nota'                      =>array(tvl($p_nota),                                     B_INTEGER,        32),
-                   'p_inicial'                   =>array(tonumber(nvl($p_inicial,0)),                        B_NUMERIC,      18,2),
-                   'p_excedente'                 =>array(tonumber(nvl($p_excedente,0)),                      B_NUMERIC,      18,2),
-                   'p_reajuste'                  =>array(tonumber(nvl($p_reajuste,0)),                       B_NUMERIC,      18,2),
+                   'p_inicial'                   =>array(tonumber(nvl($p_inicial,0)),                      B_NUMERIC,      18,2),
+                   'p_excedente'                 =>array(tonumber(nvl($p_excedente,0)),                    B_NUMERIC,      18,2),
+                   'p_reajuste'                  =>array(tonumber(nvl($p_reajuste,0)),                     B_NUMERIC,      18,2),
                    'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

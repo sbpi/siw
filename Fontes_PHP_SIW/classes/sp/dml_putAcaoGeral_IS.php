@@ -39,7 +39,7 @@ class dml_putAcaoGeral_IS {
                    'p_concluida'                 =>array(tvl($p_concluida),                                B_VARCHAR,         1),
                    'p_data_conclusao'            =>array(tvl($p_data_conclusao),                           B_DATE,           32),
                    'p_nota_conclusao'            =>array(tvl($p_nota_conclusao),                           B_VARCHAR,      2000),
-                   'p_custo_real'                =>array(tvl($p_custo_real),                               B_NUMERIC,      18,2),
+                   'p_custo_real'                =>array(tonumber(tvl($p_custo_real)),                     B_NUMERIC,      18,2),
                    'p_opiniao'                   =>array(tvl($p_opiniao),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($ano),                                        B_INTEGER,        32),
                    'p_programa'                  =>array(tvl($p_programa),                                 B_VARCHAR,         4),

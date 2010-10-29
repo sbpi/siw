@@ -15,7 +15,7 @@ class dml_putAtualizaEtapa {
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        32),
                    'p_usuario'                   =>array($p_usuario,                                       B_INTEGER,        32),
-                   'p_perc_conclusao'            =>array($p_perc_conclusao,                                B_DOUBLE,         32),
+                   'p_perc_conclusao'            =>array(toNumber($p_perc_conclusao),                      B_DOUBLE,         32),
                    'p_inicio_real'               =>array($p_inicio_real,                                   B_DATE,           32),
                    'p_fim_real'                  =>array($p_fim_real,                                      B_DATE,           32),
                    'p_situacao_atual'            =>array(tvl($p_situacao_atual),                           B_VARCHAR,      4000),

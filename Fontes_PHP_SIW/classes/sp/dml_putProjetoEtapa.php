@@ -23,7 +23,7 @@ class dml_putProjetoEtapa {
                    'p_ordem'                =>array(tvl($p_ordem),                        B_VARCHAR,         3),
                    'p_inicio'               =>array(tvl($p_inicio),                       B_DATE,           32),
                    'p_fim'                  =>array(tvl($p_fim),                          B_DATE,           32),
-                   'p_perc_conclusao'       =>array(tvl($p_perc_conclusao),               B_INTEGER,        32),
+                   'p_perc_conclusao'       =>array(toNumber(tvl($p_perc_conclusao)),     B_NUMERIC,      18,2),
                    'p_orcamento'            =>array(toNumber(tvl($p_orcamento)),          B_NUMERIC,      18,2),
                    'p_sq_pessoa'            =>array(tvl($p_sq_pessoa),                    B_INTEGER,        32),
                    'p_sq_unidade'           =>array(tvl($p_sq_unidade),                   B_INTEGER,        32),
