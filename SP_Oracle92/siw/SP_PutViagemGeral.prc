@@ -162,9 +162,7 @@ begin
       Update siw_solicitacao set
          solicitante      = p_cadastrador,
          cadastrador      = p_cadastrador,
-         descricao        = trim(p_descricao), 
-         inicio           = p_inicio,
-         fim              = p_fim,
+         descricao        = trim(p_descricao),
          ultima_alteracao = sysdate,
          sq_unidade       = p_unidade,
          sq_solic_pai     = Nvl(p_tarefa, p_projeto)
