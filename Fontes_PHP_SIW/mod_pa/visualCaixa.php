@@ -67,6 +67,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
       $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Guarda</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Destinação final</b></font></td>';
+      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Detalhamento do assunto</b></font></td>';
       $l_html.=chr(13).'     <tr valign="top" align="center">';
       $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
       $l_html.=chr(13).'       <td><font size=1><b>Nº</b></font></td>';
@@ -77,7 +78,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
       $w_linha = 6;
     } 
     if (nvl($w_pasta,'.')!=f($row,'pasta')) {
-      $l_html.=chr(13).'      <tr><td colspan=9 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>PASTA '.f($row,'pasta').'</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan=10 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>PASTA '.f($row,'pasta').'</b></td></tr>';
       $w_pasta = f($row,'pasta');
     }
     $l_html.=chr(13).'     <tr valign="top">';
@@ -90,11 +91,12 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_origem_resumido').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'prazo_guarda').'</font></td>';
     $l_html.=chr(13).'       <td title="'.f($row,'ds_final').'"><font size=1>'.f($row,'sg_final').'</font></td>';
+    $l_html.=chr(13).'       <td><font size=1>'.crlf2br(f($row,'detalhamento_assunto')).'</font></td>';
     $l_html.=chr(13).'     </tr>';
     $w_linha += 1;
   }
   $l_html.=chr(13).'     <tr valign="top">';
-  $l_html.=chr(13).'       <td colspan=8 align="right"><font size=1><b>Total da caixa</font></b></td>';
+  $l_html.=chr(13).'       <td colspan=9 align="right"><font size=1><b>Total da caixa</font></b></td>';
   $l_html.=chr(13).'       <td align="center"><b><font size=1>'.count($RS_Dados).'</font></b></td>';
   $l_html.=chr(13).'     </tr>';
   $l_html.=chr(13).'    </table>';

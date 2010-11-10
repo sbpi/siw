@@ -2041,8 +2041,9 @@ function NovaSenha() {
   $w_senha='nova'.date('is');
 
   // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
-  if ($w_tipo=='B') { $SQL = new db_updatePassword; $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD'); }
-  $SQL = new db_updatePassword; $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
+  $SQL = new db_updatePassword; 
+  if ($w_tipo=='B') $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
+  $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
 
   // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
   $w_html = '<HTML><HEAD><TITLE>Reinicialização de '.$w_texto_mail.'</TITLE></HEAD>'.chr(13);

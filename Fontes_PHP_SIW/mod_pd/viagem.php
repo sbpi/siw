@@ -530,13 +530,16 @@ function Inicial() {
         if ($_REQUEST['p_tamanho'] == 'N') {
           ShowHTML('        <td>' . Nvl(f($row, 'descricao'), '-') . '</td>');
         } else {
-          if (strlen(Nvl(f($row, 'descricao'), '-')) > 50)
-            $w_descricao = substr(Nvl(f($row, 'descricao'), '-'), 0, 50) . '...'; else
+          if (strlen(Nvl(f($row, 'descricao'), '-')) > 50) {
+            $w_descricao = substr(Nvl(f($row, 'descricao'), '-'), 0, strpos(f($row,'descricao'),' ',40 )) . '...'; 
+          } else {
             $w_descricao=Nvl(f($row, 'descricao'), '-');
-          if (f($row, 'sg_tramite') == 'CA')
+          }
+          if (f($row, 'sg_tramite') == 'CA') {
             ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . $w_descricao . '</strike></td>');
-          else
+          } else {
             ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_descricao . '</td>');
+          }
         }
         if ($P1 > 1)
           ShowHTML('        <td nowrap>' . f($row, 'nm_tramite') . '</td>');

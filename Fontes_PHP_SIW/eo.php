@@ -164,7 +164,7 @@ function Unidade() {
       Validate('w_nome','Nome','1','1','3','50','1','1');
       Validate('w_sigla','Sigla','1','1','1','20','1','1');
       Validate('w_ordem','Ordem','1','1','1','2','','1');
-      Validate('w_codigo','Código','1','','1','15','','1');
+      Validate('w_codigo','Código','1','','1','15','1','1');
       Validate('w_email','e-Mail','1','','3','60','1','1');
       Validate('w_sq_tipo_unidade','Tipo da unidade','SELECT','1','1','18','','1');
       Validate('w_sq_area_atuacao','Área de atuação','SELECT','1','1','18','','1');

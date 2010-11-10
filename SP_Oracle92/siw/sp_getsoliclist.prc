@@ -1302,6 +1302,8 @@ begin
                 b2.missao,            b2.valores,                    b2.visao_presente,
                 b2.visao_futuro,      b2.inicio as inicio_plano,     b2.fim as fim_plano,
                 b2.ativo as st_plano,
+                b8.sq_unidade sq_unidade_adm, b8.nome nm_unidade_adm, b8.sigla sg_unidade_adm,
+                b8.codigo as cd_unidade_adm,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
                 b.codigo_interno,
@@ -1335,6 +1337,7 @@ begin
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       left           join pe_plano             b2 on (b.sq_plano                 = b2.sq_plano)
+                      inner          join eo_unidade           b8 on (b.sq_unidade               = b8.sq_unidade)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
                                           )                    b4 on (b.sq_siw_solicitacao       = b4.sq_siw_solicitacao)
@@ -1428,10 +1431,12 @@ begin
                   instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
+                  instr(p_restricao,'MATRIC')  = 0 and
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
                  ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
+                  (instr(p_restricao,'MATRIC')  > 0    and b8.codigo      is not null) or
                   (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
                  )
                 );

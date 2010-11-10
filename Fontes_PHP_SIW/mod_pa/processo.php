@@ -1436,13 +1436,15 @@ function ArqSetorial() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
-    ShowHTML('  ATENÇÃO:<ul>');
-    ShowHTML('  <li>PROTOCOLOS JUNTADOS NÃO PODEM SER ENVIADOS.');
-    ShowHTML('  <li>Se o trâmite for para pessoa jurídica, não se esqueça de informar para qual unidade dessa entidade você está enviando.');
-    ShowHTML('  <li>Informe sua assinatura eletrônica e clique sobre o botão <i>Gerar Guia de Tramitação</i>.');
-    ShowHTML('  </ul></b></font></td>');
-    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    if(upper($par) != 'ARQSETORIAL'){
+      ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+      ShowHTML('  ATENÇÃO:<ul>');
+      ShowHTML('  <li>PROTOCOLOS JUNTADOS NÃO PODEM SER ENVIADOS.');
+      ShowHTML('  <li>Se o trâmite for para pessoa jurídica, não se esqueça de informar para qual unidade dessa entidade você está enviando.');
+      ShowHTML('  <li>Informe sua assinatura eletrônica e clique sobre o botão <i>Gerar Guia de Tramitação</i>.');
+      ShowHTML('  </ul></b></font></td>');
+    }
+    //// Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td colspan=2>');
     if (MontaFiltro('GET')>'') {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');

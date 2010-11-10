@@ -220,7 +220,7 @@ function Valida() {
         ScriptClose();
       } else {
         // Configura texto
-        if ($w_tipo=='B') $w_texto_mail = 'senha'; else $w_texto_mail = 'assinatura eletrônica';
+        if ($w_tipo=='B') $w_texto_mail = 'senha de acesso e assinatura eletrônica'; else $w_texto_mail = 'assinatura eletrônica';
 
         // Cria a nova senha, pegando a hora e o minuto correntes
         $w_senha='nova'.date('is');
@@ -298,13 +298,10 @@ function Valida() {
         } else {
           // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
           $db_updatePassword = new db_updatePassword;
-          if ($w_tipo=='B') {
-            $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
-          } else {
-            $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
-          }
+          if ($w_tipo=='B') $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
+          $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
 
-          ShowHTML('  alert(\'Sua '.$w_texto_mail.' foi recriada e enviada para '.$_SESSION['EMAIL'].'!\');');
+          ShowHTML('  alert(\'Reinicialização da '.$w_texto_mail.' executada com sucesso e enviada para '.$_SESSION['EMAIL'].'!\');');
         }
 
         ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');

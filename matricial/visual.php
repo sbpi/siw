@@ -24,6 +24,7 @@ ScriptClose();
     <LI><a href="default.htm">Volta ao menu principal</a></LI>
     <LI><a href="cadastro.php">Manipula cadastro de programas</a></LI>
     <LI><a href="indicador.php">Recupera quantitativos dos programas</a></LI>
+    <LI><a href="unidade.php">Recupera quantitativos das unidades</a></LI>
   </UL>
   <p>A exibição do relatório executivo de um programa deve ser feita através de uma chamada Internet, usando o método POST, passando os dados informados abaixo. O nome dos campos deve ser totalmente informado em letras minúsculas, tendo em vista o PHP ser uma linguagem case-sensitive.</p>
   <p><FONT COLOR="#BC3434"><B>ATENÇÃO: se for passado um código de programa que ainda não tenha sido criado no SIW-GP, a janela será aberta na tela padrão, ou seja, na mesa de trabalho.</FONT></b></p>

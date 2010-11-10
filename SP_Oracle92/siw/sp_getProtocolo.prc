@@ -97,6 +97,7 @@ begin
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao,
              b2.nome, b2.sigla,
+             b3.sigla as sg_tramite,
              c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
@@ -139,11 +140,13 @@ begin
                  left      join pa_caixa             ca on (c.sq_caixa              = ca.sq_caixa)
                    left    join eo_unidade           cb on (ca.sq_unidade           = cb.sq_unidade)
                  inner     join pa_documento_log     d  on (c.sq_siw_solicitacao    = d.sq_siw_solicitacao and
-                                                            d.recebimento           is not null
+                                                            (p_restricao   = 'PACLASSIF' or 
+                                                             (p_restricao <> 'PACLASSIF' and d.recebimento is not null)
+                                                            )
                                                            )
                    inner   join (select sq_siw_solicitacao, max(sq_documento_log) chave 
                                    from pa_documento_log
-                                  where  0 = instr(resumo,'*** RECUSADO')
+                                  where  0 = instr(coalesce(resumo,'-'),'*** RECUSADO')
                                  group by sq_siw_solicitacao
                                 )                    dc on (d.sq_documento_log      = dc.chave)
                    inner   join eo_unidade           d2 on (d.unidade_origem        = d2.sq_unidade)
@@ -189,7 +192,7 @@ begin
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
-              (p_restricao = 'PADTRANSF'  and (d5.cliente is not null and c.data_setorial is null)) or
+              (p_restricao = 'PADTRANSF'  and (b3.sigla <> 'CA' and d5.cliente is not null and c.data_setorial is null)) or
               (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and c.data_setorial is not null and (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
               (p_restricao = 'PACLASSIF'  and b3.sigla <> 'CA' and (c5.provisorio = 'S' or p_numero is not null or p_unid_posse is not null or p_ini is not null)) or
@@ -265,7 +268,7 @@ begin
                                      from pa_documento_log           x
                                           inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                     where y.sq_menu = p_menu
-                                      and 0         = instr(x.resumo,'*** RECUSADO')
+                                      and 0         = instr(coalesce(x.resumo,'-'),'*** RECUSADO')
                                     group by x.sq_siw_solicitacao
                                   )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
                  left        join (select x.sq_documento_pai, count(*) as qtd
@@ -307,7 +310,7 @@ begin
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
          and (p_despacho   is null or (p_despacho    is not null and 
-                                       ((b4.ativo = 'S' and (d1.sigla <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and p_numero is not null))) or 
+                                       ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and p_numero is not null))) or 
                                         (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null)
                                        ) and
                                        ((p_despacho not in (a1.despacho_autuar,

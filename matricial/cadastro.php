@@ -34,6 +34,7 @@ ShowHTML('<link rel="stylesheet" type="text/css" href="xPandMenu.css">');
   <UL>
     <LI><a href="default.htm">Volta ao menu principal</a></LI>
     <LI><a href="indicador.php">Recupera quantitativos dos programas</a></LI>
+    <LI><a href="unidade.php">Recupera quantitativos das unidades</a></LI>
     <LI><a href="visual.php">Abre SIW-GP em outra janela, exibindo relatório executivo dos projetos de um programa</a></LI>
   </UL>
   <p>A manipulação de programas no SIW-GP deve ser feita através de uma chamada Internet, usando o método POST, passando os dados informados abaixo. O nome dos campos deve ser totalmente informado em letras minúsculas, tendo em vista o PHP ser uma linguagem case-sensitive. Se o programa existir, seu nome será alterado; caso contrário, será incluído.</p>
