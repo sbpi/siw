@@ -29,7 +29,7 @@ begin
               'Indicação do assunto: '||b.codigo
              from siw_solicitacao a,
                   pa_assunto      b
-            where (a.sq_siw_solicitacao = p_chave or a.sq_solic_pai = p_chave)
+            where a.sq_siw_solicitacao = p_chave
               and b.sq_assunto = p_assunto
          );
       End If;

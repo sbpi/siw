@@ -737,7 +737,7 @@ begin
                         left         join co_pessoa            d2 on (d.outra_parte              = d2.sq_pessoa)
                           left       join co_pessoa_fisica    d21 on (d2.sq_pessoa               = d21.sq_pessoa)
                           left       join co_pessoa_juridica  d22 on (d2.sq_pessoa               = d22.sq_pessoa)
-                        left         join co_pessoa_conta      d4 on (d.outra_parte              = d4.sq_pessoa)
+                        left         join co_pessoa_conta      d4 on (d.outra_parte              = d4.sq_pessoa and d4.padrao = 'S')
                           left       join co_agencia           d5 on (d4.sq_agencia              = d5.sq_agencia)
                           left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                         left         join co_pessoa            d3 on (d.preposto                 = d3.sq_pessoa)
