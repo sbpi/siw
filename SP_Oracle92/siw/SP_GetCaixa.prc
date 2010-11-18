@@ -34,8 +34,9 @@ begin
           where a.cliente    = p_cliente
             and (p_chave     is null or (p_chave     is not null and a.sq_caixa         = p_chave  ))
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
-            and (p_numero    is null or (p_numero    is not null and a.numero           = p_numero ))
+            and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
+            and (p_ini       is null or (p_ini       is not null and (a.intermediario   between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
             and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
                  (p_restricao = 'TRAMITE' and a.arquivo_data is null and c.qtd > 0) or
@@ -65,6 +66,7 @@ begin
                 c5.fase_corrente_anos, c5.fase_intermed_anos, c5.fase_final_anos,
                 c7.nome as nm_especie,   c7.sigla as sg_natureza,    c7.ativo as st_natureza,
                 ca.sigla as sg_final,    ca.descricao as ds_final,
+                d.descricao as detalhamento_assunto,
                 d.inicio, retornaLimiteProtocolo(d.sq_siw_solicitacao) as prazo_guarda,
                 d1.nome as nm_unid_origem, d1.sigla as sg_unid_origem,
                 case d2.ativo 
