@@ -1,6 +1,7 @@
 create or replace procedure SP_GetCaixa
    (p_chave       in  number   default null,
     p_cliente     in  number,
+    p_usuario     in  number,
     p_unidade     in  number   default null,
     p_numero      in  number   default null,
     p_assunto     in  varchar2 default null,
@@ -13,7 +14,7 @@ create or replace procedure SP_GetCaixa
     p_result      out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' or p_restricao = 'CENTRAL' Then
+   If p_restricao is null or p_restricao = 'PACAIXA' or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' or p_restricao = 'CENTRAL' Then
       -- Recupera os grupos da caixa
       open p_result for 
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
@@ -37,7 +38,19 @@ begin
             and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
             and (p_ini       is null or (p_ini       is not null and (a.intermediario   between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
-            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
+            and (coalesce(p_restricao,'null') not in ('PACAIXA','PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
+                 (p_restricao = 'PACAIXA' and (a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_usuario
+                                                                UNION
+                                                                select sq_unidade from eo_unidade_resp where sq_pessoa = p_usuario and fim is null
+                                                                UNION
+                                                                select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
+                                                                 UNION
+                                                                select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
+                                                               )
+                                               or 0 < (select count(*) from sg_autenticacao where gestor_sistema = 'S' and sq_pessoa = p_usuario)
+                                               or 0 < (select count(*) from sg_pessoa_modulo x join siw_modulo y on (x.sq_modulo = y.sq_modulo and y.sigla = 'PA') where x.sq_pessoa = p_usuario)
+                                              )
+                 ) or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
                  (p_restricao = 'TRAMITE' and a.arquivo_data is null and c.qtd > 0) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or

@@ -1764,6 +1764,7 @@ begin
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, b.codigo_interno,
+                b3.sigla as sg_modulo, 
                 case when d.sq_siw_solicitacao is not null 
                      then b.titulo
                      else case when e.sq_siw_solicitacao is not null
@@ -1843,6 +1844,7 @@ begin
                 )
          UNION
          select b.sq_siw_solicitacao, b.codigo_interno,
+                b3.sigla as sg_modulo, 
                 case when d.sq_siw_solicitacao is not null 
                      then b.titulo
                      else case when e.sq_siw_solicitacao is not null
