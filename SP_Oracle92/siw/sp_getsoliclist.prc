@@ -1600,7 +1600,7 @@ begin
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and d.prefixo            = p_pais))
-            and (p_regiao         is null or (p_regiao      is not null and d.numero_documento   =  p_regiao))
+            and (p_regiao         is null or (p_regiao      is not null and d.numero_documento   = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and d.ano                = p_cidade))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.unidade_int_posse  = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
@@ -1620,6 +1620,7 @@ begin
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.ativo = 'S' and b.fim+1-sysdate<0))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d5.codigo like p_sq_acao_ppa||'%'))
             and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)
                                                                                    from pa_documento_interessado x
                                                                                         inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)

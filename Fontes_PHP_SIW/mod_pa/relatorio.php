@@ -1,5 +1,4 @@
 <?php
-
 header('Expires: ' . -1500);
 session_start();
 $w_dir_volta = '../';
@@ -151,7 +150,7 @@ function Tramitacao() {
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
                     $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia,
-                    $p_ini, $p_fim, 2, null);
+                    $p_ini, $p_fim, 2, null, null, null, null, null, null, null, null);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'ano_guia', 'desc', 'nu_guia', 'asc', 'protocolo', 'asc');
@@ -311,7 +310,7 @@ function Transferencia() {
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $SG);
+    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $SG);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'sg_unidade', 'asc', 'numero', 'asc', 'pasta', 'asc', 'cd_assunto', 'asc', 'protocolo', 'asc');
@@ -491,7 +490,8 @@ function Etiqueta() {
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
-                    $p_prefixo, $p_numero, $p_ano, null, null, null, null, null, null, 2, null);
+                    $p_prefixo, $p_numero, $p_ano, null, null, null, null, null, null, 2, null, null, null, null, 
+                    null, null, null, null);
     $RS = SortArray($RS, 'sg_unidade', 'asc', 'ano_guia', 'desc', 'nu_guia', 'asc', 'protocolo', 'asc');
   }
   Cabecalho();
@@ -732,7 +732,8 @@ function EmitirGF() {
   $w_formato = $_REQUEST['w_formato'];
 
   if ($w_formato == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
+    HeaderWord('PORTRAIT');
+    BodyOpenWord(null);
   } else {
     Cabecalho();
     BodyOpen(null);

@@ -25,16 +25,12 @@ function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,
             null,null,null,$l_fase,null,null,null,null,null);    
   }
   $RS = SortArray($RS,'titulo','asc', 'inicio', 'asc');
-  if (!isset($hint)) 
-    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  else
-    ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'TITLE="'.$hint.'"' : '').'><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0))
-      ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo').' ('.f($row,'codigo_interno').')');
-    else
-      ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo').' ('.f($row,'codigo_interno').')');
+    if (f($row,'sg_modulo')=='AC') {
+      ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" '.((nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? 'SELECTED' : '').'>'.f($row,'titulo').' ('.f($row,'codigo_interno').')');
+    }
   } 
   ShowHTML('          </select>');
 } 

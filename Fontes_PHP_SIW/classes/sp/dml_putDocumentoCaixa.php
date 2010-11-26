@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putDocumentoCaixa {
    function getInstanceOf($dbms, $p_menu, $chave, $usuario, $p_caixa, $p_pasta) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoCaixa';
-     $params=array('p_menu'               =>array(tvl($p_local),                            B_INTEGER,        32),
+     $params=array('p_menu'               =>array(tvl($p_menu),                             B_INTEGER,        32),
                    'p_chave'              =>array(tvl($chave),                              B_INTEGER,        32),
                    'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32),
                    'p_caixa'              =>array(tvl($p_caixa),                            B_INTEGER,        32),

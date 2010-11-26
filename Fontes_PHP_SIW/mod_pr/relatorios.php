@@ -1746,7 +1746,7 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
           if ($l_tipo!='WORD') {
             $l_pacote .= chr(13).     ExibeEtapa('V',f($row,'sq_siw_solicitacao'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')),$TP,$SG).'</td>';
           } else {
-            $l_pacote .= chr(13).'  '.f($row,'sq_siw_solicitacao').'</td>';
+            $l_pacote .= chr(13).'  '.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'</td>';
           }
           $l_pacote .= chr(13).'        <td>'.f($row,'titulo').'</a>';
           $l_pacote .= chr(13).'        <td align="center">'.formataDataEdicao(f($row,'inicio_previsto'),5).'</td>';

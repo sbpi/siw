@@ -53,7 +53,7 @@ function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
 
   // Verifica se já foram inseridos os itens do pedido
   if (count($l_rs_item)==0) {
-    $l_erro.='<li>Informe pelo um item no pedido de compra.';
+    $l_erro.='<li>Informe pelo menos um item no pedido de compra.';
     $l_tipo=0; 
   } else {
     // Verifica se foram inseridos itens inativos

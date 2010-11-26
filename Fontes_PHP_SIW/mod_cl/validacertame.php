@@ -41,7 +41,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   $sql = new db_getCLSolicItem; $l_rs_item = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
   // Verifica se já foi inserido os itens na licitacao
   if (count($l_rs_item)==0) {
-    $l_erro.='<li>Informe pelo um item para licitação.';
+    $l_erro.='<li>Informe pelo menos um item para licitação.';
     $l_tipo=0; 
   }
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial

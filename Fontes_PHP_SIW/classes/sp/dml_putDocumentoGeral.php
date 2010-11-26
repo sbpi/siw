@@ -12,8 +12,8 @@ class dml_putDocumentoGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_copia, $p_menu, $p_unidade, $p_unid_autua, $p_solicitante, 
         $p_cadastrador, $p_solic_pai, $p_codigo, $p_processo, $p_circular, $p_especie_documento, $p_doc_original, 
         $p_inicio, $p_volumes, $p_dt_autuacao, $p_copias, $p_natureza_documento, $p_fim, $p_data_recebimento, 
-        $p_interno, $p_pessoa_origem, $p_pessoa_interes, $p_cidade, $p_assunto, $p_descricao, $p_chave_nova, 
-        $p_codigo_interno) {
+        $p_interno, $p_pessoa_origem, $p_pessoa_interes, $p_cidade, $p_assunto, $p_descricao, $p_observacao,
+        $p_chave_nova, $p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoGeral';
      $params=array('p_operacao'                 =>array($operacao,                                  B_VARCHAR,         1),
                    'p_chave'                    =>array(tvl($p_chave),                              B_INTEGER,        32),
@@ -42,6 +42,7 @@ class dml_putDocumentoGeral {
                    'p_cidade'                   =>array(tvl($p_cidade),                             B_INTEGER,        32),
                    'p_assunto'                  =>array(tvl($p_assunto),                            B_INTEGER,        32),
                    'p_descricao'                =>array(tvl($p_descricao),                          B_VARCHAR,      2000),
+                   'p_observacao'               =>array(tvl($p_observacao),                         B_VARCHAR,      2000),
                    'p_chave_nova'               =>array(&$p_chave_nova,                             B_INTEGER,        32),
                    'p_codigo_interno'           =>array(&$p_codigo_interno,                         B_VARCHAR,        30)
                   );

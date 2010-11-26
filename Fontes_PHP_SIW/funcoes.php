@@ -191,7 +191,7 @@ function base64encodeIdentificada($string){
 // -------------------------------------------------------------------------
 function headerWord($p_orientation='LANDSCAPE') {
   extract($GLOBALS);
-  header("Cache-Control: no-cache, must-revalidate",false);
+  header('Cache-Control: no-cache, must-revalidate',false);
   header('Content-type: application/msword',false);
   header('Content-Disposition: attachment; filename=arquivo.doc');
   ShowHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office" ');
@@ -3863,8 +3863,8 @@ function BodyOpenClean($cProperties) {
 function BodyOpenMail($cProperties=null) {
   extract($GLOBALS);
   $l_html='';
-  $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">'.chr(13);
-  $l_html=$l_html.'<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
+  $l_html.='<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">'.chr(13);
+  $l_html.='<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
     'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
     'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
     'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.chr(13);
@@ -3875,8 +3875,12 @@ function BodyOpenMail($cProperties=null) {
 function BodyOpenWord($cProperties=null) {
   extract($GLOBALS);
   $l_html='';
-  $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandPrint.css">'.chr(13);
-  $l_html=$l_html.'<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
+  $l_html.='<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ';
+  $l_html.='<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />';
+  $l_html.='<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>';
+  $l_html.='<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
+  $l_html.='<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandPrint.css">'.chr(13);
+  $l_html.='<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
     'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
     'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
     'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.chr(13);

@@ -25,7 +25,14 @@ begin
   If to_char(sysdate,'yyyy') > w_reg.ano_corrente Then
      w_ano        := to_char(sysdate,'yyyy');
      w_sequencial := 1;
-  Elsif to_char(p_data,'yyyy') < 2009 Then
+
+     -- Atualiza a tabela de parâmetros
+     Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
+
+     -- Atualiza a tabela de unidades
+     Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = w_unid_pai;
+
+  Elsif to_char(p_data,'yyyy') <= 2009 Then
      -- Configura o ano do acordo para o ano informado na data de início
      -- e usa um sequencial qualquer, que será ajustado depois
      w_ano        := to_number(to_char(p_data,'yyyy'));
@@ -45,13 +52,11 @@ begin
            and a.cliente          = w_cliente;
         if w_existe = 0 then exit; end if;
      end loop;
+
+     -- Atualiza a tabela de unidades
+     Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = w_unid_pai;
+
   End If;
-
-  -- Atualiza a tabela de parâmetros
-  Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
-
-  -- Atualiza a tabela de unidades
-  Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = w_unid_pai;
 
   --  Retorna o sequencial a ser usado no lançamento
   p_numero_doc := w_unid.prefixo||'.'||substr(1000000+w_sequencial,2,6)||'/'||w_ano;

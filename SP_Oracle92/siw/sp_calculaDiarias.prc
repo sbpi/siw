@@ -1,6 +1,7 @@
 create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varchar2 default null, p_tipo in varchar2 default null) is
   i           number(18);
   w_cont      number(18) := 0;
+  w_desloc    number(18) := 0;
   w_existe    number(18);
   w_atual     date;
   w_sq_diaria number(18);
@@ -84,7 +85,8 @@ begin
   End If;
    
   -- Recupera o início e o fim da viagem
-  select min(trunc(a.saida)), max(trunc(a.chegada)), to_number(to_char(min(a.saida),'hh24mi')) into w_inicio, w_fim, w_ini_hora
+  select min(trunc(a.saida)), max(trunc(a.chegada)), to_number(to_char(min(a.saida),'hh24mi')), count(a.sq_deslocamento)
+    into w_inicio,            w_fim,                 w_ini_hora,                                w_desloc
     from pd_deslocamento        a
          join   siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao 
            join siw_tramite     c on b.sq_siw_tramite     = c.sq_siw_tramite 
@@ -95,7 +97,6 @@ begin
   for crec in c_deslocamentos (p_chave, w_fim) loop 
       w_ultimo := crec.sq_deslocamento; 
       w_compromisso_retorno := crec.compromisso;
-      w_cont := w_cont + 1;
   end loop;
   
   -- Zera as quantidades de diárias da solicitação
@@ -146,7 +147,7 @@ begin
                   and (d.sq_diaria is null or (d.sq_diaria is not null and d.diaria = 'S'))
                   and w_inicio = trunc(a.saida) 
                   and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
-               If w_existe <= 1 or w_existe = (i+1) or w_inicio = w_fim Then
+               If w_existe <= 1 or w_existe = (i+1) or w_inicio = w_fim or w_desloc = 2 Then
                   If crec.diaria_inicio = 'S' Then
                      If crec.destino_nacional = 'N' Then 
                         diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;

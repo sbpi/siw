@@ -119,10 +119,11 @@ $p_uf            = upper($_REQUEST['p_uf']);
 $p_cidade        = upper($_REQUEST['p_cidade']);
 $p_usu_resp      = upper($_REQUEST['p_usu_resp']);
 $p_uorg_resp     = upper($_REQUEST['p_uorg_resp']);
-$p_processo       = upper($_REQUEST['p_processo']);
+$p_processo      = upper($_REQUEST['p_processo']);
 $p_prazo         = upper($_REQUEST['p_prazo']);
 $p_fase          = explodeArray($_REQUEST['p_fase']);
 $p_sqcc          = upper($_REQUEST['p_sqcc']);
+$p_sq_acao_ppa   = upper($_REQUEST['p_sq_acao_ppa']);
 $p_agrega        = upper($_REQUEST['p_agrega']);
 $p_tamanho       = upper($_REQUEST['p_tamanho']);
 $p_sq_menu_relac = upper($_REQUEST['p_sq_menu_relac']);
@@ -232,8 +233,9 @@ function Gerencial() {
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_proponente>'') { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
-    if ($p_assunto>'')    { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
-    if ($p_processo>'')    { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
+    if ($p_sq_acao_ppa>''){ $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Código do assunto <td>[<b>'.$p_sq_acao_ppa.'</b>]'; }
+    if ($p_assunto>'')    { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Detalhamento do assunto <td>[<b>'.$p_assunto.'</b>]'; }
+    if ($p_processo>'')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
     if ($p_ini_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data criação/recebimento entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
     if ($p_fim_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite da tramitação entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
     if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
@@ -243,8 +245,8 @@ function Gerencial() {
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null, 
-        $p_empenho, $p_processo);
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, 
+        $p_sq_acao_ppa, null, $p_empenho, $p_processo);
 
     switch ($p_agrega) {
       case 'GRPAETAPA':
@@ -332,7 +334,8 @@ function Gerencial() {
       Validate('p_regiao','Sequencial','','','1','6','','0123456789');
       Validate('p_cidade','Ano','','','1','4','','0123456789');
       Validate('p_proponente','Origem externa','','','2','90','1','');
-      Validate('p_assunto','Detalhamento','','','2','90','1','1');
+      Validate('p_sq_acao_ppa','Código do assunto','','','1','10','1','1');
+      Validate('p_assunto','Detalhamento do assunto','','','2','90','1','1');
       Validate('p_processo','Interessado','','','2','90','1','1');
       Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
@@ -912,7 +915,9 @@ function Gerencial() {
     SelecaoUnidade('<U>O</U>rigem interna:','O',null,$p_unidade,null,'p_unidade',null,null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b><U>A</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="'.$p_assunto.'"></td>');
+    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="'.$p_sq_acao_ppa.'"></td>');
+    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="'.$p_assunto.'"></td>');
+    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" '.$w_Disabled.' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="'.$p_processo.'"></td>');
     ShowHTML('        </tr></table>');
     //SelecaoPessoa('E<u>x</u>ecutor:','X','Selecione o executor da demanda na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');

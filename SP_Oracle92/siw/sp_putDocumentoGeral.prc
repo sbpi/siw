@@ -26,6 +26,7 @@ create or replace procedure sp_putDocumentoGeral
     p_cidade              in  number   default null,
     p_assunto             in  number   default null,
     p_descricao           in  varchar2 default null,
+    p_observacao          in  varchar2 default null,
     p_chave_nova          out number,
     p_codigo_interno      in out varchar2
    ) is
@@ -208,7 +209,7 @@ begin
          (select 
              sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          sysdate,              'N',
-             'Cancelamento'
+             'Cancelamento'||case when p_observacao is not null then '. Observação: '||p_observacao else '' end
             from siw_solicitacao a
            where a.sq_siw_solicitacao = p_chave
          );

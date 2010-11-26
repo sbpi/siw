@@ -123,8 +123,8 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 *          $l_tipo  = 0;
 *       } 
 */
-    if (f($l_rs_tramite,'sigla')=='CI' || f($l_rs_tramite,'sigla')=='DF' || f($l_rs_tramite,'sigla')=='AE') {
-          // Cadastramento inicial, cotação de viagem e emissão de bilhetes deve verificar deslocamentos e diárias
+    if (f($l_rs_tramite,'sigla')=='CI') {
+          // Cadastramento inicial
 
         if(f($l_rs_solic,'passagem')=='N'){
           $l_erro1 = 0;

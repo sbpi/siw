@@ -138,6 +138,8 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } 
       $l_html.=chr(13).'      <tr valign="top"><td><b>Período:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Categoria da diária:</b></td><td>'.Nvl(f($RS,'nm_diaria'),'---').' </b></td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b></td><td>'.Nvl(f($RS,'nm_hospedagem'),'---').' </b></td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b></td><td>'.Nvl(f($RS,'nm_veiculo'),'---').' </b></td></tr>';
       if (f($RS,'internacional')=='N') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Diária em fim de semana:</b></td><td>'.retornaSimNao(f($RS,'diaria_fim_semana')).' </b></td></tr>';
       }
@@ -1493,16 +1495,24 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $i             = 1;
         $w_total       = 0;
         foreach ($RSF as $row) {
-          if (f($row,'sigla')=='FNREVENT') {
-            $w_total       -= f($row,'valor');
-          } else {
-            $w_total       += f($row,'valor');
+          $soma = false;
+          if (f($row,'sg_tramite')=='AT' || strpos(f($row,'descricao'),'(REAL)')!==false  || strpos(f($row,'descricao'),'(')===false) $soma = true;
+          if ($soma) {
+            if (f($row,'sigla')=='FNREVENT') {
+              $w_total       -= f($row,'valor');
+            } else {
+              $w_total       += f($row,'valor');
+            }
           }
           $l_html.=chr(13).'        <tr valign="middle">';
           if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N').'</td>';
           else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
-          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          if ($soma) {
+            $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          } else {
+            $l_html.=chr(13).'           <td align="right">&nbsp;</td>';
+          }
           $l_html.=chr(13).'           <td>'.f($row,'nm_tramite').'</td>';
           $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'conclusao')),'&nbsp;').'</td>';
           $l_html.=chr(13).'        </tr>';

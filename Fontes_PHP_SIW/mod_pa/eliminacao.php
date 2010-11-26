@@ -500,7 +500,7 @@ function Inicial() {
     } 
     ShowHTML('      <tr><td valign="top" colspan="2">');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    if ($P1!=1 || $O=='C') {
+    if ($P1!=1 || strpos('CP',$O)!==false) {
       // Se não for cadastramento ou se for cópia
       ShowHTML('   <tr valign="top">');
       ShowHTML('     <td valign="top"><b>Número do <U>p</U>edido:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_codigo" size="20" maxlength="60" value="'.$p_codigo.'"></td>');
