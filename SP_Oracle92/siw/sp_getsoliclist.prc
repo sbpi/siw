@@ -1620,7 +1620,7 @@ begin
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.ativo = 'S' and b.fim+1-sysdate<0))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d5.codigo like p_sq_acao_ppa||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and b.sq_solic_pai is null and ((instr(p_sq_acao_ppa,'#') = 0 and d5.codigo like p_sq_acao_ppa||'%') or (instr(p_sq_acao_ppa,'#') > 0 and d5.codigo = replace(p_sq_acao_ppa,'#','')))))
             and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)
                                                                                    from pa_documento_interessado x
                                                                                         inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)
@@ -1646,7 +1646,7 @@ begin
                  ) -- Eliminação
                 )
             and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
-                 ((p_restricao = 'GRPACC'      and b.sq_cc             is not null)   or 
+                 ((p_restricao = 'GRPACC'      and d5.codigo           is not null)   or 
                   (p_restricao = 'GRPAPRIO'    and k1.sq_tipo_despacho is not null)   or 
                   (p_restricao = 'GRPAPROP'    and d.pessoa_origem     is not null)   or 
                   (p_restricao = 'GRPARESPATU' and b.executor          is not null)   or

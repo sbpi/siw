@@ -271,7 +271,7 @@ function Gerencial() {
         break;
       case 'GRPACC':
         $w_TP = $TP.' - Por classificação';
-        $RS1  = SortArray($RS1,'sg_cc','asc');
+        $RS1  = SortArray($RS1,'cd_assunto','asc');
         break;
       case 'GRPASETOR':
         $w_TP = $TP.' - Por Unidade de posse';
@@ -422,7 +422,7 @@ function Gerencial() {
           case 'GRPAPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case 'GRPARESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
           case 'GRPARESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
-          case 'GRPACC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
+          case 'GRPACC':        ShowHTML('      document.Form.p_sq_acao_ppa.value=filtro+"#";');    break;
           case 'GRPASETOR':     ShowHTML('      document.Form.p_uorg_resp.value=filtro;');      break;
           case 'GRPAPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GRPALOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
@@ -430,12 +430,12 @@ function Gerencial() {
         ShowHTML('    }');
         switch ($p_agrega) {
           case 'GRPAETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');       break;
-          case 'GRPAPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');           break;
+          case 'GRPAPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');       break;
           case 'GRPAPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');     break;
           case 'GRPARESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');   break;
           case 'GRPARESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
-          case 'GRPACC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');                 break;
-          case 'GRPASETOR':     ShowHTML('    else document.Form.p_uorg_resp.value=\''.$_REQUEST['p_uorg_resp'].'\';');           break;
+          case 'GRPACC':        ShowHTML('    else document.Form.p_sq_acao_ppa.value=\''.$_REQUEST['p_sq_acao_ppa'].'+"#"\';');   break;
+          case 'GRPASETOR':     ShowHTML('    else document.Form.p_uorg_resp.value=\''.$_REQUEST['p_uorg_resp'].'\';');       break;
           case 'GRPAPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
           case 'GRPALOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
         } 
@@ -470,7 +470,7 @@ function Gerencial() {
           case 'GRPAPROP':      if ($_REQUEST['p_proponente']=='')  ShowHTML('<input type="Hidden" name="p_proponente" value="">');   break;
           case 'GRPARESP':      if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
           case 'GRPARESPATU':   if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
-          case 'GRPACC':        if ($_REQUEST['p_sqcc']=='')        ShowHTML('<input type="Hidden" name="p_sqcc" value="">');         break;
+          case 'GRPACC':        if ($_REQUEST['p_sq_acao_ppa']=='') ShowHTML('<input type="Hidden" name="p_sq_acao_ppa" value="">');  break;
           case 'GRPASETOR':     if ($_REQUEST['p_uorg_resp']=='')   ShowHTML('<input type="Hidden" name="p_uorg_resp" value="">');    break;
           case 'GRPAPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
           case 'GRPALOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
@@ -620,17 +620,17 @@ function Gerencial() {
             } 
             break;
           case 'GRPACC':
-            if ($w_nm_quebra!=f($row,'sg_cc')) {
+            if ($w_nm_quebra!=f($row,'cd_assunto')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha = $w_linha + 1;
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'cd_assunto').' - '.f($row,'ds_assunto'));
               } 
-              $w_nm_quebra  = f($row,'sg_cc');
-              $w_chave      = f($row,'sq_cc');
+              $w_nm_quebra  = f($row,'cd_assunto');
+              $w_chave      = f($row,'cd_assunto');
               $w_qt_quebra  = 0;
               $t_solic      = 0;
               $t_cad        = 0;
@@ -762,7 +762,7 @@ function Gerencial() {
             case 'GRPAPROP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_pessoa_origem'));  break;
             case 'GRPARESP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));          break;
             case 'GRPARESPATU':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));           break;
-            case 'GRPACC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));             break;
+            case 'GRPACC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'cd_assunto'));        break;
             case 'GRPASETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_posse'));  break;
             case 'GRPAPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_tipo_despacho'));  break;
             case 'GRPALOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
@@ -835,9 +835,7 @@ function Gerencial() {
     ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Apresentação</td>');
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
-    //if (f($RS_Menu,'solicita_cc')=='S') {
-    //  if ($p_agrega=='GRPACC')      ShowHTML('          <option value="GRPACC" selected>Classificação');              else ShowHTML('          <option value="GRPACC">Classificação');
-    //} 
+    if ($p_agrega=='GRPACC')      ShowHTML('          <option value="GRPACC" selected>Classificação');              else ShowHTML('          <option value="GRPACC">Classificação');
     //if ($SG=='PROJETO') {
     //  if ($p_agrega=='GRPAETAPA')   ShowHTML('          <option value="GRPAETAPA" selected>Etapa de projeto');        else ShowHTML('          <option value="GRPAETAPA">Etapa de projeto');
     //} 
