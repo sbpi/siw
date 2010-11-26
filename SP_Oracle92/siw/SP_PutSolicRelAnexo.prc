@@ -3,6 +3,7 @@ create or replace procedure SP_PutSolicRelAnexo
     p_cliente             in number,
     p_chave               in  number   default null,
     p_chave_aux           in  number   default null,
+    p_tipo_reg            in varchar2  default null,
     p_nome                in varchar2  default null,
     p_descricao           in varchar2  default null,
     p_caminho             in varchar2  default null,
@@ -24,9 +25,9 @@ begin
         
       -- Insere registro em pd_missao_relatorio
       insert into pd_missao_relatorio
-        (sq_siw_solicitacao, sq_siw_arquivo)
+        (sq_siw_solicitacao, sq_siw_arquivo, tipo)
       values
-        (p_chave, w_chave);
+        (p_chave, w_chave, p_tipo_reg);
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de arquivos
       update siw_arquivo

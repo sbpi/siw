@@ -2,6 +2,7 @@ create or replace procedure SP_GetSolicRelAnexo
    (p_chave     in number,
     p_chave_aux in number   default null,
     p_cliente   in number,
+    p_tipo      in varchar2,
     p_result    out sys_refcursor
    ) is
 begin
@@ -14,6 +15,7 @@ begin
              inner join siw_arquivo b on (a.sq_siw_arquivo = b.sq_siw_arquivo)
        where a.sq_siw_solicitacao = p_chave
          and b.cliente            = p_cliente
+         and a.tipo               = p_tipo
          and ((p_chave_aux        is null) or (p_chave_aux is not null and b.sq_siw_arquivo = p_chave_aux));
 End SP_GetSolicRelAnexo;
 /
