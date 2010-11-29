@@ -494,6 +494,7 @@ function Menu() {
         $w_ano_corrente         = f($RS,'ano_corrente');
         $w_prefixo              = f($RS,'prefixo');
         $w_sufixo               = f($RS,'sufixo');
+        $w_cancela_sem_tramite  = f($RS,'cancela_sem_tramite');
       } elseif ($w_troca>'' && $O!='E') {
         $w_sq_menu_pai          = $_REQUEST['w_sq_menu_pai'];
         $w_sq_servico           = $_REQUEST['w_sq_servico'];
@@ -541,6 +542,7 @@ function Menu() {
         $w_ano_corrente         = $_REQUEST['w_ano_corrente'];
         $w_prefixo              = $_REQUEST['w_prefixo'];
         $w_sufixo               = $_REQUEST['w_sufixo'];
+        $w_cancela_sem_tramite  = $_REQUEST['w_cancela_sem_tramite'];
       } 
 
       if ($O=='I' || $O=='A') {
@@ -637,6 +639,8 @@ function Menu() {
     ShowHTML('     document.Form.w_como_funciona.value=\'\';');
     ShowHTML('     document.Form.w_controla_ano[0].checked=false;');
     ShowHTML('     document.Form.w_controla_ano[1].checked=false;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[0].checked=false;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[1].checked=false;');
     ShowHTML('     document.Form.w_sq_unidade_executora.disabled=true;');
     ShowHTML('     document.Form.w_emite_os[0].disabled=true;');
     ShowHTML('     document.Form.w_emite_os[1].disabled=true;');
@@ -665,6 +669,8 @@ function Menu() {
     ShowHTML('     document.Form.w_pede_justificativa[1].disabled=true;');
     ShowHTML('     document.Form.w_controla_ano[0].disabled=true;');
     ShowHTML('     document.Form.w_controla_ano[1].disabled=true;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[0].disabled=true;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[1].disabled=true;');
     ShowHTML('     document.Form.w_como_funciona.disabled=true;');
     ShowHTML('     document.Form.w_numeracao.disabled=true;');
     if ($w_numeracao==1) {
@@ -706,6 +712,8 @@ function Menu() {
     ShowHTML('     document.Form.w_como_funciona.disabled=false;');
     ShowHTML('     document.Form.w_controla_ano[0].disabled=false;');
     ShowHTML('     document.Form.w_controla_ano[1].disabled=false;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[0].disabled=false;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[1].disabled=false;');
     ShowHTML('     document.Form.w_sq_unidade_executora.selectedIndex=0;');
     ShowHTML('     document.Form.w_emite_os[1].checked=true;');
     ShowHTML('     document.Form.w_envio[0].checked=true;');
@@ -720,6 +728,7 @@ function Menu() {
     ShowHTML('     document.Form.w_pede_justificativa[0].checked=true;');
     ShowHTML('     document.Form.w_como_funciona.value=\'\';');
     ShowHTML('     document.Form.w_controla_ano[1].checked=true;');
+    ShowHTML('     document.Form.w_cancela_sem_tramite[0].checked=true;');
     ShowHTML('     document.Form.w_numeracao.disabled=false;');
     if ($w_numeracao==1) {
       ShowHTML('     document.Form.w_sequencial.disabled=false;');
@@ -1193,6 +1202,15 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="N"> Não');
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="N" checked> Não');
+    } 
+    
+    ShowHTML('          <tr><td colspan="2" title="Se uma solicitação for cadastrada mas não foi enviada para outra fase/pessoa, o sistema irá excluí-la fisicamente; caso contrário, irá marcá-la como cancelada. Informe \'Não\' se desejar esse funcionamento ou \'Sim\' se desejar sempre marcar a solicitação como cancelada."><b>Mantém solicitações excluídas sem tramitação?</b><br>');
+    if ($w_cancela_sem_tramite=='S') {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_cancela_sem_tramite" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_cancela_sem_tramite" value="N"> Não');
+    } elseif ($w_cancela_sem_tramite=='N') {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_cancela_sem_tramite" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_cancela_sem_tramite" value="N" checked> Não');
+    } else {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_cancela_sem_tramite" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_cancela_sem_tramite" value="N" > Não');
     } 
     
     ShowHTML('          <tr align="left">');
@@ -2547,7 +2565,7 @@ function Grava() {
             $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], 
             $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao'], $_REQUEST['w_numeracao'],
             $_REQUEST['w_numerador'], $_REQUEST['w_sequencial'], $_REQUEST['w_ano_corrente'], $_REQUEST['w_prefixo'], 
-            $_REQUEST['w_sufixo'], $_REQUEST['w_envio_inclusao']);
+            $_REQUEST['w_sufixo'], $_REQUEST['w_envio_inclusao'], $_REQUEST['w_cancela_sem_tramite']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&w_cliente='.$w_cliente.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();

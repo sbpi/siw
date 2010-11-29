@@ -3950,7 +3950,7 @@ function Grava() {
           ShowHTML('  history.back(1);');
           ScriptClose();
         } 
-      } elseif ($O=='E') {
+      } elseif ($O=='E' && f($RS_Menu,'cancela_sem_tramite')=='N') {
         // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
         $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,'LISTA');
         // Mais de um registro de log significa que deve ser cancelada, e não excluída.

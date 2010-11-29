@@ -542,7 +542,7 @@ function Inicial() {
           }
         }
         if ($P1 > 1)
-          ShowHTML('        <td nowrap>' . f($row, 'nm_tramite') . '</td>');
+          ShowHTML('        <td>' . f($row, 'nm_tramite') . '</td>');
         if ($_SESSION['INTERNO'] == 'S' && $w_embed != 'WORD') {
           ShowHTML('        <td nowrap>');
           if ($P1 != 3 && $P1 != 5 && $P1 != 6) {
@@ -7693,35 +7693,14 @@ function Grava() {
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
-    case 'PDRELANEXO':
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
-        if ($O == 'E') {
-          $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_cliente, $_REQUEST['w_tipo_reg']);
-          foreach ($RS as $row) {
-            if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho')))
-            //echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
-              unlink($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
-          }
-          $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, $O, $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_tipo_reg'], $_REQUEST['w_nome'], $_REQUEST['w_descricao'], $w_file, $w_tamanho, $w_tipo, $w_nome);
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=' . $O . '&w_cumprimento=' . $_REQUEST['w_cumprimento'] . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
-          ScriptClose();
-        }
-      } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
-      }
-      break;
     case 'PDIDENT':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
-        if ($O == 'E') {
+        if ($O == 'E' && f($RS_Menu,'cancela_sem_tramite')=='N') {
           $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], null, $w_cliente);
           foreach ($RS as $row) {
             if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'))) {
-              echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
+              unlink($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
             }
           }
         }
@@ -7780,6 +7759,27 @@ function Grava() {
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;
+    case 'PDRELANEXO':
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
+        if ($O == 'E') {
+          $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_cliente, $_REQUEST['w_tipo_reg']);
+          foreach ($RS as $row) {
+            if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho')))
+            //echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
+              unlink($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
+          }
+          $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, $O, $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_tipo_reg'], $_REQUEST['w_nome'], $_REQUEST['w_descricao'], $w_file, $w_tamanho, $w_tipo, $w_nome);
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=' . $O . '&w_cumprimento=' . $_REQUEST['w_cumprimento'] . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
+          ScriptClose();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
