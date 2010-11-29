@@ -6333,8 +6333,13 @@ function relAnexo() {
   extract($GLOBALS);
   global $w_Disabled;
   //exibeArray($_REQUEST);
-  $w_chave = $_REQUEST['w_chave'];
+  $w_chave       = $_REQUEST['w_chave'];
+  $w_tipo_reg    = $_REQUEST['w_tipo_reg'];
   $w_cumprimento = $_REQUEST['w_cumprimento'];
+  $SG = upper($_REQUEST['SG']);
+  $par = upper($_REQUEST['par']);
+
+  
   Cabecalho();
   head();
   ScriptOpen('JavaScript');
@@ -6346,9 +6351,9 @@ function relAnexo() {
   //ShowHTML('      "script": "' . $conRootSIW . 'classes/uploadify/uploadify.php",');
   //ShowHTML('      "folder": "' . $conRootSIW . 'classes/uploadify/uploads-folder",');
   ShowHTML('      "buttonText": "Selecionar",');
-  ShowHTML('      "scriptData": {"w_caminho":"' . DiretorioCliente($w_cliente) . '", "w_cumprimento":"' . $w_cumprimento . '", "w_chave":"' . $w_chave . '", "w_cliente":"' . $w_cliente . '", "dbms":"' . $_SESSION['DBMS'] . '", "sid":"' . session_id() . '"},');
-  ShowHTML('      "onAllComplete" : function(event,data) {alert(data.filesUploaded  + " arquivos(" + data.allBytesLoaded + " bytes) adicionados com sucesso.");document.location.href="' . montaURL_JS($w_dir, $w_pagina . 'PrestarContas&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDREEMB&w_chave=' . $w_chave . '&O=L' . '&w_cumprimento=' . $w_cumprimento) . '";},');
-//  ShowHTML('      "onComplete" : function(event, queueID, fileObj, response, data) {alert(fileObj.name + response + data);},');
+  ShowHTML('      "scriptData": {"w_caminho":"' . DiretorioCliente($w_cliente) . '", "w_cumprimento":"' . $w_cumprimento . '", "w_chave":"' . $w_chave . '", "w_tipo_reg":"' . $w_tipo_reg . '", "w_cliente":"' . $w_cliente . '", "dbms":"' . $_SESSION['DBMS'] . '", "sid":"' . session_id() . '"},');
+  ShowHTML('      "onAllComplete" : function(event,data) {alert(data.filesUploaded  + " arquivos(" + data.allBytesLoaded + " bytes) adicionados com sucesso.");document.location.href="' . montaURL_JS($w_dir, $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG='.$SG.'&w_chave=' . $w_chave . '&O=L' . '&w_cumprimento=' . $w_cumprimento) . '";},');
+  //ShowHTML('      "onComplete" : function(event, queueID, fileObj, response, data) {alert(fileObj.name + response + data);},');
   ShowHTML('      "multi": "true",');
   ShowHTML('      "cancelImg": "' . $conRootSIW . 'classes/uploadify/cancel.png"');
   ShowHTML('  });');
@@ -6381,7 +6386,7 @@ function relAnexo() {
   ShowHTML('<td align="center" bgcolor="#f5f5f5">');
   ShowHTML('  <button class="stb" onclick="javascript:$(\'#upload\').uploadifyUpload()">Anexar arquivos</button>');
   ShowHTML('  <button class="stb" onclick="javascript:$(\'#upload\').uploadifyClearQueue()">Limpar fila</button>');
-  ShowHTML('  <input class="stb" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'PrestarContas&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDREEMB&w_chave=' . $w_chave . '&w_cumprimento=' . $w_cumprimento . '&O=L') . '\';" name="Botao" value="Cancelar">');
+  ShowHTML('  <input class="stb" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $R. '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG='.$SG.'&w_chave=' . $w_chave . '&w_tipo_reg=' . $w_tipo_reg . '&w_cumprimento=' . $w_cumprimento . '&O=L') . '\';" name="Botao" value="Cancelar">');
   ShowHTML('');
   ShowHTML('</td>');
   ShowHTML('</tr>');
@@ -6546,6 +6551,7 @@ function PrestarContas() {
   global $w_Disabled;
 
   $w_chave = $_REQUEST['w_chave'];
+  $w_tipo_reg = '1';
   $w_readonly = '';
   $w_erro = '';
 
@@ -6948,9 +6954,9 @@ function PrestarContas() {
   }
 
   if (strpos('IPC', nvl($w_cumprimento, 'nulo')) !== false) {
-    ShowHTML('<tr><td colspan="2"><br><br><b>Anexos do relatório (máximo de 15.123 KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+    ShowHTML('<tr><td colspan="2"><br><br><b>Anexos do relatório (máximo de 15.123 KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&O=I&w_tipo_reg=' . $w_tipo_reg . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
     $sql = new db_getPD_Deslocamento; //$RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
-    $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente);
+    $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente, $w_tipo_reg);
     //exibeArray($RS);
     $RS = SortArray($RS, 'nome', 'asc', 'tamanho', 'asc');
     ShowHTML('  <tr><td colspan="2">');
@@ -6976,7 +6982,7 @@ function PrestarContas() {
         ShowHTML('        <td align="center">' . round(f($row, 'tamanho') / 1024, 1) . '</td>');
         ShowHTML('        <td align="center" nowrap>');
         //ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=A&w_chave_aux=' . f($row, 'sq_deslocamento') . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '" title="Altera os dados do trecho.">AL</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Grava&R=' . $w_pagina . $par . '&O=E&w_chave_aux=' . f($row, 'chave_aux') . '&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDRELANEXO' . MontaFiltro('GET') . '" title="Exclusão do arquivo." onClick="return(confirm(\'Confirma exclusão do arquivo?\'));">EX</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Grava&R=' . $w_pagina . $par . '&O=E&w_chave_aux=' . f($row, 'chave_aux') . '&w_tipo_reg=' . f($row, 'tipo_reg') . '&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDRELANEXO' . MontaFiltro('GET') . '" title="Exclusão do arquivo." onClick="return(confirm(\'Confirma exclusão do arquivo?\'));">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
@@ -7170,6 +7176,7 @@ function Reembolso() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
+  $w_tipo_reg = '2';
   $w_readonly = '';
   $w_erro = '';
 
@@ -7372,15 +7379,59 @@ function Reembolso() {
   } else {
     ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
   }
-  ShowHTML('<tr><td colspan="2"><br><b>Arquivo contendo comprovantes (máximo de ' . formatNumber((f($RS_Cliente, 'upload_maximo') / 1024), 0) . ' KBytes)</b></font></td></tr>');
-  ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="' . f($RS_Cliente, 'upload_maximo') . '">');
-  ShowHTML('<tr><td colspan="2"><input ' . $w_Disabled . ' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="' . $w_caminho . '" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
-  if (nvl($w_atual, '') != '') {
-    ShowHTML('&nbsp;' . LinkArquivo('HL', $w_cliente, $w_atual, '_blank', 'Clique para exibir o arquivo em outra janela.', 'Exibir', null));
-    ShowHTML('&nbsp;<input ' . $w_Disabled . ' type="checkbox" name="w_exclui_arquivo" value="S" ' . ((nvl($w_exclui_aruivo, 'nulo') != 'nulo') ? 'checked' : '') . '>  Remover arquivo atual');
-  }
+
+
+    ShowHTML('<tr><td colspan="2"><br><br><b>Arquivos contendo comprovantes (máximo de ' . formatNumber((f($RS_Cliente, 'upload_maximo') / 1024), 0) . ' KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&w_tipo_reg=' . $w_tipo_reg . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+    $sql = new db_getPD_Deslocamento; //$RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
+    $sql = new db_getSolicRelAnexo;
+    $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente, $w_tipo_reg);
+
+    $RS = SortArray($RS, 'nome', 'asc', 'tamanho', 'asc');
+    ShowHTML('  <tr><td colspan="2">');
+    ShowHTML('      <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
+    ShowHTML('          <td width="1%"><b>Nº</td>');
+    ShowHTML('          <td><b>Título</td>');
+    ShowHTML('          <td><b>Tipo</td>');
+    ShowHTML('          <td><b>KB</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS) <= 0) {
+      ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=8 align="center"><font color="#BC3131"><b>NÃO HÁ ARQUIVOS EM ANEXO.</b></b></td></tr>');
+    } else {
+      $i = 1;
+
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+        ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
+        ShowHTML('        <td align="center"><b>' . $i++ . '</b></td>');
+        ShowHTML('        <td>' . LinkArquivo('HL', $w_cliente, f($row, 'chave_aux'), null, null, f($row,'nome'), null) . '</td>');
+        //ShowHTML('        <td><a target="_blank" href="' . $conFileVirtual . $w_cliente . '/' . f($row, 'caminho') . '">' . f($row, 'nome') . '</a></td>');
+        ShowHTML('        <td align="center">' . nvl(f($row, 'tipo'), '---') . '</td>');
+        ShowHTML('        <td align="center">' . round(f($row, 'tamanho') / 1024, 1) . '</td>');
+        ShowHTML('        <td align="center" nowrap>');
+        //ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=A&w_chave_aux=' . f($row, 'sq_deslocamento') . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '" title="Altera os dados do trecho.">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Grava&R=' . $w_pagina . $par . '&O=E&w_chave_aux=' . f($row, 'chave_aux') . '&w_tipo_reg=' . f($row, 'tipo_reg'). '&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=PDRELANEXO' . MontaFiltro('GET') . '" title="Exclusão do arquivo." onClick="return(confirm(\'Confirma exclusão do arquivo?\'));">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      }
+    }
+    ShowHTML('</table>');
+
+
+//  ShowHTML('<tr><td colspan="2"><br><b>Arquivo contendo comprovantes (máximo de ' . formatNumber((f($RS_Cliente, 'upload_maximo') / 1024), 0) . ' KBytes)</b></font></td></tr>');
+//  ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="' . f($RS_Cliente, 'upload_maximo') . '">');
+//  ShowHTML('<tr><td colspan="2"><input ' . $w_Disabled . ' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="' . $w_caminho . '" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+//  if (nvl($w_atual, '') != '') {
+//    ShowHTML('&nbsp;' . LinkArquivo('HL', $w_cliente, $w_atual, '_blank', 'Clique para exibir o arquivo em outra janela.', 'Exibir', null));
+//    ShowHTML('&nbsp;<input ' . $w_Disabled . ' type="checkbox" name="w_exclui_arquivo" value="S" ' . ((nvl($w_exclui_aruivo, 'nulo') != 'nulo') ? 'checked' : '') . '>  Remover arquivo atual');
+//  }
+
+
+
+
   ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
-  ShowHTML('    <tr><td align="center" colspan="2">');
+  ShowHTML('    <tr><td align="center" colspan="2"><br/>');
   ShowHTML('        <input class="stb" type="submit" name="Botao" value="Gravar">');
   ShowHTML('        <input class="stb" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Fechar">');
   ShowHTML('    </tr>');
@@ -7641,18 +7692,17 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   BodyOpen('onLoad=this.focus();');
-
   switch ($SG) {
     case 'PDRELANEXO':
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         if ($O == 'E') {
-          $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_cliente);
+          $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_cliente, $_REQUEST['w_tipo_reg']);
           foreach ($RS as $row) {
             if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho')))
             //echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
               unlink($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
           }
-          $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, $O, $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_nome'], $_REQUEST['w_descricao'], $w_file, $w_tamanho, $w_tipo, $w_nome);
+          $SQL = new dml_putSolicRelAnexo; $SQL->getInstanceOf($dbms, $O, $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_tipo_reg'], $_REQUEST['w_nome'], $_REQUEST['w_descricao'], $w_file, $w_tamanho, $w_tipo, $w_nome);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=' . $O . '&w_cumprimento=' . $_REQUEST['w_cumprimento'] . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
           ScriptClose();

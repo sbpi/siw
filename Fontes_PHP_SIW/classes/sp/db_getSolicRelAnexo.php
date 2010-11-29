@@ -9,11 +9,12 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getSolicRelAnexo {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_cliente) {
+   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_cliente, $p_tipo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICRELANEXO';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
+                   'p_tipo'                      =>array($p_tipo,                                          B_VARCHAR,         1),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

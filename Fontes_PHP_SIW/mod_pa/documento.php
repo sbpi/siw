@@ -2458,7 +2458,7 @@ function Tramitacao() {
         $i += 1;
       } 
     } 
-    if ($w_outra_unidade) ShowHTML('      <tr><td colspan="9"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
+    if ($w_outra_unidade) ShowHTML('      <tr><td colspan="11"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
     ShowHTML('    </table>');
     ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
     if ($w_envia_protocolo=='N') {
@@ -3098,6 +3098,8 @@ function Recebimento() {
   $p_ini            = $_REQUEST['p_ini'];
   $p_fim            = $_REQUEST['p_fim'];
   
+  $w_observacao     = $_REQUEST['w_observacao'];
+  
   if ($O=='L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null, 
@@ -3126,6 +3128,7 @@ function Recebimento() {
     ValidateOpen('Validacao');
     if ($O=='R' || $O=='S' || $O=='T' || $O=='U') {
       if ($w_interno=='N' && ($O=='R' || $O=='T')) Validate('w_observacao','Observações sobre o envio externo','1','1','5','2000','1','1');
+      if ($O=='S' || $O=='U') Validate('w_observacao','Observações sobre a recusa','1','','5','2000','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -3167,7 +3170,7 @@ function Recebimento() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='R' || $O=='S' || $O=='T' || $O=='U') {
-    if ($w_interno=='N') BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
+    if ($w_interno=='N' || $O=='S' || $O=='U') BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
     else BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.w_nu_guia.focus()\';');
@@ -3280,7 +3283,7 @@ function Recebimento() {
         }
       } 
     } 
-    if ($w_outra_unidade) ShowHTML('      <tr><td colspan="9"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
+    if ($w_outra_unidade) ShowHTML('      <tr><td colspan="11"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -3311,6 +3314,10 @@ function Recebimento() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
     if ($w_interno=='N') ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    if ($O=='S') {
+      ShowHTML('    <tr><td colspan=5 align="center"><hr>');
+      ShowHTML('      <tr><td colspan="5" title="OPCIONAL. Se desejar, registre observações sobre a recusa."><b><u>O</u>bservações sobre a recusa:</b><br><textarea ccesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');    
+    }
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     if ($O=='R') {
@@ -3347,6 +3354,10 @@ function Recebimento() {
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
+    if ($O=='U') {
+      ShowHTML('    <tr><td colspan=5 align="center"><hr>');
+      ShowHTML('      <tr><td colspan="5" title="OPCIONAL. Se desejar, registre observações sobre a recusa do envio."><b><u>O</u>bservações sobre a recusa:</b><br><textarea ccesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');    
+    }
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     if ($O=='T') {
