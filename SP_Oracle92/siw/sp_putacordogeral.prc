@@ -44,6 +44,7 @@ create or replace procedure SP_PutAcordoGeral
    w_log_sol    number(18);
    w_log_esp    number(18);
    w_reg        ac_parametro%rowtype;
+   w_menu       siw_menu%rowtype;
    
    w_meses_vigencia_renovacao  number(4);
    w_valor_original            number(18,2);
@@ -399,13 +400,16 @@ begin
          Values (sq_etapa_contrato.nextval, p_etapa,      p_chave);
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
+      -- Recupera os dados do menu
+      select * into w_menu from siw_menu where sq_menu = p_menu;
+      
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
       select count(*) into w_log_esp from ac_acordo_log  where sq_siw_solicitacao = p_chave;
       
       -- Se não foi enviada para outra fase nem para outra pessoa, exclui fisicamente.
       -- Caso contrário, coloca a solicitação como cancelada.
-      If (w_log_sol + w_log_esp) > 1 Then
+      If (w_log_sol + w_log_esp) > 1 or w_menu.cancela_sem_tramite = 'S' Then
          -- Insere log de cancelamento
          Insert Into siw_solic_log 
             (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa, 

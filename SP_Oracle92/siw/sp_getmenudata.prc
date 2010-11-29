@@ -11,6 +11,7 @@ begin
              a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, a.data_hora, a.envia_dia_util, a.descricao, 
              a.justificativa, a.destinatario, a.controla_ano, a.libera_edicao, a.envio_inclusao,
              a.numeracao_automatica, a.servico_numerador, a.sequencial, a.ano_corrente, a.prefixo, a.sufixo,
+             a.cancela_sem_tramite,
              case coalesce(b.qtd,0) when 0 then 'N' else 'S' end as solicita_cc, 
              case coalesce(f.qtd,0) when 0 then 'N' else 'S' end as mail_tramite, 
              c.sigla as sg_modulo, c.nome as nm_modulo, e.sq_cidade,

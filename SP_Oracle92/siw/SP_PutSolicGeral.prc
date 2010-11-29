@@ -19,6 +19,7 @@ create or replace procedure SP_PutSolicGeral
    w_log_sol number(18);
    w_inicio  date := null;
    w_fim     date := null;
+   w_menu    siw_menu%rowtype;
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
@@ -91,12 +92,15 @@ begin
       where sq_siw_solicitacao = p_chave;
       
    Elsif p_operacao = 'E' Then -- Exclusão
+      -- Recupera os dados do menu
+      select * into w_menu from siw_menu where sq_menu = p_menu;
+      
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
       
       -- Se não foi enviada para outra fase nem para outra pessoa, exclui fisicamente.
       -- Caso contrário, coloca a solicitação como cancelada.
-      If w_log_sol > 1 Then
+      If w_log_sol > 1 or w_menu.cancela_sem_tramite = 'S' Then
          -- Insere log de cancelamento
          Insert Into siw_solic_log 
             (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa, 

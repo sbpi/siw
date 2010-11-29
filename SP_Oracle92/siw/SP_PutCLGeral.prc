@@ -45,6 +45,7 @@ create or replace procedure SP_PutCLGeral
    w_data        date;
    w_dias        number(3);
    w_parametro   cl_parametro%rowtype;
+   w_menu        siw_menu%rowtype;
 
 
    cursor c_arquivos is
@@ -267,12 +268,15 @@ begin
          where sq_siw_solicitacao = p_chave;      
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
+      -- Recupera os dados do menu
+      select * into w_menu from siw_menu where sq_menu = p_menu;
+      
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
 
       -- Se não tem atividades vinculadas nem foi enviada para outra fase nem para outra pessoa, exclui fisicamente.
       -- Caso contrário, coloca a solicitação como cancelada.
-      If w_log_sol > 1 Then
+      If w_log_sol > 1 or w_menu.cancela_sem_tramite = 'S' Then
          -- Insere log de cancelamento
          Insert Into siw_solic_log
             (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa,
