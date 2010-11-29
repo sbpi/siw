@@ -11,7 +11,7 @@ begin
       select a.sq_siw_solicitacao chave,
              b.sq_siw_arquivo chave_aux, b.cliente, b.nome, b.descricao, 
              b.inclusao, b.tamanho, b.tipo, b.caminho, b.nome_original, 
-             a.tipo
+             a.tipo as tipo_reg
         from pd_missao_relatorio      a
              inner join siw_arquivo b on (a.sq_siw_arquivo = b.sq_siw_arquivo)
        where a.sq_siw_solicitacao = p_chave
