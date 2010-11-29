@@ -35,7 +35,7 @@ begin
         update pa_documento_log a 
            set a.recebedor   = p_pessoa, 
                a.recebimento = sysdate,
-               a.resumo      = a.resumo||chr(13)||chr(10)||'*** RECUSADO'
+               a.resumo      = a.resumo||chr(13)||chr(10)||'*** RECUSADO'||case when p_observacao is null then '' else chr(13)||chr(10)||'Observação: '||p_observacao end
          where a.sq_documento_log = crec.sq_documento_log;
      Else
         -- Se tramitação interna, garante que a unidade de posse é a unidade recebedora
