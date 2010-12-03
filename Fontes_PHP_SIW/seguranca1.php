@@ -1054,8 +1054,9 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
+          $SQL = new dml_putSgTraPes; 
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
-            $SQL = new dml_putSgTraPes; $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_siw_tramite'],null);
+            $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_siw_tramite'],null);
           } 
         } elseif ($O=='E') {
           $SQL = new dml_putSgTraPes; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_pessoa_endereco']);
@@ -1093,10 +1094,11 @@ function Grava() {
         
         if ($O!='E') {
           // Insere os tramites de fluxo
-          $SQL = new dml_putSiwTramiteFluxo; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
+          $SQL = new dml_putSiwTramiteFluxo; 
+          $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
           for ($i=1; $i<=count($_POST['w_sq_siw_tramite_destino'])-1; $i=$i+1) {
             if (Nvl($_POST['w_sq_siw_tramite_destino'][$i],'')>'') {
-               $SQL = new dml_putSiwTramiteFluxo; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
+               $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
             }
           }
         }
@@ -1114,12 +1116,13 @@ function Grava() {
     case 'ACESSOMENU':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_SgPesMen;
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
-            $SQL = new dml_SgPesMen; $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_menu'],null);
+            $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_menu'],null);
           } 
         } elseif ($O=='E') {
-          $SQL = new dml_SgPesMen; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
         } 
 
         $R=$R.'&w_sq_menu='.$_REQUEST['w_sq_menu'];
@@ -1136,14 +1139,15 @@ function Grava() {
     case 'ACESSOMENUPERFIL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_SgPerMen; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa_endereco'])-1; $i=$i+1) {
             for ($j=0; $j<=count($_POST['w_sq_tipo_vinculo'])-1; $j=$j+1) {
-              $SQL = new dml_SgPerMen; $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_tipo_vinculo'][$j],$_REQUEST['w_sq_menu'],$_POST['w_sq_pessoa_endereco'][$i]);
+              $SQL->getInstanceOf($dbms,$O,$_POST['w_sq_tipo_vinculo'][$j],$_REQUEST['w_sq_menu'],$_POST['w_sq_pessoa_endereco'][$i]);
             } 
           } 
         } elseif ($O=='E') {
-          $SQL = new dml_SgPerMen; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco']);
         } 
 
         $R = $R.'&w_sq_menu='.$_REQUEST['w_sq_menu'];
@@ -1163,9 +1167,10 @@ function Grava() {
         // Inicialmente, desativa a opção em todos os endereços
         $SQL = new dml_SiwMenEnd; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_sq_menu'],null);
         // Em seguida, ativa apenas para os endereços selecionados
+        $SQL = new dml_SiwMenEnd; 
         for ($i=0; $i<=count($_POST['w_sq_pessoa_endereco'])-1; $i=$i+1) {
           if ($_REQUEST['w_sq_pessoa_endereco'][$i]>'') {
-            $SQL = new dml_SiwMenEnd; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco'][$i]);
+            $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_sq_menu'],$_REQUEST['w_sq_pessoa_endereco'][$i]);
           } 
         } 
 

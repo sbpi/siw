@@ -1853,9 +1853,10 @@ function Grava() {
           ScriptClose();
         } else {                  
            // Elimina todas as permissões existentes para depois incluir
-           $SQL = new dml_PutFormaPagamentoVinc; $SQL->getInstanceOf($dbms, 'E',$_REQUEST['w_chave'],null);
+           $SQL = new dml_PutFormaPagamentoVinc; 
+           $SQL->getInstanceOf($dbms, 'E',$_REQUEST['w_chave'],null);
            for ($i=0; $i<=count($_POST['w_vinculo'])-1; $i=$i+1)   {
-             $SQL = new dml_PutFormaPagamentoVinc; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], $_POST['w_vinculo'][$i]);
+             $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], $_POST['w_vinculo'][$i]);
            }
            ScriptOpen('JavaScript');
            ShowHTML('  window.close() ;'); 

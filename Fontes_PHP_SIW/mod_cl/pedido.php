@@ -2347,16 +2347,17 @@ function Grava() {
     case 'CLPCITEM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putCLSolicItem; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_material'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_material'][$i]>'') {
-              $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,$_REQUEST['w_sq_material'][$i],
+              $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,$_REQUEST['w_sq_material'][$i],
                   Nvl($_REQUEST['w_quantidade'][$i],0),null,null,null,null);
               //Recupera os dados da pessoa associada ao lançamento
             }
           } 
         } else {
-          $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,$_REQUEST['w_material'],
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,$_REQUEST['w_material'],
               Nvl($_REQUEST['w_quantidade'],0),Nvl($_REQUEST['w_qtd_ant'],0),null,null,null);
         } 
         ScriptOpen('JavaScript');
@@ -2546,9 +2547,10 @@ function Grava() {
           exit();
         } else {
           // Grava as quantidades autorizadas
+          $SQL = new dml_putCLSolicItem; 
           for ($i=0; $i<=count($_POST['w_sq_solicitacao_item'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_solicitacao_item'][$i]>'') {
-              $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_sq_solicitacao_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
+              $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_sq_solicitacao_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
                   Nvl($_REQUEST['w_quantidade'][$i],0),Nvl($_REQUEST['w_qtd_ant'][$i],0),null,null,null);
             }
           }

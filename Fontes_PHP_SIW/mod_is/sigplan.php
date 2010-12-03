@@ -1330,14 +1330,16 @@ function Grava() {
     case 'ISSIGTAB':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putEsquemaTabela; 
+        $SQL1 = new dml_putEsquemaAtributo; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_tabela'])-1; $i=$i+1) {
-            if ($_REQUEST['w_sq_tabela'][$i]>'') { $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i]); }
+            if ($_REQUEST['w_sq_tabela'][$i]>'') { $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i]); }
           } 
         } elseif ($O=='A') {
-          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento']);
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento']);
         } elseif ($O=='E') {
-          $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
+          $SQL1->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
           $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null);
         } 
         ScriptOpen('JavaScript');
@@ -1353,10 +1355,11 @@ function Grava() {
     case 'ISSIGMAP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
+        $SQL = new dml_putEsquemaAtributo; 
+        $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
-            if ($_REQUEST['w_sq_coluna'][$i]>'') { $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i]); }
+            if ($_REQUEST['w_sq_coluna'][$i]>'') { $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i]); }
           } 
         } 
         ScriptOpen('JavaScript');

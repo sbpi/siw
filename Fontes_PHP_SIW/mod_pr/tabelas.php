@@ -1624,12 +1624,13 @@ function Grava() {
         $SQL = new dml_putConfPJ; $SQL->getInstanceOf($dbms,$O,$w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_exibe_relatorio']);
       
         // Remove os registros existentes
-        $SQL = new dml_putSolic_Vinculo; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+        $SQL = new dml_putSolic_Vinculo; 
+        $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 
         // Insere apenas os itens marcados
         for ($i=0; $i<=count($_POST['w_servico'])-1; $i=$i+1) {
           if (Nvl($_POST['w_servico'][$i],'')>'') {
-            $SQL = new dml_putSolic_Vinculo; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
+            $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');

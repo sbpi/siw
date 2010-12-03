@@ -1652,14 +1652,15 @@ function Grava() {
     case 'INDSOLIC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putSolicIndicador; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_indicador'])-1; $i=$i+1) {
             if (Nvl($_POST['w_indicador'][$i],'')>'') {
-              $SQL = new dml_putSolicIndicador; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_REQUEST['w_plano'],$_POST['w_indicador'][$i]);
+              $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_REQUEST['w_plano'],$_POST['w_indicador'][$i]);
             } 
           } 
         } elseif ($O=='E') {
-          $SQL = new dml_putSolicIndicador; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],null,$_REQUEST['w_plano'],null);
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],null,$_REQUEST['w_plano'],null);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'&w_plano='.$_REQUEST['w_plano']).'\';');
@@ -1692,8 +1693,9 @@ function Grava() {
               $_REQUEST['w_exequivel'],$_REQUEST['w_justificativa'],$_REQUEST['w_outras_medidas']); 
 
         // Insere os valor real  
+        $SQL = new dml_putCronMeta; 
         for ($i=1; $i<=count($_POST['w_chave_cron'])-1; $i=$i+1) {
-           $SQL = new dml_putCronMeta; $SQL->getInstanceOf($dbms,'V',$w_usuario,$_REQUEST['w_chave_aux'],$_POST['w_chave_cron'][$i],
+           $SQL->getInstanceOf($dbms,'V',$w_usuario,$_REQUEST['w_chave_aux'],$_POST['w_chave_cron'][$i],
                 null, null,null,$_POST['w_valor_real'][$i]);
         }
 

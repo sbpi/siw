@@ -1616,17 +1616,19 @@ function Grava() {
     case 'ISSIGTAB':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putEsquemaTabela; 
+        $SQL1 = new dml_putEsquemaAtributo; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_tabela'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_tabela'][$i]>'') {
-              $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i],Nvl($_REQUEST['w_remove_registro'][$i],'N'));
+              $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i],Nvl($_REQUEST['w_remove_registro'][$i],'N'));
             }
           } 
         } elseif ($O=='A') {
-          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento'],Nvl($_REQUEST['w_remove_registro'],'N'));
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento'],Nvl($_REQUEST['w_remove_registro'],'N'));
         } elseif ($O=='E') {
-          $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
-          $SQL = new dml_putEsquemaTabela; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
+          $SQL1->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
@@ -1641,12 +1643,13 @@ function Grava() {
     case 'ISSIGMAP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
+        $SQL = new dml_putEsquemaAtributo; 
+        $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_coluna'][$i]>'') {
               if (upper($_REQUEST['w_tipo_coluna'][$i])=='DATE') $w_valor_mascara = $_REQUEST['w_mascara_data'][$i]; else $w_valor_mascara = '';
-              $SQL = new dml_putEsquemaAtributo; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i],$w_valor_mascara,$_REQUEST['w_valor_default'][$i]);
+              $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i],$w_valor_mascara,$_REQUEST['w_valor_default'][$i]);
             }
           }
         } 
@@ -1663,12 +1666,13 @@ function Grava() {
     case 'TIREGISTRO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putEsquemaInsert; 
         if ($O=='I' || $O=='A') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
-              $SQL = new dml_putEsquemaInsert; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_insert'][$i],$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_valor'][$i],null);
+              $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_insert'][$i],$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_valor'][$i],null);
             } 
         } elseif ($O=='E') {
-          $SQL = new dml_putEsquemaInsert; $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,$_REQUEST['w_registro']);
+          $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,$_REQUEST['w_registro']);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&w_sq_tabela='.$_REQUEST['w_sq_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');

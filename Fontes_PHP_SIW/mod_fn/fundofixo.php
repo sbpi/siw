@@ -2366,9 +2366,10 @@ function Grava() {
   } elseif ($SG=='NOTA') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      $SQL = new dml_putLancamentoDoc; 
       for ($i=0; $i<=count($_POST['w_sq_acordo_nota'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_sq_acordo_nota'][$i],'')>'') {
-          $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_tipo_documento'][$i],
+          $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_tipo_documento'][$i],
              $_REQUEST['w_numero'][$i],$_REQUEST['w_data'][$i],null,null,
              'N','N','N',$_REQUEST['w_sq_acordo_nota'][$i],$_REQUEST['w_inicial'][$i],$_REQUEST['w_excedente'][$i],$_REQUEST['w_reajuste'][$i],&$w_chave_nova);
         } 
@@ -2568,11 +2569,17 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
         for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
+          $sql = new db_getSolicData; 
+          $SQL1 = new dml_putFinanceiroGeral; 
+          $sql2 = new db_getBenef; 
+          $SQL2 = new dml_putLancamentoOutra; 
+          $sql3 = new db_getAcordoNota; 
+          $SQL3 = new dml_putLancamentoDoc; 
           if ($_REQUEST['w_sq_acordo_parcela'][$i]>'') {
-            $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$_REQUEST['w_chave_pai'][$i],'GCCAD');
+            $RS1 = $sql1->getInstanceOf($dbms,$_REQUEST['w_chave_pai'][$i],'GCCAD');
             $w_tipo = '';
             if(Nvl(f($RS1,'qtd_rubrica'),0)>0) $w_tipo=5;
-            $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$w_menu,$_REQUEST['w_sq_unidade'],
+            $SQL1->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$w_menu,$_REQUEST['w_sq_unidade'],
                 $_REQUEST['w_solicitante'][$i],$w_usuario,$_REQUEST['w_sqcc'][$i],$_REQUEST['w_descricao'][$i],$_REQUEST['w_vencimento'][$i],
                 Nvl($_REQUEST['w_valor'][$i],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],
                 $_REQUEST['w_chave_pai'][$i],$_REQUEST['w_sq_acordo_parcela'][$i],$_REQUEST['w_observacao'],$_REQUEST['w_sq_tipo_lancamento'][$i],
@@ -2580,16 +2587,16 @@ function Grava() {
                 $w_tipo,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
                 $_REQUEST['w_texto_pagamento'],null,&$w_chave_nova,&$w_codigo);
             //Recupera os dados da pessoa associada ao lançamento
-            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null,null,null,null,null,null,null);
+            $RS = $sql2->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null,null,null,null,null,null,null);
             foreach ($RS as $row) {$RS=$row; break;}
             //Grava os dados da pessoa
-            $SQL = new dml_putLancamentoOutra; $SQL->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_outra_parte'][$i],f($RS,'cpf'),f($RS,'cnpj'),
+            $SQL2->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_outra_parte'][$i],f($RS,'cpf'),f($RS,'cnpj'),
                 null,null,null,null,null,null,null,null,null,null,f($RS,'logradouro'),f($RS,'complemento'),f($RS,'bairro'),f($RS,'sq_cidade'),
                 f($RS,'cep'),f($RS,'ddd'),f($RS,'nr_telefone'),f($RS,'nr_fax'),f($RS,'nr_celular'),f($RS,'email'),null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null);
-            $sql = new db_getAcordoNota; $RS_Nota = $sql->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_acordo_parcela'][$i],null,null,null,null,null,'PARCELAS');
+            $RS_Nota = $sql3->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_acordo_parcela'][$i],null,null,null,null,null,'PARCELAS');
             foreach($RS_Nota as $row1) {
-              $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,null,f($row1,'sq_tipo_documento'),
+              $SQL3->getInstanceOf($dbms,$O,$w_chave_nova,null,f($row1,'sq_tipo_documento'),
                  f($row1,'numero'),FormataDataEdicao(f($row1,'data')),null,formatNumber(f($row1,'valor_total'),2),
                  'N','N','N',f($row1,'sq_acordo_nota'),formatNumber(f($row1,'inicial_parc'),2),formatNumber(f($row1,'excedente_parc'),2),formatNumber(f($row,'reajuste_parc'),2),null);
             }

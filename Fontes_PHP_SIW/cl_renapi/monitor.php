@@ -4692,9 +4692,10 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if($O=='V') {
         // Insere os valor real  
+        $SQL = new dml_putCronograma; 
         for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
           if (Nvl($_POST['w_valor_real'][$i],'')>'') {
-             $SQL = new dml_putCronograma; $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave_rub'],$_POST['w_chave_aux'][$i],
+             $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave_rub'],$_POST['w_chave_aux'][$i],
                   null, null,null,$_POST['w_valor_real'][$i]);
           }
         }
@@ -4745,10 +4746,11 @@ function Grava() {
   } elseif($SG=='PJMPREST'){  
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      $SQL = new dml_putContasRegistro; $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_contas_cronograma'],null,null,null,null);
+      $SQL = new dml_putContasRegistro; 
+      $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_contas_cronograma'],null,null,null,null);
       for ($i=1; $i<=count($_POST['w_prestacao_contas'])-1; $i=$i+1) {
         if (Nvl($_POST['w_prestacao_contas'][$i],'')>'') {
-          $SQL = new dml_putContasRegistro; $SQL->getInstanceOf($dbms,'I',null,$_REQUEST['w_contas_cronograma'],$_POST['w_prestacao_contas'][$i],$_POST['w_pendencia'.$_POST['w_prestacao_contas'][$i]],$_POST['w_observacao'][$i],$_SESSION['SQ_PESSOA']);
+          $SQL->getInstanceOf($dbms,'I',null,$_REQUEST['w_contas_cronograma'],$_POST['w_prestacao_contas'][$i],$_POST['w_pendencia'.$_POST['w_prestacao_contas'][$i]],$_POST['w_observacao'][$i],$_SESSION['SQ_PESSOA']);
         }
       }
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
@@ -4850,11 +4852,12 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Inicialmente, desativa a opção em todos os endereços
-      $SQL = new dml_putSolicEtpRec; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
+      $SQL = new dml_putSolicEtpRec; 
+      $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
       // Em seguida, ativa apenas para os endereços selecionados
       for ($i=0; $i<=count($_POST['w_recurso'])-1; $i=$i+1) {
         if ($_REQUEST['w_recurso'][$i]>'') {
-          $SQL = new dml_putSolicEtpRec; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_recurso'][$i]);
+          $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_recurso'][$i]);
         } 
       } 
       ScriptOpen('JavaScript');
@@ -4916,11 +4919,12 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Remove os registros existentes
-      $SQL = new dml_putRestricaoEtapaInter; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
+      $SQL = new dml_putRestricaoEtapaInter; 
+      $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
       // Insere apenas os itens marcados
       for ($i=0; $i<=count($_POST['w_sq_projeto_etapa'])-1; $i=$i+1) {
         if (Nvl($_POST['w_sq_projeto_etapa'][$i],'')>'') {
-          $SQL = new dml_putRestricaoEtapaInter; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_POST['w_sq_projeto_etapa'][$i]);
+          $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_POST['w_sq_projeto_etapa'][$i]);
         } 
       }
       ScriptOpen('JavaScript');

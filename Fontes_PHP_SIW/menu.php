@@ -646,9 +646,10 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Elimina todas as permissões existentes para depois incluir
-      $SQL = new dml_PutMenuRelac; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_menu'],$_REQUEST['w_sq_menu_fornec'], null);
+      $SQL = new dml_PutMenuRelac; 
+      $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_menu'],$_REQUEST['w_sq_menu_fornec'], null);
       for ($i=0; $i<=count($_POST['w_sq_tramite'])-1; $i=$i+1)   {
-        $SQL = new dml_PutMenuRelac; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_fornec'], $_POST['w_sq_tramite'][$i]);
+        $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_fornec'], $_POST['w_sq_tramite'][$i]);
       } 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$_REQUEST['w_sq_menu'].'\';');

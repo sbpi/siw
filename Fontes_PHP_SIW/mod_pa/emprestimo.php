@@ -1848,14 +1848,15 @@ function Grava() {
     case 'PAEMITEM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putPAEmpItem; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_protocolo'])-1; $i=$i+1) {
             if ($_REQUEST['w_protocolo'][$i]>'') {
-              $SQL = new dml_putPAEmpItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'][$i],$_REQUEST['w_chave'],null);
+              $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'][$i],$_REQUEST['w_chave'],null);
             }
           } 
         } elseif ($O=='E') {
-          $SQL = new dml_putPAEmpItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'],$_REQUEST['w_chave'],null);
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'],$_REQUEST['w_chave'],null);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$_REQUEST['w_menu'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2046,13 +2047,14 @@ function Grava() {
           exit();
         } else {
           // Grava as quantidades autorizadas
+          $SQL = new dml_putPAEmpItem; 
           for ($i=0; $i<=count($_POST['w_protocolo'])-1; $i=$i+1) {
             if ($_REQUEST['w_protocolo'][$i]>'') {
-              $SQL = new dml_putPAEmpItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'][$i],$_REQUEST['w_chave'],$_REQUEST['w_devolucao'][$i]);
+              $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'][$i],$_REQUEST['w_chave'],$_REQUEST['w_devolucao'][$i]);
             }
           }
 
-          $sql = new db_getPAEmpItem; $RS = $sql->getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null);
+          $RS = $sql->getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null);
           $concluir = true;
           foreach($RS as $row) {
             // Se pelo menos um item não foi devolvido, não encerra a solicitação

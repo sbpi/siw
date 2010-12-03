@@ -2857,11 +2857,12 @@ function Grava() {
       // VerIfica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //Inicialmente, desativa a opção em todos os Endereços
-        $SQL = new dml_putTrigEvento; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+        $SQL = new dml_putTrigEvento; 
+        $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
         //Em seguida, ativa apenas para os Endereços selecionados
         for ($i=0; $i<=count($_POST['w_evento'])-1; $i=$i+1) {
           if ($_REQUEST['w_evento'][$i]>'') {
-            $SQL = new dml_PutTrigEvento; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_REQUEST['w_evento'][$i]);
+            $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_REQUEST['w_evento'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');

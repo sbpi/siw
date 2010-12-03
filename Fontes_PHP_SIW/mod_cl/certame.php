@@ -4004,15 +4004,16 @@ function Grava() {
   case 'CLLCITEM':
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      $SQL = new dml_putCLSolicItem; 
       if ($O=='I') {
         for ($i=0; $i<=count($_POST['w_item_pedido'])-1; $i=$i+1) {
           if ($_REQUEST['w_item_pedido'][$i]>'') {
-            $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],
+            $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],
                 $_REQUEST['w_item_pedido'][$i],null,null,null,null,null,null);
           }
         } 
       } else {
-        $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_chave_aux2'],
+        $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_chave_aux2'],
             null,null,null,null,null,null);
       } 
       ScriptOpen('JavaScript');
@@ -4139,9 +4140,10 @@ function Grava() {
       $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],null);
       
       // Insere as cotaçoes e atualiza a tabela de materiais
+      $SQL = new dml_putCLItemFornecedor; 
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
-          $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
+          $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
              $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
              $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa'],$_REQUEST['w_origem'][$i]);
         } 
@@ -4160,7 +4162,8 @@ function Grava() {
   case 'CLLCDADOS':
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'DADOS',$_REQUEST['w_chave'],$_REQUEST['w_sq_lcmodalidade'],
+      $SQL = new dml_putCLDados; 
+      $SQL->getInstanceOf($dbms,'DADOS',$_REQUEST['w_chave'],$_REQUEST['w_sq_lcmodalidade'],
         $_REQUEST['w_numero_processo'],$_REQUEST['w_abertura'],$_REQUEST['w_numero_certame'],$_REQUEST['w_numero_ata'],
         $_REQUEST['w_tipo_reajuste'],$_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],
         nvl($_REQUEST['w_limite_variacao'],0),$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_sq_espec_despesa'],
@@ -4170,7 +4173,7 @@ function Grava() {
       // Atualiza a ordem dos itens da solicitação
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
-          $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'ORDENACAO',$_REQUEST['w_chave_aux'][$i],null,null,null,null,null,null,
+          $SQL->getInstanceOf($dbms,'ORDENACAO',$_REQUEST['w_chave_aux'][$i],null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_ordem'][$i],null,
               $_REQUEST['w_dias_item'][$i],null,null,null,null,null);
         } 
@@ -4412,14 +4415,15 @@ function Grava() {
           ScriptClose();
           exit();
         } else {
-          $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'CONCLUSAO',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,
+          $SQL = new dml_putCLDados; 
+          $SQL->getInstanceOf($dbms,'CONCLUSAO',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,$_REQUEST['w_homologacao'],$_REQUEST['w_data_diario'],
               $_REQUEST['w_pagina_diario'],null,null,null,null,null,null,null,null);
 
           // Registra o vencedor de cada item
           for ($i=0; $i<=count($_POST['w_vencedor'])-1; $i=$i+1) {
             if (Nvl($_REQUEST['w_vencedor'][$i],'')>'') {
-              $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'VENCEDOR',$_REQUEST['w_vencedor'][$i],null,null,null,
+              $SQL->getInstanceOf($dbms,'VENCEDOR',$_REQUEST['w_vencedor'][$i],null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }

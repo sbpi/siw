@@ -344,7 +344,7 @@ function Transferencia() {
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } elseif ($O == 'P') {
-    BodyOpen('onLoad=\'document.Form.p_protocolo.focus()\';');
+    BodyOpen('onLoad=\'document.Form.w_caixa.focus()\';');
   } else {
     BodyOpen('onLoad=\'this.focus()\';');
   }

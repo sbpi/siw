@@ -3229,15 +3229,16 @@ function Grava() {
     case 'CLRPITEM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putCLSolicItem; 
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_solic_item'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_solic_item'][$i]>'') {
-              $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,'V',null,$_REQUEST['w_chave'],
+              $SQL->getInstanceOf($dbms,'V',null,$_REQUEST['w_chave'],
                   $_REQUEST['w_sq_solic_item'][$i],null,$_REQUEST['w_quantidade'][$i],null,null,null,null);
             }
           } 
         } else {
-          $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_chave_aux2'],
+          $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_chave_aux2'],
               null,null,null,null,null,null);
         } 
         ScriptOpen('JavaScript');
@@ -3320,13 +3321,15 @@ function Grava() {
             $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
             $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
             $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
+
         // Apaga todos os itens cotados dessa solicitação
-        $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa']);
+        $SQL = new dml_putCLItemFornecedor; 
+        $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa']);
       
-        // Inseri as cotaçoes e atualiza a tabela de materiais
+        // Insere as cotaçoes e atualiza a tabela de materiais
         for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
           if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
-            $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,$O,$w_cliente,null,$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
+            $SQL->getInstanceOf($dbms,$O,$w_cliente,null,$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
                $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
                $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',
                $_REQUEST['w_pesquisa']);
@@ -3510,9 +3513,10 @@ function Grava() {
     case 'CLRPINF':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putCLSolicItem; 
         for ($i=0; $i<=count($_POST['w_sq_solic_item'])-1; $i=$i+1) {
           if ($_REQUEST['w_sq_solic_item'][$i]>'') {
-            $SQL = new dml_putCLSolicItem; $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_sq_solic_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
+            $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_sq_solic_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
                 Nvl($_REQUEST['w_quantidade'][$i],0),Nvl($_REQUEST['w_qtd_ant'][$i],0),null,null,null);
           }
         }
@@ -3564,7 +3568,8 @@ function Grava() {
           null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 
         // Grava os dados da autorização
-        $SQL = new dml_putAcordoFornecimento; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putAcordoFornecimento; 
+        $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],
           $_REQUEST['w_chave'],$_REQUEST['w_ordem_fornecimento'],$_REQUEST['w_numero'],$_REQUEST['w_local_entrega'],
           $_REQUEST['w_agendamento'],$_REQUEST['w_mail'],$_REQUEST['w_numero_processo'],$_REQUEST['w_nota_empenho'],
           $_REQUEST['w_valor_empenho'],$_REQUEST['w_data_prevista'],$_REQUEST['w_autorizador_nome'],
@@ -3575,7 +3580,7 @@ function Grava() {
         // Grava os itens
         for ($i=0; $i<=count($_POST['w_sq_solic_item'])-1; $i=$i+1) {
           if (Nvl($_REQUEST['w_sq_solic_item'][$i],'')>'') {
-            $SQL = new dml_putAcordoFornecimento; $SQL->getInstanceOf($dbms,'ITEM',$w_chave_nova,
+            $SQL->getInstanceOf($dbms,'ITEM',$w_chave_nova,
               null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
               $_REQUEST['w_sq_solic_item'][$i],$_REQUEST['w_quantidade'][$i],$_REQUEST['w_valor_item'][$i],null);
           }
@@ -3600,7 +3605,8 @@ function Grava() {
           null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 
         // Grava os dados da autorização
-        $SQL = new dml_putAcordoFornecimento; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],
+        $SQL = new dml_putAcordoFornecimento; 
+        $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],
           $_REQUEST['w_chave'],$_REQUEST['w_ordem_fornecimento'],$_REQUEST['w_numero'],$_REQUEST['w_local_entrega'],
           $_REQUEST['w_agendamento'],$_REQUEST['w_mail'],$_REQUEST['w_numero_processo'],$_REQUEST['w_nota_empenho'],
           $_REQUEST['w_valor_empenho'],$_REQUEST['w_data_prevista'],$_REQUEST['w_autorizador_nome'],
@@ -3611,7 +3617,7 @@ function Grava() {
         // Grava os itens
         for ($i=0; $i<=count($_POST['w_sq_solic_item'])-1; $i=$i+1) {
           if (Nvl($_REQUEST['w_sq_solic_item'][$i],'')>'') {
-            $SQL = new dml_putAcordoFornecimento; $SQL->getInstanceOf($dbms,'ITEM',$w_chave_nova,
+            $SQL->getInstanceOf($dbms,'ITEM',$w_chave_nova,
               null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
               $_REQUEST['w_sq_solic_item'][$i],$_REQUEST['w_quantidade'][$i],$_REQUEST['w_valor_item'][$i],null);
           }

@@ -3970,9 +3970,10 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (nvl($_REQUEST['w_arq_central'],'')=='S') {
+        $SQL = new dml_putCaixaEnvio; 
         for ($i=1; $i<count($_POST['w_chave']); $i++) {
           if (Nvl($_POST['w_chave'][$i],'')>'') {
-            $SQL = new dml_putCaixaEnvio; $SQL->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
+            $SQL->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
                 $_REQUEST['w_interno'], $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],
                 $_REQUEST['w_tipo_despacho'],$_REQUEST['w_despacho'],
                 &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
@@ -4020,9 +4021,10 @@ function Grava() {
             exit;
           }
         }
+        $SQL = new dml_putDocumentoEnvio; 
         for ($i=1; $i<count($_POST['w_chave']); $i++) {
           if (Nvl($_POST['w_chave'][$i],'')>'') {
-            $SQL = new dml_putDocumentoEnvio; $SQL->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
+            $SQL->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
                 $_POST['w_tramite'][$_POST['w_chave'][$i]], $_REQUEST['w_interno'],
                 $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],$_REQUEST['w_pessoa_destino'],
                 $_REQUEST['w_tipo_despacho'],$p_prefixo, $p_numero, $p_ano,$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],
@@ -4058,9 +4060,10 @@ function Grava() {
               null,null,null,null,null,null,null,null,null,null,&$w_chave_nova);
       }
 
+      $SQL = new dml_putDocumentoCaixa; 
       for ($i=1; $i<count($_POST['w_chave']); $i++) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
-          $SQL = new dml_putDocumentoCaixa; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_POST['w_chave'][$i],$w_usuario,
+          $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_POST['w_chave'][$i],$w_usuario,
               (($_REQUEST['w_caixa']==0) ? $w_chave_nova : $_REQUEST['w_caixa']),$_REQUEST['w_pasta']);
         } 
       }
@@ -4078,11 +4081,13 @@ function Grava() {
   } elseif ($SG=='PACLASSIF') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      $sql = new db_getSolicData;
+      $SQL = new dml_putDocumentoAssunto;  
       for ($i=1; $i<count($_POST['w_chave']); $i++) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
-          $sql = new db_getSolicData; $RS_Assunto = $sql->getInstanceOf($dbms,$_POST['w_chave'][$i],'PADCAD');
-          $SQL = new dml_putDocumentoAssunto; $SQL->getInstanceOf($dbms,'E',$_SESSION['SQ_PESSOA'],$_POST['w_chave'][$i],f($RS_Assunto,'sq_assunto'),'S');
-          $SQL = new dml_putDocumentoAssunto; $SQL->getInstanceOf($dbms,'I',$_SESSION['SQ_PESSOA'],$_POST['w_chave'][$i],$_REQUEST['w_assunto'],'S');
+          $RS_Assunto = $sql->getInstanceOf($dbms,$_POST['w_chave'][$i],'PADCAD');
+          $SQL->getInstanceOf($dbms,'E',$_SESSION['SQ_PESSOA'],$_POST['w_chave'][$i],f($RS_Assunto,'sq_assunto'),'S');
+          $SQL->getInstanceOf($dbms,'I',$_SESSION['SQ_PESSOA'],$_POST['w_chave'][$i],$_REQUEST['w_assunto'],'S');
         } 
       }
 

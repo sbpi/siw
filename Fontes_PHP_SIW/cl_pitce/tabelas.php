@@ -2571,12 +2571,12 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Remove os registros existentes
-        $SQL = new dml_putPlano_Menu; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
-
+        $SQL = new dml_putPlano_Menu; 
+        $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
         // Insere apenas os itens marcados
         for ($i=0; $i<=count($_POST['w_servico'])-1; $i=$i+1) {
           if (Nvl($_POST['w_servico'][$i],'')>'') {
-            $SQL = new dml_putPlano_Menu; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
+            $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
@@ -2620,12 +2620,13 @@ function Grava() {
     case 'PEOBJETIVO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_putObjetivo_pe; 
         if ($O=='T') {
           for ($i=0; $i<=count($_POST['w_objetivo'])-1; $i=$i+1)   {
-            $SQL = new dml_putObjetivo_pe; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
+            $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
           } 
         } else {
-          $SQL = new dml_putObjetivo_pe; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
+          $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
         }
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

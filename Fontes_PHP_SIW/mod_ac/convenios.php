@@ -3633,16 +3633,17 @@ function Grava() {
   } elseif (strpos($SG,'PARC')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      $SQL = new dml_putAcordoParc;
       if($O=='V') {
         for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
           if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
-            $SQL = new dml_putAcordoParc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
+            $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
               $_REQUEST['w_sq_acordo_aditivo'], null,null,null,null,null,null,null,
               null,null,null,$_REQUEST['w_inicio'][$i],$_REQUEST['w_fim'][$i],null,null,null);
            }
         }
       } else {
-        $SQL = new dml_putAcordoParc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], 
+        $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], 
           $_REQUEST['w_sq_acordo_aditivo'], $_REQUEST['w_ordem'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
           $_REQUEST['w_observacao'], $_REQUEST['w_tipo_geracao'],$_REQUEST['w_tipo_mes'],
           $_REQUEST['w_vencimento'], $_REQUEST['w_dia_vencimento'], $_REQUEST['w_valor_parcela'],

@@ -2595,10 +2595,10 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Elimina todas as permissões existentes para depois incluir
-        $SQL = new dml_PutSiwPesCC; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
-
+        $SQL = new dml_PutSiwPesCC; 
+        $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
         for ($i=0; $i<=count($_POST['w_sq_cc'])-1; $i=$i+1)   {
-          $SQL = new dml_PutSiwPesCC; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], $_POST['w_sq_cc'][$i]);
+          $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], $_POST['w_sq_cc'][$i]);
         } 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'\';');
@@ -2618,12 +2618,13 @@ function Grava() {
         $w_teste = '';
         $SQL = new db_getMenuList; $RS = $SQL->getInstanceOf($dbms, $w_cliente, 'X', null, null);
         $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
+        $SQL = new dml_PutSiwPessoaMail;
         foreach($RS as $row) {
           for ($i=0; $i<=count($_REQUEST['w_sq_menu'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_menu'][$i]>'') {
               if($_REQUEST['w_sq_menu'][$i]==f($row,'sq_menu')) {
-                $SQL = new dml_PutSiwPessoaMail; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), nvl($_REQUEST['w_alerta_'.f($row,'sq_menu').''],'N'),
-                                                    nvl($_REQUEST['w_tramitacao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_conclusao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_responsabilidade_'.f($row,'sq_menu').''],'N'));
+                $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), nvl($_REQUEST['w_alerta_'.f($row,'sq_menu').''],'N'),
+                                    nvl($_REQUEST['w_tramitacao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_conclusao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_responsabilidade_'.f($row,'sq_menu').''],'N'));
               }
             } 
           }

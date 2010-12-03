@@ -7880,14 +7880,15 @@ function Grava() {
     case 'PDVINC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
+        $SQL = new dml_putPD_Atividade; 
         if ($O == 'I') {
           for ($i = 0; $i <= count($_POST['w_demanda']) - 1; $i = $i + 1) {
             if (Nvl($_POST['w_demanda'][$i], '') > '') {
-              $SQL = new dml_putPD_Atividade; $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $_POST['w_demanda'][$i]);
+              $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $_POST['w_demanda'][$i]);
             }
           }
         } elseif ($O == 'E') {
-          $SQL = new dml_putPD_Atividade; $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $_REQUEST['w_demanda']);
+          $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $_REQUEST['w_demanda']);
         }
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&w_chave=' . $_REQUEST['w_chave']) . '\';');
@@ -7904,12 +7905,13 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         $SQL = new dml_putPD_Missao; $SQL->getInstanceOf($dbms, null, $_REQUEST['w_chave'], Nvl($_REQUEST['w_vlr_alimentacao'], 0), Nvl($_REQUEST['w_vlr_transporte'], 0), Nvl($_REQUEST['w_adicional'], 0),
                         Nvl($_REQUEST['w_desc_alimentacao'], 0), Nvl($_REQUEST['w_desc_trasnporte'], 0), null, null, null, null);
+        $SQL = new dml_putPD_Diaria; 
         for ($i = 0; $i <= count($_POST['w_sq_diaria']) - 1; $i = $i + 1) {
           if ($_POST['w_sq_diaria'][$i] > '') {
-            $SQL = new dml_putPD_Diaria; $SQL->getInstanceOf($dbms, 'A', $_REQUEST['w_chave'], $_POST['w_sq_diaria'][$i], $_POST['w_sq_cidade'][$i],
+            $SQL->getInstanceOf($dbms, 'A', $_REQUEST['w_chave'], $_POST['w_sq_diaria'][$i], $_POST['w_sq_cidade'][$i],
                             Nvl($_POST['w_qtd_diarias'][$i], 0), Nvl($_POST['w_vlr_diarias'][$i], 0));
           } else {
-            $SQL = new dml_putPD_Diaria; $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], null, $_POST['w_sq_cidade'][$i],
+            $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], null, $_POST['w_sq_cidade'][$i],
                             Nvl($_POST['w_qtd_diarias'][$i], 0), Nvl($_POST['w_vlr_diarias'][$i], 0));
           }
         }
@@ -7928,8 +7930,9 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         $SQL = new dml_putPD_Missao; $SQL->getInstanceOf($dbms, null, $_REQUEST['w_chave'], null, null, null,
                         null, null, $_REQUEST['w_pta'], $_REQUEST['w_emissao_bilhete'], $_REQUEST['w_valor_passagem'], $SG);
+        $SQL = new dml_putPD_Deslocamento; 
         for ($i = 0; $i <= count($_POST['w_sq_deslocamento']) - 1; $i = $i + 1) {
-          $SQL = new dml_putPD_Deslocamento; $SQL->getInstanceOf($dbms, 'P', $_REQUEST['w_chave'], $_POST['w_sq_deslocamento'][$i], null, null, null, null, null, null,
+          $SQL->getInstanceOf($dbms, 'P', $_REQUEST['w_chave'], $_POST['w_sq_deslocamento'][$i], null, null, null, null, null, null,
                           $_POST['w_sq_cia_transporte'][$i], Nvl($_POST['w_codigo_voo'][$i], 0), null, null, null, null, null, null, null);
         }
         ScriptOpen('JavaScript');
@@ -8115,9 +8118,10 @@ function Grava() {
 
           /*
             // Grava dados dos bilhetes
+            $SQL = new dml_putPD_Bilhete; 
             for ($i=0; $i<=count($_POST['w_sq_bilhete'])-1; $i=$i+1) {
             if (Nvl($_POST['w_sq_bilhete'][$i],'')>'') {
-            $SQL = new dml_putPD_Bilhete; $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_chave'],$_POST['w_sq_bilhete'][$i],
+            $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_chave'],$_POST['w_sq_bilhete'][$i],
             null,null,null,null,null,null,null,null,null,null,null,null,null,$_POST['w_tipo'][$i],null);
             }
             }

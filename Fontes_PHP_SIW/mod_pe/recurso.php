@@ -1838,12 +1838,13 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Remove os registros existentes
-        $SQL = new dml_putRecurso_Menu; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
+        $SQL = new dml_putRecurso_Menu; 
+        $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 
         // Insere apenas os itens marcados
         for ($i=0; $i<=count($_POST['w_servico'])-1; $i=$i+1) {
           if (Nvl($_POST['w_servico'][$i],'')>'') {
-            $SQL = new dml_putRecurso_Menu; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
+            $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_POST['w_servico'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
