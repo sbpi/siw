@@ -25,6 +25,7 @@ create or replace procedure SP_PutViagemEnvio
    w_salto         number(4)    := 0;
    w_reembolso     pd_missao.reembolso%type;
    w_ressarcimento pd_missao.ressarcimento%type;
+   w_complemento   pd_missao.complemento_valor%type;
    w_conta         co_pessoa_conta%rowtype;
    w_beneficiario  number(18);
    w_especial      number(18);
@@ -70,7 +71,23 @@ create or replace procedure SP_PutViagemEnvio
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
                inner   join (select sq_siw_solicitacao, 
                                     sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-                               from (select a.sq_siw_solicitacao, 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
+                               from (select distinct a.sq_siw_solicitacao, 'CMP' as tp_despesa, null as sq_diaria, a1.complemento_valor as valor,
+                                            c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                                            d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                                       from siw_solicitacao                      a
+                                            inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
+                                            inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao and
+                                                                                        a1.complemento_valor         > 0
+                                                                                       )
+                                            inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
+                                                                                        c.diaria                     = 'S'
+                                                                                       )
+                                              inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
+                                            co_moeda                             d1
+                                      where a.sq_siw_solicitacao = p_chave
+                                        and d1.sigla             =	'BRL'
+                                     UNION
+                                     select a.sq_siw_solicitacao, 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                                             b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                                        from siw_solicitacao                      a
@@ -124,6 +141,18 @@ create or replace procedure SP_PutViagemEnvio
              fn_tipo_documento             y,
              (select sq_tipo_lancamento as sq_lancamento, nm_lancamento
                 from (select c2.sq_tipo_lancamento, c2.nome as nm_lancamento
+                        from siw_solicitacao                      a
+                             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
+                             inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao and
+                                                                         a1.complemento_valor         > 0
+                                                                        )
+                             inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
+                                                                         c.diaria                     = 'S'
+                                                                        )
+                               inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
+                       where a.sq_siw_solicitacao = p_chave
+                      UNION
+                      select c2.sq_tipo_lancamento, c2.nome as nm_lancamento
                         from siw_solicitacao                      a
                              inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
                              inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
@@ -224,7 +253,7 @@ create or replace procedure SP_PutViagemEnvio
    
 begin
    -- Recupera os dados da solicitação.
-   select reembolso,ressarcimento,sq_pessoa into w_reembolso, w_ressarcimento, w_beneficiario from pd_missao where sq_siw_solicitacao = p_chave;
+   select reembolso,ressarcimento,complemento_valor, sq_pessoa into w_reembolso, w_ressarcimento, w_complemento, w_beneficiario from pd_missao where sq_siw_solicitacao = p_chave;
    
    -- Recupera a chave do cliente
    select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
@@ -467,8 +496,8 @@ begin
    End If;
    
    If p_devolucao = 'N' Then
-      If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
-         If w_reembolso = 'S' or w_sg_tramite = 'PC' Then
+      If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S' or w_complemento > 0)) Then
+         If w_reembolso = 'S' or w_complemento > 0 or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso loop
                 sp_putfinanceirogeral(

@@ -469,7 +469,7 @@ begin
    Elsif p_restricao = 'RECEBIDO' Then
       -- Recupera guias de tramitação
       open p_result for
-      select a.nu_guia, a.ano_guia, b.unidade_autuacao, b.sq_siw_solicitacao
+      select a.nu_guia, a.ano_guia, b.unidade_autuacao, b.sq_siw_solicitacao, a.cadastrador
         from pa_documento_log          a
              inner   join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
        where a.nu_guia          = p_nu_guia

@@ -54,7 +54,22 @@ begin
              sq_tipo_lancamento as sq_lancamento, nm_lancamento, 
              sg_moeda, nm_moeda, sb_moeda, 
              sum(valor) as valor
-        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor,
+        from (select distinct 'CMP' as tp_despesa, a1.complemento_valor as valor,
+                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                     c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
+                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                from siw_solicitacao                      a
+                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                     inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
+                                                                 c.diaria                     = 'S'
+                                                                )
+                       inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+                       inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
+                     co_moeda                             d1
+               where a.sq_siw_solicitacao = p_solic
+                 and d1.sigla             =	'BRL'
+              UNION
+              select 'RMB' as tp_despesa, b.valor_autorizado as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
@@ -156,7 +171,20 @@ begin
       -- Recupera a previsão orçamentária da viagem
       open p_result for
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
+        from (select distinct 'CMP' as tp_despesa, a1.complemento_valor as valor, 0 as sq_diaria,
+                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                from siw_solicitacao                      a
+                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                     inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
+                                                                 c.diaria                     = 'S'
+                                                                )
+                       inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
+                     co_moeda                             d1
+               where a.sq_siw_solicitacao = p_solic
+                 and d1.sigla             =	'BRL'
+              UNION
+              select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -220,7 +248,20 @@ begin
       -- Recupera a previsão financeira da viagem
       open p_result for
       select sq_tipo_lancamento as sq_lancamento, nm_lancamento, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
+        from (select distinct 'CMP' as tp_despesa, a1.complemento_valor as valor, 0 as sq_diaria,
+                     c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
+                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                from siw_solicitacao                      a
+                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                     inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
+                                                                 c.diaria                     = 'S'
+                                                                )
+                       inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
+                     co_moeda                             d1
+               where a.sq_siw_solicitacao = p_solic
+                 and d1.sigla             =	'BRL'
+              UNION
+              select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                 from siw_solicitacao                      a
