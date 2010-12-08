@@ -1771,6 +1771,78 @@ function Concluir() {
   Rodape();
 } 
 // =========================================================================
+// Rotina de preparação para envio de e-mail comunicando a recusa de uma guia de tramitação
+// Finalidade: preparar os dados necessários ao envio automático de e-mail
+// Parâmetro: l_o         : tipo da recusa: S - protocolos; T - caixa. 
+//            l_unid      :  unidade de origem da guia
+//            l_numero    : número da guia
+//            l_ano       : ano da guia
+//            l_observacao: texto com o motivo da recusa (opcional)
+// -------------------------------------------------------------------------
+function MailRecusa($l_o, $l_unid, $l_numero, $l_ano, $l_observacao) {
+  extract($GLOBALS);
+  //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  if(f($RS,'envia_mail_tramite')=='S' && f($RS_Menu,'envia_email')=='S') {
+    $w_assunto = 'Guia '.$l_numero.'/'.$l_ano.' - Recusa de recebimento';
+    $w_destinatarios  = '';
+    $w_resultado      = '';
+    $w_html='<HTML>'.$crlf;
+    $w_html.=BodyOpenMail(null).$crlf;
+    $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+    $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+    $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+    $w_html.='    <table width="97%" border="0">'.$crlf;
+    $w_html.='      <tr><td align="center"><font size=2><b>GUIA RECUSADA</b></font><br><br><td></tr>'.$crlf;
+    $w_html.='      <tr><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
+    $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+    $w_html.=$crlf.'    <table width="99%" border="0">';
+    $w_html.=$crlf.'      <tr><td>';
+    
+    // Chama a rotina de visualização dos protocolos da guia
+    $w_html.=$crlf.VisualGR($l_unid, $l_numero, $l_ano, f($RS_Menu,'sq_menu'), 'TELA');
+
+    // Configura o remetente da tramitação como destinatário da mensagem
+    $sql = new db_getProtocolo; 
+    $RS = $sql->getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'RECEBIDO', null, null, null, null, null, 
+              $l_unid, null, $l_numero, $l_ano, null, null, 2, null, null, null, null, null, null, null, null);
+    foreach($RS as $row) { $RS = $row; break; }
+    $l_pessoa = f($RS,'cadastrador');
+    $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,nvl($l_pessoa,0),null,null);
+    $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
+    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
+    $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms,$w_cliente);
+    $w_html.='      <tr valign="top"><td><font size=2>'.$crlf;
+    $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+    $w_html.='      </font></td></tr>'.$crlf;
+    $w_html.='      <tr valign="top"><td><font size=2>'.$crlf;
+    $w_html.='         Dados da ocorrência:<br>'.$crlf;
+    $w_html.='         <ul>'.$crlf;
+    $w_html.='         <li>Responsável pela recusa: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+    $w_html.='         <li>Observação: <b>'.$l_observacao.'</b></li>'.$crlf;
+    $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',time()).'</b></li>'.$crlf;
+    $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+    $w_html.='         </ul>'.$crlf;
+    $w_html.='      </font></td></tr>'.$crlf;
+    $w_html.='    </table>'.$crlf;
+    $w_html.='</td></tr>'.$crlf;
+    $w_html.='</table>'.$crlf;
+    $w_html.='</BODY>'.$crlf;
+    $w_html.='</HTML>'.$crlf;
+    
+    if ($w_destinatarios>'') {
+      // Executa o envio do e-mail
+      $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,null);
+    } 
+    // Se ocorreu algum erro, avisa da impossibilidade de envio
+    if ($w_resultado>'') {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+      ScriptClose();
+    } 
+  }
+} 
+// =========================================================================
 // Rotina de preparação para envio de e-mail relativo a programas
 // Finalidade: preparar os dados necessários ao envio automático de e-mail
 // Parâmetro: p_solic: número de identificação da solicitação. 
@@ -1851,7 +1923,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.='         Dados da ocorrência:<br>'.$crlf;
     $w_html.='         <ul>'.$crlf;
     $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
-    $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
+    $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',time()).'</b></li>'.$crlf;
     $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
     $w_html.='         </ul>'.$crlf;
     $w_html.='      </font></td></tr>'.$crlf;
@@ -4104,7 +4176,8 @@ function Grava() {
   } elseif (strpos($SG,'RECEB')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, 'RECEBIDO', null, null, null, null, null, 
+      $sql = new db_getProtocolo; 
+      $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, 'RECEBIDO', null, null, null, null, null, 
                 $_REQUEST['w_unid_autua'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2, null, null, null, 
                 null, null, null, null, null);
       if (count($RS)==0) {
@@ -4113,8 +4186,12 @@ function Grava() {
         ScriptClose();
         retornaFormulario('w_assinatura');
       } else {
-        $SQL = new dml_putDocumentoReceb; $SQL->getInstanceOf($dbms,$O,$w_usuario,
-            $_REQUEST['w_unid_autua'],$_REQUEST['w_nu_guia'],$_REQUEST['w_ano_guia'],$_REQUEST['w_observacao']);
+        if (($O=='S'||$O=='U')) {
+          MailRecusa($O,$_REQUEST['w_unid_autua'],$_REQUEST['w_nu_guia'],$_REQUEST['w_ano_guia'],$_REQUEST['w_observacao']);
+        }
+      
+        $SQL = new dml_putDocumentoReceb; 
+        $SQL->getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_unid_autua'],$_REQUEST['w_nu_guia'],$_REQUEST['w_ano_guia'],$_REQUEST['w_observacao']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  alert("Protocolos da guia '.(($O=='S'||$O=='U') ? 'recusados' : 'recebidos').' com sucesso!");');

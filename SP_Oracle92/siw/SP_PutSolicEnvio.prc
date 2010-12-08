@@ -44,29 +44,11 @@ begin
             select * into w_solic_cl from cl_solicitacao where sq_siw_solicitacao = p_chave;
          End If;
 
-         -- Decide a tramitação em função do valor do pedido
+         -- Decide a tramitação de pedidos de compra
          If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
             -- Regra da ABDI: 
-            --   após chefia imediata, pedidos de compra até 5mil vão para GERAF, acima de 15mil vão para DIREX, outros vão para presidente ou diretor
-            --   após trâmite intermediario, vai para GERAF concluir.
-            If w_or_tramite in (3,4) Then
-               If w_solic.valor > 25000 and w_or_tramite = 4 Then
-                  select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
-                     from siw_tramite a
-                    where a.sq_menu = p_menu
-                      and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
-               Elsif w_solic.valor <= 5000 Then
-                  select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
-                     from siw_tramite a
-                    where a.sq_menu = p_menu
-                      and a.sigla   = 'AF';
-               End If;
-            Elsif w_or_tramite = 5 Then
-               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
-                  from siw_tramite a
-                 where a.sq_menu = p_menu
-                   and a.sigla   = 'AF';
-            Elsif w_or_tramite = 8 and coalesce(w_solic_cl.fundo_fixo,'N') = 'N' Then
+            --   Compra por fundo fixo vai para trâmite especial de compra pela GERAF.
+            If w_or_tramite = 5 and coalesce(w_solic_cl.fundo_fixo,'N') = 'N' Then
                select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                   from siw_tramite a
                  where a.sq_menu = p_menu

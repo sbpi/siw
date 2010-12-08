@@ -38,6 +38,7 @@ include_once($w_dir_volta . 'classes/sp/db_getSolicViagem.php');
 include_once($w_dir_volta . 'classes/sp/db_getPD_Fatura.php');
 include_once($w_dir_volta . 'classes/sp/db_getPD_Alteracao.php');
 include_once($w_dir_volta . 'classes/sp/db_getPD_Deslocamento.php');
+include_once($w_dir_volta . 'classes/sp/db_getDescontoAgencia.php');
 include_once($w_dir_volta . 'classes/sp/db_getPD_Vinculacao.php');
 include_once($w_dir_volta . 'classes/sp/db_getPD_Financeiro.php');
 include_once($w_dir_volta . 'classes/sp/db_getPDParametro.php');
@@ -56,7 +57,7 @@ include_once($w_dir_volta . 'classes/sp/dml_putPD_Contas.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Reembolso.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_ReembValor.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Cotacao.php');
-include_once($w_dir_volta . 'classes/sp/dml_putPD_FimSemana.php');
+include_once($w_dir_volta . 'classes/sp/dml_putPD_Dados.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Deslocamento.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Alteracao.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Bilhete.php');
@@ -2034,6 +2035,8 @@ function Bilhetes() {
   // Recupera os dados da solicitação e do cliente
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
+  //exibeArray($RS_Solic);
+
   if (f($RS_Solic, 'sg_tramite') == 'AE')
     $w_tipo_reg = 'S'; else
     $w_tipo_reg = 'P';
@@ -2041,6 +2044,18 @@ function Bilhetes() {
   // Trechos da solicitação
   $sql = new db_getPD_Deslocamento; $RS_Trecho = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, 'COTPASS');
   $RS_Trecho = SortArray($RS_Trecho, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
+
+  //Percentual de desconto do bilhete
+  $sql = new db_getDescontoAgencia;
+  $RS_Desc = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, null, null, 'S');
+  if (count($RS_Desc) == 1) {
+    foreach ($RS_Desc as $row) {
+      $RS_Desc = $row;
+      break;
+    }
+    $desconto = f($RS_Desc,'desconto');
+  }
+  
 
   if ($w_troca > '') {
     // Se for recarga da página
@@ -2089,6 +2104,19 @@ function Bilhetes() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
+  if (nvl($desconto, '') != '') {
+    ShowHTML('  $(document).ready(function() {');
+    ShowHTML('    $("#w_valor_bil").blur(function() {');
+    ShowHTML('      var desconto = parseFloat(' . $desconto . ')');
+    ShowHTML('      var bilhete_cheio = parseFloat($(this).val().replace(".","").replace(".","").replace(",","."))');
+    ShowHTML('      var bilhete_desconto = (bilhete_cheio - (bilhete_cheio * (desconto / 100))).toFixed(2);');
+    ShowHTML('      if(bilhete_desconto > 0){');
+    ShowHTML('        $("#w_valor_cheio").val(bilhete_desconto);');
+    ShowHTML('        $("#w_valor_cheio").focus();');
+    ShowHTML('      }');
+    ShowHTML('    });');
+    ShowHTML('  });');
+  }
   CheckBranco();
   FormataData();
   SaltaCampo();
@@ -2248,8 +2276,8 @@ function Bilhetes() {
     ShowHTML('        <td colspan=3><b><u>T</u>rechos:</b><br><input ' . $w_Disabled . ' accesskey="T" type="text" name="w_trecho" class="sti" SIZE="60" MAXLENGTH="60" style="text-transform:uppercase;" VALUE="' . $w_trecho . '"></td>');
     ShowHTML('        <td><b><u>R</u>LOC:</b><br><input ' . $w_Disabled . ' accesskey="R" type="text" name="w_rloc" class="sti" SIZE="6" MAXLENGTH="6" VALUE="' . $w_rloc . '"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b>$ Bilhete <u>c</u>om desconto:</b><br><input type="text" accesskey="C" name="w_valor_cheio" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor_cheio . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete com desconto."></td>');
-    ShowHTML('        <td><b>$ <u>B</u>ilhete:</b><br><input type="text" accesskey="V" name="w_valor_bil" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor_bil . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
+    ShowHTML('        <td><b>$ <u>B</u>ilhete cheio:</b><br><input type="text" accesskey="V" name="w_valor_bil" id="w_valor_bil" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor_bil . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
+    ShowHTML('        <td><b>$ Bilhete <u>c</u>om desconto:</b><br><input type="text" accesskey="C" name="w_valor_cheio" id="w_valor_cheio" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor_cheio . '" style="text-align:right;" onFocus="FormataValor(this,18,2,event);" title="Informe o valor do bilhete com desconto."></td>');
     ShowHTML('        <td><b>$ <u>T</u>axa de embarque:</b><br><input type="text" accesskey="T" name="w_valor_tax" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor_tax . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ Ta<u>x</u>as:</b><br><input type="text" accesskey="X" name="w_valor_pta" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . nvl($w_valor_pta, '0,00') . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     if ($w_tipo_reg == 'P') {
@@ -2326,9 +2354,62 @@ function AltSolic() {
 
   // Recupera os dados da solicitação e do cliente
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
-  $w_nm_diaria = f($RS_Solic, 'nm_diaria');
-  $w_fim_semana = nvl($_REQUEST['w_fim_semana'], f($RS_Solic, 'diaria_fim_semana'));
+  $w_nm_diaria   = f($RS_Solic, 'nm_diaria');
+  $w_fim_semana  = nvl($_REQUEST['w_fim_semana'], f($RS_Solic, 'diaria_fim_semana'));
+  $w_valor_comp  = nvl($_REQUEST['w_valor_comp'], f($RS_Solic, 'valor_complemento'));
+  $w_qtd_comp    = nvl($_REQUEST['w_qtd_comp'], f($RS_Solic, 'complemento_qtd'));
+  $w_tot_comp    = nvl($_REQUEST['w_tot_comp'], f($RS_Solic, 'complemento_valor'));
+  $w_complemento = $_REQUEST['w_complemento'];
 
+  if (($w_qtd_comp + $w_tot_comp) > 0) {
+    $w_complemento = nvl($_REQUEST['w_complemento'],'S');
+  }else{
+    $w_complemento = nvl($_REQUEST['w_complemento'],'N');
+  }
+  
+  ScriptOpen('JavaScript');
+  toMoney();
+  if (floatVal($w_valor_comp) > 0) {
+    if (nvl($w_complemento, 'N') == 'S') {
+      ShowHTML('  $(document).ready(function() {');
+      ShowHTML('      var valor;');
+      ShowHTML('      var quantidade;');
+      ShowHTML('      var total = parseFloat(0).toFixed(2);');
+      ShowHTML('      var decimal = "";');
+      ShowHTML('      $("#w_qtd_comp").blur(function() {');
+      ShowHTML('        valor = $("#w_valor_comp").val().replace(".","").replace(".","").replace(",",".")');
+      ShowHTML('        quantidade = $("#w_qtd_comp").val().replace(".","").replace(".","").replace(",",".")');
+      ShowHTML('        total = (valor * quantidade).toFixed(2);');
+      ShowHTML('        if(quantidade > 0){');
+      ShowHTML('          $("#w_tot_comp").val(toMoney(total,"BR"));');
+      ShowHTML('        }else{');
+      ShowHTML('          $("#w_tot_comp").val(parseFloat(0).toFixed(2));');
+      ShowHTML('        }');
+      ShowHTML('      });');
+      ShowHTML('      $(\'form[name="Form"]\').submit(function() {');
+      ShowHTML('        $("#w_qtd_comp").blur();');
+      ShowHTML('        return true;');
+      ShowHTML('      });');
+      ShowHTML('    });');
+      FormataValor();
+      ValidateOpen('Validacao');
+      Validate('w_qtd_comp', 'Quantidade do complemento', 'VALOR', '1', 3, 5, '1', '0123456789,');
+      CompValor('w_qtd_comp', 'Quantidade do complemento', '>', '0,0', 'zero');
+      //Validate('w_tot_comp', 'Valor total do complemento de diária', 'VALOR', '1', 4, 18, '1', '0123456789,.');
+      ValidateClose();
+    } else {
+      //$w_valor_comp = '0,00';
+      $w_qtd_comp = '0,0';
+      $w_tot_comp = '0,00';
+      $disabled = ' DISABLED ';
+      ValidateOpen('Validacao');
+      ValidateClose();
+    }
+  } else {
+    ValidateOpen('Validacao');
+    ValidateClose();
+  }
+  ScriptClose();
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
     BodyOpenClean('onLoad=\'document.Form.' . (($w_numero == 'S') ? $w_troca : 'Botao[0]') . '.focus()\';');
@@ -2340,7 +2421,7 @@ function AltSolic() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="2">');
+  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="4">');
   ShowHTML('      <table border=1 width="100%">');
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
@@ -2356,25 +2437,39 @@ function AltSolic() {
   ShowHTML('          </TABLE></td></tr>');
   ShowHTML('      </table>');
 
-  ShowHTML('<tr><td><br>&nbsp;');
-  ShowHTML('<tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-  ShowHTML('<tr><td><hr NOSHADE color=#000000 SIZE=1>&nbsp;');
+  ShowHTML('<tr><td colspan="4"><br>&nbsp;');
+  ShowHTML('<tr><td colspan="4"><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+  ShowHTML('<tr><td colspan="4"><hr NOSHADE color=#000000 SIZE=1>&nbsp;');
 
-  if (f($RS_Solic, 'internacional') == 'N') {
-    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return true;', null, $P1, $P2, $P3, $P4, $TP, 'PDDIARIAFS', $w_pagina . $par, 'A');
+  if (f($RS_Solic, 'internacional') == 'N' || $w_valor_comp > 0) {
+    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'PDDIARIAFS', $w_pagina . $par, 'A');
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('       <input type="hidden" name="w_chave" value=' . $w_chave . '>');
-    ShowHTML('        <tr valign="top">');
-    MontaRadioNS('<b>Pagar diárias em fim de semana?</b>', $w_fim_semana, 'w_fim_semana');
+    if ($w_valor_comp > 0) {
+      ShowHTML('        <tr valign="top">');
+      MontaRadioNS('<b>Pagar complemento de diária?</b>', $w_complemento, 'w_complemento', null, null, 'onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.submit();"');
+      ShowHTML('          <td width="20%"><b>Valor complemento:</b><br><input ' . $disabled . ' class="STI" value="' . formatNumber($w_valor_comp, 2) . '" readonly maxlength="10" size="10" type="text" id="w_valor_comp" name="w_valor_comp" onKeyDown="FormataValor(this,18,2,event);" /></td>');
+      ShowHTML('          <td><b>Quantidade:</b><br><input ' . $disabled . ' class="STI" maxlength="5" size="5" type="text" name="w_qtd_comp" value="' . formatNumber($w_qtd_comp, 1) . '" id="w_qtd_comp" onKeyDown="FormataValor(this,5,1,event);"/></td>');
+      ShowHTML('          <td><b>Valor a ser pago:</b><br><input ' . $disabled . ' class="STI" maxlength="10" size="10" type="text" value="' . formatNumber($w_tot_comp, 2) . '" readonly name="w_tot_comp" id="w_tot_comp" onKeyDown="FormataValor(this,18,2,event);" /></td>');
+      ShowHTML('        </tr>');
+    }
+
+    if (f($RS_Solic, 'internacional') == 'N') {
+      ShowHTML('        <tr valign="top">');
+      MontaRadioNS('<b>Pagar diárias em fim de semana?</b>', $w_fim_semana, 'w_fim_semana');
+    } else {
+      ShowHTML('       <input type="hidden" name="w_fim_semana" value="N">');
+    }
+
+
     ShowHTML('        <tr valign="top"><td>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
     ShowHTML('</FORM>');
   }
-
-  ShowHTML('<tr><td><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('<tr><td colspan="4"><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
   $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', 'PDTRECHO');
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
-  ShowHTML('<tr><td><table width="100%" border="0">');
+  ShowHTML('<tr><td colspan="4"><table width="100%" border="0">');
   ShowHTML('  <tr><td colspan="2">');
   ShowHTML('      <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -4251,7 +4346,7 @@ function Diarias() {
     }
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-    ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>' . f($RS1, 'nm_pessoa') . '</td></tr>');
+    ShowHTML('            <tr><td colspan="4">Beneficiário:<b><br>' . f($RS1, 'nm_pessoa') . '</td></tr>');
     ShowHTML('          </TABLE></td></tr>');
     ShowHTML('      </table>');
     ShowHTML('  </table>');
@@ -7684,6 +7779,7 @@ function ReembolsoValor() {
 function Grava() {
   extract($GLOBALS);
 
+
   $w_file = '';
   $w_tamanho = '';
   $w_tipo = '';
@@ -7820,7 +7916,8 @@ function Grava() {
     case 'PDDIARIAFS':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
-        $SQL = new dml_putPD_FimSemana; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_POST['w_fim_semana']);
+        $SQL = new dml_putPD_Dados;
+        $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_fim_semana'], nvl($_REQUEST['w_qtd_comp'], '0,0'), nvl($_REQUEST['w_valor_comp'], '0,00'), nvl($_REQUEST['w_tot_comp'], '0,00'));
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'AltSolic&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&w_menu=' . $_REQUEST['w_menu'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();

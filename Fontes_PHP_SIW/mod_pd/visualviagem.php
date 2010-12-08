@@ -15,16 +15,19 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   
   // Recupera os dados do acordo
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
-  $w_or_tramite      = f($RS,'or_tramite');
-  $w_tramite         = f($RS,'sq_siw_tramite');
-  $w_tramite_ativo   = f($RS,'ativo');
-  $w_valor_inicial   = f($RS,'valor');
-  $w_fim             = f($RS,'fim_real');
-  $w_sg_tramite      = f($RS,'sg_tramite');
-  $w_sigla           = f($RS,'sigla');
-  $w_aditivo         = f($RS,'aditivo');
-  $w_forma_pagamento = f($RS,'sg_forma_pagamento');
-  $w_internacional   = f($RS,'internacional');
+  $w_or_tramite        = f($RS,'or_tramite');
+  $w_tramite           = f($RS,'sq_siw_tramite');
+  $w_tramite_ativo     = f($RS,'ativo');
+  $w_valor_inicial     = f($RS,'valor');
+  $w_fim               = f($RS,'fim_real');
+  $w_sg_tramite        = f($RS,'sg_tramite');
+  $w_sigla             = f($RS,'sigla');
+  $w_aditivo           = f($RS,'aditivo');
+  $w_forma_pagamento   = f($RS,'sg_forma_pagamento');
+  $w_internacional     = f($RS,'internacional');
+  $w_complemento_qtd   = f($RS,'complemento_qtd');
+  $w_complemento_base  = f($RS,'complemento_base');
+  $w_complemento_valor = f($RS,'complemento_valor');
 
   // Execução financeira da viagem
   $sql = new db_getSolicList; $RSF = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
@@ -924,6 +927,14 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
           }
           $i += 1;
+        }
+        if ($w_complemento_qtd>0) {
+          $l_html.=chr(13).'     <tr valign="top">';
+          $l_html.=chr(13).'       <td colspan="4" align="right">Complemento de diárias (BRL)&nbsp;&nbsp;&nbsp;</td>';
+          $l_html.=chr(13).'       <td align="right">'.formatNumber($w_complemento_qtd,1).'</td>';
+          $l_html.=chr(13).'       <td align="right">'.formatNumber($w_complemento_base).'</td>';
+          $l_html.=chr(13).'       <td align="right">'.formatNumber($w_complemento_valor).'</td>';
+          $w_tot_diaria_S['BRL'] += $w_complemento_valor;
         }
         $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL DIÁRIAS:';
         foreach($w_tot_diaria_S as $k => $v) {

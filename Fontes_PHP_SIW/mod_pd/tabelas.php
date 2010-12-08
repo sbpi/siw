@@ -1418,6 +1418,7 @@ function CategoriaDiaria() {
     $w_ativo             = $_REQUEST['w_ativo'];
     $w_tramite           = $_REQUEST['w_tramite'];
     $w_dias_prest_contas = $_REQUEST['w_dias_prest_contas'];
+    $w_valor_complemento       = $_REQUEST['w_valor_complemento'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getCategoriaDiaria; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null);
@@ -1436,15 +1437,18 @@ function CategoriaDiaria() {
     $w_ativo              = f($RS,'ativo');
     $w_tramite            = f($RS,'tramite_especial');
     $w_dias_prest_contas  = f($RS,'dias_prestacao_contas');
+    $w_valor_complemento  = formatNumber(f($RS,'valor_complemento'),2);
   }
   Cabecalho();
   head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
+    FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','2','30','1','1');
       Validate('w_dias_prest_contas','Dias para prestação de contas','1',1,1,3,'','0123456789');
+      Validate('w_valor_complemento','Valor de complemento de diárias','VALOR','1',4,18,'1','0123456789,.');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1484,6 +1488,7 @@ function CategoriaDiaria() {
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Dias Prestação','dias_prestacao_contas').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Trâmite especial','nm_tramite_especial').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Complemento de diárias','valor_complemento').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
@@ -1498,6 +1503,7 @@ function CategoriaDiaria() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'dias_prestacao_contas').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_tramite_especial').'</td>');
+        ShowHTML('        <td align="center">'.formatNumber(f($row,'valor_complemento'),2).'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -1522,10 +1528,11 @@ function CategoriaDiaria() {
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Categoria passa por trâmite especial?</b>',$w_tramite,'w_tramite');
     ShowHTML('      <tr><td><b>D<u>i</u>as para prestação de contas:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dias_prest_contas" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_prest_contas.'"></td>');
+    ShowHTML('          <td><b><u>V</u>alor complemento diária:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_valor_complemento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_valor_complemento.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('      <tr><td align="center"><hr>');
+    ShowHTML('      <tr><td colspan="2" align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -1679,7 +1686,7 @@ function Grava() {
             }
           }
       }
-      $SQL = new dml_putCategoriaDiaria; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite'],$_REQUEST['w_dias_prest_contas']);
+      $SQL = new dml_putCategoriaDiaria; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite'],$_REQUEST['w_dias_prest_contas'],$_REQUEST['w_valor_complemento']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();

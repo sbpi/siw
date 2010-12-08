@@ -89,7 +89,7 @@ $w_dir = 'mod_pa/';
 $w_troca = $_REQUEST['w_troca'];
 $p_ordena = $_REQUEST['p_ordena'];
 
-if (strpos('PACAIXA', $SG) !== false) {
+if (strpos('PACAIXA', nvl($SG,'.')) !== false) {
   if ($O == '') {
     $O = 'P';
   }
