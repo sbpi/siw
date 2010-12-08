@@ -730,7 +730,8 @@ begin
                 soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as limite_envio,
                 soma_dias(a.sq_pessoa, trunc(sysdate), (case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as envio_regular,
                 case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia,
-                case trunc(b.fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana
+                case trunc(b.fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana,
+                d9.valor_complemento, d1.complemento_qtd, d1.complemento_base, d1.complemento_valor                  
            from siw_menu                                               a
                   inner                join pd_parametro              a11 on (a.sq_pessoa                   = a11.cliente)
                   inner                join eo_unidade                 a2 on (a.sq_unid_executora           = a2.sq_unidade)
