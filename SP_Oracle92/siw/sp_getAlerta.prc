@@ -149,7 +149,7 @@ begin
                  (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(l4.dias_prestacao_contas,w.dias_prestacao_contas,0) as integer))<=trunc(sysdate)) or
                  (c.sigla    = 'SR' and f.fim < trunc(sysdate))
                 ) 
-          ) lista where 0 < lista.acesso;
+          ) lista where 1 < lista.acesso;
    Elsif p_restricao = 'HORAS' Then
       open p_result for
          select a.sq_pessoa_pai as cliente, a.sq_pessoa as sq_usuario, 
@@ -271,7 +271,7 @@ begin
                  (0             < (select count(x.sq_unidade) from siw_etapa_interessado x inner join eo_unidade_resp y on (x.sq_unidade = y.sq_unidade) where x.sq_projeto_etapa = h.sq_projeto_etapa and y.sq_pessoa = a1.sq_pessoa and y.fim is null))
                 );
    Elsif p_restricao = 'DOCUMENTOS' Then
-      -- Recupera itens da EAP
+      -- Verifica os documentos que um usuário tem acesso
       open p_result for
          select * from (
          select acesso(sq_siw_solicitacao, usuario, null) as acesso, lista.* 
@@ -396,7 +396,7 @@ begin
                   where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
                     and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
                 ) lista
-         ) result where 0 < result.acesso;
+         ) result where 1 < result.acesso;
    Elsif p_restricao = 'USUARIOS' Then
       -- Verifica os usuários que tem acesso a um documento
       open p_result for         
@@ -438,7 +438,7 @@ begin
                                     )                  l on (a.sq_pessoa          = l.sq_pessoa)                                
           where a.cliente           = p_cliente
             and a.sq_pessoa         <> (p_cliente+1)
-            and 0                   < (select acesso(p_solic, a.sq_pessoa) from dual)
+            and 1                   < (select acesso(p_solic, a.sq_pessoa) from dual)
             and 'S'                 = a.ativo;
    End If;
 end SP_GetAlerta;

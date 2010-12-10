@@ -226,7 +226,7 @@ function Mesa() {
 
   ShowHTML('<tr><td colspan=2><hr>');
   ShowHTML('</table>');
-  ShowHTML('<center>');
+  //ShowHTML('<center>');
   if ($O=="L") {
     $w_pde   = 0;
     $w_pns   = 0;
@@ -478,7 +478,7 @@ function Mesa() {
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
-  ShowHTML('</center>');
+  //ShowHTML('</center>');
   ShowHTML('</body>');
   ShowHTML('</html>');
   //Rodape();

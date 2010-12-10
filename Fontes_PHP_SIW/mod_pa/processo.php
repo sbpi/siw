@@ -1066,7 +1066,7 @@ function Juntar(){
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'sg_unidade', 'asc', 'ano_guia', 'desc', 'nu_guia', 'asc', 'protocolo', 'asc');
     } else {
-      $RS = SortArray($RS, 'sg_unidade', 'asc', 'ano_guia', 'desc', 'nu_guia', 'asc', 'protocolo', 'asc');
+      $RS = SortArray($RS, 'sq_documento_pai', 'asc', 'sg_unidade', 'asc', 'ano_guia', 'desc', 'nu_guia', 'asc', 'protocolo', 'asc');
     }
     $w_existe = count($RS);
 
@@ -1170,7 +1170,7 @@ function Juntar(){
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
-    ShowHTML('  <li>Selecione o documento desejado, clicando sobre a operação <i>' . $w_nm_operacao . '</i>.');
+    ShowHTML('  <li>Selecione os documentos desejados e clique sobre o botão <i>' . $w_nm_operacao . '</i>.');
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
@@ -1185,15 +1185,15 @@ function Juntar(){
     ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
     ShowHTML('    <td align="right"><b>Registros existentes: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('  <table width="97%" border="0">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    //ShowHTML('          <td rowspan=2><b>'.linkOrdena('Último despacho','nm_despacho').'</td>');
     if($w_existe){
       ShowHTML('          <td rowspan="2" align="center"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
     }else{
       ShowHTML('          <td rowspan="2" align="center">&nbsp;</td>');
     }
-    ShowHTML('          <td rowspan=2><b>' . linkOrdena('Protocolo', 'protocolo','Form') . '</td>');
+    ShowHTML('          <td rowspan=2><b>' . linkOrdena('Protocolo Recebedor', 'protocolo_pai','Form') . '</td>');
+    ShowHTML('          <td rowspan=2><b>' . linkOrdena('Protocolo a '.$w_nm_operacao, 'protocolo','Form') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Unidade de Origem', 'nm_unid_origem','Form') . '</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Limite', 'fim','Form') . '</td>');
@@ -1215,9 +1215,8 @@ function Juntar(){
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
-        //ShowHTML('        <td>'.f($row,'nm_despacho').'</td>');
-//        ShowHTML('        <td align="center"><input type="checkbox" class="item" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" /></td>');
         ShowHTML('        <td align="center"><input type="CHECKBOX" class="item" '.((nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') ? 'CHECKED' : '').' name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'"></td>');
+        ShowHTML('        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_documento_pai') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo_pai') . '&nbsp;</a>');
         ShowHTML('        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
         ShowHTML('        <td>' . f($row, 'nm_unid_origem') . '</td>');
         ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
@@ -1225,11 +1224,6 @@ function Juntar(){
         ShowHTML('        <td align="center">' . date(d . '/' . m . '/' . y, f($row, 'inicio')) . '</td>');
         ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
         ShowHTML('        <td align="center">' . ((nvl(f($row, 'fim'), '') != '') ? date(d . '/' . m . '/' . y, f($row, 'fim')) : '&nbsp;') . '</td>');
-        ShowHTML('        <td align="top" nowrap>');
-//        ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">' . $w_nm_operacao . '</A>&nbsp');
-//        if ($SG == 'PADALTREG')
-//          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=E&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">Excluir</A>&nbsp');
-//        ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
     }
@@ -1239,10 +1233,11 @@ function Juntar(){
     ShowHTML('</tr>');
     if ($w_existe) {
       ShowHTML('    <tr><td colspan="3">&nbsp;</td></tr>');
-      ShowHTML('    <tr><td colspan=3><b>DADOS DA ANEXAÇÃO</b></td></tr>');
+      ShowHTML('    <tr><td colspan=3><b>DADOS DA '.(($SG='PADANEXA') ? 'ANEXAÇÃO' : 'APENSAÇÃO').'</b></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('    <tr><td width="30%">Data da anexação:<td colspan=2><b>' . formataDataEdicao(time()) . '</b></tr>');
-      ShowHTML('    <tr><td colspan=3><br/><br/><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('    <tr><td width="30%">Data:<td colspan=2><b>' . formataDataEdicao(time()) . '</b></tr>');
+      ShowHTML('    <tr><td width="30%">Usuário responsável:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
+      ShowHTML('    <tr><td width="30%"><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center"><hr>');
       ShowHTML('      <input class="STB" type="submit" name="Botao" value="' . $w_nm_operacao . '">');
       ShowHTML('      <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $R . '&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';" name="Botao" value="Abandonar">');
@@ -1252,20 +1247,12 @@ function Juntar(){
     ShowHTML('</FORM>');
     ShowHTML('  </td>');
     ShowHTML('  </tr>');
-//    ShowHTML('<tr><td align="center" colspan=3>');
-//    MontaBarra($w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=' . $O . '&P1=' . $P1 . '&P2=' . $P2 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET'), ceil(count($RS) / $P4), $P3, $P4, count($RS));
-//    ShowHTML('</tr>');
   } elseif ($O == 'P') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
     ShowHTML('  <li>Informe quaisquer critérios de busca e clique sobre o botão <i>Aplicar filtro</i>.');
     ShowHTML('  <li>Para pesquisa por período é obrigatório informar as datas de início e término.');
-    ShowHTML('  <li>Clicando sobre o botao <i>Aplicar filtro</i> sem informar nenhum critério de busca, serão exibidas todas as guias que você tem acesso.');
-    ShowHTML('  </ul><b>Condições para a correção de dados</b>: (pelo menos uma delas deve ser satisfeita)<ul>');
-    ShowHTML('  <li>O usuário deve ter registrado o protocolo, que deve estar na sua unidade de lotação ou em qualquer unidade gerida por ele;');
-    ShowHTML('  <li>O protocolo deve estar na unidade indicada como "Procedência" do documento original e o usuário deve estar lotado nessa unidade;');
-    ShowHTML('  <li>O protocolo é uma solicitação de viagem e sua posse é do setor de viagens;');
-    ShowHTML('  <li>Foi indicado pelo menos um critério de busca e o usuário é gestor do sistema ou gestor do módulo de protocolo e arquivo.');
+    ShowHTML('  <li>Clicando sobre o botao <i>Aplicar filtro</i> sem informar nenhum critério de busca, serão exibidas todos os protocolos que você tem acesso.');
     ShowHTML('  </ul></b></font></td>');
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');

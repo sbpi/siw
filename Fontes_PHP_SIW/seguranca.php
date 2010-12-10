@@ -2339,9 +2339,13 @@ function TelaAcessoUsuarios() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $SQL = new db_getSolicData; $RS_Solic = $SQL->getInstanceOf($dbms,$w_chave,null);
+
   // Recupera todos os registros para a listagem 
   $SQL = new db_getAlerta; $RS = $SQL->getInstanceOf($dbms, $w_cliente, $w_usuario, 'USUARIOS', null, $w_chave);
   $RS = SortArray($RS,'nome_resumido_ind','asc');
+  $l_array = explode('|@|', f($RS_Solic,'dados_solic'));
+  $l_string = $l_array[0];
+  $SQL = new db_getMenuData; $RS_Menu = $SQL->getInstanceOf($dbms,$l_array[3]);
   
   Cabecalho();
   head();
@@ -2353,10 +2357,14 @@ function TelaAcessoUsuarios() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
   ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>');
-  $l_array = explode('|@|', f($RS_Solic,'dados_solic'));
-  $l_string = ($l_array[0].' - '.$l_array[2]);
   ShowHTML($l_string);
   ShowHTML('  </b></font></div></td></tr>');
+  if (f($RS_Menu,'consulta_geral')=='S') {
+    ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
+    ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2">');
+    ShowHTML('  <b>Opção "'.$l_array[4].'" é de consulta geral</b>. Todos os usuários podem consultar este documento mas somente os que têm permissão adicional neste documento são listados abaixo.');
+    ShowHTML('  </b></font></div></td></tr>');
+  }
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td>');

@@ -114,7 +114,7 @@ begin
              b2.nome, b2.sigla,
              b3.sigla as sg_tramite,
              c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
-             c.numero_documento||'/'||substr(c.ano,3,2) as protocolo,
+             c.sq_documento_pai, c.numero_documento||'/'||substr(c.ano,3,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -128,6 +128,7 @@ begin
                        end
              end as data_limite_doc,
              ca.numero as nr_caixa, cb.sigla as sg_unid_caixa,
+             cc.numero_documento||'/'||substr(cc.ano,3,2) as protocolo_pai,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
              d.nu_guia||'/'||d.ano_guia||'-'||dd.sigla as guia_tramite, d.recebimento,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
@@ -154,6 +155,7 @@ begin
                    inner   join pa_tipo_guarda       c9 on (c5.fase_final_guarda    = c9.sq_tipo_guarda)
                  left      join pa_caixa             ca on (c.sq_caixa              = ca.sq_caixa)
                    left    join eo_unidade           cb on (ca.sq_unidade           = cb.sq_unidade)
+                 left      join pa_documento         cc on (c.sq_documento_pai      = cc.sq_siw_solicitacao)
                  inner     join pa_documento_log     d  on (c.sq_siw_solicitacao    = d.sq_siw_solicitacao and
                                                             (p_restricao   = 'PACLASSIF' or 
                                                              p_restricao   = 'PADALTREG' or
