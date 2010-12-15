@@ -13,7 +13,7 @@ create or replace procedure sp_putDocumentoCaixa
    w_assunto       varchar2(1000);
    w_descricao     varchar2(1000);
    w_cont          number(10) := 0;
-   w_texto         varchar2(255);
+   w_texto         varchar2(1000);
    
 begin
   -- Recupera a caixa atual para tratar alteração de caixa

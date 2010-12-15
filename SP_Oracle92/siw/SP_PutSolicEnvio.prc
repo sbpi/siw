@@ -46,9 +46,17 @@ begin
 
          -- Decide a tramitação de pedidos de compra
          If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
-            -- Regra da ABDI: 
+            -- Regras da ABDI: 
+            --   Pedidos até R$ 5.000,00 não passam pelo gabinete; vão direto para análise pela GERAF.
             --   Compra por fundo fixo vai para trâmite especial de compra pela GERAF.
-            If w_or_tramite = 5 and coalesce(w_solic_cl.fundo_fixo,'N') = 'N' Then
+            If w_or_tramite = 3 Then
+               If w_solic.valor <= 5000 Then
+                  select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                     from siw_tramite a
+                    where a.sq_menu = p_menu
+                      and a.sigla   = 'AF';
+               End If;
+            Elsif w_or_tramite = 5 and coalesce(w_solic_cl.fundo_fixo,'N') = 'N' Then
                select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                   from siw_tramite a
                  where a.sq_menu = p_menu

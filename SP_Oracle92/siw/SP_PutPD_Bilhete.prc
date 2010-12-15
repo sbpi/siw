@@ -96,7 +96,7 @@ begin
 
   If p_tipo = 'S' Then
      -- Recupera o valor total dos bilhetes
-     select sum(nvl(x.valor_bilhete,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
+     select sum(nvl(x.valor_bilhete_cheio,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
         into w_valor_passagem
         from pd_bilhete x
        where x.sq_siw_solicitacao = p_chave

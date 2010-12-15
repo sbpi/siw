@@ -448,6 +448,7 @@ begin
          and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
          and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero))
          and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))
+         and (p_unid_autua  is null or (p_unid_autua  is not null and d.unidade_origem     = p_unid_autua))
          and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
          and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))

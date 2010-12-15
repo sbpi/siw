@@ -152,4 +152,35 @@ class Ora10ConnectionManager extends ConnectionManager {
    
    function selectDatabase() { null;}
 }
-?>
+class OraHMConnectionManager extends ConnectionManager {
+   function OraHMConnectionManager() {
+      $this->hostName = ORAHM_SERVER_NAME;
+      $this->userName = ORAHM_DB_USERID;
+      $this->passWord = ORAHM_DB_PASSWORD;
+   }
+
+   function doConnection() {
+      if (!function_exists('oci_new_connect')) {
+        $e['message'] = 'Função oci_new_connect inexistente';
+        $e['sqltext'] = 'Não se aplica';
+        TrataErro($sql, $e, $params, __FILE__, __LINE__, __CLASS__);
+      }
+      $l_error_reporting = error_reporting(); error_reporting(0);
+      putenv('NLS_DATE_FORMAT=DD/MM/YYYY');
+//      putenv('NLS_NUMERIC_CHARACTERS=",."');
+//echo '<br>LD_LIBRARY_PATH ==>'.getenv("LD_LIBRARY_PATH");
+//echo '<br>ORACLE_HOME ==>'.getenv("ORACLE_HOME");
+//echo '<BR>ORACLE_BASE ==>'.getenv("ORACLE_BASE");
+//echo '<BR>ORACLE_SID ==>'.getenv("ORACLE_SID");
+//echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");
+//echo '<BR>NLS_DATE_FORMAT==>'.getenv("NLS_DATE_FORMAT");
+//echo '<BR>NLS_NUMERIC_CHARACTERS==>'.getenv("NLS_NUMERIC_CHARACTERS");
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,'WE8MSWIN1252'))) {
+         error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); 
+      } else {
+        error_reporting($l_error_reporting); 
+      }
+   }
+   
+   function selectDatabase() { null;}
+}?>

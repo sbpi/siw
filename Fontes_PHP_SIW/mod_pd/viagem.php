@@ -2104,6 +2104,7 @@ function Bilhetes() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
+  toMoney();
   if (nvl($desconto, '') != '') {
     ShowHTML('  $(document).ready(function() {');
     ShowHTML('    $("#w_valor_bil").blur(function() {');
@@ -2111,8 +2112,7 @@ function Bilhetes() {
     ShowHTML('      var bilhete_cheio = parseFloat($(this).val().replace(".","").replace(".","").replace(",","."))');
     ShowHTML('      var bilhete_desconto = (bilhete_cheio - (bilhete_cheio * (desconto / 100))).toFixed(2);');
     ShowHTML('      if(bilhete_desconto > 0){');
-    ShowHTML('        $("#w_valor_cheio").val(bilhete_desconto);');
-    ShowHTML('        $("#w_valor_cheio").focus();');
+    ShowHTML('        $("#w_valor_cheio").val(toMoney(bilhete_desconto,"BR"));');
     ShowHTML('      }');
     ShowHTML('    });');
     ShowHTML('  });');

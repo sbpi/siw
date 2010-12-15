@@ -465,7 +465,7 @@ function Caixa() {
 //    }
     
     if (!(strpos('IA', $O) === false)) {
-      Validate('w_assunto', 'Assunto', '1', '1', '4', '500', '1', '1');
+      Validate('w_assunto', 'Assunto', '1', '1', '4', '750', '1', '1');
       Validate('w_descricao', 'Descrição', '1', '1', '4', '2000', '1', '1');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     } elseif ($O == 'E') {

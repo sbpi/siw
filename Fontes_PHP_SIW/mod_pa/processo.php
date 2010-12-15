@@ -1233,14 +1233,13 @@ function Juntar(){
     ShowHTML('</tr>');
     if ($w_existe) {
       ShowHTML('    <tr><td colspan="3">&nbsp;</td></tr>');
-      ShowHTML('    <tr><td colspan=3><b>DADOS DA '.(($SG='PADANEXA') ? 'ANEXAÇÃO' : 'APENSAÇÃO').'</b></td></tr>');
+      ShowHTML('    <tr><td colspan=3><b>DADOS DA '.(($SG=='PADANEXA') ? 'ANEXAÇÃO' : 'APENSAÇÃO').'</b></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('    <tr><td width="30%">Data:<td colspan=2><b>' . formataDataEdicao(time()) . '</b></tr>');
       ShowHTML('    <tr><td width="30%">Usuário responsável:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
       ShowHTML('    <tr><td width="30%"><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center"><hr>');
       ShowHTML('      <input class="STB" type="submit" name="Botao" value="' . $w_nm_operacao . '">');
-      ShowHTML('      <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $R . '&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';" name="Botao" value="Abandonar">');
       ShowHTML('      </td>');
       ShowHTML('    </tr>');
     }
@@ -1596,7 +1595,7 @@ function Desmembrar() {
     $w_atual = '';
     $i = 0;
     foreach ($RS_Juntado as $row) {
-      if (f($row,'tipo_juntada')=='P') {
+      //if (f($row,'tipo_juntada')=='P') {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
         ShowHTML('        <td align="center">'); 
@@ -1606,7 +1605,7 @@ function Desmembrar() {
           ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
         }
         ShowHTML('        </td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_tipo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_tipo_protocolo').'</td>');
         ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
         ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
         ShowHTML('        <td>'.f($row,'numero_original').'</td>');
@@ -1615,7 +1614,7 @@ function Desmembrar() {
         ShowHTML('        <td align="center">'.((nvl(f($row,'fim'),'')!='') ? date(d.'/'.m.'/'.y,f($row,'fim')) : '&nbsp;').'</td>');
         ShowHTML('      </tr>');
         $i += 1;
-      }
+      //}
     } 
   } 
   ShowHTML('      </center>');

@@ -70,6 +70,14 @@ class DatabaseQueriesFactory {
         die('Módulo OCI8 não disponível na instalação do PHP.');
       }
       break;
+    case ORAHM  :
+      if ($oci8) {
+        if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
+        else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
+      } else {
+        die('Módulo OCI8 não disponível na instalação do PHP.');
+      }
+      break;
     case PGSQL  :
       if ($pg) {
         if (empty($params)) return new PgSqlDatabaseQueries($query, $conHandle);

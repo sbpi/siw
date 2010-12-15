@@ -402,7 +402,7 @@ begin
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.vincula_contrato,   d.vincula_viagem,              d.outra_parte,
-                d.sq_tipo_pessoa,
+                d.sq_tipo_pessoa,     d.objetivo_superior,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 d1.nome as nm_prop,   d1.nome_resumido as nm_prop_res,
                 d2.orc_previsto as orc_previsto, d2.orc_real as orc_real, 

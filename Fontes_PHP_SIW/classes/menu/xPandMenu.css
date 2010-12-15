@@ -146,11 +146,11 @@ BODY
   FONT-FAMILY: Verdana;
   TEXT-DECORATION: none
 }
-.HL A
+A.HL
 {
   TEXT-DECORATION: none
 }
-.HL A:hover
+A.HL:hover
 {
   COLOR: red;
   TEXT-DECORATION: none
@@ -161,11 +161,11 @@ BODY
   FONT-SIZE: 100%;
   TEXT-DECORATION: none
 }
-.SS A
+A.SS
 {
   TEXT-DECORATION: none
 }
-.SS A:hover
+A.SS:hover
 {
   TEXT-DECORATION: none
 }
