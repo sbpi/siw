@@ -20,6 +20,17 @@ function selecaoPlanoEstrategico($label,$accesskey,$hint,$chave,$chaveAux,$campo
         }
       }
     }
+  } elseif($restricao=='SERVICOS') {
+    $sql = new db_getPlanoEstrategico; $RST = $sql->getInstanceOf($dbms,$w_cliente,null,$w_menu,null,null,null,$l_ativo,'SERVICOS');
+    foreach ($RST as $row) {
+      if (f($row,'filho')==0) {
+        if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
+          ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'titulo'));
+        } else {
+          ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'titulo'));
+        }
+      }
+    }
   } else {
     $sql = new db_getPlanoEstrategico; $RST = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,$l_ativo,'IS NULL');
     foreach ($RST as $row) {

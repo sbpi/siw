@@ -555,7 +555,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
                return false; 
              } else {
-               $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+               //$this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
                if ($log) {
                  // Registra no servidor syslog
                  $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
@@ -680,12 +680,11 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     
     function PgSqlDatabaseQueryProc($proc, $conHandle, $params) {
         $this->query = $proc;
-        
         if (strpos($this->query,'FUNCTION')!==false) {
           // Chamadas diretas a funções têm tratamento diferenciado.
-          $this->query = 'FUNCTION'.PGSQL_DATABASE_NAME.((strpos($proc,'.')) ? '' : '.').substr($proc,strpos($proc,'.'));
+          $this->query = 'FUNCTION '.substr($this->query,8);
         } else {
-          $this->query = PGSQL_DATABASE_NAME.((strpos($proc,'.')) ? '' : '.').substr($proc,strpos($proc,'.'));
+          $this->query = substr($proc,strpos($proc,'.'));
         }
         $this->conHandle = $conHandle;
         $this->params = $params;
@@ -735,7 +734,6 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
             }
           }
         }
-
         if (!($this->result = pg_query($this->conHandle, $par))) {
            $this->error['message'] = pg_last_error($this->conHandle);
            $this->error['sqltext'] = $par;

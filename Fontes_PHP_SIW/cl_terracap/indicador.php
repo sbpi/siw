@@ -73,7 +73,7 @@ if (count($_POST) > 0) {
 
 	$w_username  = utf8_decode(trim(substr(base64_decode($_POST['uid']),0,20)));
   $w_senha     = utf8_decode(trim(substr(base64_decode($_POST['pwd']),0,20)));
-  $w_codigo    = utf8_decode(trim(substr($_POST['codigo'],0,20)));
+  $w_codigo    = upper(utf8_decode(trim(substr($_POST['codigo'],0,20))));
 
   // Abre conexão com o banco de dados
   $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);

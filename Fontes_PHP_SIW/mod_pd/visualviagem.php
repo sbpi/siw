@@ -1109,6 +1109,14 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           }
           $i += 1;
         }
+        if ($w_complemento_qtd > 0) {
+          $l_html.=chr(13) . '     <tr valign="top">';
+          $l_html.=chr(13) . '       <td colspan="4" align="right">Complemento de diárias (BRL)&nbsp;&nbsp;&nbsp;</td>';
+          $l_html.=chr(13) . '       <td align="right">' . formatNumber($w_complemento_qtd, 1) . '</td>';
+          $l_html.=chr(13) . '       <td align="right">' . formatNumber($w_complemento_base) . '</td>';
+          $l_html.=chr(13) . '       <td align="right">' . formatNumber($w_complemento_valor) . '</td>';
+          $w_tot_diaria_P['BRL'] += $w_complemento_valor;
+        }
         $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL DIÁRIAS:';
         foreach($w_tot_diaria_P as $k => $v) {
           $l_html.=chr(13).'       &nbsp;&nbsp;&nbsp;&nbsp;'.$k.' '.formatNumber($v);

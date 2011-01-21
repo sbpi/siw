@@ -437,7 +437,7 @@ function Grava() {
           array_walk_recursive($lista,'flatArray',&$base);
 
           // Recupera os itens do menu
-          $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'L', null);
+          $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'L', null, null);
           $RS = SortArray($RS,'or_menu','asc');    
           ShowHTML('<b>Processando o menu</b>');
           ShowHTML('<DL>');
@@ -468,6 +468,8 @@ function Grava() {
             ShowHTML('<DT><b>'.$_REQUEST['w_dir'][$i].'</b>');
             // Recupera a lista de arquivos do diretório
             $arquivos = retrieveTree($_REQUEST['w_dir'][$i]);
+            $sql = new db_getArquivo;
+            $SQL = new dml_putArquivo; 
             foreach($arquivos as $k => $v) {
               // verifica se a extensão do arquivo é uma das selecionadas
               if ((false!==strpos($v,'.')) && (false!==strpos($_REQUEST['w_extensao'],upper(substr($v,strpos($v,'.')+1))))) {
@@ -476,10 +478,9 @@ function Grava() {
                 $file = analisa_arquivo($arquivo, $w_opcao, $base);
 
                 // Se foi indicada a atualização do banco de dados, verifica se o arquivo já existe e grava.
-                if ($w_opcao=='atualiza') {
+                if ($w_opcao=='atualiza' && strlen($file['nome'])<=40) {
                   $w_diretorio  = nvl((substr(strrev($file['diretorio']),0,1)=='/') ? substr($file['diretorio'],0,-1) : $file['diretorio'],'/');
-                  //echo '['.$w_cliente.'] ['.$_REQUEST['w_sq_sistema'].'] ['.$file['nome'].'] ['.$w_diretorio.'] ';
-                  $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,'existe',null,$_REQUEST['w_sq_sistema'],$file['nome'],$w_diretorio,null);
+                  $RS = $sql->getInstanceOf($dbms,$w_cliente,'existe',null,$_REQUEST['w_sq_sistema'],$file['nome'],$w_diretorio,null);
                   if (!count($RS)) {
                     $w_chave      = null;
                     $operacao     = 'I';
@@ -494,14 +495,13 @@ function Grava() {
                     $w_diretorio  = nvl($w_diretorio,f($RS,'diretorio'));
                     $w_descricao  = nvl($file['descricao'],f($RS,'descricao'));
                     $w_tipo       = nvl($file['tipo'],f($RS,'tipo'));
-                }  
-                if ($w_diretorio=='/') $w_diretorio = null;
+	                }  
+	                if ($w_diretorio=='/') $w_diretorio = null;
                   //echo '['.$operacao.'] '.'['.$w_chave.'] '.'['.$_REQUEST['w_sq_sistema'].'] '.'['.$file['nome'].'] '.'['.$w_descricao.'] '.'['.$w_tipo.'] '.'['.$w_diretorio.'] ';
-                  $SQL = new dml_putArquivo; $SQL->getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],
-                    $file['nome'],$w_descricao,$w_tipo,$w_diretorio);
+	                $SQL->getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],$file['nome'],$w_descricao,$w_tipo,$w_diretorio);
                 }
-  
               }
+              flush();
             }
             if ($i==count($_REQUEST['w_dir'])-1) ShowHTML('</DL>');
           } 

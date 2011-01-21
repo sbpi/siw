@@ -1119,9 +1119,21 @@ function Grava() {
       $p_ordena     = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (nvl($_REQUEST['w_sq_banco'],'')!='' && nvl($_REQUEST['w_codigo'],'')!='') {
+          if ($O=='I' || $O =='A') {
+            $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_banco'],null,null,$_REQUEST['w_codigo']);
+            if (count($RS) > 0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'O código da agência informada já existe!\');');
+              ScriptClose();
+              RetornaFormulario('w_codigo');
+              exit();
+            }
+          }
+        }
         $SQL = new dml_CoAgencia; $SQL->getInstanceOf($dbms,$O,
-            $_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],
-            $_REQUEST['w_codigo'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
+            $_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_banco'],$_REQUEST['w_nome']
+            ,$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();

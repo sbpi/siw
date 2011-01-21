@@ -15,7 +15,8 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     SelecaoCC($label,$accesskey,$hint,$chave,null,$campo,$restricao);
   } elseif ($chaveAux=='PLANOEST') {
     include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
-    selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
+    //selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
+    selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'SERVICOS', $atributo);
   } elseif ($chaveAux=='COMPRA_FUNDO') {
     $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',3,
         null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,

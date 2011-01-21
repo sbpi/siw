@@ -28,14 +28,30 @@ define("ORA10_DB_PASSWORD", "ABDI_VENUS");
 define("ORA10_DATABASE_NAME", "ABDI_VENUS");
 define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
+// OracleHM Database Constants
+define("ORAHM_SERVER_NAME", "XE");
+define("ORAHM_DB_USERID", "ANATEL");
+define("ORAHM_DB_PASSWORD", "ANATEL");
+define("ORAHM_DATABASE_NAME", "ANATEL");
+define("ORAHM_VERSION_TEXT", "Oracle Server 10g");
+
 // PGSQL 8.0 Database Constants
-define("PGSQL_SERVER_NAME", "mercurio");
+define("PGSQL_SERVER_NAME", "127.0.0.1");
 define("PGSQL_DB_USERID", "siw");
 define("PGSQL_DB_PASSWORD", "siw");
-define("PGSQL_DATABASE_NAME", "siw");
+define("PGSQL_DATABASE_NAME", "siw_db");
 define("PGSQL_VERSION_TEXT", "PostgreSQL 8.3.1");
 
 switch ($_SESSION["DBMS"]) {
+   case 6 : {
+      define("DATABASE_NAME", ORAHM_DATABASE_NAME);
+      define("DATABASE_VERSION", ORAHM_VERSION_TEXT);
+      define("B_VARCHAR", null);
+      define("B_NUMERIC", null);
+      define("B_CURSOR", OCI_B_CURSOR);
+      define("B_REQUIRED", true);
+      define("B_OPTIONAL", false);
+   }
    case 5 : {
       define("DATABASE_NAME", ORA10_DATABASE_NAME);
       define("DATABASE_VERSION", ORA10_VERSION_TEXT);

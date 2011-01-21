@@ -2,6 +2,17 @@
 setlocale(LC_ALL, 'pt_BR');
 mb_language('en');
 date_default_timezone_set('America/Sao_Paulo');
+// =========================================================================
+//  funcoes.php
+// ------------------------------------------------------------------------
+// Nome     : Alexandre Vinhadelli Papadópolis
+// Descricao: Funções de uso geral da aplicação
+// Mail     : alex@sbpi.com.br
+// Criacao  : 17/08/2006, 12:26
+// Versao   : 1.0.0.0
+// Local    : Brasília - DF
+// -------------------------------------------------------------------------
+
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -3303,8 +3314,10 @@ function abreSessao() {
 // Fecha conexão com o banco de dados
 // -------------------------------------------------------------------------
 function FechaSessao($dbms) {
-  extract($GLOBALS);
-  unset($objConnectionClass);
+  @pg_close($dbms);
+  @mssql_close($dbms);
+  @oci_close($dbms);
+  unset($dbms);
 }
 
 // =========================================================================

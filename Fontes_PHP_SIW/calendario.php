@@ -25,6 +25,18 @@
   include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
   include_once($w_dir_volta.'funcoes/selecaoTipoEventoCheck.php');
   include_once($w_dir_volta.'visualalerta.php');
+
+// =========================================================================
+//  calendario.php
+// ------------------------------------------------------------------------
+// Nome     : Alexandre Vinhadelli Papadópolis
+// Descricao: Gera calendário da organização
+// Mail     : alex@sbpi.com.br
+// Criacao  : 17/08/2006, 12:26
+// Versao   : 1.0.0.0
+// Local    : Brasília - DF
+// -------------------------------------------------------------------------
+  
   // Verifica se o usuário está autenticado
   if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 

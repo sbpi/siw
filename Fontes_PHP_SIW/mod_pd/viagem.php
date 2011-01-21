@@ -7351,9 +7351,9 @@ function Reembolso() {
     Validate('w_rubrica', 'Rubrica para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
     Validate('w_lancamento', 'Tipo de lançamento para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
   }
-  ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
-  ShowHTML('    alert("ATENÇÃO: Foi informado outro anexo do relatório de viagem.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
-  ShowHTML('  }');
+//  ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
+//  ShowHTML('    alert("ATENÇÃO: Foi informado outro anexo do relatório de viagem.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
+//  ShowHTML('  }');
   
   ValidateClose();
   ScriptClose();

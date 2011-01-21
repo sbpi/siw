@@ -2039,8 +2039,8 @@ function Contrato() {
       if (!($O=='A' && Nvl($w_dt_fim,'')=='')) {
         CompData('w_dt_ini','Início da vigência','<=','w_dt_fim','Fim da vigência');
       }
-      Validate('w_banco_horas_saldo','Saldo inicial do banco de horas','HORAS','1','5','8','','0123456789-:');
-      Validate('w_banco_horas_data','Data do saldo inicial','DATA','1','10','10','','0123456789/');
+//      Validate('w_banco_horas_saldo','Saldo inicial do banco de horas','HORAS','1','5','8','','0123456789-:');
+//      Validate('w_banco_horas_data','Data do saldo inicial','DATA','1','10','10','','0123456789/');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E' && $w_erro=='') {
       Validate('w_dt_fim','Fim da vigência','DATA','','10','10','','0123456789/');

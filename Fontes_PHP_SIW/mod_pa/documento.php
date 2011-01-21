@@ -3426,6 +3426,7 @@ function Recebimento() {
   global $w_Disabled;
 
   $w_unid_autua = $_REQUEST['w_unid_autua'];
+  $w_unid_prot = $_REQUEST['w_unid_prot'];
   $w_nu_guia = $_REQUEST['w_nu_guia'];
   $w_ano_guia = $_REQUEST['w_ano_guia'];
   $p_prefixo = $_REQUEST['p_prefixo'];
@@ -3595,15 +3596,15 @@ function Recebimento() {
             ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
           ShowHTML('        <td align="top">');
           if (nvl(f($row, 'despacho_arqcentral'), '') == '') {
-            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=R&w_unid_autua=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=R&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
           } else {
-            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=T&w_unid_autua=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=T&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
           }
           if (!$w_outra_unidade) {
             if (nvl(f($row, 'despacho_arqcentral'), '') == '') {
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=S&w_unid_autua=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '">Recusar</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=S&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '">Recusar</A>&nbsp');
             } else {
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=U&w_unid_autua=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '">Recusar</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=U&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '">Recusar</A>&nbsp');
             }
           }
           ShowHTML('        </td>');
@@ -3652,6 +3653,7 @@ function Recebimento() {
     ShowHTML('<HR>');
     AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
     ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
+    ShowHTML('<INPUT type="hidden" name="w_unid_prot" value="' . $w_unid_prot . '">');
     ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
     ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -4498,8 +4500,9 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
       $sql = new db_getProtocolo;
+
       $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, 'RECEBIDO', null, null, null, null, null,
-                      $_REQUEST['w_unid_autua'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2, null, null, null,
+                      $_REQUEST['w_unid_prot'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2, null, null, null,
                       null, null, null, null, null);
       if (count($RS) == 0) {
         ScriptOpen('JavaScript');

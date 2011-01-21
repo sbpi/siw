@@ -74,8 +74,9 @@ if (count($_POST) > 0) {
   $w_senha     = utf8_decode(upper(trim(substr(base64_decode($_POST['pwd']),0,20))));
   $w_nome      = utf8_decode(trim(substr(base64_decode($_POST['nome']),0,60)));
   $w_mail      = utf8_decode(trim(substr(base64_decode($_POST['mail']),0,60)));
-  $w_codigo    = utf8_decode(trim(substr($_POST['codigo'],0,20)));
-  
+  $w_codigo    = upper(utf8_decode(trim(substr($_POST['codigo'],0,20))));
+
+
   // Abre conexão com o banco de dados
   $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
   
@@ -117,69 +118,69 @@ if (count($_POST) > 0) {
   } else {
     
     // Configura variáveis de uso global
-	  $SG         = 'PEPROCAD';
-	  $P1         = 5; // Recupera qualquer programa, independentemente da fase ou de estar cancelado
-	  $w_usuario  = RetornaUsuario();
-	  $w_menu     = RetornaMenu($w_cliente,$SG);
-	  $w_ano      = RetornaAno();
+    $SG         = 'PEPROCAD';
+    $P1         = 5; // Recupera qualquer programa, independentemente da fase ou de estar cancelado
+    $w_usuario  = RetornaUsuario();
+    $w_menu     = RetornaMenu($w_cliente,$SG);
+    $w_ano      = RetornaAno();
     
-	  // Retorna os dados do menu
-	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
-	    
-	  $w_erro     = '';
-	  // Testa os dados recebidos
-	  $w_result = fValidate(1,$w_codigo,'código do programa','','',1,20,'1','');
-	  if ($w_result>'') { $w_erro.=$crlf.'Código do programa: '.$w_result; } 
-	    
-	  if ($w_erro>'') {
-	    // Erro de preenchimento
-	    $response = '501'.$crlf.substr($w_erro,2);
-	  } else {
-	    // Recupera os trâmites do serviço de programas estratégicos
-	    $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
-		  $RS = SortArray($RS,'ordem','asc');
-		  $w_fase = '';
-		  foreach($RS as $row) {
-	      $tramites[f($row,'sigla')] = f($row,'sq_siw_tramite');
-	      if (f($row,'sigla')!='CA') $w_fase.=','.f($row,'sq_siw_tramite');
-	    }
-	    $w_fase = substr($w_fase,1);
-	      
-	    // Verifica se o programa existe
-	    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,'PEPROCAD',$P1,
-	          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-	          $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
-	          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-	          $p_uorg_resp, $w_codigo, $p_prazo, $w_fase, $p_sqcc, $p_projeto, $p_atividade, 
-	          null, null, $p_empenho, $p_processo);
-	    $RS = SortArray($RS,'codigo_interno','asc');
-	          
-	    $w_cont = 0;
-	    foreach ($RS as $row) {
-	      if (nvl(f($row,'ln_programa'),'')=='MATRICIALNET' && nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno')) {
-	        $w_cont++;
-	        $p_plano    = f($row,'sq_plano');
-	        $p_programa = f($row,'sq_siw_solicitacao');
-	      }
-	    }
-	      
-	    if ($w_cont==0) {
-	      $SG = 'MESA';
-	      $content='';
-	    } else {
-	      // Se o programa não foi informado, recupera todo o relatorio
-	      if ($w_cont > 1) $p_programa = '';
-	       
-	      $SG = 'RELPJPROG';
-	      $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-	      $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_programa='.$p_programa.'&p_legenda=S&p_projeto=S&p_resumo=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla')));
-	    }
-	      
-	    // Abre SIW-GP em nova janela
-	    ScriptOpen('JavaScript');
-	    ShowHTML('  location.href="'.montaURL_JS(null,$conRootSIW.'menu.php?par=Frames&content='.$content).'";');
-	    ScriptClose();
-	    exit();
+    // Retorna os dados do menu
+    $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
+
+    $w_erro     = '';
+    // Testa os dados recebidos
+    $w_result = fValidate(1,$w_codigo,'código do programa','','',1,20,'1','');
+    if ($w_result>'') { $w_erro.=$crlf.'Código do programa: '.$w_result; }
+
+    if ($w_erro>'') {
+      // Erro de preenchimento
+      $response = '501'.$crlf.substr($w_erro,2);
+    } else {
+      // Recupera os trâmites do serviço de programas estratégicos
+      $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
+      $RS = SortArray($RS,'ordem','asc');
+      $w_fase = '';
+      foreach($RS as $row) {
+        $tramites[f($row,'sigla')] = f($row,'sq_siw_tramite');
+        if (f($row,'sigla')!='CA') $w_fase.=','.f($row,'sq_siw_tramite');
+      }
+      $w_fase = substr($w_fase,1);
+
+      // Verifica se o programa existe
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,'PEPROCAD',$P1,
+            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+            $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
+            $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+            $p_uorg_resp, $w_codigo, $p_prazo, $w_fase, $p_sqcc, $p_projeto, $p_atividade,
+            null, null, $p_empenho, $p_processo);
+      $RS = SortArray($RS,'codigo_interno','asc');
+
+      $w_cont = 0;
+      foreach ($RS as $row) {
+        if (nvl(f($row,'ln_programa'),'')=='MATRICIALNET' && nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno')) {
+          $w_cont++;
+          $p_plano    = f($row,'sq_plano');
+          $p_programa = f($row,'sq_siw_solicitacao');
+        }
+      }
+
+      if ($w_cont==0) {
+        $SG = 'MESA';
+        $content='';
+      } else {
+        // Se o programa não foi informado, recupera todo o relatorio
+        if ($w_cont > 1) $p_programa = '';
+
+        $SG = 'RELPJPROG';
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+          $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_programa='.$p_programa.'&p_legenda=S&p_projeto=S&p_resumo=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla')));
+      }
+
+      // Abre SIW-GP em nova janela
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href="'.montaURL_JS(null,$conRootSIW.'menu.php?par=Frames&content='.$content).'";');
+      ScriptClose();
+      exit();
     }
   }
   

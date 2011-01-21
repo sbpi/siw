@@ -15,7 +15,7 @@ class dml_putArquivo {
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_sistema'                =>array(tvl($p_sq_sistema),                               B_INTEGER,        32),
-                   'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        30),
+                   'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        40),
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,      4000),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,         1),
                    'p_diretorio'                 =>array(tvl($p_diretorio),                                B_VARCHAR,       100)
