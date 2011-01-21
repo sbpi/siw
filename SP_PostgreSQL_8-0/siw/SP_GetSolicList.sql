@@ -1,4 +1,4 @@
-create or replace function SP_GetSolicList
+Ôªøcreate or replace function SP_GetSolicList
    (p_menu         in numeric,
     p_pessoa       in numeric,
     p_restricao    in varchar,
@@ -42,7 +42,7 @@ declare
 
     c_sq_unidade numeric(18);
     
-    -- cursor que recupera as unidades nas quais o usu·rio informado È titular ou substituto
+    -- cursor que recupera as unidades nas quais o usu√°rio informado √© titular ou substituto
     c_unidades_resp cursor (l_pessoa numeric) for
       select distinct sq_unidade
         from eo_unidade a
@@ -61,7 +61,7 @@ begin
       x_fase := substr(x_fase,2,200);
    End If;
    
-   -- Monta uma string com todas as unidades subordinadas ‡ que o usu·rio È respons·vel
+   -- Monta uma string com todas as unidades subordinadas √† que o usu√°rio √© respons√°vel
    open c_unidades_resp (p_pessoa);
    loop
      fetch c_unidades_resp into c_sq_unidade;
@@ -72,7 +72,7 @@ begin
    If substr(p_restricao,1,2) = 'GD'   or 
       substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or 
       p_restricao = 'ORPACOMP'         or substr(p_restricao,1,4) = 'GRORP' Then
-      -- Recupera as demandas que o usu·rio pode ver
+      -- Recupera as demandas que o usu√°rio pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -114,7 +114,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.sq_siw_restricao,   d.ordem,
                 d.recebimento,        d.limite_conclusao,            d.responsavel,
-                case d.prioridade when 0 then 'Alta' when 1 then 'MÈdia' else 'Normal' end as nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'M√©dia' else 'Normal' end as nm_prioridade,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
@@ -219,7 +219,7 @@ begin
                  );
    Elsif substr(p_restricao,1,5) = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or 
          p_restricao = 'ORCAD'             or p_restricao = 'ORACOMP' or Substr(p_restricao,1,4) = 'GROR' Then
-      -- Recupera as demandas que o usu·rio pode ver
+      -- Recupera as demandas que o usu√°rio pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -262,7 +262,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.vincula_contrato,   d.vincula_viagem,              d.outra_parte,
                 d.sq_tipo_pessoa,
-                case d.prioridade when 0 then 'Alta' when 1 then 'MÈdia' else 'Normal' end as nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'M√©dia' else 'Normal' end as nm_prioridade,
                 d1.nome as nm_prop,   d1.nome_resumido as nm_prop_res,
                 d2.orc_previsto as orc_previsto, d2.orc_real as orc_real, 
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
@@ -403,7 +403,7 @@ begin
    Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or 
          substr(p_restricao,1,3) = 'GCP' or substr(p_restricao,1,3) = 'GCA' or
          substr(p_restricao,1,3) = 'GCB' or substr(p_restricao,1,3) = 'GCC' Then
-      -- Recupera os acordos que o usu·rio pode ver
+      -- Recupera os acordos que o usu√°rio pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -453,8 +453,8 @@ begin
                 d.tipo_reajuste,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 round(months_between(d.fim,d.inicio)) as meses_acordo,
-                case when d.titulo is null then 'N„o informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
-                case d.tipo_reajuste when 0 then 'N„o permite' when 1 then 'Com Ìndice' else 'Sem Ìndice' end as nm_tipo_reajuste,
+                case when d.titulo is null then 'N√£o informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
+                case d.tipo_reajuste when 0 then 'N√£o permite' when 1 then 'Com √≠ndice' else 'Sem √≠ndice' end as nm_tipo_reajuste,
                 d1.nome as nm_tipo_acordo,d1.sigla as sg_acordo,           d1.modalidade as cd_modalidade,
                 d2.nome as nm_outra_parte, d2.nome_resumido as nm_outra_parte_resumido,
                 d2.nome_resumido_ind as nm_outra_parte_resumido_ind,
@@ -614,7 +614,7 @@ begin
                  )
                 );
    Elsif substr(p_restricao,1,2) = 'FN' Then
-      -- Recupera os acordos que o usu·rio pode ver
+      -- Recupera os acordos que o usu√°rio pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -657,7 +657,7 @@ begin
                 d.codigo_externo,     d.observacao,                  d.valor_imposto,
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
-                case d.tipo when 1 then 'DotaÁ„o incial' when 2 then 'TransferÍncia entre rubricas' when 3 then 'AtualizaÁ„o de aplicaÁ„o' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
+                case d.tipo when 1 then 'Dota√ß√£o incial' when 2 then 'Transfer√™ncia entre rubricas' when 3 then 'Atualiza√ß√£o de aplica√ß√£o' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa,    d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_resumido_ind as nm_pessoa_resumido_ind,
                 coalesce(d3.valor,0) as valor_doc,
@@ -796,7 +796,7 @@ begin
                  )
                 );
    Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
-      -- Recupera as viagens que o usu·rio pode ver
+      -- Recupera as viagens que o usu√°rio pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -811,13 +811,15 @@ begin
                 a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
                 a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
+                a5.dias_prestacao_contas, 
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.opiniao,            b.sq_solic_pai,                b.codigo_interno,
+                b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,              cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                b.valor,              cast(b.inicio as date)-cast(3 as integer) as aviso,
+                b.sq_plano,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -829,19 +831,24 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
-                b1.sigla as sg_tramite,  b1.ativo,
+                b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                case d.prioridade when 0 then 'Alta' when 1 then 'MÈdia' else 'Normal' end as nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'M√©dia' else 'Normal' end as nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,
-                case d1.tipo when 'I' then 'Inicial' when 'P' then 'ProrrogaÁ„o' else 'ComplementaÁ„o' end as nm_tp_missao,
+                d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,       d11.codigo_interno,
+                case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorroga√ß√£o' else 'Complementa√ß√£o' end as nm_tp_missao,
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
-                d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res,
+                d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
+                d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
+                d1.ressarcimento_data,d1.nacional,                   d1.internacional,
+                d1.cumprimento,
+                case d1.cumprimento when 'I' then 'N√£o' when 'P' then 'Sim' when 'C' then 'Cancelada' else 'N√£o informada' end as nm_cumprimento,
+                d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res, d2.nome_indice as nm_prop_ind, d2.nome_resumido_ind as nm_prop_res_ind,
                 d3.sq_tipo_vinculo,   d3.nome as nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
@@ -852,7 +859,8 @@ begin
                 n1.valor_diaria, d1.valor_passagem as valor_trecho,
                 d5.limite_passagem, d5.limite_diaria,
                 to_char(r.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida, to_char(r.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
-                pd_retornatrechos(b.sq_siw_solicitacao) as trechos
+                pd_retornatrechos(b.sq_siw_solicitacao) as trechos,
+                case when (b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,cast(b.fim as date),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U')<trunc(now())) then 'S' else 'N' end as atraso_pc
            from siw_menu                                a
                 inner         join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left        join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -862,17 +870,20 @@ begin
                                                                a4.tipo_respons            = 'S'           and
                                                                a4.fim                     is null)
                 inner         join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                inner         join pd_parametro         a5 on (a.sq_pessoa                = a5.cliente)
                 inner         join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                   inner       join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                   inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                       from siw_solicitacao
                                    )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                  left        join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
+                  left           join pe_plano          b3 on (b.sq_plano                 = b3.sq_plano)
                   inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                      left    join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
+                      inner   join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                       inner   join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                         inner join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
-                        inner join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
+                        left  join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
                         inner join (select x.sq_unidade, 
                                            coalesce(y.limite_passagem,0) as limite_passagem, 
                                            coalesce(y.limite_diaria,0)   as limite_diaria
@@ -894,9 +905,11 @@ begin
                         inner join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                     left      join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                   left        join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                  inner       join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave
-                                      from siw_solic_log
-                                    group by sq_siw_solicitacao
+                  inner       join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                      from siw_solic_log              x
+                                           inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where y.sq_menu = p_menu
+                                    group by x.sq_siw_solicitacao
                                    )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                     left      join gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                       left    join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
@@ -907,12 +920,15 @@ begin
                                    )                    n1 on (b.sq_siw_solicitacao       = n1.sq_siw_solicitacao)
                  left         join (select x.sq_siw_solicitacao, sum(y.valor_trecho) as valor_trecho
                                       from siw_solicitacao              x
-                                           inner join pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                           inner join pd_deslocamento   y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where y.tipo = 'S'
                                     group by x.sq_siw_solicitacao
                                    )                    q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
                  left         join (select x.sq_siw_solicitacao, min(y.saida) as saida, max(y.chegada) as chegada
                                       from siw_solicitacao            x
                                            inner join pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where x.sq_menu = p_menu
+                                       and y.tipo    = 'S'
                                     group by x.sq_siw_solicitacao
                                    )                    r  on (b.sq_siw_solicitacao       = r.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
@@ -953,7 +969,7 @@ begin
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
    Elsif substr(p_restricao,1,4) = 'PEPR' Then
-      -- Recupera os programas que o usu·rio pode ver
+      -- Recupera os programas que o usu√°rio pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -1094,7 +1110,7 @@ begin
                  )
                 );
    Elsif substr(p_restricao,1,3) = 'PAD' Then
-      -- Recupera os programas que o usu·rio pode ver
+      -- Recupera os programas que o usu√°rio pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -1256,7 +1272,7 @@ begin
                  )
                 );                
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
-      -- Recupera as demandas que o usu·rio pode ver
+      -- Recupera as demandas que o usu√°rio pode ver
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
            from siw_solicitacao               b
@@ -1266,7 +1282,7 @@ begin
             and coalesce(b1.sigla,'-') = 'EE' 
             and acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
    Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' Then
-      -- Recupera as demandas que o usu·rio pode ver
+      -- Recupera as demandas que o usu√°rio pode ver
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
            from siw_solicitacao                b
@@ -1284,7 +1300,7 @@ begin
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
-      -- Recupera as demandas que o usu·rio pode ver
+      -- Recupera as demandas que o usu√°rio pode ver
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
            from siw_solicitacao               b
@@ -1295,8 +1311,8 @@ begin
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
-   Else -- Trata a vinculaÁ„o entre serviÁos
-      -- Recupera as solicitaÁıes que o usu·rio pode ver
+   Else -- Trata a vincula√ß√£o entre servi√ßos
+      -- Recupera as solicita√ß√µes que o usu√°rio pode ver
       open p_result for 
          select b.sq_siw_solicitacao, 
                 case when d.sq_siw_solicitacao is not null 

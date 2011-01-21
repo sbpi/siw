@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION siw.SP_GetDeskTop
+ÔªøCREATE OR REPLACE FUNCTION siw.SP_GetDeskTop
    (p_cliente   numeric,
     p_usuario   numeric,
     p_ano       numeric,
@@ -10,7 +10,7 @@ $BODY$
 declare
     w_interno  varchar;
 begin
-   -- Verifica se o vÌnculo do usu·rio com a organizaÁ„o È interno ou externo
+   -- Verifica se o v√≠nculo do usu√°rio com a organiza√ß√£o √© interno ou externo
    select case when count(*) > 0 then 'S' else 'N' end into w_interno
      from co_pessoa                  a 
           inner join co_tipo_vinculo b on (a.sq_tipo_vinculo = b.sq_tipo_vinculo and
@@ -19,7 +19,7 @@ begin
          where a.sq_pessoa = p_usuario;
    
    If w_interno = 'S' Then
-      -- Recupera a lista de solicitaÁıes da mesa de trabalho do usu·rio
+      -- Recupera a lista de solicita√ß√µes da mesa de trabalho do usu√°rio
       open p_result for
          select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, 
                 v.sq_menu, v.nome as nm_servico, 
@@ -35,10 +35,13 @@ begin
                                          inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
                                          inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                          from siw_solicitacao x
-                                                              inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
+                                                              inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
+                                                                                           y.sq_pessoa      = p_cliente and
+                                                                                           y.sigla          <> 'PADCAD'
+                                                                                          )
                                                       )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    where c.sq_pessoa = p_cliente
-                                     and c.sigla  <> 'PADCAD' -- Registro de protocolo n„o tem acompanhamento pela mesa de trabalho
+                                     and c.sigla  <> 'PADCAD' -- Registro de protocolo n√£o tem acompanhamento pela mesa de trabalho
                                      and 'CI'     <> coalesce(e.sigla,'nulo')
                                      and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                                      and (('N'    = c.consulta_opiniao and d.conclusao is null) or
@@ -55,11 +58,14 @@ begin
                                  inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu)
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
                                  inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
-                                                 from siw_solicitacao x
-                                                      inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
+                                                 from siw_solicitacao        x
+                                                      inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
+                                                                                   y.sq_pessoa      = p_cliente and
+                                                                                   y.sigla          <> 'PADCAD'
+                                                                                  )
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
-                             and c.sigla     <> 'PADCAD' -- Registro de protocolo n„o tem acompanhamento pela mesa de trabalho
+                             and c.sigla     <> 'PADCAD' -- Registro de protocolo n√£o tem acompanhamento pela mesa de trabalho
                              and c.tramite   = 'S'
                              and c.ativo     = 'S'
                              and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
@@ -75,7 +81,7 @@ begin
              and v.sq_pessoa = p_cliente
           order by or_modulo, nm_modulo, nm_servico;
    Else
-      -- Recupera a lista de solicitaÁıes da mesa de trabalho do usu·rio
+      -- Recupera a lista de solicita√ß√µes da mesa de trabalho do usu√°rio
       open p_result for
          select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd

@@ -1,4 +1,4 @@
-create or replace function pd_retornatrechos(p_chave in numeric) returns varchar as $$
+﻿create or replace function pd_retornatrechos(p_chave in numeric) returns varchar as $$
 -- Retorna os trechos de uma viagem, recebendo a chave de siw_solicitacao
 declare
   w_texto   varchar(2000) := '';
@@ -32,6 +32,8 @@ begin
     w_chegada := c_nm_cidade_destino; 
     w_texto   := w_texto || c_nm_cidade_origem ||' - '; 
   end loop;
+  close c_deslocamentos;
+  
   -- Configura o retorno
   if length(w_texto) > 0 then w_texto := w_texto||' '||w_chegada; else w_texto := null; end if;
   return w_texto;

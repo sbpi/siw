@@ -4587,6 +4587,7 @@ SP_PostgreSQL_8-0/siw/SolicRestricao.sql -text
 SP_PostgreSQL_8-0/siw/Sp_GetColuna.sql -text
 SP_PostgreSQL_8-0/siw/Sp_GetEtapaOrder.sql -text
 SP_PostgreSQL_8-0/siw/ValidaCNPJCPF.sql -text
+SP_PostgreSQL_8-0/siw/VerificaDataEspecial.sql -text
 SP_PostgreSQL_8-0/siw/VerificaDataMovel.sql -text
 SP_PostgreSQL_8-0/siw/ac_criaparametro.sql -text
 SP_PostgreSQL_8-0/siw/acentos.sql -text
@@ -4598,6 +4599,7 @@ SP_PostgreSQL_8-0/siw/fn_criaparametro.sql -text
 SP_PostgreSQL_8-0/siw/instr.sql -text
 SP_PostgreSQL_8-0/siw/nvl.sql -text
 SP_PostgreSQL_8-0/siw/pd_retornatrechos.sql -text
+SP_PostgreSQL_8-0/siw/soma_dias.sql -text
 SP_PostgreSQL_8-0/siw/sp_GetEspecieDocumento_PA.sql -text
 SP_PostgreSQL_8-0/siw/sp_GetHorizonte_PE.sql -text
 SP_PostgreSQL_8-0/siw/sp_ajustaDataEtapa.sql -text

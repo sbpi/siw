@@ -1,19 +1,19 @@
-create or replace function siw.VerificaDataMovel
+Ôªøcreate or replace function siw.VerificaDataMovel
    (p_ano in varchar, 
     p_tipo in varchar
    ) returns date as $$
 /**********************************************************************************
-* Finalidade: Retorna a data em que ocorre uma data mÛvel no ano informado
-* Autor     : Alexandre Vinhadelli PapadÛpolis
+* Finalidade: Retorna a data em que ocorre uma data m√≥vel no ano informado
+* Autor     : Alexandre Vinhadelli Papad√≥polis
 * Data      :  28/07/2005, 15:55
 *
-* Par‚metros:
-*    p_ano     : ano de referÍncia
+* Par√¢metros:
+*    p_ano     : ano de refer√™ncia
 *    l_tipo    : S: segunda de carnaval
-*                T: terÁa de carnaval
+*                T: ter√ßa de carnaval
 *                Q: cinzas
-*                P: paix„o de Cristo
-*                D: P·scoa
+*                P: paix√£o de Cristo
+*                D: P√°scoa
 *                H: Corpus Christi
 ***********************************************************************************/
 declare
@@ -38,10 +38,10 @@ declare
   l_tipo varchar(10) := upper(p_tipo);
   l_ano  integer     := p_ano;
 begin
-  -- Se o tipo n„o for v·lido, retorna nulo
+  -- Se o tipo n√£o for v√°lido, retorna nulo
   If l_tipo not in ('S','C','Q','P','D','H') Then Return null; End If;
   
-  -- Calcula o Domingo de P·scoa, que È a data base para os outros feriados mÛveis
+  -- Calcula o Domingo de P√°scoa, que √© a data base para os outros feriados m√≥veis
   a      := Mod(l_ano, 19);
   b      := floor(l_ano / 100);
   c      := Mod(l_ano, 100);
@@ -58,7 +58,7 @@ begin
   q      := Mod((h + l - (7 * m) + 114), 31);
   pascoa := to_date(substr(cast(100+q+1 as varchar),2,2)||'/'||substr(cast(100+p as varchar),2,2)||'/'||substr(cast(10000+l_ano as varchar),2,4),'dd/mm/yyyy');
   
-  -- Verifica a data a ser retornada, em funÁ„o do tipo informado
+  -- Verifica a data a ser retornada, em fun√ß√£o do tipo informado
   If    l_tipo = 'D' Then Result := pascoa;
   Elsif l_tipo = 'P' Then Result := pascoa - integer '2';
   Elsif l_tipo = 'H' Then Result := pascoa + integer '60';
