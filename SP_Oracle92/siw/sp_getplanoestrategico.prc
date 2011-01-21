@@ -169,6 +169,25 @@ begin
                                                 )
                 )
          order by a.titulo;
+   Elsif p_restricao = 'SERVICOS' Then
+      -- Recupera os planos estratégicos existentes
+      open p_result for 
+         select a.sq_plano as chave, a.cliente, a.sq_plano_pai, a.titulo, a.codigo_externo,
+                a.inicio, a.fim, a.ativo
+           from pe_plano              a
+                inner join pe_plano_menu e on (a.sq_plano = e.sq_plano and e.sq_menu = p_chave_pai)
+          where a.cliente            = p_cliente
+            and (p_chave             is null or (p_chave is not null and a.sq_plano = p_chave))
+            and (p_titulo            is null or (p_titulo is not null and a.titulo    = p_titulo))
+            and (p_ativo             is null or (p_ativo is not null and a.ativo      = p_ativo))
+            and (p_inicio            is null or (p_inicio is not null and (a.inicio    between p_inicio and p_fim or
+                                                                           a.fim       between p_inicio and p_fim or
+                                                                           p_inicio    between a.inicio and a.fim or
+                                                                           p_fim       between a.inicio and a.fim
+                                                                          )
+                                                )
+                )
+         order by a.titulo;         
    Elsif p_restricao is not null Then
       If upper(p_restricao) = 'IS NULL' Then
          open p_result for
