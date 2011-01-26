@@ -1,11 +1,6 @@
-CREATE OR REPLACE FUNCTION siw.ac_criaparametro(p_cliente numeric,p_inicio date)
+ï»¿CREATE OR REPLACE FUNCTION siw.ac_criaparametro(p_cliente numeric,p_inicio date)
   RETURNS character varying AS
 $BODY$
-/*
-Tipo = 1 => Converte acentos formato Benner (Paradox Intl) para ASCII Ansi
-Tipo diferente de 1 ou nulo => Retira caracteres acentuados e converte para minúsculas
-                               para ordenação no SELECT
-*/
 DECLARE
    w_ano        numeric(4);
    w_sequencial numeric(18) := 0;
@@ -24,7 +19,7 @@ BEGIN
      values (p_cliente, 0, cast (extract (year from current_date)as numeric(4)),  'AC-',   null);
   End If;
 
-  -- Recupera os parâmetros do cliente informado
+  -- Recupera os parÃ¢metros do cliente informado
 
   select * into w_reg from siw.ac_parametro where cliente = p_cliente;
 
@@ -32,12 +27,12 @@ BEGIN
 
 
   -- Se o ano do acordo for menor que o ano corrente, configura um valor qualquer
-  -- que será corrigido depois. Caso contrário, usa o sequencial
+  -- que serÃ¡ corrigido depois. Caso contrÃ¡rio, usa o sequencial
   -- armazenado em AC_PARAMETRO.
 	  If cast (extract (year from p_inicio)as numeric(4)) < w_reg.ano_corrente Then
 
-	     -- Configura o ano do acordo para o ano informado na data de início
-	     -- e usa um sequencial qualquer, que será ajustado depois
+	     -- Configura o ano do acordo para o ano informado na data de inÃ­cio
+	     -- e usa um sequencial qualquer, que serÃ¡ ajustado depois
 	     w_ano        := cast (extract (year from p_inicio)as numeric(4));
 	     w_sequencial := 0;
 	  Else
@@ -51,7 +46,7 @@ BEGIN
 		w_sequencial := w_reg.sequencial + 1;
 	     End If;
 
-	     -- Atualiza a tabela de parâmetros
+	     -- Atualiza a tabela de parÃ¢metros
 	     Update siw.ac_parametro Set
 		 ano_corrente = w_ano,
 		 sequencial   = w_sequencial

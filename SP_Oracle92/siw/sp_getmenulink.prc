@@ -68,7 +68,7 @@ begin
                    )
                and a.sq_pessoa        = p_cliente
                and (p_modulo          is null or (p_modulo is not null and a.sq_modulo = p_modulo))
-               and a.sq_menu_pai      = p_restricao
+               and a.sq_menu_pai      = to_number(p_restricao)
             order by 5,3;
       End If;
     End If;

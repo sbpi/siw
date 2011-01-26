@@ -1,25 +1,33 @@
-﻿create or replace function siw.Acesso
+﻿create or replace function Acesso
   (p_solicitacao numeric,
-   p_usuario     numeric,
-   p_tramite     numeric default null
-  ) returns numeric as $$
+   p_usuario      numeric,
+   p_tramite      numeric default null
+  )  RETURNS numeric AS $$
+DECLARE
 /**********************************************************************************
-* Nome      : SolicitacaoAcesso
-* Finalidade: Verificar se o usuário têm acesso a uma solicitacao, de acordo com os parâmetros informados
+* Nome      : Acesso
+* Finalidade: Verificar se o usuário tem acesso a uma solicitacao, de acordo com os parâmetros informados
 * Autor     : Alexandre Vinhadelli Papadópolis
 * Data      :  14/10/2003, 10:35
 * Parâmetros:
-*    p_solicitacao : chave primária de SR_SOLICITACAO
+*    p_solicitacao : chave primária de SIW_SOLICITACAO
 *    p_usuario   : chave de acesso do usuário
 * Retorno: campo do tipo bit
 *   16: Se a solicitação deve aparecer na mesa de trabalho do usuário
 *    8: Se o usuário é gestor do módulo à qual a solicitação pertence
+*       Outra possibilidade é:
+*          o usuário ser responsável por uma etapa de um projeto
+*          o usuário ser titular ou substituto da unidade responsável por uma etapa de um projeto
+*          o usuário ser responsável por alguma questão de um projeto (risco ou problema)
 *    4: Se o usuário é o responsável pela unidade de lotação do solicitante da solicitação
 *       Obs: somente se o trâmite for cumprido pela chefia imediata
-*       Outra possibilidade é se o usuário cumprir algum trâmite no serviço
-*       Outra possibilidade é se o serviço for de interesse de toda a unidade e o usuário for lotado nela
+*       Outra possibilidade é usuário cumprir algum trâmite no serviço
 *    2: Se o usuário é o solicitante da solicitacao ou se é um interessado na sua execução
-*    1: Se o usuário é o cadastrador da solicitação
+*    1: Se o usuário é o cadastrador ou executor da solicitação ou é está lotado na unidade de cadastramento
+*       Outra possibilidade é:
+*          o usuário ser representante do contrato
+*          o usuário ser representante do projeto
+*          a solicitação ser do módulo de planejamento estratégico
 *    0: Se o usuário não tem acesso à solicitação
 *    Se o usuário enquadrar-se em mais de uma das situações acima, o retorno será a
 *    soma das situações. Assim,
@@ -36,7 +44,6 @@
 *    15 - se for cadastrador, solicitante, chefe da unidade e gestor
 *    16 a 31 - se o usuário deve cumprir o trâmite em que a solicitação está
 ***********************************************************************************/
-declare
   w_cliente                siw_cliente.sq_pessoa%type;
   w_interno                co_tipo_vinculo.interno%type;
   w_sq_servico             siw_menu.sq_menu%type;
@@ -71,27 +78,22 @@ declare
   w_sq_pessoa_substituto   eo_unidade_resp.sq_pessoa%type;         -- Substituto da unidade solicitante
   w_sq_endereco_unidade    eo_unidade.sq_pessoa_endereco%type;
   w_nm_vinculo             co_tipo_vinculo.nome%type;
-  w_solicitante            numeric(10);                             -- Solicitante
-  w_unidade_beneficiario   numeric(10);
-  w_sair                   numeric(10);
-  w_existe                 numeric(10);
-  w_unidade_atual          numeric(10);
-  w_chefe_beneficiario     numeric(10);
-  w_executor               numeric(10);
-  c_sq_unidade	           numeric(10);
-  c_sq_unidade_pai         numeric(10);
-  c_sq_pessoa_titular      numeric(10);
-  c_sq_pessoa_substituto   numeric(10);
-
+  w_solicitante            numeric(18);                             -- Solicitante
+  w_unidade_beneficiario   numeric(18);
+  w_existe                 numeric(18);
+  w_sair                   numeric(18);
+  w_unidade_atual          numeric(18);
+  w_chefe_beneficiario     numeric(18);
+  w_executor               numeric(18);
+  Result                   numeric := 0;
   w_unidade_resp           numeric(18);
   w_anterior               numeric(18);
   w_beneficiario           numeric(18);
   w_anterior_assina        varchar(1);
   w_beneficiario_assina    varchar(1);
   w_gestor_cumpre          varchar(1);
-  Result                   numeric := 0;
 
-  c_unidade cursor (p_unidade numeric) for
+   c_unidade CURSOR (p_unidade numeric) FOR
      select pt.sq_unidade, a.sq_unidade_pai, coalesce(pt.sq_pessoa, -1) as sq_pessoa_titular,
             coalesce(ps.sq_pessoa, -1) as sq_pessoa_substituto
       from eo_unidade a
@@ -112,7 +114,7 @@ declare
                                                              )
                      ) ps on (a.sq_unidade  = ps.sq_unidade)
      where a.sq_unidade  = p_unidade;
-begin
+BEGIN
 
  -- Verifica se a solicitação e o usuário informados existem
  select count(*) into w_existe from siw_solicitacao where sq_siw_solicitacao = p_solicitacao;
@@ -233,7 +235,7 @@ begin
     Result := 1;
  End If;
  
-  -- Verifica se o usuário é o solicitante
+ -- Verifica se o usuário é o solicitante
  If w_solicitante = p_usuario Then 
     Result                   := Result + 2; 
     select sq_unidade into w_unidade_beneficiario from sg_autenticacao where sq_pessoa = p_usuario;
@@ -295,7 +297,7 @@ begin
  
  -- Se o serviço for vinculado à unidade
  If w_vinculacao = 'U' Then
-     -- Verifica se o usuário está lotado ou se é titular/substituto 
+    -- Verifica se o usuário está lotado ou se é titular/substituto 
     -- da unidade de CADASTRAMENTO da solicitação 
     -- ou se é da unidade RESPONSÁVEL e o módulo for de protocolo
     If w_interno = 'S' and w_sigla = 'PADCAD' Then 
@@ -712,6 +714,5 @@ begin
 
    End If;
  End If;
-
  return(Result);
-end; $$ language 'plpgsql' volatile;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

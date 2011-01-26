@@ -6,7 +6,7 @@ create or replace procedure SP_GetAddressList
     p_result        out sys_refcursor) is
 begin
    If p_restricao is null Then
-      -- Recupera todos os endereços, independente do tipo
+      -- Recupera todos os endereÃ§os, independente do tipo
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a.padrao, a.logradouro, a.sq_cidade, 
                 a1.sq_tipo_endereco, a1.nome as tipo_endereco, a1.email, a1.internet, 
@@ -25,7 +25,7 @@ begin
           where a.sq_pessoa = p_cliente
          order by acentos(a.logradouro);
    Elsif p_restricao = 'FISICO' Then
-      -- Recupera apenas os endereços físicos
+      -- Recupera apenas os endereÃ§os fÃ­sicos
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
                 a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
@@ -50,7 +50,7 @@ begin
            and (p_chave is null or (p_chave is not null and a.sq_pessoa_endereco = p_chave))
          order by acentos(a.logradouro);
    Elsif p_restricao = 'EMAIL' Then
-      -- Recupera apenas os endereços de e-mail
+      -- Recupera apenas os endereÃ§os de e-mail
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
                 a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
@@ -69,7 +69,7 @@ begin
           where a.sq_pessoa = p_cliente
          order by acentos(a.logradouro);
    Elsif p_restricao = 'INTERNET' Then
-      -- Recupera apenas os endereços Web
+      -- Recupera apenas os endereÃ§os Web
       open p_result for 
         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
@@ -89,12 +89,12 @@ begin
         order by acentos(a.logradouro);
    ElsIf p_restricao = 'LISTALOCALIZACAO' Then
       open p_result for 
-           -- Recupera a lista de endereços de localização da unidade
+           -- Recupera a lista de endereÃ§os de localizaÃ§Ã£o da unidade
           select a.sq_pessoa_endereco, a.sq_cidade, a.logradouro,
                  c.nome || ' - ' || e.co_uf as cidade, 
                  l.nome, l.telefone, l.telefone2, l.ramal, l.fax, l.sq_localizacao, 
                  p.nome nm_pais, 
-                 case l.ativo when 'S' then'Sim' else 'Não' end as ativo
+                 case l.ativo when 'S' then'Sim' else 'NÃ£o' end as ativo
             from co_pessoa_endereco          a
                  inner   join co_cidade      c on (a.sq_cidade          = c.sq_cidade)
                    inner join co_uf          e on (c.co_uf              = e.co_uf and
@@ -106,7 +106,7 @@ begin
           where u.sq_unidade         = p_chave
           order by acentos(a.logradouro);
    ElsIf p_restricao = 'LOCALIZACAO' Then
-      -- Recupera os dados do endereços da localização da unidade
+      -- Recupera os dados do endereÃ§os da localizaÃ§Ã£o da unidade
       open p_result for
          select l.nome, l.telefone, l.sq_localizacao,
 	              l.ativo, l.telefone2, l.ramal, l.fax, u.sq_unidade, 
@@ -116,7 +116,7 @@ begin
            where l.sq_unidade     = u.sq_unidade 
              and l.sq_localizacao = p_chave;
    ElsIf p_restricao = 'EMAILINTERNET' Then
-      -- Recupera os endereços de email e internet
+      -- Recupera os endereÃ§os de email e internet
       open p_result for  
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
                 a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
@@ -137,7 +137,7 @@ begin
           where a.sq_pessoa = p_cliente
          order by acentos(a.logradouro);
    ElsIf p_restricao = 'ENDERECO' Then         
-      -- Recupera todos os endereços, independente do tipo
+      -- Recupera todos os endereÃ§os, independente do tipo
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
                 a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,

@@ -1,4 +1,4 @@
-create or replace function SP_GetMenuList
+ï»¿create or replace function SP_GetMenuList
    (p_cliente   numeric,
     p_operacao  varchar,
     p_chave     numeric,
@@ -6,7 +6,7 @@ create or replace function SP_GetMenuList
    ) returns refcursor as $$
 begin
    If upper(p_operacao) = 'X' Then
-      -- Recupera os links vinculados a serviços
+      -- Recupera os links vinculados a serviÃ§os
       open p_result for
         select a.sq_menu,
                case when a.sq_modulo is null then a.nome else a.nome||' ('||b.nome||')' end as nome,
@@ -17,7 +17,7 @@ begin
            and a.tramite   = 'S'
         order by acentos(a.nome, null);
    ElsIf upper(p_operacao) <> 'I' and upper(p_operacao) <> 'H' Then
-      -- Se for alteração, evita a exibição do próprio registro e dos seus subordinados
+      -- Se for alteraÃ§Ã£o, evita a exibiÃ§Ã£o do prÃ³prio registro e dos seus subordinados
       open p_result for
         select a.sq_menu,
                case when a.sq_modulo is null then a.nome else a.nome||' ('||b.nome||')' end as nome 

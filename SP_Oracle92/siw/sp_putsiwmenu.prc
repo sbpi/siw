@@ -165,7 +165,5 @@ begin
       -- Desativa registro
       update siw_menu set ativo = 'N' where sq_menu = p_chave;
    End If;
-   
-   commit;   
 end SP_PutSIWMenu;
 /

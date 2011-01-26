@@ -82,7 +82,7 @@ begin
                  and x.contratado = 'S'
                  and x.ativo      = 'S'
               order by padrao desc, nome
-             )
+             ) a
       where rownum = 1;
    end if;
    
@@ -97,7 +97,7 @@ begin
                  and x.ativo           = 'S'
                  and x.externo         = 'N'
               order by x.sq_unidade
-             )
+             ) a
        where rownum = 1;
    end if;
    
@@ -109,7 +109,7 @@ begin
                where x.sq_unidade = w_unidade
                  and x.ativo           = 'S'
               order by x.nome
-             )
+             ) a
        where rownum = 1;
    end if;
    
