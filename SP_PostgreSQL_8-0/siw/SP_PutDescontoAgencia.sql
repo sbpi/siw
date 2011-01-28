@@ -17,7 +17,7 @@ BEGIN
               sq_desconto_agencia,        cliente,   agencia_viagem,
               faixa_inicio, faixa_fim, desconto,   ativo)
       (select sq_desconto_agencia.nextval,p_cliente, p_agencia, 
-              p_inicio,     p_fim,     p_desconto, p_ativo from dual);
+              p_inicio,     p_fim,     p_desconto, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pd_desconto_agencia set

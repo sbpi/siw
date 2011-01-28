@@ -13,7 +13,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_rubrica_cronograma.nextval into w_chave from dual;
+      select sq_rubrica_cronograma.nextval into w_chave;
       
       -- Insere registro na tabela de etapas do projeto
       Insert Into pj_rubrica_cronograma 

@@ -20,7 +20,6 @@ DECLARE
    w_item_solic    numeric(18)  := p_item;
    w_valor         numeric(18,4);
    w_material      numeric(18);
-   w_valor         float;
    w_menu          siw_menu%rowtype;
    w_acordo        ac_acordo%rowtype;
    w_item_sol      cl_solicitacao_item%rowtype;
@@ -53,7 +52,7 @@ BEGIN
    End If;
    
    If p_operacao = 'I' Then
-      select sq_solicitacao_item.nextval into w_item_solic from dual;
+      select sq_solicitacao_item.nextval into w_item_solic;
       -- Insere registro em 
       insert into cl_solicitacao_item
         (sq_solicitacao_item, sq_siw_solicitacao, ordem,       sq_material,           quantidade,   cancelado,   motivo_cancelamento,
@@ -111,7 +110,7 @@ BEGIN
          
          If length(w_log) > 0 Then
             -- Recupera a nova chave da tabela de encaminhamentos da demanda
-            select sq_acordo_log.nextval into w_chave_dem from dual;
+            select sq_acordo_log.nextval into w_chave_dem;
          
             -- Insere registro na tabela de encaminhamentos da demanda
             Insert into ac_acordo_log 

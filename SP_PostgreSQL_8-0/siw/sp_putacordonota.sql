@@ -21,7 +21,7 @@ DECLARE
    w_chave   numeric(18);
 BEGIN
    If p_operacao = 'I' Then
-      select sq_acordo_nota.nextval into w_chave from dual;
+      select sq_acordo_nota.nextval into w_chave;
       -- Insere registro
       insert into ac_acordo_nota
         (sq_acordo_nota, sq_siw_solicitacao, sq_tipo_documento, sq_acordo_outra_parte, 
@@ -31,7 +31,7 @@ BEGIN
         (select w_chave, p_chave_aux, p_sq_tipo_documento, p_sq_acordo_outra_parte, 
           p_sq_acordo_aditivo, p_numero, p_data, p_valor, p_sq_lcfonte_recurso, p_espec_despesa, p_observacao,
           p_abrange_inicial, p_abrange_acrescimo, p_abrange_reajuste
-           from dual
+          
         );
    Elsif p_operacao = 'A' Then
       -- Altera registro

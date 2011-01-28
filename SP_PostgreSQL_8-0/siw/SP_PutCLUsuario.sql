@@ -9,7 +9,7 @@ BEGIN
       -- Insere registro
       insert into cl_usuario
              (cliente,   sq_pessoa)
-      (select p_cliente, p_chave from dual);
+      (select p_cliente, p_chave);
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       DELETE FROM cl_usuario where sq_pessoa = p_chave;

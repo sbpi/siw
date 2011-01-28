@@ -93,7 +93,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave from dual;
+      select sq_siw_solicitacao.nextval into w_Chave;
 
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -137,12 +137,12 @@ BEGIN
               w_chave,              p_prioridade,    p_decisao_judicial,   p_numero_original, 
               p_data_recebimento,   p_aviso,         w_dias,               p_unidade,
               p_arp,                p_interno,       p_especie_documento,  w_financeiro
-           from dual
+          
          );
       
       End If;
       If p_codigo is null Then
-         geracodigointerno(w_chave,null,w_codigo);
+         PERFORM geracodigointerno(w_chave,null,w_codigo);
          update siw_solicitacao set
                 codigo_interno = w_codigo
           where sq_siw_solicitacao = w_chave;
@@ -154,7 +154,7 @@ BEGIN
           observacao
          )
       (select
-          sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
+          nextVal('sq_siw_solic_log'),  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          w_data,             'N',
           coalesce(p_observacao_log,'Cadastramento inicial')
          from siw_tramite a
@@ -264,7 +264,7 @@ BEGIN
               p_data_recebimento, p_aviso,            p_unidade,
               p_arp,              p_interno,          p_especie_documento,
               p_dias,             w_financeiro
-           from dual
+          
          )
          where sq_siw_solicitacao = p_chave;      
       End If;

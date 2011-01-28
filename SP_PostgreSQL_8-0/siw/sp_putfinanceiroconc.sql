@@ -20,9 +20,13 @@ DECLARE
    w_chave_dem     numeric(18) := null;
    w_chave_arq     numeric(18) := null;
    w_cont          numeric(18);
+   
+   c_dados cursor for
+     select x.sq_lancamento_doc, x.valor from fn_lancamento_doc x where x.sq_siw_solicitacao = p_chave;
+     
 BEGIN
    -- Recupera a chave do log
-   select sq_siw_solic_log.nextval into w_chave_dem from dual;
+   select sq_siw_solic_log.nextval into w_chave_dem;
    
    -- Insere registro na tabela de log da solicitacao
    Insert Into siw_solic_log 
@@ -66,7 +70,7 @@ BEGIN
    
    -- Se foi informada rubrica, cria ou atualiza os itens de documentos
    If p_rubrica is not null Then
-      for crec in (select x.sq_lancamento_doc, x.valor from fn_lancamento_doc x where x.sq_siw_solicitacao = p_chave) loop
+      for crec in c_dados loop
         select count(*) into w_cont from fn_documento_item a where a.sq_lancamento_doc = crec.sq_lancamento_doc;
         -- Se o item existe, atualiza a rubrica; caso contrário, insere o item
         If w_cont > 0 Then
@@ -83,7 +87,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq from dual;
+      select sq_siw_arquivo.nextval into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

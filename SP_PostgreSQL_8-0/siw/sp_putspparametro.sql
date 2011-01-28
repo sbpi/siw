@@ -14,7 +14,7 @@ BEGIN
       -- Insere registro
       insert into dc_sp_param
         (sq_sp_param, sq_stored_proc, sq_dado_tipo, nome, descricao, tipo, ordem)
-        (select sq_sp_param.nextval, p_chave, p_sq_dado_tipo, p_nome, p_descricao, p_tipo, p_ordem from dual);
+        (select sq_sp_param.nextval, p_chave, p_sq_dado_tipo, p_nome, p_descricao, p_tipo, p_ordem);
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       DELETE FROM dc_sp_param 

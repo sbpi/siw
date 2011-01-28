@@ -12,7 +12,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into dc_arquivo (sq_arquivo, sq_sistema, nome, descricao, tipo, diretorio)
-      (select sq_arquivo.nextval, p_sq_sistema, p_nome,  p_descricao, p_tipo, p_diretorio from dual);
+      (select sq_arquivo.nextval, p_sq_sistema, p_nome,  p_descricao, p_tipo, p_diretorio);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_arquivo

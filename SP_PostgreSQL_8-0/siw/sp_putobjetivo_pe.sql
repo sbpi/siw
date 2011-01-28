@@ -14,7 +14,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then
       -- Recupera a próxima chave
-      select sq_peobjetivo.nextval into w_chave from dual;
+      select sq_peobjetivo.nextval into w_chave;
       
       -- Insere registro
       insert into pe_objetivo

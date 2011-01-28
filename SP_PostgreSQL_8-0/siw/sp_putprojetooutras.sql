@@ -8,7 +8,7 @@ BEGIN
    if p_operacao = 'I' Then
       -- Insere os registro
       insert into or_acao_prioridade(sq_siw_solicitacao, sq_orprioridade) 
-                  (select p_chave, p_sq_orprioridade from dual);
+                  (select p_chave, p_sq_orprioridade);
 
    Elsif p_operacao = 'E' Then
       -- Apaga os registro

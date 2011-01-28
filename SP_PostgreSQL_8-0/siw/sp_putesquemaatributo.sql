@@ -21,7 +21,7 @@ BEGIN
                   trim(p_campo_externo),
                   p_mascara_data,
                   p_valor_default
-             from dual
+            
           );
    Elsif p_operacao = 'E' Then
       -- Apaga todos os registros, para q a exclusão e alteração seja feita

@@ -16,7 +16,7 @@ BEGIN
              (sq_lcjulgamento,         cliente,   nome,   descricao,   item,   ativo,   padrao
              )
       (select sq_lcjulgamento.nextval, p_cliente, p_nome, p_descricao, p_item, p_ativo, p_padrao
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

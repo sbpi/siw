@@ -12,7 +12,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_contas_registro.nextval into w_chave from dual;
+      select sq_contas_registro.nextval into w_chave;
       
       -- Insere registro na tabela de registros de cronogramas
       Insert Into siw_contas_registro

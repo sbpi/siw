@@ -14,7 +14,7 @@ BEGIN
                  p_cliente,
                  trim(p_nome),
                  p_ativo
-            from dual
+           
           );  
    Elsif p_operacao = 'A' Then
       -- Altera registro

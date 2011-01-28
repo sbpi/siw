@@ -439,7 +439,7 @@ BEGIN
                                     )                  l on (a.sq_pessoa          = l.sq_pessoa)                                
           where a.cliente           = p_cliente
             and a.sq_pessoa         <> (p_cliente+1)
-            and 1                   < (select acesso(p_solic, a.sq_pessoa) from dual)
+            and 1                   < (select acesso(p_solic, a.sq_pessoa))
             and 'S'                 = a.ativo;
    End If;
   return p_result;

@@ -64,7 +64,7 @@ BEGIN
    End If;
          
    If p_operacao = 'I' Then
-      select sq_acordo_aditivo.nextval into w_chave from dual;
+      select sq_acordo_aditivo.nextval into w_chave;
       -- Insere registro
       insert into ac_acordo_aditivo
         (       sq_acordo_aditivo,         sq_siw_solicitacao,   protocolo,           codigo,           objeto,            inicio,         fim, 
@@ -76,7 +76,7 @@ BEGIN
                 p_duracao,                 p_documento_origem,   p_documento_data,    p_variacao_valor, p_prorrogacao,     p_revisao,         
                 p_acrescimo,               p_supressao,          p_observacao,        p_valor_inicial,  p_parcela_inicial, p_valor_reajuste, 
                 p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc
-           from dual
+          
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro

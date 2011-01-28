@@ -68,7 +68,7 @@ BEGIN
             and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = p_tramite);
   
         -- Recupera a próxima chave
-        select sq_siw_solic_log.nextval into w_chave from dual;
+        select sq_siw_solic_log.nextval into w_chave;
         
         -- Se houve mudança de fase, grava o log
         Insert Into siw_solic_log 
@@ -107,7 +107,7 @@ BEGIN
      If p_retorno_limite is not null Then w_retorno_unid := p_unidade_origem; End If;
      
      -- Recupera a nova chave da tabela de encaminhamentos da demanda
-     select sq_documento_log.nextval into w_chave_dem from dual;
+     select sq_documento_log.nextval into w_chave_dem;
          
      -- Insere registro na tabela de encaminhamentos do documento
      insert into pa_documento_log

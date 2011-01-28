@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetCountryList
+﻿create or replace FUNCTION SP_GetCountryList
    (p_restricao  varchar,
     p_nome       varchar,
     p_ativo      varchar,
@@ -34,13 +34,14 @@ BEGIN
                                   or (p_restricao = 'NOMEFRANCA'   and a.nome = 'França')
                                   or (p_restricao = 'BRASILFRANCA' and (a.nome = 'Brasil' or a.nome = 'França'))
                                   or (p_restricao = 'INDICADOR')
-                                  or (p_restricao like 'CONTINENTE%' and a.continente = replace(p_restricao,'CONTINENTE','')))
+                                  or (p_restricao like 'CONTINENTE%' and to_char(a.continente) = replace(p_restricao,'CONTINENTE','')))
          and ((coalesce(p_restricao,'-')  = 'INDICADOR' and b.sq_pais is not null) or 
               (coalesce(p_restricao,'-') <> 'INDICADOR' and 
                (p_nome  is null or (p_nome is not null and acentos(a.nome) like '%'||acentos(p_nome)||'%'))
               )
              )
          and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo))
-         and (p_sigla is null or (p_sigla is not null and a.sigla = p_sigla));
+         and (p_sigla is null or (p_sigla is not null and a.sigla = p_sigla));
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

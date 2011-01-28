@@ -12,7 +12,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera o valor da próxima chave
-      select sq_projeto_recurso.nextval into  w_chave from dual;
+      select sq_projeto_recurso.nextval into  w_chave;
       
       -- Insere registro na tabela de recursos
       Insert Into pj_projeto_recurso

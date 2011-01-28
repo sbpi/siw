@@ -22,7 +22,7 @@ BEGIN
          sq_cvpessoa_escol.nextval,  p_pessoa,       p_sq_area_conhecimento, 
          p_sq_pais,                  p_sq_formacao,  p_nome, 
          p_instituicao,              p_inicio,       p_fim
-       from dual);
+      );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de formação acadêmica
       update cv_pessoa_escol

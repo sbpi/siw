@@ -19,7 +19,7 @@ BEGIN
                  p_ordem,
                  trim(p_elemento),
                  p_remove_registro
-            from dual
+           
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro

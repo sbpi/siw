@@ -57,7 +57,7 @@ BEGIN
          w_fornecedor := 'N';
       End If;
       -- recupera a próxima chave da pessoa
-      select sq_pessoa.nextval into w_chave_pessoa from dual;
+      select sq_pessoa.nextval into w_chave_pessoa;
       
       -- insere os dados da pessoa
       insert into co_pessoa

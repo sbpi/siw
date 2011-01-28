@@ -43,11 +43,12 @@ DECLARE
     --  que recupera as unidades nas quais o usuário informado é titular ou substituto
      c_unidades_resp CURSOR FOR
         select distinct a.sq_unidade
-          from eo_unidade_resp b,
-	       eo_unidade a
+          from eo_unidade_resp         b
+	       inner   join co_pessoa  c on (b.sq_pessoa     = c.sq_pessoa)
+	         inner join eo_unidade a on (c.sq_pessoa_pai = a.sq_pessoa)
          where b.sq_pessoa = p_pessoa
            and b.fim       is null
-           ;--and a.sq_unidade in (select sq_unidade from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(b.sq_unidade),0) as (sq_unidade numeric, sq_unidade_pai numeric, level int));
+           and a.sq_unidade in (select sq_unidade from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(b.sq_unidade),0) as (sq_unidade numeric, sq_unidade_pai numeric, level int));
 
       
 BEGIN
@@ -65,7 +66,7 @@ BEGIN
    
    -- Monta uma string com todas as unidades subordinadas à que o usuário é responsável
    for crec in c_unidades_resp loop
-     l_resp_unid := l_resp_unid ||','''||c_sq_unidade||'''';
+     l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
    If p_restricao = 'ESTRUTURA' Then
@@ -954,8 +955,9 @@ BEGIN
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao 
-                                            where sq_menu = p_menu
+                                             from siw_solicitacao     a
+                                                  inner join siw_menu b on (a.sq_menu = b.sq_menu)
+                                            where b.sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (a.sq_pessoa                = b3.cliente and
                                                                       b.sq_plano                 = b3.sq_plano
@@ -1048,7 +1050,7 @@ BEGIN
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))

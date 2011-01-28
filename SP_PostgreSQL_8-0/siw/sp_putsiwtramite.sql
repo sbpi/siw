@@ -20,7 +20,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then
       -- Recupera a próxima chave
-      select sq_siw_tramite.nextval into w_Chave from dual;
+      select sq_siw_tramite.nextval into w_Chave;
       
       -- Insere registro em SIW_MENU
       insert into siw_tramite 

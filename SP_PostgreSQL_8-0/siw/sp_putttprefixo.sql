@@ -15,7 +15,7 @@ BEGIN
       -- Insere registro
      insert into tt_prefixos 
        (sq_prefixo, prefixo, localidade, sigla, uf, ddd, controle, degrau)                       
-       (select sq_prefixo.nextVal, p_prefixo, p_localidade, p_sigla, p_uf, p_ddd, p_controle, p_degrau from dual);
+       (select sq_prefixo.nextVal, p_prefixo, p_localidade, p_sigla, p_uf, p_ddd, p_controle, p_degrau);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update tt_prefixos

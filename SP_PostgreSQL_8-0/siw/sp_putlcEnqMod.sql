@@ -14,7 +14,7 @@ BEGIN
              (sq_modalidade_artigo,         sq_lcmodalidade, sigla,   descricao,   ativo
              )
       (select sq_modalidade_artigo.nextval, p_chave,         p_sigla, p_descricao, p_ativo
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

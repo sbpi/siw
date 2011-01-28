@@ -25,7 +25,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_lancamento_doc.nextval into w_chave_aux from dual;   
+      select sq_lancamento_doc.nextval into w_chave_aux;   
       insert into fn_lancamento_doc
         (sq_lancamento_doc,         sq_siw_solicitacao, sq_tipo_documento,   numero,           data, 
          serie,                     valor,              patrimonio,          calcula_retencao, calcula_tributo,

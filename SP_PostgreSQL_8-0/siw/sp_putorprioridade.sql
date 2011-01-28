@@ -21,7 +21,7 @@ BEGIN
              )
       (select sq_orprioridade.nextval, p_cliente,      p_codigo,   p_nome,     p_responsavel, 
               p_telefone,          p_email,            p_ordem,    p_ativo,    p_padrao
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

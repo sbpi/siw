@@ -50,7 +50,7 @@ BEGIN
                  p_unidade_pagadora,
                  p_externo,
                  p_ativo
-            from dual
+           
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro

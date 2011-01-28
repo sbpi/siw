@@ -10,7 +10,7 @@ BEGIN
       insert into siw_tramite_fluxo
              (sq_siw_tramite_origem, sq_siw_tramite_destino)
       (select p_chave,               p_destino
-         from dual
+        
       );
    Elsif p_operacao = 'E' Then
       -- Exclui registro

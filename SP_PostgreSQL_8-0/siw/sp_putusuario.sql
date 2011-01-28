@@ -11,7 +11,7 @@ BEGIN
       -- Insere registro
       insert into dc_usuario
         (sq_usuario, sq_sistema, nome, descricao)
-      (select sq_usuarionextVal(''), p_sq_sistema, p_nome, p_descricao from dual);
+      (select sq_usuarionextVal(''), p_sq_sistema, p_nome, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_Usuario set

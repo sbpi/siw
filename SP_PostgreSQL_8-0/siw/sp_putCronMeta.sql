@@ -14,7 +14,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_meta_cronograma.nextval into w_chave from dual;
+      select sq_meta_cronograma.nextval into w_chave;
       
       -- Insere registro na tabela de cronograma da meta
       Insert Into siw_meta_cronograma 

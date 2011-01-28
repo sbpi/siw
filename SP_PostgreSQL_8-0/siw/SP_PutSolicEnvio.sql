@@ -134,7 +134,7 @@ BEGIN
    End If;
    
    -- Recupera a próxima chave
-   select sq_siw_solic_log.nextval into w_chave from dual;
+   select sq_siw_solic_log.nextval into w_chave;
     
    -- Se houve mudança de fase, grava o log
    Insert Into siw_solic_log 
@@ -209,7 +209,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq from dual;
+      select sq_siw_arquivo.nextval into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

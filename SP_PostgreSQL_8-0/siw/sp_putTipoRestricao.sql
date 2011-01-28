@@ -11,7 +11,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into siw_tipo_restricao (sq_tipo_restricao, cliente, nome, codigo_externo, ativo)
-      (select sq_tipo_restricao.nextval, p_cliente, p_nome,  p_codigo, p_ativo from dual);
+      (select sq_tipo_restricao.nextval, p_cliente, p_nome,  p_codigo, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update siw_tipo_restricao

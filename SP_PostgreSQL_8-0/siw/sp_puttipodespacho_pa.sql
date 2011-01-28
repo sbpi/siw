@@ -12,7 +12,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pa_tipo_despacho (sq_tipo_despacho, cliente, nome, sigla, descricao, ativo)
-      (select sq_tipo_despacho.nextval, p_cliente, p_nome, upper(p_sigla), p_descricao, p_ativo from dual);
+      (select sq_tipo_despacho.nextval, p_cliente, p_nome, upper(p_sigla), p_descricao, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pa_tipo_despacho

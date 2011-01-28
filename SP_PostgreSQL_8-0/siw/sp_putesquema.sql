@@ -42,7 +42,7 @@ BEGIN
               p_bd_hostname,      p_bd_username, p_bd_password,          p_tx_delimitador, p_tipo_efetivacao,
               p_tx_origem_arquivos, p_ftp_hostname, p_ftp_username,      p_ftp_password,p_ftp_diretorio,
               p_envia_mail,      p_lista_mail
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

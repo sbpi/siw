@@ -53,7 +53,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave from dual;
+      select sq_siw_solicitacao.nextval into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (

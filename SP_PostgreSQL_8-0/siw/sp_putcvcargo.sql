@@ -17,7 +17,7 @@ BEGIN
       (select 
          sq_cvpescargo.nextval, p_sq_cvpesexp,     p_sq_area_conhecimento,
          p_especialidades,      p_inicio,          p_fim
-       from dual);
+      );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de cargos
       update cv_pessoa_cargo

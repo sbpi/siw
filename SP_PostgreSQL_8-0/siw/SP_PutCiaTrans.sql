@@ -20,7 +20,7 @@ BEGIN
               sq_cia_transporte,         cliente,   nome,        sigla,         aereo,   
               rodoviario,     aquaviario,                padrao,    ativo)
       (select sq_cia_transporte.nextval, p_cliente, trim(p_nome),w_sigla, p_aereo, 
-              p_rodoviario,   p_aquaviario,              p_padrao,  p_ativo from dual);
+              p_rodoviario,   p_aquaviario,              p_padrao,  p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pd_cia_transporte set

@@ -36,7 +36,7 @@ BEGIN
       -- Se não existir, executa a inclusão
       If w_existe = 0 Then
          -- Recupera a próxima chave
-         select sq_pessoa.nextval into w_Chave from dual;
+         select sq_pessoa.nextval into w_Chave;
           
          -- Insere registro em CO_PESSOA
          insert into co_pessoa (
@@ -164,7 +164,7 @@ BEGIN
         );
         
         -- Gera as opções gerais do menu
-        SG_GeraMenu(w_Chave);
+        PERFORM SG_GeraMenu(w_Chave);
         
         -- Habilita as opções do menu para o endereço criado acima, permitindo sua associação
         -- a tipos de vínculo
@@ -200,19 +200,19 @@ BEGIN
         );
 
         -- Grava uma unidade para o superusuário do sistema
-        select sq_unidade.nextval into w_chave1 from dual;
+        select sq_unidade.nextval into w_chave1;
         
         Insert into eo_unidade ( sq_unidade, sq_pessoa, nome, sigla, ordem)
          Values (w_chave1, w_chave, 'Suporte técnico', 'SUTEC', 99);
          
         -- Grava uma localização para o superusuário do sistema
-        select sq_localizacao.nextval into w_chave2 from dual;
+        select sq_localizacao.nextval into w_chave2;
         
         Insert into eo_localizacao ( sq_localizacao, cliente, sq_unidade, nome)
          Values (w_chave2, w_chave, w_chave1, 'Sala virtual');
          
         -- Grava um superusuário para o cliente
-        select sq_pessoa.nextval into w_Chave3 from dual;
+        select sq_pessoa.nextval into w_Chave3;
         
         Insert into co_pessoa
           ( sq_pessoa, sq_pessoa_pai, sq_tipo_pessoa,   nome,           nome_resumido )

@@ -35,14 +35,15 @@ begin
                                           ('S'    = c.consulta_opiniao and d.opiniao is null)
                                          )
                                      and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
-                                 ) z where acesso(sq_siw_solicitacao, p_usuario,null) > 0
+                                     and acesso(d.sq_siw_solicitacao, p_usuario,null) > 0
+                                 ) z
                           group by sq_menu
                          )          y on (v.sq_menu = y.sq_menu)
               left  join (select c.sq_menu, count(*) as qtd 
                             from siw_menu                        c
                                  inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu and e.sigla <> 'CI')
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
-                                 inner   join (select x.sq_siw_solicitacao, 1 as acesso--acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                 inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                  from siw_solicitacao        x
                                                       inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
                                                                                    y.sq_pessoa      = p_cliente and

@@ -20,7 +20,7 @@ BEGIN
       (select 
           p_contrato, p_data, p_primeira_entrada, p_primeira_saida, p_segunda_entrada,
           p_segunda_saida, p_horas_trabalhadas, p_saldo_diario
-         from dual
+        
         where 0 = (select count(*) from gp_folha_ponto_diaria where sq_contrato_colaborador = p_contrato and data = p_data)
       );
    End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

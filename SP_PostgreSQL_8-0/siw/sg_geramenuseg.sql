@@ -47,7 +47,7 @@ BEGIN
 for crec in c_Segmento loop
   for drec in c_Segmento_Menu loop
      -- Recupera chave primária
-     select sq_segmento_menu.nextval into w_chave from dual;
+     select sq_segmento_menu.nextval into w_chave;
      
      -- Guarda pai do registro original
      i := i + 1;

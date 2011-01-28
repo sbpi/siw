@@ -6,6 +6,6 @@ DECLARE
 BEGIN
    -- Recupera os 10% de dias do prazo da tarefa
    open p_result for 
-      select ceil((p_fim - p_inicio)*0.1) dias from dual;
+      select ceil((p_fim - p_inicio)*0.1) dias;
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

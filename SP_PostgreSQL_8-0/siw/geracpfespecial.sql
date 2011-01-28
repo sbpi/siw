@@ -10,7 +10,7 @@ DECLARE
   w_Codigo     varchar(12);
   w_DV         varchar(2);
 BEGIN
-  select sq_cpf_especial.nextval into w_Sequencial from dual;
+  select sq_cpf_especial.nextval into w_Sequencial;
   If p_tipo = 1
      Then w_Codigo := substr(1000000000+w_Sequencial,2,9);
      Else w_Codigo := substr(1000000000000+w_Sequencial,2,12);

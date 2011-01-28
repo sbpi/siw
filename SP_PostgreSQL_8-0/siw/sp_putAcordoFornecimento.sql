@@ -28,7 +28,7 @@ DECLARE
    w_chave   numeric(18);
 BEGIN
    If p_operacao = 'I' Then
-      select sq_autorizacao_fornecimento.nextval into w_chave from dual;
+      select sq_autorizacao_fornecimento.nextval into w_chave;
 
       -- Insere registro
       insert into cl_autorizacao_fornecimento

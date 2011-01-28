@@ -9,7 +9,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into dc_indice_tipo (sq_indice_tipo, nome, descricao)
-      (select sq_indice_tipo.nextval, p_nome, p_descricao from dual);
+      (select sq_indice_tipo.nextval, p_nome, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_indice_tipo set

@@ -16,7 +16,7 @@ BEGIN
              (sq_lcfonte_recurso,         cliente,   nome,   descricao,   orcamentario,   ativo,   padrao
              )
       (select sq_lcfonte_recurso.nextval, p_cliente, p_nome, p_descricao, p_orcamentario, p_ativo, p_padrao
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

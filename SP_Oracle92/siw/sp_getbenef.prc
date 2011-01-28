@@ -7,7 +7,7 @@ create or replace procedure SP_GetBenef
     p_nome               in varchar2 default null,
     p_tipo_pessoa        in number   default null,
     p_passaporte_numero  in varchar2 default null,
-    p_sq_pais_passaporte in varchar2 default null,
+    p_sq_pais_passaporte in number   default null,
     p_fornecedor         in varchar2 default null,
     p_pais               in number   default null,
     p_regiao             in number   default null,

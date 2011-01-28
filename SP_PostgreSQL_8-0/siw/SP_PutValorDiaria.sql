@@ -19,7 +19,7 @@ BEGIN
                   sq_pais, sq_cidade, sq_moeda, tipo_diaria, valor, sq_categoria_diaria)
       (select sq_valor_diaria.nextval, p_cliente, p_nacional, p_continente, p_sq_pais,
               p_sq_cidade, p_sq_moeda, p_tipo_diaria, p_valor, p_categoria 
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       --Altera registro

@@ -10,7 +10,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pe_horizonte (sq_pehorizonte, cliente, nome, ativo)
-      (select sq_pehorizonte.nextval, p_cliente, p_nome,  p_ativo from dual);
+      (select sq_pehorizonte.nextval, p_cliente, p_nome,  p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pe_horizonte

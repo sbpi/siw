@@ -93,7 +93,7 @@ BEGIN
    Elsif p_caminho is not null Then
       If w_arquivo is null Then -- Inclusão
          -- Recupera a próxima chave
-         select sq_siw_arquivo.nextval into w_arquivo from dual;
+         select sq_siw_arquivo.nextval into w_arquivo;
          
          -- Insere registro em SIW_ARQUIVO
          insert into siw_arquivo

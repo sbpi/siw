@@ -1,4 +1,4 @@
-create or replace function siw.sp_getIndicador
+Ôªøcreate or replace function siw.sp_getIndicador
    (p_cliente        in  numeric,
     p_usuario        in  numeric,
     p_chave          in  numeric,
@@ -27,9 +27,9 @@ begin
          select a.sq_eoindicador as chave, a.cliente, a.nome, a.sigla, a.descricao, a.forma_afericao, 
                 a.fonte_comprovacao, a.ciclo_afericao, a.ativo,
                 a.exibe_mesa, a.vincula_meta,
-                case a.ativo        when 'S' then 'Sim' else 'N„o' end as nm_ativo,
-                case a.exibe_mesa   when 'S' then 'Sim' else 'N„o' end as nm_exibe_mesa,
-                case a.vincula_meta when 'S' then 'Sim' else 'N„o' end as nm_vincula_meta,
+                case a.ativo        when 'S' then 'Sim' else 'N√£o' end as nm_ativo,
+                case a.exibe_mesa   when 'S' then 'Sim' else 'N√£o' end as nm_exibe_mesa,
+                case a.vincula_meta when 'S' then 'Sim' else 'N√£o' end as nm_vincula_meta,
                 to_char(b.data,'dd/mm/yyyy, hh24:mi:ss') as phpdt_afericao,
                 c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla as sg_unidade_medida,
                 d.sq_tipo_indicador, d.nome as nm_tipo_indicador
@@ -75,7 +75,7 @@ begin
                  )
                 );
    Elsif p_restricao = 'TIPOINDIC' Then
-      -- Retorna os tipos de indicador que tem alguma aferiÁao
+      -- Retorna os tipos de indicador que tem alguma aferi√ßao
       open p_result for 
          select a.sq_tipo_indicador as chave, a.nome, coalesce(b.qtd,0) as afericao
            from eo_tipo_indicador                a
@@ -105,11 +105,11 @@ begin
             and (p_tipo             is null or (p_tipo  is not null and a.sq_tipo_indicador = p_tipo))
          order by a.nome;
    Elsif p_restricao = 'EXISTE' Then
-      -- Verifica se h· outro registro com o mesmo nome ou sigla
+      -- Verifica se h√° outro registro com o mesmo nome ou sigla
       open p_result for 
          select a.sq_eoindicador as chave, a.cliente, a.nome, a.sigla, a.descricao, a.forma_afericao, 
                 a.fonte_comprovacao, a.ciclo_afericao, a.ativo,
-                case a.ativo when 'S' then 'Sim' else 'N„o' end as nm_ativo,
+                case a.ativo when 'S' then 'Sim' else 'N√£o' end as nm_ativo,
                 to_char(b.data,'dd/mm/yyyy, hh24:mi:ss') as phpdt_afericao,
                 c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla as sg_unidade_medida,
                 d.sq_tipo_indicador, d.nome as nm_tipo_indicador
@@ -125,11 +125,11 @@ begin
             and (p_nome          is null or (p_nome    is not null and acentos(a.nome) = acentos(p_nome)))
             and (p_sigla         is null or (p_sigla   is not null and acentos(a.sigla) = acentos(p_sigla)));
    Elsif p_restricao = 'VINCULADO' Then
-      -- Verifica se o registro est· vinculado a um interessado
+      -- Verifica se o registro est√° vinculado a um interessado
       open p_result for 
          select a.sq_eoindicador as chave, a.cliente, a.nome, a.sigla, a.descricao, a.forma_afericao, 
                 a.fonte_comprovacao, a.ciclo_afericao, a.ativo,
-                case a.ativo when 'S' then 'Sim' else 'N„o' end as nm_ativo,
+                case a.ativo when 'S' then 'Sim' else 'N√£o' end as nm_ativo,
                 to_char(b.data,'dd/mm/yyyy, hh24:mi:ss') as phpdt_afericao,
                 c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla as sg_unidade_medida,
                 d.sq_tipo_indicador, d.nome as nm_tipo_indicador
@@ -150,9 +150,9 @@ begin
          select a.sq_eoindicador, a.cliente, a.nome, a.sigla, a.descricao, a.forma_afericao, 
                 a.fonte_comprovacao, a.ciclo_afericao, a.ativo,
                 a.exibe_mesa, a.vincula_meta,
-                case a.ativo        when 'S' then 'Sim' else 'N„o' end as nm_ativo,
-                case a.exibe_mesa   when 'S' then 'Sim' else 'N„o' end as nm_exibe_mesa,
-                case a.vincula_meta when 'S' then 'Sim' else 'N„o' end as nm_vincula_meta,
+                case a.ativo        when 'S' then 'Sim' else 'N√£o' end as nm_ativo,
+                case a.exibe_mesa   when 'S' then 'Sim' else 'N√£o' end as nm_exibe_mesa,
+                case a.vincula_meta when 'S' then 'Sim' else 'N√£o' end as nm_vincula_meta,
                 a1.nome as nm_tipo_indicador,
                 a2.sigla as sg_unidade_medida,
                 b.sq_eoindicador_afericao as chave, b.data_afericao, b.referencia_inicio, b.referencia_fim, 
@@ -178,7 +178,7 @@ begin
                 inner    join eo_tipo_indicador     a1 on (a.sq_tipo_indicador = a1.sq_tipo_indicador)
                 inner    join co_unidade_medida     a2 on (a.sq_unidade_medida = a2.sq_unidade_medida)
                 inner    join eo_indicador_afericao b  on (a.sq_eoindicador    = b.sq_eoindicador)
-                  -- b1, b2 e b3 s„o usadas para verificar se o usu·rio pode editar informaÁoes no perÌodo de referÍncia
+                  -- b1, b2 e b3 s√£o usadas para verificar se o usu√°rio pode editar informa√ßoes no per√≠odo de refer√™ncia
                   left   join eo_indicador_aferidor b1 on (b.sq_eoindicador    = b1.sq_eoindicador and
                                                            b1.sq_pessoa        = p_usuario and
                                                            b.referencia_inicio between b1.inicio and b1.fim and
@@ -240,7 +240,7 @@ begin
                  )
                 );
    Elsif p_restricao = 'VISUALBASE' Then
-      -- Recupera as bases geogr·ficas do indicador informado que j· tÍm aferiÁıes registradas
+      -- Recupera as bases geogr√°ficas do indicador informado que j√° t√™m aferi√ß√µes registradas
       open p_result for 
          select distinct b.base_geografica as chave,
                 case base_geografica

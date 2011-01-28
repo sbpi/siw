@@ -14,7 +14,7 @@ BEGIN
       -- Insere registro
       insert into dc_stored_proc
         (sq_stored_proc, sq_sp_tipo, sq_usuario, sq_sistema, nome, descricao)
-      (select sq_stored_proc.nextval, p_sq_sp_tipo, p_sq_usuario, p_sq_sistema, p_nome, p_descricao from dual);
+      (select sq_stored_proc.nextval, p_sq_sp_tipo, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
      
    Elsif p_operacao = 'A' Then
       -- Altera registro

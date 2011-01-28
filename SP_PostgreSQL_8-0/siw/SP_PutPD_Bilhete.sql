@@ -42,7 +42,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_bilhete.nextval into w_chave_aux from dual;
+      select sq_bilhete.nextval into w_chave_aux;
       
       -- Insere registro na tabela de bilhetes
       insert into pd_bilhete

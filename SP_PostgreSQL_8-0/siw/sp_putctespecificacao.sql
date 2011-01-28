@@ -20,7 +20,7 @@ BEGIN
          ano, codigo, nome, valor, ultimo_nivel, ativo)
         (select sq_especificacao_despesa.nextval,  p_cliente,  p_sq_cc,  p_chave_pai, 
                  p_ano,  p_codigo,  p_nome,  p_valor,  p_ultimo_nivel,  p_ativo 
-            from dual
+           
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro

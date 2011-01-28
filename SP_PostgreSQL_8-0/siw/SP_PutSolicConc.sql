@@ -160,7 +160,7 @@ BEGIN
     where a.sq_siw_solicitacao = p_chave;
     
    -- Recupera a chave do log
-   select sq_siw_solic_log.nextval into w_chave_dem from dual;
+   select sq_siw_solic_log.nextval into w_chave_dem;
    
    -- Insere registro na tabela de log da solicitacao
    Insert Into siw_solic_log 
@@ -231,7 +231,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq from dual;
+      select sq_siw_arquivo.nextval into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
@@ -260,7 +260,7 @@ BEGIN
    Elsif p_financeiro_resp is not null Then
       -- Cria/atualiza lançamento financeiro
       for crec in c_financeiro_geral loop
-          sp_putfinanceirogeral(
+          PERFORM sp_putfinanceirogeral(
                              p_operacao           => 'I',
                              p_cliente            => crec.cliente,
                              p_chave              => null,
@@ -292,7 +292,7 @@ BEGIN
           update fn_lancamento set pessoa = crec.fornecedor where sq_siw_solicitacao = w_sq_financ;
 
           -- Cria os documentos
-          sp_putlancamentodoc(
+          PERFORM sp_putlancamentodoc(
                              p_operacao           => 'I',
                              p_chave              => w_sq_financ,
                              p_chave_aux          => null,
@@ -315,7 +315,7 @@ BEGIN
           i := 0;
           For drec in c_financeiro_item (crec.fornecedor) Loop
                i := i + 1;
-               sp_putlancamentoitem(
+               PERFORM sp_putlancamentoitem(
                              p_operacao           => 'I',
                              p_chave              => w_sq_doc,
                              p_chave_aux          => null,

@@ -120,7 +120,7 @@ BEGIN
       -- Se não existir, executa a inclusão
       If w_existe = 0 Then
          -- Recupera a próxima chave
-         select sq_pessoa.nextval into w_Chave from dual;
+         select sq_pessoa.nextval into w_Chave;
           
          -- Insere registro em CO_PESSOA
          insert into co_pessoa (

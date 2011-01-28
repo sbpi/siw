@@ -28,7 +28,7 @@ BEGIN
       (select sq_lcmodalidade.nextval,      p_cliente,               p_nome,                     p_sigla,                    p_descricao, 
               p_fundamentacao,              p_minimo_pesquisas,      p_minimo_participantes,     p_minimo_propostas_validas, p_certame,
               p_enquadramento_inicial,      p_enquadramento_final,   p_ativo,                    p_padrao,                   p_contrato
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

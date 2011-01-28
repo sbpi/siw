@@ -40,7 +40,7 @@ BEGIN
          End If;
          
          -- Recupera prefixo do código
-         select montanometipomaterial(p_tipo_material) into w_raiz from dual;
+         select montanometipomaterial(p_tipo_material) into w_raiz;
          
          -- Se o tipo mudar, gera novo código
          If w_tipo is null or w_tipo <> p_tipo_material or (p_chave is not null and instr(w_codigo, w_raiz)=0) Then
@@ -66,7 +66,7 @@ BEGIN
    
    If p_operacao = 'I' or p_operacao = 'C' Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_material.nextval into w_chave from dual;
+      select sq_material.nextval into w_chave;
 
       -- Insere registro
       insert into cl_material

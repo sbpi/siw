@@ -67,7 +67,7 @@ BEGIN
    
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacaonextVal('') into w_Chave from dual;
+      select sq_siw_solicitacaonextVal('') into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -103,7 +103,7 @@ BEGIN
            p_aviso,             0,               null,              null,
            'N',                 null,            null,              0,
            p_proponente,        0
-        from dual
+       
       );
       
       -- Insere registro em PD_MISSAO

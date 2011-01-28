@@ -107,7 +107,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave from dual;
+      select sq_siw_solicitacao.nextval into w_Chave;
 
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -143,7 +143,7 @@ BEGIN
            null,                 null,            0,                 p_proponente,
            p_sq_tipo_pessoa,     Nvl(p_vincula_contrato,'N'),        Nvl(p_vincula_viagem,'N'),
            p_aviso_pacote,       p_dias_pacote
-        from dual
+       
       );
 
       -- Grava os dados de uma ação orçamentária, se for o caso
@@ -213,7 +213,7 @@ BEGIN
           -- Insere os riscos do projeto
           for crec in c_riscos loop
              -- recupera a próxima chave do recurso
-             select sq_siw_restricao.nextval into w_chave1 from dual;
+             select sq_siw_restricao.nextval into w_chave1;
 
              -- Guarda pai do registro original
              w_risco_pai(crec.sq_siw_restricao) := w_chave1;
@@ -232,7 +232,7 @@ BEGIN
           -- Insere recursos do projeto
           for crec in c_recursos loop
              -- recupera a próxima chave do recurso
-             select sq_projeto_recurso.nextval into w_chave1 from dual;
+             select sq_projeto_recurso.nextval into w_chave1;
 
              -- Guarda pai do registro original
              w_recurso_pai(crec.sq_projeto_recurso) := w_chave1;
@@ -247,7 +247,7 @@ BEGIN
           -- Insere etapas do projeto
           for crec in c_etapas loop
              -- recupera a próxima chave do recurso
-             select sq_projeto_etapa.nextval into w_chave1 from dual;
+             select sq_projeto_etapa.nextval into w_chave1;
 
              -- Guarda pai do registro original
              i := i + 1;
@@ -318,7 +318,7 @@ BEGIN
           -- Insere rubricas do projeto
           for crec in c_rubricas loop
              -- recupera a próxima chave da rubrica
-             select sq_projeto_rubrica.nextval into w_chave1 from dual;
+             select sq_projeto_rubrica.nextval into w_chave1;
           
              insert into pj_rubrica
                 (sq_projeto_rubrica, sq_siw_solicitacao,  sq_cc,        codigo,      nome,      descricao,      ativo,      aplicacao_financeira)

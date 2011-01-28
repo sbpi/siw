@@ -10,7 +10,7 @@ BEGIN
    if p_operacao = 'I' Then
       -- Insere os registro
       insert into lc_portal_contrato_item(sq_portal_contrato, sq_portal_lic_item) 
-                  (select p_chave, p_sq_portal_lic_item from dual);
+                  (select p_chave, p_sq_portal_lic_item);
       update lc_portal_lic_item set 
          valor_unitario = p_valor,
          valor_total    = (p_valor*p_quantidade)

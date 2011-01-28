@@ -21,7 +21,7 @@ BEGIN
          sq_cvpescurso.nextval,      p_pessoa,       p_sq_area_conhecimento, 
          p_sq_formacao,              p_nome,         p_instituicao,
          p_carga_horaria,            p_conclusao
-       from dual);
+      );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de extensão acadêmica
       update cv_pessoa_curso

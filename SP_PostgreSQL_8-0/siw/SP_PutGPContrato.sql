@@ -79,7 +79,7 @@ BEGIN
               p_plano_saude,                   p_plano_odonto,         p_plano_vida,
               p_vale_refeicao,                 p_vale_transporte,      p_observacao_beneficios, p_data_atestado,
               p_dias_experiencia
-         from dual);
+        );
        If p_fim is null Then
           update co_pessoa 
              set sq_tipo_vinculo = p_tipo_vinculo,

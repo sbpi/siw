@@ -13,7 +13,7 @@ BEGIN
    
    insert into tt_tronco
      (sq_tronco, cliente, sq_central_fone, sq_pessoa_telefone, codigo, ativo)
-     (select sq_tronco.nextVal, p_cliente, p_sq_central_fone, p_sq_pessoa_telefone, p_codigo, p_ativo from dual);
+     (select sq_tronco.nextVal, p_cliente, p_sq_central_fone, p_sq_pessoa_telefone, p_codigo, p_ativo);
      
    Elsif p_operacao = 'A' Then
       -- Altera registro

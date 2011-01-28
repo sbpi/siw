@@ -53,7 +53,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave from dual;
+      select sq_siw_solicitacao.nextval into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -89,7 +89,7 @@ BEGIN
            'N',                 null,            null,              0,
            p_proponente,        p_ordem,         p_atividade_ant,   p_restricao,
            p_demanda_tipo,      p_recebimento,   p_limite_conclusao, p_responsavel
-        from dual
+       
       );
 
       -- Insere log da solicitação

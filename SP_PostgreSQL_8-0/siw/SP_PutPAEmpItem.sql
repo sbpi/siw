@@ -10,7 +10,7 @@ BEGIN
       -- Insere registro
       insert into pa_emprestimo_item (sq_siw_solicitacao, protocolo) 
       (select p_solic, p_protocolo
-         from dual
+        
         where 0 = (select count(*) from pa_emprestimo_item where sq_siw_solicitacao = p_solic and protocolo = p_protocolo)
       );
    Elsif p_operacao = 'E' Then

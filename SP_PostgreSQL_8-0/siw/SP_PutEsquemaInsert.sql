@@ -31,7 +31,7 @@ BEGIN
                  p_sq_coluna,
                  p_ordem,
                  p_valor
-            from dual
+           
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro

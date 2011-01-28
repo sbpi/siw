@@ -15,7 +15,7 @@ BEGIN
       -- Insere registro
       insert into gp_alteracao_salario(sq_alteracao_salario, sq_contrato_colaborador,data_alteracao,
                                        novo_valor,             funcao, motivo)
-         (select sq_alteracao_salario.nextval,p_chave, p_data_alteracao, p_novo_valor, p_funcao, p_motivo from dual);
+         (select sq_alteracao_salario.nextval,p_chave, p_data_alteracao, p_novo_valor, p_funcao, p_motivo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
     update gp_alteracao_salario

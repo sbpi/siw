@@ -112,7 +112,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave from dual;
+      select sq_siw_solicitacao.nextval into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -148,7 +148,7 @@ BEGIN
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
            p_numero_processo,   w_vincula_projeto, w_protocolo_siw
-        from dual
+       
       );
 
       -- Insere log da solicitação
@@ -197,7 +197,7 @@ BEGIN
          
          for crec in c_outra_parte loop
             -- Copia as outras partes existentes no contrato de origem
-            select sq_acordo_outra_parte.nextval into w_outra_parte from dual;
+            select sq_acordo_outra_parte.nextval into w_outra_parte;
             insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
             values (w_outra_parte, w_chave, crec.outra_parte, crec.tipo);
             

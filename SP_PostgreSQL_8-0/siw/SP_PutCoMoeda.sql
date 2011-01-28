@@ -22,7 +22,7 @@ BEGIN
                  p_tipo,
                  p_exclusao_ptax,
                  p_ativo
-            from dual
+           
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro

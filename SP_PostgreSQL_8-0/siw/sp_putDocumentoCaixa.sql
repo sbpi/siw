@@ -27,7 +27,7 @@ BEGIN
   where sq_siw_solicitacao in (select sq_siw_solicitacao from siw_solicitacao where sq_siw_solicitacao = p_chave or sq_solic_pai = p_chave);
   
   -- Atualiza os dados do arquivamento da caixa
-  select retornaLimiteCaixa(p_caixa)||'|@|' into w_dados_caixa from dual;
+  select retornaLimiteCaixa(p_caixa)||'|@|' into w_dados_caixa;
   Loop
      w_cont := w_cont + 1;
      w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);
@@ -50,7 +50,7 @@ BEGIN
 
   If w_caixa_atual is not null and w_caixa_atual <> p_caixa Then
      -- Atualiza os dados do arquivamento da caixa em que o docuumento estava armazenado
-     select retornaLimiteCaixa(w_caixa_atual)||'|@|' into w_dados_caixa from dual;
+     select retornaLimiteCaixa(w_caixa_atual)||'|@|' into w_dados_caixa;
      Loop
         w_cont := w_cont + 1;
         w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);

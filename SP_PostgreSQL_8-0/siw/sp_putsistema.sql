@@ -12,7 +12,7 @@ BEGIN
       -- Insere registro
       insert into dc_sistema
         (sq_sistema, cliente, nome, sigla, descricao)
-      (select sq_sistema.nextval, p_cliente, p_nome, p_sigla, p_descricao from dual);
+      (select sq_sistema.nextval, p_cliente, p_nome, p_sigla, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_sistema set 

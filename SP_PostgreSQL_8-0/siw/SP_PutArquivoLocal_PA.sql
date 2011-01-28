@@ -11,7 +11,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
          insert into pa_arquivo_local(sq_arquivo_local,         sq_localizacao, sq_local_pai, nome,   ativo)
-         (select                      sq_arquivo_local.nextval, p_chave,        p_local_pai,  p_nome, p_ativo from dual);
+         (select                      sq_arquivo_local.nextval, p_chave,        p_local_pai,  p_nome, p_ativo);
         -- Insere Registro na tabela de locais
    Elsif p_operacao = 'A' Then
       -- Altera registro

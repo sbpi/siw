@@ -30,7 +30,7 @@ BEGIN
               p_pessoa_fisica,
               p_idec,
               p_ativo
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

@@ -19,7 +19,7 @@ BEGIN
       (select 
           sq_pessoa_telefone.nextval, p_tipo_telefone,      p_pessoa,      p_cidade,
           p_ddd,                      p_numero,             p_padrao
-        from dual
+       
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

@@ -61,7 +61,7 @@ BEGIN
       select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
 
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave from dual;
+      select sq_siw_solicitacao.nextval into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (

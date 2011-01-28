@@ -28,7 +28,7 @@ BEGIN
       (select sq_assunto.nextval, p_cliente, p_chave_pai, p_codigo, p_descricao, p_detalhamento, p_observacao, p_corrente_guarda, 
               p_corrente_anos, p_intermed_guarda, p_intermed_anos, p_final_guarda, p_final_anos, 
               p_destinacao_final, p_provisorio, p_ativo 
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

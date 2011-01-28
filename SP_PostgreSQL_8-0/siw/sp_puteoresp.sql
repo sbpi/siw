@@ -22,7 +22,7 @@ BEGIN
                      'S',
                      p_inicio_substituto
                      
-             from dual
+            
          );
       End If;
       insert into eo_unidade_resp(
@@ -33,6 +33,6 @@ BEGIN
                p_sq_pessoa,
                'T',
                p_inicio_titular
-               from dual
+              
         );
     End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

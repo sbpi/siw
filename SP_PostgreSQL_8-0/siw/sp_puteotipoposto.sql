@@ -18,7 +18,7 @@ BEGIN
       (select 
          sq_tipo_posto.nextval, p_cliente,  p_nome,     p_sigla,
          p_descricao,           p_ativo,    p_padrao
-       from dual);
+      );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de tipos de posto
       update eo_tipo_posto

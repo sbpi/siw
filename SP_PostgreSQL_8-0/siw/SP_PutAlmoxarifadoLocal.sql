@@ -11,7 +11,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro      
          insert into mt_almoxarifado_local(sq_almoxarifado_local,         sq_almoxarifado, sq_local_pai, nome,         ativo)
-         (select                           sq_almoxarifado_local.nextval, p_chave,          p_local_pai, trim(p_nome), trim(p_ativo) from dual);
+         (select                           sq_almoxarifado_local.nextval, p_chave,          p_local_pai, trim(p_nome), trim(p_ativo));
       -- Insere Registro na tabela de locais
    Elsif p_operacao = 'A' Then
       -- Altera registro

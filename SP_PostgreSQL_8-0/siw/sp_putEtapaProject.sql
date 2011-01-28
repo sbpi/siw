@@ -56,7 +56,7 @@ BEGIN
          where sq_projeto_etapa = crec.sq_projeto_etapa;
         
         -- Recalcula os percentuais de execução dos pais
-        sp_calculaPercEtapa(null, crec.sq_etapa_pai);
+        PERFORM sp_calculaPercEtapa(null, crec.sq_etapa_pai);
       end loop;
       
       -- Ajusta o início e o fim do projeto a partir dos prazos das suas etapas
@@ -76,7 +76,7 @@ BEGIN
       End If;
 
       -- Recupera a próxima chave
-      select sq_projeto_etapa.nextval into w_chave from dual;
+      select nextVal('sq_projeto_etapa') into w_chave;
    
        -- Insere registro na tabela de etapas do projeto
        Insert Into pj_projeto_etapa 

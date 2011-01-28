@@ -107,7 +107,7 @@ BEGIN
 
    If p_operacao = 'I' Then
       -- Recupera o valor da chave
-      select  sq_diaria.nextval into w_sq_diaria from dual;
+      select  sq_diaria.nextval into w_sq_diaria;
       
       -- Insere os registros em PD_DIARIA
       insert into pd_diaria
@@ -143,7 +143,7 @@ BEGIN
               p_texto_diaria,
               p_texto_hospedagem,
               p_texto_veiculo
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Atualiza os dados PD_DIARIA

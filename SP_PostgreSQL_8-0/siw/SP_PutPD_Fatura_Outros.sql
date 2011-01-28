@@ -26,7 +26,7 @@ BEGIN
 
       If w_existe = 0 Then
         -- Recupera a próxima chave de CO_PESSOA
-        select sq_pessoa.nextval into w_pessoa from dual;
+        select sq_pessoa.nextval into w_pessoa;
         
         -- Insere em CO_PESSOA
         insert into co_pessoa

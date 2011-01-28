@@ -24,7 +24,7 @@ BEGIN
    -- informada
    If p_operacao = 'I'  Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_siw_restricao.nextval into w_chave_aux from dual;    
+      select sq_siw_restricao.nextval into w_chave_aux;    
       -- Insere registro
       insert into siw_restricao
         (sq_siw_restricao,  sq_siw_solicitacao,       sq_pessoa,      sq_pessoa_atualizacao,      sq_tipo_restricao,   risco,              problema,         descricao,        probabilidade, 

@@ -29,7 +29,7 @@ BEGIN
         and a.sq_siw_tramite      = coalesce(p_chave_aux,a1.sq_siw_tramite)
         and ((a.sigla             = 'CI'  and a1.cadastrador = c.sq_pessoa) or
              (a.sigla             <> 'CI' and ((a.destinatario = 'S' and a1.executor = c.sq_pessoa) or 
-                                               (a.destinatario = 'N' and 15 < (select acesso(p_chave, d.sq_pessoa, a.sq_siw_tramite) from dual))
+                                               (a.destinatario = 'N' and 15 < (select acesso(p_chave, d.sq_pessoa, a.sq_siw_tramite)))
                                               )
              )
             )

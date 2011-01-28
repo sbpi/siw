@@ -28,7 +28,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_portal_contrato.nextval into w_Chave from dual;
+      select sq_portal_contrato.nextval into w_Chave;
        
       -- Insere registro em LC_PORTAL_CONTRATO
       insert into lc_portal_contrato

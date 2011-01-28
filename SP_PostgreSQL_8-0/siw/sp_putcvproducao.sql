@@ -18,7 +18,7 @@ BEGIN
       (select 
          sq_cvpessoa_prod.nextval,  p_pessoa,         p_sq_area_conhecimento, p_sq_formacao,
          p_nome,                    p_meio,           p_data
-       from dual);
+      );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de produção técnica
       update cv_pessoa_prod

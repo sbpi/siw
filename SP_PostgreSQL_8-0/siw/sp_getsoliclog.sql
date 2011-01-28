@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetSolicLog
+﻿create or replace FUNCTION SP_GetSolicLog
    (p_chave     numeric,
     p_chave_aux numeric,
     p_tipo      numeric, -- 0: encaminhamentos; 1: anotaçoes; 2: versões
@@ -14,7 +14,7 @@ BEGIN
    select count(sq_siw_solicitacao) into w_reg from siw_solicitacao where sq_siw_solicitacao = coalesce(p_chave,0);
    If w_reg = 0 Then
       -- Se não existir, aborta a execução
-      return;
+      exit;
    End If;
    
    -- Recupera o módulo da solicitacao para decidir onde buscará os interessados
@@ -609,6 +609,7 @@ BEGIN
                                       )
                    );
       End If;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

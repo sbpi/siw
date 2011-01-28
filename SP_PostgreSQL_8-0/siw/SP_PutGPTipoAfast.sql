@@ -26,7 +26,7 @@ BEGIN
    -- Grava uma modalidade de contratação
    If p_operacao = 'I' Then
       -- Recupera a chave
-      select sq_tipo_afastamento.nextval into w_chave from dual;
+      select sq_tipo_afastamento.nextval into w_chave;
       -- Insere registro
       insert into gp_tipo_afastamento
         (sq_tipo_afastamento, cliente, nome, sigla, limite_dias, sexo, percentual_pagamento, 

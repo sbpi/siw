@@ -64,7 +64,7 @@ BEGIN
      and b.sigla     = 'PA';
   
    -- Recupera a chave do log
-   select sq_siw_solic_log.nextval into w_chave_dem from dual;
+   select sq_siw_solic_log.nextval into w_chave_dem;
    
    -- Insere registro na tabela de log da solicitacao
    Insert Into siw_solic_log 
@@ -99,7 +99,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq from dual;
+      select sq_siw_arquivo.nextval into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
@@ -117,7 +117,7 @@ BEGIN
    If w_cliente = 10135 and w_mod_pa = 'S' Then
       for crec in c_protocolo loop
           -- Cria o documento no sistema de protocolo
-          sp_putdocumentogeral(p_operacao           => 'I',
+          PERFORM sp_putdocumentogeral(p_operacao           => 'I',
                                p_chave              => null,
                                p_copia              => null,
                                p_menu               => crec.sq_menu,
@@ -148,7 +148,7 @@ BEGIN
                                p_codigo_interno     => w_codigo_interno
                               );
           -- Envia para arquivamento setorial
-          sp_putdocumentoenvio(p_menu               => crec.sq_menu,
+          PERFORM sp_putdocumentoenvio(p_menu               => crec.sq_menu,
                                p_chave              => w_chave_nova,
                                p_pessoa             => p_pessoa,
                                p_tramite            => crec.sq_siw_tramite,
@@ -171,7 +171,7 @@ BEGIN
                                p_unidade_autuacao   => w_unidade_guia
                               );
           -- Executa arquivamento setorial
-          sp_putdocumentoarqset(p_chave             => w_chave_nova,
+          PERFORM sp_putdocumentoarqset(p_chave             => w_chave_nova,
                                 p_usuario           => p_pessoa,
                                 p_observacao        => p_nota_conclusao
                                );

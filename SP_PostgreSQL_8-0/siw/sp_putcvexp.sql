@@ -29,7 +29,7 @@ BEGIN
          p_sq_eo_tipo_posto,  p_sq_tipo_vinculo, p_empregador,           p_entrada,
          p_saida,             p_duracao_mes,     p_duracao_ano,          p_motivo_saida,
          p_ultimo_salario,    p_atividades
-       from dual);
+      );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de experiência profissional
       update cv_pessoa_exp

@@ -9,7 +9,7 @@ BEGIN
    if p_operacao = 'I' Then
       -- Insere os registro
       insert into or_acao_financ(sq_siw_solicitacao, sq_acao_ppa, observacao) 
-                  (select p_chave, p_sq_acao_ppa, p_observacao from dual);
+                  (select p_chave, p_sq_acao_ppa, p_observacao);
    Elsif p_operacao = 'A' Then
       -- Altera os resgitros
       update or_acao_financ set

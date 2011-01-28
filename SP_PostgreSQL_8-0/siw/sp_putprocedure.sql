@@ -14,7 +14,7 @@ BEGIN
       -- Insere registro
       insert into dc_procedure
         (sq_procedure, sq_arquivo, sq_sistema, sq_sp_tipo, nome, descricao)
-      (select sq_procedure.nextval, p_sq_arquivo, p_sq_sistema, p_sq_sp_tipo, p_nome, p_descricao from dual);
+      (select sq_procedure.nextval, p_sq_arquivo, p_sq_sistema, p_sq_sp_tipo, p_nome, p_descricao);
      
    Elsif p_operacao = 'A' Then
       -- Altera registro

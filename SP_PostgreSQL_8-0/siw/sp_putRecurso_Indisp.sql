@@ -12,7 +12,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' or p_operacao = 'C' Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_recurso_indisponivel.nextval into w_chave from dual;
+      select sq_recurso_indisponivel.nextval into w_chave;
 
       -- Insere registro
       insert into eo_recurso_indisponivel

@@ -12,7 +12,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pa_especie_documento (sq_especie_documento, cliente, nome, sigla, sq_assunto, ativo)
-      (select sq_especie_documento.nextval, p_cliente, p_nome, p_sigla, p_assunto, p_ativo from dual);
+      (select sq_especie_documento.nextval, p_cliente, p_nome, p_sigla, p_assunto, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pa_especie_documento

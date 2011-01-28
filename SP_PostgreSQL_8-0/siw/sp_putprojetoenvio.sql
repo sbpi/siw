@@ -21,7 +21,7 @@ DECLARE
 BEGIN
    If p_tramite <> p_novo_tramite Then
       -- Recupera a próxima chave
-      select sq_siw_solic_log.nextval into w_chave from dual;
+      select sq_siw_solic_log.nextval into w_chave;
       
       -- Se houve mudança de fase, grava o log
       Insert Into siw_solic_log 
@@ -76,7 +76,7 @@ BEGIN
    End If;
    
    -- Recupera a nova chave da tabela de encaminhamentos da demanda
-   select sq_projeto_log.nextval into w_chave_dem from dual;
+   select sq_projeto_log.nextval into w_chave_dem;
    
    -- Insere registro na tabela de encaminhamentos do projeto
    Insert into pj_projeto_log 
@@ -88,13 +88,13 @@ BEGIN
        w_chave_dem,               p_chave,            p_pessoa,
        p_destinatario,            now(),            p_observacao,
        p_despacho,                w_chave
-      from dual
+     
     );
 
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq from dual;
+      select sq_siw_arquivo.nextval into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

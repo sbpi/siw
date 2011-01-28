@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetSolicData
+﻿create or replace FUNCTION SP_GetSolicData
    (p_chave     numeric,
     p_restricao varchar,
     p_result    REFCURSOR
@@ -12,7 +12,7 @@ BEGIN
   End If;
    
    If p_restricao is null Then
-      open p_result for select dados_solic(p_chave) as dados_solic from dual;
+      open p_result for select dados_solic(p_chave) as dados_solic;
    Elsif substr(p_restricao,1,2) = 'GD' or p_restricao = 'ORPGERAL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
@@ -36,7 +36,7 @@ BEGIN
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,                     b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.fim-d.dias_aviso as aviso,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -104,7 +104,7 @@ BEGIN
                 left         join pj_projeto                k  on (b.sq_solic_pai        = k.sq_siw_solicitacao)
                   left       join siw_solicitacao           k1 on (k.sq_siw_solicitacao  = k1.sq_siw_solicitacao)
           where b.sq_siw_solicitacao = p_chave;
-   Elsif substr(p_restricao,1,2) ('PJ','OR') Then
+   Elsif substr(p_restricao,1,2) in ('PJ','OR') Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -158,7 +158,7 @@ BEGIN
                 d.estudos,            d.instancia_articulacao,       d.composicao_instancia,
                 d.analise1,           d.analise2,                    d.analise3,
                 d.analise4,           d.exibe_relatorio,
-                b.fim-d.dias_aviso as aviso,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 d2.sq_pais as pais_evento,                           d2.co_uf as uf_evento,
                 d1.nome as nm_prop,   d1.nome_resumido as nm_prop_res,
                 case upper(d3.nome) when 'BRASIL' then d2.nome||'-'||d2.co_uf||' ('||d3.nome||')' else d2.nome||' ('||d3.nome||')' end as nm_cidade_evento,
@@ -340,7 +340,7 @@ BEGIN
                 d13.aditivo aditivo_excedente,
                 d14.aditivo aditivo_prorrogacao,
                 dc.sq_siw_solicitacao as sq_compra, coalesce(dd.numero_certame,dc.codigo_interno) as cd_compra,
-                b.fim-d.dias_aviso aviso,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
@@ -511,7 +511,7 @@ BEGIN
                 dd.codigo as cd_age_org, dd.nome as nm_age_org,
                 de.codigo as cd_ban_org, de.nome as nm_ban_org,
                 de.exige_operacao as exige_oper_org,
-                b.fim-d.dias_aviso as aviso,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular,                             e2.sq_pessoa as substituto,
@@ -719,7 +719,7 @@ BEGIN
                 d9.nome as nm_diaria,
                 da.nome_original as nm_arquivo, da.descricao as ds_arquivo,   da.caminho as cm_arquivo,
                 dd.nome_original as nm_arquivo_comprovante, dd.descricao as ds_arquivo_comprovante,   dd.caminho as cm_arquivo_comprovante,
-                b.fim-d.dias_aviso aviso,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,       e12.nome nm_titular,
@@ -729,7 +729,7 @@ BEGIN
                 coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec,
                 soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as limite_envio,
-                soma_dias(a.sq_pessoa, trunc(now()), (case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as envio_regular,
+                soma_dias(a.sq_pessoa, trunc(trunc(now())), (case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as envio_regular,
                 case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia,
                 case trunc(b.fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana,
                 d9.valor_complemento, d1.complemento_qtd, d1.complemento_base, d1.complemento_valor                  
@@ -942,7 +942,7 @@ BEGIN
                 d.nota_conclusao,     d.aviso_prox_conc,             d.dias_aviso,
                 d1.nome nm_horizonte, d1.ativo st_horizonte, 
                 d7.nome nm_natureza, d7.ativo st_natureza,
-                b.fim-d.dias_aviso aviso,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
@@ -1077,7 +1077,7 @@ BEGIN
                 montaNomeArquivoLocal(dh.sq_arquivo_local) as nm_arquivo_local,
                 di.sq_unidade as sq_unid_caixa, di.sigla as sg_unid_caixa, di.nome as nm_unid_caixa,
                 dj.sq_unidade_autua, dj.nm_unidade_autua, dj.sg_unidade_autua,
-                b.fim-k.dias_aviso aviso,
+                cast(b.fim as date)-cast(k.dias_aviso as integer) aviso,
                 e.sq_unidade as sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp, e.adm_central as adm_resp, e.sigla as sg_unidade_resp,
@@ -1190,6 +1190,7 @@ BEGIN
                      left            join pa_documento_log         k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao          l  on (k.recebedor                = l.sq_pessoa)
           where b.sq_siw_solicitacao = p_chave;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

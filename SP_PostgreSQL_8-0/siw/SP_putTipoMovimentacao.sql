@@ -18,7 +18,7 @@ BEGIN
       insert into mt_tipo_movimentacao (sq_tipo_movimentacao,          cliente,         nome,       entrada, 
                                         saida,     orcamentario,   consumo,   permanente,   inativa_bem, ativo)
       (select                           sq_tipo_movimentacao.nextval, p_cliente,      p_nome,     p_entrada, 
-                                        p_saida, p_orcamentario, p_consumo, p_permanente, p_inativa_bem, p_ativo from dual);
+                                        p_saida, p_orcamentario, p_consumo, p_permanente, p_inativa_bem, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update mt_tipo_movimentacao set

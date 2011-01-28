@@ -10,7 +10,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
          insert into pa_arquivo (sq_localizacao, cliente,   nome,   ativo)
-         (select                 p_chave,        p_cliente, p_nome, p_ativo from dual);
+         (select                 p_chave,        p_cliente, p_nome, p_ativo);
       -- Insere Registro na tabela de locais
    Elsif p_operacao = 'A' Then
       -- Altera registro

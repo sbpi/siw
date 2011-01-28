@@ -34,7 +34,7 @@ BEGIN
               p_telefone,          p_email,            p_ativo,    p_padrao,  p_aprovado, p_saldo,
               p_empenhado,         p_liquidado,        p_liquidar, p_selecionada_mpog, 
               p_selecionada_relevante
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

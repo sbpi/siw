@@ -9,7 +9,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into dc_evento (sq_evento, nome, descricao)
-      (select sq_evento.nextval, p_nome, p_descricao from dual);
+      (select sq_evento.nextval, p_nome, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_evento set

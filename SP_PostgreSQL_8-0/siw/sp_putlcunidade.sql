@@ -15,7 +15,7 @@ BEGIN
              (sq_unidade,   cnpj,   licita,   contrata,   ativo,   padrao
              )
       (select    p_chave, p_cnpj, p_licita, p_contrata, p_ativo, p_padrao
-         from dual
+        
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro

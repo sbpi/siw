@@ -50,7 +50,7 @@ BEGIN
          select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_cliente;
 
          -- recupera a próxima chave da pessoa
-         select sq_pessoa.nextval into w_chave_pessoa from dual;
+         select sq_pessoa.nextval into w_chave_pessoa;
 
          -- insere os dados da pessoa
          insert into co_pessoa

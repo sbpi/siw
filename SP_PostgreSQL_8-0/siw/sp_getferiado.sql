@@ -11,7 +11,7 @@ BEGIN
    -- Recupera os feriados a partir dos parâmetros informados
    open p_result for 
       select null sq_feriado, null nome, null tipo, null sq_cidade
-        from dual
+       
        where 1 = 0;
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
