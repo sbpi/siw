@@ -4403,7 +4403,6 @@ SP_PostgreSQL_8-0/siw/GeraCodigoInterno.sql -text
 SP_PostgreSQL_8-0/siw/Gestor.sql -text
 SP_PostgreSQL_8-0/siw/GetCodigo.sql -text
 SP_PostgreSQL_8-0/siw/LIMPA_BASE.sql -text
-SP_PostgreSQL_8-0/siw/LimpaOrcamento.sql -text
 SP_PostgreSQL_8-0/siw/Marcado.sql -text
 SP_PostgreSQL_8-0/siw/MontaNomeAlmoxLocal.sql -text
 SP_PostgreSQL_8-0/siw/MontaNomeArquivoLocal.sql -text
@@ -4611,10 +4610,6 @@ SP_PostgreSQL_8-0/siw/SP_PutViagemOutra.sql -text
 SP_PostgreSQL_8-0/siw/SP_UpdatePassword.sql -text
 SP_PostgreSQL_8-0/siw/SP_VerificaAssinat.sql -text
 SP_PostgreSQL_8-0/siw/SP_VerificaSenha.sql -text
-SP_PostgreSQL_8-0/siw/SP_fGetCcList.sql -text
-SP_PostgreSQL_8-0/siw/SP_fGetEtapaList.sql -text
-SP_PostgreSQL_8-0/siw/SP_fGetMenuList.sql -text
-SP_PostgreSQL_8-0/siw/SP_fGetUorgList.sql -text
 SP_PostgreSQL_8-0/siw/SP_getGPPensionista.sql -text
 SP_PostgreSQL_8-0/siw/SP_putTipoMovimentacao.sql -text
 SP_PostgreSQL_8-0/siw/SolicRestricao.sql -text
