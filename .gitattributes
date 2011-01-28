@@ -4428,6 +4428,7 @@ SP_PostgreSQL_8-0/siw/SF_Consulta.sql -text
 SP_PostgreSQL_8-0/siw/SG_GeraCliMod.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetAddressData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetAddressList.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetAlmoxarifado.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetArquivo_PA.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetBenef.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetCLFinanceiro.sql -text
