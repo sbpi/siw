@@ -126,7 +126,7 @@ create or replace procedure SP_PutViagemEnvio
                                                 inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                                       where a.sq_siw_solicitacao = p_chave
                                         and b.tipo               = case a2.sigla when 'EE' then 'P' else 'S' end
-                                    ) 
+                                    ) k
                              group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
@@ -177,7 +177,7 @@ create or replace procedure SP_PutViagemEnvio
                                inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
                                  inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
                        where a.sq_siw_solicitacao = p_chave
-                     )
+                     ) k
              )                             z
        where w.sigla              = 'FNDVIA'
          and x.sq_siw_solicitacao = p_chave
@@ -248,7 +248,7 @@ create or replace procedure SP_PutViagemEnvio
                      co_moeda                             b
                where a.sq_siw_solicitacao = p_chave
                  and b.sigla              = 'BRL'
-              )
+              ) k
       group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
    
 begin
@@ -318,7 +318,7 @@ begin
                where a.sq_siw_solicitacao = p_chave
                  and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
                  and d.ordem              > 1
-             );
+             ) k;
       -- Se sim, pula autorização pelo chefe imediato.
       If w_existe > 0 
          Then w_salto := 1;

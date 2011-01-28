@@ -4605,6 +4605,8 @@ SP_PostgreSQL_8-0/siw/SP_PutSolicRelAnexo.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutSolicTransp.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutUsuarioTemp.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutValorDiaria.sql -text
+SP_PostgreSQL_8-0/siw/SP_PutViagemGeral.sql -text
+SP_PostgreSQL_8-0/siw/SP_PutViagemOutra.sql -text
 SP_PostgreSQL_8-0/siw/SP_UpdatePassword.sql -text
 SP_PostgreSQL_8-0/siw/SP_VerificaAssinat.sql -text
 SP_PostgreSQL_8-0/siw/SP_VerificaSenha.sql -text
@@ -4987,6 +4989,8 @@ SP_PostgreSQL_8-0/siw/sp_putTipoInteressado.sql -text
 SP_PostgreSQL_8-0/siw/sp_putTipoMatServ.sql -text
 SP_PostgreSQL_8-0/siw/sp_putTipoRecurso.sql -text
 SP_PostgreSQL_8-0/siw/sp_putTipoRestricao.sql -text
+SP_PostgreSQL_8-0/siw/sp_putUnidadeMedida.sql -text
+SP_PostgreSQL_8-0/siw/sp_putUnidade_PE.sql -text
 SP_PostgreSQL_8-0/siw/sp_putUorgArquivo.sql -text
 SP_PostgreSQL_8-0/siw/sp_putabastecimento.sql -text
 SP_PostgreSQL_8-0/siw/sp_putacaoppa.sql -text
@@ -5105,6 +5109,7 @@ SP_PostgreSQL_8-0/siw/sp_putsiwmenend.sql -text
 SP_PostgreSQL_8-0/siw/sp_putsiwpessoamail.sql -text
 SP_PostgreSQL_8-0/siw/sp_putsiwtramite.sql -text
 SP_PostgreSQL_8-0/siw/sp_putsiwtramitefluxo.sql -text
+SP_PostgreSQL_8-0/siw/sp_putsolicapoio.sql -text
 SP_PostgreSQL_8-0/siw/sp_putsolicarquivo.sql -text
 SP_PostgreSQL_8-0/siw/sp_putsolicetprec.sql -text
 SP_PostgreSQL_8-0/siw/sp_putsolicinter.sql -text
@@ -5131,6 +5136,11 @@ SP_PostgreSQL_8-0/siw/sp_putttprefixo.sql -text
 SP_PostgreSQL_8-0/siw/sp_putttramal.sql -text
 SP_PostgreSQL_8-0/siw/sp_putttramalusuario.sql -text
 SP_PostgreSQL_8-0/siw/sp_puttttronco.sql -text
+SP_PostgreSQL_8-0/siw/sp_putttusuariocentral.sql -text
+SP_PostgreSQL_8-0/siw/sp_putunidade_cl.sql -text
+SP_PostgreSQL_8-0/siw/sp_putunidade_pa.sql -text
+SP_PostgreSQL_8-0/siw/sp_putusuario.sql -text
+SP_PostgreSQL_8-0/siw/sp_putveiculo.sql -text
 SP_PostgreSQL_8-0/siw/sp_putviagembenef.sql -text
 SP_PostgreSQL_8-0/siw/sp_verificausuario.sql -text
 SP_PostgreSQL_8-0/siw/tg_ac_acordo_aditivo_in_up.sql -text
