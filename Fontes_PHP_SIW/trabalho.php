@@ -141,7 +141,7 @@ function Mesa() {
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');
   // Se o módulo de pessoal estiver habilitado para o cliente, exibe link para acesso à folha de ponto
-  if (nvl($w_pessoal,'')!='' && $_SESSION['DBMS']!=4) {
+  if (nvl($w_pessoal,'')!='' && $_SESSION['DBMS']!=8) {
     // Verifica se o usuário tem contrato de trabalho  
     $sql = new db_getGPContrato; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
     
@@ -171,7 +171,7 @@ function Mesa() {
     ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas geo-referenciados."><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
-  if ($_SESSION['DBMS']!=4) {
+  if ($_SESSION['DBMS']!=8) {
     // Exibe, se necessário, sinalizador para alerta
     $sql = new db_getAlerta; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     if (count($RS)>0) {
@@ -214,7 +214,7 @@ function Mesa() {
     }
     ShowHTML('        </tr>');
 
-    if ($_SESSION['DBMS']!=4) {
+    if ($_SESSION['DBMS']!=8) {
       $sql = new db_getDeskTop_Recurso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario);
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -289,12 +289,13 @@ function Mesa() {
 
     // Exibe o calendário da organização
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
+    $sql = new db_getDataEspecial; 
     for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-      $sql = new db_getDataEspecial; $RS_Ano[$i] = $sql->getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
+      $RS_Ano[$i] = $sql->getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
       $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
     }
 
-    if ($_SESSION['DBMS']!=4) {
+    if ($_SESSION['DBMS']!=8) {
 	    // Recupera os dados da unidade de lotação do usuário
 	    include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 	    $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);

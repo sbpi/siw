@@ -11,15 +11,15 @@ include_once("ConnectionManagerFactory.php");
 class abreSessao {
    function getInstanceOf($DB_TYPE) {
      $conn = new ConnectionManagerFactory; 
-     $dbms = $conn->getInstanceOf($DB_TYPE);
-     $dbms->doConnection();
-     $dbms->selectDatabase();
+     $DBMS = $conn->getInstanceOf($DB_TYPE);
+     $DBMS->doConnection();
+     $DBMS->selectDatabase();
      if ($DB_TYPE==MSSQL) { ini_set('mssql.datetimeconvert', 0);}
      if ($DB_TYPE==PGSQL) { 
-       //pg_query($dbms->getConnectionHandle(), "set client_encoding to 'LATIN1'"); 
-       //pg_query($dbms->getConnectionHandle(), "set search_path to siw,public");
+       pg_query($DBMS->getConnectionHandle(), "set client_encoding to 'LATIN1'"); 
+       //pg_query($DBMS->getConnectionHandle(), "set search_path to siw,public");
      }
-     return $dbms->getConnectionHandle();
+     return $DBMS->getConnectionHandle();
    }
 }    
 ?>

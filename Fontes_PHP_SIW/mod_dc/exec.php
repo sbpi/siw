@@ -40,6 +40,11 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
+//Inicializa objeto de conexão e executa a query
+if (nvl($_REQUEST['dataBank'],'')!='') {
+  $conObj = new abreSessao; $conObj = $conObj->getInstanceOf($_REQUEST['dataBank']);
+}
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -236,9 +241,6 @@ function ResultSql() {
   if (nvl($_POST['sqlStr'],'')=='') {
     ShowHTML('<h4> Instrução SQL não informada </h4>');
   } else {
-    //Inicializa objeto de conexão e executa a query
-    $conObj = new abreSessao; $conObj = $conObj->getInstanceOf($dataBank);
-
     //tira os brancos e substitui aspas duplas por aspas simples
     $mySql = str_replace('\\\'','\'',trim($_POST['sqlStr']));
     if (false!==strpos($mySql,';')) {
@@ -257,7 +259,7 @@ function ResultSql() {
     
       $command = upper(substr(trim($v),0,strpos(trim($v),' ')));
       if ($command=='SELECT') {
-        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows);
+        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows, $dataBank);
         if (count($RS) > 0) {
            ShowHTML($numRows.' registros selecionados<br />');
            ShowHTML('<table border="1">');
@@ -280,7 +282,7 @@ function ResultSql() {
            ShowHTML('Nenhum registro encontrado<br />');
         }      
       } elseif (false!==strpos('INSERT,UPDATE,DELETE',$command)) {
-        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows);
+        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows, $dataBank);
         ShowHTML('<p>'.$numRows.' registros processados</p>');
       } elseif ($command=='EXEC') {
         $sp = substr($v,strpos($v,' ')+1);
