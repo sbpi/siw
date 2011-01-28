@@ -3,10 +3,7 @@
     p_usuario   numeric,
     p_ano       numeric,
     p_result    refcursor
-   )
-
-  RETURNS refcursor AS
-$BODY$
+   ) RETURNS refcursor AS $$
 declare
     w_interno  varchar;
 begin
@@ -27,37 +24,25 @@ begin
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
               inner join (select sq_menu, count(*) as qtd 
-                            from (select c.sq_menu, d.sq_siw_solicitacao, f.acesso
+                            from (select c.sq_menu, d.sq_siw_solicitacao
                                     from siw_menu                        c
-                                         inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo)
-                                           inner join siw_cliente_modulo b1 on (b.sq_modulo          = b1.sq_modulo and b1.sq_pessoa=p_cliente)
-                                         inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu)
+                                         inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu and e.sigla <> 'CI')
                                          inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
-                                         inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
-                                                         from siw_solicitacao x
-                                                              inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
-                                                                                           y.sq_pessoa      = p_cliente and
-                                                                                           y.sigla          <> 'PADCAD'
-                                                                                          )
-                                                      )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    where c.sq_pessoa = p_cliente
                                      and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
-                                     and 'CI'     <> coalesce(e.sigla,'nulo')
                                      and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                                      and (('N'    = c.consulta_opiniao and d.conclusao is null) or
                                           ('S'    = c.consulta_opiniao and d.opiniao is null)
                                          )
                                      and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
-                                 ) z where acesso > 0
+                                 ) z where acesso(sq_siw_solicitacao, p_usuario,null) > 0
                           group by sq_menu
                          )          y on (v.sq_menu = y.sq_menu)
               left  join (select c.sq_menu, count(*) as qtd 
                             from siw_menu                        c
-                                 inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo)
-                                   inner join siw_cliente_modulo b1 on (b.sq_modulo          = b1.sq_modulo and b1.sq_pessoa=p_cliente)
-                                 inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu)
+                                 inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu and e.sigla <> 'CI')
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
-                                 inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                 inner   join (select x.sq_siw_solicitacao, 1 as acesso--acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                  from siw_solicitacao        x
                                                       inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
                                                                                    y.sq_pessoa      = p_cliente and
@@ -69,7 +54,6 @@ begin
                              and c.tramite   = 'S'
                              and c.ativo     = 'S'
                              and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
-                             and 'CI'    <> coalesce(e.sigla,'nulo')
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                              and ((c.sigla <> 'PJCAD' and (c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and f.acesso > 15)) or
                                   (c.sigla =  'PJCAD' and e.sigla <> 'CI' and f.acesso >= 8)
@@ -87,7 +71,7 @@ begin
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
-              inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
+              inner join (select c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
                             FROM siw_tramite                    e
                                  inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
                                    inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
@@ -111,6 +95,4 @@ begin
           order by or_modulo, nm_modulo, nm_servico;
    End If;
    return p_result;
-end 
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+END $$ LANGUAGE 'plpgsql' VOLATILE;

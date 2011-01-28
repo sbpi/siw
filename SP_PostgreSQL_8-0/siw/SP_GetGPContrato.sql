@@ -1,27 +1,23 @@
-CREATE OR REPLACE FUNCTION siw.SP_GetGPContrato
+﻿CREATE OR REPLACE FUNCTION SP_GetGPContrato
    (p_cliente                 numeric,
     p_chave                   numeric,
     p_sq_pessoa               numeric,
     p_modalidade_contrato     numeric,
     p_unidade_lotacao         numeric,
     p_filhos_lotacao          varchar,
-    p_unidade_exercicio       varchar,
+    p_unidade_exercicio       numeric,
     p_filhos_exercicio        varchar,
     p_afastamento             numeric,
     p_dt_ini                  date,
     p_dt_fim                  date,
     p_chave_aux               numeric,
-    p_restricao               varchar)
-  RETURNS refcursor AS
-$BODY$declare
-    p_result    refcursor;
-
+    p_restricao               varchar,
+    p_result       REFCURSOR) RETURNS REFCURSOR AS $$
+DECLARE
     l_item        varchar(18);
     l_afastamento varchar(200) := p_afastamento ||',';
     x_afastamento varchar(200) := '';
-
-begin
-
+BEGIN
    If p_afastamento is not null Then
       Loop
          l_item  := Trim(substr(l_afastamento,1,Instr(l_afastamento,',')-1));
@@ -63,39 +59,32 @@ begin
             and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
             and (p_sq_pessoa           is null or (p_sq_pessoa           is not null and a.sq_pessoa               = p_sq_pessoa))
             and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
-            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade
-                                                                                                                                                                                                                                  from eo_unidade
-                                                                                                                                                                                                                                start with sq_unidade = p_unidade_lotacao
-                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
-            and (p_unidade_exercicio   is null or (p_unidade_exercicio   is not null and ((p_filhos_exercicio is null and e.sq_unidade_exercicio = p_unidade_exercicio) or (p_filhos_exercicio is not null and e.sq_unidade_exercicio in (select sq_unidade
-                                                                                                                                                                                                                                  from eo_unidade
-                                                                                                                                                                                                                                start with sq_unidade = p_unidade_exercicio
-                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
-           and (p_afastamento          is null or (p_afastamento         is not null and f.sq_tipo_afastamento in (x_afastamento)))
+            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao = p_unidade_lotacao) or 
+                                                                                          (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade
+                                                                                                                                                         from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(p_unidade_lotacao),0) 
+                                                                                                                                                              as (sq_unidade numeric, sq_unidade_pai numeric, level int)
+                                                                                                                                                      )
+                                                                                          )
+                                                                                         )
+                                                  )
+                )
+            and (p_unidade_exercicio   is null or (p_unidade_exercicio   is not null and ((p_filhos_exercicio is null and e.sq_unidade_exercicio = p_unidade_exercicio) or
+                                                                                          (p_filhos_exercicio is not null and e.sq_unidade_exercicio in (select sq_unidade
+                                                                                                                                                           from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(p_unidade_exercicio),0) 
+                                                                                                                                                                as (sq_unidade numeric, sq_unidade_pai numeric, level int)
+                                                                                                                                                        )
+                                                                                          )
+                                                                                         )
+                                                  )
+                )
+           and (p_afastamento          is null or (p_afastamento         is not null and ''''||to_char(f.sq_tipo_afastamento)||'''' in (x_afastamento)))
            and (p_dt_ini               is null or (p_dt_ini              is not null and ((f.inicio_data           between p_dt_ini      and p_dt_fim)   or
-                                                                                          (Nvl(f.fim_data,sysdate) between p_dt_ini      and p_dt_fim)   or
-                                                                                          (p_dt_ini                between f.inicio_data and Nvl(f.fim_data,sysdate)) or
-                                                                                          (p_dt_fim                between f.inicio_data and Nvl(f.fim_data,sysdate))
+                                                                                          (coalesce(f.fim_data,now()) between p_dt_ini      and p_dt_fim)   or
+                                                                                          (p_dt_ini                between f.inicio_data and coalesce(f.fim_data,now())) or
+                                                                                          (p_dt_fim                between f.inicio_data and coalesce(f.fim_data,now()))
                                                                                          )
                                                    )
                 );
    End If;
-   return p_result;
-end $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-  COST 100;
-ALTER FUNCTION siw.SP_GetGPContrato
-   (p_cliente                 numeric,
-    p_chave                   numeric,
-    p_sq_pessoa               numeric,
-    p_modalidade_contrato     numeric,
-    p_unidade_lotacao         numeric,
-    p_filhos_lotacao          varchar,
-    p_unidade_exercicio       varchar,
-    p_filhos_exercicio        varchar,
-    p_afastamento             numeric,
-    p_dt_ini                  date,
-    p_dt_fim                  date,
-    p_chave_aux               numeric,
-    p_restricao               varchar) OWNER TO siw;
-
+  return p_result;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

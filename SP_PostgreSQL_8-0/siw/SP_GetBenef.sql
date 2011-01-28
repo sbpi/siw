@@ -1,4 +1,4 @@
-create or replace function siw.SP_GetBenef
+﻿create or replace function SP_GetBenef
    (p_cliente            numeric,
     p_sq_pessoa          numeric,
     p_cpf                varchar,
@@ -12,14 +12,10 @@ create or replace function siw.SP_GetBenef
     p_regiao             numeric,
     p_uf                 varchar,
     p_cidade             numeric,
-    p_restricao          varchar)
-
-
-  RETURNS character varying AS
-$BODY$declare
-
-    p_result      refcursor;
-
+    p_restricao          varchar,
+    p_result    refcursor
+   ) RETURNS refcursor AS $$
+declare
 begin
    open p_result for 
      select distinct a.sq_pessoa, a.nome as nm_pessoa, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
@@ -155,22 +151,5 @@ begin
         and (p_regiao             is null     or (p_regiao             is not null and h.sq_regiao          = p_regiao))
         and (p_cidade             is null     or (p_cidade             is not null and h.sq_cidade          = p_cidade))
         and (p_uf                 is null     or (p_uf                 is not null and h.co_uf              = p_uf));
-end 
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-  COST 100;
-ALTER FUNCTION siw.SP_GetBenef
-   (p_cliente            numeric,
-    p_sq_pessoa          numeric,
-    p_cpf                varchar,
-    p_cnpj               varchar,
-    p_nome               varchar,
-    p_tipo_pessoa        numeric,
-    p_passaporte_numero  varchar,
-    p_sq_pais_passaporte varchar,
-    p_fornecedor         varchar,
-    p_pais               numeric,
-    p_regiao             numeric,
-    p_uf                 varchar,
-    p_cidade             numeric,
-    p_restricao          varchar) OWNER TO siw;
+   return p_result;
+END $$ LANGUAGE 'plpgsql' VOLATILE;

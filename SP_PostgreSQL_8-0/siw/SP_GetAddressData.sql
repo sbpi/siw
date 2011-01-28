@@ -1,12 +1,8 @@
-create or replace function siw.SP_GetAddressData
-   (p_chave       numeric)
-
-  RETURNS character varying AS
-$BODY$declare
-
-   
-    p_result     refcursor;
-   
+﻿create or replace function SP_GetAddressData
+   (p_chave       numeric,
+    p_result    refcursor
+   ) RETURNS refcursor AS $$
+declare
 begin
    -- Recupera os dados do endereco informado
    open p_result for 
@@ -29,9 +25,5 @@ begin
                left   join siw_coordenada_endereco g on (b.sq_pessoa_endereco = g.sq_pessoa_endereco)
                  left join siw_coordenada          h on (g.sq_siw_coordenada  = h.sq_siw_coordenada)
        where b.sq_pessoa_endereco = p_chave;
-end
-
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-  COST 100;
-ALTER FUNCTION siw.SP_GetAddressData(p_chave numeric) OWNER TO siw;
+   return p_result;
+END $$ LANGUAGE 'plpgsql' VOLATILE;
