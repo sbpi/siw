@@ -4605,6 +4605,7 @@ SP_PostgreSQL_8-0/siw/SP_PutSolicRelAnexo.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutSolicTransp.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutUsuarioTemp.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutValorDiaria.sql -text
+SP_PostgreSQL_8-0/siw/SP_PutViagemEnvio.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutViagemGeral.sql -text
 SP_PostgreSQL_8-0/siw/SP_PutViagemOutra.sql -text
 SP_PostgreSQL_8-0/siw/SP_UpdatePassword.sql -text

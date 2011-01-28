@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetAfastamento
+﻿create or replace FUNCTION SP_GetAfastamento
    (p_cliente                  numeric,
     p_pessoa                   numeric,
     p_chave                    numeric,
@@ -12,7 +12,6 @@ create or replace FUNCTION SP_GetAfastamento
     p_restricao                varchar,
     p_result    REFCURSOR) RETURNS REFCURSOR AS $$
 DECLARE
-    
     w_inicio numeric(9);
     w_fim    numeric(9);
 BEGIN
@@ -44,10 +43,10 @@ BEGIN
             and ((p_chave_aux               is null) or (p_chave_aux               is not null and a.sq_afastamento          <> p_chave_aux))
             and ((p_sq_tipo_afastamento     is null) or (p_sq_tipo_afastamento     is not null and a.sq_tipo_afastamento     = p_sq_tipo_afastamento))
             and ((p_sq_contrato_colaborador is null) or (p_sq_contrato_colaborador is not null and a.sq_contrato_colaborador = p_sq_contrato_colaborador))
-            and ((p_inicio_data             is null) or (p_inicio_data             is not null and (to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end between w_inicio and w_fim or
-                                                                                                    to_char(a.fim_data,'yyyymmdd')||case coalesce(a.fim_periodo,'M') when 'M' then 0 else 1 end between w_inicio and w_fim or
-                                                                                                    w_inicio  between to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end and to_char(a.fim_data,'yyyymmdd')||case coalesce(a.fim_periodo,'M') when 'M' then 0 else 1 end or
-                                                                                                    w_fim     between to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end and to_char(a.fim_data,'yyyymmdd')||case coalesce(a.fim_periodo,'M') when 'M' then 0 else 1 end
+            and ((p_inicio_data             is null) or (p_inicio_data             is not null and (to_number(to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end) between w_inicio and w_fim or
+                                                                                                    to_number(to_char(a.fim_data,'yyyymmdd')||case coalesce(a.fim_periodo,'M') when 'M' then 0 else 1 end) between w_inicio and w_fim or
+                                                                                                    w_inicio  between to_number(to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end) and to_number(to_char(a.fim_data,'yyyymmdd')||case coalesce(a.fim_periodo,'M') when 'M' then 0 else 1 end) or
+                                                                                                    w_fim     between to_number(to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end) and to_number(to_char(a.fim_data,'yyyymmdd')||case coalesce(a.fim_periodo,'M') when 'M' then 0 else 1 end)
                                                                                                    )
                                                         )
                 );
@@ -57,6 +56,7 @@ BEGIN
          select count(*) as existe 
            from gp_afastamento_envio a
           where a.sq_afastamento = p_chave;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
