@@ -1,6 +1,5 @@
-CREATE OR REPLACE FUNCTION siw.validacnpjcpf(character varying, character varying)
-  RETURNS character varying AS
-$BODY$declare
+ï»¿CREATE OR REPLACE FUNCTION validacnpjcpf(character varying, character varying) RETURNS character varying AS $$
+declare
    Result    varchar(2);
   igual     numeric(10)   := 0;
   allValid  boolean      := true;
@@ -16,7 +15,7 @@ begin
   elsif length(checkSTR) <= 11 then -- Trata CPF
       for i in 1..9 loop
           soma := soma + (substring(checkStr from i for 1)*(11-i));
-          -- A crítica abaixo impede CPFs com todos os números iguais
+          -- A crÃ­tica abaixo impede CPFs com todos os nÃºmeros iguais
           if substring(checkStr from i for 1) <> substring(checkStr from i-1 for 1) then igual := 1; end if;
       end loop;
       if igual = 0 and $2 is null then retorno = 'ER'; end if;
@@ -64,7 +63,7 @@ begin
       else
           Result := D1||D2;
       end if;
-  else -- Trata número de processo
+  else -- Trata nÃºmero de processo
       for i in 1..15 loop teste :=substring (checkStr from i for 1) ;
 
 		soma := soma + teste*(17-i);
@@ -89,8 +88,4 @@ begin
       end if;
   end if;
   return Result;
-end 
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-  COST 100;
-ALTER FUNCTION siw.validacnpjcpf(character varying, character varying) OWNER TO siw;
+END $$ LANGUAGE 'plpgsql' VOLATILE;

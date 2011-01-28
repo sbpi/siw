@@ -1,30 +1,23 @@
-﻿CREATE OR REPLACE FUNCTION siw.ac_criaparametro(p_cliente numeric,p_inicio date)
-  RETURNS character varying AS
-$BODY$
+﻿CREATE OR REPLACE FUNCTION ac_criaparametro(p_cliente numeric,p_inicio date, p_codigo_interno out varchar) RETURNS varchar AS $$
 DECLARE
    w_ano        numeric(4);
    w_sequencial numeric(18) := 0;
    w_existe     numeric(4);
    w_teste      varchar(4);
-   w_reg        siw.ac_parametro%rowtype;
-   p_codigo_interno Varchar(10);
-
+   w_reg        ac_parametro%rowtype;
 BEGIN
   -- Verifica se existe um registro criado para o cliente.
 
-  select count(1) into w_existe from siw.ac_parametro where cliente = p_cliente;
+  select count(1) into w_existe from ac_parametro where cliente = p_cliente;
     If w_existe = 0 Then
-     insert into siw.ac_parametro
+     insert into ac_parametro
             (cliente,sequencial,ano_corrente,prefixo,sufixo)
      values (p_cliente, 0, cast (extract (year from current_date)as numeric(4)),  'AC-',   null);
   End If;
 
   -- Recupera os parâmetros do cliente informado
 
-  select * into w_reg from siw.ac_parametro where cliente = p_cliente;
-
-
-
+  select * into w_reg from ac_parametro where cliente = p_cliente;
 
   -- Se o ano do acordo for menor que o ano corrente, configura um valor qualquer
   -- que será corrigido depois. Caso contrário, usa o sequencial
@@ -47,7 +40,7 @@ BEGIN
 	     End If;
 
 	     -- Atualiza a tabela de parâmetros
-	     Update siw.ac_parametro Set
+	     Update ac_parametro Set
 		 ano_corrente = w_ano,
 		 sequencial   = w_sequencial
 	     Where cliente    = p_cliente;
@@ -56,8 +49,4 @@ BEGIN
 
    p_codigo_interno := COALESCE(w_reg.prefixo,'')||cast(w_sequencial as varchar) ||'/'||cast(w_ano as varchar)||COALESCE(w_reg.sufixo,'');
 
-   RETURN p_codigo_interno;
-END; $BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-  COST 100;
-ALTER FUNCTION siw.ac_criaparametro(p_cliente numeric,p_inicio date) OWNER TO siw;
+END; $$ LANGUAGE 'plpgsql' VOLATILE;

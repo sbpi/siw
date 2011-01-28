@@ -1,5 +1,4 @@
-CREATE OR REPLACE FUNCTION siw.sp_verificasenha(p_cliente numeric, p_username character varying, p_senha character varying, p_result refcursor)
-  RETURNS refcursor AS $BODY$
+﻿CREATE OR REPLACE FUNCTION sp_verificasenha(p_cliente numeric, p_username character varying, p_senha character varying, p_result refcursor) RETURNS refcursor AS $$
 begin
    open p_result for
        select ativo
@@ -9,7 +8,5 @@ begin
           and upper(username) = upper(p_username)
           and upper(senha)    = criptografia(upper(p_senha));
    return p_result;
-end 
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE
+END $$ LANGUAGE 'plpgsql' VOLATILE;
 

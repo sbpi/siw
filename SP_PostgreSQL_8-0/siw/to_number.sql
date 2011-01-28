@@ -1,19 +1,14 @@
-CREATE OR REPLACE FUNCTION to_number(bpchar)
-  RETURNS int8 AS
-$BODY$
- DECLARE
+ÔªøCREATE OR REPLACE FUNCTION to_number(bpchar) RETURNS int8 AS $$
+DECLARE
  pCAMPO ALIAS FOR $1;
  cCAMPO bpchar;
  vCAMPO int8;
 BEGIN
- cCAMPO := trim(translate(upper(pCAMPO),'⁄¡…Õ”‘€Œ¬ √’‹Ÿ¿»Ã“ 
-QWERTYUIOP[]ASDFGHJKL;ZXCVBNM,./<>?|{}:"-_=+)(*&[EMAIL PROTECTED]',''));
+ cCAMPO := trim(translate(upper(pCAMPO),'√ö√Å√â√ç√ì√î√õ√é√Ç√ä√É√ï√ú√ô√Ä√à√å√íQWERTYUIOP[]ASDFGHJKL;ZXCVBNM,./<>?|{}:"-_=+)(*&[EMAIL PROTECTED]',''));
  if (cCAMPO='') then
    cCAMPO='0';
  end if;
  vCAMPO := CAST (cCAMPO as int8);
  --vCAMPO := cCAMPO;
  return vCAMPO;
-end
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+END $$ LANGUAGE 'plpgsql' VOLATILE;

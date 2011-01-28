@@ -1,12 +1,11 @@
-CREATE OR REPLACE FUNCTION siw.sp_ajustaPesquisaMaterial(
+ï»¿CREATE OR REPLACE FUNCTION sp_ajustaPesquisaMaterial(
      p_cliente numeric, 
      p_material numeric,
-     p_todos varchar) 
-  RETURNS refcursor AS
-$BODY$declare
+     p_todos varchar) RETURNS VOID AS $$
+declare
      
   w_cont      numeric := 0;
-  cursor c_dados(tipo in varchar2) is
+  c_dados cursor (tipo varchar) for
     select a.sq_material, min(b.valor_unidade) as valor_menor, max(b.valor_unidade) as valor_maior, round(avg(b.valor_unidade),4) as valor_medio,
            max(inicio) as inicio, max(fim) as fim
       from cl_material                   a
@@ -17,7 +16,7 @@ $BODY$declare
        and b.pesquisa = 'S'
     group by a.sq_material;
 begin
-  -- Ajusta os dados dos materiais que têm pesquisa válida
+  -- Ajusta os dados dos materiais que tÃªm pesquisa vÃ¡lida
   for crec in c_dados('NORMAL') loop
      w_cont := 1;
      update cl_material a set
@@ -39,10 +38,4 @@ begin
         where a.sq_material = crec.sq_material;  
      end loop;
   End If;
-end$BODY$
-  LANGUAGE 'plpgsql' VOLATILE
-  COST 100;
-ALTER FUNCTION siw.sp_ajustaPesquisaMaterial(
-     p_cliente numeric, 
-     p_material numeric,
-     p_todos varchar)  OWNER TO siw;
+END $$ LANGUAGE 'plpgsql' VOLATILE;

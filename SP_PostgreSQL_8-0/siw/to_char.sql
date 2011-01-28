@@ -1,8 +1,4 @@
-CREATE OR REPLACE FUNCTION to_char(p_valor numeric)
-  RETURNS varchar AS
-$BODY$
+﻿CREATE OR REPLACE FUNCTION to_char(p_valor numeric) RETURNS varchar AS $$
 BEGIN
  return p_valor;
-end
-$BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+END $$ LANGUAGE 'plpgsql' VOLATILE;

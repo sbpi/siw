@@ -1,4 +1,4 @@
-create or replace function siw.SF_Consulta(
+Ôªøcreate or replace function SF_Consulta(
        p_restricao    varchar,
        p_ctcc         numeric,
        p_sq_pessoa    numeric,
@@ -12,7 +12,7 @@ create or replace function siw.SF_Consulta(
        p_inicio_nf    date,
        p_fim_nf       date)
        RETURNS refcursor  AS
-$BODY$declare
+$$declare
     p_result  refcursor;
 begin
   If upper(p_restricao) = 'DOLAR' Then
@@ -68,7 +68,7 @@ begin
         select a.automatico_sa Documento, to_char(c.duracaoinicio,'dd/mm/yyyy') inicio, c.duracaoinicio,
                to_char(c.duracaofim,'dd/mm/yyyy') fim, c.duracaofim,
                d.codigounesco projeto,
-               decode(c.tipodepagamento,1,'ServiÁos',2,'Aquis.Mat/Bens',3,'Pub/Serv.Gr·f.',4,'PromoÁ„o Eventos','Financiamento de atividades')||' ('||
+               decode(c.tipodepagamento,1,'Servi√ßos',2,'Aquis.Mat/Bens',3,'Pub/Serv.Gr√°f.',4,'Promo√ß√£o Eventos','Financiamento de atividades')||' ('||
                decode(a.alteracao,1,'Contrato',2,'Emenda')||')' Modalidade,
                seguranca.fcfaseatual@sicof(a.automatico_sa) fase_atual, e.handle, e.nome, e.cgccpf, c.totcontratacao,
                b.acordo
@@ -153,10 +153,10 @@ begin
         order by a.dt_inicio desc;
   End If;
 end 
-$BODY$
+$$
   LANGUAGE 'plpgsql' VOLATILE
   COST 100;
-ALTER FUNCTION siw.SF_Consulta(
+ALTER FUNCTION SF_Consulta(
        p_restricao    varchar,
        p_ctcc         numeric,
        p_sq_pessoa    numeric,
