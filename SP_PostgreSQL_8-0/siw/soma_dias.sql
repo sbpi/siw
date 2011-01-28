@@ -1,9 +1,19 @@
 ﻿create or replace function soma_dias(
    p_cliente   in numeric,
+   data_inicio in timestamp,
+   dias        in numeric,
+   contagem    in varchar) 
+   returns date as $$
+begin
+  Return soma_dias(p_cliente,cast(data_inicio as date), dias, contagem);
+end; $$ language 'plpgsql' volatile;
+   
+create or replace function soma_dias(
+   p_cliente   in numeric,
    data_inicio in date,
    dias        in numeric,
    contagem    in varchar) 
-    returns date as $$
+   returns date as $$
 /**********************************************************************************
 * Nome      : soma_dias
 * Finalidade: Retorna a data fim a partir da data inicio e o número de dias

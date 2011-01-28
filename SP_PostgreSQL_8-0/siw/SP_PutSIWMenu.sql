@@ -51,7 +51,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then
       -- Recupera a próxima chave
-      select sq_menu.nextval into w_Chave from dual;
+      select nextval('sq_menu') into w_Chave;
       
       -- Insere registro em SIW_MENU
       insert into siw_menu (sq_menu, sq_menu_pai, link, p1, p2, p3, p4, sigla, imagem, target, 
@@ -82,7 +82,7 @@ BEGIN
         
       -- Insere registros de configuração de e-mail se for serviço
       insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
-      (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+      (select nextVal('sq_pessoa_mail'), a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
               case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
          from sg_autenticacao        a 
               inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)

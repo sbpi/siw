@@ -273,6 +273,7 @@ BEGIN
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite             = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
+                                            where sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao         = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                   = b3.sq_plano)
                       inner          join gd_demanda           d  on (b.sq_siw_solicitacao         = d.sq_siw_solicitacao)
@@ -322,7 +323,7 @@ BEGIN
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.assunto,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
-            and (p_prazo          is null or (p_prazo       is not null and d.concluida            = 'N' and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and d.concluida            = 'N' and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_ini_i          is null or (p_ini_i       is not null and (b1.sigla     <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (b1.sigla = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (b1.sigla     <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (b1.sigla = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
@@ -439,9 +440,6 @@ BEGIN
                    inner       join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner       join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
                       inner    join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner    join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
-                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left     join pe_plano                   b3 on (b.sq_plano                 = b3.sq_plano)
                       left     join siw_coordenada_solicitacao ba on (b.sq_siw_solicitacao       = ba.sq_siw_solicitacao)
                       left     join siw_coordenada             bb on (ba.sq_siw_coordenada       = bb.sq_siw_coordenada)
@@ -518,6 +516,10 @@ BEGIN
                                     )                          j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left      join pj_projeto_log             k  on (j.chave                    = k.sq_siw_solic_log)
                        left    join sg_autenticacao            l  on (k.destinatario             = l.sq_pessoa)
+                      inner    join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
+                                             from siw_solicitacao
+                                            where sq_menu = p_menu
+                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = to_number(p_sq_acao_ppa) or
@@ -558,10 +560,10 @@ BEGIN
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and d.concluida          = 'N' and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and d.concluida          = 'N' and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (b1.sigla   <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (b1.sigla = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (b1.sigla   <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (b1.sigla = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-now()<0))
+            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and cast(b.fim as date)+1-trunc(now())<0))
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d.proponente,null)     like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d1.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d1.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
@@ -702,6 +704,7 @@ BEGIN
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
+                                            where sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join (select sq_siw_solicitacao, calculaIDCC(sq_siw_solicitacao) as idcc
                                              from siw_solicitacao
@@ -801,7 +804,7 @@ BEGIN
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.objeto,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and d.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and d.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -951,9 +954,8 @@ BEGIN
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao     a
-                                                  inner join siw_menu b on (a.sq_menu = b.sq_menu)
-                                            where b.sq_menu = p_menu
+                                             from siw_solicitacao 
+                                            where sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (a.sq_pessoa                = b3.cliente and
                                                                       b.sq_plano                 = b3.sq_plano
@@ -1046,7 +1048,7 @@ BEGIN
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -1144,7 +1146,7 @@ BEGIN
                 d5.limite_passagem, d5.limite_diaria,
                 to_char(r.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida, to_char(r.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
                 pd_retornatrechos(b.sq_siw_solicitacao) as trechos,
-                case when (b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(now())<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,cast(b.fim as date),(coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1),'U')<trunc(now())) then 'S' else 'N' end as atraso_pc
            from siw_menu                                a
                 inner         join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left        join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -1157,9 +1159,6 @@ BEGIN
                 inner         join pd_parametro         a5 on (a.sq_pessoa                = a5.cliente)
                 inner         join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                   inner       join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                  inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                      from siw_solicitacao
-                                   )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                   left           join pe_plano          b3 on (b.sq_plano                 = b3.sq_plano)
                   inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
@@ -1215,6 +1214,10 @@ BEGIN
                                        and y.tipo    = 'S'
                                     group by x.sq_siw_solicitacao
                                    )                    r  on (b.sq_siw_solicitacao       = r.sq_siw_solicitacao)
+                  inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
+                                      from siw_solicitacao
+                                     where sq_menu = p_menu
+                                   )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
             and (p_projeto        is null or (p_projeto     is not null and (b.sq_solic_pai = p_projeto or 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1, siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao))))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 join pj_etapa_demanda x3 on (x2.sq_siw_solicitacao = x3.sq_siw_solicitacao and x3.sq_projeto_etapa = p_atividade) where x2.sq_solic_missao = b.sq_siw_solicitacao)))
@@ -1237,12 +1240,12 @@ BEGIN
             and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
                                                                              (b.fim              between p_ini_i  and p_ini_f) or
                                                                              (p_ini_i            between b.inicio and b.fim)   or
-                                                                             (p_fim_i            between b.inicio and b.fim)
+                                                                             (p_ini_f            between b.inicio and b.fim)
                                                                             )
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(now())<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,cast(b.fim as date),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U')<trunc(now())))
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
@@ -1331,6 +1334,7 @@ BEGIN
                       inner          join eo_unidade           b8 on (b.sq_unidade               = b8.sq_unidade)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
+                                            where sq_menu = p_menu
                                           )                    b4 on (b.sq_siw_solicitacao       = b4.sq_siw_solicitacao)
                       left           join siw_solicitacao      b5 on (b.sq_solic_pai             = b5.sq_siw_solicitacao)
                         left         join siw_solicitacao      b6 on (b5.sq_solic_pai            = b6.sq_siw_solicitacao)
@@ -1402,7 +1406,7 @@ BEGIN
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -1522,7 +1526,7 @@ BEGIN
                       inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
-                                           group by sq_siw_solicitacao
+                                            where sq_menu = p_menu
                                           )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
                       left           join pe_plano                 b4 on (b.sq_plano                 = b4.sq_plano)
@@ -1599,7 +1603,7 @@ BEGIN
             and (p_uf             is null or (p_uf          is not null and d.processo           = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
