@@ -1166,9 +1166,6 @@ begin
                 inner         join pd_parametro         a5 on (a.sq_pessoa                = a5.cliente)
                 inner         join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                   inner       join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                  inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                      from siw_solicitacao
-                                   )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                   left           join pe_plano          b3 on (b.sq_plano                 = b3.sq_plano)
                   inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
@@ -1224,6 +1221,9 @@ begin
                                        and y.tipo    = 'S'
                                     group by x.sq_siw_solicitacao
                                    )                    r  on (b.sq_siw_solicitacao       = r.sq_siw_solicitacao)
+                  inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
+                                      from siw_solicitacao
+                                   )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
             and (p_projeto        is null or (p_projeto     is not null and (b.sq_solic_pai = p_projeto or 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1 , siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao))))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 join pj_etapa_demanda x3 on (x2.sq_siw_solicitacao = x3.sq_siw_solicitacao and x3.sq_projeto_etapa = p_atividade) where x2.sq_solic_missao = b.sq_siw_solicitacao)))
@@ -1246,7 +1246,7 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
                                                                              (b.fim              between p_ini_i  and p_ini_f) or
                                                                              (p_ini_i            between b.inicio and b.fim)   or
-                                                                             (p_fim_i            between b.inicio and b.fim)
+                                                                             (p_ini_f            between b.inicio and b.fim)
                                                                             )
                                              )
                 )

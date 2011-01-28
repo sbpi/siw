@@ -23,7 +23,7 @@ begin
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
               inner join (select sq_menu, count(*) as qtd 
-                            from (select c.sq_menu, d.sq_siw_solicitacao, f.acesso
+                            from (select /*+ ordered*/ c.sq_menu, d.sq_siw_solicitacao, f.acesso
                                     from siw_menu                        c
                                          inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo)
                                            inner join siw_cliente_modulo b1 on (b.sq_modulo          = b1.sq_modulo and b1.sq_pessoa=p_cliente)
@@ -47,7 +47,7 @@ begin
                                  ) z where acesso > 0
                           group by sq_menu
                          )          y on (v.sq_menu = y.sq_menu)
-              left  join (select c.sq_menu, count(*) as qtd 
+              left  join (select /*+ ordered*/ c.sq_menu, count(*) as qtd 
                             from siw_menu                        c
                                  inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo)
                                    inner join siw_cliente_modulo b1 on (b.sq_modulo          = b1.sq_modulo and b1.sq_pessoa=p_cliente)
