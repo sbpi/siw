@@ -38,7 +38,7 @@ BEGIN
          observacao
         )
     (Select 
-         sq_siw_solic_log.nextval,  p_chave,            p_usuario,
+         nextVal('sq_siw_solic_log'),  p_chave,            p_usuario,
          a.sq_siw_tramite,          now(),            'N',
          'Autuação de processo.'
         from siw_solicitacao a

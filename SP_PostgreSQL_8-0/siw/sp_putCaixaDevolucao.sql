@@ -32,7 +32,7 @@ BEGIN
             and a.sigla   = 'AS';
   
         -- Recupera a próxima chave
-        select sq_siw_solic_log.nextval into w_chave;
+        select nextVal('sq_siw_solic_log') into w_chave;
         
         -- Se houve mudança de fase, grava o log
         Insert Into siw_solic_log 
@@ -55,7 +55,7 @@ BEGIN
      End If;
   
      -- Recupera a nova chave da tabela de encaminhamentos da demanda
-     select sq_documento_log.nextval into w_chave_dem;
+     select nextVal('sq_documento_log') into w_chave_dem;
          
      -- Insere registro na tabela de encaminhamentos do documento
      insert into pa_documento_log

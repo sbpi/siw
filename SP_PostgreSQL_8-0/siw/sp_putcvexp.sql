@@ -25,7 +25,7 @@ BEGIN
          saida,               duracao_mes,       duracao_ano,            motivo_saida,
          ultimo_salario,      atividades)
       (select 
-         sq_cvpesexp.nextval, p_pessoa,          p_sq_area_conhecimento, p_sq_cidade,
+         nextVal('sq_cvpesexp'), p_pessoa,          p_sq_area_conhecimento, p_sq_cidade,
          p_sq_eo_tipo_posto,  p_sq_tipo_vinculo, p_empregador,           p_entrada,
          p_saida,             p_duracao_mes,     p_duracao_ano,          p_motivo_saida,
          p_ultimo_salario,    p_atividades

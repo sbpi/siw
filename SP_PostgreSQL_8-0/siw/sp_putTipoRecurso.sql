@@ -16,7 +16,7 @@ BEGIN
       insert into eo_tipo_recurso
         (sq_tipo_recurso,         cliente,   sq_tipo_pai, nome,   sigla,          unidade_gestora,  descricao,   ativo)
       values
-        (sq_tipo_recurso.nextval, p_cliente, p_chave_pai, p_nome, upper(p_sigla), p_gestora,        p_descricao, p_ativo);
+        (nextVal('sq_tipo_recurso'), p_cliente, p_chave_pai, p_nome, upper(p_sigla), p_gestora,        p_descricao, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update eo_tipo_recurso

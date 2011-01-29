@@ -13,7 +13,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pd_categoria_diaria ( sq_categoria_diaria,         cliente,   nome,         ativo,   tramite_especial,   dias_prestacao_contas, valor_complemento)
-      (select                           sq_categoria_diaria.nextval, p_cliente, trim(p_nome), p_ativo, p_tramite_especial, p_dias_prest_contas,   p_valor_complemento);
+      (select                           nextVal('sq_categoria_diaria'), p_cliente, trim(p_nome), p_ativo, p_tramite_especial, p_dias_prest_contas,   p_valor_complemento);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pd_categoria_diaria set

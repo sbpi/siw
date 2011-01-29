@@ -13,7 +13,7 @@ BEGIN
       -- Insere registro
    insert into dc_tabela
      (sq_tabela, sq_tabela_tipo, sq_usuario, sq_sistema, nome, descricao)
-   (select sq_tabela.nextVal,  p_sq_tabela_tipo, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
+   (select nextVal('sq_tabela'),  p_sq_tabela_tipo, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
    update dc_tabela

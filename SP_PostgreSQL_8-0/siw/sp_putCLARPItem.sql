@@ -52,7 +52,7 @@ BEGIN
    End If;
    
    If p_operacao = 'I' Then
-      select sq_solicitacao_item.nextval into w_item_solic;
+      select nextVal('sq_solicitacao_item') into w_item_solic;
       -- Insere registro em 
       insert into cl_solicitacao_item
         (sq_solicitacao_item, sq_siw_solicitacao, ordem,       sq_material,           quantidade,   cancelado,   motivo_cancelamento,
@@ -75,7 +75,7 @@ BEGIN
          valor_unidade,              valor_item,             ordem,       vencedor,             pesquisa,        fabricante, 
          marca_modelo,               embalagem,              dias_validade_proposta,            origem,          fator_embalagem)
       values
-        (sq_item_fornecedor.nextval, w_item_solic,           w_material,  w_acordo.outra_parte, w_acordo.inicio, w_acordo.fim,
+        (nextVal('sq_item_fornecedor'), w_item_solic,           w_material,  w_acordo.outra_parte, w_acordo.inicio, w_acordo.fim,
          p_valor,                    (p_valor*p_quantidade), p_ordem,     'S',                  'N',             p_fabricante, 
          p_marca_modelo,             p_embalagem,            (w_acordo.fim - w_acordo.inicio),  'PF',            p_fator
         );
@@ -110,7 +110,7 @@ BEGIN
          
          If length(w_log) > 0 Then
             -- Recupera a nova chave da tabela de encaminhamentos da demanda
-            select sq_acordo_log.nextval into w_chave_dem;
+            select nextVal('sq_acordo_log') into w_chave_dem;
          
             -- Insere registro na tabela de encaminhamentos da demanda
             Insert into ac_acordo_log 

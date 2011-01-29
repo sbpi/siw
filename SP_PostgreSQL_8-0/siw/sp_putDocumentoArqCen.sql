@@ -42,7 +42,7 @@ BEGIN
            observacao
           )
      (Select 
-           sq_siw_solic_log.nextval,  crec.chave,         p_usuario,
+           nextVal('sq_siw_solic_log'),  crec.chave,         p_usuario,
            a.sq_siw_tramite,          w_data,             'N',
            'Arquivamento central.'
           from siw_solicitacao a

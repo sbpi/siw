@@ -95,7 +95,7 @@ BEGIN
       If p_chave is not null Then
          insert into siw_tramite
            (sq_siw_tramite, sq_menu, nome, ordem, sigla, descricao, chefia_imediata, ativo, solicita_cc, envia_mail)
-         (select sq_siw_tramite.nextval, w_chave, nome, ordem, sigla, descricao, chefia_imediata, ativo, solicita_cc, envia_mail
+         (select nextVal('sq_siw_tramite'), w_chave, nome, ordem, sigla, descricao, chefia_imediata, ativo, solicita_cc, envia_mail
             from siw_tramite
            where sq_menu = p_chave
          );

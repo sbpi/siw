@@ -13,7 +13,7 @@ BEGIN
       -- Insere registro
       insert into dc_trigger
         (sq_trigger, sq_tabela, sq_usuario, sq_sistema, nome, descricao)
-      (Select sq_trigger.nextval, p_sq_tabela, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
+      (Select nextVal('sq_trigger'), p_sq_tabela, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
 
    Elsif p_operacao = 'A' Then
       -- Altera registro

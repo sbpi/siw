@@ -15,7 +15,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera o valor da próxima chave
-      select sq_projeto_rubrica.nextval into  w_chave;
+      select nextVal('sq_projeto_rubrica') into  w_chave;
       
       -- Insere registro na tabela de recursos
       Insert Into pj_rubrica
@@ -27,7 +27,7 @@ BEGIN
       If p_copia is not null Then
          insert into pj_rubrica_cronograma
            (sq_rubrica_cronograma, sq_projeto_rubrica, inicio, fim, valor_previsto, valor_real)
-         (select sq_rubrica_cronograma.nextval, w_chave, inicio, fim, valor_previsto, valor_real
+         (select nextVal('sq_rubrica_cronograma'), w_chave, inicio, fim, valor_previsto, valor_real
             from pj_rubrica_cronograma a
            where a.sq_projeto_rubrica = p_copia
          );

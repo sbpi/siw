@@ -20,7 +20,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then
       -- recupera a próxima chave
-      select sq_plano.nextval into w_chave;
+      select nextVal('sq_plano') into w_chave;
       
       -- Insere registro
       insert into pe_plano
@@ -35,7 +35,7 @@ BEGIN
       if p_heranca is not null then
          -- herda os objetivos estratégicos
          insert into pe_objetivo (sq_peobjetivo, cliente, sq_plano, nome, sigla, descricao, ativo, codigo_externo)
-         (select sq_peobjetivo.nextval,          cliente, w_chave,  nome, sigla, descricao, ativo, codigo_externo
+         (select nextVal('sq_peobjetivo'),          cliente, w_chave,  nome, sigla, descricao, ativo, codigo_externo
             from pe_objetivo
            where sq_plano = p_heranca
          );

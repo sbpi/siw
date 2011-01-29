@@ -11,7 +11,7 @@ BEGIN
       -- Insere registro
       insert into ac_nota_cancelamento
         (sq_nota_cancelamento, sq_acordo_nota, data, valor)
-        (select sq_nota_cancelamento.nextval, p_chave_aux, p_data, p_valor);
+        (select nextVal('sq_nota_cancelamento'), p_chave_aux, p_data, p_valor);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update ac_nota_cancelamento

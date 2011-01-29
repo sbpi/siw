@@ -24,7 +24,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_portal_lic.nextval into w_Chave;
+      select nextVal('sq_portal_lic') into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into lc_portal_lic

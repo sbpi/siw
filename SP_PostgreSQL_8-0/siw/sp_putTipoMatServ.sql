@@ -18,7 +18,7 @@ BEGIN
       insert into cl_tipo_material
         (sq_tipo_material,         cliente,   sq_tipo_pai, nome,   sigla,          classe,   unidade_gestora,  descricao,   codigo_externo,   ativo)
       values
-        (sq_tipo_material.nextval, p_cliente, p_chave_pai, p_nome, upper(p_sigla), p_classe, p_gestora,        p_descricao, p_codigo_externo, p_ativo);
+        (nextVal('sq_tipo_material'), p_cliente, p_chave_pai, p_nome, upper(p_sigla), p_classe, p_gestora,        p_descricao, p_codigo_externo, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update cl_tipo_material

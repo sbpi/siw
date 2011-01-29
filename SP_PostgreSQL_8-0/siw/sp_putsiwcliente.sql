@@ -36,7 +36,7 @@ BEGIN
       -- Se não existir, executa a inclusão
       If w_existe = 0 Then
          -- Recupera a próxima chave
-         select sq_pessoa.nextval into w_Chave;
+         select nextVal('sq_pessoa') into w_Chave;
           
          -- Insere registro em CO_PESSOA
          insert into co_pessoa (
@@ -111,7 +111,7 @@ BEGIN
            ( sq_pessoa_endereco, sq_pessoa,     sq_tipo_endereco,
              logradouro,         sq_cidade,     padrao
            )
-        (select sq_pessoa_endereco.nextval, w_chave, a.sq_tipo_endereco,
+        (select nextVal('sq_pessoa_endereco'), w_chave, a.sq_tipo_endereco,
                 'Endereço principal (corrigir)', p_cidade, 'S'
            from co_tipo_endereco a,
                co_tipo_pessoa   b
@@ -148,7 +148,7 @@ BEGIN
         -- Grava tipos de vínculo do cliente a partir do padrão definido para o segmento onde atua
         Insert into co_tipo_vinculo 
            ( sq_tipo_vinculo, sq_tipo_pessoa, cliente, nome, interno, ativo, padrao, contratado, ordem ) 
-        (select sq_tipo_vinculo.nextval, 
+        (select nextVal('sq_tipo_vinculo'), 
                 a.sq_tipo_pessoa, 
                 w_chave, 
                 a.nome, a.interno, a.ativo, a.padrao, a.contratado, a.ordem
@@ -200,19 +200,19 @@ BEGIN
         );
 
         -- Grava uma unidade para o superusuário do sistema
-        select sq_unidade.nextval into w_chave1;
+        select nextVal('sq_unidade') into w_chave1;
         
         Insert into eo_unidade ( sq_unidade, sq_pessoa, nome, sigla, ordem)
          Values (w_chave1, w_chave, 'Suporte técnico', 'SUTEC', 99);
          
         -- Grava uma localização para o superusuário do sistema
-        select sq_localizacao.nextval into w_chave2;
+        select nextVal('sq_localizacao') into w_chave2;
         
         Insert into eo_localizacao ( sq_localizacao, cliente, sq_unidade, nome)
          Values (w_chave2, w_chave, w_chave1, 'Sala virtual');
          
         -- Grava um superusuário para o cliente
-        select sq_pessoa.nextval into w_Chave3;
+        select nextVal('sq_pessoa') into w_Chave3;
         
         Insert into co_pessoa
           ( sq_pessoa, sq_pessoa_pai, sq_tipo_pessoa,   nome,           nome_resumido )
@@ -233,7 +233,7 @@ BEGIN
 
         -- Insere registros de configuração de e-mail
         insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
-        (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+        (select nextVal('sq_pessoa_mail'), a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
                 case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
            from sg_autenticacao        a 
                 inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)

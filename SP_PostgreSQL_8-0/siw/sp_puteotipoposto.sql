@@ -16,7 +16,7 @@ BEGIN
         (sq_eo_tipo_posto,      cliente,    nome,       sigla,
          descricao,             ativo,      padrao)
       (select 
-         sq_tipo_posto.nextval, p_cliente,  p_nome,     p_sigla,
+         nextVal('sq_tipo_posto'), p_cliente,  p_nome,     p_sigla,
          p_descricao,           p_ativo,    p_padrao
       );
    Elsif p_operacao = 'A' Then -- Alteração

@@ -15,7 +15,7 @@ BEGIN
       insert into siw_tipo_evento
         (sq_tipo_evento,        sq_menu,   nome,   ordem,          sigla,   descricao,   ativo)
       values
-        (sq_tipo_evento.nextval, p_menu, p_nome, p_ordem, upper(p_sigla), p_descricao, p_ativo);
+        (nextVal('sq_tipo_evento'), p_menu, p_nome, p_ordem, upper(p_sigla), p_descricao, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update siw_tipo_evento

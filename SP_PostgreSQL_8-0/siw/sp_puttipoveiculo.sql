@@ -15,7 +15,7 @@ BEGIN
       insert into sr_tipo_veiculo 
         (sq_tipo_veiculo, cliente, sq_grupo_veiculo, nome, sigla, descricao, ativo)
       values
-        (sq_tipo_veiculo.nextval, p_cliente, p_chave_aux, p_nome, p_sigla, p_descricao, p_ativo);
+        (nextVal('sq_tipo_veiculo'), p_cliente, p_chave_aux, p_nome, p_sigla, p_descricao, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update sr_tipo_veiculo

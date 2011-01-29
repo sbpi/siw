@@ -13,7 +13,7 @@ BEGIN
       insert into lc_modalidade_artigo
              (sq_modalidade_artigo,         sq_lcmodalidade, sigla,   descricao,   ativo
              )
-      (select sq_modalidade_artigo.nextval, p_chave,         p_sigla, p_descricao, p_ativo
+      (select nextVal('sq_modalidade_artigo'), p_chave,         p_sigla, p_descricao, p_ativo
         
       );
    Elsif p_operacao = 'A' Then

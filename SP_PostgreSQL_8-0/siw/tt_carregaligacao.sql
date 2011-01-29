@@ -39,7 +39,7 @@ insert into tt_ligacao
         sq_ramal, data, operadora, valor,
         duracao, recebida, entrante, fax, numero, sq_usuario_central
        )
-(select sq_ligacao.nextval, 1, 1, b.sq_tronco,
+(select nextVal('sq_ligacao'), 1, 1, b.sq_tronco,
         c.sq_ramal, to_date(to_char(a.data,'dd/mm/yyyy')||', '||a.hora,'dd/mm/yyyy, hh24:mi:ss'),
         nvl(a.operadora,14), a.valor, (substr(a.dura,1,2)*3600)+(substr(a.dura,4,2)*60)+substr(a.dura,7,2),
         'N',  'S', 'N', a.ndisc, d.sq_usuario_central

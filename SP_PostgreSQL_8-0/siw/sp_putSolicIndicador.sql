@@ -18,7 +18,7 @@ BEGIN
          If w_existe = 0 Then
             insert into pe_plano_indicador 
                ( sq_plano_indicador, sq_plano, sq_eoindicador) 
-            values (sq_plano_indicador.nextval, p_plano, p_indicador);
+            values (nextVal('sq_plano_indicador'), p_plano, p_indicador);
          End If;
       Elsif p_operacao = 'E' Then
          -- Remove registro de pe_plano_indicador
@@ -34,7 +34,7 @@ BEGIN
          If w_existe = 0 Then
             insert into siw_solic_indicador 
                ( sq_solic_indicador, sq_siw_solicitacao, sq_eoindicador) 
-            values (sq_solic_indicador.nextval, p_solicitacao, p_indicador);
+            values (nextVal('sq_solic_indicador'), p_solicitacao, p_indicador);
          End If;
       Elsif p_operacao = 'E' Then
          -- Remove registro de siw_solic_indicador

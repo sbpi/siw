@@ -32,7 +32,7 @@ BEGIN
      from cl_parametro where cliente = w_menu.sq_pessoa;
 
    If p_operacao = 'I' Then
-      select sq_solicitacao_item.nextval into w_chave;
+      select nextVal('sq_solicitacao_item') into w_chave;
       -- Insere registro
       insert into cl_solicitacao_item
         (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   cancelado,                 motivo_cancelamento,   sq_unidade_medida)
@@ -153,7 +153,7 @@ BEGIN
    
       if w_existe = 0 then
          -- Recupera o próximo valor da sequence
-         select sq_solicitacao_item.nextval into w_chave;
+         select nextVal('sq_solicitacao_item') into w_chave;
 
          -- Insere registro
          insert into cl_solicitacao_item

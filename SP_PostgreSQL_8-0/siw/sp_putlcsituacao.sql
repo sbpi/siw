@@ -15,7 +15,7 @@ BEGIN
       insert into lc_situacao
              (sq_lcsituacao,         cliente,   nome,   descricao,   publicar,   ativo,   padrao
              )
-      (select sq_lcsituacao.nextval, p_cliente, p_nome, p_descricao, p_publicar, p_ativo, p_padrao
+      (select nextVal('sq_lcsituacao'), p_cliente, p_nome, p_descricao, p_publicar, p_ativo, p_padrao
         
       );
    Elsif p_operacao = 'A' Then

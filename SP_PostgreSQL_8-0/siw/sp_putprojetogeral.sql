@@ -107,7 +107,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave;
+      select nextVal('sq_siw_solicitacao') into w_Chave;
 
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -167,7 +167,7 @@ BEGIN
           observacao
          )
       (select
-          sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
+          nextVal('sq_siw_solic_log'),  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          now(),            'N',
           'Cadastramento inicial'
          from siw_tramite a
@@ -213,7 +213,7 @@ BEGIN
           -- Insere os riscos do projeto
           for crec in c_riscos loop
              -- recupera a próxima chave do recurso
-             select sq_siw_restricao.nextval into w_chave1;
+             select nextVal('sq_siw_restricao') into w_chave1;
 
              -- Guarda pai do registro original
              w_risco_pai(crec.sq_siw_restricao) := w_chave1;
@@ -232,7 +232,7 @@ BEGIN
           -- Insere recursos do projeto
           for crec in c_recursos loop
              -- recupera a próxima chave do recurso
-             select sq_projeto_recurso.nextval into w_chave1;
+             select nextVal('sq_projeto_recurso') into w_chave1;
 
              -- Guarda pai do registro original
              w_recurso_pai(crec.sq_projeto_recurso) := w_chave1;
@@ -247,7 +247,7 @@ BEGIN
           -- Insere etapas do projeto
           for crec in c_etapas loop
              -- recupera a próxima chave do recurso
-             select sq_projeto_etapa.nextval into w_chave1;
+             select nextVal('sq_projeto_etapa') into w_chave1;
 
              -- Guarda pai do registro original
              i := i + 1;
@@ -318,7 +318,7 @@ BEGIN
           -- Insere rubricas do projeto
           for crec in c_rubricas loop
              -- recupera a próxima chave da rubrica
-             select sq_projeto_rubrica.nextval into w_chave1;
+             select nextVal('sq_projeto_rubrica') into w_chave1;
           
              insert into pj_rubrica
                 (sq_projeto_rubrica, sq_siw_solicitacao,  sq_cc,        codigo,      nome,      descricao,      ativo,      aplicacao_financeira)
@@ -327,7 +327,7 @@ BEGIN
              
              insert into pj_rubrica_cronograma
                (sq_rubrica_cronograma,                sq_projeto_rubrica, inicio, fim, valor_previsto, valor_real)
-               (select sq_rubrica_cronograma.nextval, w_chave1, inicio,   fim,    valor_previsto,      valor_real 
+               (select nextVal('sq_rubrica_cronograma'), w_chave1, inicio,   fim,    valor_previsto,      valor_real 
                   from pj_rubrica_cronograma
                  where sq_projeto_rubrica = crec.sq_projeto_rubrica);
           end loop;
@@ -406,7 +406,7 @@ BEGIN
              observacao
             )
          (select
-             sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
+             nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          now(),              'N',
              'Cancelamento'
             from siw_solicitacao a
@@ -434,7 +434,7 @@ BEGIN
                  observacao
                 )
              (select
-                 sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
+                 nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao, p_cadastrador,
                  a.sq_siw_tramite,          now(),              'N',
                  'Cancelamento'
                 from siw_solicitacao a

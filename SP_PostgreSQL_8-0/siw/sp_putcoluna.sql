@@ -18,7 +18,7 @@ BEGIN
       -- Insere registro
    insert into dc_coluna
      (sq_coluna, sq_tabela, sq_dado_tipo, nome, descricao, ordem, tamanho, precisao, escala, obrigatorio, valor_padrao)
-   (select sq_coluna.nextval, p_sq_tabela, p_sq_dado_tipo, p_nome, p_descricao, p_ordem, p_tamanho, p_precisao, p_escala, p_obrigatorio, p_valor_padrao);
+   (select nextVal('sq_coluna'), p_sq_tabela, p_sq_dado_tipo, p_nome, p_descricao, p_ordem, p_tamanho, p_precisao, p_escala, p_obrigatorio, p_valor_padrao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
    update dc_coluna

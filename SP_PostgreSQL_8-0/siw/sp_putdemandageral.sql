@@ -53,7 +53,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave;
+      select nextVal('sq_siw_solicitacao') into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -99,7 +99,7 @@ BEGIN
           observacao
          )
       (select 
-          sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
+          nextVal('sq_siw_solic_log'),  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          now(),            'N',
           'Cadastramento inicial'
          from siw_tramite a
@@ -111,7 +111,7 @@ BEGIN
       If p_atividade is not null Then
          Insert Into pj_etapa_demanda 
                 (sq_etapa_demanda,         sq_projeto_etapa, sq_siw_solicitacao)
-         Values (sq_etapa_demanda.nextval, p_atividade,      w_chave);
+         Values (nextVal('sq_etapa_demanda'), p_atividade,      w_chave);
       End If;
 
       -- Se a demanda foi copiada de outra, grava os dados complementares
@@ -172,7 +172,7 @@ BEGIN
          -- Cria a vinculação com os novos dados
          Insert Into pj_etapa_demanda 
                 (sq_etapa_demanda,         sq_projeto_etapa, sq_siw_solicitacao)
-          Values (sq_etapa_demanda.nextval, p_atividade,     p_chave);
+          Values (nextVal('sq_etapa_demanda'), p_atividade,     p_chave);
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Recupera os dados do menu
@@ -192,7 +192,7 @@ BEGIN
              observacao
             )
          (select 
-             sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
+             nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          now(),              'N',
              'Cancelamento'
             from siw_solicitacao a

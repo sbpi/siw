@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutCLPesqFornecedor
+﻿create or replace FUNCTION SP_PutCLPesqFornecedor
    (p_operacao                 varchar,
     p_cliente                  numeric,
     p_chave                    numeric,
@@ -24,11 +24,11 @@ BEGIN
             valor_item,                 pesquisa,            fabricante,   marca_modelo,   embalagem, ordem, dias_validade_proposta,
             origem,                     fator_embalagem)
          values
-           (sq_item_fornecedor.nextval, null,                p_material,   p_fornecedor,   p_inicio,  (p_inicio + p_dias -1), p_valor, 
+           (nextVal('sq_item_fornecedor'), null,                p_material,   p_fornecedor,   p_inicio,  (p_inicio + p_dias -1), p_valor, 
             p_valor,                    'S',                 p_fabricante, p_marca_modelo, p_embalagem, '0', p_dias,
             p_origem,                   coalesce(p_fator,1));
          -- Atualiza a tabela de materiais
-         sp_ajustapesquisamaterial(p_cliente,p_material);
+         PERFORM sp_ajustapesquisamaterial(p_cliente,p_material);
       Elsif p_chave is not null Then
          update cl_item_fornecedor set
            inicio                 = p_inicio,
@@ -43,12 +43,12 @@ BEGIN
            origem                 = p_origem
          where sq_item_fornecedor = p_chave;
          -- Atualiza a tabela de materiais
-         sp_ajustapesquisamaterial(p_cliente,p_material);
+         PERFORM sp_ajustapesquisamaterial(p_cliente,p_material);
       End If;
    Elsif p_operacao = 'E' Then
       -- Exclui pesquisa de preço
       DELETE FROM cl_item_fornecedor a
        where a.sq_item_fornecedor = p_chave;
       -- Atualiza a tabela de materiais
-      sp_ajustapesquisamaterial(p_cliente,p_material);
+      PERFORM sp_ajustapesquisamaterial(p_cliente,p_material);
    End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

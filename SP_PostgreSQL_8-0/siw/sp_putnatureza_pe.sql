@@ -10,7 +10,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pe_natureza (sq_penatureza, cliente, nome, ativo)
-      (select sq_penatureza.nextval, p_cliente, p_nome,  p_ativo);
+      (select nextVal('sq_penatureza'), p_cliente, p_nome,  p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pe_natureza

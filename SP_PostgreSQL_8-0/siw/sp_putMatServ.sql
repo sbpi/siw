@@ -66,7 +66,7 @@ BEGIN
    
    If p_operacao = 'I' or p_operacao = 'C' Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_material.nextval into w_chave;
+      select nextVal('sq_material') into w_chave;
 
       -- Insere registro
       insert into cl_material

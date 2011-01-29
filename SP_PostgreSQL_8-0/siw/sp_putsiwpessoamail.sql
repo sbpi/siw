@@ -13,7 +13,7 @@ BEGIN
       -- Insere registro em SG_PESSOA_MAIL, para cada serviço que conténha a opção
       insert into sg_pessoa_mail (sq_pessoa_mail,         sq_pessoa, sq_menu, alerta_diario, tramitacao,
                                   conclusao,              responsabilidade) 
-                          values (sq_pessoa_mail.nextval, p_pessoa,  p_menu, p_alerta,       p_tramitacao,
+                          values (nextVal('sq_pessoa_mail'), p_pessoa,  p_menu, p_alerta,       p_tramitacao,
                                   p_conclusao,            p_responsabilidade);
    Elsif p_operacao = 'E' Then
       -- Remove a permissão

@@ -19,7 +19,7 @@ BEGIN
         (sq_portal_lic_item,         cliente,        sq_portal_lic,   ordem,       nome,   
          descricao,                  quantidade,     cancelado,       situacao,    sq_unidade_fornec)
       values
-        (sq_portal_lic_item.nextval, p_cliente,      p_chave,         p_ordem,     p_nome, 
+        (nextVal('sq_portal_lic_item'), p_cliente,      p_chave,         p_ordem,     p_nome, 
          p_descricao,                p_quantidade,   p_cancelado,     p_situacao,  p_unidade_fornec);
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de itens de licitação

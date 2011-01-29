@@ -71,7 +71,7 @@ BEGIN
                 observacao
                )
            (Select 
-                sq_siw_solic_log.nextval,  crec.sq_siw_solicitacao,  p_pessoa,
+                nextVal('sq_siw_solic_log'),  crec.sq_siw_solicitacao,  p_pessoa,
                 a.sq_siw_tramite,          now(),                  'N',
                 'Envio externo: '||p_observacao
                from siw_solicitacao a

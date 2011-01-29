@@ -13,7 +13,7 @@ BEGIN
       -- Insere registro
       insert into dc_esquema_tabela (sq_esquema_tabela, sq_esquema, sq_tabela, ordem, 
                                      elemento, remove_registro)
-         (select sq_esquema_tabela.nextval,
+         (select nextVal('sq_esquema_tabela'),
                  p_sq_esquema,
                  p_sq_tabela,
                  p_ordem,

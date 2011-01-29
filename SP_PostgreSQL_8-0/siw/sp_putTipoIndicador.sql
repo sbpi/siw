@@ -12,7 +12,7 @@ BEGIN
       insert into eo_tipo_indicador
         (sq_tipo_indicador,         cliente,   nome,   ativo)
       values
-        (sq_tipo_indicador.nextval, p_cliente, p_nome, p_ativo);
+        (nextVal('sq_tipo_indicador'), p_cliente, p_nome, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update eo_tipo_indicador

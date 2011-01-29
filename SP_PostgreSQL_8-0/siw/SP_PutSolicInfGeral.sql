@@ -12,7 +12,7 @@ DECLARE
    w_chave_dem     numeric(18) := null;
 BEGIN
    -- Recupera a chave do log
-   select sq_siw_solic_log.nextval into w_chave_dem;
+   select nextVal('sq_siw_solic_log') into w_chave_dem;
    
    -- Insere registro na tabela de log da solicitacao
    Insert Into siw_solic_log 

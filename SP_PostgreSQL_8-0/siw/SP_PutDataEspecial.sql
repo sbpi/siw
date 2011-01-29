@@ -20,7 +20,7 @@ BEGIN
       insert into eo_data_especial
         (sq_data_especial, cliente, sq_pais, co_uf, sq_cidade, tipo, data_especial, nome, abrangencia, expediente, ativo)
       values
-        (sq_data_especial.nextval, p_cliente, p_sq_pais, p_co_uf, p_sq_cidade, p_tipo, p_data_especial, trim(p_nome), p_abrangencia, p_expediente, p_ativo);
+        (nextVal('sq_data_especial'), p_cliente, p_sq_pais, p_co_uf, p_sq_cidade, p_tipo, p_data_especial, trim(p_nome), p_abrangencia, p_expediente, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update eo_data_especial

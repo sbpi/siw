@@ -28,7 +28,7 @@ DECLARE
    w_chave   numeric(18);
 BEGIN
    If p_operacao = 'I' Then
-      select sq_autorizacao_fornecimento.nextval into w_chave;
+      select nextVal('sq_autorizacao_fornecimento') into w_chave;
 
       -- Insere registro
       insert into cl_autorizacao_fornecimento
@@ -69,7 +69,7 @@ BEGIN
       insert into cl_item_autorizacao
         (sq_item_autorizacao, sq_autorizacao_fornecimento, sq_solicitacao_item, quantidade, valor_unitario)
       values
-        (sq_item_autorizacao.nextval, p_chave, p_sq_item, p_quantidade, p_valor_item);
+        (nextVal('sq_item_autorizacao'), p_chave, p_sq_item, p_quantidade, p_valor_item);
    Elsif p_operacao = 'EXCLUIITEM' Then
       DELETE FROM cl_item_autorizacao where sq_autorizacao_fornecimento = coalesce(p_chave,0);
    End If;

@@ -21,7 +21,7 @@ BEGIN
           devolucao_valor,                  saldo_inicial
          )
       (select
-          sq_pessoa_conta_bancaria.nextval, p_oper,                p_pessoa,       p_agencia,
+          nextVal('sq_pessoa_conta_bancaria'), p_oper,                p_pessoa,       p_agencia,
           p_numero,                         p_ativo,               p_padrao,       p_tipo_conta,
           p_devolucao,                      p_saldo
        

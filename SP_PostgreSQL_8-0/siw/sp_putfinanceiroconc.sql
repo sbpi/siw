@@ -26,7 +26,7 @@ DECLARE
      
 BEGIN
    -- Recupera a chave do log
-   select sq_siw_solic_log.nextval into w_chave_dem;
+   select nextVal('sq_siw_solic_log') into w_chave_dem;
    
    -- Insere registro na tabela de log da solicitacao
    Insert Into siw_solic_log 
@@ -79,7 +79,7 @@ BEGIN
            insert into fn_documento_item
              (sq_documento_item,         sq_lancamento_doc,      sq_projeto_rubrica, ordem, descricao,   quantidade, valor_unitario, valor_total, valor_cotacao)
            values
-             (sq_documento_item.nextval, crec.sq_lancamento_doc, p_rubrica,          1,     'Reembolso', 1,          crec.valor,     crec.valor,  0);
+             (nextVal('sq_documento_item'), crec.sq_lancamento_doc, p_rubrica,          1,     'Reembolso', 1,          crec.valor,     crec.valor,  0);
         End If;
       End Loop;
    End If;
@@ -87,7 +87,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq;
+      select nextVal('sq_siw_arquivo') into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

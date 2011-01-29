@@ -75,7 +75,7 @@ BEGIN
         observacao
        )
   (Select 
-        sq_siw_solic_log.nextval,  p_chave,            p_usuario,
+        nextVal('sq_siw_solic_log'),  p_chave,            p_usuario,
         a.sq_siw_tramite,          now(),            'N',
         'Preparação para envio ao Arquivo Central. Caixa: '||c.numero||'/'||d.sigla||', Pasta: '||p_pasta||'.'
        from siw_solicitacao         a

@@ -19,7 +19,7 @@ BEGIN
         (sq_clvinculo_financeiro,         cliente,      sq_siw_solicitacao,   sq_projeto_rubrica,   sq_tipo_lancamento, 
          consumo,                         permanente,   servico,              outros,               sq_menu)
       values
-        (sq_clvinculo_financeiro.nextval, p_cliente,    p_siw_solicitacao,    p_rubrica,            p_lancamento, 
+        (nextVal('sq_clvinculo_financeiro'), p_cliente,    p_siw_solicitacao,    p_rubrica,            p_lancamento, 
          p_consumo,                       p_permanente, p_servico,            p_outros,             p_menu
         );
    Elsif p_operacao = 'A' Then

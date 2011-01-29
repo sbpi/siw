@@ -18,7 +18,7 @@ declare
      select sq_menu from siw_menu where sq_pessoa = p_pessoa;
 begin
    If p_operacao = 'I' Then
-      select sq_pessoa_endereco.nextval into w_sq_pessoa_endereco;
+      select nextVal('sq_pessoa_endereco') into w_sq_pessoa_endereco;
       -- Insere registro
       insert into co_pessoa_endereco 
          (sq_pessoa_endereco,         sq_tipo_endereco,     sq_pessoa,     sq_cidade, 

@@ -22,7 +22,7 @@ BEGIN
          diaria,                          hospedagem,      veiculo,              seguro,               bilhete,
          reembolso,                       ressarcimento)
       values
-        (sq_pdvinculo_financeiro.nextval, p_cliente,       p_siw_solicitacao,    p_rubrica,            p_lancamento, 
+        (nextVal('sq_pdvinculo_financeiro'), p_cliente,       p_siw_solicitacao,    p_rubrica,            p_lancamento, 
          p_diaria,                        p_hospedagem,    p_veiculo,            p_seguro,             p_bilhete,
          p_reembolso,                     p_ressarcimento
         );

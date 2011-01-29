@@ -16,7 +16,7 @@ BEGIN
       insert into fn_tipo_lancamento
         (sq_tipo_lancamento,         cliente,   sq_tipo_lancamento_pai, nome,   descricao,   receita,   despesa,   ativo)
       values
-        (sq_tipo_lancamento.nextval, p_cliente, p_pai,                  p_nome, p_descricao, p_receita, p_despesa, p_ativo);
+        (nextVal('sq_tipo_lancamento'), p_cliente, p_pai,                  p_nome, p_descricao, p_receita, p_despesa, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update fn_tipo_lancamento

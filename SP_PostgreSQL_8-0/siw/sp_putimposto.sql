@@ -17,7 +17,7 @@ BEGIN
       insert into fn_imposto
         (sq_imposto, cliente, nome, descricao, sigla, esfera, calculo, dia_pagamento, ativo)
       values
-        (sq_imposto.nextval, p_cliente, p_nome, p_descricao, p_sigla, p_esfera, p_calculo, p_dia_pagamento, p_ativo);
+        (nextVal('sq_imposto'), p_cliente, p_nome, p_descricao, p_sigla, p_esfera, p_calculo, p_dia_pagamento, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update fn_imposto

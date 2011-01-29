@@ -64,7 +64,7 @@ BEGIN
    End If;
          
    If p_operacao = 'I' Then
-      select sq_acordo_aditivo.nextval into w_chave;
+      select nextVal('sq_acordo_aditivo') into w_chave;
       -- Insere registro
       insert into ac_acordo_aditivo
         (       sq_acordo_aditivo,         sq_siw_solicitacao,   protocolo,           codigo,           objeto,            inicio,         fim, 

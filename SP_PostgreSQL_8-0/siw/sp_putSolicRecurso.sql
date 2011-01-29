@@ -15,7 +15,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' or p_operacao = 'C' Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_solic_recurso.nextval into w_chave;
+      select nextVal('sq_solic_recurso') into w_chave;
 
       -- Insere registro
       insert into siw_solic_recurso
@@ -28,7 +28,7 @@ BEGIN
         insert into siw_solic_recurso_alocacao
           (sq_solic_recurso_alocacao,         sq_solic_recurso, inicio,   fim,   unidades_solicitadas, unidades_autorizadas)
         values
-          (sq_solic_recurso_alocacao.nextval, w_chave,          p_inicio, p_fim, p_unidades,           0);
+          (nextVal('sq_solic_recurso_alocacao'), w_chave,          p_inicio, p_fim, p_unidades,           0);
       End If;
    Elsif p_operacao = 'A' Then
       -- Altera registro

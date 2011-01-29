@@ -15,7 +15,7 @@ BEGIN
         (sq_cvpescargo,         sq_cvpesexp,       sq_area_conhecimento,
          especialidades,        inicio,            fim)
       (select 
-         sq_cvpescargo.nextval, p_sq_cvpesexp,     p_sq_area_conhecimento,
+         nextVal('sq_cvpescargo'), p_sq_cvpesexp,     p_sq_area_conhecimento,
          p_especialidades,      p_inicio,          p_fim
       );
    Elsif p_operacao = 'A' Then -- Alteração

@@ -43,7 +43,7 @@ BEGIN
           observacao
          )
       (select 
-          sq_siw_solic_log.nextval,  a.sq_siw_solicitacao,  p_usuario,
+          nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao,  p_usuario,
           a.sq_siw_tramite,          now(),               'N',
           'RENUMERAÇÃO: '||w_protocolo||' PARA '||w_codigo
          from siw_solicitacao a

@@ -15,7 +15,7 @@ BEGIN
       insert into lc_unidade_fornec
              (sq_unidade_fornec,            cliente,   sigla, nome,   descricao,    ativo,   padrao
              )
-      (select sq_unidade_fornec.nextval, p_cliente, p_sigla, p_nome, p_descricao,p_ativo, p_padrao
+      (select nextVal('sq_unidade_fornec'), p_cliente, p_sigla, p_nome, p_descricao,p_ativo, p_padrao
         
       );
    Elsif p_operacao = 'A' Then

@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutPdDiaria
+﻿create or replace FUNCTION SP_PutPdDiaria
    (p_operacao               varchar,
     p_chave                  numeric,
     p_sq_diaria              numeric,
@@ -107,7 +107,7 @@ BEGIN
 
    If p_operacao = 'I' Then
       -- Recupera o valor da chave
-      select  sq_diaria.nextval into w_sq_diaria;
+      select  nextVal('sq_diaria') into w_sq_diaria;
       
       -- Insere os registros em PD_DIARIA
       insert into pd_diaria
@@ -209,7 +209,7 @@ BEGIN
    
    -- Ajusta as diárias se o usuário não as definiu manualmente
    If p_texto_diaria is null Then 
-     sp_calculadiarias(p_chave, null, p_tipo); 
+     PERFORM sp_calculadiarias(p_chave, null, p_tipo); 
    End If;
 
    If p_operacao in ('I','A') Then

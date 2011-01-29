@@ -18,7 +18,7 @@ BEGIN
       insert into ct_especificacao_despesa
         (sq_especificacao_despesa, cliente, sq_cc, especificacao_pai, 
          ano, codigo, nome, valor, ultimo_nivel, ativo)
-        (select sq_especificacao_despesa.nextval,  p_cliente,  p_sq_cc,  p_chave_pai, 
+        (select nextVal('sq_especificacao_despesa'),  p_cliente,  p_sq_cc,  p_chave_pai, 
                  p_ano,  p_codigo,  p_nome,  p_valor,  p_ultimo_nivel,  p_ativo 
            
          );

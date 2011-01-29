@@ -20,7 +20,7 @@ BEGIN
       insert into gp_modalidade_contrato
         (sq_modalidade_contrato, cliente, nome, descricao, sigla, ferias, username, passagem, diaria, horas_extras, ativo)
       values
-        (sq_modalidade_contrato.nextval, p_cliente, trim(p_nome), p_descricao, upper(trim(p_sigla)), p_ferias, p_username, p_passagem, p_diaria, p_horas_extras, p_ativo);
+        (nextVal('sq_modalidade_contrato'), p_cliente, trim(p_nome), p_descricao, upper(trim(p_sigla)), p_ferias, p_username, p_passagem, p_diaria, p_horas_extras, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gp_modalidade_contrato

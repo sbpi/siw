@@ -19,7 +19,7 @@ BEGIN
              (sq_orprioridade,     cliente,            codigo,     nome,      responsavel, 
               telefone,            email,              ordem,      ativo,      padrao
              )
-      (select sq_orprioridade.nextval, p_cliente,      p_codigo,   p_nome,     p_responsavel, 
+      (select nextVal('sq_orprioridade'), p_cliente,      p_codigo,   p_nome,     p_responsavel, 
               p_telefone,          p_email,            p_ordem,    p_ativo,    p_padrao
         
       );

@@ -13,7 +13,7 @@ BEGIN
       insert into co_forma_pagamento
         (sq_forma_pagamento, cliente, nome, sigla, ativo)
       values
-        (sq_forma_pagamento.nextval, p_cliente, p_nome, p_sigla, p_ativo);
+        (nextVal('sq_forma_pagamento'), p_cliente, p_nome, p_sigla, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update co_forma_pagamento

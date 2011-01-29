@@ -14,7 +14,7 @@ BEGIN
       insert into siw_opiniao
         (sq_siw_opiniao,        cliente,    nome,         sigla,          ordem)
       values
-        (sq_siw_opiniao.nextVal, p_cliente, trim(p_nome), trim(p_sigla),  p_ordem);
+        (nextVal('sq_siw_opiniao'), p_cliente, trim(p_nome), trim(p_sigla),  p_ordem);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update siw_opiniao

@@ -15,7 +15,7 @@ BEGIN
       insert into ac_prestacao_contas
         (sq_prestacao_contas,         cliente,   sq_prestacao_pai, nome,   descricao,   tipo,   ativo)
       values
-        (sq_prestacao_contas.nextval, p_cliente, p_chave_pai,      p_nome, p_descricao, p_tipo, p_ativo);
+        (nextVal('sq_prestacao_contas'), p_cliente, p_chave_pai,      p_nome, p_descricao, p_tipo, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update ac_prestacao_contas

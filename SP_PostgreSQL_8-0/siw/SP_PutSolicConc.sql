@@ -160,7 +160,7 @@ BEGIN
     where a.sq_siw_solicitacao = p_chave;
     
    -- Recupera a chave do log
-   select sq_siw_solic_log.nextval into w_chave_dem;
+   select nextVal('sq_siw_solic_log') into w_chave_dem;
    
    -- Insere registro na tabela de log da solicitacao
    Insert Into siw_solic_log 
@@ -231,7 +231,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq;
+      select nextVal('sq_siw_arquivo') into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

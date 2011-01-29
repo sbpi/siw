@@ -21,7 +21,7 @@ BEGIN
       insert into eo_posto_trabalho
         (sq_posto_trabalho, cliente, sq_eo_tipo_posto, sq_formacao, nome, descricao, atividades, competencias, salario_piso, salario_teto, sq_area_conhecimento, ativo)
       values
-        (sq_posto_trabalho.nextVal, p_cliente, p_sq_tipo, p_sq_formacao, trim(p_nome), p_descricao, p_atividades, p_competencias, p_salario_piso, p_salario_teto, p_area_conhecimento, p_ativo);
+        (nextVal('sq_posto_trabalho'), p_cliente, p_sq_tipo, p_sq_formacao, trim(p_nome), p_descricao, p_atividades, p_competencias, p_salario_piso, p_salario_teto, p_area_conhecimento, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update eo_posto_trabalho

@@ -16,7 +16,7 @@ BEGIN
         (sq_cvpessoa_prod,          sq_pessoa,        sq_area_conhecimento,   sq_formacao,
          nome,                      meio,             data)
       (select 
-         sq_cvpessoa_prod.nextval,  p_pessoa,         p_sq_area_conhecimento, p_sq_formacao,
+         nextVal('sq_cvpessoa_prod'),  p_pessoa,         p_sq_area_conhecimento, p_sq_formacao,
          p_nome,                    p_meio,           p_data
       );
    Elsif p_operacao = 'A' Then -- Alteração

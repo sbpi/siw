@@ -36,7 +36,7 @@ BEGIN
             w_operacao := 'A';
          Else
             -- Se não existir, gera nova chave a partir da sequence e configura para inclusão
-            select sq_siw_coordenada.nextval into w_coordenada;
+            select nextVal('sq_siw_coordenada') into w_coordenada;
             w_operacao := 'I';
          End If;
          
@@ -83,7 +83,7 @@ BEGIN
             w_operacao := 'A';
          Else
             -- Se não existir, gera nova chave a partir da sequence e configura para inclusão
-            select sq_siw_coordenada.nextval into w_coordenada;
+            select nextVal('sq_siw_coordenada') into w_coordenada;
             w_operacao := 'I';
          End If;
          

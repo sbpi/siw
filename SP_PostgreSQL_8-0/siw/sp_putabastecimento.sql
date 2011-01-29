@@ -15,7 +15,7 @@ BEGIN
       insert into sr_abastecimento
           (sq_abastecimento,         sq_veiculo,    data,   hodometro, litros,    valor,    local)
         values
-          (sq_abastecimento.nextval, p_chave_aux, p_data, p_hodometro, p_litros, p_valor, p_local);
+          (nextVal('sq_abastecimento'), p_chave_aux, p_data, p_hodometro, p_litros, p_valor, p_local);
 
    Elsif p_operacao = 'A' Then
       -- Altera registro

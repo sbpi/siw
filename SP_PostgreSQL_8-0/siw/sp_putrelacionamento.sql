@@ -15,7 +15,7 @@ BEGIN
       -- Insere registro
       insert into dc_relacionamento
         (sq_relacionamento, nome, descricao, tabela_pai, tabela_filha, sq_sistema)
-      (select sq_relacionamento.nextval, p_nome, p_descricao, p_sq_tabela_pai, p_sq_tabela_filha, p_sq_sistema);
+      (select nextVal('sq_relacionamento'), p_nome, p_descricao, p_sq_tabela_pai, p_sq_tabela_filha, p_sq_sistema);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_relacionamento

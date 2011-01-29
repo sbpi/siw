@@ -25,7 +25,7 @@ BEGIN
       -- Insere registro
       insert into dc_esquema_insert (sq_esquema_insert, sq_esquema_tabela, registro, sq_coluna, 
                                      ordem, valor)
-         (select sq_esquema_insert.nextval,
+         (select nextVal('sq_esquema_insert'),
                  p_sq_esquema_tabela,
                  w_registro,
                  p_sq_coluna,

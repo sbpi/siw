@@ -30,7 +30,7 @@ BEGIN
               empenhado,           liquidado,          liquidar,   selecionada_mpog, 
               selecionada_relevante
              )
-      (select sq_acao_ppa.nextval, p_sq_acao_ppa_pai,  p_cliente,  p_codigo,  p_nome,     p_responsavel, 
+      (select nextVal('sq_acao_ppa'), p_sq_acao_ppa_pai,  p_cliente,  p_codigo,  p_nome,     p_responsavel, 
               p_telefone,          p_email,            p_ativo,    p_padrao,  p_aprovado, p_saldo,
               p_empenhado,         p_liquidado,        p_liquidar, p_selecionada_mpog, 
               p_selecionada_relevante

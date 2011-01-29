@@ -19,7 +19,7 @@ BEGIN
       insert into ac_tipo_acordo (
               sq_tipo_acordo, sq_tipo_acordo_pai,  cliente,         nome,          sigla, 
               modalidade,     prazo_indeterm,      pessoa_juridica, pessoa_fisica, exibe_idec, ativo)
-      (select sq_tipo_acordo.nextval,
+      (select nextVal('sq_tipo_acordo'),
               p_chave_pai,
               p_cliente,
               trim(p_nome),

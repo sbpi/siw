@@ -14,7 +14,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into gd_demanda_tipo (sq_demanda_tipo, cliente, nome, sigla, descricao, sq_unidade, reuniao, ativo)
-      (select sq_demanda_tipo.nextval, p_cliente, p_nome, upper(p_sigla), p_descricao, p_unidade, p_reuniao, p_ativo);
+      (select nextVal('sq_demanda_tipo'), p_cliente, p_nome, upper(p_sigla), p_descricao, p_unidade, p_reuniao, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gd_demanda_tipo

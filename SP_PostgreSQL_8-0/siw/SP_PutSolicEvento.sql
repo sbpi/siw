@@ -50,7 +50,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave;
+      select nextVal('sq_siw_solicitacao') into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -81,7 +81,7 @@ BEGIN
           observacao
          )
       (select 
-          sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
+          nextVal('sq_siw_solic_log'),  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          now(),            'N',
           'Cadastramento inicial'
          from siw_tramite a
@@ -127,7 +127,7 @@ BEGIN
              observacao
             )
          (select 
-             sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
+             nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          now(),              'N',
              'Cancelamento'
             from siw_solicitacao a

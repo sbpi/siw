@@ -18,7 +18,7 @@ BEGIN
          sq_formacao,                nome,           instituicao,
          carga_horaria,              conclusao)
       (select 
-         sq_cvpescurso.nextval,      p_pessoa,       p_sq_area_conhecimento, 
+         nextVal('sq_cvpescurso'),      p_pessoa,       p_sq_area_conhecimento, 
          p_sq_formacao,              p_nome,         p_instituicao,
          p_carga_horaria,            p_conclusao
       );

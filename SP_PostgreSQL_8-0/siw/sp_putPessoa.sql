@@ -57,7 +57,7 @@ BEGIN
          w_fornecedor := 'N';
       End If;
       -- recupera a próxima chave da pessoa
-      select sq_pessoa.nextval into w_chave_pessoa;
+      select nextVal('sq_pessoa') into w_chave_pessoa;
       
       -- insere os dados da pessoa
       insert into co_pessoa
@@ -147,7 +147,7 @@ BEGIN
             sq_cidade,                  padrao
            )
          values
-           (sq_pessoa_endereco.nextval, w_chave_pessoa, w_tipo_endereco,  p_email, 
+           (nextVal('sq_pessoa_endereco'), w_chave_pessoa, w_tipo_endereco,  p_email, 
             p_sq_cidade,                'S'
            );
       Else
@@ -186,7 +186,7 @@ BEGIN
              padrao
            )
          values
-           (sq_pessoa_endereco.nextval, w_chave_pessoa, w_tipo_endereco,  p_logradouro, 
+           (nextVal('sq_pessoa_endereco'), w_chave_pessoa, w_tipo_endereco,  p_logradouro, 
             p_complemento,              p_bairro,       p_sq_cidade,      p_cep,
             'S'
            );
@@ -234,7 +234,7 @@ BEGIN
             padrao
            )
          values
-           (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+           (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
             p_sq_cidade,                p_ddd,          p_nr_telefone, 
             'S'
            );
@@ -291,7 +291,7 @@ BEGIN
             padrao
            )
          values
-           (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+           (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
             p_sq_cidade,                p_ddd,          p_nr_fax, 
             'S'
            );
@@ -343,7 +343,7 @@ BEGIN
             padrao
            )
          values
-           (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+           (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
             p_sq_cidade,                p_ddd,          p_nr_celular, 
             'S'
            );

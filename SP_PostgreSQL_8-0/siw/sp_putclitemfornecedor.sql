@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutCLItemFornecedor
+﻿create or replace FUNCTION SP_PutCLItemFornecedor
    (p_operacao                 varchar,
     p_cliente                  numeric,
     p_chave                    numeric,
@@ -32,14 +32,14 @@ BEGIN
          valor_item,                 ordem,               vencedor,    pesquisa,     fabricante, marca_modelo, embalagem, 
          dias_validade_proposta,     origem,              fator_embalagem)
       values
-        (sq_item_fornecedor.nextval, p_chave_aux,         w_material,  p_fornecedor, p_inicio,     (p_inicio + p_dias - 1), p_valor, 
+        (nextVal('sq_item_fornecedor'), p_chave_aux,         w_material,  p_fornecedor, p_inicio,     (p_inicio + p_dias - 1), p_valor, 
          (p_valor*w_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem,
          p_dias,                     case                 p_pesquisa   when 'S' then p_origem else 'PF' end,              coalesce(p_fator,1)
         );
       
       -- Atualiza a tabela CL_MATERIAL
       If p_pesquisa = 'S' Then
-         sp_ajustapesquisamaterial(p_cliente,w_material);
+         PERFORM sp_ajustapesquisamaterial(p_cliente,w_material);
       
          -- Atualiza o valor da solicitação
          update siw_solicitacao a
@@ -62,7 +62,7 @@ BEGIN
       -- Ajusta os dados dos materiais que têm pesquisa válida
       If p_pesquisa = 'S' Then
          for crec in c_itens loop
-            sp_ajustapesquisamaterial(p_cliente,crec.sq_material);
+            PERFORM sp_ajustapesquisamaterial(p_cliente,crec.sq_material);
          end loop;
       End If;
    End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

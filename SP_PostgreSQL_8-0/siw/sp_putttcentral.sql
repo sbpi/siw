@@ -12,7 +12,7 @@ BEGIN
    
    insert into tt_central
      (sq_central_fone, cliente, sq_pessoa_endereco, arquivo_bilhetes, recupera_bilhetes)
-     (select sq_central_telefonica.nextVal, p_cliente, p_sq_pessoa_endereco, p_arquivo_bilhetes, p_recupera_bilhetes);
+     (select nextVal('sq_central_telefonica'), p_cliente, p_sq_pessoa_endereco, p_arquivo_bilhetes, p_recupera_bilhetes);
      
    Elsif p_operacao = 'A' Then
       -- Altera registro

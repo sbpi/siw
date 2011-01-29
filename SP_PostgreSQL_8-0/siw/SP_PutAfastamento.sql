@@ -28,7 +28,7 @@ BEGIN
              (sq_afastamento, cliente, sq_tipo_afastamento, sq_contrato_colaborador, inicio_data, inicio_periodo, 
               fim_data, fim_periodo, dias, observacao)
            values
-             (sq_afastamento.nextval, p_cliente,  p_sq_tipo_afastamento, crec.chave, p_inicio_data, p_inicio_periodo, 
+             (nextVal('sq_afastamento'), p_cliente,  p_sq_tipo_afastamento, crec.chave, p_inicio_data, p_inicio_periodo, 
               p_fim_data, p_fim_periodo, p_dias, p_observacao);        
          End loop;
       Else
@@ -37,7 +37,7 @@ BEGIN
            (sq_afastamento, cliente, sq_tipo_afastamento, sq_contrato_colaborador, inicio_data, inicio_periodo, 
             fim_data, fim_periodo, dias, observacao)
          values
-           (sq_afastamento.nextval, p_cliente,  p_sq_tipo_afastamento, p_sq_contrato_colaborador, p_inicio_data, p_inicio_periodo, 
+           (nextVal('sq_afastamento'), p_cliente,  p_sq_tipo_afastamento, p_sq_contrato_colaborador, p_inicio_data, p_inicio_periodo, 
             p_fim_data, p_fim_periodo, p_dias, p_observacao);
       End If;
    Elsif p_operacao = 'A' Then

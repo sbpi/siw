@@ -14,7 +14,7 @@ BEGIN
       insert into siw_tipo_arquivo
         (sq_tipo_arquivo,         cliente,   nome,   sigla,   descricao,   ativo)
       values
-        (sq_tipo_arquivo.nextval, p_cliente, p_nome, upper(p_sigla), p_descricao, p_ativo);
+        (nextVal('sq_tipo_arquivo'), p_cliente, p_nome, upper(p_sigla), p_descricao, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update siw_tipo_arquivo

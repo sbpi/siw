@@ -10,7 +10,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
      insert into eo_tipo_unidade (sq_tipo_unidade, sq_pessoa, nome, ativo)
-         (select sq_tipo_unidade.nextval,
+         (select nextVal('sq_tipo_unidade'),
                  p_cliente,
                  trim(p_nome),
                  p_ativo

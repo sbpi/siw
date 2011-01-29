@@ -15,7 +15,7 @@ BEGIN
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
-      select sq_siw_solic_log.nextval into w_chave_log;
+      select nextVal('sq_siw_solic_log') into w_chave_log;
 
       Insert Into siw_solic_log 
          (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
@@ -30,7 +30,7 @@ BEGIN
       );
       
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq;
+      select nextVal('sq_siw_arquivo') into w_chave_arq;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

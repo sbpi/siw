@@ -22,7 +22,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' or p_operacao = 'C' Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_recurso.nextval into w_chave;
+      select nextVal('sq_recurso') into w_chave;
 
       -- Insere registro
       insert into eo_recurso
@@ -40,14 +40,14 @@ BEGIN
          If p_disponibilidade <> 1 Then
             insert into eo_recurso_disponivel
               (sq_recurso_disponivel, sq_recurso, inicio, fim, valor, unidades, limite_diario, dia_util)
-            (select sq_recurso_disponivel.nextval, w_chave, inicio, fim, valor, unidades, limite_diario, dia_util
+            (select nextVal('sq_recurso_disponivel'), w_chave, inicio, fim, valor, unidades, limite_diario, dia_util
                from eo_recurso_disponivel
               where sq_recurso = p_copia
             );
          
             insert into eo_recurso_indisponivel
               (sq_recurso_indisponivel, sq_recurso, inicio, fim, justificativa)
-            (select sq_recurso_indisponivel.nextval, w_chave, inicio, fim, justificativa
+            (select nextVal('sq_recurso_indisponivel'), w_chave, inicio, fim, justificativa
                from eo_recurso_indisponivel
               where sq_recurso = p_copia
             );

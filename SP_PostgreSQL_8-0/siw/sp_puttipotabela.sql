@@ -9,7 +9,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into dc_tabela_tipo (sq_tabela_tipo, nome, descricao)
-      (select sq_tabela_tipo.nextval, p_nome, p_descricao);
+      (select nextVal('sq_tabela_tipo'), p_nome, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update dc_tabela_tipo set

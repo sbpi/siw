@@ -48,7 +48,7 @@ BEGIN
      If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
 
         -- recupera a próxima chave da pessoa
-        select sq_pessoa.nextval into w_chave_pessoa;
+        select nextVal('sq_pessoa') into w_chave_pessoa;
         
         -- insere os dados da pessoa
         insert into co_pessoa
@@ -109,7 +109,7 @@ BEGIN
               sq_cidade,                  ddd,            numero, 
               padrao
              )
-           (select sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+           (select nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                    a.sq_cidade_padrao,         p_ddd,          p_nr_telefone, 
                    'S'
               from siw_cliente a
@@ -166,7 +166,7 @@ BEGIN
               sq_cidade,                  ddd,            numero, 
               padrao
              )
-           (select sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+           (select nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                    a.sq_cidade_padrao,         p_ddd,          p_nr_fax, 
                    'S'
               from siw_cliente a
@@ -218,7 +218,7 @@ BEGIN
               sq_cidade,                  ddd,            numero, 
               padrao
              )
-           (select sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+           (select nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                    a.sq_cidade_padrao,         p_ddd,          p_nr_celular, 
                    'S'
               from siw_cliente a
@@ -250,7 +250,7 @@ BEGIN
               numero,                           ativo,          padrao,      tipo_conta
              )
            values
-             (sq_pessoa_conta_bancaria.nextval, w_chave_pessoa, p_sq_agencia, p_op_conta, 
+             (nextVal('sq_pessoa_conta_bancaria'), w_chave_pessoa, p_sq_agencia, p_op_conta, 
               p_nr_conta,                       'S',            'S',          '1'
              );
         Else

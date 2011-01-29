@@ -38,7 +38,7 @@ BEGIN
    
    If p_operacao = 'I'  Then
       -- Gera a nova chave do registro, a partir da sequence
-      select sq_solic_meta.nextval into w_chave_aux;    
+      select nextVal('sq_solic_meta') into w_chave_aux;    
       -- Insere registro
       insert into siw_solic_meta
         (sq_solic_meta,     sq_siw_solicitacao,  sq_eoindicador,    sq_pessoa,    titulo,       descricao,     ordem,          inicio,       fim, 

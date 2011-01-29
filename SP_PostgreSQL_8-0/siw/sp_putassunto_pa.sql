@@ -25,7 +25,7 @@ BEGIN
          (sq_assunto, cliente, sq_assunto_pai, codigo, descricao, detalhamento, observacao, fase_corrente_guarda,
           fase_corrente_anos, fase_intermed_guarda, fase_intermed_anos, fase_final_guarda,
           fase_final_anos, destinacao_final, provisorio, ativo)
-      (select sq_assunto.nextval, p_cliente, p_chave_pai, p_codigo, p_descricao, p_detalhamento, p_observacao, p_corrente_guarda, 
+      (select nextVal('sq_assunto'), p_cliente, p_chave_pai, p_codigo, p_descricao, p_detalhamento, p_observacao, p_corrente_guarda, 
               p_corrente_anos, p_intermed_guarda, p_intermed_anos, p_final_guarda, p_final_anos, 
               p_destinacao_final, p_provisorio, p_ativo 
         

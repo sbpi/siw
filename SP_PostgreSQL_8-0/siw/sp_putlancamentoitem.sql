@@ -22,7 +22,7 @@ BEGIN
          valor_cotacao,               sq_solicitacao_item
         )
       values
-        (sq_documento_item.nextval,   p_chave,            p_sq_projeto_rubrica, p_descricao,
+        (nextVal('sq_documento_item'),   p_chave,            p_sq_projeto_rubrica, p_descricao,
          p_quantidade,                p_valor_unitario,   p_ordem,              p_data_cotacao,
          coalesce(p_valor_cotacao,0), p_solic_item
         );

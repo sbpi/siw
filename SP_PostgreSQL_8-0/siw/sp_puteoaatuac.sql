@@ -10,7 +10,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
      insert into eo_area_atuacao (sq_area_atuacao, sq_pessoa, nome, ativo)
-         (select sq_area_atuacao.nextval,
+         (select nextVal('sq_area_atuacao'),
                  p_cliente,
                  trim(p_nome),
                  p_ativo

@@ -16,7 +16,7 @@ BEGIN
       -- Insere registro
      insert into eo_localizacao (sq_localizacao, sq_pessoa_endereco,
                   sq_unidade, nome, fax, telefone, ramal, telefone2, ativo, cliente)         
-          (select sq_localizacao.nextval,
+          (select nextVal('sq_localizacao'),
                   p_sq_pessoa_endereco,
                   p_sq_unidade,                 
                   trim(p_nome),

@@ -14,7 +14,7 @@ BEGIN
       -- Insere registro
       insert into dc_esquema_atributo (sq_esquema_atributo, sq_esquema_tabela, sq_coluna, 
                   ordem, campo_externo, mascara_data, valor_default)
-          (select sq_esquema_atributo.nextval,
+          (select nextVal('sq_esquema_atributo'),
                   p_sq_esquema_tabela,
                   p_sq_coluna,
                   p_ordem,

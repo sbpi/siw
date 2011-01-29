@@ -120,7 +120,7 @@ BEGIN
       -- Se não existir, executa a inclusão
       If w_existe = 0 Then
          -- Recupera a próxima chave
-         select sq_pessoa.nextval into w_Chave;
+         select nextVal('sq_pessoa') into w_Chave;
           
          -- Insere registro em CO_PESSOA
          insert into co_pessoa (
@@ -183,7 +183,7 @@ BEGIN
          
          -- Insere registros de configuração de e-mail
          insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
-         (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+         (select nextVal('sq_pessoa_mail'), a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
                  case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
             from sg_autenticacao        a 
                  inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)

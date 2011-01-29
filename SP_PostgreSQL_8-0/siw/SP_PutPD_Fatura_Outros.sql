@@ -26,7 +26,7 @@ BEGIN
 
       If w_existe = 0 Then
         -- Recupera a próxima chave de CO_PESSOA
-        select sq_pessoa.nextval into w_pessoa;
+        select nextVal('sq_pessoa') into w_pessoa;
         
         -- Insere em CO_PESSOA
         insert into co_pessoa
@@ -57,5 +57,5 @@ BEGIN
       insert into pd_fatura_outros
         (sq_fatura_outros,         sq_siw_solicitacao, sq_fatura_agencia, sq_pessoa, tipo,   inicio,   fim,   valor)
       values
-        (sq_fatura_outros.nextval, p_solic,            p_fatura,          w_pessoa,  p_tipo, p_inicio, p_fim, p_valor);
+        (nextVal('sq_fatura_outros'), p_solic,            p_fatura,          w_pessoa,  p_tipo, p_inicio, p_fim, p_valor);
    End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

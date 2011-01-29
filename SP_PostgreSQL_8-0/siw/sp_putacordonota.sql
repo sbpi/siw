@@ -21,7 +21,7 @@ DECLARE
    w_chave   numeric(18);
 BEGIN
    If p_operacao = 'I' Then
-      select sq_acordo_nota.nextval into w_chave;
+      select nextVal('sq_acordo_nota') into w_chave;
       -- Insere registro
       insert into ac_acordo_nota
         (sq_acordo_nota, sq_siw_solicitacao, sq_tipo_documento, sq_acordo_outra_parte, 

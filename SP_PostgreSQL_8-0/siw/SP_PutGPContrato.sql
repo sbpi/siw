@@ -68,7 +68,7 @@ BEGIN
               vale_refeicao,                   vale_transporte,        observacao_beneficios, data_atestado,
               dias_experiencia         
               )
-      (select sq_contrato_colaborador.nextval, p_cliente,              p_sq_pessoa,           p_cc,
+      (select nextVal('sq_contrato_colaborador'), p_cliente,              p_sq_pessoa,           p_cc,
               p_sq_posto_trabalho,             p_sq_localizacao,       p_sq_unidade_lotacao,  p_sq_unidade_exercicio, 
               p_sq_modalidade_contrato,        p_matricula,            p_inicio,              p_fim, 
               p_trata_username,                p_trata_ferias,         p_trata_extras,        p_entrada_manha, 

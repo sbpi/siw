@@ -16,7 +16,7 @@ BEGIN
       -- Insere registro
       insert into pa_tipo_guarda (sq_tipo_guarda, cliente, sigla, descricao, fase_corrente, 
                                   fase_intermed, fase_final, destinacao_final, ativo)
-      (select sq_tipo_guarda.nextval, p_cliente, upper(p_sigla), p_descricao, p_fase_corrente, 
+      (select nextVal('sq_tipo_guarda'), p_cliente, upper(p_sigla), p_descricao, p_fase_corrente, 
               p_fase_intermed, p_fase_final, p_destinacao_final, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro

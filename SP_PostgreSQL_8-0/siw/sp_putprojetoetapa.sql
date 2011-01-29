@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutProjetoEtapa
+﻿create or replace FUNCTION SP_PutProjetoEtapa
    (p_operacao             varchar,
     p_chave               numeric,
     p_chave_aux           numeric,
@@ -34,7 +34,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_projeto_etapa.nextval into w_chave;
+      select nextVal('sq_projeto_etapa') into w_chave;
       
       -- Insere registro na tabela de etapas do projeto
       Insert Into pj_projeto_etapa 
@@ -55,13 +55,13 @@ BEGIN
            p_uf,                p_cidade,           p_peso);
 
       -- Recalcula os percentuais de execução dos pais da etapa
-      sp_calculaPercEtapa(w_chave, null);
+      PERFORM sp_calculaPercEtapa(w_chave, null);
    
       -- Atualiza os pesos das etapas
-      sp_ajustaPesoEtapa(w_chave, null);
+      PERFORM sp_ajustaPesoEtapa(w_chave, null);
 
       -- Atualiza as datas de início e término das etapas superiores
-      sp_ajustaDataEtapa(w_chave);
+      PERFORM sp_ajustaDataEtapa(w_chave);
 
    Elsif p_operacao = 'A' Then -- Alteração
       -- Recupera a etapa pai
@@ -103,17 +103,17 @@ BEGIN
       -- Se houve alteração da subordinação, recalcula para o pai anterior
       If coalesce(w_pai,0) <> coalesce(p_chave_pai,0) Then
          -- Recalcula os percentuais de execução dos pais anteriores da etapa
-         sp_calculaPercEtapa(null, w_pai);
+         PERFORM sp_calculaPercEtapa(null, w_pai);
       End If;
       
       -- Recalcula os percentuais de execução dos pais da etapa
-      sp_calculaPercEtapa(p_chave_aux, null);
+      PERFORM sp_calculaPercEtapa(p_chave_aux, null);
    
       -- Atualiza os pesos das etapas
-      sp_ajustaPesoEtapa(p_chave, null);
+      PERFORM sp_ajustaPesoEtapa(p_chave, null);
 
       -- Atualiza as datas de início e término das etapas superiores
-      sp_ajustaDataEtapa(p_chave);
+      PERFORM sp_ajustaDataEtapa(p_chave);
 
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove as vinculações de riscos
@@ -138,13 +138,13 @@ BEGIN
 
       -- Recalcula os percentuais de execução dos pais da etapa
       -- e os pesos relativos de cada uma das etapas do projeto
-      If w_pai is not null Then sp_calculaPercEtapa(null, w_pai); End If;
+      If w_pai is not null Then PERFORM sp_calculaPercEtapa(null, w_pai); End If;
 
     -- Atualiza os pesos das etapas
-    sp_ajustaPesoEtapa(p_chave, null);
+    PERFORM sp_ajustaPesoEtapa(p_chave, null);
 
     -- Atualiza as datas de início e término das etapas superiores
-    sp_ajustaDataEtapa(p_chave);
+    PERFORM sp_ajustaDataEtapa(p_chave);
 
    
    End If;

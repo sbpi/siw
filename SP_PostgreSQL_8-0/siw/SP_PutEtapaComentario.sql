@@ -22,7 +22,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_etapa_comentario.nextval into w_chave;
+      select nextVal('sq_etapa_comentario') into w_chave;
       
       -- Insere registro na tabela de comentários de etapa
       insert into pj_etapa_comentario
@@ -33,7 +33,7 @@ BEGIN
       -- Se foi informado um arquivo, grava.
       If p_caminho is not null Then
          -- Recupera a próxima chave
-         select sq_siw_arquivo.nextval into w_chave_arq;
+         select nextVal('sq_siw_arquivo') into w_chave_arq;
          
          -- Insere registro em SIW_ARQUIVO
          insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
@@ -59,7 +59,7 @@ BEGIN
          
          If w_existe = 0 Then -- Inclui o anexo
             -- Recupera a próxima chave
-            select sq_siw_arquivo.nextval into w_chave_arq;
+            select nextVal('sq_siw_arquivo') into w_chave_arq;
            
             -- Insere registro em SIW_ARQUIVO
             insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)

@@ -13,7 +13,7 @@ BEGIN
       -- Insere registro
       insert into dc_indice
         (sq_indice, sq_indice_tipo, sq_usuario, sq_sistema, nome, descricao)
-      (select sq_indice.nextVal, p_sq_indice_tipo, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
+      (select nextVal('sq_indice'), p_sq_indice_tipo, p_sq_usuario, p_sq_sistema, p_nome, p_descricao);
    Elsif p_operacao = 'A' Then
       -- Altera registro
        update dc_indice

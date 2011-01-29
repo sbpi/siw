@@ -14,7 +14,7 @@ BEGIN
       insert into fn_tipo_documento
         (sq_tipo_documento,         cliente,   nome,   sigla,   detalha_item,   ativo)
       values
-        (sq_tipo_documento.nextval, p_cliente, p_nome, p_sigla, p_detalha_item, p_ativo);
+        (nextVal('sq_tipo_documento'), p_cliente, p_nome, p_sigla, p_detalha_item, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update fn_tipo_documento

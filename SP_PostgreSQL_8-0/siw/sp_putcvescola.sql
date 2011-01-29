@@ -19,7 +19,7 @@ BEGIN
          sq_pais,                    sq_formacao,    nome, 
          instituicao,                inicio,         fim)
       (select 
-         sq_cvpessoa_escol.nextval,  p_pessoa,       p_sq_area_conhecimento, 
+         nextVal('sq_cvpessoa_escol'),  p_pessoa,       p_sq_area_conhecimento, 
          p_sq_pais,                  p_sq_formacao,  p_nome, 
          p_instituicao,              p_inicio,       p_fim
       );

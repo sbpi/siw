@@ -14,7 +14,7 @@ BEGIN
       insert into siw_contas_cronograma
           (sq_contas_cronograma,         sq_siw_solicitacao, sq_prestacao_contas, inicio,   fim,   limite)
         values
-          (sq_contas_cronograma.nextval, p_siw_solicitacao,  p_prestacao_contas,  p_inicio, p_fim, p_limite);
+          (nextVal('sq_contas_cronograma'), p_siw_solicitacao,  p_prestacao_contas,  p_inicio, p_fim, p_limite);
 
    Elsif p_operacao = 'A' Then
       -- Altera registro

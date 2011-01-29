@@ -18,8 +18,8 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave;
-      select sq_esquema_script.nextval into w_chave_aux;
+      select nextVal('sq_siw_arquivo') into w_chave;
+      select nextVal('sq_esquema_script') into w_chave_aux;
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo

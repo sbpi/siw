@@ -20,7 +20,7 @@ BEGIN
       insert into mt_situacao (
                   sq_mtsituacao, cliente, nome, sigla, entrada, saida, 
                   estorno, consumo, permanente, inativa_bem,situacao_fisica, ativo)
-      (select sq_mtsituacao.nextval, p_cliente, trim(p_nome), trim(p_sigla), trim(p_entrada),
+      (select nextVal('sq_mtsituacao'), p_cliente, trim(p_nome), trim(p_sigla), trim(p_entrada),
               trim(p_saida), trim(p_estorno), trim(p_consumo), trim(p_permanente), 
               trim(p_inativa_bem), trim(p_situacao_fisica), trim(p_ativo));
    Elsif p_operacao = 'A' Then

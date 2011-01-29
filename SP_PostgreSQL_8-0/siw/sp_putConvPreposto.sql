@@ -50,7 +50,7 @@ BEGIN
          select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_cliente;
 
          -- recupera a próxima chave da pessoa
-         select sq_pessoa.nextval into w_chave_pessoa;
+         select nextVal('sq_pessoa') into w_chave_pessoa;
 
          -- insere os dados da pessoa
          insert into co_pessoa
@@ -171,7 +171,7 @@ BEGIN
                sq_cidade,                  padrao
               )
             values
-              (sq_pessoa_endereco.nextval, w_chave_pessoa, w_tipo_endereco,  p_email, 
+              (nextVal('sq_pessoa_endereco'), w_chave_pessoa, w_tipo_endereco,  p_email, 
                w_cidade,                   'S'
               );
          Else
@@ -210,7 +210,7 @@ BEGIN
                padrao
               )
             values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+              (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                w_cidade,                   p_ddd,          p_nr_telefone, 
                'S'
               );
@@ -267,7 +267,7 @@ BEGIN
                padrao
               )
             values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+              (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                w_cidade,                   p_ddd,          p_nr_fax, 
                'S'
               );
@@ -319,7 +319,7 @@ BEGIN
                padrao
               )
             values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+              (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                w_cidade,                   p_ddd,          p_nr_celular, 
                'S'
               );

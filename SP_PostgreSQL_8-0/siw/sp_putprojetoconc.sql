@@ -17,7 +17,7 @@ BEGIN
        observacao
       )
    Values
-      (sq_siw_solic_log.nextval,  p_chave,            p_pessoa,
+      (nextVal('sq_siw_solic_log'),  p_chave,            p_pessoa,
        p_tramite,                 now(),            'N',
        'Conclusão do projeto');
        

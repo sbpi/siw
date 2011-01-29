@@ -42,7 +42,7 @@ BEGIN
           where sq_pessoa = w_chave;         
       Else
          -- Recupera a próxima chave
-         select sq_pessoa.nextval into w_chave;
+         select nextVal('sq_pessoa') into w_chave;
          -- Insere registro em CO_PESSOA
          insert into co_pessoa (
                 sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,
@@ -119,7 +119,7 @@ BEGIN
    If p_foto is not null Then
       If w_foto is null Then
          -- Recupera a próxima chave
-         select sq_siw_arquivo.nextval into w_foto;
+         select nextVal('sq_siw_arquivo') into w_foto;
          
          -- Insere registro em SIW_ARQUIVO
          insert into siw_arquivo

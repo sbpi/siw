@@ -36,7 +36,7 @@ BEGIN
          codigo_voo,              compromisso,
          aeroporto_origem,        aeroporto_destino,  tipo)
       values
-        (sq_deslocamento.nextval, p_chave,            p_origem,       p_destino, 
+        (nextVal('sq_deslocamento'), p_chave,            p_origem,       p_destino, 
          to_date(to_char(p_data_saida,'dd/mm/yyyy')||', '||p_hora_saida,'dd/mm/yyyy, hh24:mi'), 
          to_date(to_char(p_data_chegada,'dd/mm/yyyy')||', '||p_hora_chegada,'dd/mm/yyyy, hh24:mi'),
          p_passagem,              p_meio_transp,      p_valor_trecho, p_sq_cia_transporte,

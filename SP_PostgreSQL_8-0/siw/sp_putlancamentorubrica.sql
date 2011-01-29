@@ -13,7 +13,7 @@ BEGIN
          (sq_lancamento_rubrica, sq_rubrica_origem, sq_rubrica_destino, 
           sq_lancamento_doc, valor)
       Values 
-         (sq_lancamento_rubrica.nextval, p_sq_rubrica_origem, p_sq_rubrica_destino,
+         (nextVal('sq_lancamento_rubrica'), p_sq_rubrica_origem, p_sq_rubrica_destino,
           p_chave_aux, p_valor);
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove o registro da tabela por documento

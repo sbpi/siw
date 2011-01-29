@@ -15,7 +15,7 @@ BEGIN
       insert into pd_reembolso
         (sq_pdreembolso,         sq_siw_solicitacao, sq_moeda, valor_solicitado,   justificativa,   valor_autorizado,               observacao)
       (select 
-         sq_pdreembolso.nextval, p_chave,            p_moeda,  p_valor_solicitado, p_justificativa, coalesce(p_valor_autorizado,0), p_observacao
+         nextVal('sq_pdreembolso'), p_chave,            p_moeda,  p_valor_solicitado, p_justificativa, coalesce(p_valor_autorizado,0), p_observacao
        
       );
    Elsif p_operacao = 'A' Then -- Alteração

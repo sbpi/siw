@@ -26,7 +26,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then
       -- Recupera a próxima chave da tabela de arquivos
-      select sq_siw_arquivo.nextval into w_Chave1;
+      select nextVal('sq_siw_arquivo') into w_Chave1;
        
       -- Insere o arquivo recebido em SIW_ARQUIVO
       insert into siw_arquivo
@@ -42,7 +42,7 @@ BEGIN
         );
 
       -- Recupera a próxima chave da tabela de arquivos
-      select sq_siw_arquivo.nextval into w_Chave2;
+      select nextVal('sq_siw_arquivo') into w_Chave2;
        
       -- Insere o arquivo registro em SIW_ARQUIVO
       insert into siw_arquivo
@@ -58,7 +58,7 @@ BEGIN
         );
 
       -- Recupera o valor da próxima chave
-      select sq_orimporta.nextval into w_chave;
+      select nextVal('sq_orimporta') into w_chave;
       
       -- Insere registro
       insert into dc_ocorrencia 

@@ -20,7 +20,7 @@ BEGIN
             insert into siw_solicitacao_interessado
                (sq_solicitacao_interessado,         sq_siw_solicitacao, sq_pessoa,   sq_tipo_interessado,   envia_email,   tipo_visao)
             values
-               (sq_solicitacao_interessado.nextval, p_chave,            p_pessoa,    p_sq_tipo_interessado, p_envia_email, p_tipo_visao);
+               (nextVal('sq_solicitacao_interessado'), p_chave,            p_pessoa,    p_sq_tipo_interessado, p_envia_email, p_tipo_visao);
          End If;
          
          -- Remove das tabelas antigas
@@ -34,7 +34,7 @@ BEGIN
       insert into siw_solicitacao_interessado
          (sq_solicitacao_interessado,         sq_siw_solicitacao, sq_pessoa, sq_tipo_interessado,   envia_email,   tipo_visao)
       values
-         (sq_solicitacao_interessado.nextval, p_chave,            p_pessoa,  p_sq_tipo_interessado, p_envia_email, p_tipo_visao);
+         (nextVal('sq_solicitacao_interessado'), p_chave,            p_pessoa,  p_sq_tipo_interessado, p_envia_email, p_tipo_visao);
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de interessados da solicitação
       update siw_solicitacao_interessado set

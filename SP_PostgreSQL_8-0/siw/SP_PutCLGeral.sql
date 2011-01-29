@@ -93,7 +93,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave;
+      select nextVal('sq_siw_solicitacao') into w_Chave;
 
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -195,7 +195,7 @@ BEGIN
          -- Copia os itens da solicitação
          insert into cl_solicitacao_item
            (sq_solicitacao_item,              sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida, prazo_garantia, vistoria_previa, catalogo, prazo_manutencao)
-         (select sq_solicitacao_item.nextval, w_chave,            sq_material, quantidade, sq_unidade_medida, prazo_garantia, vistoria_previa, catalogo, prazo_manutencao
+         (select nextVal('sq_solicitacao_item'), w_chave,            sq_material, quantidade, sq_unidade_medida, prazo_garantia, vistoria_previa, catalogo, prazo_manutencao
             from cl_solicitacao_item a
            where sq_siw_solicitacao = p_copia
              and cancelado          = 'N'
@@ -285,7 +285,7 @@ BEGIN
              observacao
             )
          (select
-             sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
+             nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          w_data,               'N',
              coalesce(p_observacao_log,'Cancelamento')
             from siw_solicitacao a

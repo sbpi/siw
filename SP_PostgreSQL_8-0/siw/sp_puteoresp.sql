@@ -15,7 +15,7 @@ BEGIN
       If not p_sq_pessoa_substituto is null Then
          insert into eo_unidade_resp(
                      sq_unidade_resp, fim, sq_unidade, sq_pessoa, tipo_respons, inicio)         
-             (select sq_unidade_responsavel.nextval,
+             (select nextVal('sq_unidade_responsavel'),
                      p_fim_substituto,
                      p_chave,
                      p_sq_pessoa_substituto,
@@ -27,7 +27,7 @@ BEGIN
       End If;
       insert into eo_unidade_resp(
                sq_unidade_resp, fim, sq_unidade, sq_pessoa, tipo_respons, inicio)
-       (select sq_unidade_responsavel.nextval,
+       (select nextVal('sq_unidade_responsavel'),
                p_fim_titular,
                p_chave,
                p_sq_pessoa,

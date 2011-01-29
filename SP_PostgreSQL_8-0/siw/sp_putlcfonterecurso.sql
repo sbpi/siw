@@ -16,7 +16,7 @@ BEGIN
       insert into lc_fonte_recurso
         (sq_lcfonte_recurso, cliente, nome, descricao, 
          orcamentario, ativo, padrao, codigo)
-      (select sq_lcfonte_recurso.nextval, p_cliente, p_nome, p_descricao, p_orcamentario, 
+      (select nextVal('sq_lcfonte_recurso'), p_cliente, p_nome, p_descricao, p_orcamentario, 
               p_ativo, p_padrao, p_codigo
         );
    Elsif p_operacao = 'A' Then

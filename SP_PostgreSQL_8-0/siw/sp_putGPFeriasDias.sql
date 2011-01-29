@@ -13,7 +13,7 @@ BEGIN
   -- Grava os dias de direito de férias baseado no número de faltas sem justificativa
   If p_operacao = 'I' Then
   -- Recupera a próxima chave de sq_ferias_dias
-     select sq_ferias_dias.nextval into w_chave;
+     select nextVal('sq_ferias_dias') into w_chave;
   -- Insere registro
     insert into gp_ferias_dias
       (sq_ferias_dias, cliente, faixa_inicio, faixa_fim, dias_ferias, ativo)

@@ -36,7 +36,7 @@ BEGIN
   for crec in c_tabela loop
      If crec.sq_tabela is null Then
         insert into dc_tabela (sq_tabela, sq_tabela_tipo, sq_usuario, sq_sistema, nome, descricao )
-        values (sq_tabela.nextval, 
+        values (nextVal('sq_tabela'), 
                 crec.sq_tabela_tipo, 
                 crec.sq_usuario, 
                 crec.sq_sistema, 

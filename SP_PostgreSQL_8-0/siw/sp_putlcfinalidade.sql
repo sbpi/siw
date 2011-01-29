@@ -14,7 +14,7 @@ BEGIN
       insert into lc_finalidade
              (sq_lcfinalidade,         cliente,   nome,   descricao,   ativo,   padrao
              )
-      (select sq_lcfinalidade.nextval, p_cliente, p_nome, p_descricao, p_ativo, p_padrao
+      (select nextVal('sq_lcfinalidade'), p_cliente, p_nome, p_descricao, p_ativo, p_padrao
         
       );
    Elsif p_operacao = 'A' Then

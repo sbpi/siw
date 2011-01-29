@@ -20,7 +20,7 @@ DECLARE
 BEGIN
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_fatura_agencia.nextval into w_chave;
+      select nextVal('sq_fatura_agencia') into w_chave;
       
       -- Insere registro na tabela de bilhetes
       insert into pd_fatura_agencia

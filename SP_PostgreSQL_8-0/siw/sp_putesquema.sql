@@ -37,7 +37,7 @@ BEGIN
               tx_origem_arquivos, ftp_hostname,  ftp_username,ftp_password,   ftp_diretorio,
               envia_mail,         lista_mail
              )
-      (select sq_esquema.nextval, p_cliente,     p_sq_modulo, p_nome,    p_descricao,   p_tipo, 
+      (select nextVal('sq_esquema'), p_cliente,     p_sq_modulo, p_nome,    p_descricao,   p_tipo, 
               p_ativo, p_formato, p_ws_servidor, p_ws_url,    p_ws_acao, p_ws_mensagem, p_no_raiz,
               p_bd_hostname,      p_bd_username, p_bd_password,          p_tx_delimitador, p_tipo_efetivacao,
               p_tx_origem_arquivos, p_ftp_hostname, p_ftp_username,      p_ftp_password,p_ftp_diretorio,

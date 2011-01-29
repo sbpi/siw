@@ -10,7 +10,7 @@ BEGIN
    
    insert into tt_ramal
      (sq_ramal, sq_central_fone, codigo)
-     (select sq_ramal.nextVal, p_sq_central_fone, p_codigo);
+     (select nextVal('sq_ramal'), p_sq_central_fone, p_codigo);
      
    Elsif p_operacao = 'A' Then
       -- Altera registro

@@ -112,7 +112,7 @@ BEGIN
 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
-      select sq_siw_solicitacao.nextval into w_Chave;
+      select nextVal('sq_siw_solicitacao') into w_Chave;
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
@@ -158,7 +158,7 @@ BEGIN
           observacao
          )
       (select 
-          sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
+          nextVal('sq_siw_solic_log'),  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          now(),            'N',
           'Cadastramento inicial'
          from siw_tramite a
@@ -170,7 +170,7 @@ BEGIN
       If p_etapa is not null Then
          Insert Into pj_etapa_contrato
                 (sq_etapa_contrato,         sq_projeto_etapa, sq_siw_solicitacao)
-         Values (sq_etapa_contrato.nextval, p_etapa,          w_chave);
+         Values (nextVal('sq_etapa_contrato'), p_etapa,          w_chave);
       End If;
       
       If p_codigo is null Then
@@ -197,7 +197,7 @@ BEGIN
          
          for crec in c_outra_parte loop
             -- Copia as outras partes existentes no contrato de origem
-            select sq_acordo_outra_parte.nextval into w_outra_parte;
+            select nextVal('sq_acordo_outra_parte') into w_outra_parte;
             insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
             values (w_outra_parte, w_chave, crec.outra_parte, crec.tipo);
             
@@ -275,7 +275,7 @@ BEGIN
                      ( sq_acordo_parcela,         sq_siw_solicitacao, ordem,      emissao,
                        vencimento,                observacao,         valor )
                   Values 
-                     ( sq_acordo_parcela.nextval, w_chave,            crec.ordem, crec.emissao, 
+                     ( nextVal('sq_acordo_parcela'), w_chave,            crec.ordem, crec.emissao, 
                        w_data,                    crec.observacao,    w_valor
                      );
                End If;
@@ -307,7 +307,7 @@ BEGIN
 
                -- Indica a tabela de outras partes
                insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
-               values (sq_acordo_outra_parte.nextval, w_chave, w_outra_parte, 3);
+               values (nextVal('sq_acordo_outra_parte'), w_chave, w_outra_parte, 3);
             End If;
             sp_putclarpitem(p_operacao     => 'I',
                             p_cliente      => p_cliente,
@@ -398,7 +398,7 @@ BEGIN
          -- Cria a vinculação com os novos dados
          Insert Into pj_etapa_contrato 
                 (sq_etapa_contrato,         sq_projeto_etapa, sq_siw_solicitacao)
-         Values (sq_etapa_contrato.nextval, p_etapa,      p_chave);
+         Values (nextVal('sq_etapa_contrato'), p_etapa,      p_chave);
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Recupera os dados do menu
@@ -418,7 +418,7 @@ BEGIN
              observacao
             )
          (select 
-             sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
+             nextVal('sq_siw_solic_log'),  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          now(),              'N',
              'Cancelamento'
             from siw_solicitacao a

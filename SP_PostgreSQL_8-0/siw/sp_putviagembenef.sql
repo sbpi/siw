@@ -58,7 +58,7 @@ BEGIN
       If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
     
          -- recupera a próxima chave da pessoa
-         select sq_pessoa.nextval into w_chave_pessoa;
+         select nextVal('sq_pessoa') into w_chave_pessoa;
          
          -- insere os dados da pessoa
          insert into co_pessoa
@@ -119,7 +119,7 @@ BEGIN
                padrao
               )
             values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+              (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                w_cidade,                   p_ddd,          p_nr_telefone, 
                'S'
               );
@@ -176,7 +176,7 @@ BEGIN
                padrao
               )
             values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
+              (nextVal('sq_pessoa_telefone'), w_chave_pessoa, w_tipo_fone, 
                w_cidade,                   p_ddd,          p_nr_fax, 
                'S'
               );
@@ -196,7 +196,7 @@ BEGIN
       If p_operacao = 'I' Then
          insert into pd_viagem (sq_viagem, cliente, sq_siw_solicitacao, pessoa, origem, destino,
                                 reserva,   trechos, bilhete,            saida,  retorno, valor) 
-         values (sq_viagem.nextval, p_chave_aux, p_chave, w_chave_pessoa, p_origem, p_destino, 
+         values (nextVal('sq_viagem'), p_chave_aux, p_chave, w_chave_pessoa, p_origem, p_destino, 
                  p_reserva, p_trechos, p_bilhete, p_saida, p_retorno, Nvl(p_valor,0));
       ElsIf p_operacao = 'A' Then
          update pd_viagem
