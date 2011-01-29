@@ -29,7 +29,7 @@ begin
              sq_unid_pagadora, sq_pessoa_endereco, ordem, email, codigo, sq_pessoa, nome, 
              sigla, informal, vinculada, adm_central, unidade_gestora, unidade_pagadora, externo,ativo
             )
-     (select Nvl(p_Chave,sq_unidade.nextval),
+     (select Nvl(p_Chave, sq_unidade.nextval),
                  p_sq_tipo_unidade,
                  p_sq_area_atuacao,
                  p_sq_unidade_gestora,

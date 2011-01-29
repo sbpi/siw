@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutCoMoeda
+﻿create or replace FUNCTION SP_PutCoMoeda
    (p_operacao                  varchar,
     p_chave                     numeric,
     p_codigo                    varchar,
@@ -14,7 +14,7 @@ BEGIN
    If p_operacao = 'I' Then
       -- Insere registro
       insert into co_moeda (sq_moeda, nome, codigo, sigla, simbolo, tipo, exclusao_ptax, ativo)
-         (select Nvl(p_Chave,sq_moeda.nextval),
+         (select Nvl(p_Chave, nextVal('sq_moeda')),
                  trim(upper(p_nome)),
                  trim(p_codigo),                 
                  p_sigla,
@@ -38,4 +38,5 @@ BEGIN
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       DELETE FROM co_moeda where sq_moeda = p_chave;
-   End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+   End If;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

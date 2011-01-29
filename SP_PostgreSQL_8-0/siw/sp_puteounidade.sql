@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutEOUnidade
+﻿create or replace FUNCTION SP_PutEOUnidade
    (p_operacao                  varchar,
     p_chave                     numeric,
     p_sq_tipo_unidade           numeric,
@@ -30,7 +30,7 @@ BEGIN
              sq_unid_pagadora, sq_pessoa_endereco, ordem, email, codigo, sq_pessoa, nome, 
              sigla, informal, vinculada, adm_central, unidade_gestora, unidade_pagadora, externo,ativo
             )
-     (select Nvl(p_Chave,sq_unidade.nextval),
+     (select Nvl(p_Chave, nextVal('sq_unidade')),
                  p_sq_tipo_unidade,
                  p_sq_area_atuacao,
                  p_sq_unidade_gestora,
@@ -77,4 +77,5 @@ BEGIN
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       DELETE FROM eo_unidade where sq_unidade = p_chave;
-   End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+   End If;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

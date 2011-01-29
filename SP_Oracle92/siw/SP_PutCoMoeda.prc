@@ -13,7 +13,7 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into co_moeda (sq_moeda, nome, codigo, sigla, simbolo, tipo, exclusao_ptax, ativo)
-         (select Nvl(p_Chave,sq_moeda.nextval),
+         (select Nvl(p_Chave, sq_moeda.nextval),
                  trim(upper(p_nome)),
                  trim(p_codigo),                 
                  p_sigla,
