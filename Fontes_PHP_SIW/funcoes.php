@@ -1944,11 +1944,12 @@ function MontaOrdemEtapa($l_chave) {
   extract($GLOBALS);
   if (nvl($l_chave,'')=='') return null;
   include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
-  $sql = new db_getEtapaDataParents; $l_rs = $sql->getInstanceOf($dbms, $l_chave);
-  foreach($l_rs as $row) {
+  $sql1 = new db_getEtapaDataParents; $l_rs1 = $sql1->getInstanceOf($dbms, $l_chave);
+  foreach($l_rs1 as $row) {
     $w_texto = f($row,'ordem');
     break;
   }
+  
   return $w_texto;
 }
 

@@ -2151,7 +2151,7 @@ function TelaUsuario() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
     ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS,'nome_resumido').'</b></td>');
-    ShowHTML('          <td>Sexo:<b><br>'.nvl(f($row1,'nm_sexo'),'*** Atualizar').'</td>');
+    ShowHTML('          <td>Sexo:<b><br>'.nvl(f($RS,'nm_sexo'),'*** Atualizar').'</td>');
     if (nvl(f($RS,'email'),'')>'') {
       ShowHTML('      <tr><td colspan=3>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></b></td>');
     } else {
