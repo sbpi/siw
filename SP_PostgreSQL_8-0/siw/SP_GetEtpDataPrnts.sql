@@ -1,9 +1,10 @@
-create or replace function siw.SP_GetEtpDataPrnts (p_chave in  numeric, p_result refcursor) returns refcursor as $$
-begin
+﻿create or replace function SP_GetEtpDataPrnts
+   (p_chave      NUMERIC,
+    p_result     REFCURSOR) RETURNS REFCURSOR AS $$
+DECLARE
+BEGIN
    -- Recupera as etapas acima da informada
    open p_result for 
-      select sq_projeto_etapa, sq_etapa_pai, titulo, ordem
-        from pj_projeto_etapa
-      where sq_projeto_etapa in (select sq_projeto_etapa from sp_fGetEtapaList(p_chave,0,'UP'));
-   return p_result;
-end; $$ language 'plpgsql' volatile;
+      select montaOrdem(p_chave, null) as ordem;
+  return p_result;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

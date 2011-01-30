@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetSolicRecurso
+﻿create or replace FUNCTION SP_GetSolicRecurso
    (p_chave     numeric,
     p_chave_aux numeric,
     p_restricao varchar,
@@ -18,6 +18,7 @@ BEGIN
         select a.*
           from pj_projeto_recurso a
          where a.sq_projeto_recurso = p_chave_aux;
-  End If;
+  End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getSolicRecursos
+﻿create or replace FUNCTION sp_getSolicRecursos
    (p_cliente         numeric,
     p_usuario         numeric,
     p_chave           numeric,
@@ -94,7 +94,7 @@ BEGIN
             and (p_unidade       is null or (p_unidade       is not null and a1.sq_unidade        = p_unidade))
             and (p_gestora       is null or (p_gestora       is not null and b.unidade_gestora    = p_gestora))
             and (p_ativo         is null or (p_ativo         is not null and b.ativo              = p_ativo))
-            and (p_tipo          is null or (p_tipo          is not null and b.sq_tipo_recurso    = p_tipo))
+            and (p_tipo          is null or (p_tipo          is not null and b.sq_tipo_recurso    = to_number(p_tipo)))
             and (p_ref_i         is null or (p_ref_i         is not null and f.sq_siw_solicitacao is not null));
    Elsif p_restricao = 'EXISTEREC' Then
       -- Verifica se o recurso já está alocado na solicitação
@@ -166,6 +166,7 @@ BEGIN
             and (c.disponibilidade_tipo   = 1 or
                  (c.disponibilidade_tipo  > 1 and p_ref_i between d.inicio and d.fim and p_ref_f between d.inicio and d.fim)
                 );
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

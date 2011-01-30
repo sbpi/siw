@@ -326,14 +326,14 @@ begin
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_ini_i          is null or (p_ini_i       is not null and (b1.sigla     <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (b1.sigla = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (b1.sigla     <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (b1.sigla = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and b.fim+1-sysdate<0))
+            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and cast(b.fim as date)+1<sysdate))
             and (p_proponente     is null or (p_proponente  is not null and acentos(d.proponente,null) like '%'||acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp      = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_demanda_pai       = p_sq_acao_ppa))
-            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))            
-            and (p_empenho        is null or (p_empenho     is not null and d1.sq_demanda_tipo     = p_empenho))            
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))
+            and (p_empenho        is null or (p_empenho     is not null and d1.sq_demanda_tipo     = to_number(p_empenho)))
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador          = p_pessoa) or
                  (p_tipo         = 2     and b1.sigla <> 'CI'  and b.executor             = p_pessoa and d.concluida = 'N') or
                  --(p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or

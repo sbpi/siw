@@ -277,7 +277,7 @@ BEGIN
          End If;
              
          -- Recupera o código interno  do acordo, gerado por trigger
-         select prefixo||'.'||substr(1000000+w_sequencial,2,6)||'/'||w_ano into p_codigo_interno 
+         select prefixo||'.'||substr(cast(1000000+w_sequencial as varchar),2,6)||'/'||w_ano into p_codigo_interno 
            from pa_documento 
           where sq_siw_solicitacao = w_chave;
          
@@ -294,13 +294,13 @@ BEGIN
           where sq_siw_solicitacao = w_chave;
       Else
          -- Recupera o código interno  do acordo, gerado por trigger
-         select prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2) into p_codigo_interno 
+         select prefixo||'.'||substr(cast(1000000+numero_documento as varchar),2,6)||'/'||ano||'-'||substr(cast(100+digito as varchar),2,2) into p_codigo_interno 
            from pa_documento 
           where sq_siw_solicitacao = w_chave;
       End If;
    Elsif p_operacao <> 'E' Then
       -- Recupera o código interno  do acordo, gerado por trigger
-      select prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2) into p_codigo_interno 
+      select prefixo||'.'||substr(cast(1000000+numero_documento as varchar),2,6)||'/'||ano||'-'||substr(cast(100+digito as varchar),2,2) into p_codigo_interno 
         from pa_documento 
        where sq_siw_solicitacao = p_chave;
    End If;

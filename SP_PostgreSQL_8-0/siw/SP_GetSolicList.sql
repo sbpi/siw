@@ -271,11 +271,12 @@ BEGIN
                                                                      )
                    inner             join siw_modulo           a1 on (a.sq_modulo                  = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                    = b.sq_menu)
-                      inner          join siw_tramite          b1 on (b.sq_siw_tramite             = b1.sq_siw_tramite)
-                      inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
-                                            where sq_menu = p_menu
+                      inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
+                                             from siw_solicitacao x
+                                            where x.sq_menu = p_menu
+                                              and (p_atividade is null or (p_atividade is not null and 0 < (select count(*) from pj_etapa_demanda where x.sq_siw_solicitacao = sq_siw_solicitacao and sq_projeto_etapa = p_atividade)))
                                           )                    b2 on (b.sq_siw_solicitacao         = b2.sq_siw_solicitacao)
+                      inner          join siw_tramite          b1 on (b.sq_siw_tramite             = b1.sq_siw_tramite)
                       left           join pe_plano             b3 on (b.sq_plano                   = b3.sq_plano)
                       inner          join gd_demanda           d  on (b.sq_siw_solicitacao         = d.sq_siw_solicitacao)
                       left           join gd_demanda_tipo      d1 on (d.sq_demanda_tipo            = d1.sq_demanda_tipo)
@@ -299,7 +300,7 @@ BEGIN
                    left              join eo_unidade           c  on (a.sq_unid_executora          = c.sq_unidade)
                    left              join pj_etapa_demanda     i  on (b.sq_siw_solicitacao         = i.sq_siw_solicitacao)
                       left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa           = q.sq_projeto_etapa)
-                   left              join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                   inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
                                              from siw_solic_log              x
                                                   inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                             where y.sq_menu = p_menu
@@ -328,14 +329,14 @@ BEGIN
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_ini_i          is null or (p_ini_i       is not null and (b1.sigla     <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (b1.sigla = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (b1.sigla     <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (b1.sigla = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and b.fim+1-now()<0))
+            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and cast(b.fim as date)+1<now()))
             and (p_proponente     is null or (p_proponente  is not null and acentos(d.proponente,null) like '%'||acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp      = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_demanda_pai       = to_number(p_sq_acao_ppa)))
-            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))            
-            and (p_empenho        is null or (p_empenho     is not null and d1.sq_demanda_tipo     = p_empenho))            
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))
+            and (p_empenho        is null or (p_empenho     is not null and d1.sq_demanda_tipo     = to_number(p_empenho)))
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador          = p_pessoa) or
                  (p_tipo         = 2     and b1.sigla <> 'CI'  and b.executor             = p_pessoa and d.concluida = 'N') or
                  --(p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
@@ -441,6 +442,10 @@ BEGIN
                    inner       join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner       join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
                       inner    join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                      inner    join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
+                                             from siw_solicitacao
+                                            where sq_menu = p_menu
+                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left     join pe_plano                   b3 on (b.sq_plano                 = b3.sq_plano)
                       left     join siw_coordenada_solicitacao ba on (b.sq_siw_solicitacao       = ba.sq_siw_solicitacao)
                       left     join siw_coordenada             bb on (ba.sq_siw_coordenada       = bb.sq_siw_coordenada)
@@ -517,10 +522,6 @@ BEGIN
                                     )                          j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left      join pj_projeto_log             k  on (j.chave                    = k.sq_siw_solic_log)
                        left    join sg_autenticacao            l  on (k.destinatario             = l.sq_pessoa)
-                      inner    join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
-                                            where sq_menu = p_menu
-                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = to_number(p_sq_acao_ppa) or
@@ -1485,7 +1486,7 @@ BEGIN
                 case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                d.prefixo||'.'||substr(cast(1000000+d.numero_documento as varchar),2,6)||'/'||d.ano||'-'||substr(cast(100+d.digito as varchar),2,2) as protocolo,
                 case d.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo_protocolo,
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
@@ -1612,7 +1613,7 @@ BEGIN
             and (p_solicitante    is null or (p_solicitante is not null and d7.sq_especie_documento = p_solicitante))
             and (p_proponente     is null or (p_proponente  is not null and (to_char(d.pessoa_origem) = p_proponente or d2.nome_indice like '%'||acentos(p_proponente)||'%' or d2.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
             and (p_prioridade     is null or (p_prioridade  is not null and k.sq_tipo_despacho is not null and k.sq_tipo_despacho = p_prioridade))
-            and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
+            and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(cast(1000000+d.numero_documento as varchar),2,6)||'/'||d.ano||'-'||substr(cast(100+d.digito as varchar),2,2) = p_palavra))
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.ativo = 'S' and b.fim+1-now()<0))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))

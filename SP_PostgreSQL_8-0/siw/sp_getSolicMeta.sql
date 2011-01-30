@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getSolicMeta
+﻿create or replace FUNCTION sp_getSolicMeta
    (p_cliente         numeric,
     p_usuario         numeric,
     p_chave           numeric,
@@ -112,7 +112,7 @@ BEGIN
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade         = p_unidade))
             and (p_titulo    is null or (p_titulo    is not null and acentos(b.nome)      like '%'||acentos(p_titulo)||'%'))
             and (p_ativo     is null or (p_ativo     is not null and b.ativo              = p_ativo))
-            and (p_tipo      is null or (p_tipo      is not null and b.sq_tipo_indicador  = p_tipo))
+            and (p_tipo      is null or (p_tipo      is not null and b.sq_tipo_indicador  = to_number(p_tipo)))
             and (p_pais      is null or (p_pais      is not null and a.sq_pais            = p_pais))
             and (p_base      is null or (p_base      is not null and a.base_geografica    = p_base))
             and (p_regiao    is null or (p_regiao    is not null and a.sq_regiao          = p_regiao))
@@ -210,7 +210,7 @@ BEGIN
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade         = p_unidade))
             and (p_titulo    is null or (p_titulo    is not null and acentos(b.nome)      like '%'||acentos(p_titulo)||'%'))
             and (p_ativo     is null or (p_ativo     is not null and b.ativo              = p_ativo))
-            and (p_tipo      is null or (p_tipo      is not null and b.sq_tipo_indicador  = p_tipo))
+            and (p_tipo      is null or (p_tipo      is not null and b.sq_tipo_indicador  = to_number(p_tipo)))
             and (p_pais      is null or (p_pais      is not null and a.sq_pais            = p_pais))
             and (p_base      is null or (p_base      is not null and a.base_geografica    = p_base))
             and (p_regiao    is null or (p_regiao    is not null and a.sq_regiao          = p_regiao))
@@ -247,6 +247,7 @@ BEGIN
                                                                               )
                                               )
                    );
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

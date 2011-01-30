@@ -1,4 +1,4 @@
-create or replace function CalculaIDCC(p_chave numeric, p_data date, p_inicio date )  RETURNS float AS $$
+﻿create or replace function CalculaIDCC(p_chave numeric, p_data date DEFAULT NULL, p_inicio date DEFAULT NULL)  RETURNS float AS $$
 DECLARE
   Result float := 0;
   w_cliente    numeric(18);
@@ -41,4 +41,5 @@ BEGIN
       end if;
   end loop;
 
-  Return Result;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+  Return Result;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetDataEspecial
+﻿create or replace FUNCTION SP_GetDataEspecial
    (p_cliente   numeric,
     p_chave     numeric,
     p_ano       varchar,
@@ -17,7 +17,7 @@ BEGIN
                 case a.tipo 
                      when 'E' then to_date(a.data_especial,'dd/mm/yyyy')
                      when 'I' then to_date(a.data_especial||'/'||coalesce(p_ano,to_char(now(),'yyyy')),'dd/mm/yyyy')
-                     else          VerificaDataMovel(coalesce(p_ano,to_char(now(),'yyyy')), a.tipo)
+                     else          VerificaDataMovel(to_number(coalesce(p_ano,to_char(now(),'yyyy'))), a.tipo)
                 end as data_formatada,
                 case a.expediente
                      when 'S' then ' (Exp. normal)'
@@ -37,7 +37,8 @@ BEGIN
          select a.tipo
            from eo_data_especial  a
           where a.cliente = p_cliente
-            and a.tipo not ('I','E');
-   End If;
+            and a.tipo not in ('I','E');
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

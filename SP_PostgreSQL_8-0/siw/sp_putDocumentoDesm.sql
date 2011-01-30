@@ -8,7 +8,7 @@ DECLARE
    w_chave_pai  numeric(18);
    w_data_atual date := now();
 BEGIN
-   select a.sq_documento_pai, b.prefixo||'.'||substr(1000000+b.numero_documento,2,6)||'/'||b.ano||'-'||substr(100+b.digito,2,2)
+   select a.sq_documento_pai, b.prefixo||'.'||substr(cast(1000000+b.numero_documento as varchar),2,6)||'/'||b.ano||'-'||substr(cast(100+b.digito as varchar),2,2)
      into w_chave_pai,        w_protocolo
      from pa_documento a
           inner join pa_documento b on (a.sq_documento_pai = b.sq_siw_solicitacao)

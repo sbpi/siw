@@ -54,7 +54,7 @@ begin
   m      := floor((a + (11 * h) + (22 * l)) / 451);
   p      := floor((h + l - (7 * m) + 114) / 31);
   q      := Mod((h + l - (7 * m) + 114), 31);
-  pascoa := to_date(substr(100+q+1,2,2)||'/'||substr(100+p,2,2)||'/'||substr(10000+p_ano,2,4),'dd/mm/yyyy');
+  pascoa := to_date(substr(cast(100+q+1 as varchar),2,2)||'/'||substr(cast(100+p as varchar),2,2)||'/'||substr(cast(10000+p_ano as varchar),2,4),'dd/mm/yyyy');
   
   -- Verifica a data a ser retornada, em função do tipo informado
   If    l_tipo = 'D' Then Result := pascoa;

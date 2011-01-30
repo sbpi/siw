@@ -12,8 +12,8 @@ DECLARE
 BEGIN
   select nextVal('sq_cpf_especial') into w_Sequencial;
   If p_tipo = 1
-     Then w_Codigo := substr(1000000000+w_Sequencial,2,9);
-     Else w_Codigo := substr(1000000000000+w_Sequencial,2,12);
+     Then w_Codigo := substr(cast(1000000000+w_Sequencial as varchar),2,9);
+     Else w_Codigo := substr(cast(1000000000000+w_Sequencial as varchar),2,12);
   End If;
   w_DV     := ValidaCNPJCPF(w_Codigo,1);
   w_DV     := substr(w_Dv,1,1)||substr(w_DV,2,1);

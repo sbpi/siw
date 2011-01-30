@@ -60,7 +60,7 @@ BEGIN
       select null codigo_interno, d.vencimento, null sq_siw_solicitacao, null quitacao, 
              'S' aviso_prox_conc, d.vencimento-3 aviso,
              case substr(b1.sigla,3,1) when 'D' Then round(d.valor,2) * -1 else round(d.valor,2) end valor, 
-             'Pagamento da parcela '||substr(1000+d.ordem,2,3)||', contrato '||b.codigo_interno||' ('||a.sq_siw_solicitacao||')' descricao, 
+             'Pagamento da parcela '||substr(cast(1000+d.ordem as varchar),2,3)||', contrato '||b.codigo_interno||' ('||a.sq_siw_solicitacao||')' descricao, 
              b.conclusao, d.vencimento fim,
              to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_conclusao,
              substr(b1.sigla, 3,1) tipo,

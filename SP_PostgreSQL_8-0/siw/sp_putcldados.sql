@@ -53,7 +53,7 @@ BEGIN
       
       If substr(w_sigla_menu,1,4) = 'CLLC' and (w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade)) Then
         -- Recupera o número do certame
-        CL_CriaParametro(p_chave, w_numero_certame);
+        PERFORM CL_CriaParametro(p_chave, w_numero_certame);
 
         -- Atualiza a tabela da licitação com os dados da análise
         Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
@@ -62,7 +62,7 @@ BEGIN
       If p_protocolo is not null Then
          -- Grava a chave do protocolo na solicitação
          update siw_solicitacao a
-           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2))
+           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(cast(1000000+numero_documento as varchar),2,6)||'/'||ano||'-'||substr(cast(100+digito as varchar),2,2))
          where sq_siw_solicitacao = p_chave;
       End If;
    ElsIf p_restricao = 'DADOS' Then
@@ -103,7 +103,7 @@ BEGIN
          (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade)
       Then
          -- Recupera o número do certame
-         CL_CriaParametro(p_chave, w_numero_certame);
+         PERFORM CL_CriaParametro(p_chave, w_numero_certame);
 
         -- Atualiza a tabela da licitação com os dados da análise
         Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
@@ -112,7 +112,7 @@ BEGIN
       If p_protocolo is not null Then
          -- Grava a chave do protocolo na solicitação
          update siw_solicitacao a
-           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2))
+           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(cast(1000000+numero_documento as varchar),2,6)||'/'||ano||'-'||substr(cast(100+digito as varchar),2,2))
          where sq_siw_solicitacao = p_chave;
       End If;
    ElsIf p_restricao = 'CONCLUSAO' Then

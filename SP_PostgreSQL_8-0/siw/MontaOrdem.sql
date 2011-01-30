@@ -1,31 +1,23 @@
-create or replace function MontaOrdem (p_chave in numeric, p_retorno in varchar) returns varchar as $$
+ï»¿create or replace function MontaOrdem (p_chave in numeric, p_retorno in varchar default null) returns varchar as $$
 --------------------------------------------------------
---Se p_retorno é diferente de nulo, monta a ordem usando
---números para permitir a correta ordenação dos registros 
+--Se p_retorno Ã© diferente de nulo, monta a ordem usando
+--nÃºmeros para permitir a correta ordenaÃ§Ã£o dos registros 
 --------------------------------------------------------
 declare
-  c_sq_projeto_etapa      numeric(18);
-  c_sq_etapa_pai          numeric(18);
-  c_ordem                 numeric(4);
-
-  c_ordens cursor (l_chave numeric) for
+  c_ordem cursor for
      select sq_projeto_etapa, sq_etapa_pai, ordem
        from pj_projeto_etapa
-      where sq_projeto_etapa in (select sq_projeto_etapa from sp_fGetEtapaList(l_chave,0,'UP')); 
+      where sq_projeto_etapa in (select sq_projeto_etapa from connectby('pj_projeto_etapa','sq_etapa_pai','sq_projeto_etapa',to_char(p_chave),0) as (sq_projeto_etapa numeric, sq_etapa_pai numeric, level int)); 
 
   Result varchar(2000) := '';
 begin
   If p_chave is null Then return null; End If;
-  open c_ordens (p_chave);
-  loop
-     fetch c_ordens into c_sq_projeto_etapa, c_sq_etapa_pai, c_ordem;
-     If Not Found Then Exit; End If;
+  for crec in c_ordem loop
      If p_retorno is null 
-        Then Result :=  c_ordem||'.'||Result;
-        Else Result := substr(1000+c_ordem,2,3)||Result;
+        Then Result :=  crec.ordem||'.'||Result;
+        Else Result := substr(cast(1000+crec.ordem as varchar),2,3)||Result;
      End If;
   end loop;
-  close c_ordens;
-  If p_retorno is null Then Result := substr(Result,1); End If;
+  If p_retorno is null Then Result := substr(Result,1,length(Result)-1); End If;
   return(Result);
 end; $$ language 'plpgsql' volatile;

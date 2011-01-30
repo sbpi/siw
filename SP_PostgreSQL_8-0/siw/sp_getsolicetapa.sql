@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetSolicEtapa
+﻿create or replace FUNCTION SP_GetSolicEtapa
    (p_chave      numeric,
     p_chave_aux  numeric,
     p_restricao  varchar,
@@ -12,12 +12,7 @@ BEGIN
       select a.sq_projeto_etapa, a.titulo
         from pj_projeto_etapa a
        where a.sq_siw_solicitacao = p_chave
-         and a.sq_projeto_etapa not in (select b.sq_projeto_etapa
-                                          from pj_projeto_etapa b
-                                         where b.sq_siw_solicitacao   = p_chave
-                                        start with b.sq_projeto_etapa = p_chave_aux
-                                        connect by prior b.sq_projeto_etapa = b.sq_etapa_pai
-                                       ) 
+         and a.sq_projeto_etapa not in (select sq_projeto_etapa from connectby('pj_projeto_etapa','sq_projeto_etapa','sq_etapa_pai',to_char(p_chave_aux),0) as (pj_projeto_etapa numeric, sq_projeto_etapa numeric, level int))
       order by acentos(a.titulo);
    ElsIf p_restricao = 'LISTA' Then
       -- Recupera todas as etapas de um projeto
@@ -91,7 +86,7 @@ BEGIN
                                 )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux  is null or (p_chave_aux  is not null and a.sq_projeto_etapa = p_chave_aux))
-            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.pacote_trabalho = 'S' and a.sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa connect by prior sq_projeto_etapa = sq_etapa_pai start with sq_projeto_etapa = p_chave_aux2)));
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.pacote_trabalho = 'S' and a.sq_projeto_etapa in (select sq_projeto_etapa from connectby('pj_projeto_etapa','sq_projeto_etapa','sq_etapa_pai',to_char(p_chave_aux2),0) as (pj_projeto_etapa numeric, sq_projeto_etapa numeric, level int))));
    ElsIf p_restricao = 'QUESTAO' Then
       -- Recupera todas as etapas de um projeto
       open p_result for 
@@ -296,6 +291,7 @@ BEGIN
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das etapas
       open p_result for 
+         select *, (length(ordenacao)/3) as level from (
          select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
@@ -308,7 +304,7 @@ BEGIN
                 coalesce(o.qt_anexo,0) qt_anexo,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 acentos(a.titulo,1) as ac_titulo,
-                level
+                montaOrdem(a.sq_projeto_etapa, 'ordenacao') as ordenacao
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
@@ -355,9 +351,8 @@ BEGIN
                                 )                   o on (o.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'))
-         connect by prior a.sq_projeto_etapa = a.sq_etapa_pai
-         start with coalesce(a.sq_etapa_pai,0) = coalesce(p_chave_aux,0)
-         order by montaOrdem(a.sq_projeto_etapa, 'ordenacao');
+         ) dad
+         order by ordenacao;
    Elsif p_restricao = 'FILHOS' Then
       -- Recupera as etapas subordinadas a outra do mesmo projeto
       open p_result for 
@@ -378,6 +373,7 @@ BEGIN
            from pj_projeto_etapa   a
           where a.sq_siw_solicitacao = p_chave
             and acentos(a.titulo,1)  = p_restricao;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

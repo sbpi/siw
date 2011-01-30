@@ -1,4 +1,4 @@
-create or replace function CalculaIDC(p_chave in numeric, p_data in timestamp, p_inicio in timestamp) returns float as $$
+﻿create or replace function CalculaIDC(p_chave in numeric, p_data in timestamp DEFAULT NULL, p_inicio in timestamp DEFAULT NULL) returns float as $$
 declare
   Result      float := 0;
   w_existe    numeric(18);

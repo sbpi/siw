@@ -38,11 +38,11 @@ BEGIN
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.descricao,
              c.numero_original,
-             c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
+             c.prefixo||'.'||substr(cast(1000000+c.numero_documento as varchar),2,6)||'/'||c.ano||'-'||substr(cast(100+c.digito as varchar),2,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case when c5.sq_siw_solicitacao is not null
-                  then c5.prefixo||'.'||substr(1000000+c5.numero_documento,2,6)||'/'||c5.ano||'-'||substr(100+c5.digito,2,2) 
+                  then c5.prefixo||'.'||substr(cast(1000000+c5.numero_documento as varchar),2,6)||'/'||c5.ano||'-'||substr(cast(100+c5.digito as varchar),2,2) 
                   else null
              end as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -269,7 +269,7 @@ BEGIN
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
              coalesce(c5.qtd,0) as qt_apensos,
              case when b.sq_siw_solicitacao is not null
-                  then b3.prefixo||'.'||substr(1000000+b3.numero_documento,2,6)||'/'||b3.ano||'-'||substr(100+b3.digito,2,2) 
+                  then b3.prefixo||'.'||substr(cast(1000000+b3.numero_documento as varchar),2,6)||'/'||b3.ano||'-'||substr(cast(100+b3.digito as varchar),2,2) 
                   else null
              end as protocolo_pai,
              c6.sigla as sg_unidade_posse, c6.nome as nm_unidade_posse,
@@ -390,7 +390,7 @@ BEGIN
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case when c5.sq_siw_solicitacao is not null
-                  then c5.prefixo||'.'||substr(1000000+c5.numero_documento,2,6)||'/'||c5.ano||'-'||substr(100+c5.digito,2,2) 
+                  then c5.prefixo||'.'||substr(cast(1000000+c5.numero_documento as varchar),2,6)||'/'||c5.ano||'-'||substr(cast(100+c5.digito as varchar),2,2) 
                   else null
              end as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -484,7 +484,7 @@ BEGIN
       -- Verifica a existência de um protocolo
       open p_result for
       select a.sq_siw_solicitacao, a.processo,
-             a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2) as protocolo
+             a.prefixo||'.'||substr(cast(1000000+a.numero_documento as varchar),2,6)||'/'||a.ano||'-'||substr(cast(100+a.digito as varchar),2,2) as protocolo
         from siw_solicitacao         b
              inner join pa_documento a on (b.sq_siw_solicitacao = a.sq_siw_solicitacao)
        where b.sq_menu          = p_menu

@@ -26,7 +26,7 @@ create or replace function dados_solic(p_chave in number) return varchar2 is
   w_reg  number(18);
 
   cursor c_dados is
-     select a.sq_menu, a.nome, a.sigla, a.p1, a.p2, a.p3, a.p4,
+     select a.sq_menu, a.nome, a.sigla, coalesce(to_char(a.p1),'') as p1, coalesce(to_char(a.p2),'') as p2, coalesce(to_char(a.p3),'') as p3, coalesce(to_char(a.p4),'') as p4,
             coalesce(a1.link, replace(lower(a.link),'inicial','visual')) as link,
             a2.sigla as sg_modulo,
             b.sq_siw_solicitacao,

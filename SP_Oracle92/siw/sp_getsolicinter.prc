@@ -8,8 +8,8 @@ begin
       -- Recupera os interessados de uma solicitação
       -- para envio de evento
       open p_result for 
-        select null as sq_solicitacao_interessado, null as sq_siw_solicitacao, null as sq_pessoa, null as sq_tipo_interessado,
-               null as tipo_visao, 'S' as envia_email,
+        select 0 as sq_solicitacao_interessado, 0 as sq_siw_solicitacao, 0 as sq_pessoa, 0 as sq_tipo_interessado,
+               0 as tipo_visao, 'S' as envia_email,
                b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
                c.email, c.ativo,
                d.sigla lotacao,
@@ -74,7 +74,7 @@ begin
       -- Recupera os interessados de uma solicitação
       -- tanto no formato novo quanto no formato antigo da tabela de interessados
       open p_result for 
-         select null as sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, null as sq_tipo_interessado,
+         select 0 as sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, 0 as sq_tipo_interessado,
                 a.tipo_visao, a.envia_email,
                 b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
                 c.email, c.ativo,
@@ -88,7 +88,7 @@ begin
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_pessoa = p_chave_aux))
          UNION
-         select null as sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, null as sq_tipo_interessado,
+         select 0 as sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, 0 as sq_tipo_interessado,
                 a.tipo_visao, a.envia_email,
                 b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
                 c.email, c.ativo,

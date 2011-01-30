@@ -13,7 +13,7 @@ BEGIN
   w_minutos := w_minutos - (w_horas*60);
   
   -- Configura o formato de saída
-  Result    := case when length(w_horas)=1 then '0' else '' end||w_horas||':'||substr(100+w_minutos,2,2);
+  Result    := case when length(w_horas)=1 then '0' else '' end||w_horas||':'||substr(cast(100+w_minutos as varchar),2,2);
   If w_sinal < 0 Then Result := '-'||Result; End If;
   
   return(Result);END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

@@ -79,12 +79,12 @@ begin
           (a.tipo        = 'E' and a.data_especial = w_data) or
           (a.tipo        in ('S','C','Q','P','D','H') and
            a.sq_pais     = w_pais and
-           ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-            (a.tipo      = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
-            (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
-            (a.tipo      = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
-            (a.tipo      = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
-            (a.tipo      = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+           ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'S')) or
+            (a.tipo      = 'C' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'C')) or
+            (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'Q')) or
+            (a.tipo      = 'P' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'P')) or
+            (a.tipo      = 'D' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'D')) or
+            (a.tipo      = 'H' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'H'))
            )
           )
          );
@@ -105,12 +105,12 @@ begin
              (a.tipo        = 'E' and a.data_especial = w_data) or
              (a.tipo        in ('S','C','Q','P','D','H') and
               a.sq_pais     = w_pais and
-              ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-               (a.tipo      = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
-               (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
-               (a.tipo      = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
-               (a.tipo      = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
-               (a.tipo      = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+              ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'S')) or
+               (a.tipo      = 'C' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'C')) or
+               (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'Q')) or
+               (a.tipo      = 'P' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'P')) or
+               (a.tipo      = 'D' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'D')) or
+               (a.tipo      = 'H' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'H'))
               )
              )
             );
@@ -131,12 +131,12 @@ begin
                 (a.tipo        = 'E' and a.data_especial = w_data) or
                 (a.tipo        in ('S','C','Q','P','D','H') and
                  a.sq_pais     = w_pais and
-                 ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-                  (a.tipo      = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
-                  (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
-                  (a.tipo      = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
-                  (a.tipo      = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
-                  (a.tipo      = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+                 ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'S')) or
+                  (a.tipo      = 'C' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'C')) or
+                  (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'Q')) or
+                  (a.tipo      = 'P' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'P')) or
+                  (a.tipo      = 'D' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'D')) or
+                  (a.tipo      = 'H' and p_data = VerificaDataMovel(to_number(to_char(p_data,'yyyy')),'H'))
                  )
                 )
                );

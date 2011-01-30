@@ -71,7 +71,7 @@ BEGIN
                 c.numero_original,    c.numero_documento,                c.interno,   c.pasta,
                 case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
                 case c.processo when 'S' then c.data_autuacao else d.inicio end as dt_limite,
-                c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
+                c.prefixo||'.'||substr(cast(1000000+c.numero_documento as varchar),2,6)||'/'||c.ano||'-'||substr(cast(100+c.digito as varchar),2,2) as protocolo,
                 a.arquivo_guia_numero||'/'||a.arquivo_guia_ano||'-'||coalesce(b3.sigla,b.sigla) as guia_transferencia, 
                 case when c.pessoa_origem is null then d1.sq_unidade else c1.sq_pessoa end as sq_origem,
                 case when c.pessoa_origem is null then d1.nome else c1.nome end as nm_origem,

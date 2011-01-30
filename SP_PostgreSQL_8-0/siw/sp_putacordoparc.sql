@@ -23,7 +23,7 @@ DECLARE
    
    w_cont        numeric(4) := 1;
    w_vencimento  date;
-   w_dia         varchar(2) := substr(100+p_dia_vencimento,2,2);
+   w_dia         varchar(2) := substr(cast(100+p_dia_vencimento as varchar),2,2);
    w_valor_1     numeric(18,4);
    w_valor       numeric(18,4);
    w_valor_n     numeric(18,4);

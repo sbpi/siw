@@ -18,13 +18,13 @@ BEGIN
    If w_existe > 0 Then
 
       -- Recupera o número atual do protocolo
-      select a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2)
+      select a.prefixo||'.'||substr(cast(1000000+a.numero_documento as varchar),2,6)||'/'||a.ano||'-'||substr(cast(100+a.digito as varchar),2,2)
         into w_protocolo
         from pa_documento a
        where sq_siw_solicitacao = p_chave;
        
       -- Gera o novo número de protocolo
-      w_codigo := p_prefixo||'.'||substr(1000000+p_numero,2,6)||'/'||p_ano;
+      w_codigo := p_prefixo||'.'||substr(cast(1000000+p_numero as varchar),2,6)||'/'||p_ano;
       w_digito := validaCnpjCpf(w_codigo,'gerar');
       w_codigo := w_codigo||'-'||w_digito;
 

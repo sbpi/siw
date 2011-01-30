@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetPlanoEstrategico
+﻿create or replace FUNCTION SP_GetPlanoEstrategico
    (p_cliente   numeric,
     p_chave     numeric,
     p_chave_pai numeric,
@@ -62,12 +62,7 @@ BEGIN
                            group by y.sq_plano
                           ) e on (a.sq_plano = e.sq_plano)
           where a.cliente  = p_cliente
-            and a.sq_plano not in (select x.sq_plano
-                                       from pe_plano x
-                                      where x.cliente   = p_cliente
-                                     start with x.sq_plano = p_chave
-                                     connect by prior x.sq_plano = x.sq_plano_pai
-                                    )
+            and a.sq_plano not in (select sq_plano from connectby('pe_plano','sq_plano','sq_plano_pai',to_char(p_chave),0) as (sq_plano numeric, sq_plano_pai numeric, level int))
          order by a.titulo;
    Elsif upper(p_restricao) = 'IRMAOS' Then
      -- Recupera todos os planos estratégicos vinculados ao mesmo pai do plano informado, menos o que foi informado
@@ -259,6 +254,7 @@ BEGIN
                    )
             order by a.titulo;
       End If;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

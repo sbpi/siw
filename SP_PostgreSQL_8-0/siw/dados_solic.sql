@@ -25,21 +25,9 @@
 declare
   Result        varchar(32767) := null;
   w_reg         numeric(18);
-  c_solic       siw_solicitacao.sq_siw_solicitacao%type;
-  c_nome        siw_menu.nome%type;
-  c_codigo      varchar(255);
-  c_titulo      varchar(4000);
-  c_sq_menu     siw_menu.sq_menu%type;
-  c_sigla       siw_menu.sigla%type;
-  c_p1          siw_menu.p1%type;
-  c_p2          siw_menu.p2%type;
-  c_p3          siw_menu.p3%type;
-  c_p4          siw_menu.p4%type;
-  c_link        siw_menu.link%type;
-  c_sg_modulo   siw_menu.sigla%type;
 
-  c_dados cursor (l_chave numeric) for
-     select a.sq_menu, a.nome, a.sigla, a.p1, a.p2, a.p3, a.p4,
+  c_dados cursor for
+     select a.sq_menu, a.nome, a.sigla, coalesce(cast(a.p1 as varchar),'') as p1, coalesce(cast(a.p2 as varchar),'') as p2, coalesce(cast(a.p3 as varchar),'') as p3, coalesce(cast(a.p4 as varchar),'') as p4,
             coalesce(a1.link, replace(lower(a.link),'inicial','visual')) as link,
             a2.sigla as sg_modulo,
             b.sq_siw_solicitacao,
@@ -59,13 +47,9 @@ begin
      -- Verifica se a solicitação existe e, se existir, recupera seus dados
      select count(sq_siw_solicitacao) into w_reg from siw_solicitacao where sq_siw_solicitacao = p_chave;
      if w_reg > 0 then
-        open c_dados (p_chave);
-        loop
-          fetch c_dados into c_sq_menu, c_nome, c_sigla, c_p1, c_p2, c_p3, c_p4, c_link, c_sg_modulo, c_solic, c_codigo, c_titulo;
-          If Not Found Then Exit; End If;
-           Result := c_nome||': '||c_codigo||'|@|'||c_codigo||'|@|'||c_titulo||'|@|'||c_sq_menu||'|@|'||c_nome||'|@|'||c_sigla||'|@|'||c_p1||'|@|'||c_p2||'|@|'||c_p3||'|@|'||c_p4||'|@|'||c_link||'|@|'||c_sg_modulo;
+        for crec in c_dados loop
+            Result := crec.nome||': '||crec.codigo||'|@|'||crec.codigo||'|@|'||crec.titulo||'|@|'||crec.sq_menu||'|@|'||crec.nome||'|@|'||crec.sigla||'|@|'||crec.p1||'|@|'||crec.p2||'|@|'||crec.p3||'|@|'||crec.p4||'|@|'||crec.link||'|@|'||crec.sg_modulo;
         end loop;
-        close c_dados;
      end if;
   end if;
   return(Result);

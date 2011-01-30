@@ -1,10 +1,11 @@
-﻿create or replace view vw_calendario as
-select chave, cliente, to_char(data_formatada,'yyyy') as ano, data_formatada, nome, expediente, nm_expediente
+﻿drop view vw_calendario;
+create or replace view vw_calendario as
+select chave, cliente, to_number(to_char(data_formatada,'yyyy')) as ano, data_formatada, nome, expediente, nm_expediente
   from (select a.sq_data_especial as chave, a.cliente, 
               case a.tipo 
                    when 'E' then to_date(a.data_especial,'dd/mm/yyyy')
                    when 'I' then to_date(a.data_especial||'/'||coalesce(b.ano,to_number(to_char(now(),'yyyy'))),'dd/mm/yyyy')
-                   else          VerificaDataMovel(coalesce(to_char(b.ano),to_char(now(),'yyyy')), a.tipo)
+                   else          VerificaDataMovel(coalesce(b.ano,to_number(to_char(now(),'yyyy'))), a.tipo)
               end as data_formatada,
               a.nome,
               a.expediente,

@@ -15,7 +15,7 @@ BEGIN
                 b.inicio,             b.fim,                         b.descricao,
                 d.numero_original,    d.numero_documento,            d.ano,
                 d.prefixo,            d.digito,                      d.interno,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                d.prefixo||'.'||substr(cast(1000000+d.numero_documento as varchar),2,6)||'/'||d.ano||'-'||substr(cast(100+d.digito as varchar),2,2) as protocolo,
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
                 d.data_autuacao,      d.pessoa_origem,               d.processo,
                 d.circular,           d.copias,                      d.volumes,

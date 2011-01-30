@@ -239,7 +239,7 @@ BEGIN
       -- Recupera a chave do protocolo
       select sq_siw_solicitacao into w_protocolo_siw 
         from pa_documento 
-       where p_numero_processo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2);
+       where p_numero_processo = prefixo||'.'||substr(cast(1000000+numero_documento as varchar),2,6)||'/'||ano||'-'||substr(cast(100+digito as varchar),2,2);
        
       -- Grava a chave do protocolo na solicitação
       update siw_solicitacao a set a.protocolo_siw = w_protocolo_siw where sq_siw_solicitacao = w_chave;

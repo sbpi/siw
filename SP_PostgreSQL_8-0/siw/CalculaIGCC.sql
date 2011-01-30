@@ -1,4 +1,4 @@
-create or replace function CalculaIGCC(p_chave numeric)  RETURNS float AS $$
+﻿create or replace function CalculaIGCC(p_chave numeric)  RETURNS float AS $$
 DECLARE
   Result float := 0;
   w_cliente numeric(18);
@@ -35,4 +35,5 @@ BEGIN
   select b.sq_pessoa into w_cliente from siw_solicitacao a join siw_menu b on a.sq_menu = b.sq_menu where a.sq_siw_solicitacao = p_chave;
   
   for crec in c_dados (w_cliente) loop Result := (crec.igcc * 100); end loop;
-  Return Result;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+  Return Result;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
