@@ -1,4 +1,4 @@
-﻿CREATE OR REPLACE FUNCTION siw.SP_GetDeskTop
+﻿CREATE OR REPLACE FUNCTION SP_GetDeskTop
    (p_cliente   numeric,
     p_usuario   numeric,
     p_ano       numeric,
@@ -23,32 +23,41 @@ begin
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd, y.qtd as qtd_solic
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
-              inner join (select sq_menu, count(*) as qtd 
-                            from (select c.sq_menu, d.sq_siw_solicitacao
-                                    from siw_menu                        c
-                                         inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu and e.sigla <> 'CI')
-                                         inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
-                                   where c.sq_pessoa = p_cliente
-                                     and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
-                                     and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
-                                     and (('N'    = c.consulta_opiniao and d.conclusao is null) or
-                                          ('S'    = c.consulta_opiniao and d.opiniao is null)
-                                         )
-                                     and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
-                                     and acesso(d.sq_siw_solicitacao, p_usuario,null) > 0
-                                 ) z
-                          group by sq_menu
-                         )          y on (v.sq_menu = y.sq_menu)
-              left  join (select c.sq_menu, count(*) as qtd 
+              inner join (select c.sq_menu, count(d.sq_siw_solicitacao) as qtd
                             from siw_menu                        c
-                                 inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu and e.sigla <> 'CI')
-                                 inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
-                                 inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                 inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
+                                   inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
+                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                  from siw_solicitacao        x
                                                       inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
                                                                                    y.sq_pessoa      = p_cliente and
                                                                                    y.sigla          <> 'PADCAD'
                                                                                   )
+                                                      inner join siw_tramite z on (x.sq_siw_tramite = z.sq_siw_tramite and z.sigla not in ('CI','CA'))
+                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
+                                              )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                           where c.sq_pessoa = p_cliente
+                             and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
+                             and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
+                             and (('N'    = c.consulta_opiniao and d.conclusao is null) or
+                                  ('S'    = c.consulta_opiniao and d.opiniao is null)
+                                 )
+                             and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
+                             and f.acesso > 0
+                             group by c.sq_menu
+                         )          y on (v.sq_menu = y.sq_menu)
+              left  join (select c.sq_menu, count(*) as qtd 
+                            from siw_menu                        c
+                                 inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
+                                   inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
+                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                                 from siw_solicitacao        x
+                                                      inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
+                                                                                   y.sq_pessoa      = p_cliente and
+                                                                                   y.sigla          <> 'PADCAD'
+                                                                                  )
+                                                      inner join siw_tramite z on (x.sq_siw_tramite = z.sq_siw_tramite and z.sigla not in ('CI','CA'))
+                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
@@ -61,38 +70,44 @@ begin
                                  )
                           group by c.sq_menu
                          )          x on (v.sq_menu = x.sq_menu)
-           where v.tramite   = 'S' 
+           where v.sq_pessoa = p_cliente
+             and v.tramite   = 'S' 
              and v.ativo     = 'S' 
-             and v.sq_pessoa = p_cliente
           order by or_modulo, nm_modulo, nm_servico;
    Else
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
+         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, 
+                v.sq_menu, v.nome as nm_servico, 
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
-              inner join (select c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
-                            FROM siw_tramite                    e
-                                 inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
-                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
-                                                   from siw_solicitacao
-                                                )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                                   inner   join siw_menu        c on (d.sq_menu        = c.sq_menu and
-                                                                      c.tramite        = 'S' and
-                                                                      c.ativo          = 'S' and
-                                                                      c.sq_pessoa      = p_cliente
-                                                                     ) 
-                                     inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
-                           where e.ativo  = 'S'
-                             and f.acesso > 0
-                             and 'CI'     <> coalesce(e.sigla,'nulo')
+              inner join (select /*+ ordered*/ c.sq_menu, count(d.sq_siw_solicitacao) as qtd
+                            from siw_menu                        c
+                                 inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
+                                   inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
+                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                                 from siw_solicitacao        x
+                                                      inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
+                                                                                   y.sq_pessoa      = p_cliente and
+                                                                                   y.sigla          <> 'PADCAD'
+                                                                                  )
+                                                      inner join siw_tramite z on (x.sq_siw_tramite = z.sq_siw_tramite and z.sigla not in ('CI','CA'))
+                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = 10136 and y.consulta_opiniao = 'S' and x.opiniao is null))
+                                              )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                           where c.sq_pessoa = p_cliente
+                             and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
+                             and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
+                             and (('N'    = c.consulta_opiniao and d.conclusao is null) or
+                                  ('S'    = c.consulta_opiniao and d.opiniao is null)
+                                 )
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
-                           group by c.sq_menu
+                             and f.acesso > 0
+                             group by c.sq_menu
                          )          x on (v.sq_menu = x.sq_menu)
-           where v.tramite   = 'S' 
+           where v.sq_pessoa = p_cliente
+             and v.tramite   = 'S' 
              and v.ativo     = 'S' 
-             and v.sq_pessoa = p_cliente
           order by or_modulo, nm_modulo, nm_servico;
    End If;
    return p_result;

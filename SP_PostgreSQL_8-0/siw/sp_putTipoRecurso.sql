@@ -1,6 +1,6 @@
-create or replace FUNCTION sp_putTipoRecurso
+﻿create or replace FUNCTION sp_putTipoRecurso
    (p_operacao    varchar,
-    p_cliente     varchar,
+    p_cliente     numeric,
     p_chave       numeric,
     p_chave_pai   numeric,
     p_nome        varchar,
@@ -35,4 +35,5 @@ BEGIN
    Elsif p_operacao = 'D' Then
       -- Desativa registro
       update eo_tipo_recurso set ativo = 'N' where sq_tipo_recurso = p_chave;
-   End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+   End If;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

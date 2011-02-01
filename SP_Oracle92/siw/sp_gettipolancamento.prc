@@ -86,7 +86,7 @@ begin
                     and a.sq_tipo_lancamento_pai is null
                     and a.despesa                = 'S'
                     and a.receita                = 'N'
-                )
+                ) x
          where rownum = 1;
    Else
       If length(p_restricao) = 25 Then

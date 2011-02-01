@@ -57,7 +57,7 @@ begin
             x_fase := x_fase||','''||to_number(l_item)||'''';
          End If;
          l_fase := substr(l_fase,Instr(l_fase,',')+1,200);
-         Exit when l_fase is null;
+         Exit when l_fase is null or instr(l_fase,'1') = 0;
       End Loop;
       x_fase := substr(x_fase,2,200);
    End If;
@@ -270,10 +270,13 @@ begin
                                                                      )
                    inner             join siw_modulo           a1 on (a.sq_modulo                  = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                    = b.sq_menu)
-                      inner          join siw_tramite          b1 on (b.sq_siw_tramite             = b1.sq_siw_tramite)
-                      inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
+                      inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
+                                             from siw_solicitacao       x
+                                                  inner join gd_demanda y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where x.sq_menu = p_menu
+                                              and (p_atividade is null or (p_atividade is not null and 0 < (select count(*) from pj_etapa_demanda where x.sq_siw_solicitacao = sq_siw_solicitacao and sq_projeto_etapa = p_atividade)))
                                           )                    b2 on (b.sq_siw_solicitacao         = b2.sq_siw_solicitacao)
+                      inner          join siw_tramite          b1 on (b.sq_siw_tramite             = b1.sq_siw_tramite)
                       left           join pe_plano             b3 on (b.sq_plano                   = b3.sq_plano)
                       inner          join gd_demanda           d  on (b.sq_siw_solicitacao         = d.sq_siw_solicitacao)
                       left           join gd_demanda_tipo      d1 on (d.sq_demanda_tipo            = d1.sq_demanda_tipo)
@@ -439,20 +442,13 @@ begin
                    inner       join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner       join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
                       inner    join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner    join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
+                      inner    join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
+                                             from siw_solicitacao x
+                                                  inner join pj_projeto y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left     join pe_plano                   b3 on (b.sq_plano                 = b3.sq_plano)
-                      left     join siw_coordenada_solicitacao ba on (b.sq_siw_solicitacao       = ba.sq_siw_solicitacao)
-                      left     join siw_coordenada             bb on (ba.sq_siw_coordenada       = bb.sq_siw_coordenada)
                       inner    join pj_projeto                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        left   join co_pessoa                  d1 on (d.outra_parte              = d1.sq_pessoa)
-                        left   join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
-                                             from pj_rubrica_cronograma x
-                                                  inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
-                                            where y.ativo = 'S'
-                                           group by y.sq_siw_solicitacao
-                                          )                    d2 on (d.sq_siw_solicitacao       = d2.sq_siw_solicitacao)
                         inner  join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
                           left join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
@@ -462,10 +458,19 @@ begin
                                                                       e2.tipo_respons            = 'S'           and
                                                                       e2.fim                     is null
                                                                      )
-                        left   join or_acao                    r  on (d.sq_siw_solicitacao       = r.sq_siw_solicitacao)
-                      inner    join co_cidade                  f  on (b.sq_cidade_origem         = f.sq_cidade)
+                        inner  join co_cidade                  f  on (b.sq_cidade_origem         = f.sq_cidade)
                         inner  join co_uf                      f1 on (f.sq_pais                  = f1.sq_pais and f.co_uf = f1.co_uf)
-                         inner join co_pais                    f2 on (f.sq_pais                  = f2.sq_pais)
+                        inner  join co_pais                    f2 on (f.sq_pais                  = f2.sq_pais)
+                        left   join siw_coordenada_solicitacao ba on (d.sq_siw_solicitacao       = ba.sq_siw_solicitacao)
+                        left   join siw_coordenada             bb on (ba.sq_siw_coordenada       = bb.sq_siw_coordenada)
+                        left   join co_pessoa                  d1 on (d.outra_parte              = d1.sq_pessoa)
+                        left   join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
+                                             from pj_rubrica_cronograma x
+                                                  inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                                            where y.ativo = 'S'
+                                           group by y.sq_siw_solicitacao
+                                          )                    d2 on (d.sq_siw_solicitacao       = d2.sq_siw_solicitacao)
+                        left   join or_acao                    r  on (d.sq_siw_solicitacao       = r.sq_siw_solicitacao)
                       left     join siw_solicitacao            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left   join siw_menu                   m1 on (m.sq_menu                  = m1.sq_menu)
                       left     join ct_cc                      n  on (b.sq_cc                    = n.sq_cc)
@@ -512,8 +517,7 @@ begin
                    left        join eo_unidade                 c   on (a.sq_unid_executora       = c.sq_unidade)
                    inner       join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
                                        from siw_solic_log              x
-                                            inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                      where y.sq_menu = p_menu
+                                            inner join pj_projeto      y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                      group by x.sq_siw_solicitacao
                                     )                          j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left      join pj_projeto_log             k  on (j.chave                    = k.sq_siw_solic_log)
@@ -616,15 +620,15 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.sq_plano,                    b.protocolo_siw,
-                b4.idcc,              b5.igcc,
-                case when b4.idcc < 75   then 'IDCC próximo da faixa desejável'
-                     when b4.idcc <= 100 then 'IDCC na faixa desejável'
+                b2.idcc,              b2.igcc,
+                case when b2.idcc < 75   then 'IDCC próximo da faixa desejável'
+                     when b2.idcc <= 100 then 'IDCC na faixa desejável'
                      else                     'IDCC fora da faixa desejável'
                 end as nm_idcc,
                 case d1.exibe_idec 
                      when 'N' then null
-                     else case when b4.idcc < 70   then 'IDEC fora da faixa desejável'
-                               when b4.idcc < 90   then 'IDEC próximo da faixa desejável'
+                     else case when b2.idcc < 70   then 'IDEC fora da faixa desejável'
+                               when b2.idcc < 90   then 'IDEC próximo da faixa desejável'
                                else                     'IDEC na faixa desejável'
                           end
                 end as nm_idec,
@@ -692,6 +696,19 @@ begin
                 end as titulo
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                   inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                   inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                      inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                      inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                      inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso, calculaIDCC(x.sq_siw_solicitacao) as idcc, calculaIGCC(x.sq_siw_solicitacao) as igcc
+                                             from siw_solicitacao        x
+                                                  inner join siw_menu    y on (x.sq_menu        = y.sq_menu and
+                                                                               y.sq_menu        = p_menu
+                                                                              )
+                                          )                    b2 on (d.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                        inner        join co_forma_pagamento   d7 on (a.sq_pessoa                = d7.cliente and
+                                                                      d.sq_forma_pagamento       = d7.sq_forma_pagamento
+                                                                     )
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
                                                                       a3.tipo_respons            = 'T'           and
                                                                       a3.fim                     is null
@@ -700,24 +717,8 @@ begin
                                                                       a4.tipo_respons            = 'S'           and
                                                                       a4.fim                     is null
                                                                      )
-                   inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
-                   inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
-                      inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
-                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      inner          join (select sq_siw_solicitacao, calculaIDCC(sq_siw_solicitacao) as idcc
-                                             from siw_solicitacao
-                                          )                    b4 on (b.sq_siw_solicitacao       = b4.sq_siw_solicitacao)
-                      inner          join (select sq_siw_solicitacao, calculaIGCC(sq_siw_solicitacao) as igcc
-                                             from siw_solicitacao
-                                          )                    b5 on (b.sq_siw_solicitacao       = b5.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (a.sq_pessoa                = b3.cliente and
                                                                       b.sq_plano                 = b3.sq_plano
-                                                                     )
-                      inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        inner        join co_forma_pagamento   d7 on (a.sq_pessoa                = d7.cliente and
-                                                                      d.sq_forma_pagamento       = d7.sq_forma_pagamento
                                                                      )
                         left         join (select x.sq_siw_solicitacao, sum(z.valor) as valor
                                              from fn_lancamento                  y
@@ -821,12 +822,12 @@ begin
                                                                             )
                                              )
                 )
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and ((p_sq_acao_ppa = 'IDCC PRÓXIMO DA FAIXA DESEJÁVEL' and b4.idcc <   75 ) or
-                                                                             (p_sq_acao_ppa = 'IDCC NA FAIXA DESEJÁVEL'         and b4.idcc >=  75 and b4.idcc <= 100 ) or
-                                                                             (p_sq_acao_ppa = 'IDCC FORA DA FAIXA DESEJÁVEL'    and b4.idcc >  100 ) or
-                                                                             (p_sq_acao_ppa = 'IDEC FORA DA FAIXA DESEJÁVEL'    and b4.idcc <   70 ) or
-                                                                             (p_sq_acao_ppa = 'IDEC PRÓXIMO DA FAIXA DESEJÁVEL' and b4.idcc >=  70 and b4.idcc < 90 ) or
-                                                                             (p_sq_acao_ppa = 'IDEC NA FAIXA DESEJÁVEL'         and b4.idcc >=  90 )
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and ((p_sq_acao_ppa = 'IDCC PRÓXIMO DA FAIXA DESEJÁVEL' and b2.idcc <   75 ) or
+                                                                             (p_sq_acao_ppa = 'IDCC NA FAIXA DESEJÁVEL'         and b2.idcc >=  75 and b2.idcc <= 100 ) or
+                                                                             (p_sq_acao_ppa = 'IDCC FORA DA FAIXA DESEJÁVEL'    and b2.idcc >  100 ) or
+                                                                             (p_sq_acao_ppa = 'IDEC FORA DA FAIXA DESEJÁVEL'    and b2.idcc <   70 ) or
+                                                                             (p_sq_acao_ppa = 'IDEC PRÓXIMO DA FAIXA DESEJÁVEL' and b2.idcc >=  70 and b2.idcc < 90 ) or
+                                                                             (p_sq_acao_ppa = 'IDEC NA FAIXA DESEJÁVEL'         and b2.idcc >=  90 )
                                                                             )
                                              )
                 )

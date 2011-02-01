@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getSolicSR
+﻿create or replace FUNCTION sp_getSolicSR
    (p_cliente      numeric,
     p_menu         numeric,
     p_pessoa       numeric,
@@ -41,15 +41,14 @@ DECLARE
     
     l_resp_unid  varchar(10000) :='';
     
-    --  que recupera as unidades nas quais o usuário informado é titular ou substituto
      c_unidades_resp CURSOR FOR
-      select distinct sq_unidade
-        from eo_unidade a
-      start with sq_unidade in (select sq_unidade
-                                  from eo_unidade_resp b
-                                 where b.sq_pessoa = p_pessoa
-                                   and b.fim       is null)
-      connect by prior sq_unidade = sq_unidade_pai;
+        select distinct a.sq_unidade
+          from eo_unidade_resp         b
+	       inner   join co_pessoa  c on (b.sq_pessoa     = c.sq_pessoa)
+	         inner join eo_unidade a on (c.sq_pessoa_pai = a.sq_pessoa)
+         where b.sq_pessoa = p_pessoa
+           and b.fim       is null
+           and a.sq_unidade in (select sq_unidade from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(b.sq_unidade),0) as (sq_unidade numeric, sq_unidade_pai numeric, level int));
       
 BEGIN
    If p_fase is not null Then
@@ -189,6 +188,7 @@ BEGIN
                    (p_restricao = 'GRSREXEC'     and b1.sigla='AT' and b.executor is not null)
                   )
                  );
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

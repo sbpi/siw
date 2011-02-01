@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetAgreeType
+﻿create or replace FUNCTION SP_GetAgreeType
    (p_chave     numeric,
     p_chave_aux numeric,
     p_cliente   numeric,
@@ -35,8 +35,8 @@ BEGIN
                  ((substr(p_restricao,3,1) = 'A' and a.modalidade = 'I') or
                   (substr(p_restricao,3,1) = 'B' and a.modalidade = 'E') or
                   (substr(p_restricao,3,1) = 'C' and a.modalidade = 'I') or
-                  (substr(p_restricao,3,1) = 'D' and a.modalidade not ('F','I')) or
-                  (substr(p_restricao,3,1) = 'Z' and a.modalidade not ('F','I')) or
+                  (substr(p_restricao,3,1) = 'D' and a.modalidade not in ('F','I')) or
+                  (substr(p_restricao,3,1) = 'Z' and a.modalidade not in ('F','I')) or
                   (substr(p_restricao,3,1) = 'R' and a.modalidade = 'F') or
                   (substr(p_restricao,3,1) = 'P' and a.modalidade = 'I')
                  )
@@ -90,12 +90,7 @@ BEGIN
                            )      b on (a.sq_tipo_acordo = b.sq_tipo_acordo)
           where a.cliente = p_cliente
             and 0         = coalesce(b.qtd,0)
-            and a.sq_tipo_acordo not (select x.sq_tipo_acordo
-                                           from ac_tipo_acordo x
-                                          where x.cliente   = p_cliente
-                                         start with x.sq_tipo_acordo = p_chave_aux
-                                         connect by prior x.sq_tipo_acordo = x.sq_tipo_acordo_pai
-                                        )
+            and a.sq_tipo_acordo not in (select sq_tipo_acordo from connectby('ac_tipo_acordo','sq_tipo_acordo','sq_tipo_acordo_pai',to_char(p_chave_aux),'0') as (sq_tipo_acordo numeric,sq_tipo_acordo_pai numeric, level int))
          order by a.nome;
    Elsif p_restricao = 'PAI' Then
       -- Recupera os tipos de contrato do cliente que não são subordinados a ninguém
@@ -142,6 +137,7 @@ BEGIN
          and a.sq_tipo_acordo <> coalesce(p_chave,0)
          and ((p_nome  is null) or (p_nome  is not null and a.nome  = p_nome))
          and ((p_sigla is null) or (p_sigla is not null and a.sigla = p_sigla));
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

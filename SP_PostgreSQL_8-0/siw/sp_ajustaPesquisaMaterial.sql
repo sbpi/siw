@@ -12,7 +12,7 @@ declare
            inner join cl_item_fornecedor b on (a.sq_material = b.sq_material)
      where a.cliente = coalesce(p_cliente,0)
        and (coalesce(p_todos,'-') = 'TODOS' or (coalesce(p_todos,'-') <> 'TODOS' and a.sq_material = coalesce(p_material,0)))
-       and (tipo = 'NORMAL' and b.fim >= sysdate or (tipo <> 'NORMAL'))
+       and (tipo = 'NORMAL' and b.fim >= now() or (tipo <> 'NORMAL'))
        and b.pesquisa = 'S'
     group by a.sq_material;
 begin

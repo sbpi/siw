@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getTipoMatServ
+﻿create or replace FUNCTION sp_getTipoMatServ
    (p_cliente   numeric,
     p_chave     numeric,
     p_chave_pai numeric,
@@ -72,12 +72,7 @@ BEGIN
                             group by x.sq_tipo_material
                            )      b on (a.sq_tipo_material = b.sq_tipo_material)
           where a.cliente = p_cliente
-            and a.sq_tipo_material not in (select x.sq_tipo_material
-                                              from cl_tipo_material x
-                                             where x.cliente   = p_cliente
-                                            start with x.sq_tipo_material = p_chave
-                                            connect by prior x.sq_tipo_material = x.sq_tipo_pai
-                                           )
+            and a.sq_tipo_material not in (select sq_tipo_material from connectby('cl_tipo_material','sq_tipo_material','sq_tipo_pai',to_char(p_chave),'0') as (sq_tipo_material numeric,sq_tipo_pai numeric, level int))
          order by a.nome;
    Elsif upper(p_restricao) = 'FOLHA' Then
      -- Recupera apenas os registros sem filhos
@@ -104,14 +99,12 @@ BEGIN
             and (p_sigla      is null or (p_sigla     is not null and a.sigla            = upper(p_sigla)))
             and (p_ativo      is null or (p_ativo     is not null and ((a.ativo          = 'S' and 0 = (select sum(case ativo when 'S' then 0 else 1 end)
                                                                                                           from cl_tipo_material
-                                                                                                        connect by prior sq_tipo_pai = sq_tipo_material
-                                                                                                        start with sq_tipo_material = a.sq_tipo_material
+                                                                                                         where sq_tipo_material in (select sq_tipo_material from connectby('cl_tipo_material','sq_tipo_pai','sq_tipo_material',to_char(a.sq_tipo_material),'0') as (sq_tipo_material numeric,sq_tipo_pai numeric, level int))
                                                                                                        )
                                                                        ) or
                                                                        (a.ativo          = 'N' and 0 < (select sum(case ativo when 'S' then 0 else 1 end)
                                                                                                           from cl_tipo_material
-                                                                                                        connect by prior sq_tipo_pai = sq_tipo_material
-                                                                                                        start with sq_tipo_material = a.sq_tipo_material
+                                                                                                         where sq_tipo_material in (select sq_tipo_material from connectby('cl_tipo_material','sq_tipo_pai','sq_tipo_material',to_char(a.sq_tipo_material),'0') as (sq_tipo_material numeric,sq_tipo_pai numeric, level int))
                                                                                                        )
                                                                        )
                                                                       )
@@ -213,13 +206,14 @@ BEGIN
                                group by x.sq_tipo_material
                               ) c on (a.sq_tipo_material = c.sq_tipo_material)
              where a.cliente     = p_cliente
-               and a.sq_tipo_pai = p_restricao
+               and a.sq_tipo_pai = to_number(p_restricao)
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
                and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
                and (p_classe     is null or (p_classe is not null and a.classe = p_classe))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))
             order by a.sigla,a.nome;
       End If;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

@@ -157,7 +157,7 @@ begin
                                group by x.sq_tipo_recurso
                               ) c on (a.sq_tipo_recurso = c.sq_tipo_recurso)
              where a.cliente     = p_cliente
-               and a.sq_tipo_pai = p_restricao
+               and a.sq_tipo_pai = to_number(p_restricao)
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
                and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))

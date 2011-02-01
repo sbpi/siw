@@ -766,7 +766,7 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
         if(is_resource($this->result)) { 
           for ($i = 0; $i < pg_num_fields($this->result); $i++) {
             if (pg_field_type($this->result, $i)=='timestamp' || pg_field_type($this->result, $i)=='date' || pg_field_type($this->result, $i)=='numeric') { $this->column_datatype[pg_field_name($this->result, $i)] = pg_field_type($this->result, $i); }
-            elseif (substr(strtolower(pg_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(pg_field_name($this->result, $i))] = 'timestamp'; }
+            elseif (substr(strtolower(pg_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(pg_field_name($this->result, $i))] = 'timestamp1'; }
           }
           $this->resultData  = pg_fetch_all($this->result);
           $this->num_rows    = pg_num_rows($this->result);
@@ -777,6 +777,9 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                   if ($val=='date') {
                     $tmp = $this->resultData[$i][$key];
                     $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 
+                  } elseif ($val=='timestamp1') {
+                    $tmp = $this->resultData[$i][$key];
+                    $this->resultData[$i][$key] = mktime(substr($tmp,12,2).'-'.substr($tmp,15,2).'-'.substr($tmp,18,2).'-'.substr($tmp,3,2).'-'.substr($tmp,0,2).'-'.substr($tmp,6,4)); 
                   } elseif ($val=='timestamp') {
                     $tmp = $this->resultData[$i][$key];
                     $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 

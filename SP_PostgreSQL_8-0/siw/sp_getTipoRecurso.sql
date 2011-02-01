@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getTipoRecurso
+﻿create or replace FUNCTION sp_getTipoRecurso
    (p_cliente   numeric,
     p_chave     numeric,
     p_chave_pai numeric,
@@ -51,12 +51,7 @@ BEGIN
                             group by x.sq_tipo_recurso
                            )      b on (a.sq_tipo_recurso = b.sq_tipo_recurso)
           where a.cliente = p_cliente
-            and a.sq_tipo_recurso not in (select x.sq_tipo_recurso
-                                              from eo_tipo_recurso x
-                                             where x.cliente   = p_cliente
-                                            start with x.sq_tipo_recurso = p_chave
-                                            connect by prior x.sq_tipo_recurso = x.sq_tipo_pai
-                                           )
+            and a.sq_tipo_recurso not in (select sq_tipo_recurso from connectby('eo_tipo_recurso','sq_tipo_recurso','sq_tipo_pai',to_char(p_chave),'0') as (sq_tipo_recurso numeric,sq_tipo_pai numeric, level int))
          order by a.nome;
    Elsif upper(p_restricao) = 'FOLHA' Then
      -- Recupera apenas os registros sem filhos
@@ -84,7 +79,7 @@ BEGIN
             and (p_gestora    is null or (p_gestora   is not null and a.unidade_gestora = p_gestora))
             and (p_sigla      is null or (p_sigla     is not null and a.sigla = upper(p_sigla)))
             and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
-         connect by prior a.sq_tipo_pai = a.sq_tipo_recurso
+            and a.sq_tipo_recurso in (select sq_tipo_recurso from connectby('eo_tipo_recurso','sq_tipo_pai','sq_tipo_recurso',to_char(a.sq_tipo_recurso),'0') as (sq_tipo_recurso numeric,sq_tipo_pai numeric, level int))
          order by 5;
    Elsif upper(p_restricao) = 'PAI' Then
      -- Recupera o plano pai do informado
@@ -158,12 +153,13 @@ BEGIN
                                group by x.sq_tipo_recurso
                               ) c on (a.sq_tipo_recurso = c.sq_tipo_recurso)
              where a.cliente     = p_cliente
-               and a.sq_tipo_pai = p_restricao
+               and a.sq_tipo_pai = to_number(p_restricao)
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
                and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))
             order by a.nome;
       End If;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

@@ -246,7 +246,7 @@ begin
                               group by x.sq_plano
                              ) d on (a.sq_plano = d.sq_plano)
              where a.cliente      = p_cliente
-               and a.sq_plano_pai = p_restricao
+               and a.sq_plano_pai = to_number(p_restricao)
                and (p_titulo      is null or (p_titulo is not null and a.titulo    = p_titulo))
                and (p_ativo       is null or (p_ativo  is not null and a.ativo     = p_ativo))
                and (p_inicio      is null or (p_inicio is not null and (a.inicio   between p_inicio and p_fim or

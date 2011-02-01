@@ -1,4 +1,4 @@
-create or replace function retornaAfericaoIndicador(p_chave numeric, p_data varchar, p_tipo varchar )  RETURNS float AS $$
+﻿create or replace function retornaAfericaoIndicador(p_chave numeric, p_data varchar, p_tipo varchar DEFAULT NULL)  RETURNS float AS $$
 DECLARE
  -- p_chave: chave da tabela EO_INDICADOR
  -- p_data : data desejada para verificação do valor. Se nulo, retorna a mais recente.
@@ -24,10 +24,11 @@ BEGIN
      w_data := now();
   Else
      If length(p_data) = 7 Then
-        If substr(p_data,3,1) <> '/' or substr(p_data,1,2) > 12 Then Return null; End If;
-        w_data := last_day(to_date('01/'||p_data,'dd/mm/yyyy'));
+        If substr(p_data,3,1) <> '/' or to_number(substr(p_data,1,2)) > 12 Then Return null; End If;
+        w_data := to_date('01/'||p_data,'dd/mm/yyyy');
+        w_data := last_day(w_data);
      Else
-        If substr(p_data,3,1) <> '/' or substr(p_data,6,1) <> '/' or substr(p_data,1,2) > 31 or substr(p_data,4,2) > 12 Then Return null; End If;
+        If to_number(substr(p_data,3,1)) <> '/' or to_number(substr(p_data,6,1)) <> '/' or to_number(substr(p_data,1,2)) > 31 or to_number(substr(p_data,4,2)) > 12 Then Return null; End If;
      End If;
   End If;
   
@@ -40,4 +41,5 @@ BEGIN
      Result := null;
   End If;
   
-  return(Result);END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+  return(Result);
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

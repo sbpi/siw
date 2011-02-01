@@ -212,7 +212,7 @@ begin
                                group by x.sq_tipo_material
                               ) c on (a.sq_tipo_material = c.sq_tipo_material)
              where a.cliente     = p_cliente
-               and a.sq_tipo_pai = p_restricao
+               and a.sq_tipo_pai = to_number(p_restricao)
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
                and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
                and (p_classe     is null or (p_classe is not null and a.classe = p_classe))

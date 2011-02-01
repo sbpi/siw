@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetTipoLancamento
+﻿create or replace FUNCTION SP_GetTipoLancamento
    (p_chave     numeric,
     p_chave_aux numeric,
     p_cliente   numeric,
@@ -37,12 +37,7 @@ BEGIN
                             group by x.sq_tipo_lancamento
                            )      b on (a.sq_tipo_lancamento = b.sq_tipo_lancamento)
           where a.cliente = p_cliente
-            and a.sq_tipo_lancamento not in (select x.sq_tipo_lancamento
-                                           from fn_tipo_lancamento x
-                                          where x.cliente   = p_cliente
-                                         start with x.sq_tipo_lancamento = p_chave_aux
-                                         connect by prior x.sq_tipo_lancamento = x.sq_tipo_lancamento_pai
-                                        )
+            and a.sq_tipo_lancamento not in (select sq_tipo_lancamento from connectby('fn_tipo_lancamento','sq_tipo_lancamento','sq_tipo_lancamento_pai',to_char(p_chave_aux),'0') as (sq_tipo_lancamento numeric,sq_tipo_lancamento_pai numeric, level int))
          order by a.nome;
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das etapas
@@ -52,7 +47,8 @@ BEGIN
                 case a.despesa when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
                 case a.ativo   when 'S' Then 'Sim' Else 'Não' end as nm_ativo,
                 coalesce(b.qtd,0) as qt_lancamentos, coalesce(c.qtd,0) as qt_filhos,
-                level
+                montanomeTipoLancamento(a.sq_tipo_lancamento) ordenacao, 
+                (select count(*) from connectby('fn_tipo_lancamento','sq_tipo_lancamento_pai','sq_tipo_lancamento',to_char(a.sq_tipo_lancamento),'0') as (sq_tipo_lancamento numeric,sq_tipo_lancamento_pai numeric, level int)) as level
            from fn_tipo_lancamento   a
                 left  join (select x.sq_tipo_lancamento, count(x.sq_siw_solicitacao) qtd 
                               from fn_lancamento x
@@ -66,16 +62,9 @@ BEGIN
                             group by x.sq_tipo_lancamento_pai
                            )      c on (a.sq_tipo_lancamento = c.sq_tipo_lancamento_pai)
           where a.cliente = p_cliente
-            and a.sq_tipo_lancamento not in (select x.sq_tipo_lancamento
-                                           from fn_tipo_lancamento x
-                                          where x.cliente   = p_cliente
-                                         start with x.sq_tipo_lancamento = p_chave_aux
-                                         connect by prior x.sq_tipo_lancamento = x.sq_tipo_lancamento_pai
-                                        )
+            and a.sq_tipo_lancamento not in (select sq_tipo_lancamento from connectby('fn_tipo_lancamento','sq_tipo_lancamento','sq_tipo_lancamento_pai',to_char(p_chave_aux),'0') as (sq_tipo_lancamento numeric,sq_tipo_lancamento_pai numeric, level int))
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_tipo_lancamento <> p_chave_aux))
-         connect by prior a.sq_tipo_lancamento = a.sq_tipo_lancamento_pai
-         start with coalesce(a.sq_tipo_lancamento_pai,0) = coalesce(p_chave_aux,0)
-         order by montanomeTipoLancamento(a.sq_tipo_lancamento);
+         order by ordenacao;
    Elsif upper(p_restricao) = 'REEMBOLSO' Then
      -- Se reembolso, recupera classificação inicial
       open p_result for
@@ -87,7 +76,7 @@ BEGIN
                     and a.sq_tipo_lancamento_pai is null
                     and a.despesa                = 'S'
                     and a.receita                = 'N'
-                )
+                ) x
          where rownum = 1;
    Else
       If length(p_restricao) = 25 Then
@@ -155,6 +144,7 @@ BEGIN
                   )
                  )
                 );
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

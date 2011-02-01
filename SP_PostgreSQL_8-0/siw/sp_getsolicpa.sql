@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetSolicPA
+﻿create or replace FUNCTION SP_GetSolicPA
    (p_menu         numeric,
     p_pessoa       numeric,
     p_restricao    varchar,
@@ -42,13 +42,13 @@ DECLARE
     
     --  que recupera as unidades nas quais o usuário informado é titular ou substituto
      c_unidades_resp CURSOR FOR
-      select distinct sq_unidade
-        from eo_unidade a
-      start with sq_unidade in (select sq_unidade
-                                  from eo_unidade_resp b
-                                 where b.sq_pessoa = p_pessoa
-                                   and b.fim       is null)
-      connect by prior sq_unidade = sq_unidade_pai;
+        select distinct a.sq_unidade
+          from eo_unidade_resp         b
+	       inner   join co_pessoa  c on (b.sq_pessoa     = c.sq_pessoa)
+	         inner join eo_unidade a on (c.sq_pessoa_pai = a.sq_pessoa)
+         where b.sq_pessoa = p_pessoa
+           and b.fim       is null
+           and a.sq_unidade in (select sq_unidade from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(b.sq_unidade),0) as (sq_unidade numeric, sq_unidade_pai numeric, level int));
       
 BEGIN
    If p_fase is not null Then
@@ -120,7 +120,9 @@ BEGIN
                 inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)
                    inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                    inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                          from siw_solicitacao
+                                          from siw_solicitacao         x
+                                               inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                         where x.sq_menu = coalesce(p_menu, x.sq_menu)
                                        )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                    left           join (select x.sq_siw_solicitacao, count(*) as qtd
                                           from siw_solicitacao               x
@@ -155,14 +157,10 @@ BEGIN
                    left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
                    left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
                 left              join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
-                inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                          from siw_solic_log
-                                        group by sq_siw_solicitacao
-                                       )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano           = p_sq_orprior))
-            and (p_pais           is null or (p_pais        is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and x.prefixo = p_pais)))
+            and (p_pais           is null or (p_pais        is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and x.prefixo = to_char(p_pais))))
             and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and x.numero_documento = p_regiao)))
             and (p_cidade         is null or (p_cidade      is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and x.ano = p_cidade)))
             and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and x.sq_especie_documento = p_usu_resp)))
@@ -192,7 +190,7 @@ BEGIN
             --and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and b.conclusao is null))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b1.sigla not in ('CI','AT') and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b1.sigla not in ('CI','AT') and trunc(b.fim)-trunc(now())+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and b1.sigla not in ('CI','AT') and b.fim+1-now()<0))
@@ -301,10 +299,6 @@ BEGIN
                    left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
                    left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
                 left              join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
-                inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                          from siw_solic_log
-                                        group by sq_siw_solicitacao
-                                       )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano           = p_sq_orprior))
@@ -421,10 +415,6 @@ BEGIN
                    left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
                    left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
                 left              join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
-                inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                          from siw_solic_log
-                                        group by sq_siw_solicitacao
-                                       )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where b3.protocolo = p_processo
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
@@ -435,6 +425,7 @@ BEGIN
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

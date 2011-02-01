@@ -1,6 +1,6 @@
 create or replace procedure sp_putTipoRecurso
    (p_operacao   in  varchar2            ,
-    p_cliente    in  varchar2 default null,
+    p_cliente    in  number   default null,
     p_chave      in  number   default null,
     p_chave_pai  in  number   default null,
     p_nome       in  varchar2 default null,

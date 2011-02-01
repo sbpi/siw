@@ -27,10 +27,10 @@
     p_financeiro          numeric,
     p_rubrica             numeric,
     p_lancamento          numeric,
-    p_chave_nova          numeric,
+    p_chave_nova          out numeric,
     p_copia               numeric,
-    p_codigo_interno      varchar
-   ) RETURNS VOID AS $$
+    p_codigo_interno      out varchar
+   ) AS $$
 DECLARE
    w_arq        varchar(4000) := ', ';
    w_ano        numeric(4);

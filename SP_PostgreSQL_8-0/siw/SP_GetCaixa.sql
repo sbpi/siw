@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetCaixa
+﻿create or replace FUNCTION SP_GetCaixa
    (p_chave        numeric,
     p_cliente      numeric,
     p_usuario      numeric,
@@ -38,7 +38,7 @@ BEGIN
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
             and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
-            and (p_ini       is null or (p_ini       is not null and (a.intermediario   between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
+            and (p_ini       is null or (p_ini       is not null and (cast(a.intermediario as date) between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
             and (coalesce(p_restricao,'null') not in ('PACAIXA','PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
                  (p_restricao = 'PACAIXA' and (a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_usuario
                                                                 UNION
@@ -71,7 +71,7 @@ BEGIN
                 c.numero_original,    c.numero_documento,                c.interno,   c.pasta,
                 case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
                 case c.processo when 'S' then c.data_autuacao else d.inicio end as dt_limite,
-                c.prefixo||'.'||substr(cast(1000000+c.numero_documento as varchar),2,6)||'/'||c.ano||'-'||substr(cast(100+c.digito as varchar),2,2) as protocolo,
+                c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo,
                 a.arquivo_guia_numero||'/'||a.arquivo_guia_ano||'-'||coalesce(b3.sigla,b.sigla) as guia_transferencia, 
                 case when c.pessoa_origem is null then d1.sq_unidade else c1.sq_pessoa end as sq_origem,
                 case when c.pessoa_origem is null then d1.nome else c1.nome end as nm_origem,
@@ -116,7 +116,8 @@ BEGIN
             --and (p_unid_autua is null or (p_unid_autua is not null and c.unidade_autuacao    = p_unid_autua))
             and (p_numero     is null or (p_numero     is not null and a.numero              = p_numero ))
             and (p_ini        is null or (p_ini        is not null and a.arquivo_data        between p_ini and p_fim))
-            and (p_assunto    is null or (p_assunto    is not null and acentos(a.assunto)    like '%' + acentos(p_assunto)+ '%' ));
-   End If;
+            and (p_assunto    is null or (p_assunto    is not null and acentos(a.assunto)    like '%'||acentos(p_assunto)||'%' ));
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

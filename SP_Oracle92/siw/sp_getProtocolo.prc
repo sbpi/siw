@@ -37,11 +37,11 @@ begin
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.descricao,
              c.numero_original,
-             c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
+             c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case when c5.sq_siw_solicitacao is not null
-                  then c5.prefixo||'.'||substr(1000000+c5.numero_documento,2,6)||'/'||c5.ano||'-'||substr(100+c5.digito,2,2) 
+                  then c5.prefixo||'.'||substr(to_char(1000000+c5.numero_documento),2,6)||'/'||to_char(c5.ano)||'-'||substr(to_char(100+to_number(c5.digito)),2,2) 
                   else null
              end as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -57,8 +57,9 @@ begin
              d8.nome as nm_pessoa_resp,    d8.nome_resumido as nm_res_pessoa_resp
         from siw_menu                                  a
              inner           join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
-               inner         join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
-                                       from siw_solicitacao
+               inner         join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) acesso
+                                     from siw_solicitacao x
+                                    where x.sq_menu = p_menu
                                   )                    b1 on (b.sq_siw_solicitacao   = b1.sq_siw_solicitacao)
                inner         join eo_unidade           b2 on (b.sq_unidade           = b2.sq_unidade)
                inner         join pa_documento         c  on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
@@ -93,7 +94,7 @@ begin
              )
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
-         and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
+         and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
          and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero))
          and (p_ano        is null or (p_ano         is not null and c.ano                = p_ano))
          and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
@@ -114,7 +115,7 @@ begin
              b2.nome, b2.sigla,
              b3.sigla as sg_tramite,
              c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
-             c.sq_documento_pai, c.numero_documento||'/'||substr(c.ano,3,2) as protocolo,
+             c.sq_documento_pai, c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -128,7 +129,7 @@ begin
                        end
              end as data_limite_doc,
              ca.numero as nr_caixa, cb.sigla as sg_unid_caixa,
-             cc.numero_documento||'/'||substr(cc.ano,3,2) as protocolo_pai,
+             cc.numero_documento||'/'||substr(to_char(cc.ano),3,2) as protocolo_pai,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
              d.nu_guia||'/'||d.ano_guia||'-'||dd.sigla as guia_tramite, d.recebimento,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
@@ -137,41 +138,37 @@ begin
              d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest
         from siw_menu                                a
              inner         join siw_solicitacao      b  on (a.sq_menu               = b.sq_menu)
-               inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
-                                     from siw_solicitacao
-                                )                    b1 on (b.sq_siw_solicitacao    = b1.sq_siw_solicitacao)
                inner       join eo_unidade           b2 on (b.sq_unidade            = b2.sq_unidade)
                inner       join siw_tramite          b3 on (b.sq_siw_tramite        = b3.sq_siw_tramite)
                inner       join pa_documento         c  on (b.sq_siw_solicitacao    = c.sq_siw_solicitacao)
                  inner     join eo_unidade           c1 on (c.unidade_autuacao      = c1.sq_unidade)
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento  = c2.sq_especie_documento)
-                 left      join co_pessoa            c3 on (c.pessoa_origem         = c3.sq_pessoa)
                  inner     join pa_documento_assunto c4 on (c.sq_siw_solicitacao    = c4.sq_siw_solicitacao and
                                                             c4.principal            = 'S'
                                                            )
-                 inner     join pa_assunto           c5 on (c4.sq_assunto           = c5.sq_assunto)
-                   inner   join pa_tipo_guarda       c6 on (c5.fase_corrente_guarda = c6.sq_tipo_guarda)
-                   inner   join pa_tipo_guarda       c8 on (c5.fase_intermed_guarda = c8.sq_tipo_guarda)
-                   inner   join pa_tipo_guarda       c9 on (c5.fase_final_guarda    = c9.sq_tipo_guarda)
-                 left      join pa_caixa             ca on (c.sq_caixa              = ca.sq_caixa)
-                   left    join eo_unidade           cb on (ca.sq_unidade           = cb.sq_unidade)
-                 left      join pa_documento         cc on (c.sq_documento_pai      = cc.sq_siw_solicitacao)
-                 inner     join pa_documento_log     d  on (c.sq_siw_solicitacao    = d.sq_siw_solicitacao and
-                                                            (p_restricao   = 'PACLASSIF' or 
-                                                             p_restricao   = 'PADALTREG' or
-                                                             (p_restricao <> 'PACLASSIF' and d.recebimento is not null)
-                                                            )
-                                                           )
-                   inner   join (select sq_siw_solicitacao, max(sq_documento_log) chave 
+                 inner     join (select sq_siw_solicitacao, max(sq_documento_log) chave 
                                    from pa_documento_log
-                                  where  0 = instr(coalesce(resumo,'-'),'*** RECUSADO')
+                                  where  0 = instr(coalesce(resumo,'-'),'*** RECUSADO') and
+                                         (p_restricao   = 'PACLASSIF' or 
+                                          p_restricao   = 'PADALTREG' or
+                                          (p_restricao <> 'PACLASSIF' and recebimento is not null)
+                                         )
                                  group by sq_siw_solicitacao
-                                )                    dc on (d.sq_documento_log      = dc.chave)
+                                )                    df on (c.sq_siw_solicitacao    = df.sq_siw_solicitacao)
+                   inner   join pa_documento_log     d  on (df.chave                = d.sq_documento_log)
                    inner   join eo_unidade           d2 on (d.unidade_origem        = d2.sq_unidade)
                      inner join pa_unidade           dc on (d2.sq_unidade           = dc.sq_unidade)
                      inner join eo_unidade           dd on (dd.sq_unidade           = coalesce(dc.sq_unidade_pai,dc.sq_unidade))
                    inner   join eo_unidade           d3 on (d.unidade_destino       = d3.sq_unidade)
                    inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho      = d1.sq_tipo_despacho)
+                 inner     join pa_assunto           c5 on (c4.sq_assunto           = c5.sq_assunto)
+                   inner   join pa_tipo_guarda       c6 on (c5.fase_corrente_guarda = c6.sq_tipo_guarda)
+                   inner   join pa_tipo_guarda       c8 on (c5.fase_intermed_guarda = c8.sq_tipo_guarda)
+                   inner   join pa_tipo_guarda       c9 on (c5.fase_final_guarda    = c9.sq_tipo_guarda)
+                 left      join co_pessoa            c3 on (c.pessoa_origem         = c3.sq_pessoa)
+                 left      join pa_caixa             ca on (c.sq_caixa              = ca.sq_caixa)
+                   left    join eo_unidade           cb on (ca.sq_unidade           = cb.sq_unidade)
+                 left      join pa_documento         cc on (c.sq_documento_pai      = cc.sq_siw_solicitacao)
                      left  join pa_parametro         d4 on (d1.sq_tipo_despacho     = d4.despacho_arqcentral)
                      left  join pa_parametro         d5 on (d1.sq_tipo_despacho     = d5.despacho_arqsetorial)
                      left  join pa_parametro         d6 on (d1.sq_tipo_despacho     = d6.despacho_emprestimo)
@@ -191,16 +188,16 @@ begin
          and w.sq_pessoa   = p_pessoa
          and (p_restricao = 'PACLASSIF' or 
               p_restricao = 'PADALTREG' or 
-              (b1.acesso    >= 8 or d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))
+              (acesso(c.sq_siw_solicitacao, p_pessoa) >=8 or d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))
              )
-         and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-         and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
-         and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
-         and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero))
-         and (p_ano        is null or (p_ano         is not null and c.ano                = p_ano))
-         and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
-         and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
-         and (p_unid_posse is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
+         and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero))
+         and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))
+         and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
+         and (p_unid_autua  is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
+         and (p_unid_posse  is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
+         and (p_chave       is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
+         and (p_chave_aux   is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
+         and (p_nu_guia     is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
          and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
          and (p_ini         is null or (p_ini         is not null and b.inicio between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
@@ -218,7 +215,7 @@ begin
                                                                           )
                                        )
              )
-         and (p_tipo       = 1 or (p_tipo      = 2 and b1.acesso > 0))
+         and (p_tipo       = 1 or (p_tipo      = 2 and acesso(c.sq_siw_solicitacao, p_pessoa) > 0))
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
@@ -261,16 +258,12 @@ begin
       open p_result for
       select b.sq_siw_solicitacao, b.inicio, b.fim, b.sq_siw_tramite, b.sq_solic_pai, b.descricao,
              c.numero_original, c.numero_documento, c.unidade_int_posse, c.pessoa_ext_posse,
-             c.numero_documento||'/'||substr(c.ano,3,2) as protocolo,
+             c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
              coalesce(c5.qtd,0) as qt_apensos,
-             case when b.sq_siw_solicitacao is not null
-                  then b3.prefixo||'.'||substr(1000000+b3.numero_documento,2,6)||'/'||b3.ano||'-'||substr(100+b3.digito,2,2) 
-                  else null
-             end as protocolo_pai,
              c6.sigla as sg_unidade_posse, c6.nome as nm_unidade_posse,
              case coalesce(c7.existe,0) when 0 then 'N' else 'S' end as st_mesma_lotacao,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
@@ -284,11 +277,7 @@ begin
         from siw_menu                                  a
              inner           join pa_parametro         a1 on (a.sq_pessoa            = a1.cliente)
              inner           join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
-               inner         join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
-                                       from siw_solicitacao
-                                  )                    b1 on (b.sq_siw_solicitacao   = b1.sq_siw_solicitacao)
                inner         join eo_unidade           b2 on (b.sq_unidade           = b2.sq_unidade)
-                 left        join pa_documento         b3 on (b.sq_solic_pai         = b3.sq_siw_solicitacao)
                inner         join siw_tramite          b4 on (b.sq_siw_tramite       = b4.sq_siw_tramite)
                inner         join pa_documento         c  on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
                  inner       join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
@@ -334,31 +323,6 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
-         and (w_filtro = 'true' or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
-         and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-         and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
-         and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
-         and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero and c.ano = p_ano))
-         and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
-         and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
-         and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
-         and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
-         and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
-         and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
-         and (p_assunto     is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
-         and (p_solicitante is null or (p_solicitante is not null and c.sq_especie_documento = p_solicitante))
-         and (p_proponente  is null or (p_proponente  is not null and (to_char(c.pessoa_origem) = p_proponente or c3.nome_indice like '%'||acentos(p_proponente)||'%' or c3.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
-         and (p_processo    is null or (p_processo    is not null and 0 < (select count(*)
-                                                                             from pa_documento_interessado x
-                                                                                  inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)
-                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
-                                                                              and (acentos(y.nome_indice)       like '%'||acentos(p_processo)||'%' or
-                                                                                   acentos(y.nome_resumido_ind) like '%'||acentos(p_processo)||'%'
-                                                                                  )
-                                                                          )
-                                       )
-             )
          and (p_despacho   is null or (p_despacho    is not null and 
                                        ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and w_filtro = 'true'))) or 
                                         (b4.ativo = 'N' and b4.sigla = 'AS' and w_filtro = 'true')
@@ -378,18 +342,47 @@ begin
                                       )
              )
          and (p_tipo       = 1 or
-              (p_tipo      = 2 and (b1.acesso > 0 or w_filtro = 'true' or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))))
+              (p_tipo      = 2 and (w_filtro = 'true' or 
+                                    (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)) or
+                                    acesso(b.sq_siw_solicitacao, p_pessoa) > 0
+                                   )
+              )
+             )
+         and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
+         and (w_filtro = 'true' or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
+         and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
+         and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
+         and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
+         and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero and c.ano = p_ano))
+         and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
+         and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
+         and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
+         and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
+         and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
+         and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
+         and (p_assunto     is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
+         and (p_solicitante is null or (p_solicitante is not null and c.sq_especie_documento = p_solicitante))
+         and (p_proponente  is null or (p_proponente  is not null and (to_char(c.pessoa_origem) = p_proponente or c3.nome_indice like '%'||acentos(p_proponente)||'%' or c3.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
+         and (p_processo    is null or (p_processo    is not null and 0 < (select count(*)
+                                                                             from pa_documento_interessado x
+                                                                                  inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and (acentos(y.nome_indice)       like '%'||acentos(p_processo)||'%' or
+                                                                                   acentos(y.nome_resumido_ind) like '%'||acentos(p_processo)||'%'
+                                                                                  )
+                                                                          )
+                                       )
              );
    Elsif p_restricao = 'PADRECEB' Then
       -- Recupera guias de tramitação
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.descricao,
              c.numero_original,
-             c.numero_documento||'/'||substr(c.ano,3,2) as protocolo,
+             c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case when c5.sq_siw_solicitacao is not null
-                  then c5.prefixo||'.'||substr(1000000+c5.numero_documento,2,6)||'/'||c5.ano||'-'||substr(100+c5.digito,2,2) 
+                  then c5.prefixo||'.'||substr(to_char(1000000+c5.numero_documento),2,6)||'/'||to_char(c5.ano)||'-'||substr(to_char(100+to_number(c5.digito)),2,2) 
                   else null
              end as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -406,9 +399,6 @@ begin
              d8.nome as nm_pessoa_resp,    d8.nome_resumido as nm_res_pessoa_resp
         from siw_menu                                a
              inner         join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
-               inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
-                                     from siw_solicitacao
-                                )                    b1 on (b.sq_siw_solicitacao   = b1.sq_siw_solicitacao)
                inner       join eo_unidade           b2 on (b.sq_unidade           = b2.sq_unidade)
                inner       join pa_documento         c  on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
                  inner     join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
@@ -445,7 +435,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
+         and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
          and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero))
          and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))
          and (p_unid_autua  is null or (p_unid_autua  is not null and d.unidade_origem     = p_unid_autua))
@@ -483,11 +473,11 @@ begin
       -- Verifica a existência de um protocolo
       open p_result for
       select a.sq_siw_solicitacao, a.processo,
-             a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2) as protocolo
+             a.prefixo||'.'||substr(to_char(1000000+a.numero_documento),2,6)||'/'||to_char(a.ano)||'-'||substr(to_char(100+to_number(a.digito)),2,2) as protocolo
         from siw_solicitacao         b
              inner join pa_documento a on (b.sq_siw_solicitacao = a.sq_siw_solicitacao)
        where b.sq_menu          = p_menu
-         and a.prefixo          = p_prefixo 
+         and a.prefixo          = to_char(p_prefixo) 
          and a.numero_documento = p_numero 
          and a.ano              = p_ano;
    End If;

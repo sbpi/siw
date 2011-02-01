@@ -4701,6 +4701,7 @@ SP_PostgreSQL_8-0/siw/hash_md5.sql -text
 SP_PostgreSQL_8-0/siw/horario2minutos.sql -text
 SP_PostgreSQL_8-0/siw/indicecols.sql -text
 SP_PostgreSQL_8-0/siw/instr.sql -text
+SP_PostgreSQL_8-0/siw/last_day.sql -text
 SP_PostgreSQL_8-0/siw/minutos2horario.sql -text
 SP_PostgreSQL_8-0/siw/months_between.sql -text
 SP_PostgreSQL_8-0/siw/nvl.sql -text

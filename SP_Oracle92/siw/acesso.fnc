@@ -132,7 +132,7 @@ begin
  select a.sq_pessoa, a.acesso_geral, a.consulta_geral, a.sq_menu, a.sq_modulo, a.sigla, e.destinatario,
         a1.sigla,
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
-        b2.nome,
+        b2.nome, b2.interno,
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
         d.sq_siw_tramite, coalesce(o.sq_pessoa, d.solicitante), d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
         case when d.sq_cc is not null 
@@ -149,7 +149,7 @@ begin
    into w_cliente, w_acesso_geral, w_consulta_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
-        w_nm_vinculo,
+        w_nm_vinculo, w_interno,
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
         w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, 
         w_opiniao_solicitante, w_solic_pai, w_sq_cc,
@@ -187,12 +187,6 @@ begin
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
   
- select b.interno
-   into w_interno
-   from co_pessoa                  a
-        inner join co_tipo_vinculo b on (a.sq_tipo_vinculo = b.sq_tipo_vinculo)
-  where a.sq_pessoa = p_usuario;
-   
  Result := 0;
  
  -- Verifica se o usuário está ativo

@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getMatServ
+﻿create or replace FUNCTION sp_getMatServ
    (p_cliente       numeric,
     p_usuario       numeric,
     p_chave         numeric,
@@ -30,7 +30,7 @@ BEGIN
                 a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
                 a.pesquisa_data, a.pesquisa_validade, 
-                a.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
+                trunc(a.pesquisa_validade)-cast(f.dias_aviso_pesquisa as integer) as pesquisa_aviso,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
@@ -324,6 +324,7 @@ BEGIN
                  (p_branco       = 'S' and a.pesquisa_validade is null)
                 )
             and (p_aviso||p_valida||p_invalida||p_branco     is not null);
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

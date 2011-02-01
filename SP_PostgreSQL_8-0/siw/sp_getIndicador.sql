@@ -1,4 +1,4 @@
-﻿create or replace function siw.sp_getIndicador
+﻿create or replace function sp_getIndicador
    (p_cliente        in  numeric,
     p_usuario        in  numeric,
     p_chave          in  numeric,
@@ -41,7 +41,7 @@ begin
                 left  join (select sq_eoindicador, count(sq_pessoa) as qtd 
                               from eo_indicador_aferidor 
                              where sq_pessoa = p_usuario 
-                               and trunc(sysdate) between inicio and fim
+                               and trunc(now()) between inicio and fim
                             group by sq_eoindicador
                            )                 b1 on (a.sq_eoindicador    = b1.sq_eoindicador)
                 inner join co_unidade_medida c  on (a.sq_unidade_medida = c.sq_unidade_medida)
