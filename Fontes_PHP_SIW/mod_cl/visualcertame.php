@@ -9,9 +9,9 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   $w_cliente_arp = f($RS,'ata_registro_preco');
-  
+
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,$w_menu,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $l_tramite        = f($RS,'sq_siw_tramite');
@@ -605,7 +605,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
   
     // Se for envio, executa verificações nos dados da solicitação
-    $w_erro = ValidaCertame($w_cliente,$v_chave,substr($l_sigla,0,4).'GERAL',null,null,null,Nvl($l_tramite,0));
+    $w_erro = ValidaCertame($w_cliente,$v_chave,$l_sigla,null,null,null,Nvl($l_tramite,0));
     if ($w_erro>'') {
       $l_html.=chr(13).'<tr><td colspan=2><font size=2>';
       $l_html.=chr(13).'<HR>';

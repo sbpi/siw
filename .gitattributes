@@ -1821,6 +1821,7 @@ Fontes_PHP_SIW/mod_dc/dc_tabelas.php -text
 Fontes_PHP_SIW/mod_dc/etl.php -text
 Fontes_PHP_SIW/mod_dc/etl_txt.php -text
 Fontes_PHP_SIW/mod_dc/exec.php -text
+Fontes_PHP_SIW/mod_dc/migra_arquivos.php -text
 Fontes_PHP_SIW/mod_dc/serverstatus.php -text
 Fontes_PHP_SIW/mod_dc/serverstatus2.php -text
 Fontes_PHP_SIW/mod_dm/demanda.php -text
