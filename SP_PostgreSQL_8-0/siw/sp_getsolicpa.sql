@@ -415,7 +415,7 @@ BEGIN
                    left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
                    left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
                 left              join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
-          where b3.protocolo = p_processo
+          where b3.protocolo = to_number(p_processo)
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

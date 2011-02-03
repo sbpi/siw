@@ -424,7 +424,7 @@ begin
                                           from siw_solic_log
                                         group by sq_siw_solicitacao
                                        )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-          where b3.protocolo = p_processo
+          where b3.protocolo = to_number(p_processo)
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

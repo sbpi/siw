@@ -1614,7 +1614,20 @@ BEGIN
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa = p_atividade))
             and (p_uf             is null or (p_uf          is not null and d.processo           = p_uf))
-            and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
+                                                                             0 < (select count(*)
+                                                                                   from pa_documento_log x
+                                                                                  where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                                    and acentos(x.resumo) like '%'||acentos(p_assunto)||'%'
+                                                                                 )  or 
+                                                                             0 < (select count(*)
+                                                                                   from siw_solic_log x
+                                                                                  where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                                    and acentos(x.observacao) like '%'||acentos(p_assunto)||'%'
+                                                                                 )
+                                                                            )
+                                             ) 
+                 )  
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-trunc(now()) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))

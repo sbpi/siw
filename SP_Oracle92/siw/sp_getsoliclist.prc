@@ -1608,7 +1608,20 @@ begin
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa = p_atividade))
             and (p_uf             is null or (p_uf          is not null and d.processo           = p_uf))
-            and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
+                                                                             0 < (select count(*)
+                                                                                   from pa_documento_log x
+                                                                                  where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                                    and acentos(x.resumo) like '%'||acentos(p_assunto)||'%'
+                                                                                 )  or 
+                                                                             0 < (select count(*)
+                                                                                   from siw_solic_log x
+                                                                                  where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                                    and acentos(x.observacao) like '%'||acentos(p_assunto)||'%'
+                                                                                 )
+                                                                            )
+                                             ) 
+                 )  
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
@@ -1619,7 +1632,7 @@ begin
             and (p_prioridade     is null or (p_prioridade  is not null and k.sq_tipo_despacho is not null and k.sq_tipo_despacho = p_prioridade))
             and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.ativo = 'S' and b.fim+1-sysdate<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.ativo = 'S' and trunc(b.fim)+1 < trunc(sysdate)))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and b.sq_solic_pai is null and ((instr(p_sq_acao_ppa,'#') = 0 and d5.codigo like p_sq_acao_ppa||'%') or (instr(p_sq_acao_ppa,'#') > 0 and d5.codigo = replace(p_sq_acao_ppa,'#','')))))
             and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)
