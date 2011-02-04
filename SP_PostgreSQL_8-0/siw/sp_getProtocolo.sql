@@ -220,7 +220,7 @@ BEGIN
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADTRANSF'  and (b3.sigla <> 'CA' and d5.cliente is not null and c.data_setorial is null)) or
-              (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and b.sq_solic_pai is null and c.data_setorial is not null and (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))) or
+              (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and b3.sigla <> 'CA' and b.sq_solic_pai is null and c.data_setorial is not null and (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
               (p_restricao = 'PACLASSIF'  and b3.sigla <> 'CA' and b.sq_solic_pai is null and (c5.provisorio = 'S' or w_filtro = 'true')) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or

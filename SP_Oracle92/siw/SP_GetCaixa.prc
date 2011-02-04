@@ -52,7 +52,7 @@ begin
                                               )
                  ) or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
-                 (p_restricao = 'TRAMITE' and a.arquivo_data is null and c.qtd > 0) or
+                 (p_restricao = 'TRAMITE' and a.arquivo_guia_ano is null and a.arquivo_data is null and c.qtd > 0) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
                  (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null) or
                  (p_restricao = 'CENTRAL' and a.sq_arquivo_local is not null)

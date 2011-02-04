@@ -31,9 +31,17 @@ begin
                a.pessoa_ext_posse  = null
          where a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
 
+        -- Atualiza a caixa com os dados da recusa        
+        If crec.sq_caixa is not null Then
+         update pa_caixa
+           set arquivo_guia_numero = null,
+               arquivo_guia_ano = null
+         where sq_caixa = crec.sq_caixa;
+        End If;
+        
         -- Atualiza o log com os dados da recusa
         update pa_documento_log a 
-           set a.recebedor   = p_pessoa, 
+           set a.recebedor   = p_pessoa,
                a.recebimento = sysdate,
                a.resumo      = a.resumo||chr(13)||chr(10)||'*** RECUSADO'||case when p_observacao is null then '' else chr(13)||chr(10)||'Observação: '||p_observacao end
          where a.sq_documento_log = crec.sq_documento_log;

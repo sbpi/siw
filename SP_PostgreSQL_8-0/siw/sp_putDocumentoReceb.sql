@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_putDocumentoReceb
+﻿create or replace FUNCTION sp_putDocumentoReceb
    (p_operacao     varchar,
     p_pessoa       numeric,
     p_unid_autua   numeric,
@@ -32,6 +32,14 @@ BEGIN
                a.pessoa_ext_posse  = null
          where a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
 
+        -- Atualiza a caixa com os dados da recusa        
+        If crec.sq_caixa is not null Then
+         update pa_caixa
+           set arquivo_guia_numero = null,
+               arquivo_guia_ano = null
+         where sq_caixa = crec.sq_caixa;
+        End If;
+      
         -- Atualiza o log com os dados da recusa
         update pa_documento_log a 
            set a.recebedor   = p_pessoa, 
@@ -80,4 +88,5 @@ BEGIN
            );
         End If;
      End If;
-  end loop;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+  end loop;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
