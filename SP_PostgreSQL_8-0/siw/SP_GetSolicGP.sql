@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetSolicGP
+﻿create or replace FUNCTION SP_GetSolicGP
    (p_menu         numeric,
     p_pessoa       numeric,
     p_restricao    varchar,
@@ -40,16 +40,15 @@ DECLARE
     
     l_resp_unid  varchar(10000) :='';
     
-    --  que recupera as unidades nas quais o usuário informado é titular ou substituto
+    --  Recupera as unidades nas quais o usuário informado é titular ou substituto
      c_unidades_resp CURSOR FOR
-      select distinct sq_unidade
-        from eo_unidade a
-      start with sq_unidade in (select sq_unidade
-                                  from eo_unidade_resp b
-                                 where b.sq_pessoa = p_pessoa
-                                   and b.fim       is null)
-      connect by prior sq_unidade = sq_unidade_pai;
-      
+        select distinct a.sq_unidade
+          from eo_unidade_resp         b
+	       inner   join co_pessoa  c on (b.sq_pessoa     = c.sq_pessoa)
+	         inner join eo_unidade a on (c.sq_pessoa_pai = a.sq_pessoa)
+         where b.sq_pessoa = p_pessoa
+           and b.fim       is null
+           and a.sq_unidade in (select sq_unidade from connectby('eo_unidade','sq_unidade','sq_unidade_pai',to_char(b.sq_unidade),0) as (sq_unidade numeric, sq_unidade_pai numeric, level int));
 BEGIN
    If p_fase is not null Then
       Loop
@@ -154,7 +153,7 @@ BEGIN
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao   = p_chave))
             --and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_modalidade_artigo = p_sq_acao_ppa))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano             = p_sq_orprior))
-            and (p_pais           is null or (p_pais        is not null and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=p_pais))))
+            and (p_pais           is null or (p_pais        is not null and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from connectby('cl_tipo_material','sq_tipo_material','sq_tipo_pai',to_char(p_pais)) as (sq_tipo_material numeric, sq_tipo_pai numeric, level int)))))
             --and (p_regiao         is null or (p_regiao      is not null and d.processo           like '%'||p_regiao||'%'))
             --and (p_cidade         is null or (p_cidade      is not null and d.processo           like '%'||p_cidade||'%'))
             --and (p_usu_resp       is null or (p_usu_resp    is not null and d4.sq_lcmodalidade   = p_usu_resp))
@@ -202,7 +201,7 @@ BEGIN
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
-                                                    a2.servico_cliente   = p_restricao
+                                                    a2.servico_cliente   = to_number(p_restricao)
                                                    )
                 inner join siw_solicitacao   b  on (a2.servico_fornecedor= b.sq_menu and
                                                     a2.sq_siw_tramite    = b.sq_siw_tramite and
@@ -224,12 +223,13 @@ BEGIN
                              )               e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
                 left    join pe_programa     f  on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
                   left  join siw_solicitacao f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao)
-          where a.sq_menu        = p_restricao
+          where a.sq_menu        = to_number(p_restricao)
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 )
          order by titulo;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

@@ -36,7 +36,7 @@ begin
                       (select sq_menu_pai,count(*) as Filho from siw_menu x where ativo = 'S' group by sq_menu_pai) b
                     on (a.sq_menu = b.sq_menu_pai)  
             where a.ativo            = 'S'
-              and a.sq_menu_pai      = p_restricao
+              and a.sq_menu_pai      = to_number(p_restricao)
               and a.sq_pessoa        = p_cliente
               and a.sq_modulo        = p_modulo
               and (l_pessoa          <= 0 or (l_pessoa > 0 and marcado(a.sq_menu, l_pessoa, null, null, null) > 0))

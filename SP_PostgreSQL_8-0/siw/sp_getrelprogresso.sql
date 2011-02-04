@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetRelProgresso
+﻿create or replace FUNCTION SP_GetRelProgresso
    (p_cliente              numeric,
     p_plano                numeric,
     p_objetivo             numeric,
@@ -12,7 +12,7 @@ DECLARE
 
     w_inicio date := p_inicio;
     w_fim    date := p_fim;
-    w_dias   numeric(18);
+    w_dias   integer;
     w_mes    date;
 BEGIN
    If p_restricao = 'PROENTR' Then
@@ -137,28 +137,20 @@ BEGIN
           where d.sq_pessoa      = p_cliente
             and (j.ativo         = 'S' or b.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
-                                                                                            from siw_solicitacao                     x
-                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
-                                                                                         )
-                                            )
-                )
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))))
             and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
                                                                                   from siw_solicitacao                     x
                                                                                        left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                                                  where y.sq_siw_solicitacao is not null
                                                                                    and y.sq_peobjetivo      = p_objetivo
-                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                            )
                 )
             and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
                                                                                   from siw_solicitacao
                                                                                  where sq_plano = p_plano
-                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                             )
                 )
@@ -192,9 +184,8 @@ BEGIN
             and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
-                                                                                            from siw_solicitacao                     x
-                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                            from siw_solicitacao  x
+                                                                                           where x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                          )
                                             )
                 )
@@ -203,16 +194,14 @@ BEGIN
                                                                                        left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                                                  where y.sq_siw_solicitacao is not null
                                                                                    and y.sq_peobjetivo      = p_objetivo
-                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                            )
                 )
             and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
                                                                                   from siw_solicitacao
                                                                                  where sq_plano = p_plano
-                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                             )
                 );
@@ -242,9 +231,8 @@ BEGIN
             and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
-                                                                                            from siw_solicitacao                     x
-                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                            from siw_solicitacao x
+                                                                                           where x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                          )
                                             )
                 )
@@ -253,16 +241,14 @@ BEGIN
                                                                                        left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                                                  where y.sq_siw_solicitacao is not null
                                                                                    and y.sq_peobjetivo      = p_objetivo
-                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                            )
                 )
             and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
                                                                                   from siw_solicitacao
                                                                                  where sq_plano = p_plano
-                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                             )
                 )
@@ -292,9 +278,8 @@ BEGIN
             and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
-                                                                                            from siw_solicitacao                     x
-                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                            from siw_solicitacao x
+                                                                                           where x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                          )
                                             )
                 )
@@ -303,16 +288,14 @@ BEGIN
                                                                                        left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                                                  where y.sq_siw_solicitacao is not null
                                                                                    and y.sq_peobjetivo      = p_objetivo
-                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                            )
                 )
             and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
                                                                                   from siw_solicitacao
                                                                                  where sq_plano = p_plano
-                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                             )
                 )
@@ -342,9 +325,8 @@ BEGIN
             and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
-                                                                                            from siw_solicitacao                     x
-                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                            from siw_solicitacao x
+                                                                                           where x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                          )
                                             )
                 )
@@ -353,16 +335,14 @@ BEGIN
                                                                                        left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                                                  where y.sq_siw_solicitacao is not null
                                                                                    and y.sq_peobjetivo      = p_objetivo
-                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                            )
                 )
             and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
                                                                                   from siw_solicitacao
                                                                                  where sq_plano = p_plano
-                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                             )
                 )
@@ -392,9 +372,8 @@ BEGIN
             and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
-                                                                                            from siw_solicitacao                     x
-                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                            from siw_solicitacao x
+                                                                                           where x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                          )
                                             )
                 )
@@ -403,19 +382,18 @@ BEGIN
                                                                                        left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                                                  where y.sq_siw_solicitacao is not null
                                                                                    and y.sq_peobjetivo      = p_objetivo
-                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
-                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and x.sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                            )
                 )
             and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
                                                                                   from siw_solicitacao
                                                                                  where sq_plano = p_plano
-                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                   and sq_siw_solicitacao in (select sq_siw_solicitacao from connectby('siw_solicitacao','sq_solic_pai','sq_siw_solicitacao', to_char(b.sq_siw_solicitacao), 0) as (sq_siw_solicitacao numeric, sq_solic_pai numeric, level int))
                                                                                )
                                             )
                 );
-  End If;
+  End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

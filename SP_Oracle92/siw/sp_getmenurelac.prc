@@ -75,7 +75,7 @@ begin
                   inner join siw_modulo  d on (c.sq_modulo          = d.sq_modulo)
                 inner   join siw_tramite e on (a.sq_siw_tramite     = e.sq_siw_tramite)
           where a.servico_cliente = p_sq_menu
-            and ((p_restricao is null) or (p_restricao is not null and a.sq_siw_tramite = p_restricao))
+            and ((p_restricao is null) or (p_restricao is not null and a.sq_siw_tramite = to_number(p_restricao)))
           order by b.nome, c.nome, e.nome;
    End If;
 end SP_GetMenuRelac;

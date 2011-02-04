@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetCCTree
+﻿create or replace FUNCTION SP_GetCCTree
    (p_cliente    numeric,
     p_restricao  varchar,
     p_result    REFCURSOR
@@ -25,9 +25,10 @@ BEGIN
                        (select sq_cc_pai,count(*) Filho from ct_cc x where cliente = p_cliente group by sq_cc_pai) b
                      on (a.sq_cc = b.sq_cc_pai)  
              where a.cliente      = p_cliente
-               and a.sq_cc_pai    = p_restricao
+               and a.sq_cc_pai    = to_number(p_restricao)
              order by a.receita, a.nome;
       End If;
-    End If;
+    End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

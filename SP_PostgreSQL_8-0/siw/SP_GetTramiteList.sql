@@ -187,13 +187,13 @@ begin
          from siw_tramite                 a
          where a.sq_siw_tramite in (select sq_siw_tramite
                                       from siw_tramite b
-                                     where b.sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = p_restricao)
-                                        or (b.sq_menu       = (select sq_menu from siw_solicitacao where sq_siw_solicitacao = p_restricao) and
-                                            b.ordem         = (select ordem-1 from siw_tramite where sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = p_restricao)) and
+                                     where b.sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = to_number(p_restricao))
+                                        or (b.sq_menu       = (select sq_menu from siw_solicitacao where sq_siw_solicitacao = to_number(p_restricao)) and
+                                            b.ordem         = (select ordem-1 from siw_tramite where sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = to_number(p_restricao))) and
                                             b.ativo = 'S'
                                            )
-                                        or (b.sq_menu       = (select sq_menu from siw_solicitacao where sq_siw_solicitacao = p_restricao) and
-                                            b.ordem         = (select ordem+1 from siw_tramite where sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = p_restricao)) and
+                                        or (b.sq_menu       = (select sq_menu from siw_solicitacao where sq_siw_solicitacao = to_number(p_restricao)) and
+                                            b.ordem         = (select ordem+1 from siw_tramite where sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = to_number(p_restricao))) and
                                             b.ativo = 'S'
                                            )
                                    )

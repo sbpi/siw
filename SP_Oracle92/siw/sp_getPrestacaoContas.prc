@@ -185,7 +185,7 @@ begin
                                group by x.sq_prestacao_contas
                               ) d on (a.sq_prestacao_contas = d.sq_prestacao_contas)
              where a.cliente     = p_cliente
-               and a.sq_prestacao_pai = p_restricao
+               and a.sq_prestacao_pai = to_number(p_restricao)
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo  = p_ativo))
                and (p_tipo       is null or (p_tipo    is not null and a.tipo   = p_tipo))

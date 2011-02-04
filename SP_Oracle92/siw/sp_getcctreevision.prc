@@ -34,10 +34,9 @@ begin
                                                                    c.sq_pessoa = Nvl(p_sq_pessoa,0) and
                                                                    c.sq_menu   = Nvl(p_sq_menu,0))
              where a.cliente      = p_cliente
-               and a.sq_cc_pai    = p_restricao
+               and a.sq_cc_pai    = to_number(p_restricao)
              order by a.receita, a.nome;
       End If;
     End If;
 end SP_GetCCTreeVision;
 /
-

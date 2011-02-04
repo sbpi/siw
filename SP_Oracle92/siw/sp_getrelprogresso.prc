@@ -11,7 +11,7 @@ create or replace procedure SP_GetRelProgresso
 
     w_inicio date := p_inicio;
     w_fim    date := p_fim;
-    w_dias   number(18);
+    w_dias   integer;
     w_mes    date;
 begin
    If p_restricao = 'PROENTR' Then

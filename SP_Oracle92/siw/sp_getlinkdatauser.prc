@@ -27,7 +27,7 @@ begin
                       (select sq_menu_pai,count(*) Filho from siw_menu x where ativo = 'S' and ultimo_nivel = 'N' group by sq_menu_pai) b
                     on (a.sq_menu = b.sq_menu_pai)  
             where a.ativo            = 'S'
-              and a.sq_menu_pai      = p_restricao
+              and a.sq_menu_pai      = to_number(p_restricao)
               and a.sq_pessoa        = p_cliente
               and (p_sq_pessoa       <= 0 or (p_sq_pessoa > 0 and marcado(a.sq_menu, p_sq_pessoa) > 0))
            order by 5,2;
@@ -35,4 +35,3 @@ begin
   End If;
 end SP_GetLinkDataUser;
 /
-

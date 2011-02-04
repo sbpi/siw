@@ -201,7 +201,7 @@ begin
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
-                                                    a2.servico_cliente   = p_restricao
+                                                    a2.servico_cliente   = to_number(p_restricao)
                                                    )
                 inner join siw_solicitacao   b  on (a2.servico_fornecedor= b.sq_menu and
                                                     a2.sq_siw_tramite    = b.sq_siw_tramite and
@@ -223,7 +223,7 @@ begin
                              )               e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
                 left    join pe_programa     f  on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
                   left  join siw_solicitacao f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao)
-          where a.sq_menu        = p_restricao
+          where a.sq_menu        = to_number(p_restricao)
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0

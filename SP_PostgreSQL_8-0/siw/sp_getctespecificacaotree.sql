@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetCTEspecificacaoTree
+﻿create or replace FUNCTION SP_GetCTEspecificacaoTree
    (p_cliente    numeric,
     p_ano        varchar,
     p_restricao  varchar,
@@ -33,10 +33,11 @@ BEGIN
                      on (a.sq_especificacao_despesa = b.especificacao_pai)  
                      left outer join ct_cc c on (a.sq_cc = c.sq_cc)
              where a.cliente            = p_cliente
-               and a.especificacao_pai  = p_restricao
+               and a.especificacao_pai  = to_number(p_restricao)
                and (p_ano is null or (p_ano is not null and a.ano = p_ano))               
              order by c.nome;
       End If;
-    End If;
+    End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

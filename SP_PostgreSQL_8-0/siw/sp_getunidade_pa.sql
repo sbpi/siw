@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getUnidade_PA
+﻿create or replace FUNCTION sp_getUnidade_PA
    (p_cliente         numeric,
     p_chave           numeric,
     p_ativo          varchar,
@@ -68,6 +68,7 @@ BEGIN
             and a.sq_unidade     <> coalesce(p_chave,0)
             and a.ativo          = 'S'
             and a.prefixo        = p_restricao;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

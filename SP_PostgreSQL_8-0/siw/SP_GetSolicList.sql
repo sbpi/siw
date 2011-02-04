@@ -1808,7 +1808,7 @@ BEGIN
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
-                                                    a2.servico_cliente   = p_restricao
+                                                    a2.servico_cliente   = to_number(p_restricao)
                                                    )
                 inner join siw_solicitacao   b  on (a2.servico_fornecedor= b.sq_menu and
                                                     a2.sq_siw_tramite    = b.sq_siw_tramite and
@@ -1839,8 +1839,8 @@ BEGIN
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
-          where a.sq_menu        = p_restricao
-            --and 0                = (select count(*) from siw_solic_vinculo where sq_menu = p_restricao)
+          where a.sq_menu        = to_number(p_restricao)
+            --and 0                = (select count(*) from siw_solic_vinculo where sq_menu = to_number(p_restricao))
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
                  (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
@@ -1885,7 +1885,7 @@ BEGIN
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
-                                                    a2.servico_cliente   = p_restricao
+                                                    a2.servico_cliente   = to_number(p_restricao)
                                                    )
                 inner join siw_solic_vinculo a3 on (a3.sq_menu           = a2.servico_cliente)
                 inner join siw_solicitacao   b  on (a3.sq_siw_solicitacao= b.sq_siw_solicitacao)
@@ -1914,7 +1914,7 @@ BEGIN
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
-          where a.sq_menu        = p_restricao
+          where a.sq_menu        = to_number(p_restricao)
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
          order by titulo;
    End If;

@@ -110,7 +110,7 @@ begin
                         ) c on (a.sq_localizacao = c.sq_localizacao)
              where cliente = p_cliente
              and (p_chave is null or (p_chave is not null and a.sq_localizacao = p_chave))
-             and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = p_restricao))
+             and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = to_number(p_restricao)))
              and (p_nome       is null or (p_nome      is not null and a.nome   = p_nome))
              and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
              order by a.nome;
@@ -124,9 +124,9 @@ begin
 --                                from mt_almoxarifado x
 --                              )c on(a.sq_almoxarifado = c.sq_almoxarifado)
 --            where cliente = p_cliente
---            and a.sq_local_pai = p_restricao
+--            and a.sq_local_pai = to_number(p_restricao)
 --            and (p_chave      is null or (p_chave     is not null and a.sq_almoxarifado = p_chave))
---            and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = p_restricao))
+--            and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = to_number(p_restricao)))
 --            and (p_nome       is null or (p_nome      is not null and a.nome   = p_nome))
 --            and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
 

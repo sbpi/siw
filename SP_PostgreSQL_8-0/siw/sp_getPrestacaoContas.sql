@@ -1,4 +1,4 @@
-create or replace FUNCTION sp_getPrestacaoContas
+﻿create or replace FUNCTION sp_getPrestacaoContas
    (p_cliente   numeric,
     p_chave     numeric,
     p_chave_pai numeric,
@@ -50,8 +50,7 @@ BEGIN
             and a.sq_prestacao_contas not in (select x.sq_prestacao_contas
                                               from ac_prestacao_contas x
                                              where x.cliente   = p_cliente
-                                            start with x.sq_prestacao_contas = p_chave
-                                            connect by prior x.sq_prestacao_contas = x.sq_prestacao_pai
+                                               and x.sq_prestacao_contas in (select sq_prestacao_contas from connectby('ac_prestacao_contas','sq_prestacao_contas','sq_prestacao_pai',to_char(p_chave), 0) as (sq_prestacao_contas numeric, sq_prestacao_pai numeric, level int))
                                            )
          order by a.nome;
    Elsif upper(p_restricao) = 'FOLHA' Then
@@ -71,7 +70,7 @@ BEGIN
             and (p_nome       is null or (p_nome      is not null and a.nome = p_nome))
             and (p_tipo       is null or (p_tipo      is not null and a.tipo = p_tipo))
             and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
-         connect by prior a.sq_prestacao_pai = a.sq_prestacao_contas
+            and a.sq_prestacao_contas in (select sq_prestacao_contas from connectby('ac_prestacao_contas','sq_prestacao_pai','sq_prestacao_contas',to_char(b.sq_prestacao_contas), 0) as (sq_prestacao_contas numeric, sq_prestacao_pai numeric, level int))
          order by 5;
    Elsif upper(p_restricao) = 'PAI' Then
      -- Recupera apenas os registros pais
@@ -186,12 +185,13 @@ BEGIN
                                group by x.sq_prestacao_contas
                               ) d on (a.sq_prestacao_contas = d.sq_prestacao_contas)
              where a.cliente     = p_cliente
-               and a.sq_prestacao_pai = p_restricao
+               and a.sq_prestacao_pai = to_number(p_restricao)
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo  = p_ativo))
                and (p_tipo       is null or (p_tipo    is not null and a.tipo   = p_tipo))
             order by a.nome;
       End If;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

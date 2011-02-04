@@ -372,7 +372,7 @@ BEGIN
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.peso
            from pj_projeto_etapa   a
           where a.sq_siw_solicitacao = p_chave
-            and acentos(a.titulo,1)  = p_restricao;
+            and acentos(a.titulo,1)  = to_number(p_restricao);
    End If;
 
   return p_result;

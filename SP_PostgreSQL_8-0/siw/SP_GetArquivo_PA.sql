@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetArquivo_PA
+﻿create or replace FUNCTION SP_GetArquivo_PA
    (p_cliente          numeric,
     p_chave            numeric,
     p_chave_aux        numeric,
@@ -59,12 +59,11 @@ BEGIN
                 inner join pa_arquivo b on (a.sq_localizacao = b.sq_localizacao)
           where b.cliente = p_cliente
             and a.sq_localizacao = p_chave
-            and a.sq_arquivo_local not in(select x.sq_arquivo_local
+            and a.sq_arquivo_local not in (select x.sq_arquivo_local
                                             from pa_arquivo_local x
                                                  inner join pa_arquivo y on (x.sq_localizacao = y.sq_localizacao)
                                            where y.cliente = p_cliente
-                                          start with x.sq_arquivo_local = p_chave_aux
-                                          connect by prior x.sq_arquivo_local = x.sq_local_pai
+                                             and x.sq_arquivo_local in (select sq_arquivo_local from connectby('pa_arquivo_local','sq_arquivo_local','sq_local_pai',to_char(p_chave_aux),0) as (sq_arquivo_local numeric, sq_local_pai numeric, int level))
                                           )
        order by a.nome;
 
@@ -111,7 +110,7 @@ BEGIN
                         ) c on (a.sq_localizacao = c.sq_localizacao)
              where cliente = p_cliente
              and (p_chave is null or (p_chave is not null and a.sq_localizacao = p_chave))
-             and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = p_restricao))
+             and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = to_number(p_restricao)))
              and (p_nome       is null or (p_nome      is not null and a.nome   = p_nome))
              and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
              order by a.nome;
@@ -125,12 +124,13 @@ BEGIN
 --                                from mt_almoxarifado x
 --                              )c on(a.sq_almoxarifado = c.sq_almoxarifado)
 --            where cliente = p_cliente
---            and a.sq_local_pai = p_restricao
+--            and a.sq_local_pai = to_number(p_restricao)
 --            and (p_chave      is null or (p_chave     is not null and a.sq_almoxarifado = p_chave))
---            and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = p_restricao))
+--            and (p_restricao  is null or (p_restricao is not null and a.sq_local_pai = to_number(p_restricao)))
 --            and (p_nome       is null or (p_nome      is not null and a.nome   = p_nome))
 --            and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
 
-   end if;
+   end if;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

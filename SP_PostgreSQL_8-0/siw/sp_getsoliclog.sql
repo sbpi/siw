@@ -53,8 +53,8 @@ BEGIN
                      left     join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_demanda_log = p_chave_aux))
-               and (p_tipo      is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                                    (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo      is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                                    (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                                    )
                                            )
                    )
@@ -118,8 +118,8 @@ BEGIN
                      left     join siw_arquivo        m  on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_projeto_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    )
@@ -183,8 +183,8 @@ BEGIN
                      left     join siw_arquivo           m  on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_programa_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    )
@@ -246,8 +246,8 @@ BEGIN
                      left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_acordo_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    )
@@ -311,8 +311,8 @@ BEGIN
                      left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_lancamento_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    )
@@ -369,8 +369,8 @@ BEGIN
                      left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_demanda_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    )
@@ -422,9 +422,9 @@ BEGIN
                      left outer join siw_arquivo     k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and a.sq_siw_solic_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão' and substr(a.observacao,1,9) <> 'Anotação:') or
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers' and substr(a.observacao,1,9) <> 'Anotação:') or
                                                                (p_tipo =  1 and substr(a.observacao,1,9) = 'Anotação:') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    );
@@ -535,8 +535,8 @@ BEGIN
              where a.sq_siw_solicitacao = p_chave
                and p.cliente            = a1.sq_pessoa_pai
                and (p_chave_aux is null or (p_chave_aux is not null and h.sq_documento_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers') or
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    )
@@ -602,9 +602,9 @@ BEGIN
                      left outer join siw_arquivo     k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and a.sq_siw_solic_log = p_chave_aux))
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão' and substr(a.observacao,1,9) <> 'Anotação:') or
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers' and substr(a.observacao,1,9) <> 'Anotação:') or
                                                                (p_tipo =  1 and substr(a.observacao,1,9) = 'Anotação:') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                               (p_tipo =  2 and substr(a.observacao,1,13) =  '*** Nova vers')
                                                               )
                                       )
                    );

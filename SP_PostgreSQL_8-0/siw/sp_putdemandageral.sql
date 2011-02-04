@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutDemandaGeral
+﻿create or replace FUNCTION SP_PutDemandaGeral
    (p_operacao             varchar,
     p_chave                numeric,
     p_copia                numeric,
@@ -284,4 +284,5 @@ BEGIN
    If p_chave is not null
       Then p_chave_nova := p_chave;
       Else p_chave_nova := w_chave;
-   End If;END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+   End If;
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
