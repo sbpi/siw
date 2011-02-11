@@ -2070,7 +2070,7 @@ function Etapas() {
     $w_inicio_real          = f($RS,'inicio_real');
     $w_fim_real             = f($RS,'fim_real');
     $w_perc_conclusao       = formatNumber(f($RS,'perc_conclusao'));
-    $w_orcamento            = f($RS,'orcamento');
+    $w_orcamento            = formatNumber(f($RS,'orcamento'));
     $w_sq_pessoa            = f($RS,'sq_pessoa');
     $w_sq_unidade           = f($RS,'sq_unidade');
     $w_vincula_atividade    = f($RS,'vincula_atividade');
@@ -2376,7 +2376,7 @@ function Etapas() {
     ShowHTML('        <td><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);"  onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('        <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b>Orça<u>m</u>ento previsto:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_orcamento" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(nvl($w_orcamento,0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Orçamento previsto para execução desta etapa."></td>');
+    ShowHTML('        <td><b>Orça<u>m</u>ento previsto:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_orcamento" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_orcamento.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Orçamento previsto para execução desta etapa."></td>');
     MontaRadioSN('<b>Permite vinculação de tarefas?</b>',$w_vincula_atividade,'w_vincula_atividade','Marque SIM se desejar que tarefas sejam vinculadas a esta etapa.');
     MontaRadioNS('<b>Permite vinculação de contratos?</b>',$w_vincula_contrato,'w_vincula_contrato','Marque SIM se desejar que contratos sejam vinculados a esta etapa.');
     if ($w_pacote=='N') {

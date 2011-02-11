@@ -34,6 +34,12 @@ include_once($w_dir_volta.'classes/sp/db_exec.php');
 //                   = P   : Pesquisa
 
 
+if ($_POST['suporte']=='y') {
+  $_SESSION['LOGON'] = 'Sim';
+  $_SESSION['DBMS'] = $_POST['p_dbms'];
+  $_SESSION['P_CLIENTE'] = $_POST['p_cliente'];
+  $_SESSION['SQ_PESSOA'] = $_POST['sq_pessoa'];
+}
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 

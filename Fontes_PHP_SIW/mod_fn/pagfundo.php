@@ -2598,7 +2598,8 @@ function Grava() {
         // Reembolso sempre é para o usuário logado
         $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,null,null,null,null,null,null,null,null);
         foreach ($RS as $row) {$RS=$row; break;}
-  
+        //exibeVariaveis();
+        
         if (nvl($_REQUEST['w_chave'],'')!='') {
           // Se a solicitação já existe, recupera os dados bancários
           $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));

@@ -1,5 +1,4 @@
 <?php
-
 header('Expires: ' . -1500);
 session_start();
 $w_dir_volta = '../';
@@ -3008,14 +3007,27 @@ function TramitCentral() {
     ShowHTML('  }');
     Validate('w_caixa', 'Caixa para arquivamento', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_pasta', 'Pasta', '', 1, 1, 20, '1', '1');
-    ShowHTML('  for (i=1; i < theForm["w_assunto[]"].length; i++) {');
+    /*ShowHTML('  for (i=1; i < theForm["w_assunto[]"].length; i++) {');
     ShowHTML('    if (theForm["w_chave[]"][i].checked) {');
     ShowHTML('      if (theForm["w_assunto[]"][i].value == "---") {');
-    ShowHTML('        alert(\'Não é permitido arquivar protocolos sem assunto!\') ');
+    //ShowHTML('        alert(\'Não é permitido arquivar protocolos sem assunto!\') ');
+    ShowHTML('        alert("Não é permitido arquivar protocolos sem assunto: \n" + theForm["w_codigo[]"][i].value)');
     ShowHTML('        return false;');
     ShowHTML('      }');
     ShowHTML('    }');
+    ShowHTML('  }');*/
+    ShowHTML('  var w_teste = ""; ');
+    ShowHTML('  for (i=1; i < theForm["w_assunto[]"].length; i++) {');
+    ShowHTML('    if (theForm["w_chave[]"][i].checked) {');
+    ShowHTML('      if (theForm["w_prov[]"][i].value == "S") {');
+    ShowHTML('        var w_teste = w_teste + "\n" + theForm["w_codigo[]"][i].value; ');
+    ShowHTML('      }');
+    ShowHTML('    }');
     ShowHTML('  }');
+    ShowHTML('      if (w_teste != "") {');
+    ShowHTML('        alert("Não é permitido arquivar o(s) seguinte(s) protocolo(s) sem assunto: \n" + w_teste ) ');
+    ShowHTML('        return false; ');
+    ShowHTML('      }');
     Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     ShowHTML('  if (!confirm(\'Confirma o acondicionamento na caixa e pasta informadas?\')) return false;');
     ShowHTML('  theForm.Botao.disabled=true;');
@@ -3079,6 +3091,8 @@ function TramitCentral() {
       AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
       ShowHTML('<input type="hidden" name="w_chave[]" value="">');
       ShowHTML('<input type="hidden" name="w_assunto[]" value=""></td>');
+      ShowHTML('<input type="hidden" name="w_prov[]" value=""></td>');
+      ShowHTML('<input type="hidden" name="w_codigo[]" value=""></td>');
       ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
       ShowHTML('<INPUT type="hidden" name="w_menu" value="' . $w_menu . '">');
       if (nvl($_REQUEST['p_ordena'], '') == '')
@@ -3087,8 +3101,13 @@ function TramitCentral() {
       // Lista os registros selecionados para listagem
       $w_atual = '';
       $i = 0;
+      echo '<!-- '.var_export($RS, true).' -->';
       foreach ($RS as $row) {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+        //echo '('.f($row, 'provisorio').')';
+        if(f($row, 'provisorio') == 'S'){
+          $w_cor = $conTrBgColorLightYellow1;
+        }
         $w_unidade = f($row, 'sq_unidade_posse');
         ShowHTML('      <tr bgcolor="' . $w_cor . '">');
         ShowHTML('        <td align="center" width="1%" nowrap>');
@@ -3098,6 +3117,8 @@ function TramitCentral() {
           ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
         }
         ShowHTML('<input type="hidden" name="w_assunto[]" value="' . f($row, 'cd_assunto') . '">');
+        ShowHTML('<input type="hidden" name="w_prov[]" value="' . f($row, 'provisorio') . '">');
+        ShowHTML('<input type="hidden" name="w_codigo[]" value="' . f($row, 'protocolo') . '">');
         ShowHTML('        </td>');
         ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
         ShowHTML('        <td width="10">&nbsp;' . f($row, 'nm_tipo') . '</td>');

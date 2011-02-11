@@ -4846,6 +4846,7 @@ function Diarias_Solic() {
     ShowHTML('</SCRIPT>');
   } else {
     ScriptOpen('JavaScript');
+    toMoney();
     ShowHTML('function calculaDiaria(valor) { ');
     ShowHTML('  var obj=document.Form;');
     ShowHTML('    var w_qtd = replaceAll(valor,".","");');
@@ -4866,7 +4867,7 @@ function Diarias_Solic() {
     ShowHTML('    w_val = replaceAll(w_val,",",".");');
     ShowHTML('    w_res = parseFloat(w_val*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_hospedagem_valor.value="0,00";');
-    ShowHTML('    else obj.w_hospedagem_valor.value = mascaraGlobal("[###.]###,##",w_res*100);');
+    ShowHTML('    else obj.w_hospedagem_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('}');
     ShowHTML('function calculaLocacao(valor) { ');
     ShowHTML('  var obj=document.Form;');
@@ -5317,7 +5318,7 @@ function Diarias_Solic() {
           ShowHTML('          <tr><td><td colspan="3">Observações:<br><b>' . $w_hos_observ . '</td>');
         ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
         ShowHTML('          <tr valign="top"><td>');
-        ShowHTML('            <td><b>Valor (' . $w_sg_moeda_hospedagem . '):</b><br><input type="text" ' . (($w_hospedagem == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_vl_diaria_hospedagem . '" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor da hospedagem."></td>');
+        ShowHTML('            <td><b>Valor (' . $w_sg_moeda_hospedagem . '):</b><br><input type="text" ' . (($w_hospedagem == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_vl_diaria_hospedagem . '" onblur="calculaHospedagem(document.Form.w_hospedagem_qtd.value);" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor da hospedagem."></td>');
         ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_hospedagem == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_hospedagem_qtd" SIZE="5" MAXLENGTH="5" VALUE="' . $w_hospedagem_qtd . '" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
         ShowHTML('            <td><b>Valor a ser pago (' . $w_sg_moeda_hospedagem . '):</b><br><input type="text" READONLY name="w_hospedagem_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_hospedagem_valor . '" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
         ShowHTML('<INPUT type="hidden" name="w_hos_in" value="' . formataDataEdicao($w_hos_in) . '">');
