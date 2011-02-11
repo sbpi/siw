@@ -33,7 +33,7 @@ begin
                                                                                    y.sigla          <> 'PADCAD'
                                                                                   )
                                                       inner join siw_tramite z on (x.sq_siw_tramite = z.sq_siw_tramite and z.sigla not in ('CI','CA'))
-                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = 10136 and y.consulta_opiniao = 'S' and x.opiniao is null))
+                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
                              and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
@@ -56,7 +56,7 @@ begin
                                                                                    y.sigla          <> 'PADCAD'
                                                                                   )
                                                       inner join siw_tramite z on (x.sq_siw_tramite = z.sq_siw_tramite and z.sigla not in ('CI','CA'))
-                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = 10136 and y.consulta_opiniao = 'S' and x.opiniao is null))
+                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
@@ -92,7 +92,7 @@ begin
                                                                                    y.sigla          <> 'PADCAD'
                                                                                   )
                                                       inner join siw_tramite z on (x.sq_siw_tramite = z.sq_siw_tramite and z.sigla not in ('CI','CA'))
-                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = 10136 and y.consulta_opiniao = 'S' and x.opiniao is null))
+                                                where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
                              and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho

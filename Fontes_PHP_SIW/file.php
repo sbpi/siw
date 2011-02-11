@@ -57,7 +57,6 @@ if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $w_
       $w_filename  = f($row,'nome_original');
     }
   } 
-  FechaSessao($dbms);
 } 
 
 if ($w_erro>0) { // Se houve erro, exibe HTML
@@ -74,6 +73,8 @@ if ($w_erro>0) { // Se houve erro, exibe HTML
   $strFileName = $w_caminho;
   if (strlen($strFileName)>0) DownloadFile($strFileName,$w_force);
 } 
+
+FechaSessao($dbms);
 
 function DownloadFile($strFileName,$blnForceDownload) {
   extract($GLOBALS);

@@ -13,6 +13,7 @@ include_once($w_dir_volta.'classes/sp/db_getAfastamento.php');
 include_once($w_dir_volta.'classes/sp/db_getViagemBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getGPTipoAfast.php');
 include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
+include_once($w_dir_volta.'classes/sp/db_getGPFolhaPontoDiario.php');
 include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
 include_once($w_dir_volta.'classes/sp/db_getGpPensionista.php');
 include_once($w_dir_volta.'classes/sp/db_getGpFamiliares.php');

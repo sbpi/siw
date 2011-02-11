@@ -473,7 +473,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            } else { 
              $this->stmt = oci_parse($this->conHandle, "begin $this->query ($par); end;");
            }
-
+           
            $exibe = false;
            foreach($this->params as $paramName=>$value) {
                foreach($value as $paramValue=>$paramType) {
@@ -527,7 +527,9 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
               } 
            }
         } else {
+           $function = false;
            if (substr($this->query,0,8)=='FUNCTION') {
+             $function = true;
              $log = false;
              $this->query = substr($this->query,8);
              $this->result = oci_parse($this->conHandle, "select $this->query ($par) from dual");
@@ -555,15 +557,18 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
                return false; 
              } else {
-               //$this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-               if ($log) {
-                 // Registra no servidor syslog
-                 $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
-                 if ($w_resultado>'') {
-                   ScriptOpen('JavaScript');
-                   ShowHTML('  alert(\''.$w_resultado.'\');');
-                   ScriptClose();
-                 }
+               if ($function){
+                 $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+               } else {
+	               if ($log) {
+	                 // Registra no servidor syslog
+	                 $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
+	                 if ($w_resultado>'') {
+	                   ScriptOpen('JavaScript');
+	                   ShowHTML('  alert(\''.$w_resultado.'\');');
+	                   ScriptClose();
+	                 }
+	               }
                }               
              }
            } else { 
@@ -704,8 +709,8 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
 
         foreach($this->params as $paramName=>$value) {
             foreach($value as $paramValue=>$paramType) {
-                if ($value[1]!=B_CURSOR) { 
-                   if (nvl($value[0],'')=='') { $par .= ", null"; }
+                if ($value[1]!=B_CURSOR) {
+                   if (nvl($value[0],'')==='') { $par .= ", null"; }
                    elseif ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
                    elseif ($value[1]==B_DATE) { $par .= ", '".date('d/m/Y',toDate($value[0]))."'"; }
                    else { $par .= ", $value[0]"; }
@@ -779,7 +784,7 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                     $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 
                   } elseif ($val=='timestamp1') {
                     $tmp = $this->resultData[$i][$key];
-                    $this->resultData[$i][$key] = mktime(substr($tmp,12,2).'-'.substr($tmp,15,2).'-'.substr($tmp,18,2).'-'.substr($tmp,3,2).'-'.substr($tmp,0,2).'-'.substr($tmp,6,4)); 
+                    $this->resultData[$i][$key] = mktime(substr($tmp,12,2),substr($tmp,15,2),substr($tmp,18,2),substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
                   } elseif ($val=='timestamp') {
                     $tmp = $this->resultData[$i][$key];
                     $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 

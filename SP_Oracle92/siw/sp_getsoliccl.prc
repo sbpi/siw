@@ -159,7 +159,7 @@ begin
                 inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)
                    inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso
                                           from siw_solicitacao             x
-                                               inner  join ac_acordo      x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)
+                                               inner  join cl_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)
                                                inner join siw_menu         y on (x.sq_menu        = y.sq_menu and
                                                                                  y.sq_menu        = coalesce(p_menu, y.sq_menu)
                                                                                 )

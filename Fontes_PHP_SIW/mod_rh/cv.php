@@ -290,7 +290,7 @@ function Identificacao() {
       $w_chave = $w_usuario;
     }
     if (Nvl($w_chave,'')>'' && $O=='I'){
-      $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getGPColaborador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,'S',null,null,null,null,null,null,null,null,null,null,null,null);
       if (count($RS)>0) {
         ScriptOpen('JavaScript');
         ShowHTML(' alert(\'Colaborador já cadastrado!\');');
