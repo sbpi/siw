@@ -120,7 +120,7 @@ BEGIN
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
-             c5.codigo as cd_assunto,
+             c5.codigo as cd_assunto, c5.provisorio,
              case b3.ativo 
                   when 'S' then case c5.fase_corrente_anos when 0 then c6.descricao else to_char(c5.fase_corrente_anos) || ' '  || c6.sigla end
                   else case b3.sigla
