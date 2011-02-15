@@ -25,7 +25,7 @@ begin
                 case a.unidade_padrao       when 'S' then 'Sim' else 'Não' end as nm_padrao,
                 b.nome, b.sigla,
                 e.nome nm_unidade_pai, e.sigla sg_unidade_pai,
-                e.nome||coalesce(b.nome,'0') as ordena,
+                case a.unidade_padrao when 'S' then '0' else '1' end||e.nome||coalesce(b.nome,'0') as ordena,
                 case when d.sq_unidade_pai is null then b.sigla else e.sigla end as sg_unidade_pai
            from cl_unidade                      a
                 inner   join eo_unidade         b on (a.sq_unidade         = b.sq_unidade)

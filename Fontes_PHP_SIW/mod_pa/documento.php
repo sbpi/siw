@@ -1517,17 +1517,19 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
       CabecalhoRelatorio($w_cliente, f($RS_Cab, 'nome'), 4, $w_chave);
     $w_embed = 'HTML';
   }
-  if ($w_embed != 'WORD')
-    ShowHTML('<center><B><font size=1>Clique <a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML('<tr><td colspan="2" align="center">');
   ShowHTML(VisualDocumento($w_chave, $w_o, $w_usuario, $w_p1, $w_embed, $w_identificacao, $w_assunto_princ, $w_orcamentaria, $w_indicador, $w_recurso, $w_interessado, $w_anexo, $w_meta, $w_ocorrencia, $w_consulta));
-  if ($w_embed != 'WORD')
-    ShowHTML('<center><B><font size=1>Clique <a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
-  if ($w_tipo == 'PDF')
-    RodapePDF();
-  elseif ($w_tipo != 'WORD')
-    Rodape();
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  var comando, texto;');
+  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+  ShowHTML('  }');
+  ScriptClose();
+  if     ($w_tipo=='PDF')  RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 }
 
 // =========================================================================

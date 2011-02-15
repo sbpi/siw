@@ -1346,18 +1346,18 @@ function Visual(){
   } 
   ShowHTML('</TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
-//  ShowHTML('<HR>');
-  if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B><FONT SIZE=1>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</font></b></center>');
-  } 
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da tarefa, na opção 'Listagem'
   ShowHTML(VisualDemanda($w_chave,'L',$w_usuario));
-  if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B><FONT SIZE=1>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</font></b></center>');
-  } 
-  if ($w_tipo!='WORD') {
-    Rodape();
-  } 
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  var comando, texto;');
+  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+  ShowHTML('  }');
+  ScriptClose();
+  if     ($w_tipo=='PDF')  RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================

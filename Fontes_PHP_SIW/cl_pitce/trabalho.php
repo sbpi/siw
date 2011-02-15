@@ -190,9 +190,9 @@ function Mesa() {
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');
 
-  // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+  // Se o georeferenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
   if (f($RS_Cliente,'georeferencia')=='S') {
-    ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Georeferenciamento" title="Clique para visualizar os mapas georeferenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
   if ($_SESSION['DBMS']!=5) {

@@ -6,7 +6,7 @@ create or replace procedure SP_GetUserModule
 begin
    -- Recupera os módulos geridos pela pessoa
    open p_result for 
-      select a.sq_modulo, d.sq_pessoa_endereco, b.nome modulo, d.logradouro endereco, e.nome usuario 
+      select a.sq_modulo, b.sigla, b.nome as modulo, d.sq_pessoa_endereco, d.logradouro as endereco, e.nome as usuario 
         from siw_cliente_modulo              a
              inner   join siw_modulo         b on (a.sq_modulo          = b.sq_modulo)
              inner   join sg_pessoa_modulo   c on (a.sq_pessoa          = c.cliente and
@@ -19,4 +19,3 @@ begin
        order by b.nome;
 end SP_GetUserModule;
 /
-

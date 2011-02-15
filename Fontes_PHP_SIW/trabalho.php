@@ -11,6 +11,7 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_TT.php');
+include_once($w_dir_volta.'classes/sp/db_getUserModule.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_Recurso.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop.php');
 include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
@@ -108,30 +109,31 @@ function Mesa() {
 
   if ($O=="L") {
     // Verifica se o cliente tem o módulo de telefonia contratado
-    $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, 'TT');
-    foreach ($RS as $row) $w_telefonia = f($row,'nome');
+    $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null);
+    foreach($RS as $row) {
+      if (f($row,'sigla')=='TT') $w_telefonia = f($row,'nome');
+      if ($_SESSION['INTERNO']=='S') {
+        if (f($row,'sigla')=='GP') $w_pessoal    = f($row,'nome');
+        if (f($row,'sigla')=='FN') $w_financeiro = f($row,'nome');
+        if (f($row,'sigla')=='PD') $w_viagem     = f($row,'nome');
+      }
+      $w_user[f($row,'sigla')] = false;
+    }
+
     // Apenas para usuários internos da organização
     if ($_SESSION['INTERNO']=='S') {
-      // Verifica se o cliente tem o módulo de colaboradores contratado
-      $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, 'GP');
-      foreach ($RS as $row) $w_pessoal = f($row,'nome');
-      
-
-      // Verifica se o cliente tem o módulo de viagens
-      $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, 'PD');
-      foreach ($RS as $row) $w_viagem = f($row,'nome');
-
       // Verifica se há algum indicador com aferição
       $sql = new db_getIndicador; $RS_Indicador = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'TIPOINDIC');
       $RS_Indicador = SortArray($RS_Indicador,'nome','asc');
       if (count($RS_Indicador)>0) $w_indicador='S'; else $w_indicador='N';
       
-      // Verifica se o usuário tem acesso ao módulo de telefonia
-      //$sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
-      //if (f($RS,'sq_usuario_central')=='') $w_telefonia='';
+      // Verifica os módulos que o usuário seja gestor
+      $sql = new db_getUserModule; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario);
+      foreach($RS as $row) {
+        $w_user[f($row,'sigla')] = true;
+      }
     }
   }
-
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
@@ -140,6 +142,15 @@ function Mesa() {
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');
+  
+  // Se o módulo financeiro estiver habilitado e o usuário for gestor desse módulo, exibe link para a tela de tesouraria
+  if (nvl($w_financeiro,'')!='' && $_SESSION['DBMS']!=8) {
+    if ($w_user['FN']) {
+      //ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_fn/tesouraria.php?par=inicial&O=L&TP='.$TP.' - Tesouraria').'\',\'Tesouraria\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a tela da tesouraria."><img src="'.$conImgFin.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      ShowHTML('      <A HREF="mod_fn/tesouraria.php?par=inicial&O=L&TP='.$TP.' - Tesouraria" title="Clique para acessar a tela da tesouraria."><img src="'.$conImgFin.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    }
+  }
+  
   // Se o módulo de pessoal estiver habilitado para o cliente, exibe link para acesso à folha de ponto
   if (nvl($w_pessoal,'')!='' && $_SESSION['DBMS']!=8) {
     // Verifica se o usuário tem contrato de trabalho  
@@ -166,9 +177,9 @@ function Mesa() {
     }
   }
 
-  // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+  // Se o georeferenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
   if (f($RS_Cliente,'georeferencia')=='S') {
-    ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas geo-referenciados."><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Georeferenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas georeferenciados."><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
   if ($_SESSION['DBMS']!=8) {

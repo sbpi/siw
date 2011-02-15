@@ -428,7 +428,7 @@ function Geral() {
     Validate('w_googlemaps_key','Chave do Google Maps','1','',1,2000,'1','1');
     ShowHTML('  if (theForm.w_georeferencia[0].checked) {');
     ShowHTML('     if (theForm.w_googlemaps_key.value=="") {');
-    ShowHTML('        alert("Para usar o geo-referenciamento, indique a chave do Google Maps!");');
+    ShowHTML('        alert("Para usar o georeferenciamento, indique a chave do Google Maps!");');
     ShowHTML('        theForm.w_googlemaps_key.focus();');
     ShowHTML('        return false;');
     ShowHTML('     }');
@@ -551,13 +551,13 @@ function Geral() {
       MontaRadioSN('<b>Controla ata de registro de preços?</b>',$w_arp,'w_arp','Indique SIM se o cliente tiver módulo de compras e controle de ARP.');
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração do serviço de Geo-Referenciamento</td></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração do serviço de GeoReferenciamento</td></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td>Os dados deste bloco informam ao sistema se o cliente deve ter acesso às funcionalidades de geo-referenciamento e, neste caso, a chave de acesso ao Web Service do Google Maps.</td></tr>');
+      ShowHTML('      <tr><td>Os dados deste bloco informam ao sistema se o cliente deve ter acesso às funcionalidades de georeferenciamento e, neste caso, a chave de acesso ao Web Service do Google Maps.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td><table border="0" width="100%">');
       ShowHTML('          <tr valign="top">');
-      MontaRadioSN('<b>Ativa geo-referenciamento?</b>',$w_georeferencia,'w_georeferencia','Indique SIM se desejar ativar o geo-referenciamento para este cliente.');
+      MontaRadioSN('<b>Ativa georeferenciamento?</b>',$w_georeferencia,'w_georeferencia','Indique SIM se desejar ativar o georeferenciamento para este cliente.');
       ShowHTML('      <tr><td><b><u>C</u>have do Google Maps:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_googlemaps_key" class="STI" ROWS=5 cols=75 title="Informe a chave de acesso ao Web Service do Google Maps">'.$w_googlemaps_key.'</TEXTAREA></td>');
       ShowHTML('          </table>');
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');

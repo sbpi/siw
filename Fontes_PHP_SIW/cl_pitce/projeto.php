@@ -1080,9 +1080,9 @@ function Geral() {
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
     SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
-    // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+    // Se o georeferenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
     if (f($RS_Cliente,'georeferencia')=='S' && nvl($w_pais,'')!='' && nvl($w_uf,'')!='' && nvl($w_cidade,'')!='') {
-      // Recupera dados da cidade selecionada para início da tela de geo-referenciamento
+      // Recupera dados da cidade selecionada para início da tela de georeferenciamento
       $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$w_cidade);
       ShowHTML('          <td align="center" valign="middle"><img src="'.$conImgGeo.'" border=0 onClick="javascript:window.open(\''.montaURL_JS(null,$conRootSIW.'mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=PROJETO&w_auth=false&w_volta=fecha&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&w_inicio='.f($RS,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas."></A>&nbsp');
     }
@@ -3460,10 +3460,16 @@ function Visual() {
     if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
     $w_embed="HTML";
   }
-  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,$O,$w_usuario,$w_embed));
-  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  var comando, texto;');
+  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+  ShowHTML('  }');
+  ScriptClose();
   if     ($w_tipo=='PDF')  RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 }  

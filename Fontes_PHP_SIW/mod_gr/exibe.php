@@ -281,7 +281,7 @@ function inicial(){
   Cabecalho();
   head();
   ShowHTML($api->getHeadCode());
-  ShowHTML('<TITLE>'.$conSgSistema.' - Geo-referenciamento</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Georeferenciamento</TITLE>');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAET',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -326,9 +326,9 @@ function inicial(){
     if (nvl($w_origem,'')=='') {
       ShowHTML('          <tr><td colspan=2><b>Indique o que exibir:</b>');
     } elseif ($w_origem=='Endereços') {
-      ShowHTML('          <tr><td colspan=2><b>'.$w_origem.' geo-referenciados: ('.count($w_enderecos).')</b>');
+      ShowHTML('          <tr><td colspan=2><b>'.$w_origem.' georeferenciados: ('.count($w_enderecos).')</b>');
     } elseif ($w_origem=='Projetos') {
-      ShowHTML('          <tr><td colspan=2><b>'.$w_origem.' geo-referenciados: ('.count($w_projetos).')</b>');
+      ShowHTML('          <tr><td colspan=2><b>'.$w_origem.' georeferenciados: ('.count($w_projetos).')</b>');
     }
     if (nvl($w_origem,'')=='') {
       if (nvl($w_endereco,'')!='') $w_checked = true; else $w_checked = false;

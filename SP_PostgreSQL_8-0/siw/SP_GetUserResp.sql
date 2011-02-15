@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetUserResp
+﻿create or replace FUNCTION SP_GetUserResp
    (p_chave       numeric,
     p_restricao   varchar,
     p_result     REFCURSOR
@@ -15,6 +15,7 @@ BEGIN
              inner join eo_unidade b on (a.sq_unidade = b.sq_unidade)
        where a.sq_pessoa = p_chave
          and a.fim is null;
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

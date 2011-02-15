@@ -693,7 +693,7 @@ function Geral() {
         foreach ($RS as $row) { $RS = $row; break; }
         $w_chave_pai        = f($RS,'sq_solic_pai');
         $w_chave_aux        = null;
-        $w_sq_menu     = f($RS,'sq_menu');
+        $w_sq_menu          = f($RS,'sq_menu');
         $w_sq_unidade       = f($RS,'sq_unidade');
         $w_solicitante      = f($RS,'solicitante');
         $w_descricao        = f($RS,'descricao');
@@ -705,6 +705,12 @@ function Geral() {
   } 
   //Recupera os dados dos contratos do colaborador
   $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+  if (count($RSContrato==0)) {
+    ScriptOpen('JavaScript');
+    ShowHTML('  alert("Você não tem nenhum contrato ativo!");');
+    ScriptClose();
+    exit();
+  }
   foreach($RSContrato as $row){
     if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
       $sql = new db_getGPContrato; $RSContratos = $sql->getInstanceOf($dbms,$w_cliente,f($row,'chave'),$w_usuario,null,null,null,null,null,null,null,null,$w_inicio_data,null);
@@ -913,10 +919,16 @@ function Visual() {
     CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
   } 
   
-  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(visualferias($w_chave,'L',$w_usuario,$SG,$w_embed));
-  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  var comando, texto;');
+  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+  ShowHTML('  }');
+  ScriptClose();
   if ($w_tipo=='PDF')      RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 

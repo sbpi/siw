@@ -1326,11 +1326,17 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
       else                  CabecalhoRelatorio($w_cliente,'Ficha de '.f($RS_Menu,'nome'),4,$w_chave);
     }
   }
-  if ($w_embed!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados do registro, na opção 'Listagem'
   ShowHTML(VisualPrograma($w_chave,$w_o,$w_usuario,$w_p1,$w_embed,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_recurso,$w_interessado,$w_anexo,$w_meta,$w_ocorrencia,$w_consulta));
-  if ($w_embed!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
-  if     ($w_tipo=='PDF')      RodapePDF();
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  var comando, texto;');
+  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+  ShowHTML('  }');
+  ScriptClose();
+  if     ($w_tipo=='PDF')  RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================

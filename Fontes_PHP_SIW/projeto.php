@@ -1065,9 +1065,9 @@ function Geral() {
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
     SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
-    // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+    // Se o georeferenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
     if (f($RS_Cliente,'georeferencia')=='S' && nvl($w_pais,'')!='' && nvl($w_uf,'')!='' && nvl($w_cidade,'')!='') {
-      // Recupera dados da cidade selecionada para início da tela de geo-referenciamento
+      // Recupera dados da cidade selecionada para início da tela de georeferenciamento
       $sql = new db_getCityData; $RS = $sql->getInstanceOf($dbms,$w_cidade);
       ShowHTML('          <td align="center" valign="middle"><img src="'.$conImgGeo.'" border=0 onClick="javascript:window.open(\''.montaURL_JS(null,$conRootSIW.'mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=PROJETO&w_auth=false&w_volta=fecha&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&w_inicio='.f($RS,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas."></A>&nbsp');
     }

@@ -100,9 +100,9 @@ function callback($buffer) {
 // =========================================================================
 // Abre e fecha a arvore.
 // -------------------------------------------------------------------------
-function colapsar($w_chave){
+function colapsar($chave,$fechado=null){
   $saida = "&nbsp;";
-  $saida .= "<img src='images/mais.jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$w_chave.",this)'/>";
+  $saida .= "<img src='images/".(($fechado=="none") ? "mais" : "menos").".jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$chave.",this)'/>";
   $saida .= "&nbsp;";
   return $saida;
 }
@@ -868,7 +868,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
   }
   if (strpos($l_texto,'|@|')!==false) {
     $l_array = explode('|@|', $l_texto);
-    $l_hint = $l_array[4];
+    $l_hint = $l_array[4].(($l_exibe_titulo=='N') ? ' - '.$l_array[2] : '');
     if(nvl($l_embed,'-')!= 'WORD') {
       $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
     }else{
@@ -880,7 +880,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
     $l_hint = $l_array[4];
     $l_array = explode('|@|', f($RS,'dados_solic'));
     if(nvl($l_embed,'-')!= 'WORD') {
-      $l_hint = 'Exibe as informações deste registro.';
+      $l_hint = $l_array[4].(($l_exibe_titulo=='N') ? ' - '.$l_array[2] : '');
       $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
     } else {
       $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
@@ -1640,7 +1640,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
 }
 
 // =========================================================================
-// Exibe ícone da solicitação para geo-referenciamento
+// Exibe ícone da solicitação para georeferenciamento
 // -------------------------------------------------------------------------
 function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0, $l_restricao=null) {
   extract($GLOBALS);

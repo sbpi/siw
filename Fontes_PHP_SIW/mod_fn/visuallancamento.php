@@ -120,9 +120,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
         $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
         $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
-        $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
       }
+      $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
+      $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
       if (!($l_P1==4 || $l_tipo=='WORD')){
         $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
         $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';

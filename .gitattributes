@@ -1018,6 +1018,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicData_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEV.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtapa.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtpRec.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicFN.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGP.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGR.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGRA.php -text
@@ -1774,6 +1775,7 @@ Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/images/cancel.png -text
+Fontes_PHP_SIW/images/icone/dollar-green.png -text
 Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/js/funcoes.js -text
 Fontes_PHP_SIW/js/jquery.MultiFile.js -text
@@ -1844,6 +1846,7 @@ Fontes_PHP_SIW/mod_fn/rel_contas.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
 Fontes_PHP_SIW/mod_fn/rel_plano.php -text
 Fontes_PHP_SIW/mod_fn/tabelas.php -text
+Fontes_PHP_SIW/mod_fn/tesouraria.php -text
 Fontes_PHP_SIW/mod_fn/validafundofixo.php -text
 Fontes_PHP_SIW/mod_fn/validalancamento.php -text
 Fontes_PHP_SIW/mod_fn/visualfundofixo.php -text
@@ -3932,6 +3935,7 @@ SP_Oracle92/siw/sp_getsolicdata.prc -text
 SP_Oracle92/siw/sp_getsolicemail.prc -text
 SP_Oracle92/siw/sp_getsolicetapa.prc -text
 SP_Oracle92/siw/sp_getsolicetprec.prc -text
+SP_Oracle92/siw/sp_getsolicfn.prc -text
 SP_Oracle92/siw/sp_getsolicgr.prc -text
 SP_Oracle92/siw/sp_getsolicgra.prc -text
 SP_Oracle92/siw/sp_getsolicgri.prc -text
@@ -4539,6 +4543,7 @@ SP_PostgreSQL_8-0/siw/SP_GetSiwArquivo.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSiwCliData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSiwCliList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSiwCliModLis.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetSolicFN.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSolicGP.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSolicList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSolicResultado.sql -text

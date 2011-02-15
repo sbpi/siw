@@ -125,8 +125,7 @@ function Inicial() {
   $w_mes = $_REQUEST['w_mes'];
 
   // Configura variáveis para montagem do calendário
-  if (nvl($w_mes, '')=='')
-    $w_mes = date('m/Y', time());
+  if (nvl($w_mes, '')=='') $w_mes = date('m/Y', time());
   $w_dt_inicio = first_day(toDate('01/' . $w_mes));
   $w_dt_fim = last_day(toDate('01/' . $w_mes));
   $w_dia_fim = date('j', $w_dt_fim);
@@ -142,6 +141,19 @@ function Inicial() {
   } else {
     $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms, $w_cliente, null, $w_usuario, null, null, null, null, null, null, null, formataDataEdicao($w_dt_fim), null, null);
     $RSContrato = SortArray($RSContrato, 'fim', 'asc');
+  }
+  
+  if (count($RSUorg)==0 && count($RSContrato)==0) {
+    Cabecalho();
+    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    BodyOpen('onLoad=this.focus();');
+    ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+    ShowHTML('<HR>');
+    ShowHTML('<table width="97%" border="0">');
+    ShowHTML('  <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Não há folha de ponto disponível para registro nem aprovação! Clique <a class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.</font></b></td>');
+    ShowHTML('</table>');
+    Rodape();
+    exit();
   }
   foreach ($RSContrato as $row) { $RSContrato = $row; break;  }
   $w_contrato = f($RSContrato, 'chave');
@@ -494,7 +506,7 @@ function Inicial() {
     $w_ano = $_REQUEST['w_ano'];
     $w_percentual = $_REQUEST['w_percentual'];
   } elseif ($O=='L') {
-    $sql = new db_getGpFolha; //$RS = $sql->getInstanceOf($dbms, $w_chave,$w_mes);
+    //$sql = new db_getGpFolha; $RS = $sql->getInstanceOf($dbms, $w_chave,$w_mes);
     //$RS = SortArray($RS,'data','asc');
   }
 
@@ -753,18 +765,13 @@ function Inicial() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
-  ShowHTML('<table width="100%" bgcolor="FAEBD7">');
-  ShowHTML('  <tr>');
-  ShowHTML('    <td>');
-  ShowHTML('<table border=1 width="100%">');
-  ShowHTML('<table border=1 width="100%"><td><table width="100%">');
-  ShowHTML('      <tr><td colspan=2><b><font size="2">' . f($RSContrato, 'nome') . '</font></b><hr noshade size="1"/>');
-  ShowHTML('      <tr valign="top"><td>Matrícula: <b>' . f($RSContrato, 'matricula') . '</b>');
+  ShowHTML('<table width="100%" bgcolor="#FAEBD7"><tr><td>');
+  ShowHTML('  <table border=1 width="100%"><tr><td>');
+  ShowHTML('    <tr><td colspan=2><b><font size="2">' . f($RSContrato, 'nome') . '</font></b><hr noshade size="1"/>');
+  ShowHTML('    <tr valign="top">');
+  ShowHTML('      <td>Matrícula: <b>' . f($RSContrato, 'matricula') . '</b>');
   ShowHTML('      <td>Admissão: <b>' . formataDataEdicao(f($RSContrato, 'inicio')) . '</b></td>');
-  ShowHTML('</table>');
-  ShowHTML('</table>');
-  ShowHTML('    </td>');
-  ShowHTML('  </tr>');
+  ShowHTML('  </table>');
   ShowHTML('</table>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
 
@@ -1665,14 +1672,12 @@ function Visual() {
     Estrutura_Corpo_Abre();
     CabecalhoRelatorio($w_cliente, 'Folha de Ponto', 4);
   }
-  ShowHTML('<table width="100%"><tr><td>');
-  ShowHTML('  <table border=1 width="100%" bgcolor="FAEBD7"><tr><td>');
-  ShowHTML('    <table border=0 width="100%"><tr><td><table width="100%">');
-  ShowHTML('      <tr><td>Nome:<br><b>' . f($RSContrato, 'nome') . '</font></b>');
-  ShowHTML('          <td align="center">Matrícula:<br><b>' . f($RSContrato, 'matricula') . '</b>');
-  ShowHTML('          <td align="center">Admissão:<br><b>' . formataDataEdicao(f($RSContrato, 'inicio')) . '</b></td>');
-  ShowHTML('      </tr>');
-  ShowHTML('    </table>');
+  ShowHTML('<table width="100%" bgcolor="#FAEBD7"><tr><td>');
+  ShowHTML('  <table border=1 width="100%"><tr><td>');
+  ShowHTML('    <tr><td colspan=2><b><font size="2">' . f($RSContrato, 'nome') . '</font></b><hr noshade size="1"/>');
+  ShowHTML('    <tr valign="top">');
+  ShowHTML('      <td>Matrícula: <b>' . f($RSContrato, 'matricula') . '</b>');
+  ShowHTML('      <td>Admissão: <b>' . formataDataEdicao(f($RSContrato, 'inicio')) . '</b></td>');
   ShowHTML('  </table>');
   ShowHTML('</table>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');

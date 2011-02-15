@@ -1,5 +1,4 @@
 <?php
-
 header('Expires: ' . -1500);
 session_start();
 $w_dir_volta = '../';

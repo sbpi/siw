@@ -407,7 +407,7 @@ function Gerencial() {
       } else {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
       } 
-      // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+      // Se o georeferenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
       if (f($RS_Cliente,'georeferencia')=='S' && count($RS1)>0) {
         ShowHTML('    <td align="right"><b><font class="SS">Exibir no mapa</b> <input class="stc" type="checkbox" name="w_origem" value="pesquisa" id="w_origem">');
       }
