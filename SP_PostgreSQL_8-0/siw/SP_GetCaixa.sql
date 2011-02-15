@@ -108,7 +108,7 @@ BEGIN
                   inner     join pa_especie_documento     c7 on (c.sq_especie_documento     = c7.sq_especie_documento)
                   inner     join siw_solicitacao          d on (c.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                     left    join eo_unidade               d1 on (d.sq_unidade               = d1.sq_unidade)
-                    inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite)
+                    inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite and d2.sigla <> 'CA')
           where a.cliente     = p_cliente
             and (p_chave      is null or (p_chave      is not null and a.sq_caixa            = p_chave  ))
             and (p_unidade    is null or (p_unidade    is not null and a.sq_unidade          = p_unidade))
