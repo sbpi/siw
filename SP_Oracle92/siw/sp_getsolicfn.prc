@@ -307,7 +307,7 @@ begin
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where z1.sq_pessoa = p_pessoa
             and ((p_tipo = 1 and b1.sigla = 'EE') or
-                 (p_tipo = 2 and b1.sigla = 'AT' and trunc(d.quitacao)>=trunc(sysdate)) or
+                 (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(sysdate)) or
                  (p_tipo = 3 and b2.acesso > 0) or
                  (p_tipo = 3 and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo = 4 and b1.sigla <> 'CA'  and b2.acesso > 0) or
@@ -331,7 +331,7 @@ begin
                 )
             and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%' or acentos(b.justificativa,null) like '%'||acentos(p_assunto,null)||'%')))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(d.vencimento-trunc(sysdate) as integer) <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and trunc(d.vencimento)-cast(p_prazo as integer)<=trunc(sysdate)))
             and (p_ini_i          is null or (p_ini_i       is not null and d.vencimento         between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and d.quitacao           between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))

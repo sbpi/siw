@@ -92,7 +92,7 @@ BEGIN
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.titulo,
                 b.titulo as ac_titulo,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.nome nm_tramite,   b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 calculaIGE(b.sq_siw_solicitacao) as ige, calculaIDE(b.sq_siw_solicitacao,null,null)  as ide,
                 calculaIGC(b.sq_siw_solicitacao) as igc, calculaIDC(b.sq_siw_solicitacao,null,null)  as idc,
@@ -173,7 +173,7 @@ BEGIN
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 b.titulo as ac_titulo,
-                b1.sq_siw_tramite,    b1.ordem or_tramite,
+                b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 case a.sigla when 'FNDVIA'
                              then case when b2.quitacao >= trunc(now()) then 'Agendado' else b1.nome end
@@ -233,7 +233,7 @@ BEGIN
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite, b1.ordem as or_tramite,
                 b1.sigla sg_tramite, b1.ativo,                    b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
@@ -394,7 +394,7 @@ BEGIN
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b2.acesso,
                 bb.sq_siw_coordenada, bb.nome as nm_coordenada,
@@ -641,7 +641,7 @@ BEGIN
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,            b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                      b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -904,7 +904,7 @@ BEGIN
                      else dados_solic(b4.sq_solic_pai) 
                 end as dados_avo,
                 case coalesce(b1.sigla,'--') when 'AT' then b.valor else 0 end as valor_atual,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -1118,7 +1118,7 @@ BEGIN
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
@@ -1291,7 +1291,7 @@ BEGIN
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 coalesce(b2.sq_plano,b5.sq_plano,b6.sq_plano,b7.sq_plano) as sq_plano,
                 b2.sq_plano_pai,               b2.titulo as nm_plano,
@@ -1469,7 +1469,7 @@ BEGIN
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla as sg_unid_origem,
                 b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,

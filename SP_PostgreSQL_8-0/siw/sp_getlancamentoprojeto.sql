@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetLancamentoProjeto
+﻿create or replace FUNCTION SP_GetLancamentoProjeto
    (p_chave     numeric,
     p_menu      numeric,
     p_restricao varchar,
@@ -11,7 +11,7 @@ BEGIN
        select b.sigla sg_tramite
          from siw_solicitacao a
               inner join siw_tramite   b on (a.sq_siw_tramite     = b.sq_siw_tramite and
-                                             'CA'                 <> nvl(b.sigla,'--'))
+                                             'CA'                 <> b.sigla)
               inner join fn_lancamento c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
         where a.sq_solic_pai = p_chave
           and a.sq_menu      = p_menu
@@ -22,11 +22,12 @@ BEGIN
        select b.sigla sg_tramite
          from siw_solicitacao a
               inner join siw_tramite   b on (a.sq_siw_tramite     = b.sq_siw_tramite and
-                                             'CA'                 <> nvl(b.sigla,'--'))
+                                             'CA'                 <> b.sigla)
               inner join fn_lancamento c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
         where a.sq_solic_pai = p_chave
           and a.sq_menu      = p_menu
           and c.tipo         <> 1;   
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

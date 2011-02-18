@@ -171,6 +171,7 @@ BEGIN
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
                 d.referencia_inicio,  d.referencia_fim,              d.sq_solic_vinculo,
+                d.numero_conta,
                 coalesce(d.quitacao, d.vencimento) as dt_pagamento,
                 d1.nome as nm_tipo_lancamento,
                 case d.tipo when 1 then 'Dotação inicial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
@@ -181,10 +182,10 @@ BEGIN
                 d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
-                d7.sq_forma_pagamento,d7.nome as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
+                d7.sq_forma_pagamento,case substr(a.sigla,3,1) when 'R' then null else d7.nome end as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
                 coalesce(d9.valor,0) as valor_nota,
-                cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                trunc(b.fim)-cast(d.dias_aviso as integer)as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
@@ -249,6 +250,7 @@ BEGIN
                                                                       b4.sq_plano                = b5.sq_plano
                                                                      )
                         left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
+                        left         join siw_solicitacao      b7 on (b4.sq_solic_pai            = b7.sq_siw_solicitacao)
                         left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
                         left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                              from fn_lancamento_doc x
@@ -262,16 +264,16 @@ BEGIN
                                                                       d4.ativo                   = 'S' and
                                                                       d4.padrao                  = 'S'
                                                                      )
-                          left       join co_agencia           d5 on (d4.sq_agencia              = d5.sq_agencia)
-                          left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
-                          left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
-                                               from fn_lancamento_doc          x
-                                                    inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
-                                                    inner join siw_menu        z on (y.sq_menu           = z.sq_menu)
-                                              where x.sq_acordo_nota is not null
-                                                and z.sq_menu        = p_menu
-                                             group by x.sq_siw_solicitacao
-                                            )                  d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
+                        left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
+                        left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
+                          left       join (select x.sq_siw_solicitacao, sum(x.valor) as valor
+                                             from fn_lancamento_doc          x
+                                                  inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
+                                                  inner join siw_menu        z on (y.sq_menu           = z.sq_menu)
+                                            where x.sq_acordo_nota is not null
+                                              and z.sq_menu        = p_menu
+                                           group by x.sq_siw_solicitacao
+                                          )                    d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null
@@ -306,10 +308,8 @@ BEGIN
                      left            join fn_lancamento_log    k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where z1.sq_pessoa = p_pessoa
-            and ((p_tipo = 0 and (b1.sigla = 'EE' or (b1.sigla = 'AT' and d.quitacao > trunc(now())))) or
-                 (p_tipo = 1 and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo = 2 and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo = 2 and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
+            and ((p_tipo = 1 and b1.sigla = 'EE') or
+                 (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(now())) or
                  (p_tipo = 3 and b2.acesso > 0) or
                  (p_tipo = 3 and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo = 4 and b1.sigla <> 'CA'  and b2.acesso > 0) or
@@ -319,10 +319,11 @@ BEGIN
                 )
             and (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-            and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
+            and (p_pais           is null or (p_pais        is not null and d5.sq_banco          = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from fn_lancamento_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_tipo_lancamento = p_sq_orprior))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and ((substr(a.sigla,4)  = 'CONT' and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
@@ -330,15 +331,17 @@ BEGIN
                                                                             )
                                              )
                 )
-            and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
-            and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%' or acentos(b.justificativa,null) like '%'||acentos(p_assunto,null)||'%')))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(trunc(b.fim)-trunc(now()) as integer)+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
-            and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and trunc(d.vencimento)-cast(p_prazo as integer)<=trunc(now())))
+            and (p_ini_i          is null or (p_ini_i       is not null and d.vencimento         between p_ini_i and p_ini_f))
+            and (p_fim_i          is null or (p_fim_i       is not null and d.quitacao           between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_palavra        is null or (p_palavra     is not null and b.codigo_interno     like '%'||p_palavra||'%'))
+            and (p_atraso         is null or (p_atraso      is not null and (b4.codigo_interno   like '%'||p_atraso ||'%' or b7.codigo_interno like '%'||p_atraso ||'%' or acentos(b4.titulo) like '%'||acentos(p_atraso)||'%' or acentos(b7.titulo) like '%'||acentos(p_atraso)||'%')))
+            and (p_uf             is null or (p_uf          is not null and (b4.codigo_interno   like '%'||p_uf ||'%' or b7.codigo_interno like '%'||p_uf ||'%' or acentos(b4.titulo) like '%'||acentos(p_uf)||'%' or acentos(b7.titulo) like '%'||acentos(p_uf) ||'%')))
+            --and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d2.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )

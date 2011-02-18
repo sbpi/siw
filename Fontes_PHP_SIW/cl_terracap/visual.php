@@ -173,7 +173,8 @@ if (count($_POST) > 0) {
 
         $SG = 'RELPJPROG';
         $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-          $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_programa='.$p_programa.'&p_legenda=S&p_projeto=S&p_resumo=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla')));
+        $id = session_id();
+        $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_programa='.$p_programa.'&p_legenda=S&p_projeto=S&p_resumo=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla').'&id='.$id));
       }
 
       // Abre SIW-GP em nova janela
@@ -183,31 +184,16 @@ if (count($_POST) > 0) {
       exit();
     }
   }
-  
-  // Fecha conexão com o banco de dados
-  if (isset($_SESSION['DBMS'])) FechaSessao($dbms);
-  
 } else {
   $response = '501'.$crlf.
               'Método de chamada inválido';
 }
 
-HttpResponse::setCache(false);
-HttpResponse::status(200);
 if ($response=='200') {
-  HttpResponse::setContentType('text/html');
-  HttpResponse::setData($relatorio);
+  echo $relatorio;
 } else {
-  HttpResponse::setContentType('text/plain');
-  HttpResponse::setData($response);
-}      
-HttpResponse::send();
+  echo $response;
+}
 flush();
-
-// Eliminar todas as variáveis de sessão.
-$_SESSION = array();
-
-// Finalmente, destruição da sessão.
-session_destroy();
 exit;
 ?>

@@ -56,8 +56,8 @@ begin
          If Length(l_item) > 0 Then
             x_fase := x_fase||','''||to_number(l_item)||'''';
          End If;
-         l_fase := substr(l_fase,Instr(l_fase,',')+1,200);
-         Exit when l_fase is null or instr(l_fase,'1') = 0;
+         l_fase := substr(l_fase,Instr(l_fase,',')+1);
+         Exit when l_fase is null or instr(l_fase,',') = 0;
       End Loop;
       x_fase := substr(x_fase,2,200);
    End If;
@@ -1297,7 +1297,7 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 coalesce(b2.sq_plano,b5.sq_plano,b6.sq_plano,b7.sq_plano) as sq_plano,
                 b2.sq_plano_pai,               b2.titulo as nm_plano,

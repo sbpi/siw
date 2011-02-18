@@ -212,20 +212,12 @@ if (count($_POST) > 0) {
       @closedir($l_caminho); 
     }
   }
-
-  // Fecha conexão com o banco de dados
-  if (isset($_SESSION['DBMS'])) FechaSessao($dbms);
-
 } else {
   $response = '501'.$crlf.
               'Método de chamada inválido';
 }
 
-HttpResponse::setCache(false);
-HttpResponse::status(200);
-HttpResponse::setContentType('text/plain');      
-HttpResponse::setData($response);
-HttpResponse::send();
+echo $response;
 flush();
 
 // Eliminar todas as variáveis de sessão.

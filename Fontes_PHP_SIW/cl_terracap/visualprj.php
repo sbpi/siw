@@ -58,7 +58,7 @@ include_once('visualprograma.php');
 //    cli       = código do cliente a ser utilizado
 //    uid       = username para login
 //    pwd       = senha para login
-//    codigo    = código do programa
+//    codigo    = código do projeto
 //
 // Retorno:
 //    Página HTML com o relatório executivo informado ou com mensagem informando que o programa não existe, ou ainda. 
@@ -117,90 +117,81 @@ if (count($_POST) > 0) {
   } else {
     
     // Configura variáveis de uso global
-	  $SG         = 'PJCAD';
-	  $P1         = 5; // Recupera o projeto indicado, independentemente da fase ou de estar cancelado
-	  $w_usuario  = RetornaUsuario();
-	  $w_menu     = RetornaMenu($w_cliente,$SG);
-	  $w_ano      = RetornaAno();
+    $SG         = 'PJCAD';
+    $P1         = 5; // Recupera o projeto indicado, independentemente da fase ou de estar cancelado
+    $w_usuario  = RetornaUsuario();
+    $w_menu     = RetornaMenu($w_cliente,$SG);
+    $w_ano      = RetornaAno();
     
-	  // Retorna os dados do menu
-	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
-	    
-	  $w_erro     = '';
-	  // Testa os dados recebidos
-	  $w_result = fValidate(1,$w_codigo,'código do projeto','','',1,20,'1','');
-	  if ($w_result>'') { $w_erro.=$crlf.'Código do projeto: '.$w_result; } 
-	    
-	  if ($w_erro>'') {
-	    // Erro de preenchimento
-	    $response = '501'.$crlf.substr($w_erro,2);
-	  } else {
-	    // Recupera os trâmites do serviço de programas estratégicos
-	    $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
-		  $RS = SortArray($RS,'ordem','asc');
-		  $w_fase = '';
-		  foreach($RS as $row) {
-	      $tramites[f($row,'sigla')] = f($row,'sq_siw_tramite');
-	      if (f($row,'sigla')!='CA') $w_fase.=','.f($row,'sq_siw_tramite');
-	    }
-	    $w_fase = substr($w_fase,1);
-	      
-	    // Verifica se o programa existe
-	    $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
-	          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-	          $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
-	          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-	          $p_uorg_resp, $p_codigo, $p_prazo, $w_fase, $p_sqcc, $p_projeto, $p_atividade, 
-	          null, null, $p_empenho, $p_processo);
-	    $RS = SortArray($RS,'codigo_interno','asc');
-	          
-	    $w_cont = 0;
-	    foreach ($RS as $row) {
-	      if (nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno')) {
-	        $w_cont++;
-	        $p_plano    = f($row,'sq_plano');
-	        if ($w_cont==1) $p_projeto  = f($row,'sq_siw_solicitacao'); else $p_projeto  .= ','.f($row,'sq_siw_solicitacao'); 
-	      }
-	    }
-
-	    if ($w_cont==0) {
-	      $SG = 'MESA';
-	      $content='';
-	    } else {
-	      // Se o programa não foi informado, recupera todo o relatorio
-	      if ($w_cont > 1) $p_projeto = '';
-	       
-	      $SG = 'RELDSPROJ';
-	      $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-	      $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_projeto='.$p_projeto.'&p_legenda=S&p_geral=S&p_qualit=S&p_os=S&p_oe=S&p_ee=S&p_pr=S&p_re=S&p_ob=S&p_rubrica=S&p_etapa=S&p_tr=S&p_indicador=S&p_meta=S&p_recurso=S&p_risco=S&p_cf=S&p_tf=S&p_resp=S&p_partes=S&p_ca=S&p_anexo=S&p_tramite=S&p_sinal=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla')));
-	    }
-	      
-	    // Abre SIW-GP em nova janela
-	    ScriptOpen('JavaScript');
-	    ShowHTML('  location.href="'.montaURL_JS(null,$conRootSIW.'menu.php?par=Frames&content='.$content).'";');
-	    ScriptClose();
-	    exit();
+    // Retorna os dados do menu
+    $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
+      
+    $w_erro     = '';
+    // Testa os dados recebidos
+    $w_result = fValidate(1,$w_codigo,'código do projeto','','',1,20,'1','');
+    if ($w_result>'') { $w_erro.=$crlf.'Código do projeto: '.$w_result; } 
+      
+    if ($w_erro>'') {
+      // Erro de preenchimento
+      $response = '501'.$crlf.substr($w_erro,2);
+    } else {
+      // Recupera os trâmites do serviço de programas estratégicos
+      $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu, null, null,null);
+      $RS = SortArray($RS,'ordem','asc');
+      $w_fase = '';
+      foreach($RS as $row) {
+        $tramites[f($row,'sigla')] = f($row,'sq_siw_tramite');
+        if (f($row,'sigla')!='CA') $w_fase.=','.f($row,'sq_siw_tramite');
+      }
+      $w_fase = substr($w_fase,1);
+        
+      // Verifica se o programa existe
+      $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
+            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+            $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
+            $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+            $p_uorg_resp, $p_codigo, $p_prazo, $w_fase, $p_sqcc, $p_projeto, $p_atividade, 
+            null, null, $p_empenho, $p_processo);
+      $RS = SortArray($RS,'codigo_interno','asc', 'inicio', 'desc');
+            
+      $w_cont = 0;
+      foreach ($RS as $row) {
+        if (nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno') && f($row,'sg_tramite')!='CA' && f($row,'sg_tramite')!='AT') {
+          $w_cont++;
+          $p_plano    = f($row,'sq_plano');
+          if ($w_cont==1) $p_projeto  = f($row,'sq_siw_solicitacao'); else $p_projeto  .= ','.f($row,'sq_siw_solicitacao'); 
+        }
+      }
+      if ($w_cont==0) {
+        $SG = 'MESA';
+        $content='';
+      } else {
+        // Se o programa não foi informado, recupera todo o relatorio
+        if ($w_cont > 1) $p_projeto = '';
+         
+        $SG = 'RELDSPROJ';
+        $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+        $id = session_id();
+        $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_projeto='.$p_projeto.'&p_legenda=S&p_geral=S&p_qualit=S&p_os=S&p_oe=S&p_ee=S&p_pr=S&p_re=S&p_ob=S&p_rubrica=S&p_etapa=S&p_tr=S&p_indicador=S&p_meta=S&p_recurso=S&p_risco=S&p_cf=S&p_tf=S&p_resp=S&p_partes=S&p_ca=S&p_anexo=S&p_tramite=S&p_sinal=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla').'&id='.$id));
+      }
+        
+      // Abre SIW-GP em nova janela
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href="'.montaURL_JS(null,$conRootSIW.'menu.php?par=Frames&content='.$content).'";');
+      ScriptClose();
+      exit();
     }
   }
-  
-  // Fecha conexão com o banco de dados
-  if (isset($_SESSION['DBMS'])) FechaSessao($dbms);
-  
 } else {
   $response = '501'.$crlf.
               'Método de chamada inválido';
 }
 
-HttpResponse::setCache(false);
-HttpResponse::status(200);
 if ($response=='200') {
-  HttpResponse::setContentType('text/html');
-  HttpResponse::setData($relatorio);
+  echo $relatorio;
 } else {
-  HttpResponse::setContentType('text/plain');
-  HttpResponse::setData($response);
-}      
-HttpResponse::send();
+  echo $response;
+}
 flush();
 
 // Eliminar todas as variáveis de sessão.
