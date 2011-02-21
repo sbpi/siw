@@ -5515,34 +5515,34 @@ function Encaminhamento() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_chave = $_REQUEST['w_chave'];
-  $w_chave_aux = $_REQUEST['w_chave_aux'];
-  $w_tipo = Nvl($_REQUEST['w_tipo'], '');
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_tipo       = Nvl($_REQUEST['w_tipo'], '');
 
   if ($w_troca > '') {
     // Se for recarga da página
-    $w_tramite = $_REQUEST['w_tramite'];
-    $w_sg_tramite = $_REQUEST['w_sg_tramite'];
-    $w_sg_novo_tramite = $_REQUEST['w_tramite'];
-    $w_destinatario = $_REQUEST['w_destinatario'];
-    $w_envio = $_REQUEST['w_envio'];
-    $w_despacho = $_REQUEST['w_despacho'];
-    $w_justificativa = $_REQUEST['w_justificativa'];
-    $w_justif_dia_util = $_REQUEST['w_justif_dia_util'];
-    $w_prazo = $_REQUEST['w_prazo'];
-    $w_antecedencia = $_REQUEST['w_antecedencia'];
-    $w_envio_regular = $_REQUEST['w_envio_regular'];
-    $w_fim_semana = $_REQUEST['w_fim_semana'];
+    $w_tramite            = $_REQUEST['w_tramite'];
+    $w_sg_tramite         = $_REQUEST['w_sg_tramite'];
+    $w_sg_novo_tramite    = $_REQUEST['w_tramite'];
+    $w_destinatario       = $_REQUEST['w_destinatario'];
+    $w_envio              = $_REQUEST['w_envio'];
+    $w_despacho           = $_REQUEST['w_despacho'];
+    $w_justificativa      = $_REQUEST['w_justificativa'];
+    $w_justif_dia_util    = $_REQUEST['w_justif_dia_util'];
+    $w_prazo              = $_REQUEST['w_prazo'];
+    $w_antecedencia       = $_REQUEST['w_antecedencia'];
+    $w_envio_regular      = $_REQUEST['w_envio_regular'];
+    $w_fim_semana         = $_REQUEST['w_fim_semana'];
   } else {
     $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
-    $w_inicio = f($RS, 'inicio');
-    $w_tramite = f($RS, 'sq_siw_tramite');
-    $w_justificativa = f($RS, 'justificativa');
-    $w_prazo = f($RS, 'limite_envio');
-    $w_antecedencia = f($RS, 'dias_antecedencia');
-    $w_envio_regular = f($RS, 'envio_regular');
-    $w_justif_dia_util = f($RS, 'justificativa_dia_util');
-    $w_fim_semana = f($RS, 'fim_semana');
+    $w_inicio           = f($RS, 'inicio');
+    $w_tramite          = f($RS, 'sq_siw_tramite');
+    $w_justificativa    = f($RS, 'justificativa');
+    $w_prazo            = f($RS, 'limite_envio');
+    $w_antecedencia     = f($RS, 'dias_antecedencia');
+    $w_envio_regular    = f($RS, 'envio_regular');
+    $w_justif_dia_util  = f($RS, 'justificativa_dia_util');
+    $w_fim_semana       = f($RS, 'fim_semana');
   }
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
@@ -5661,7 +5661,7 @@ function Encaminhamento() {
     ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
     if (substr(Nvl($w_erro, 'nulo'), 0, 1) == '0' || $w_sg_tramite == 'EE' || $w_ativo == 'N') {
       ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
-      ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
+      ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
     } else {
       if (Nvl($w_envio, 'N') == 'N') {
         ShowHTML('              <input ' . $w_Disabled . ' class="STR" type="radio" name="w_envio" value="N" checked> Enviar para a próxima fase <br><input ' . $w_Disabled . ' class="STR" class="STR" type="radio" name="w_envio" value="S"> Devolver para a fase anterior');

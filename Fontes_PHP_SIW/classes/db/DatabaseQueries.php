@@ -469,10 +469,11 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            $this->result = oci_new_cursor($this->conHandle);
            if (substr($this->query,0,8)=='FUNCTION') {
              $this->query = substr($this->query,8);
-             $this->stmt = oci_parse($this->conHandle, "select $this->query ($par) from dual;");
+             $stmt = "select $this->query ($par) from dual;";
            } else { 
-             $this->stmt = oci_parse($this->conHandle, "begin $this->query ($par); end;");
+             $stmt = "begin $this->query ($par); end;";
            }
+           $this->stmt = oci_parse($this->conHandle, $stmt);
            
            $exibe = false;
            foreach($this->params as $paramName=>$value) {
@@ -487,7 +488,8 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            }
 
            if(!(oci_execute($this->stmt))) { 
-             $this->error = oci_error($this->stmt); 
+             $this->error = oci_error($this->stmt);
+             $this->error['sqltext'] = $stmt;
              return false; 
            } else {
               oci_execute($this->result);
@@ -516,13 +518,20 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                  }
               } else { 
                 $this->num_rows = -1; 
-                $this->error    = oci_error($this->result);
+                $this->error = oci_error($this->result); 
+                $this->error['sqltext'] = $stmt;
+                return false; 
               }
               if (!oci_execute($this->stmt)) { 
                 $this->error = oci_error($this->stmt); 
+                $this->error = oci_error($this->stmt); 
+                $this->error['sqltext'] = $stmt;
+                return false; 
               } else {
                 if (!oci_execute($this->result)) {
-                  $this->error = oci_error($this->result);
+                  $this->error = oci_error($this->result); 
+                  $this->error['sqltext'] = $stmt;
+                  return false; 
                 } 
               } 
            }
@@ -532,12 +541,13 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
              $function = true;
              $log = false;
              $this->query = substr($this->query,8);
-             $this->result = oci_parse($this->conHandle, "select $this->query ($par) from dual");
+             $stmt = "select $this->query ($par) from dual";
            } else { 
              $log = true;
-             $this->result = oci_parse($this->conHandle, "begin $this->query ($par); end;");
+             $stmt = "begin $this->query ($par); end;";
            }
-
+           $this->result = oci_parse($this->conHandle, $stmt);
+           
            foreach($this->params as $paramName=>$value) {
                foreach($value as $paramValue=>$paramType) { 
                   oci_bind_by_name($this->result, $paramName, $value[0], $value[2]); 
@@ -547,7 +557,8 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
 
            if(is_resource($this->result)) {
              if (!oci_execute($this->result)) {
-               $this->error = oci_error($this->result);
+               $this->error = oci_error($this->result); 
+               $this->error['sqltext'] = $stmt;
                // Registra no servidor syslog
                $w_resultado = enviaSyslog('GR','ERRO ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
                if ($w_resultado>'') {
@@ -560,15 +571,15 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                if ($function){
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
                } else {
-	               if ($log) {
-	                 // Registra no servidor syslog
-	                 $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
-	                 if ($w_resultado>'') {
-	                   ScriptOpen('JavaScript');
-	                   ShowHTML('  alert(\''.$w_resultado.'\');');
-	                   ScriptClose();
-	                 }
-	               }
+                 if ($log) {
+                   // Registra no servidor syslog
+                   $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
+                   if ($w_resultado>'') {
+                     ScriptOpen('JavaScript');
+                     ShowHTML('  alert(\''.$w_resultado.'\');');
+                     ScriptClose();
+                   }
+                 }
                }               
              }
            } else { 

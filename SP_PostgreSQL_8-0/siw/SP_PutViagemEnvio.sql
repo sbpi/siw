@@ -55,8 +55,7 @@ DECLARE
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
-             x2.sq_financeiro,
-             x2.sq_lancamento_doc  as sq_documento,
+             x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, x2.sg_tramite,
              x3.sq_tipo_pessoa,
              x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
         from siw_menu                          w
@@ -130,7 +129,8 @@ DECLARE
                                     ) k
                              group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
-             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
+             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc,
+                                    b.sigla as sg_tramite
                                from siw_solicitacao                a
                                     inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
                                     inner   join fn_lancamento     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
@@ -501,6 +501,7 @@ BEGIN
          If w_reembolso = 'S' or w_complemento > 0 or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso loop
+              If crec.sg_tramite <> 'AT' Then
                 PERFORM sp_putfinanceirogeral(
                                   p_operacao           => case when crec.sq_financeiro is null then 'I' else 'A' end,
                                   p_cliente            => crec.cliente,
@@ -596,6 +597,7 @@ BEGIN
                                                        end
                                    );
                 End If;
+              End If;
             End Loop;
          End If;
 

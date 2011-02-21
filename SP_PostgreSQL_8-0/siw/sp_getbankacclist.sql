@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_GetBankAccList
+﻿create or replace FUNCTION SP_GetBankAccList
    (p_cliente   numeric,
     p_chave     numeric,
     p_restricao varchar,
@@ -41,7 +41,7 @@ BEGIN
       -- Recupera as contas bancárias do cliente
       open p_result for 
          select a.sq_pessoa, b.sq_pessoa_conta, b.saldo_inicial,
-                d.sq_banco, d.codigo||' - '||d.nome as banco, d.codigo as cd_banco,
+                d.sq_banco, d.nome as nm_banco, d.codigo||' - '||d.nome as banco, d.codigo as cd_banco,
                 e.sq_agencia, e.codigo||' - '||e.nome as agencia, e.codigo as cd_agencia,
                 b.operacao, b.numero, b.ativo, b.padrao,  b.devolucao_valor,
                 case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end as tipo_conta
@@ -70,6 +70,7 @@ BEGIN
             and b.devolucao_valor  = 'S'
             and b.ativo            = 'S'
          order by d.nome, e.codigo;   
-   End If;
+   End If;
+
   return p_result;
 END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

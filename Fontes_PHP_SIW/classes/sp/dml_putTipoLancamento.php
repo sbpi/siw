@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putTipoLancamento {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_pai, $p_cliente, $p_nome, $p_descricao, $p_receita, $p_despesa, $p_ativo) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTTIPOLANCAMENTO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putTipoLancamento';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_pai'                       =>array(tvl($p_pai),                                      B_INTEGER,        32),

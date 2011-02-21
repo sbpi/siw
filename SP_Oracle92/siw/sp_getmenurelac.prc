@@ -7,8 +7,27 @@ create or replace procedure SP_GetMenuRelac
     p_result     out sys_refcursor
    ) is
     l_modulo     varchar2(200) := '';
+    w_tramite    varchar2(1);
 begin
-   If p_restricao = 'CLIENTES' Then
+   -- Verifica se o cliente é um serviço
+   select tramite into w_tramite from siw_menu where sq_menu = p_sq_menu;
+   
+   -- Se não for, recupera os serviços fornecedores a clientes do mesmo módulo   
+   If w_tramite = 'N' Then
+      open p_result for 
+         select distinct a.servico_fornecedor as sq_menu, c.nome
+           from siw_menu_relac                  a
+                inner   join siw_menu           b on (a.servico_cliente    = b.sq_menu)
+                  inner join siw_menu           f on (b.sq_pessoa          = f.sq_pessoa and
+                                                      b.sq_modulo          = f.sq_modulo
+                                                     )
+                inner   join siw_menu           c on (a.servico_fornecedor = c.sq_menu)
+                  inner join siw_modulo         d on (c.sq_modulo          = d.sq_modulo)
+                  inner join siw_cliente_modulo e on (c.sq_modulo          = e.sq_modulo and
+                                                      c.sq_pessoa          = e.sq_pessoa)
+          where f.sq_menu = p_sq_menu
+         order by c.nome;
+   Elsif p_restricao = 'CLIENTES' Then
       -- Recupera a lista de serviços que podem ser vinculados ao serviço informado
       If p_acordo = 'N' Then
          l_modulo := l_modulo||',AC';
@@ -59,8 +78,10 @@ begin
                   inner join siw_modulo         d on (c.sq_modulo          = d.sq_modulo)
                   inner join siw_cliente_modulo e on (c.sq_modulo          = e.sq_modulo and
                                                       c.sq_pessoa          = e.sq_pessoa)
-          where a.servico_cliente = p_sq_menu
-            and (l_modulo is null or (l_modulo is not null and InStr(l_modulo,d.sigla) = 0))
+          where ((b.tramite = 'S' and a.servico_cliente = p_sq_menu) or
+                 (b.tramite = 'N' and c.sq_pessoa = (select sq_pessoa from siw_menu where sq_menu = p_sq_menu))
+                )
+           and (l_modulo is null or (l_modulo is not null and InStr(l_modulo,d.sigla) = 0))
           order by b.nome, c.nome;
    Else
       open p_result for 

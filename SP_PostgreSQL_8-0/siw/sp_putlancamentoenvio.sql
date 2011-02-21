@@ -1,4 +1,4 @@
-create or replace FUNCTION SP_PutLancamentoEnvio
+﻿create or replace FUNCTION SP_PutLancamentoEnvio
    (p_menu                numeric,
     p_chave               numeric,
     p_pessoa              numeric,
@@ -47,7 +47,10 @@ BEGIN
       Where sq_siw_solicitacao = p_chave;
 
       -- Atualiza a situação do lançamento financeiro
-      Update fn_lancamento set quitacao = null Where sq_siw_solicitacao = p_chave;
+      Update fn_lancamento 
+         set quitacao        = null,
+             sq_pessoa_conta = null
+      Where sq_siw_solicitacao = p_chave;
    End If;
 
    -- Verifica se o envio é na/para fase de cadastramento. Se for, atualiza o cadastrador.
@@ -101,6 +104,5 @@ BEGIN
          values (w_chave_dem, w_chave_arq);
       End If;
    End If;
-
-   commit;
-      END; $$ LANGUAGE 'PLPGSQL' VOLATILE;
+      
+END; $$ LANGUAGE 'PLPGSQL' VOLATILE;

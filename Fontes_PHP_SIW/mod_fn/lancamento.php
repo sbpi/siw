@@ -142,6 +142,18 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
 if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 
+// Verifica se deve ser exigida conta débito
+$sql = new db_getContaBancoList; $RS_Conta = $sql->getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
+if (count($RS_Conta)>1) { 
+  $w_exige_conta = true; 
+} else {
+  $w_exige_conta = false;
+  if (count($RS_Conta)==1) {
+    foreach($RS_Conta as $row) $RS_Conta = $row;
+    $w_conta_debito = f($RS_Conta,'sq_pessoa_conta');
+  }
+}
+  
 
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
@@ -3400,7 +3412,7 @@ function Concluir() {
     $w_valor_real         = $_REQUEST['w_valor_real'];
     $w_codigo_deposito    = $_REQUEST['w_codigo_deposito'];
     $w_observacao         = $_REQUEST['w_observacao'];
-    $w_conta              = $_REQUEST['w_conta'];
+    $w_conta_debito       = $_REQUEST['w_conta_debito'];
     $w_sq_tipo_lancamento = $_REQUEST['$w_sq_tipo_lancamento'];
   } 
 
@@ -3413,17 +3425,6 @@ function Concluir() {
   $w_sq_tipo_lancamento = nvl($w_sq_tipo_lancamento,f($RS_Solic,'sq_tipo_lancamento'));
   $w_inicio             = FormataDataEdicao(time());
 
-  $sql = new db_getContaBancoList; $RS_Conta = $sql->getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
-  if (count($RS_Conta)>1) { 
-    $w_exige_conta = true; 
-  } else {
-    $w_exige_conta = false;
-    if (count($RS_Conta)==1) {
-      foreach($RS_Conta as $row) $RS_Conta = $row;
-      $w_conta = f($RS_Conta,'sq_pessoa_conta');
-    }
-  }
-  
   $RS_Rub = array();
   
   // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
@@ -3471,7 +3472,7 @@ function Concluir() {
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
     Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
-    if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
+    if ($w_exige_conta) Validate('w_conta_debito','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
     Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     if ($P1!=1) {
@@ -3528,7 +3529,7 @@ function Concluir() {
     ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,3);
     ShowHTML('      </tr>');
     if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
@@ -3542,9 +3543,9 @@ function Concluir() {
       ShowHTML('        <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
     }
     if ($w_exige_conta) {
-      SelecaoContaBAnco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta,null,'w_conta',null,null);
+      SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
     } else {
-      ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta.'">');
+      ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_debito.'">');
     }
     ShowHTML('      <tr><td colspan="4"><b>Obs<u>e</u>rvação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="sti" ROWS=5 cols=75 title="Descreva o quanto a demanda atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="4"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
@@ -4186,7 +4187,7 @@ function Grava() {
             } 
           } 
           $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_quitacao'],
-            $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta'],$_REQUEST['w_sq_tipo_lancamento'],
+            $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta_debito'],$_REQUEST['w_sq_tipo_lancamento'],
             $_REQUEST['w_sq_projeto_rubrica'],
             $_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
           // Envia e-mail comunicando a conclusão

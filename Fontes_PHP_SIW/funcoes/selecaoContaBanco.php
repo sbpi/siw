@@ -10,7 +10,7 @@ function selecaoContaBAnco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($l_rs as $row) {
-    ShowHTML('          <option value="'.f($row,'sq_pessoa_conta').'" '.((nvl(f($row,'sq_pessoa_conta'),0)==nvl($chave,0)) ? 'SELECTED' : '').'>BANCO '.f($row,'cd_banco').' AGÊNCIA '.f($row,'cd_agencia').' CONTA '.f($row,'numero'));
+    ShowHTML('          <option value="'.f($row,'sq_pessoa_conta').'" '.((nvl(f($row,'sq_pessoa_conta'),0)==nvl($chave,0)) ? 'SELECTED' : '').'> '.f($row,'nm_banco').' AG. '.f($row,'cd_agencia').' C/C '.f($row,'numero'));
   } 
   ShowHTML('          </select>');
 }

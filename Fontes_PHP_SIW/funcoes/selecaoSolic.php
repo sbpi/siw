@@ -49,7 +49,9 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     } 
     ShowHTML('          </select>');  
   } else {
-    $sql = new db_getMenuRelac; $RS1 = $sql->getInstanceOf($dbms,$chaveAux2,null,null,null,null);
+    $sql = new db_getMenuRelac;
+    if ($chaveAux2==0) $RS1 = $sql->getInstanceOf($dbms,$chaveAux,null,null,null,'CLIENTES');
+    else               $RS1 = $sql->getInstanceOf($dbms,$chaveAux2,null,null,null,null);
     $l_fase = '';
     $l_cont = 0;
     foreach($RS1 as $l_row) {

@@ -1884,9 +1884,7 @@ begin
                 coalesce(g.existe,0) as qtd_projeto
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
-                inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
-                                                    a2.servico_cliente   = to_number(p_restricao)
-                                                   )
+                inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente)
                 inner join siw_solic_vinculo a3 on (a3.sq_menu           = a2.servico_cliente)
                 inner join siw_solicitacao   b  on (a3.sq_siw_solicitacao= b.sq_siw_solicitacao)
                 inner   join siw_menu        b2 on (b.sq_menu            = b2.sq_menu)
@@ -1914,8 +1912,8 @@ begin
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
-          where a.sq_menu        = to_number(p_restricao)
-            and b.sq_menu        = coalesce(p_menu, b.sq_menu)
+          where a.sq_menu        = case to_number(p_restricao) when 0 then a.sq_menu else to_number(p_restricao) end
+            and b.sq_menu        = case p_menu when 0 then b.sq_menu else coalesce(p_menu, b.sq_menu) end
          order by titulo;
    End If;
 end SP_GetSolicList;

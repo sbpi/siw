@@ -76,13 +76,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
       if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
         // Recupera dados da solicitação de compra
-        $sql = new db_getLinkData; $RS_Vinculo = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
-        $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,f($RS_Vinculo,'sq_menu'),$w_usuario,f($RS_Vinculo,'sigla'),3,
-            null,null,null,null,null,null,null,null,null,null,f($RS,'sq_solic_vinculo'), null, null, null, null, null, null,
-            null, null, null, null, null, null, null,null, null, null, null);
-        foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
-        $l_html.=chr(13).'      <tr><td width="30%"><b>'.f($RS_Vinculo,'nome').': </b></td>';
-        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS_Vinculo,'sq_siw_solicitacao'),f($RS_Vinculo,'codigo_interno'),'N',$l_tipo).'</td>';
+        $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_solic_vinculo'),null);
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_vinculo'),f($RS1,'dados_solic'),'N',$l_tipo).'</td>';
       }
     } else {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';

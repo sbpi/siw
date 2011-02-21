@@ -180,6 +180,10 @@ begin
                 d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
+                da.sq_pessoa_conta as sq_conta_debito, da.operacao as operacao_debito, da.numero as nr_conta_debito,
+                db.sq_agencia as sq_agencia_debito,    db.codigo as cd_agencia_debito, db.nome as nm_agencia_debito,
+                dc.sq_banco as sq_banco_debito,        dc.codigo as cd_banco_debito,   dc.nome as nm_banco_debito,
+                case when da.numero is not null then dc.codigo||'/'||db.codigo||'/'||da.numero else '' end as conta_debito,
                 d7.sq_forma_pagamento,case substr(a.sigla,3,1) when 'R' then null else d7.nome end as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
                 coalesce(d9.valor,0) as valor_nota,
@@ -264,6 +268,9 @@ begin
                                                                      )
                         left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                         left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
+                        left         join co_pessoa_conta      da on (d.sq_pessoa_conta          = da.sq_pessoa_conta)
+                          left       join co_agencia           db on (da.sq_agencia              = db.sq_agencia)
+                          left       join co_banco             dc on (db.sq_banco                = dc.sq_banco)
                           left       join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                              from fn_lancamento_doc          x
                                                   inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
@@ -317,7 +324,7 @@ begin
                 )
             and (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-            and (p_pais           is null or (p_pais        is not null and d5.sq_banco          = p_pais))
+            and (p_pais           is null or (p_pais        is not null and d.sq_pessoa_conta    = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from fn_lancamento_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))

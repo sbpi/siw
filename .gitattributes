@@ -1715,6 +1715,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoAfastamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivoTab.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAutenticacao.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoBeneficiario.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoConclusao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoCumprimento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDado.php -text
@@ -1755,6 +1756,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoTabela.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoUnidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoUtilBilhete.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoVeiculo.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoVinculo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoVisao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTrigger.php -text
 Fontes_PHP_SIW/funcoes/selecaoUniMedida_IS.php -text

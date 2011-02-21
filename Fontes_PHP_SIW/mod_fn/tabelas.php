@@ -11,6 +11,7 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getImposto.php');
+include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoDocumento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
@@ -20,8 +21,14 @@ include_once($w_dir_volta.'classes/sp/dml_putImposto.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoDocumento.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoBeneficiario.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoVinculo.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoDocumento.php');
 include_once($w_dir_volta.'funcoes/selecaoEsfera.php');
 include_once($w_dir_volta.'funcoes/selecaoCalculo.php');
+include_once($w_dir_volta.'funcoes/selecaoServico.php');
+include_once($w_dir_volta.'funcoes/selecaoSolic.php');
+include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 // =========================================================================
 //  /Tabelas.asp
 // ------------------------------------------------------------------------
@@ -91,6 +98,19 @@ function Imposto() {
     $w_calculo        = $_REQUEST['w_calculo'];
     $w_dia_pagamento  = $_REQUEST['w_dia_pagamento'];
     $w_ativo          = $_REQUEST['w_ativo'];
+    $w_lancamento     = $_REQUEST['w_lancamento'];
+    $w_documento      = $_REQUEST['w_documento'];
+    $w_tipo_benef     = $_REQUEST['w_tipo_benef'];
+    $w_sq_benef       = $_REQUEST['w_sq_benef'];
+    $w_tipo_vinc      = $_REQUEST['w_tipo_vinc'];
+    $w_sq_cc          = $_REQUEST['w_sq_cc'];
+    $w_sq_solic       = $_REQUEST['w_sq_solic'];
+    $w_sq_menu_relac  = $_REQUEST['w_sq_menu_relac'];    
+    if($w_sq_menu_relac=='CLASSIF') {
+      $w_chave_pai    = '';
+    } else {
+      $w_chave_pai    = $_REQUEST['w_chave_pai'];
+    }
   } elseif ($O=='L') {
     $sql = new db_getImposto; $RS = $sql->getInstanceOf($dbms,null,$w_cliente);
     if ($p_ordena>'') { 
@@ -102,15 +122,27 @@ function Imposto() {
   } elseif (strpos('AEV',$O)!==false) {
     $sql = new db_getImposto; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente);
     foreach($RS as $row) {$RS = $row; break;}
-    $w_chave        = f($RS,'chave');
-    $w_nome         = f($RS,'nome');
-    $w_descricao    = f($RS,'descricao');
-    $w_sigla        = f($RS,'sigla');
-    $w_esfera       = f($RS,'esfera');
-    $w_calculo      = f($RS,'nm_calculo');
-    $w_dia_pagamento= f($RS,'dia_pagamento');
-    $w_ativo        = f($RS,'nm_ativo');
+    $w_chave          = f($RS,'chave');
+    $w_nome           = f($RS,'nome');
+    $w_descricao      = f($RS,'descricao');
+    $w_sigla          = f($RS,'sigla');
+    $w_esfera         = f($RS,'esfera');
+    $w_calculo        = f($RS,'calculo');
+    $w_dia_pagamento  = f($RS,'dia_pagamento');
+    $w_ativo          = f($RS,'nm_ativo');
+    $w_lancamento     = f($RS,'sq_tipo_lancamento');
+    $w_documento      = f($RS,'sq_tipo_documento');
+    $w_tipo_benef     = f($RS,'tipo_beneficiario');
+    $w_sq_benef       = f($RS,'sq_beneficiario');
+    $w_tipo_vinc      = f($RS,'tipo_vinculo');
+    $w_sq_cc          = f($RS,'sq_cc_vinculo');
+    $w_sq_solic       = f($RS,'sq_solic_vinculo');
+    
+    $w_vinculo        = explode('|@|',f($RS,'nm_tipo_vinculo'));
+    $w_sq_menu_relac  = $w_vinculo[3];
+    if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
   } 
+  if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
   Cabecalho();
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de impostos</TITLE>');
@@ -127,6 +159,21 @@ function Imposto() {
       Validate('w_esfera','Esfera','SELECT','1','1','1','1','1');
       Validate('w_calculo','Calculo','SELECT','1','1','1','1','1');
       Validate('w_dia_pagamento','Dia do Pagamento','1','1','1','2','','1');
+      Validate('w_tipo_benef','Beneficiário padrão','SELECT',1,1,18,1,1);
+      if ($w_tipo_benef==2) {
+        Validate('w_sq_benef_nm','Beneficiário padrão','1','1','2','80','1','1');
+      }
+      Validate('w_tipo_vinc','Vinculação padrão','SELECT',1,1,18,1,1);
+      if ($w_tipo_vinc==1) {
+        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+        if(nvl($w_sq_menu_relac,'')!='') {
+          if ($w_sq_menu_relac=='CLASSIF') {
+            Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+          } else {
+            Validate('w_sq_solic','Vinculação','SELECT',1,1,18,1,1);
+          }
+        }
+      }
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -160,7 +207,11 @@ function Imposto() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
+    //ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo de lançamento','nm_tipo_lancamento').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Documento','nm_tipo_documento').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Beneficiário padrão','nm_tipo_beneficiario').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Centro Custo padrão','nm_tipo_vinculo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Esfera','nm_esfera').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Cálculo','nm_calculo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
@@ -168,7 +219,7 @@ function Imposto() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -176,7 +227,13 @@ function Imposto() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
-        ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
+        //ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'nm_tipo_lancamento'),'---').'</td>');
+        ShowHTML('        <td '.((nvl(f($row,'nm_tipo_documento'),'')!='') ? ' title="'.f($row,'nm_tipo_documento').'"' : '').'>'.nvl(f($row,'sg_tipo_documento'),'---').'</td>');
+        if (nvl(f($row,'sq_beneficiario'),'')!='') ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_beneficiario'),$TP,f($row,'nm_benef_res')).'</td>');
+        else                                       ShowHTML('        <td>'.f($row,'nm_tipo_beneficiario').'</td>');
+        if (f($row,'tipo_vinculo')==1) ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_vinculo'),f($row,'dados_vinculo'),'N',$w_tipo).'</td>');
+        else                           ShowHTML('        <td>'.f($row,'nm_tipo_vinculo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_esfera').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_calculo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
@@ -191,13 +248,8 @@ function Imposto() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    if ($R>'') {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    } else {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    } 
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.(($R>'') ? $R : $w_pagina.$par).'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
-    //Aqui começa a manipulação de registros
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
@@ -209,10 +261,37 @@ function Imposto() {
     ShowHTML('      <tr><td colspan="5"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td colspan="5"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr valign="top">');
+    SelecaoTipoLancamento('Tipo de <u>l</u>ançamento:','L','Selecione o tipo de lançamento padrão a ser usado neste registro.',$w_lancamento,null,$w_cliente,'w_lancamento','SUBTODOS',null,5);
+    ShowHTML('      <tr valign="top">');
+    SelecaoTipoDocumento('Tipo de <u>d</u>ocumento:','D', 'Selecione o tipo de documento padrão usado a ser usado neste registro.', $w_documento,$w_cliente,'w_documento',null,null);
     ShowHTML('          <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
     SelecaoEsfera('<u>E</u>sfera:','E','Selecione a esfera desejada',$w_chave,$w_esfera,$w_cliente,'w_esfera',null,null);
-    SelecaoCalculo('<u>C</u>alculo:','C','Selecione a base de calculo',$w_chave,$w_calculo,$w_cliente,'w_calculo',null,null);
+    SelecaoCalculo('<u>C</u>álculo:','C','Selecione a base de calculo',$w_chave,$w_calculo,$w_cliente,'w_calculo',null,null);
     ShowHTML('          <td><b>D<u>i</u>a de pagamento:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dia_pagamento" class="sti" SIZE="2" MAXLENGTH="2" VALUE="'.$w_dia_pagamento.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoTipoBeneficiario('<u>B</u>eneficiário padrão:','B','Selecione o tipo de beneficiário padrão a ser usado neste registro.',$w_tipo_benef,$w_cliente,'w_tipo_benef',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_tipo_benef\'; document.Form.submit();"');
+    if ($w_tipo_benef==2) {
+      SelecaoPessoaOrigem('<u>P</u>adrão:', 'P', 'Clique na lupa para selecionar o beneficiário padrão.', $w_sq_benef, null, 'w_sq_benef', null, null, null,4);
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_sq_benef" value="">');
+    }
+    ShowHTML('          <tr valign="top">');
+    SelecaoTipoVinculo('<u>C</u>entro de custo padrão:','V','Selecione o centro de custo padrão a ser usado neste registro.',$w_tipo_vinc,$w_cliente,'w_tipo_vinc',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_tipo_vinc\'; document.Form.submit();"',1);
+    if ($w_tipo_vinc==1) {
+      selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+      if(nvl($w_sq_menu_relac,'')!='') {
+        if ($w_sq_menu_relac=='CLASSIF') {
+          SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
+          ShowHTML('<INPUT type="hidden" name="w_sq_solic" value="">');
+        } else {
+          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_sq_solic,$w_sq_menu_relac,0,'w_sq_solic',f($RS_Relac,'sigla'),null,$w_sq_solic,'<BR />',3);
+          ShowHTML('<INPUT type="hidden" name="w_sq_cc" value="">');
+        }
+      }
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_sq_cc" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_solic" value="">');
+    }
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -714,9 +793,10 @@ function Grava() {
     case 'FNIMPOSTO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $SQL = new dml_putImposto; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-          $_REQUEST['w_sigla'],$_REQUEST['w_esfera'],$_REQUEST['w_calculo'],$_REQUEST['w_dia_pagamento'],
-          $_REQUEST['w_ativo']);
+        $SQL = new dml_putImposto; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],
+          $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_lancamento'],$_REQUEST['w_documento'],$_REQUEST['w_sigla'],
+          $_REQUEST['w_esfera'],$_REQUEST['w_calculo'],$_REQUEST['w_dia_pagamento'],$_REQUEST['w_ativo'],$_REQUEST['w_tipo_benef'],
+          $_REQUEST['w_sq_benef'],$_REQUEST['w_tipo_vinc'],$_REQUEST['w_sq_cc'],$_REQUEST['w_sq_solic']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
