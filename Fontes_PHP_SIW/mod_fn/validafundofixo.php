@@ -56,63 +56,6 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
       $l_tipo=0;
     }
   }
-  // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
-  $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
-  if (count($l_rs1)<=0) {
-    $l_existe_rs1=0;
-  } else {
-    $l_existe_rs1=count($l_rs1);
-    $l_item = false;    
-    foreach($l_rs1 as $l_row) {
-      if (nvl(f($l_rs_solic,'tipo_rubrica'),0)!=4 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=5) {
-        $sql = new db_getLancamentoRubrica; $l_rs2 = $sql->getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
-        if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
-        if($l_existe_rs2>0) {
-          $l_valor_rubrica=0;
-          foreach($l_rs2 as $l_row2) $l_valor_rubrica += f($l_row2,'valor'); 
-          if (((f($l_row,'valor')!=$l_valor_rubrica) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
-            $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.formatNumber(Nvl($l_valor_rubrica,0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
-            $l_tipo=0;
-          }          
-        }
-      } elseif (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
-        if (f($l_row,'detalha_item')=='S') $l_item = true;
-        $sql = new db_getLancamentoItem; $l_rs2 = $sql->getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
-        if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
-        if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
-          $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.formatNumber(Nvl(f($l_row,'total_item'),0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
-          $l_tipo=0;
-        }
-      }
-    }
-    if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc') && f($l_rs_tramite,'ativo')=='S') {
-      $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores dos documentos (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_doc'),0)).'</b>).';
-      $l_tipo=0;
-    }
-  }
-
-  // 3 - Se o lançamento está ligado a acordo com nota, ele deve ter pelo menos uma nota e a parcela ao qual está ligado também.
-  if (f($l_rs_solic,'notas_acordo')>0 && f($l_rs_solic,'qtd_nota')==0) {
-    $l_erro=$l_erro.'<li>Este lançamento deve ter pelo menos uma nota.';
-    $l_tipo=0;
-  }
-
-  if (f($l_rs_solic,'notas_acordo')>0 && f($l_rs_solic,'notas_parcela')==0) {
-    $l_erro=$l_erro.'<li>A parcela deste lançamento deve ter pelo menos uma nota.';
-    $l_tipo=0;
-  }
-
-  // 4 - Se o lançamento tem notas, verifica se o valor do lançamento é igual à soma dos valores das notas
-  $sql = new db_getLancamentoDoc; $l_rs3 = $sql->getInstanceOf($dbms,$l_chave,null,'NOTA');
-  if (count($l_rs3)<=0) {
-    $l_existe_rs3=0;
-  } else { 
-    $l_existe_rs3=count($l_rs3);    
-    if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_nota') && f($l_rs_tramite,'ativo')=='S') {
-      $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores das notas (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_nota'),0)).'</b>).';
-      $l_tipo=0;
-    }
-  }
 
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
     $sql = new db_getSolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
@@ -150,8 +93,6 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
     if (substr(f($l_rs_solic,'sigla'),0,3)=='FND') {
       if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
         if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
-      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='CHEQUE') {
-        if (nvl(f($l_rs_solic,'sq_pessoa_conta'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
       } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
         if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
       } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
@@ -168,38 +109,6 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
       $l_tipo=0;
     }
 
-
-  // Este bloco faz verificações em solicitações que estão em fases posteriores ao
-  // cadastramento inicial
-  /*
-    if (f($l_rs_tramite,'ordem')>1 || f($l_rs_solic,'sigla')=='FNDREEMB') {
-      $l_erro=$l_erro;
-      if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE' || f($l_rs_solic,'sigla')=='FNDREEMB') {
-        // 4 - Recupera os documentos associados ao lançamento
-        $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
-        if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
-        if ($l_existe_rs1==0) {
-          // 5 - Verifica se foi informado pelo menos um documento
-          $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Acesse a operação "Docs" e informe pelo menos um.';
-          $l_tipo=0;
-        } else {
-          if ($l_item && $l_existe_rs2==0 && nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
-            // 7 - Verifica se foi informado pelo menos um item no documento
-            $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Acesse a operação "Itens" do documento e informe pelo menos um.';
-            $l_tipo=0;
-          } 
-        }
-      } elseif ((Nvl(f($l_rs_tramite,'sigla'),'---')=='AT')&&(Nvl(f($l_rs_solic,'tipo_rubrica'),0)==1)) {
-        // Verifica se o tipo de movimentação é dotação inicial e se for nao pode haver retorno 
-        // para fases anteriores se houver outros lancamentos ativos.
-        $sql = new db_getLancamentoProjeto; $l_rs1 = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_solic,'sq_menu'),'LANCAMENTOS');
-        if(count($l_rs1)>0) {
-          $l_erro=$l_erro.'<li>O envio deste lançamento só pode ser feito após o cancelamento de todos os outros lançamentos deste projeto.';
-          $l_tipo=0;
-        }
-      }
-    } 
-  */ 
   }
   $l_erro=$l_tipo.$l_erro;
   //-----------------------------------------------------------------------------------

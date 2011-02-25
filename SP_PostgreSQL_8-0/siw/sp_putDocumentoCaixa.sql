@@ -41,11 +41,11 @@ BEGIN
      w_dados_caixa := substr(w_dados_caixa,instr(w_dados_caixa,'|@|')+3);
   End Loop;
   update pa_caixa
-     set assunto             = w_assunto,
-         descricao           = w_descricao,
+     set assunto             = substr(w_assunto,1,800),
+         descricao           = substr(w_descricao,1,2000),
          data_limite         = w_limite,
-         intermediario       = w_intermediario,
-         destinacao_final    = w_final
+         intermediario       = substr(w_intermediario,1,400),
+         destinacao_final    = substr(w_final,1,40)
   where sq_caixa = p_caixa;
 
   If w_caixa_atual is not null and w_caixa_atual <> p_caixa Then

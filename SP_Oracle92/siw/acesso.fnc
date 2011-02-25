@@ -56,6 +56,7 @@ create or replace function Acesso
   w_sq_unidade_lotacao     sg_autenticacao.sq_unidade%type;
   w_gestor_seguranca       sg_autenticacao.gestor_seguranca%type;  
   w_gestor_sistema         sg_autenticacao.gestor_sistema%type;
+  w_gestor_financeiro      varchar2(1);
   w_sq_unidade_executora   siw_menu.sq_unid_executora%type;        -- Unidade executora do serviço
   w_consulta_opiniao       siw_menu.consulta_opiniao%type;
   w_envia_email            siw_menu.envia_email%type;
@@ -425,12 +426,17 @@ begin
    w_beneficiario := 0;
  End If;
  
- -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence
+ -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence ou, 
+ -- se a solicitacao for do módulo de contratos, se o usuário é gestor do módulo financeiro
  select count(*)
    into w_existe
    from sg_pessoa_modulo a
   where a.sq_pessoa          = p_usuario
-    and a.sq_modulo          = w_modulo
+    and (a.sq_modulo         = w_modulo or
+         (w_modulo           in (select sq_modulo from siw_modulo where sigla in ('AC','PR','PD')) and
+          a.sq_modulo        = (select sq_modulo from siw_modulo where sigla = 'FN')
+         )
+        )
     and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
          a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
          a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))

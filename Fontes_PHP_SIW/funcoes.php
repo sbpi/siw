@@ -2876,6 +2876,12 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
   } else {
     $w_html='<html>';
     $w_html .= chr(10).'<head>';
+    $w_html .= chr(10).'<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">';
+    $w_html .= chr(10).'<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">';
+    $w_html .= chr(10).'<META NAME="author" CONTENT="SBPI Consultoria Ltda">';
+    $w_html .= chr(10).'<META NAME="robots" CONTENT="noindex,nofollow">';
+    $w_html .= chr(10).'<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR">';
+    $w_html .= chr(10).'<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1">';
     $w_html .= chr(10).'  <BASEFONT FACE="Arial" SIZE="2">';
     $w_html .= chr(10).'</head>';
     $w_html .= chr(10).'<body BGCOLOR="#FF5555">';
@@ -2933,9 +2939,8 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
        ShowHTML('   alert("Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.");');
        ShowHTML('</SCRIPT>');
     }
-    die();
   }
-  exit;
+  die();
 }
 // =========================================================================
 // Fim da rotina de tratamento de erros

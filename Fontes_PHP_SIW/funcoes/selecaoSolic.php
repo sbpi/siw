@@ -18,11 +18,10 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     //selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
     selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'SERVICOS', $atributo);
   } elseif ($chaveAux=='COMPRA_FUNDO') {
-    $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',3,
-        null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,
+    $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',5,
+        null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
         null, null, null, null, null, null, null,null, null, null, null);
     $l_RS = SortArray($l_RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
-    
     ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($l_RS as $l_row) {

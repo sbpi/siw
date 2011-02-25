@@ -286,7 +286,8 @@ begin
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo, 
+                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao
            from siw_solicitacao             b
                 inner   join siw_tramite    b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and
                                                    b1.sigla             = 'AT'
@@ -303,7 +304,7 @@ begin
                                where w.sq_solic_vinculo is not null
                              )              e  on (b.sq_siw_solicitacao = e.sq_solic_vinculo)
           where b.sq_menu             = p_menu
-            and (e.sq_siw_solicitacao is null or (e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_chave));
+            and (p_chave is null or e.sq_siw_solicitacao is null or (p_chave is not null and e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_chave));
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 

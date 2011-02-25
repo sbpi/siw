@@ -16,6 +16,7 @@ create or replace procedure SP_PutFinanceiroConc
     p_nome_original       in varchar2  default null
    ) is
    w_chave         number(18) := null;
+   w_chave_doc     number(18) := null;
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
    w_cont          number(18);
@@ -65,18 +66,43 @@ begin
    
    -- Se foi informada rubrica, cria ou atualiza os itens de documentos
    If p_rubrica is not null Then
-      for crec in (select x.sq_lancamento_doc, x.valor from fn_lancamento_doc x where x.sq_siw_solicitacao = p_chave) loop
-        select count(*) into w_cont from fn_documento_item a where a.sq_lancamento_doc = crec.sq_lancamento_doc;
-        -- Se o item existe, atualiza a rubrica; caso contrário, insere o item
-        If w_cont > 0 Then
-           update fn_documento_item set sq_projeto_rubrica = p_rubrica where sq_lancamento_doc = crec.sq_lancamento_doc;
-        Else
-           insert into fn_documento_item
-             (sq_documento_item,         sq_lancamento_doc,      sq_projeto_rubrica, ordem, descricao,   quantidade, valor_unitario, valor_total, valor_cotacao)
-           values
-             (sq_documento_item.nextval, crec.sq_lancamento_doc, p_rubrica,          1,     'Reembolso', 1,          crec.valor,     crec.valor,  0);
-        End If;
-      End Loop;
+      -- Verifica se existe documento lançado para o fundo fixo
+      select count(*) into w_cont from fn_lancamento_doc a where a.sq_siw_solicitacao = p_chave;
+      If w_cont = 0 Then
+         -- Recupera a chave do documento
+         select sq_lancamento_doc.nextval into w_chave_doc from dual;
+         
+         -- Insere o documento
+         insert into fn_lancamento_doc
+           (sq_lancamento_doc, sq_siw_solicitacao, sq_tipo_documento,   numero, data,  valor)
+         (select w_chave_doc,  p_chave,            a.sq_tipo_documento, 's/n',  c.fim, p_valor_real
+            from fn_tipo_documento   a
+                 inner join siw_menu b on (a.cliente = b.sq_pessoa),
+                 siw_solicitacao     c
+           where b.sq_menu            = p_menu
+             and c.sq_siw_solicitacao = p_chave
+             and a.sigla              = 'RE' -- Recibo
+         );
+
+        -- Insere o item
+        insert into fn_documento_item
+          (sq_documento_item,         sq_lancamento_doc, sq_projeto_rubrica, ordem, descricao,              quantidade, valor_unitario, valor_total,  valor_cotacao)
+        values
+          (sq_documento_item.nextval, w_chave_doc,       p_rubrica,          1,     'Suprimento de fundos', 1,          p_valor_real,   p_valor_real, 0);
+      Else
+         for crec in (select x.sq_lancamento_doc, x.valor from fn_lancamento_doc x where x.sq_siw_solicitacao = p_chave) loop
+           select count(*) into w_cont from fn_documento_item a where a.sq_lancamento_doc = crec.sq_lancamento_doc;
+           -- Se o item existe, atualiza a rubrica; caso contrário, insere o item
+           If w_cont > 0 Then
+              update fn_documento_item set sq_projeto_rubrica = p_rubrica where sq_lancamento_doc = crec.sq_lancamento_doc;
+           Else
+              insert into fn_documento_item
+                (sq_documento_item,         sq_lancamento_doc,      sq_projeto_rubrica, ordem, descricao,   quantidade, valor_unitario, valor_total, valor_cotacao)
+              values
+                (sq_documento_item.nextval, crec.sq_lancamento_doc, p_rubrica,          1,     'Reembolso', 1,          crec.valor,     crec.valor,  0);
+           End If;
+         End Loop;
+      End If;
    End If;
     
    -- Se foi informado um arquivo, grava.

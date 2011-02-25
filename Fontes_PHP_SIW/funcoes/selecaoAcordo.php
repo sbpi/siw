@@ -12,16 +12,12 @@ function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,
     $sql = new db_getMenuRelac; $RS1 = $sql->getInstanceOf($dbms, $restricao, null, null, null, null);
     if (count($RS1)>0) {
       $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,3,
-              null,null,null,null,null,null,
-              null,null,null,null,
-              null,null,null,null,null,null,null,
+              null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
               null,null,null,$l_fase,null,null,null,null,null);
     }
   } else {
       $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,4,
-            null,null,null,null,null,null,
-            null,null,null,null,
-            null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
             null,null,null,$l_fase,null,null,null,null,null);    
   }
   $RS = SortArray($RS,'titulo','asc', 'inicio', 'asc');

@@ -77,8 +77,8 @@ begin
          sq_solic_pai)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_cadastrador,
-         p_cadastrador,      p_descricao,   null,                p_inicio,
-         p_fim,              sysdate,       sysdate,             0,
+         p_cadastrador,      p_descricao,   null,                case when p_copia is not null then sysdate else p_inicio end,
+         case when p_copia is not null then sysdate else p_fim end,              sysdate,       sysdate,             0,
          p_data_hora,        p_unidade,     null,                d.sq_cidade,
          Nvl(p_tarefa, p_projeto)
          from siw_tramite                     a,
@@ -157,6 +157,12 @@ begin
           where a.tipo               = 'S'
             and a.sq_siw_solicitacao = p_copia
          );
+      
+        -- Ajusta o início e o término da missão
+        update siw_solicitacao
+           set inicio = (select min(saida) from pd_deslocamento where sq_siw_solicitacao = w_chave),
+               fim    = (select max(chegada) from pd_deslocamento where sq_siw_solicitacao = w_chave)
+         where sq_siw_solicitacao = w_chave;
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
@@ -258,7 +264,7 @@ begin
       -- Recupera os parâmetros do cliente informado
       select * into w_reg from pd_parametro where cliente = p_cliente;
 
-      If to_char(p_inicio,'yyyy') <  w_reg.ano_corrente Then
+      If to_char(p_inicio,'yyyy') <  w_reg.ano_corrente and p_copia is null Then
     
          -- Configura o ano do acordo para o ano informado na data de início.
          w_ano := to_number(to_char(p_inicio,'yyyy'));

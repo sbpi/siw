@@ -49,7 +49,7 @@ create or replace procedure SP_PutViagemEnvio
       
    cursor c_reembolso is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
-             case x5.sigla when 'EE' then 'Diferença de diárias da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||' ('||x4.nm_moeda||') '||fValor(x4.valor,'T') as descricao,
+             case x5.sigla when 'EE' then 'Reembolso da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||' ('||x4.nm_moeda||') '||fValor(x4.valor,'T') as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
@@ -591,7 +591,7 @@ begin
                                     p_devolucao     => 'N',
                                     p_despacho      => case w_sg_tramite 
                                                             when 'EE' 
-                                                            then 'Envio automático de diferença de diárias.' 
+                                                            then 'Envio automático de reembolso de viagem.' 
                                                             else 'Envio automático de adiantamento de diárias.' 
                                                        end
                                    );

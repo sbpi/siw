@@ -17,7 +17,7 @@ class dml_putCaixa {
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_unidade'                =>array(tvl($p_sq_unidade),                               B_INTEGER,        32),
                    'p_sq_arquivo_local'          =>array(tvl($p_sq_arquivo_local),                         B_INTEGER,        32),
-      		    	   'p_assunto'                   =>array(tvl($p_assunto),                                  B_VARCHAR,       500),
+      		    	   'p_assunto'                   =>array(tvl($p_assunto),                                  B_VARCHAR,       800),
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,      2000),
                    'p_data_limite'               =>array(tvl($p_data_limite),                              B_DATE,           32),
                    'p_numero'                    =>array(tvl($p_numero),                                   B_INTEGER,        32),

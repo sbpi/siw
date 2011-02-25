@@ -988,8 +988,8 @@ begin
                         left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
                         left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                              from fn_lancamento_doc x
-                                                  inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
-                                                  inner join siw_menu        z on (y.sq_menu           = z.sq_menu)
+                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  inner join siw_menu        z on (y.sq_menu            = z.sq_menu)
                                             where x.sq_acordo_nota is null
                                               and z.sq_menu        = p_menu
                                            group by x.sq_siw_solicitacao
@@ -1002,8 +1002,8 @@ begin
                           left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                           left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                                from fn_lancamento_doc          x
-                                                    inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
-                                                    inner join siw_menu        z on (y.sq_menu           = z.sq_menu)
+                                                    inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                    inner join siw_menu        z on (y.sq_menu            = z.sq_menu)
                                               where x.sq_acordo_nota is not null
                                                 and z.sq_menu        = p_menu
                                              group by x.sq_siw_solicitacao

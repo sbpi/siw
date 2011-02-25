@@ -34,12 +34,12 @@ begin
             coalesce(g.complemento, g1.complemento) as complemento, 
             coalesce(g.bairro, g1.bairro) as bairro, 
             coalesce(g.cep, g1.cep) as cep, 
-            coalesce(h.sq_cidade, h1.sq_cidade,b1.sq_cidade,f1.sq_cidade,l1.sq_cidade,i1.sq_cidade) as sq_cidade, 
-            coalesce(h.nome,h1.nome,i1.nome) as nm_cidade, 
-            coalesce(h.co_uf, h1.co_uf, b1.co_uf,f1.co_uf,l1.co_uf,i1.co_uf) as co_uf,
-            coalesce(h.sq_pais,h1.sq_pais,b1.sq_pais,f1.sq_pais,l1.sq_pais,i1.sq_pais) as sq_pais,
-            coalesce(m.padrao,m1.padrao,i2.padrao) as pd_pais, 
-            coalesce(m.nome,m1.nome,i2.nome) as nm_pais,
+            coalesce(h.sq_cidade, h1.sq_cidade,b1.sq_cidade,f1.sq_cidade,l1.sq_cidade,i1.sq_cidade,a1.sq_cidade_padrao) as sq_cidade, 
+            coalesce(h.nome,h1.nome,i1.nome,a2.nome) as nm_cidade, 
+            coalesce(h.co_uf, h1.co_uf, b1.co_uf,f1.co_uf,l1.co_uf,i1.co_uf,a2.co_uf) as co_uf,
+            coalesce(h.sq_pais,h1.sq_pais,b1.sq_pais,f1.sq_pais,l1.sq_pais,i1.sq_pais,a3.sq_pais) as sq_pais,
+            coalesce(m.padrao,m1.padrao,i2.padrao,a3.padrao) as pd_pais, 
+            coalesce(m.nome,m1.nome,i2.nome,a3.nome) as nm_pais,
             coalesce(i.email, n.email) as email,
             coalesce(j.cpf,n.username) as cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
             j.sq_pais_passaporte, j.sexo,
@@ -56,6 +56,9 @@ begin
                       end
             end as identificador_primario
        from co_pessoa                           a
+            left join  siw_cliente             a1 on (a.sq_pessoa_pai      = a1.sq_pessoa)
+            left join  co_cidade               a2 on (a1.sq_cidade_padrao  = a2.sq_cidade)
+            left join  co_pais                 a3 on (a2.sq_pais           = a3.sq_pais)
             left join  co_tipo_pessoa           c on (a.sq_tipo_pessoa     = c.sq_tipo_pessoa)
             left join  co_tipo_vinculo          d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
             left join  (select w.sq_pessoa_conta, w.sq_pessoa, x.sq_banco, w.sq_agencia, 
