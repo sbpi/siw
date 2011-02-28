@@ -198,7 +198,7 @@ function Inicial() {
   $p_ano_guia = $_REQUEST['p_ano_guia'];
   $p_ini = $_REQUEST['p_ini'];
   $p_fim = $_REQUEST['p_fim'];
-  $w_assunto = $_REQUEST['w_assunto'];
+  $p_classif = $_REQUEST['p_classif'];
 
 //  extract($_REQUEST,EXTR_OVERWRITE);
 
@@ -233,9 +233,9 @@ function Inicial() {
   }
 
   if ($O == 'L') {
-    if (nvl($w_assunto, '') != '') {
+    if (nvl($p_classif, '') != '') {
       $sql = new db_getAssunto_PA;
-      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $w_assunto, null, null, null, null, null, null, null, null, 'REGISTROS');
+      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
       foreach ($RS_Assunto as $row) {
         $RS_Assunto = $row;
         break;
@@ -389,7 +389,7 @@ function Inicial() {
 //    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
     ShowHTML('      <tr valign="top">');
-    SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $w_assunto, null, 'w_assunto', 'FOLHA', null, '2');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $p_classif, null, 'p_classif', 'FOLHA', null, '2');
     ShowHTML('        </tr></table>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');

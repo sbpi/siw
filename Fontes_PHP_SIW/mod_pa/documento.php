@@ -2396,6 +2396,8 @@ function Tramitacao() {
   $p_ini = $_REQUEST['p_ini'];
   $p_fim = $_REQUEST['p_fim'];
   $p_tipo_despacho = nvl($_REQUEST['w_tipo_despacho'], $_REQUEST['p_tipo_despacho']);
+  $p_detalhamento = $_REQUEST['p_detalhamento'];
+  $p_assunto = $_REQUEST['p_assunto'];
 
   if ($w_troca > '') {
     // Se for recarga da página
@@ -2480,11 +2482,22 @@ function Tramitacao() {
         reset($RS);
       }
     } else {
+
+      if (nvl($p_assunto, '') != '') {
+        $sql = new db_getAssunto_PA;
+        $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_assunto, null, null, null, null, null, null, null, null, 'REGISTROS');
+        foreach ($RS_Assunto as $row) {
+          $RS_Assunto = $row;
+          break;
+        }
+        $p_sq_acao_ppa = f($row,'codigo');
+      }
+
       // Recupera todos os registros para a listagem
       $sql = new db_getProtocolo;
       $RS = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux,
                       $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2,
-                      $p_tipo_despacho, $p_empenho, $p_solicitante, $p_unidade, $p_proponente, $p_sq_acao_ppa, $p_assunto, $p_processo);
+                      $p_tipo_despacho, $p_empenho, $p_solicitante, $p_unidade, $p_proponente, $p_sq_acao_ppa, $p_detalhamento, $p_processo);
       if (Nvl($p_ordena, '') > '') {
         $lista = explode(',', str_replace(' ', ',', $p_ordena));
         $RS = SortArray($RS, $lista[0], $lista[1], 'prefixo', 'asc', 'ano', 'desc', 'numero_documento', 'asc');
@@ -2527,8 +2540,8 @@ function Tramitacao() {
     ShowHTML('     return false;');
     ShowHTML('  }');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
-    Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
-    Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
+    //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
+    Validate('p_detalhamento', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
     Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Término', 'DATA', '', '10', '10', '', '0123456789/');
@@ -2869,10 +2882,13 @@ function Tramitacao() {
     SelecaoUnidade('<U>O</U>rigem interna:', 'O', null, $p_unidade, null, 'p_unidade', null, null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" ' . $w_Disabled . ' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="' . $p_proponente . '"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
-    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
-    ShowHTML('      <tr valign="top">');
+//    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
+    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_detalhamento" size="40" maxlength="30" value="' . $p_detalhamento . '"></td>');
+//    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $p_assunto, null, 'p_assunto', 'FOLHA', null, '2');
     ShowHTML('        </tr></table>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
@@ -3198,6 +3214,7 @@ function Classificacao() {
   $p_chave_aux = $_REQUEST['p_chave_aux'];
   $p_prefixo = $_REQUEST['p_prefixo'];
   $p_numero = $_REQUEST['p_numero'];
+  $p_classif = $_REQUEST['p_classif'];
   $p_ano = $_REQUEST['p_ano'];
   $p_unid_autua = $_REQUEST['p_unid_autua'];
   $p_unid_posse = $_REQUEST['p_unid_posse'];
@@ -3228,6 +3245,17 @@ function Classificacao() {
   }
 
   if ($O == 'L') {
+
+    if (nvl($p_classif, '') != '') {
+      $sql = new db_getAssunto_PA;
+      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
+      foreach ($RS_Assunto as $row) {
+        $RS_Assunto = $row;
+        break;
+      }
+      $p_sq_acao_ppa = f($row,'codigo');
+    }
+
     $sql = new db_getProtocolo;
     $RS = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux,
                     $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2,
@@ -3275,7 +3303,7 @@ function Classificacao() {
     ShowHTML('  }');
     CompData('p_ini', 'Início', '<=', 'p_fim', 'Término');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
-    Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
+//    Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
     Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
     Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
     ShowHTML('  theForm.Botao.disabled=true;');
@@ -3418,10 +3446,13 @@ function Classificacao() {
     SelecaoUnidade('<U>O</U>rigem interna:', 'O', null, $p_unidade, null, 'p_unidade', null, null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" ' . $w_Disabled . ' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="' . $p_proponente . '"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
+//    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
     ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $p_classif, null, 'p_classif', 'FOLHA', null, '2');
     ShowHTML('        </tr></table>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
@@ -3457,10 +3488,21 @@ function Recebimento() {
   $p_ano = $_REQUEST['p_ano'];
   $p_ini = $_REQUEST['p_ini'];
   $p_fim = $_REQUEST['p_fim'];
+  $p_classif = $_REQUEST['p_classif'];
 
   $w_observacao = $_REQUEST['w_observacao'];
 
   if ($O == 'L') {
+    if (nvl($p_classif, '') != '') {
+      $sql = new db_getAssunto_PA;
+      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
+      foreach ($RS_Assunto as $row) {
+        $RS_Assunto = $row;
+        break;
+      }
+      $p_sq_acao_ppa = f($row, 'codigo');
+    }
+
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo;
     $RS = $sql->getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null,
@@ -3516,7 +3558,7 @@ function Recebimento() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
-      Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
+      //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
       Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
       Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
       Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
@@ -3777,10 +3819,13 @@ function Recebimento() {
     SelecaoUnidade('<U>O</U>rigem interna:', 'O', null, $p_unidade, null, 'p_unidade', null, null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" ' . $w_Disabled . ' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="' . $p_proponente . '"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
+//    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
     ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
-    ShowHTML('      <tr valign="top">');
+//    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $p_classif, null, 'p_classif', 'FOLHA', null, '2');
     ShowHTML('        </tr></table>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
