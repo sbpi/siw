@@ -1357,7 +1357,7 @@ function OutraParte() {
   FormataData();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (($w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Procurar') !== false || strpos($_REQUEST['Botao'], 'Alterar') !== false) {
+  if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Procurar') !== false || strpos($_REQUEST['Botao'], 'Alterar') !== false) {
     // Se o beneficiário ainda não foi selecionado
     /* ShowHTML('  if (theForm.Botao.value == "Procurar") {');
       Validate('w_nome', 'Nome', '', '1', '4', '20', '1', '');
@@ -1372,6 +1372,9 @@ function OutraParte() {
     Validate('w_nome', 'Nome', '1', 1, 5, 60, '1', '1');
     Validate('w_nome_resumido', 'Nome resumido', '1', 1, 2, 21, '1', '1');
     Validate('w_sexo', 'Sexo', 'SELECT', 1, 1, 1, 'MF', '');
+    if (nvl($w_cpf,'') == '') {
+      Validate('w_cpf', 'CPF', 'CPF', '1', '14', '14', '', '0123456789-.');
+    }
     if ($w_sq_tipo_vinculo == '') {
       Validate('w_sq_tipo_vinculo', 'Tipo de vínculo', 'SELECT', 1, 1, 18, '', '1');
     }
@@ -1493,7 +1496,7 @@ function OutraParte() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  if (($w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
+  if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
     // Se o beneficiário ainda não foi selecionado
     if (strpos($_REQUEST['Botao'], 'Procurar') !== false) {
       // Se está sendo feita busca por nome
@@ -1512,7 +1515,7 @@ function OutraParte() {
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IA', $O) !== false) {
-    if (($w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
+    if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
       // Se o beneficiário ainda não foi selecionado
       ShowHTML('<FORM action="' . $w_dir . $w_pagina . $par . '" method="POST" name="Form" onSubmit="return(Validacao(this));">');
     } else {
@@ -1532,7 +1535,7 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="' . $w_sq_pessoa . '">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="' . $w_tipo_pessoa . '">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="' . $w_pessoa_atual . '">');
-    if (($w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
+    if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
       $w_nome = $_REQUEST['w_nome'];
       if (strpos($_REQUEST['Botao'], 'Alterar') !== false) {
         $w_cpf = '';
@@ -1599,7 +1602,12 @@ function OutraParte() {
       if ($w_tipo_pessoa == 1)
         ShowHTML('          <td>CPF:<br><b><font size=2>' . $w_cpf);
 
-      ShowHTML('              <INPUT type="hidden" name="w_cpf" value="' . $w_cpf . '">');
+      //ShowHTML('              <INPUT type="hidden" name="w_cpf" value="' . $w_cpf . '">');
+      if (nvl($w_cpf, '') == '') {
+        ShowHTML('              <INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="' . $w_cpf . '" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+      }else{
+        ShowHTML('              <INPUT type="hidden" name="w_cpf" value="' . $w_cpf . '">');
+      }
       ShowHTML('          <tr valign="top">');
       if (strpos('AE', $O) !== false) {
         $readonly = ' readonly ';
@@ -5570,41 +5578,43 @@ function Encaminhamento() {
   ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=../' . MontaURL('MESA') . '">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  if ($w_sg_tramite == 'CI' && substr(Nvl($w_erro, 'nulo'), 0, 1) != '0') {
-    if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
-      Validate('w_justificativa', 'Justificativa', '', '1', '1', '2000', '1', '1');
-    }
-    if ($w_fim_semana == 'S') {
-      Validate('w_justif_dia_util', 'Justificativa', '1', '1', 5, 2000, '1', '1');
-    }
-  } else {
-    if (substr(Nvl($w_erro, 'nulo'), 0, 1) == '0' || $w_sg_tramite == 'EE' || $w_ativo == 'N') {
-      Validate('w_despacho', 'Despacho', '1', '1', '1', '2000', '1', '1');
-    } else {
-      Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
-      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
-      ShowHTML('     theForm.w_despacho.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
-      ShowHTML('     theForm.w_despacho.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      if (Nvl(substr($w_erro, 0, 1), '') == '1' || substr(Nvl($w_erro, 'nulo'), 0, 1) == '2') {
-        if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
-          Validate('w_justificativa', 'Justificativa', '', '', '1', '2000', '1', '1');
-          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
-          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
-          ShowHTML('     theForm.w_justificativa.focus();');
-          ShowHTML('     return false;');
-          ShowHTML('}');
-        }
-      }
-    }
+  if (substr(Nvl($w_erro, 'nulo'), 0, 1) != '0' || $w_sg_tramite != 'CI') {
+	  if ($w_sg_tramite == 'CI') {
+	    if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
+	      Validate('w_justificativa', 'Justificativa', '', '1', '1', '2000', '1', '1');
+	    }
+	    if ($w_fim_semana == 'S') {
+	      Validate('w_justif_dia_util', 'Justificativa', '1', '1', 5, 2000, '1', '1');
+	    }
+	  } else {
+	    if ($w_sg_tramite == 'EE' || $w_ativo == 'N') {
+	      Validate('w_despacho', 'Despacho', '1', '1', '1', '2000', '1', '1');
+	    } else {
+	      Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
+	      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+	      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+	      ShowHTML('     theForm.w_despacho.focus();');
+	      ShowHTML('     return false;');
+	      ShowHTML('  }');
+	      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
+	      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+	      ShowHTML('     theForm.w_despacho.focus();');
+	      ShowHTML('     return false;');
+	      ShowHTML('  }');
+	      if (Nvl(substr($w_erro, 0, 1), '') == '1' || substr(Nvl($w_erro, 'nulo'), 0, 1) == '2') {
+	        if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
+	          Validate('w_justificativa', 'Justificativa', '', '', '1', '2000', '1', '1');
+	          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
+	          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
+	          ShowHTML('     theForm.w_justificativa.focus();');
+	          ShowHTML('     return false;');
+	          ShowHTML('}');
+	        }
+	      }
+	    }
+	    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+	  }
   }
-  Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
   if ($P1 != 1 || ( $P1 == 1 && $w_tipo == 'Volta')) {
     // Se não for encaminhamento e nem o sub-menu do cadastramento
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -5660,8 +5670,8 @@ function Encaminhamento() {
   } else {
     ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
     if (substr(Nvl($w_erro, 'nulo'), 0, 1) == '0' || $w_sg_tramite == 'EE' || $w_ativo == 'N') {
-      ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
-      ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
+      ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="S"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
+      ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
     } else {
       if (Nvl($w_envio, 'N') == 'N') {
         ShowHTML('              <input ' . $w_Disabled . ' class="STR" type="radio" name="w_envio" value="N" checked> Enviar para a próxima fase <br><input ' . $w_Disabled . ' class="STR" class="STR" type="radio" name="w_envio" value="S"> Devolver para a fase anterior');

@@ -198,10 +198,14 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
         if(count($l_rs1)>0) {
           $w_pendencia = '';
           foreach($l_rs1 as $row) {
-            $w_pendencia.=', '.f($row,'codigo_interno');
+            if (f($row,'atraso_pc')=='S' && f($row,'sq_siw_solicitacao')!=nvl(f($l_rs_solic,'sq_solic_pai'),0)) {
+              $w_pendencia.=', '.f($row,'codigo_interno');
+            }
           }
-          $l_erro=$l_erro.'<li>Pagamento bloqueado em função de prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
-          $l_tipo=0;
+          if ($w_pendencia!='') {
+            $l_erro=$l_erro.'<li>Pagamento bloqueado em função de prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
+            $l_tipo=0;
+          }
         }
       }
   } 

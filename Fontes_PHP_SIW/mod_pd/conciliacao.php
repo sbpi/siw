@@ -882,29 +882,38 @@ function Grava() {
                 }
                 
                 $w_projeto    = trim($row[10]);
+                /* Crítica do projeto não deve ser aplicada
                 // Valida o campo código do projeto
                 $w_result = fValidate(1,$w_projeto,'código do projeto','',1,2,60,'1','1');
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Código do projeto: '.$w_result; 
                 } else {
+                */
                   // Verifica se o projeto existe
                   $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
                   $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
+                  /* Crítica do projeto não deve ser aplicada
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
                   }
+                  */
                   foreach($RS as $row1) { $w_hn_projeto = f($row1,'sq_siw_solicitacao'); break; } 
                   if (isset($faturas[$w_fatura]['cd_projeto'])) {
+                    /* Crítica do projeto não deve ser aplicada
                     if ($faturas[$w_fatura]['cd_projeto']!=$w_projeto) {
                      $w_erro.=$crlf.'Código do projeto: todas as linhas da fatura devem ter o mesmo valor';
                     } 
+                    */
                   } else {
                     $faturas[$w_fatura]['cd_projeto'] = $w_projeto;
                     $faturas[$w_fatura]['projeto'] = $w_hn_projeto;
                   }
-                }
+                //}
                 
-                $w_bilhete    = trim($row[7]);
+                // Remove caracteres especiais
+                $w_bilhete    = str_replace('-','',str_replace(' ','',str_replace('/','',str_replace('.','',trim($row[7])))));
+                // Remove prefixo de companhia
+                if (substr($w_bilhete,0,3)=='957') $w_bilhete = substr($w_bilhete,3);
                 // Valida o campo numero do bilhete
                 $w_result = fValidate(1,$w_bilhete,'número do bilhete','',1,1,20,'1','1');
                 if ($w_result>'') { 
@@ -918,30 +927,56 @@ function Grava() {
                   }
                   if ($w_hn_cia) {
                     // Verificações se a companhia aérea for localizada na base de dados
-                    $sql = new db_getPD_Bilhete; $RS_Bilhete = $sql->getInstanceOf($dbms,null,null,null,null,$w_bilhete,$w_hn_cia,'S',null);
                     $w_hn_bilhete  = '';
                     $w_hn_solic    = '';
                     $w_solicitacao = '';
+                    $sql = new db_getPD_Bilhete; $RS_Bilhete = $sql->getInstanceOf($dbms,null,null,null,null,$w_bilhete,$w_hn_cia,'S',null);
+                    if (count($RS_Bilhete)==0) {
+                      $sql = new db_getPD_Bilhete; $RS_Bilhete = $sql->getInstanceOf($dbms,null,null,null,null,substr($w_bilhete,0,10),$w_hn_cia,'S',null);
+                    }
+                    if (count($RS_Bilhete)==0) {
+                      $sql = new db_getPD_Bilhete; $RS_Bilhete = $sql->getInstanceOf($dbms,null,null,null,null,substr($w_bilhete,3),$w_hn_cia,'S',null);
+                    }
                     if (count($RS_Bilhete)==0) {
                       $w_erro.=$crlf.'Número do bilhete: na base de dados não há bilhete com o número "'.$w_bilhete.'" da cia "'.$w_cia.'"';
-                    } elseif (count($RS_Bilhete)>1) {
-                      $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado na base de dados';
                     } else {
-                      foreach($RS_Bilhete as $row1) { $RS_Bil = $row1; break; } 
-                      $w_hn_bilhete  = f($RS_Bil,'chave');
-                      $w_hn_solic    = f($RS_Bil,'sq_siw_solicitacao');
-                      $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario');
-                      if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
-                        $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
+                      if (count($RS_Bilhete)>1) {
+                        $w_duplicado = false;
+                        $w_teste1 = 0;
+                        $w_teste2 = 'x';
+                        foreach($RS_Bilhete as $row1) { 
+                          if (f($row1,'valor_faturado')==$w_teste1 && f($row1,'tipo')==$w_teste2) {
+                            $w_duplicado = true;
+                            break;
+                          } else {
+                            $w_teste1 = f($row1,'valor_faturado');
+                            $w_teste1 = f($row1,'teste');
+                          }
+                          if (f($row1,'tipo')=='S') $RS_Bil = $row1;
+                        }
+                      } else {
+                        foreach($RS_Bilhete as $row1) { $RS_Bil = $row1; break; } 
                       }
-                      $sql = new db_getPD_Fatura; $RS_FatBil = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
-                                    null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
-                      if (count($RS_FatBil)>0) {
-                        foreach($RS_FatBil as $row1) { $RS_FatBil = $row1; break; } 
-                        $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" consta da fatura '.f($RS_FatBil,'nr_fatura').' da agência de viagem '.f($RS_FatBil,'nm_agencia_res');
-                      }
-                      if (f($RS_Bil,'cd_pai')!=$faturas[$w_fatura]['cd_projeto']) {
-                        $w_erro.=$crlf.'Número do bilhete: '.f($RS_Bil,'codigo_interno').' está vinculada ao projeto '.f($RS_Bil,'cd_pai').', divergindo do projeto da fatura ('.$faturas[$w_fatura]['cd_projeto'].')';
+                      if ($w_duplicado) {
+                        $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado na base de dados';
+                      } else {
+	                      $w_hn_bilhete  = f($RS_Bil,'chave');
+	                      $w_hn_solic    = f($RS_Bil,'sq_siw_solicitacao');
+	                      $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario');
+	                      if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
+	                        $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
+	                      }
+	                      $sql = new db_getPD_Fatura; $RS_FatBil = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
+	                                    null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
+	                      if (count($RS_FatBil)>0) {
+	                        foreach($RS_FatBil as $row1) { $RS_FatBil = $row1; break; } 
+	                        $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" consta da fatura '.f($RS_FatBil,'nr_fatura').' da agência de viagem '.f($RS_FatBil,'nm_agencia_res');
+	                      }
+	                      /* Crítica de projeto não deve ser feita
+	                      if (f($RS_Bil,'cd_pai')!=$faturas[$w_fatura]['cd_projeto']) {
+	                        $w_erro.=$crlf.'Número do bilhete: '.f($RS_Bil,'codigo_interno').' está vinculada ao projeto '.f($RS_Bil,'cd_pai').', divergindo do projeto da fatura ('.$faturas[$w_fatura]['cd_projeto'].')';
+	                      }
+	                      */
                       }
                     }
                   }
@@ -967,20 +1002,20 @@ function Grava() {
                 $w_result = fValidate(1,$w_trechos,'trechos','',1,3,60,'1','1');
                 if ($w_result>'') { $w_erro.=$crlf.'Trechos: '.$w_result; }
                 
-                $w_valor_pleno= trim($row[11]);
+                $w_valor_pleno= trim($row[13]);
                 if (strpos($w_valor_pleno,',')===false) $w_valor_pleno .= ',00';
                 // Valida o campo valor pleno do bilhete
-                $w_result = fValidate(1,$w_valor_pleno,'valor pleno do bilhete','VALOR',1,3,18,'','0123456789,.');
+                $w_result = fValidate(1,$w_valor_pleno,'valor do bilhete','VALOR',1,3,18,'','0123456789,.');
                 if ($w_result>'') { 
-                  $w_erro.=$crlf.'Valor pleno do bilhete: '.$w_result; 
+                  $w_erro.=$crlf.'Valor do bilhete: '.$w_result; 
                 } elseif ($w_hn_bilhete) {
-                  if (formatNumber(f($RS_Bil,'valor_bilhete'))!=$w_valor_pleno) {
-                    $w_erro.=$crlf.'Valor pleno do bilhete: valor constante do arquivo ('.$w_valor_pleno.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete_cheio')).')'; 
+                  if (formatNumber(f($RS_Bil,'valor_bilhete_cheio'))!=$w_valor_pleno) {
+                    $w_erro.=$crlf.'Valor do bilhete: valor constante do arquivo ('.$w_valor_pleno.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete_cheio')).')'; 
                   }
                 }
                 
                 // Recupera o valor do bilhete aqui para poder calcular o percentual de desconto
-                $w_valor_bil  = trim($row[13]);
+                $w_valor_bil  = trim($row[11]);
                 if (strpos($w_valor_bil,',')===false) $w_valor_bil .= ',00';
                 
                 $w_desconto   = trim(str_replace('%','',$row[12]));
@@ -1019,12 +1054,12 @@ function Grava() {
                 }
                 
                 // Valida o campo valor do bilhete
-                $w_result = fValidate(1,$w_valor_bil,'valor do bilhete','VALOR',1,3,18,'','0123456789,.');
+                $w_result = fValidate(1,$w_valor_bil,'valor pleno do bilhete','VALOR',1,3,18,'','0123456789,.');
                 if ($w_result>'') { 
-                  $w_erro.=$crlf.'Valor do bilhete: '.$w_result; 
+                  $w_erro.=$crlf.'Valor pleno do bilhete: '.$w_result; 
                 } elseif ($w_hn_bilhete) {
                   if (formatNumber(f($RS_Bil,'valor_bilhete'))!=$w_valor_bil) {
-                    $w_erro.=$crlf.'Valor do bilhete: valor constante do arquivo ('.$w_valor_bil.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete')).') '.f($RS_Bil,'chave'); 
+                    $w_erro.=$crlf.'Valor pleno do bilhete: valor constante do arquivo ('.$w_valor_bil.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete')).') '; 
                   }
                 }
                 
@@ -1095,8 +1130,8 @@ function Grava() {
                 $bilhetes[$w_fatura][$w_bilhete]['cia'] = $w_hn_cia;
                 $bilhetes[$w_fatura][$w_bilhete]['emissao'] = $w_emissao_bil;
                 $bilhetes[$w_fatura][$w_bilhete]['trecho'] = $w_trechos;
-                $bilhetes[$w_fatura][$w_bilhete]['valor_cheio'] = $w_valor_pleno;
-                $bilhetes[$w_fatura][$w_bilhete]['valor'] = $w_valor_bil;
+                $bilhetes[$w_fatura][$w_bilhete]['valor_cheio'] = $w_valor_bil;
+                $bilhetes[$w_fatura][$w_bilhete]['valor'] = $w_valor_pleno;
                 $bilhetes[$w_fatura][$w_bilhete]['embarque'] = $w_taxa;
                 $bilhetes[$w_fatura][$w_bilhete]['cia'] = $w_hn_cia;
                 $bilhetes[$w_fatura][$w_bilhete]['erro'] = substr($w_erro,2);

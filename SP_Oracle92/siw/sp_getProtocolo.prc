@@ -282,6 +282,10 @@ begin
                inner         join pa_documento         c  on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
                  inner       join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
                  inner       join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
+                 inner       join pa_documento_assunto c8 on (c.sq_siw_solicitacao   = c8.sq_siw_solicitacao and
+                                                              c8.principal           = 'S'
+                                                             )
+                   inner     join pa_assunto           c9 on (c8.sq_assunto           = c9.sq_assunto)
                  left        join co_pessoa            c3 on (c.pessoa_origem        = c3.sq_pessoa)
                  left        join (select x.sq_siw_solicitacao, max(x.sq_documento_log) as sq_documento_log
                                      from pa_documento_log           x
@@ -308,10 +312,6 @@ begin
                                     where y.sq_pessoa is not null or z.sq_pessoa is not null
                                    group by x.sq_siw_solicitacao
                                   )                    c7 on (c.sq_siw_solicitacao   = c7.sq_siw_solicitacao)
-                 inner       join pa_documento_assunto c8 on (c.sq_siw_solicitacao   = c8.sq_siw_solicitacao and
-                                                              c8.principal           = 'S'
-                                                             )
-                   inner     join pa_assunto           c9 on (c8.sq_assunto           = c9.sq_assunto)
                    left      join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log)
                      left    join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
                      left    join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)

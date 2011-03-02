@@ -3521,11 +3521,16 @@ function Recebimento() {
                     null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, 2, null, null, null,
                     null, null, null, null, null);
 
-    foreach ($RS_Dados as $row) {
-      $RS_Dados = $row;
-      break;
+    if (count($RS_Dados)==0) {
+      $erro = true; // Outro usuário já recebeu a guia
+    } else {
+      $erro = false;
+      foreach ($RS_Dados as $row) {
+        $RS_Dados = $row;
+        break;
+      }
+      $w_interno = f($RS_Dados, 'interno');
     }
-    $w_interno = f($RS_Dados, 'interno');
   }
 
   Cabecalho();
@@ -3534,13 +3539,19 @@ function Recebimento() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($O == 'R' || $O == 'S' || $O == 'T' || $O == 'U') {
-      if ($w_interno == 'N' && ($O == 'R' || $O == 'T'))
-        Validate('w_observacao', 'Observações sobre o envio externo', '1', '1', '5', '2000', '1', '1');
-      if ($O == 'S' || $O == 'U')
-        Validate('w_observacao', 'Observações sobre a recusa', '1', '', '5', '2000', '1', '1');
-      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
+      if (!$erro) {
+        if ($w_interno == 'N' && ($O == 'R' || $O == 'T')) {
+          Validate('w_observacao', 'Observações sobre o envio externo', '1', '1', '5', '2000', '1', '1');
+        }
+        if ($O == 'S' || $O == 'U') {
+          Validate('w_observacao', 'Observações sobre a recusa', '1', '', '5', '2000', '1', '1');
+        }
+        Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+        ShowHTML('  theForm.Botao[0].disabled=true;');
+        ShowHTML('  theForm.Botao[1].disabled=true;');
+      } else {
+        ShowHTML('  theForm.Botao.disabled=true;');
+      }
     } else {
       Validate('w_nu_guia', 'Número da guia', '1', '', '1', '10', '0', '0123456789');
       Validate('w_ano_guia', 'Ano da guia', '1', '', '4', '4', '0', '0123456789');
@@ -3578,7 +3589,7 @@ function Recebimento() {
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
-  } elseif ($O == 'R' || $O == 'S' || $O == 'T' || $O == 'U') {
+  } elseif (!$erro && ($O == 'R' || $O == 'S' || $O == 'T' || $O == 'U')) {
     if ($w_interno == 'N' || $O == 'S' || $O == 'U')
       BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
     else
@@ -3712,40 +3723,56 @@ function Recebimento() {
     ShowHTML('</tr>');
   } elseif ($O == 'R' || $O == 'S') {
     ShowHTML('<tr><td align="center" colspan=3>');
-    // Chama a rotina de visualização dos protocolos da guia
-    ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
-
-    ShowHTML('<HR>');
-    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
-    ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
-    ShowHTML('<INPUT type="hidden" name="w_unid_prot" value="' . $w_unid_prot . '">');
-    ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
-    ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
-    ShowHTML('  ATENÇÃO:<ul>');
-    if ($O == 'R') {
-      ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
-      ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
+    if ($erro) {
+      ShowHTML('<HR>');
+      AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
+      ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
+      ShowHTML('<INPUT type="hidden" name="w_unid_prot" value="' . $w_unid_prot . '">');
+      ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
+      ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
+      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+      ShowHTML('  ATENÇÃO:<ul>');
+      ShowHTML('  <li>Outro usuário recebeu esta guia. Clique no botão "Abandonar" para voltar à tela de filtragem de recebimentos.');
+      ShowHTML('  </ul></b></font></td>');
+      ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
+      ShowHTML('  <table width="97%" border="0">');
+      ShowHTML('    <tr><td align="center" colspan=4><hr>');
     } else {
-      ShowHTML('  <li>Antes de recusar o recebimento, verifique com atenção se essa é realmente sua intenção.');
-      ShowHTML('  <li>Não será possível reverter esta ação.');
-    }
-    ShowHTML('  </ul></b></font></td>');
-    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
-    ShowHTML('  <table width="97%" border="0">');
-    if ($w_interno == 'N')
-      ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
-    if ($O == 'S') {
-      ShowHTML('    <tr><td colspan=5 align="center"><hr>');
-      ShowHTML('      <tr><td colspan="5" title="OPCIONAL. Se desejar, registre observações sobre a recusa."><b><u>O</u>bservações sobre a recusa:</b><br><textarea ccesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
-    }
-    ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('    <tr><td align="center" colspan=4><hr>');
-    if ($O == 'R') {
-      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
-    } else {
-      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Recusar">');
+      // Chama a rotina de visualização dos protocolos da guia
+      ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
+	    ShowHTML('<HR>');
+	    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
+	    ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
+	    ShowHTML('<INPUT type="hidden" name="w_unid_prot" value="' . $w_unid_prot . '">');
+	    ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
+	    ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
+	    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+	    ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+	    ShowHTML('  ATENÇÃO:<ul>');
+	    if ($O == 'R') {
+	      ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
+	      ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
+	    } else {
+	      ShowHTML('  <li>Antes de recusar o recebimento, verifique com atenção se essa é realmente sua intenção.');
+	      ShowHTML('  <li>Não será possível reverter esta ação.');
+	    }
+	    ShowHTML('  </ul></b></font></td>');
+	    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
+	    ShowHTML('  <table width="97%" border="0">');
+	    if ($w_interno == 'N')
+	      ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
+	    if ($O == 'S') {
+	      ShowHTML('    <tr><td colspan=5 align="center"><hr>');
+	      ShowHTML('      <tr><td colspan="5" title="OPCIONAL. Se desejar, registre observações sobre a recusa."><b><u>O</u>bservações sobre a recusa:</b><br><textarea ccesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
+	    }
+	    ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+	    ShowHTML('    <tr><td align="center" colspan=4><hr>');
+	    if ($O == 'R') {
+	      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+	    } else {
+	      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Recusar">');
+	    }
     }
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';" name="Botao" value="Abandonar">');
     ShowHTML('      </td>');

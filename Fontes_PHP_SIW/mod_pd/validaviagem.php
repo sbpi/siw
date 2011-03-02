@@ -114,7 +114,11 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
       $l_erro .= '<li>O beneficiário não foi informado';
       $l_tipo = 0;
     } else {
-      // Verifica se o beneficiário tem os dados bancários cadastrados
+      // Verifica se o beneficiário tem os dados mínimos cadastrados
+      if (nvl(f($l_rs1, 'cpf'), '') == '' || nvl(f($l_rs1, 'email'), '') == '' || nvl(f($l_rs1, 'sexo'), '') == '' || nvl(f($l_rs1, 'cpf'), '') == '' || nvl(f($l_rs1, 'rg_numero'), '') == '' || nvl(f($l_rs1, 'ddd'), '') == '') {
+        $l_erro .= '<li>Beneficiário da viagem com dados incompletos. Acesse a tela do beneficiário, informe os dados obrigatórios e clique no botão "Gravar"';
+        $l_tipo = 0;
+      }
       if (nvl(f($l_rs_solic, 'sq_forma_pagamento'), '') == '' && nvl(f($l_rs_solic, 'diaria'), '') != '') {
         $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
         $l_tipo = 0;

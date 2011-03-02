@@ -499,11 +499,14 @@ begin
                                   when instr(upper(a.observacao),'ENVIO EXTERNO')>0     then 'ENVIO EXTERNO'
                                   else 'REGISTRO' 
                              end
-                        else case f.sigla
-                                  when 'AS' then 'ARQUIVAMENTO'
-                                  when 'AT' then 'ARQUIVAMENTO CENTRAL'
-                                  when 'EL' then 'ELIMINACAO'
-                                  else 'TRÂMITE ORIGINAL' 
+                        else case when h.sq_siw_solic_log is null
+                                  then case f.sigla
+                                            when 'AS' then 'ARQUIVAMENTO'
+                                            when 'AT' then 'ARQUIVAMENTO CENTRAL'
+                                            when 'EL' then 'ELIMINACAO'
+                                            else 'TRÂMITE ORIGINAL'
+                                       end
+                                  else 'TRÂMITE ORIGINAL'
                              end
                    end as origem,
                    c.sq_unidade as sq_registro, c.sigla nm_registro, l1.sq_unidade as sq_origem, l1.sigla as nm_origem,
