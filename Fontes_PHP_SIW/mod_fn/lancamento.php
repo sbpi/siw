@@ -3569,63 +3569,61 @@ function Concluir() {
       ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_debito.'">');
     }
 
-	  // Pagamentos vinculados
-	  $sql = new db_getLinkData; $RSL = $sql->getInstanceOf($dbms,$w_cliente,'FNDEVENT');
-	  $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RSL,'sq_menu'),$w_usuario,f($RSL,'sigla'),4,
-	         null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-	         null,null,null,null,null,null,null,null,$w_chave,null,null,null);
-    ShowHTML('      <tr><td colspan="2"><br><b>LANÇAMENTOS VINCULADOS</b>&nbsp;&nbsp;&nbsp;<A class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=I&w_chave_vinc='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Incluir lançamento vinculado a este.">Incluir</A>&nbsp</td></tr>');  
-    ShowHTML('      <tr><td colspan="3" align="center"><table width=100%  border="1" bordercolor="#00000">');
-    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('            <td rowspan="2"><b>Código</td>');
-    ShowHTML('            <td colspan="2"><b>Comprovante</td>');
-    ShowHTML('            <td rowspan="2"><b>Pessoa</td>');
-    ShowHTML('            <td rowspan="2"><b>Finalidade</td>');
-    ShowHTML('            <td rowspan="2"><b>Crédito</td>');
-    ShowHTML('            <td rowspan="2"><b>Débito</td>');
-    ShowHTML('            <td rowspan="2"><b>Saldo</td>');
-    ShowHTML('          </tr>');
-    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('            <td><b>Data</td>');
-    ShowHTML('            <td><b>Tipo e Número</td>');
-    ShowHTML('          </tr>');
-	  if (count($RS1)==0) {
-      ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'"><td align="center" colspan=8><b>Nenhum registro encontrado.</b></td></tr>');
-	  } else {
-	    $w_cor=$w_TrBgColor;
-	    $w_atual = $w_inicial;
-	    $w_total = 0;
-	    $i       = 0;
-	    foreach ($RS1 as $row) {
-	      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-	      ShowHTML('      <tr valign="top" BGCOLOR="'.$w_cor.'">');
-	      ShowHTML('        <td width="1%" nowrap>'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-	      if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>');
-	      else                 ShowHTML('        '.f($row,'codigo_interno'));
-	      ShowHTML('        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'data_lancamento'),5),'-').'&nbsp;</td>');
-	      ShowHTML('        <td>'.f($row,'nm_tipo_documento').' '.f($row,'numero').'</td>');
-	      if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
-	        if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa')).'</td>');
-	        else                 ShowHTML('        <td>'.f($row,'nm_pessoa_resumido').'</td>');
-	      } else {
-	        ShowHTML('        <td align="center">---</td>');
-	      }
-	      ShowHTML('        <td>'.f($row,'descricao').'</td>');
-	      ShowHTML('        <td align="right">&nbsp;</td>');
-	      ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'</td>');
-	      $w_total += Nvl(f($row,'valor'),0);
-	      $w_atual -= Nvl(f($row,'valor'),0);
-	      ShowHTML('        <td align="right">'.formatNumber($w_atual).'</td>');
-	    } 
-	    ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-	    ShowHTML('        <td align="right" colspan=6><b>Total das despesas</b></td>');
-	    ShowHTML('        <td align="right"><b>'.formatNumber($w_total).'</b></td>');
-	    ShowHTML('        <td align="right"><b>&nbsp;</b></td>');
-	    ShowHTML('      </tr>');
-      $i++;
-	  } 
-    ShowHTML('      </table></td></tr>');
-	  
+	  if (f($RS_Solic,'lancamento_vinculado')=='N') {
+	    // Pagamentos vinculados
+	    $sql = new db_getImpostoDoc; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,$w_SG);
+	    $RS1 = SortArray($RS1,'sq_lancamento_doc','asc','phpdt_inclusao','asc','calculo','asc','esfera','asc','nm_imposto','asc');
+	    ShowHTML('      <tr><td colspan="2"><br><b>LANÇAMENTOS VINCULADOS</b>&nbsp;&nbsp;&nbsp;<A class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=I&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Incluir lançamento vinculado a este.">Incluir</A>&nbsp</td></tr>');  
+	    ShowHTML('      <tr><td colspan="3" align="center"><table width=100%  border="1" bordercolor="#00000">');
+	    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+	    ShowHTML('            <td><b>Documento</td>');
+	    ShowHTML('            <td><b>Código</td>');
+	    ShowHTML('            <td><b>Finalidade</td>');
+	    ShowHTML('            <td><b>Beneficiário</td>');
+	    ShowHTML('            <td><b>Data</td>');
+	    ShowHTML('            <td><b>Valor</td>');
+	    ShowHTML('            <td><b>Operações</td>');
+	    ShowHTML('          </tr>');
+		  if (count($RS1)==0) {
+	      ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'"><td align="center" colspan=8><b>Nenhum registro encontrado.</b></td></tr>');
+		  } else {
+		    $w_cor=$w_TrBgColor;
+		    $w_atual = '';
+		    $w_total = 0;
+		    $i       = 0;
+		    foreach ($RS1 as $row) {
+		      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+		      if ($w_atual <> f($row,'sq_lancamento_doc')) {
+		        ShowHTML('      <tr valign="top" BGCOLOR="'.$w_cor.'">');
+		        ShowHTML('          <td>'.f($row,'nm_tipo_documento').' '.f($row,'numero').'</td>');
+		        $w_atual = f($row,'sq_lancamento_doc');
+		      } else {
+	          ShowHTML('      <tr valign="top" BGCOLOR="'.$w_cor.'">');
+		        ShowHTML('          <td>&nbsp;</td>');
+		      }
+	        ShowHTML('          <td>');
+		      ShowHTML(ExibeImagemSolic(f($row,'imp_sigla'),f($row,'imp_inicio'),f($row,'imp_vencimento'),f($row,'imp_inicio'),f($row,'imp_quitacao'),f($row,'imp_aviso'),f($row,'aviso'),f($row,'imp_sg_tramite'), null));
+	        if (nvl(f($row,'solic_imposto'),'')!='') {
+	          ShowHTML('        '.exibeSolic($w_dir,f($row,'solic_imposto'),f($row,'imp_codigo'),'N',$l_tipo).'</td>');
+	        }
+	        ShowHTML('          <td>'.f($row,'nm_imposto').'</td>');
+	        if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nm_pessoa')).'</td>');
+	        else                 ShowHTML('        <td>'.f($row,'nm_pessoa').'</td>');
+	        ShowHTML('          <td align="center">'.formataDataEdicao(f($row,'quitacao_imposto'),5).'</td>');
+	        ShowHTML('          <td align="right">R$ '.formatNumber(f($row,'vl_total')).'</td>');
+          ShowHTML('          <td>');
+	        ShowHTML('            <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=A&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&w_chave='.f($row,'solic_imposto').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Altera as informações cadastrais do lançamento">AL</A>&nbsp');
+          ShowHTML('            <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=excluir&R='.$w_pagina.$par.'&O=E&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&w_chave='.f($row,'solic_imposto').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Exclusão do lançamento">EX</A>&nbsp');
+	        $w_vl_total+=f($row,'vl_total');
+		    } 
+		    ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'">');
+		    ShowHTML('        <td align="right" colspan=5><b>Total dos lançamentos</b></td>');
+		    ShowHTML('        <td align="right"><b>'.formatNumber($w_vl_total).'</b></td>');
+        ShowHTML('        <td>&nbsp;</td>');
+		    ShowHTML('      </tr>');
+		  } 
+	    ShowHTML('      </table></td></tr>');
+	  }
     
     ShowHTML('      <tr><td colspan="4"><b>Obs<u>e</u>rvação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="sti" ROWS=5 cols=75 title="Descreva o quanto a demanda atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="4"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');

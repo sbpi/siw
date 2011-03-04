@@ -510,6 +510,8 @@ begin
                 dd.codigo as cd_age_org, dd.nome as nm_age_org,
                 de.codigo as cd_ban_org, de.nome as nm_ban_org,
                 de.exige_operacao as exige_oper_org,
+                df.sq_imposto,
+                case coalesce(df.sq_siw_solicitacao,0) when 0 then 'N' else 'S' end as lancamento_vinculado,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
@@ -583,6 +585,15 @@ begin
                      left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
                        left       join co_agencia           dd on (dc.sq_agencia              = dd.sq_agencia)
                          left     join co_banco             de on (dd.sq_banco                = de.sq_banco)
+                     left         join (select y.sq_siw_solicitacao, x.sq_imposto
+                                          from fn_imposto_doc             x
+                                               inner join siw_solicitacao y on (x.solic_retencao = y.sq_siw_solicitacao or 
+                                                                                x.solic_imposto  = y.sq_siw_solicitacao
+                                                                               )
+                                               inner join siw_menu        z on (y.sq_menu        = z.sq_menu and
+                                                                                z.sigla          = 'FNDEVENT'
+                                                                               )
+                                       )                    df on (d.sq_siw_solicitacao       = df.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and

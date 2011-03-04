@@ -851,9 +851,9 @@ function Geral() {
       Validate('w_dt_autuacao', 'Data de autuação', 'DATA', '1', 10, 10, '', '0123456789/');
       Validate('w_volumes', 'Nº de volumes', '1', '1', 1, 18, '', '0123456789');
       CompValor('w_volumes', 'Nº de volumes', '>', 0, 'zero');
-    } elseif ($w_circular == 'S') {
-      Validate('w_copias', 'Nº de cópias', '1', '1', 1, 18, '', '0123456789');
-      CompValor('w_copias', 'Nº de cópias', '>', 2, 'dois');
+//    } elseif ($w_circular == 'S') {
+//      Validate('w_copias', 'Nº de cópias', '1', '1', 1, 18, '', '0123456789');
+//      CompValor('w_copias', 'Nº de cópias', '>', 2, 'dois');
     }
     Validate('w_fim', 'Data limite para conclusão', 'DATA', '', 10, 10, '', '0123456789/');
     CompData('w_fim', 'Data limite para conclusão', '>=', 'w_data_documento', 'Data do documento');
@@ -940,7 +940,7 @@ function Geral() {
       ShowHTML('           <td title="Data de autuação do processo."><b>Data de autuação:</b><br><input ' . $w_Disabled . ' type="text" name="w_dt_autuacao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $w_dt_autuacao . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'w_fim') . '</td>');
       ShowHTML('           <td title="Informe quantos volumes compõem o processo."><b>Nº de volumes:</b><br><INPUT ' . $w_Disabled . ' class="STI" type="text" name="w_volumes" size="3" maxlength="3" value="' . $w_volumes . '" ></td>');
     } elseif ($w_circular == 'S') {
-      ShowHTML('           <td title="Informe o número de cópias da circular."><b>Nº de cópias:</b><br><INPUT ' . $w_Disabled . ' class="STI" type="text" name="w_copias" size="5" maxlength="18" value="' . $w_copias . '" ></td>');
+      //ShowHTML('           <td title="Informe o número de cópias da circular."><b>Nº de cópias:</b><br><INPUT ' . $w_Disabled . ' class="STI" type="text" name="w_copias" size="5" maxlength="18" value="' . $w_copias . '" ></td>');
     }
     selecaoNaturezaDocumento('<u>N</u>atureza:', 'N', 'Indique a natureza do documento.', $w_natureza_documento, null, 'w_natureza_documento', null, null);
     ShowHTML('           <td title="OPCIONAL. Limite para término da tramitação do documento."><b>Data limite:</b><br><input ' . $w_Disabled . ' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $w_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'w_fim') . '</td>');
@@ -1631,22 +1631,22 @@ function Encaminhamento() {
   $sql = new db_getSolicData;
   $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, f($RS_Menu, 'sigla'));
 
-  if (strpos(upper(f($RS_Solic, 'nm_especie')), 'CIRCULAR') !== false) {
-    Cabecalho();
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-    BodyOpenClean('onLoad=\'this.focus()\';');
-    $Estrutura_Topo_Limpo;
-    Estrutura_Menu();
-    Estrutura_Corpo_Abre();
-    $Estrutura_Texto_Abre;
-    ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center"><font size=2 color="red">');
-    ShowHTML('   A tramitação de circulares só pode ser feita através de opção específica no menu principal.');
-    ShowHTML('</td></tr>');
-    ShowHTML('</table>');
-    Rodape();
-    exit();
-  }
+//  if (strpos(upper(f($RS_Solic, 'nm_especie')), 'CIRCULAR') !== false) {
+//    Cabecalho();
+//    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+//    BodyOpenClean('onLoad=\'this.focus()\';');
+//    $Estrutura_Topo_Limpo;
+//    Estrutura_Menu();
+//    Estrutura_Corpo_Abre();
+//    $Estrutura_Texto_Abre;
+//    ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+//    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center"><font size=2 color="red">');
+//    ShowHTML('   A tramitação de circulares só pode ser feita através de opção específica no menu principal.');
+//    ShowHTML('</td></tr>');
+//    ShowHTML('</table>');
+//    Rodape();
+//    exit();
+//  }
 
   // Somente gestores do módulo e usuários lotados no setor de protocolo podem fazer envios externos.
   if ($w_gestor == false)

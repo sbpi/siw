@@ -26,7 +26,6 @@ include_once($w_dir_volta . 'classes/sp/db_getCV.php');
 include_once($w_dir_volta . 'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta . 'classes/sp/dml_putGPColaborador.php');
 include_once($w_dir_volta . 'classes/sp/dml_putGPContrato.php');
-include_once($w_dir_volta . 'classes/sp/dml_putSiwUsuario.php');
 include_once($w_dir_volta . 'classes/sp/dml_putGpDesempenho.php');
 include_once($w_dir_volta . 'classes/sp/dml_putGpPontoDiario.php');
 include_once($w_dir_volta . 'classes/sp/dml_putGpPontoMensal.php');

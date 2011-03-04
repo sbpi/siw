@@ -14,7 +14,10 @@ create or replace procedure SP_PutSiwUsuario
     p_email               in  varchar2 default null,
     p_gestor_seguranca    in  varchar2 default null,
     p_gestor_sistema      in  varchar2 default null,
-    p_tipo_autenticacao   in  varchar2 default null
+    p_tipo_autenticacao   in  varchar2 default null,
+    p_gestor_portal       in  varchar2 default null,
+    p_gestor_dashboard    in  varchar2 default null,
+    p_gestor_conteudo     in  varchar2 default null
    ) is
    w_existe            number(18);
    w_chave             co_pessoa.sq_pessoa%type               := p_chave;
@@ -30,6 +33,9 @@ create or replace procedure SP_PutSiwUsuario
    w_gestor_seguranca  sg_autenticacao.gestor_seguranca%type  := p_gestor_seguranca;
    w_gestor_sistema    sg_autenticacao.gestor_sistema%type    := p_gestor_sistema;
    w_tipo_autenticacao sg_autenticacao.tipo_autenticacao%type := p_tipo_autenticacao;
+   w_gestor_portal     sg_autenticacao.gestor_portal%type    := p_gestor_portal;
+   w_gestor_dashboard  sg_autenticacao.gestor_dashboard%type    := p_gestor_dashboard;
+   w_gestor_conteudo   sg_autenticacao.gestor_conteudo%type    := p_gestor_conteudo;
 begin
    -- Verifica se o usuário já existe em CO_PESSOA_FISICA ou em SG_AUTENTICACAO
    if w_cpf is not null or p_username is not null then
@@ -171,13 +177,15 @@ begin
             ( sq_pessoa,            sq_unidade,       sq_localizacao,
               cliente,              username,         email,
               gestor_seguranca,     gestor_sistema,   senha,          
-              assinatura,           tipo_autenticacao
+              assinatura,           tipo_autenticacao,gestor_portal,
+              gestor_dashboard,     gestor_conteudo
             )
          Values
             ( w_chave,              coalesce(p_unidade, w_unidade), coalesce(p_localizacao, w_localizacao),
               p_cliente,            p_username,       w_email,
               w_gestor_seguranca,   w_gestor_sistema, case w_tipo_autenticacao  when 'B' then criptografia(p_username) else 'Externa' end,
-              criptografia(p_username), w_tipo_autenticacao
+              criptografia(p_username), w_tipo_autenticacao, w_gestor_portal,
+              w_gestor_dashboard,   w_gestor_conteudo
             );
          
          -- Insere registros de configuração de e-mail
@@ -201,6 +209,9 @@ begin
              sq_localizacao        = coalesce(p_localizacao, w_localizacao),
              gestor_seguranca      = coalesce(p_gestor_seguranca, w_gestor_seguranca),
              gestor_sistema        = coalesce(p_gestor_sistema, w_gestor_sistema),
+             gestor_portal         = coalesce(p_gestor_portal, w_gestor_portal),
+             gestor_dashboard      = coalesce(p_gestor_dashboard, w_gestor_dashboard),
+             gestor_conteudo       = coalesce(p_gestor_conteudo, w_gestor_conteudo),
              email                 = w_email,
              tipo_autenticacao     = w_tipo_autenticacao                             
          where sq_pessoa      = w_chave;

@@ -11,7 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putImposto {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_descricao, $p_lancamento, $p_documento, $p_sigla, 
-          $p_esfera, $p_calculo, $p_dia_pagamento, $p_ativo, $p_tipo_benef, $p_sq_benef, $p_tipo_vinc, $p_sq_cc, $p_sq_solic) {
+          $p_esfera, $p_calculo, $p_dia_pagamento, $p_ativo, $p_tipo_benef, $p_sq_benef, $p_tipo_vinc, $p_sq_cc, $p_sq_solic, 
+          $p_sq_forma_pag) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putImposto';
      $params=array('p_operacao'                  =>array($operacao,                                B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                            B_INTEGER,        32),
@@ -29,7 +30,8 @@ class dml_putImposto {
                    'p_sq_benef'                  =>array(tvl($p_sq_benef),                         B_INTEGER,        32),
                    'p_tipo_vinc'                 =>array(tvl($p_tipo_vinc),                        B_INTEGER,        32),
                    'p_sq_cc'                     =>array(tvl($p_sq_cc),                            B_INTEGER,        32),
-                   'p_sq_solic'                  =>array(tvl($p_sq_solic),                         B_INTEGER,        32)
+                   'p_sq_solic'                  =>array(tvl($p_sq_solic),                         B_INTEGER,        32),
+                   'p_sq_forma_pag'              =>array(tvl($p_sq_forma_pag),                     B_INTEGER,        32)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

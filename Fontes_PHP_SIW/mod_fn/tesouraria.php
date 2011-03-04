@@ -48,6 +48,7 @@ include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
+include_once($w_dir_volta.'classes/sp/dml_putImpostoDoc.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'funcoes/selecaoImposto.php');
@@ -198,15 +199,7 @@ if (nvl($SG,'')!='') {
 	  $w_submenu = '';
 	}
 	// Recupera a configuração do serviço
-	if ($P2>0) {
-	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$P2);
-	} else {
-	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
-	}
-	// Se for sub-menu, pega a configuração do pai
-	if (f($RS_Menu,'ultimo_nivel')=='S') { 
-	  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
-	} 
+ $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 }
 Main();
 FechaSessao($dbms);
@@ -652,9 +645,15 @@ function Geral() {
   $w_chave              = $_REQUEST['w_chave'];
   $w_chave_vinc         = $_REQUEST['w_chave_vinc'];
   $w_imposto            = $_REQUEST['w_imposto'];
+  $w_sq_documento       = $_REQUEST['w_sq_documento'];
   $w_sq_tipo_lancamento = $_REQUEST['w_sq_tipo_lancamento'];
   $w_readonly           = '';
   $w_erro               = '';
+
+  // Recupera os dados do lançamento financeiro de origem
+  $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,$w_chave_vinc);
+  $dados_vinc = explode('|@|',f($RS_Vinc,'dados_solic'));
+  $RS_Vinc = $sql->getInstanceOf($dbms,$w_chave_vinc,$dados_vinc[5]);
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -735,6 +734,7 @@ function Geral() {
     if ($w_copia>'') $RS = $sql->getInstanceOf($dbms,$w_copia,$SG);
     else             $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
     if (count($RS)>0) {
+      $w_imposto              = f($RS,'sq_imposto');
       $w_sq_unidade           = f($RS,'sq_unidade');
       $w_observacao           = f($RS,'observacao');
       $w_aviso                = f($RS,'aviso_prox_conc');
@@ -810,41 +810,44 @@ function Geral() {
     }
   }
 
+  if (nvl($w_sq_prop,'')=='') $w_sq_prop = $w_usuario;
+  
   if (nvl($w_imposto,'')!='') {
+    // Recupera os dados da finalidade informada
     $sql = new db_getImposto; $RS_Imposto = $sql->getInstanceOf($dbms,$w_imposto,$w_cliente);
-    foreach($RS_Imposto as $row) {$RS_Imposto = $row; break; }  
+    foreach($RS_Imposto as $row) {$RS_Imposto = $row; break; }
 
-    $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,$w_chave_vinc);
-    $dados_vinc = explode('|@|',f($RS_Vinc,'dados_solic'));
-    $RS_Vinc = $sql->getInstanceOf($dbms,$w_chave_vinc,$dados_vinc[5]);
+    if (nvl(f($RS_Imposto,'sq_tipo_documento'),'')!='')  $w_sq_tipo_documento  = f($RS_Imposto,'sq_tipo_documento');
+    if (nvl(f($RS_Imposto,'sq_tipo_lancamento'),'')!='') $w_sq_tipo_lancamento = f($RS_Imposto,'sq_tipo_lancamento');
+    if (nvl(f($RS_Imposto,'sq_forma_pagamento'),'')!='') $w_sq_forma_pagamento = f($RS_Imposto,'sq_forma_pagamento');
     
-    if (nvl($w_sq_tipo_documento,'')=='') $w_sq_tipo_documento = f($RS_Imposto,'sq_tipo_documento');
-    if (nvl($w_tipo_pessoa,'')=='') $w_tipo_pessoa = 2;
-    if (nvl($w_pessoa,'')=='') { $w_pessoa = f($RS_Imposto,'sq_beneficiario'); }
-    if (nvl($w_sq_prop,'')=='') { $w_sq_prop = f($RS_Imposto,'sq_prop'); }
-    if (nvl($w_sq_tipo_lancamento,'')=='') $w_sq_tipo_lancamento = f($RS_Imposto,'sq_tipo_lancamento');
-    if (nvl($w_sq_menu_relac,'')=='') {
+    if (f($RS_Imposto,'tipo_beneficiario')!=3){
+      if     (f($RS_Imposto,'tipo_beneficiario')==0) $w_pessoa = f($RS_Vinc,'pessoa');              // Igual ao do lançamento financeiro
+      elseif (f($RS_Imposto,'tipo_beneficiario')==1) $w_pessoa = $w_cliente;                        // A própria organização
+      elseif (f($RS_Imposto,'tipo_beneficiario')==2) $w_pessoa = f($RS_Imposto,'sq_beneficiario');  // Padrão vinculado à finalidade
+    }
+      
+    if (f($RS_Imposto,'tipo_vinculo')!=2) {
       if (f($RS_Imposto,'tipo_vinculo')==0) {
+        // Igual ao do lançamento financeiro
         if (nvl(f($RS_Vinc,'sq_cc'),'')!='') {
           $w_sq_menu_relac = 'CLASSIF';
           $w_sq_cc = f($$RS_Vinc,'sq_cc'); 
         } else {
-          $w_dados_vinc     = explode('|@|',f($RS_Vinc,'dados_pai'));
+          $w_dados_vinc     = explode('|@|',f($RS_Vinc,'dados_solic'));
           $w_sq_menu_relac  = $w_dados_vinc[3];
-          $w_chave_pai      = f($RS_Vinc,'sq_solic_pai');
+          $w_chave_pai      = $w_chave_vinc;
         }
-        $w_sq_menu_relac = f($RS_Imposto,'sq_tipo_lancamento');
       } elseif (f($RS_Imposto,'tipo_vinculo')==1) {
+        // Padrão vinculado à finalidade
         if (nvl(f($RS_Imposto,'sq_cc_vinculo'),'')!='') {
           $w_sq_menu_relac = 'CLASSIF';
           $w_sq_cc = f($RS_Imposto,'sq_cc_vinculo'); 
         } elseif (nvl(f($RS_Imposto,'sq_solic_vinculo'),'')!='') {
-			    $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS_Imposto,'sq_solic_vinculo'));
-			    $dados_vinc = explode('|@|',f($RS_Vinc,'dados_solic'));
-			    $RS_Vinc = $sql->getInstanceOf($dbms,f($RS_Imposto,'sq_solic_vinculo'),$dados_vinc[5]);
-          $w_sq_menu_relac  = f($RS_Vinc,'sq_menu');
-          $w_chave_pai      = f($RS_Vinc,'sq_siw_solicitacao');
-
+			    $sql = new db_getSolicData; $RS_Vinc_pai = $sql->getInstanceOf($dbms,f($RS_Imposto,'sq_solic_vinculo'));
+			    $dados_vinc = explode('|@|',f($RS_Vinc_pai,'dados_solic'));
+			    $w_sq_menu_relac  = $dados_vinc[3];
+          $w_chave_pai      = f($RS_Imposto,'sq_solic_vinculo');
         } 
       }
     }
@@ -856,15 +859,23 @@ function Geral() {
     $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente);
     foreach ($RS2 as $row) { $w_tipo = f($row,'sigla'); break; }
   } 
-
+  
+  // Recupera os documentos do lançamento financeiro
+  $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$w_chave_vinc,null,'DOCS');
+  $RS_Docs = SortArray($RS_Docs,'data','asc');
+  if (count($RS_Docs)==1) {
+    foreach($RS_Docs as $row) $w_sq_documento = f($row,'sq_lancamento_doc');
+  }
+  
   // Tenta recuperar os dados do beneficiário
-  if (Nvl($w_tipo_pessoa,'')!='' && (Nvl($w_pessoa,'')!='' || Nvl($_REQUEST['w_cpf'],'')!='' || Nvl($_REQUEST['w_cnpj'],'')!='')) {
+  if (Nvl($w_pessoa,'')!='' || Nvl($_REQUEST['w_cpf'],'')!='' || Nvl($_REQUEST['w_cnpj'],'')!='') {
     // Recupera os dados do proponente
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,$w_tipo_pessoa,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,((nvl($w_pessoa,'')=='') ? $_REQUEST['w_cpf'] : null),((nvl($w_pessoa,'')=='') ? $_REQUEST['w_cnpj'] : null),null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_cpf           = f($RS,'cpf');
       $w_cnpj          = f($RS,'cnpj');
+      $w_tipo_pessoa   = f($RS,'sq_tipo_pessoa');
       $w_sq_prop       = f($RS,'sq_pessoa');
       $w_nome          = f($RS,'nm_pessoa');
       $w_nome_resumido = f($RS,'nome_resumido');
@@ -893,19 +904,6 @@ function Geral() {
     }
   }   
   
-  // Recupera dados do fundo fixo
-  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
-  
-  if (nvl($w_solic_vinculo,'')!='') {
-    // Recupera dados da solicitação de compra
-    $sql = new db_getLinkData; $RSL = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
-    $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,f($RSL,'sq_menu'),$w_usuario,f($RSL,'sigla'),5,
-        null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo, null, null, null, null, null, null,
-        null, null, null, null, null, null, null,null, null, null, null);
-    foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
-    $w_descricao = nvl($w_descricao,nvl($_REQUEST['w_descricao'],f($RS_Vinculo,'justificativa')));
-  }
-
   if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
 
   Cabecalho();
@@ -928,6 +926,10 @@ function Geral() {
   ShowHTML('}');
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
+    Validate('w_imposto','Finalidade','SELECT',1,1,18,'','0123456789');
+    if (count($RS_Docs)>1) {
+      Validate('w_sq_documento','Documento','SELECT',1,1,18,'','0123456789');
+    }
     if ($w_exige_relac) Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
     if(nvl($w_sq_menu_relac,'')!='') {
       if ($w_sq_menu_relac=='CLASSIF') {
@@ -959,8 +961,7 @@ function Geral() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                               BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('EV',$O)===false))            BodyOpen('onLoad=\'this.focus()\';');
-  elseif ($w_exige_relac)                        BodyOpen('onLoad=\'document.Form.w_sq_menu_relac.focus()\';');
-  else                                           BodyOpen('onLoad=\'document.Form.w_chave_pai.focus()\';');
+  else                                           BodyOpen('onLoad=\'document.Form.w_imposto.focus()\';');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -1002,51 +1003,58 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_chave_vinc" value="'.$w_chave_vinc.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
-    ShowHTML('      <tr><td colspan=2 align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan=2 align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
-    ShowHTML('      <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan=2>Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
-    ShowHTML('      <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0"><b>Pagamento Original</td></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b>Código:</b><br>'.f($RS_Vinc,'codigo_interno'));
+    ShowHTML('        <td><b>Finalidade:</b><br>'.f($RS_Vinc,'descricao'));
+    ShowHTML('        <td><b>Valor:</b><br>'.formatNumber(f($RS_Vinc,'valor')));
+    
+    ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3>Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
   
     SelecaoImposto('<u>F</u>inalidade:','T', 'Selecione a finalidade do lançamento.', $w_imposto,$w_cliente,'w_imposto',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_imposto\'; document.Form.submit();"');
+    
+    if (count($RS_Docs)==1) {
+      ShowHTML('<INPUT type="hidden" name="w_sq_documento" value="'.$w_sq_documento.'">');
+    } else {
+      ShowHTML('      <tr><td colspan="3" title="Selecione o documento ao qual este lançamento é vinculado."><b><b><u>D</u>ocumento:</b><br>');
+      ShowHTML('         <SELECT ACCESSKEY="D" CLASS="sts" NAME="w_sq_documento" '.$w_Disabled.'>');
+      ShowHTML('            <option value="">---');
+      foreach($RS_Docs as $row) {
+		    ShowHTML('            <option value="'.f($row,'sq_lancamento_doc').'" '.((Nvl($w_sq_documento,'')==f($row,'sq_lancamento_doc')) ? 'SELECTED' : '').'>'.f($row,'nm_tipo_documento').' '.f($row,'numero'));
+      }
+      ShowHTML('         </select>');
+      ShowHTML('      </td></tr>');
+    }
 
     ShowHTML('          <tr valign="top">');
     if ($w_exige_relac) selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+
     if(Nvl($w_sq_menu_relac,'')!='') {
       ShowHTML('          <tr valign="top">');
       if ($w_sq_menu_relac=='CLASSIF') {
-        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
+        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null,null,'<BR />',2);
       } else {
-        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai);
-      }
-    }
-    if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
-      
-    if ($w_mod_co=='S') { 
-      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
-      ShowHTML('      <tr>');
-      SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
-      if (nvl($w_solic_vinculo,'')!='') {
-        $sql = new db_getSolicCL; $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
-                            $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
-        ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td><b>Valor da compra:</b><br>'.formatNumber(f($RS_Compra,'valor')).'</td>');
-        ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(f($RS_Compra,'justificativa')).'</td>');
-        ShowHTML('      </tr>');
+        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai,'<BR />',2);
       }
     }
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',$SG,null,2);
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%">');
+    ShowHTML('      <tr><td colspan=3><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="3"><table border=0 width="100%">');
     ShowHTML('        <tr valign="top">');
     SelecaoTipoPessoa('Lançamento para pessoa:','T','Selecione na lista o tipo de pessoa associada a este lançamento.',$w_tipo_pessoa,$w_cliente,'w_tipo_pessoa',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_forma_pagamento\'; document.Form.submit();"',null);
     SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
-    ShowHTML('              <td><b><u>D</u>ata do pagamento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
+    ShowHTML('              <td><b><u>D</u>ata do pagamento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
 
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -3562,13 +3570,15 @@ function Grava() {
           $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
-          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
+          &$w_chave_nova,&$w_codigo);
 
-      if (strpos($SG,'REEMB')!==false && $O!='E') {
-        //Reembolso sempre é para o usuário logado
-        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_solicitante'],null,null,null,null,null,null,null,null,null,null,null,null);
+      
+      if ($O!='E') {
+        // Reembolso sempre é para o usuário logado
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,null,null,null,null,null,null,null,null);
         foreach ($RS as $row) {$RS=$row; break;}
-
+  
         if (nvl($_REQUEST['w_chave'],'')!='') {
           // Se a solicitação já existe, recupera os dados bancários
           $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
@@ -3588,17 +3598,43 @@ function Grava() {
           $w_informacoes      = f($RS1,'informacoes');
           $w_codigo_deposito  = f($RS1,'codigo_deposito');
         } 
-
+  
         //Grava os dados da pessoa
-        $SQL = new dml_putLancamentoOutra; $SQL->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_solicitante'],f($RS,'cpf'),f($RS,'cnpj'),
-            null,null,null,null,null,null,null,null,null,null,f($RS,'logradouro'),f($RS,'complemento'),f($RS,'bairro'),f($RS,'sq_cidade'),
-            f($RS,'cep'),f($RS,'ddd'),f($RS,'nr_telefone'),f($RS,'nr_fax'),f($RS,'nr_celular'),f($RS,'email'), $w_sq_agencia, $w_operacao, 
+        $SQL = new dml_putLancamentoOutra; $SQL->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],
+            $_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_sexo'],null,null,null,null,null,null,null,
+            f($RS,'logradouro'),f($RS,'complemento'),f($RS,'bairro'),f($RS,'sq_cidade'),f($RS,'cep'),
+            f($RS,'ddd'),f($RS,'nr_telefone'),f($RS,'nr_fax'),f($RS,'nr_celular'),f($RS,'email'), $w_sq_agencia, $w_operacao, 
             $w_nr_conta, $w_sq_pais_estrang, $w_aba_code, $w_swift_code, $w_endereco_estrang, $w_banco_estrang, $w_agencia_estrang, 
             $w_cidade_estrang, $w_informacoes, $w_codigo_deposito, $w_pessoa_atual, $w_conta);
+            
+        //Grava os dados do comprovante de despesa
+        $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
+          $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor'],
+          'N','N','N',null,null,null,null,&$w_chave_doc);
+
+        //Grava os dados da vinculação
+        $SQL = new dml_putImpostoDoc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_documento'], $_REQUEST['w_imposto'],null,
+          $w_chave_nova,null,null,null,$_REQUEST['w_valor'],0,0,$_REQUEST['w_vencimento'],$_REQUEST['w_vencimento']);
+      
+	      // Recupera os trâmites de cadastramento inicial e de execução 
+	      $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null, null,'S');
+	      $RS = SortArray($RS,'ordem','asc');
+	      foreach ($RS as $row) {
+	        if (f($row,'sigla')=='CI') $w_ci = f($row,'sq_siw_tramite');
+	        elseif (f($row,'sigla')=='EE') $w_ee = f($row,'sq_siw_tramite');
+	      }
+	        
+	      // Grava versão da solicitação
+	      $w_html = VisualLancamento($w_chave_nova,'L',$w_usuario,'2','1');
+	      CriaBaseLine($w_chave_nova,$w_html,f($RS_Menu,'nome'),$w_ee);
+	        
+	      // Envia a solicitação para execução   
+	      $SQL = new dml_putLancamentoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_ci,
+	                $w_ee,'N',null,$w_usuario,'Envio automático de lançamento financeiro.',null,null,null,null);
       }
-          
+
       ScriptOpen('JavaScript');
-      ShowHTML('  window.close(); opener.focus();');
+      ShowHTML('  window.close(); opener.location.reload(); opener.focus();');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

@@ -934,6 +934,8 @@ begin
                 d7.sq_forma_pagamento,d7.nome as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
                 coalesce(d9.valor,0) as valor_nota,
+                da.sq_imposto,
+                case coalesce(da.sq_siw_solicitacao,0) when 0 then 'N' else 'S' end as lancamento_vinculado,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
@@ -1008,6 +1010,15 @@ begin
                                                 and z.sq_menu        = p_menu
                                              group by x.sq_siw_solicitacao
                                             )                  d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
+                          left         join (select y.sq_siw_solicitacao, x.sq_imposto
+                                               from fn_imposto_doc             x
+                                                    inner join siw_solicitacao y on (x.solic_retencao = y.sq_siw_solicitacao or 
+                                                                                     x.solic_imposto  = y.sq_siw_solicitacao
+                                                                                    )
+                                                    inner join siw_menu        z on (y.sq_menu        = z.sq_menu and
+                                                                                     z.sigla          = 'FNDEVENT'
+                                                                                    )
+                                            )                  da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null

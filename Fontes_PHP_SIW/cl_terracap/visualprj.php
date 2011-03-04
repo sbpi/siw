@@ -95,12 +95,15 @@ if (count($_POST) > 0) {
     $w_gestor_seguranca = f($RS,'GESTOR_SEGURANCA');
     $w_gestor_sistema   = f($RS,'GESTOR_SISTEMA');
     $w_tipo             = f($RS,'TIPO_AUTENTICACAO');
+    $w_gestor_portal    = f($RS,'gestor_portal');
+    $w_gestor_dashboard = f($RS,'gestor_dashbord');
+    $w_gestor_conteudo  = f($RS,'gestor_conteudo');
   }        
 
   // Cria ou atualiza o usuário
   $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms, $O, $w_chave, $w_cliente, $w_nome, $w_nome_resumido, $w_cpf, $w_sexo,
         $w_sq_tipo_vinculo, $w_tipo_pessoa, $w_unidade, $w_localizacao, $w_username, $w_mail, $w_gestor_seguranca, 
-        $w_gestor_sistema, $w_tipo);
+        $w_gestor_sistema, $w_tipo, $w_gestor_portal, $w_gestor_dashboard, $w_gestor_conteudo);
 
   // Recupera a chave do usuário
   $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);

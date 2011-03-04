@@ -9,6 +9,7 @@ begin
    open p_result for 
      select a.*, 
            b.username, b.ativo, b.sq_unidade, b.sq_localizacao, b.tipo_autenticacao,
+           b.gestor_portal, b.gestor_dashboard as gestor_dashbord, b.gestor_conteudo,
            b.gestor_seguranca, b.gestor_sistema, coalesce(b.email,i.email) as email,
            case b.tipo_autenticacao when 'B' then 'BD' when 'A' then 'MS-AD' else 'O-LDAP' end as nm_tipo_autenticacao,
            c.sq_usuario_central, c.sq_central_fone, c.codigo codigo_central, c.codigo codigo_central,
@@ -22,6 +23,9 @@ begin
            l.sq_tipo_pessoa, l.nome as nm_tipo_pessoa,
            case b.gestor_seguranca when 'S' then 'Sim' else 'Não' end as nm_gestor_seguranca,
            case b.gestor_sistema   when 'S' then 'Sim' else 'Não' end as nm_gestor_sistema,
+           case b.gestor_portal    when 'S' then 'Sim' else 'Não' end as nm_gestor_portal,
+           case b.gestor_dashboard when 'S' then 'Sim' else 'Não' end as nm_gestor_dashbord,
+           case b.gestor_conteudo  when 'S' then 'Sim' else 'Não' end as nm_gestor_conteudo,
            case b.ativo            when 'S' then 'Sim' else 'Não' end as nm_ativo,
            case d.interno          when 'S' then 'Sim' else 'Não' end as nm_interno,
            case d.contratado       when 'S' then 'Sim' else 'Não' end as nm_contratado

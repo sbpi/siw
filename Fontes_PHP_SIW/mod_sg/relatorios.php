@@ -200,6 +200,7 @@ function Rel_Permissao() {
       ShowHTML('          <td rowspan="2"><b>Sexo</td>');
       ShowHTML('          <td rowspan="2"><b>Lotação</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
+      ShowHTML('          <td colspan="3"><b>Portal</td>');
       ShowHTML('          <td rowspan="2"><b>Tipo aut</td>');
       ShowHTML('          <td rowspan="2"><b>Visão</td>');
       ShowHTML('          <td rowspan="2"><b>Dirigente</td>');
@@ -209,11 +210,15 @@ function Rel_Permissao() {
       ShowHTML('          <td><b>Seg.</td>');
       ShowHTML('          <td><b>Sist.</td>');
       ShowHTML('          <td><b>Mod.</td>');
+      ShowHTML('          <td><b>Portal</td>');
+      ShowHTML('          <td><b>Dash.</td>');
+      ShowHTML('          <td><b>Cont.</td>');
     } else {
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Sexo','nm_sexo').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
+      ShowHTML('          <td colspan="3"><b>Portal</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo aut','nm_tipo_autenticacao').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Visão','qtd_visao').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dirigente','qtd_dirigente').'</td>');
@@ -222,7 +227,11 @@ function Rel_Permissao() {
       ShowHTML('        <tr align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Seg.','gestor_seguranca').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Sist.','gestor_sistema').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Mod.','qtd_modulo').'</td>');    
+      ShowHTML('          <td><b>'.LinkOrdena('Mod.','qtd_modulo').'</td>');
+      ShowHTML('          <td title="Gestor do portal"><b>'.LinkOrdena('Portal','gestor_portal').'</td>');
+      ShowHTML('          <td title="Gestor do dashboard"><b>'.LinkOrdena('Dash','gestor_dashbord').'</td>');
+      ShowHTML('          <td title="Gestor de conteúdo do portal"><b>'.LinkOrdena('Cont.','gestor_conteudo').'</td>');
+        
     }
     ShowHTML('        </tr>');
     if (count($RS) == 0) {
@@ -245,6 +254,9 @@ function Rel_Permissao() {
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
         if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
         else                       ShowHTML('        <td align="center">---</td>');        
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_portal'),'---').'</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_dashbord'),'---').'</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_conteudo'),'---').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_tipo_autenticacao').'</td>');
         if(f($row,'qtd_visao')>0)  ShowHTML('        <td align="center">'.nvl(f($row,'qtd_visao'),'---').'</td>');
         else                       ShowHTML('        <td align="center">---</td>');
@@ -480,9 +492,10 @@ function TelaUsuarioRel() {
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>GESTOR<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   ShowHTML('          <td><b>Segurança: </b></td>');
   ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_seguranca'),'---').'</td></tr>');
-  ShowHTML('      <tr valign="top">');  
-  ShowHTML('          <td><b>Sistema: </b></td>');
-  ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_sistema'),'---').'</td></tr>');
+  ShowHTML('      <tr><td><b>Sistema: </b></td><td>'.nvl(f($RS,'nm_gestor_sistema'),'---').'</td></tr>');
+  ShowHTML('      <tr><td><b>Portal: </b></td><td>'.nvl(f($RS,'nm_gestor_portal'),'---').'</td></tr>');
+  ShowHTML('      <tr><td><b>Dashboard: </b></td><td>'.nvl(f($RS,'nm_gestor_dashbord'),'---').'</td></tr>');
+  ShowHTML('      <tr><td><b>Conteúdo: </b></td><td>'.nvl(f($RS,'nm_gestor_conteudo'),'---').'</td></tr>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('          <td><b>Módulos: </b></td>');
   $sql = new DB_GetUserModule; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);

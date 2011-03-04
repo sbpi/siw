@@ -207,12 +207,16 @@ function Usuarios() {
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ramal','ramal').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Vínculo','vinculo').'</td>');
     ShowHTML('          <td colspan="3"><b>Gestor</td>');
+    ShowHTML('          <td colspan="3"><b>Portal</td>');
     ShowHTML('          <td rowspan="2"><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Seg.','gestor_seguranca').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Sist.','gestor_sistema').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Mod.','qtd_modulo').'</td>');
+    ShowHTML('          <td title="Gestor do portal"><b>'.LinkOrdena('Portal','gestor_portal').'</td>');
+    ShowHTML('          <td title="Gestor do dashboard"><b>'.LinkOrdena('Dash','gestor_dashbord').'</td>');
+    ShowHTML('          <td title="Gestor de conteúdo do portal"><b>'.LinkOrdena('Cont.','gestor_conteudo').'</td>');
     ShowHTML('        </tr>');    
     if (count($RS) <= 0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
@@ -237,6 +241,9 @@ function Usuarios() {
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
         if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
         else                       ShowHTML('        <td align="center">---</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_portal'),'---').'</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_dashbord'),'---').'</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_conteudo'),'---').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if ($w_libera_edicao=='S') {
           ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=A&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do usuário">AL</A>&nbsp');

@@ -1283,6 +1283,7 @@ Fontes_PHP_SIW/classes/sp/dml_putGrupoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putHorizonte_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putHorizonte_PE.php -text
 Fontes_PHP_SIW/classes/sp/dml_putImposto.php -text
+Fontes_PHP_SIW/classes/sp/dml_putImpostoDoc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIndicador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIndicador_Afericao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIndicador_Aferidor.php -text
@@ -4158,6 +4159,7 @@ SP_Oracle92/siw/sp_putfinanceirogeral.prc -text
 SP_Oracle92/siw/sp_putgrupoveiculo.prc -text
 SP_Oracle92/siw/sp_puthorizonte_pe.prc -text
 SP_Oracle92/siw/sp_putimposto.prc -text
+SP_Oracle92/siw/sp_putimpostodoc.prc -text
 SP_Oracle92/siw/sp_putindice.prc -text
 SP_Oracle92/siw/sp_putlancamentodoc.prc -text
 SP_Oracle92/siw/sp_putlancamentoenvio.prc -text

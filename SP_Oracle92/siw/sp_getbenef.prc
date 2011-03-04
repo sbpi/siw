@@ -45,7 +45,8 @@ begin
             k.cnpj, k.inscricao_estadual, k.inicio_atividade, k.sede,
             o.nome as nm_pais_passaporte,
             case sexo when 'F' then 'Feminino' when 'M' then 'Masculino' else null end as nm_sexo,
-            n.sq_unidade as sq_unidade_benef, n.username,
+            n.sq_unidade as sq_unidade_benef, n.username, 
+            n.gestor_portal, n.gestor_dashboard as gestor_dashbord, n.gestor_conteudo,
             p.sigla||'/'||q.sigla as nm_unidade_benef,
             case when k.cnpj is not null 
                  then k.cnpj

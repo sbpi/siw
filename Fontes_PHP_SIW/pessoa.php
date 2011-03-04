@@ -161,6 +161,9 @@ function Benef() {
         $w_sq_tipo_vinculo      = $_REQUEST['w_sq_tipo_vinculo'];
         $w_gestor_seguranca     = $_REQUEST['w_gestor_seguranca'];
         $w_gestor_sistema       = $_REQUEST['w_gestor_sistema'];
+        $w_gestor_portal        = $_REQUEST['w_gestor_portal'];
+        $w_gestor_dashboard     = $_REQUEST['w_gestor_dashboard'];
+        $w_gestor_conteudo      = $_REQUEST['w_gestor_conteudo'];
         $w_tipo_autenticacao    = $_REQUEST['w_tipo_autenticacao'];
         $w_username_ant         = $_REQUEST['w_username_ant'];
     } else {
@@ -194,6 +197,9 @@ function Benef() {
                     $w_sq_tipo_vinculo      = f($RS,'sq_tipo_vinculo');
                     $w_gestor_seguranca     = f($RS,'gestor_seguranca');
                     $w_gestor_sistema       = f($RS,'gestor_sistema');
+                    $w_gestor_portal        = f($RS,'gestor_portal');
+                    $w_gestor_dashboard     = f($RS,'gestor_dashbord');
+                    $w_gestor_conteudo      = f($RS,'gestor_conteudo');
                     $w_tipo_autenticacao    = f($RS,'tipo_autenticacao');
                     $w_username_ant         = f($RS,'username');
                 }
@@ -212,6 +218,9 @@ function Benef() {
                     $w_sq_tipo_vinculo      = f($RS,'sq_tipo_vinculo');
                     $w_gestor_seguranca     = f($RS,'gestor_seguranca');
                     $w_gestor_sistema       = f($RS,'gestor_sistema');
+                    $w_gestor_portal        = f($RS,'gestor_portal');
+                    $w_gestor_dashboard     = f($RS,'gestor_dashbord');
+                    $w_gestor_conteudo      = f($RS,'gestor_conteudo');
                     $w_tipo_autenticacao    = f($RS,'tipo_autenticacao');
                     $w_username_ant         = f($RS,'username');
                 }
@@ -471,7 +480,10 @@ function Benef() {
               } else {
                 ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="S"> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="N" CHECKED> Não</td>');
               }
-
+              ShowHTML('          <tr valign="top">');
+              MontaRadioNS('<b>Gestor portal?</b>',$w_gestor_portal,'w_gestor_portal');
+              MontaRadioNS('<b>Gestor dashboard?</b>',$w_gestor_dashboard,'w_gestor_dashboard');
+              MontaRadioNS('<b>Gestor conteúdo?</b>',$w_gestor_conteudo,'w_gestor_conteudo');
               ShowHTML('      <tr valign="top">');
               selecaoTipoAutenticacao('<u>T</u>ipo de autenticação:','t','Indique o tipo de autenticação para este usuário',$w_tipo_autenticacao,$w_cliente,'w_tipo_autenticacao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_tipo_autenticacao\'; document.Form.submit();"');
               if (($O=='I' || $w_username_ant!= $w_username) && strpos('AO',$w_tipo_autenticacao)!==false) {
@@ -1179,7 +1191,8 @@ function Grava() {
                  $_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                  $_REQUEST['w_sq_tipo_vinculo'],$w_tipo,$_REQUEST['w_sq_unidade_lotacao'],$_REQUEST['w_sq_localizacao'],
                  $_REQUEST['w_username'],$_REQUEST['w_email'],$_REQUEST['w_gestor_seguranca'],$_REQUEST['w_gestor_sistema'],
-                 $_REQUEST['w_tipo_autenticacao']);
+                 $_REQUEST['w_tipo_autenticacao'],$_REQUEST['w_gestor_portal'],$_REQUEST['w_gestor_dashboard'],
+                 $_REQUEST['w_gestor_conteudo']);
 
             // Se o usuário logado deseja comunicar a ocorrência ao usuário em edição, configura e envia mensagem automática.
             if ($_REQUEST['w_envia_mail']>'') { // Configuração do texto da mensagem
