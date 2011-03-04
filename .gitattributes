@@ -3671,8 +3671,12 @@ SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/VW_ACORDO.sql -text
 SP_Oracle92/siw/VW_ACORDO_PARCELA.sql -text
+SP_Oracle92/siw/VW_CALCULO_INDICADOR_PROJETO.sql -text
 SP_Oracle92/siw/VW_EVENTOS.sql -text
 SP_Oracle92/siw/VW_GESTORES_MODULO.sql -text
+SP_Oracle92/siw/VW_INDICADOR_PROJETO.sql -text
+SP_Oracle92/siw/VW_PROGRAMA.sql -text
+SP_Oracle92/siw/VW_PROJETO.sql -text
 SP_Oracle92/siw/VW_PROJETOS.sql -text
 SP_Oracle92/siw/VW_USUARIOS.sql -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text
@@ -4275,6 +4279,8 @@ SP_Oracle92/siw/vw_item_catalogo.sql -text
 SP_Oracle92/siw/vw_pesquisa_mercado.sql -text
 SP_Oracle92/siw/vw_requisicao_arp.sql -text
 SP_Oracle92/siw/vw_requisicao_lic.sql -text
+SP_Oracle92/siw/vw_status_projeto.sql -text
+SP_Oracle92/siw/vw_tarefas_projeto.sql -text
 SP_Oracle92/siw/vw_ttresumo_usu.vw -text
 SP_Oracle92/siw_is/SP_GetIsUnidadeLimite_IS.prc -text
 SP_Oracle92/siw_is/SP_PutIsUnidadeLimite_IS.prc -text
