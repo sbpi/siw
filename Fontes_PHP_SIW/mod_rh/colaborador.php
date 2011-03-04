@@ -251,7 +251,7 @@ function Inicial() {
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $RS1 = array_slice($RS,(($P3-1)*$P4),$P4);
       foreach($RS1 as $row){
