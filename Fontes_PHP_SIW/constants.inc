@@ -74,6 +74,7 @@ $conImgSmAviso  = 'images/BallYellow.gif';
 $conImgSmAtraso = 'images/BallRed.gif';
 
 $conImgGeo      = 'images/icone/earth_16.png';
+$conImgFin      = 'images/icone/dollar-green.png';
 $conImgSheet     = 'images/Folder/SheetImg.gif';
 
 //---------------------------Definições de banco

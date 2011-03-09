@@ -748,6 +748,14 @@ Fontes_PHP_SIW/classes/pd4ml/Pd4Php.class -text
 Fontes_PHP_SIW/classes/pd4ml/Pd4Php.java -text
 Fontes_PHP_SIW/classes/pd4ml/pd4ml.jar -text
 Fontes_PHP_SIW/classes/pd4ml/pd4ml.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/deletetmp.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/index.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/pdftest1.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/pdftest1a.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/pdftest2.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/pdftest3.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/xdemo.php -text
+Fontes_PHP_SIW/classes/pd4ml/probe/xdemocjk.php -text
 Fontes_PHP_SIW/classes/pd4ml/ss_css2.jar -text
 Fontes_PHP_SIW/classes/serverstatus/blank.gif -text
 Fontes_PHP_SIW/classes/serverstatus/class.parse_server_status.php -text

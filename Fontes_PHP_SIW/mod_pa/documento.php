@@ -535,7 +535,7 @@ function Inicial() {
         if ($w_embed != 'WORD')
           ShowHTML('        <td width="1%" nowrap>&nbsp;' . ExibeUnidade('../', $w_cliente, f($row, 'sg_unidade_posse'), f($row, 'unidade_int_posse'), $TP) . '</td>');
         else
-          ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'sg_unidade_posse') . '');
+          ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'sg_unidade_posse') . '');
 
         ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'numero_original') . '</td>');

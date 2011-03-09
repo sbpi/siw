@@ -22,6 +22,8 @@ include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
+include_once($w_dir_volta.'funcoes/selecaoAssuntoRadio.php');
+include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -124,6 +126,7 @@ $p_prazo         = upper($_REQUEST['p_prazo']);
 $p_fase          = explodeArray($_REQUEST['p_fase']);
 $p_sqcc          = upper($_REQUEST['p_sqcc']);
 $p_sq_acao_ppa   = upper($_REQUEST['p_sq_acao_ppa']);
+$p_classif       = upper($_REQUEST['p_classif']);
 $p_agrega        = upper($_REQUEST['p_agrega']);
 $p_tamanho       = upper($_REQUEST['p_tamanho']);
 $p_sq_menu_relac = upper($_REQUEST['p_sq_menu_relac']);
@@ -241,12 +244,23 @@ function Gerencial() {
     if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
     if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
-    $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
-        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-        $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, 
-        $p_sq_acao_ppa, null, $p_empenho, $p_processo);
+    if (nvl($p_classif, '') != '') {
+      $sql = new db_getAssunto_PA;
+      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
+      foreach ($RS_Assunto as $row) {
+        $RS_Assunto = $row;
+        break;
+      }
+      $p_sq_acao_ppa = f($row, 'codigo').'#';
+    }
+   
+    $sql = new db_getSolicList;
+    $RS1 = $sql->getInstanceOf($dbms, $P2, $w_usuario, $p_agrega, 5,
+                    $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante,
+                    $p_unidade, $p_prioridade, $p_ativo, $p_proponente,
+                    $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+                    $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade,
+                    $p_sq_acao_ppa, null, $p_empenho, $p_processo);
 
     switch ($p_agrega) {
       case 'GRPAETAPA':
@@ -334,7 +348,7 @@ function Gerencial() {
       Validate('p_regiao','Sequencial','','','1','6','','0123456789');
       Validate('p_cidade','Ano','','','1','4','','0123456789');
       Validate('p_proponente','Origem externa','','','2','90','1','');
-      Validate('p_sq_acao_ppa','Código do assunto','','','1','10','1','1');
+      //Validate('p_sq_acao_ppa','Código do assunto','','','1','10','1','1');
       Validate('p_assunto','Detalhamento do assunto','','','2','90','1','1');
       Validate('p_processo','Interessado','','','2','90','1','1');
       Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
@@ -422,7 +436,7 @@ function Gerencial() {
           case 'GRPAPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case 'GRPARESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
           case 'GRPARESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
-          case 'GRPACC':        ShowHTML('      document.Form.p_sq_acao_ppa.value=filtro+"#";');    break;
+          case 'GRPACC':        ShowHTML('      document.Form.p_sq_acao_ppa.value=filtro;');    break;
           case 'GRPASETOR':     ShowHTML('      document.Form.p_uorg_resp.value=filtro;');      break;
           case 'GRPAPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GRPALOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
@@ -434,7 +448,7 @@ function Gerencial() {
           case 'GRPAPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');     break;
           case 'GRPARESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');   break;
           case 'GRPARESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
-          case 'GRPACC':        ShowHTML('    else document.Form.p_sq_acao_ppa.value=\''.$_REQUEST['p_sq_acao_ppa'].'+"#"\';');   break;
+          case 'GRPACC':        ShowHTML('    else document.Form.p_sq_acao_ppa.value=\''.$_REQUEST['p_sq_acao_ppa'].'\';');   break;
           case 'GRPASETOR':     ShowHTML('    else document.Form.p_uorg_resp.value=\''.$_REQUEST['p_uorg_resp'].'\';');       break;
           case 'GRPAPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
           case 'GRPALOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
@@ -463,6 +477,7 @@ function Gerencial() {
         $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Protocolo',5,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
+        if (strpos(montaFiltro('GET'),'p_sq_acao_ppa')===false && nvl($p_sq_acao_ppa,'')!='') ShowHTML('<input type="Hidden" name="p_sq_acao_ppa" value="'.$p_sq_acao_ppa.'">');
         ShowHTML('<input type="Hidden" name="p_tipo" value="">');
         switch ($p_agrega) {
           case 'GRPAETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
@@ -913,10 +928,12 @@ function Gerencial() {
     SelecaoUnidade('<U>O</U>rigem interna:','O',null,$p_unidade,null,'p_unidade',null,null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="'.$p_sq_acao_ppa.'"></td>');
+    //ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="'.$p_sq_acao_ppa.'"></td>');
     ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="'.$p_assunto.'"></td>');
-    ShowHTML('      <tr valign="top">');
+//    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" '.$w_Disabled.' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="'.$p_processo.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $p_classif, null, 'p_classif', 'FOLHA', null, '2');
     ShowHTML('        </tr></table>');
     //SelecaoPessoa('E<u>x</u>ecutor:','X','Selecione o executor da demanda na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');
     //ShowHTML('      <tr>');
