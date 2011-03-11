@@ -8,7 +8,7 @@ create or replace procedure sp_putDocumentoGeral
     p_solicitante         in  number   default null,
     p_cadastrador         in  number   default null,
     p_solic_pai           in  number   default null,
-    p_codigo              in varchar2  default null,
+    p_vinculo             in  number   default null,
     p_processo            in  varchar2 default null,
     p_circular            in  varchar2 default null,
     p_especie_documento   in  number   default null,
@@ -67,12 +67,12 @@ begin
          sq_siw_solicitacao, sq_menu,          sq_siw_tramite,      solicitante, 
          cadastrador,        descricao,        inicio,              fim,
          inclusao,           ultima_alteracao, data_hora,           sq_unidade,
-         sq_solic_pai,       sq_cidade_origem)
+         sq_solic_pai,       sq_cidade_origem, protocolo_siw)
       (select 
          w_Chave,            p_menu,           a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_descricao,      p_inicio,            p_fim,
          sysdate,            sysdate,          1,                   p_unidade,
-         p_solic_pai,        w_cidade
+         p_solic_pai,        w_cidade,         p_vinculo
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -120,7 +120,10 @@ begin
          (select w_chave, sq_assunto, principal from pa_documento_assunto where sq_siw_solicitacao = p_copia and principal = 'N');
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
-      -- Atualiza a tabela de solicitações
+      -- Atualiza o vínculo somente no protocolo indicado
+      Update siw_solicitacao set protocolo_siw = p_vinculo where sq_siw_solicitacao = p_chave;
+
+      -- Atualiza os demais dados da tabela no protocolo indicado e nos vinculados a ele
       Update siw_solicitacao set
           solicitante      = p_solicitante,
           cadastrador      = p_cadastrador,
@@ -131,8 +134,12 @@ begin
           sq_unidade       = p_unidade,
           ultima_alteracao = sysdate,
           sq_cidade_origem = w_cidade
-      where sq_siw_solicitacao = p_chave;
+      where sq_siw_solicitacao = p_chave
+         or sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave);
       
+      -- Atualiza o número da cópia somente no protocolo indicado
+      update pa_documento set copias = p_copias where sq_siw_solicitacao = p_chave;
+
       -- Atualiza a tabela de documentos
       update pa_documento set
           sq_documento_pai      = p_solic_pai,
@@ -144,15 +151,18 @@ begin
           sq_especie_documento  = p_especie_documento,
           sq_natureza_documento = p_natureza_documento,
           pessoa_origem         = p_pessoa_origem,
-          copias                = p_copias,
           volumes               = p_volumes,
           data_autuacao         = case p_processo when 'S' then data_autuacao else p_dt_autuacao end,
           unidade_autuacao      = case p_processo when 'S' then unidade_autuacao else p_unid_autua end
-       where sq_siw_solicitacao = p_chave;
+       where sq_siw_solicitacao = p_chave
+          or sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave);
 
       If p_pessoa_interes is null Then
         -- Apaga o registro existente
-        delete pa_documento_interessado a where sq_siw_solicitacao = p_chave;
+        delete pa_documento_interessado
+         where (sq_siw_solicitacao = p_chave or 
+                sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+               );
       Else
          -- Verifica se houve alteração do interessado principal
          select count(a.sq_pessoa) into w_cont from pa_documento_interessado a where sq_siw_solicitacao = p_chave and principal = 'S' and sq_pessoa = p_pessoa_interes;
@@ -160,16 +170,30 @@ begin
          -- Se houve, ajusta os registros
          if w_cont = 0 then
             -- Apaga o registro existente
-            delete pa_documento_interessado a where sq_siw_solicitacao = p_chave and principal = 'S';
+            delete pa_documento_interessado a
+             where (sq_siw_solicitacao = p_chave or 
+                    sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+                   )
+               and principal = 'S';
          
             -- Verifica se o novo interessado já está vinculado ao documento
             select count(a.sq_pessoa) into w_cont from pa_documento_interessado a where sq_siw_solicitacao = p_chave and principal = 'N' and sq_pessoa = p_pessoa_interes;
 
             -- Se estiver, coloca o interessado como principal, senão, insere registro com o novo interessado principal
             if w_cont > 0 then
-               update pa_documento_interessado set principal = 'S' where sq_siw_solicitacao = p_chave and sq_pessoa = p_pessoa_interes;
+               update pa_documento_interessado
+                   set principal = 'S' 
+                where (sq_siw_solicitacao = p_chave or 
+                       sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+                      )
+                and sq_pessoa = p_pessoa_interes;
             else 
-               insert into pa_documento_interessado (sq_siw_solicitacao, sq_pessoa, principal) values (p_chave, p_pessoa_interes, 'S');
+               insert into pa_documento_interessado (sq_siw_solicitacao, sq_pessoa, principal) 
+               (select sq_siw_solicitacao, p_pessoa_interes, 'S'
+                  from siw_solicitacao 
+                 where sq_siw_solicitacao = p_chave
+                    or sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+               );
             end if;
          end if;
       End If;
@@ -180,16 +204,30 @@ begin
       -- Se houve, ajusta os registros
       if w_cont = 0 then
          -- Apaga o registro existente
-         delete pa_documento_assunto a where sq_siw_solicitacao = p_chave and principal = 'S';
+         delete pa_documento_assunto a 
+         where (sq_siw_solicitacao = p_chave or 
+                sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+               )
+           and principal = 'S';
          
          -- Verifica se o novo assunto já está vinculado ao documento
          select count(a.sq_assunto) into w_cont from pa_documento_assunto a where sq_siw_solicitacao = p_chave and principal = 'N' and sq_assunto = p_assunto;
 
          -- Se estiver, coloca o assunto como principal, senão, insere registro com o novo assunto principal
          if w_cont > 0 then
-            update pa_documento_assunto set principal = 'S' where sq_siw_solicitacao = p_chave and sq_assunto = p_assunto;
+            update pa_documento_assunto 
+               set principal = 'S' 
+            where (sq_siw_solicitacao = p_chave or 
+                   sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+                  )
+              and sq_assunto = p_assunto;
          else 
-            insert into pa_documento_assunto (sq_siw_solicitacao, sq_assunto, principal) values (p_chave, p_assunto, 'S');
+            insert into pa_documento_assunto (sq_siw_solicitacao, sq_assunto, principal) 
+            (select sq_siw_solicitacao, p_assunto, 'S'
+               from siw_solicitacao
+              where sq_siw_solicitacao = p_chave
+                 or sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave)
+            );
          end if;
       end if;
    Elsif p_operacao = 'E' Then -- Exclusão

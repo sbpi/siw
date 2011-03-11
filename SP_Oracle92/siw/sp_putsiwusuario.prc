@@ -72,7 +72,12 @@ begin
 
    -- Inicializa variáveis caso não sejam recebidas na chamada da procedure
    w_sexo              := coalesce(p_sexo,w_sexo,'M'); -- Default: masculino
-   w_nome_resumido     := coalesce(p_nome_resumido,w_nome_resumido, substr(w_nome,1,instr(w_nome,' ')-1)); -- Default: primeiro nome
+   If instr(w_nome,' ') > 0 Then
+      w_nome_resumido     := coalesce(p_nome_resumido,w_nome_resumido, substr(w_nome,1,instr(w_nome,' ')-1)); -- Default: primeiro nome
+   Else
+      w_nome_resumido     := coalesce(p_nome_resumido,w_nome_resumido, w_nome);
+   End If;
+   w_nome_resumido     := substr(w_nome_resumido,1,20); -- Garante que o tamanho máximo do campo não será excedido.
    w_tipo_pessoa       := coalesce(p_tipo_pessoa,w_tipo_pessoa,'Física'); -- Default: Pessoa física nacional
    w_gestor_seguranca  := coalesce(p_gestor_seguranca,w_gestor_seguranca,'N'); -- Default: Não
    w_gestor_sistema    := coalesce(p_gestor_sistema,w_gestor_sistema,'N'); -- Default: Não

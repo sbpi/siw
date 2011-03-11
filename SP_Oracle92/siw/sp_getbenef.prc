@@ -6,15 +6,19 @@ create or replace procedure SP_GetBenef
     p_cnpj               in varchar2 default null,
     p_nome               in varchar2 default null,
     p_tipo_pessoa        in number   default null,
+    p_tipo_vinculo       in number   default null,
     p_passaporte_numero  in varchar2 default null,
     p_sq_pais_passaporte in number   default null,
+    p_clientes           in varchar2 default null,
     p_fornecedor         in varchar2 default null,
+    p_entidade           in varchar2 default null,
+    p_parceiro           in varchar2 default null,
     p_pais               in number   default null,
     p_regiao             in number   default null,
     p_uf                 in varchar2 default null,
     p_cidade             in number   default null,
     p_restricao          in varchar2 default null,
-    p_result      out sys_refcursor
+    p_result             out sys_refcursor
    ) is
 begin
    open p_result for 
@@ -22,7 +26,7 @@ begin
             a.sq_pessoa_pai, 
             a.cliente, a.fornecedor, 
             c.sq_tipo_pessoa, c.nome as nm_tipo_pessoa,
-            d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.ativo as vinculo_ativo,
+            d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.contratado, d.ativo as vinculo_ativo,
             e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero as nr_conta,
             e.nm_agencia, e.cd_banco, e.nm_banco,  e.devolucao_valor,
             b.sq_pessoa_fax, b.nr_fax,
@@ -147,6 +151,7 @@ begin
       where (a.sq_pessoa_pai      = p_cliente or (p_cliente = p_sq_pessoa) or (a.sq_pessoa = p_cliente and a.sq_pessoa_pai is null))
         and (p_sq_pessoa          is null     or (p_sq_pessoa          is not null and ((coalesce(p_restricao,'-')<>'EXISTE' and a.sq_pessoa = p_sq_pessoa) or (p_restricao = 'EXISTE' and a.sq_pessoa <> p_sq_pessoa))))
         and (p_tipo_pessoa        is null     or (p_tipo_pessoa        is not null and a.sq_tipo_pessoa     = p_tipo_pessoa))
+        and (p_tipo_vinculo       is null     or (p_tipo_vinculo       is not null and a.sq_tipo_vinculo    = p_tipo_vinculo))
         and (p_nome               is null     or (p_nome               is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or 
                                                                                         a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
                                                                                        )
@@ -157,7 +162,10 @@ begin
         and (p_cnpj               is null     or (p_cnpj               is not null and k.cnpj               = p_cnpj))
         and (p_passaporte_numero  is null     or (p_passaporte_numero  is not null and j.passaporte_numero  = p_passaporte_numero))
         and (p_sq_pais_passaporte is null     or (p_sq_pais_passaporte is not null and j.sq_pais_passaporte = p_sq_pais_passaporte))
+        and (p_clientes           is null     or (p_clientes           is not null and a.cliente            = p_clientes))
         and (p_fornecedor         is null     or (p_fornecedor         is not null and a.fornecedor         = p_fornecedor))
+        and (p_entidade           is null     or (p_entidade           is not null and a.entidade           = p_entidade))
+        and (p_parceiro           is null     or (p_parceiro           is not null and a.parceiro           = p_parceiro))
         and (p_pais               is null     or (p_pais               is not null and h.sq_pais            = p_pais))
         and (p_regiao             is null     or (p_regiao             is not null and h.sq_regiao          = p_regiao))
         and (p_cidade             is null     or (p_cidade             is not null and h.sq_cidade          = p_cidade))

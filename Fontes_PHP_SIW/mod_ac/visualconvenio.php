@@ -203,7 +203,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       foreach($RSQuery as $row) { 
-        $l_html.=chr(13).'      <tr><td colspan=7 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><font size=1>Outra parte:<b>';
+        $l_html.=chr(13).'      <tr><td colspan=7 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><font size=1>Outra parte:<b>';
         $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')';
         $l_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         $l_html.=chr(13).'         <br>Tipo:<b> '.f($row,'nm_tipo');

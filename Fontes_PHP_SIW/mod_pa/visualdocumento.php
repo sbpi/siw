@@ -26,6 +26,18 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     else                            $w_tipo_juntada = 'APENSO AO PROCESSO '.f($RS_Pai,'protocolo');
   }
 
+  if (nvl(f($RS,'protocolo_siw'),'')!='') {
+    $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
+    if (nvl(f($RS,'copias'),0)>0) {
+      if (f($RS_Vinc,'tipo_documento')=='D') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
+      else                                   $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+    } else {
+      if (f($RS_Vinc,'tipo_documento')=='D') $w_tipo_vinc = 'VINCULADO AO PROCESSO ';
+      else                                   $w_tipo_vinc = 'VINCULADO AO DOCUMENTO ';
+    }
+    $w_tipo_vinc.=f($RS_Vinc,'protocolo');
+  }
+
   $l_html.=chr(13).'    <table width="100%" border="0" cellspacing="3">';
   if ($O!='T' && $O!='V') {
     if ($l_formato!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do documento.">Exibir todas as informações</a></td></tr>';
@@ -49,6 +61,9 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_central'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO CENTRAL' : 'ARQUIVADO CENTRAL').'</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='CA') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>CANCELADO</b></font></td>';
+  }
+  if (nvl($w_tipo_vinc,'')!='') {
+    $l_html.=chr(13).'      <tr><td nowrap colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='' || f($RS,'ativo')=='N') ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><b>'.$w_tipo_vinc.'</b></td>';
   } 
   $w_sg_tramite = f($RS,'sg_tramite');
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
@@ -84,10 +99,12 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'       <td>'.f($RS,'numero_original').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data do documento:</b></td>';
     $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>';
+    /*
     if (nvl(f($RS,'copias'),'')!='') {
       $l_html.=chr(13).'   <tr><td><b>Nº de cópias:</b></td>';
       $l_html.=chr(13).'       <td>'.formatNumber(f($RS,'copias'),0).'</td></tr>';
     }
+    */
     if (nvl(f($RS,'volumes'),'')!='') {
       $l_html.=chr(13).'   <tr><td><b>Nº de volumes:</b></td>';
       $l_html.=chr(13).'       <td>'.formatNumber(f($RS,'volumes'),0).'</td></tr>';
@@ -263,6 +280,36 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'        <td>'.f($row,'numero_original').'</td>';
       $l_html.=chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
       $l_html.=chr(13).'        <td>'.nvl(f($row,'nm_origem_doc'),'&nbsp;').'</td>';
+      $l_html.=chr(13).'      </tr>';
+    } 
+    $l_html.=chr(13).'      </center>';
+    $l_html.=chr(13).'    </table>';
+    $l_html.=chr(13).'  </td>';
+    $l_html.=chr(13).'</tr>';
+  }
+
+  $sql = new db_getSolicList; $RS_Copias = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',9,
+      $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+      $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+      $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+      $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, f($RS,'sq_siw_solicitacao'), $p_atividade, 
+      null, null, $p_empenho, $p_numero_orig);
+  $RS_Copias = SortArray($RS_Copias,'copias','asc','sq_siw_solicitacao','asc');
+  
+  if (count($RS_Copias)>0) {
+    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>CÓPIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'       <tr valign="top" align="center">';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    foreach ($RS_Copias as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
+      $l_html.=chr(13).'        <td align="center">'.f($row,'protocolo').'</td>';
+      $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
       $l_html.=chr(13).'      </tr>';
     } 
     $l_html.=chr(13).'      </center>';

@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putDocumentoGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_copia, $p_menu, $p_unidade, $p_unid_autua, $p_solicitante, 
-        $p_cadastrador, $p_solic_pai, $p_codigo, $p_processo, $p_circular, $p_especie_documento, $p_doc_original, 
+        $p_cadastrador, $p_solic_pai, $p_vinculo, $p_processo, $p_circular, $p_especie_documento, $p_doc_original, 
         $p_inicio, $p_volumes, $p_dt_autuacao, $p_copias, $p_natureza_documento, $p_fim, $p_data_recebimento, 
         $p_interno, $p_pessoa_origem, $p_pessoa_interes, $p_cidade, $p_assunto, $p_descricao, $p_observacao,
         $p_chave_nova, $p_codigo_interno) {
@@ -24,7 +24,7 @@ class dml_putDocumentoGeral {
                    'p_solicitante'              =>array(tvl($p_solicitante),                        B_INTEGER,        32),
                    'p_cadastrador'              =>array(tvl($p_cadastrador),                        B_INTEGER,        32),
                    'p_solic_pai'                =>array(tvl($p_solic_pai),                          B_INTEGER,        32),
-                   'p_codigo'                   =>array(tvl($p_codigo),                             B_VARCHAR,        30),
+                   'p_vinculo'                  =>array(tvl($p_vinculo),                            B_INTEGER,        32),
                    'p_processo'                 =>array(tvl($p_processo),                           B_VARCHAR,         1),
                    'p_circular'                 =>array(tvl($p_circular),                           B_VARCHAR,         1),
                    'p_especie_documento'        =>array(tvl($p_especie_documento),                  B_INTEGER,        32),

@@ -13,11 +13,14 @@ include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkDataUser.php');
+include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getFoneList.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 include_once($w_dir_volta.'classes/sp/dml_putPessoa.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoPessoa.php');
+include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoRegiao.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
@@ -60,6 +63,12 @@ $w_pagina       = 'fornecedor.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_eo/';
 $w_troca        = $_REQUEST['w_troca'];
+$p_tipo_pessoa  = upper($_REQUEST['p_tipo_pessoa']);
+$p_tipo_vinculo = upper($_REQUEST['p_tipo_vinculo']);
+$p_clientes     = upper($_REQUEST['p_clientes']);
+$p_fornecedor   = upper($_REQUEST['p_fornecedor']);
+$p_entidade     = upper($_REQUEST['p_entidade']);
+$p_parceiro     = upper($_REQUEST['p_parceiro']);
 $p_uf           = upper($_REQUEST['p_uf']);
 $p_cidade       = upper($_REQUEST['p_cidade']);
 $p_regiao       = upper($_REQUEST['p_regiao']);
@@ -74,6 +83,15 @@ $w_cliente       = RetornaCliente();
 $w_usuario       = RetornaUsuario();
 $w_menu          = RetornaMenu($w_cliente,$SG);
 
+// Recupera o nome do tipo de pessoa para usar na seleção do tipo de vínculo
+$w_nm_tipo_pessoa = '';
+if (nvl($p_tipo_pessoa,'')!='') {
+  $sql = new db_getKindPersonList; $RS = $sql->getInstanceOf($dbms, null);
+  foreach($RS as $row) {
+    if (f($row,'sq_tipo_pessoa')==$p_tipo_pessoa) $w_nm_tipo_pessoa = f($row,'nome');
+  }
+}
+
 $P1           = $_REQUEST['P1'];
 $P2           = $_REQUEST['P2'];
 $P3           = nvl($_REQUEST['P3'],1);
@@ -84,6 +102,8 @@ $w_assinatura = upper($_REQUEST['w_assinatura']);
 
 if ($SG=='CLGERAL' && $O=='L') {
   $O='A';
+} elseif ($SG=='FORNECEDOR' && $O=='') {
+  $O='P';
 } elseif($O=='') {
   $O='L';
 } 
@@ -123,7 +143,7 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   if ($O=='L') {
-    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$p_nome,null,null,null,null,$p_pais,$p_regiao,$p_uf,$p_cidade,'NUSUARIO');
+    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$p_nome,$p_tipo_pessoa,$p_tipo_vinculo,null,null,$p_clientes,$p_fornecedor,$p_entidade,$p_parceiro,$p_pais,$p_regiao,$p_uf,$p_cidade,'NUSUARIO');
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS_Benef = SortArray($RS_Benef,$lista[0],$lista[1],'nome_indice','desc');
@@ -159,88 +179,113 @@ function Inicial() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-  ShowHTML('<tr><td>');    
-  if ($w_submenu>'') {
-    $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-    foreach($RS1 as $row) {
-      ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-      break;
-    }
-  } else {
-    ShowHTML('<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-  }
-  if ($p_pais.$p_uf.$p_cidade.$p_nome.$p_ativo.$p_ordena>'') {
-    ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
-  } else {
-    ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-  } 
-  ShowHTML('    <td align="right"><b>Registros: '.count($RS_Benef));
-  ShowHTML('<tr><td align="center" colspan=3>');
-  ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-  ShowHTML('          <td><b>'.LinkOrdena('Nome','nm_pessoa').'</td>');
-  ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</td>');
-  ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
-  ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
-  ShowHTML('          <td><b>Operações</td>');
-  ShowHTML('        </tr>');
-  if (count($RS_Benef)<=0) {
-    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
-  } else {
-    if (count($RS_Benef)<$P4) $P3=1;
-    $RS1 = array_slice($RS_Benef, (($P3-1)*$P4), $P4);
-    foreach($RS1 as $row) {
-      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('        <td>'.ExibeFornecedor(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nm_pessoa')).'</b></td>');
-      if(nvl(f($row,'nm_cidade'),'')!='')ShowHTML('        <td>'.f($row,'nm_cidade').' - '.f($row,'co_uf').'</td>');
-      else                               ShowHTML('        <td>---</td>');
-      ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
-      ShowHTML('        <td align="center">'.Nvl(f($row,'identificador_primario'),'---').'</td>');
-      ShowHTML('        <td align="top" nowrap>');
-      if ($w_submenu>'') {
-        ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
-      } else {
-      ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
-      } 
-      //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
-      ShowHTML('        </td>');
-      ShowHTML('      </tr>');
-    } 
-  } 
-  ShowHTML('      </center>');
-  ShowHTML('    </table>');
-  ShowHTML('  </td>');
-  ShowHTML('</tr>');
-  ShowHTML('<tr><td align="center" colspan=3>');
-  if ($R>'') {
-    MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
-  } else {
-    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
-  } 
-  ShowHTML('</tr>');  
+	  ShowHTML('<tr><td>');    
+	  if ($w_submenu>'') {
+	    $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+	    foreach($RS1 as $row) {
+	      ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+	      break;
+	    }
+	  } else {
+	    ShowHTML('<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+	  }
+	  if (montaFiltro('GET')>'') {
+	    ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
+	  } else {
+	    ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+	  } 
+	  ShowHTML('    <td align="right"><b>Registros: '.count($RS_Benef));
+	  ShowHTML('<tr><td align="center" colspan=3>');
+	  ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+	  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+	  ShowHTML('          <td><b>'.LinkOrdena('Nome','nm_pessoa').'</td>');
+	  ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</td>');
+	  ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
+	  ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
+	  ShowHTML('          <td><b>Operações</td>');
+	  ShowHTML('        </tr>');
+	  if (count($RS_Benef)<=0) {
+	    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+	  } else {
+	    if (count($RS_Benef)<$P4) $P3=1;
+	    $RS1 = array_slice($RS_Benef, (($P3-1)*$P4), $P4);
+	    foreach($RS1 as $row) {
+	      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+	      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+	      ShowHTML('        <td>'.ExibeFornecedor(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nm_pessoa')).'</b></td>');
+	      if(nvl(f($row,'nm_cidade'),'')!='')ShowHTML('        <td>'.f($row,'nm_cidade').((nvl(f($row,'pd_pais'),'N')=='S') ? ' - '.f($row,'co_uf') : ' ('.f($row,'nm_pais').')').'</td>');
+	      else                               ShowHTML('        <td>---</td>');
+	      ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
+	      ShowHTML('        <td align="center">'.Nvl(f($row,'identificador_primario'),'---').'</td>');
+	      ShowHTML('        <td align="top" nowrap>');
+	      if ($w_submenu>'') {
+	        ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
+	      } else {
+	      ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
+	      } 
+	      //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
+	      ShowHTML('        </td>');
+	      ShowHTML('      </tr>');
+	    } 
+	  } 
+	  ShowHTML('      </center>');
+	  ShowHTML('    </table>');
+	  ShowHTML('  </td>');
+	  ShowHTML('</tr>');
+	  ShowHTML('<tr><td align="center" colspan=3>');
+	  if ($R>'') {
+	    MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
+	  } else {
+	    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
+	  } 
+	  ShowHTML('</tr>');  
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    ShowHTML('    <table width="70%" border="0">');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('      <tr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center"><table width="98%" border="0">');
+    ShowHTML('    <tr><td colspan="4"><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    ShowHTML('    <tr><td colspan="3"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
+    ShowHTML('      <tr valign="top">');
     selecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
     selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,null,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
-    selecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
-    ShowHTML('      <tr><td valign="top"><b>Clientes ativos?</b><br>');
-    if ($p_ativo=='') {
-      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Não <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="" checked> Tanto faz');
-    } elseif ($p_ativo=='S') {
-      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S" checked> Sim <input '.$w_Disabled.' class="str" class="str" type="radio" name="p_ativo" value="N"> Não <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""> Tanto faz');
+    selecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null,2);
+    ShowHTML('      <tr>');
+    SelecaoTipoPessoa('<u>T</u>ipo de pessoa:','T','Selecione o tipo de pessoa na relação.',$p_tipo_pessoa,null,'p_tipo_pessoa',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_tipo_vinculo\'; document.Form.submit();"');
+    selecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$p_tipo_vinculo,null,'p_tipo_vinculo','S',$w_nm_tipo_pessoa,null,null,null,3);
+    ShowHTML('    <tr valign="top">');
+    ShowHTML('      <td><b>Apenas clientes?</b>');
+    if ($p_clientes=='') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value="" checked> Tanto faz');
+    } elseif ($p_clientes=='S') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value="S" checked> Sim <br><input '.$w_Disabled.' class="str" class="str" type="radio" name="p_clientes" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value=""> Tanto faz');
     } else {
-      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N" checked> Não <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""> Tanto faz');
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value="N" checked> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_clientes" value=""> Tanto faz');
     } 
-    ShowHTML('      <tr><td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="sts" name="p_ordena" size="1">');
+    ShowHTML('      <td><b>Apenas fornecedor?</b>');
+    if ($p_fornecedor=='') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value="" checked> Tanto faz');
+    } elseif ($p_fornecedor=='S') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value="S" checked> Sim <br><input '.$w_Disabled.' class="str" class="str" type="radio" name="p_fornecedor" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value=""> Tanto faz');
+    } else {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value="N" checked> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_fornecedor" value=""> Tanto faz');
+    } 
+    ShowHTML('      <td><b>Apenas entidades?</b>');
+    if ($p_entidade=='') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value="" checked> Tanto faz');
+    } elseif ($p_entidade=='S') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value="S" checked> Sim <br><input '.$w_Disabled.' class="str" class="str" type="radio" name="p_entidade" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value=""> Tanto faz');
+    } else {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value="N" checked> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_entidade" value=""> Tanto faz');
+    } 
+    ShowHTML('      <td><b>Apenas parceiros?</b>');
+    if ($p_parceiro=='') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value="" checked> Tanto faz');
+    } elseif ($p_parceiro=='S') {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value="S" checked> Sim <br><input '.$w_Disabled.' class="str" class="str" type="radio" name="p_parceiro" value="N"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value=""> Tanto faz');
+    } else {
+      ShowHTML('            <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value="S"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value="N" checked> Não <br><input '.$w_Disabled.' class="str" type="radio" name="p_parceiro" value=""> Tanto faz');
+    } 
+    ShowHTML('    <tr><td><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="sts" name="p_ordena" size="1">');
     if ($p_ordena=='NM_TIPO_PESSOA') {
       ShowHTML('          <option value="NM_TIPO_PESSOA" SELECTED>Tipo de pessoa<option value="NM_CIDADE">Cidade<option value="">Nome');
     } elseif ($p_ordena=='NM_CIDADE') {
@@ -249,13 +294,13 @@ function Inicial() {
       ShowHTML('          <option value="NM_TIPO_PESSOA">Tipo de pessoa<option value="NM_CIDADE">Cidade<option value="" SELECTED>Nome');
     } 
     ShowHTML('          </select></td>');
-    ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');    
-    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3">');
-    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
-    ShowHTML('          </td>');
-    ShowHTML('      </tr>');
+    ShowHTML('        <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');    
+    ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('    <tr><td align="center" colspan="3">');
+    ShowHTML('          <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('        </td>');
+    ShowHTML('    </tr>');
     ShowHTML('    </table>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
@@ -322,7 +367,7 @@ function Geral() {
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];    
   } elseif ($O=='A' || $w_sq_pessoa>'') {
     // Recupera os dados do beneficiário em co_pessoa
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) {
         $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -349,7 +394,7 @@ function Geral() {
       }
     } 
   } elseif ($O=='P') {
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'nome_indice','asc');
   }
   Cabecalho();
@@ -622,7 +667,7 @@ function Grava() {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_tipo_pessoa']==1) {
             // Verifica se já existe pessoa física com o CPF informado
-            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -631,7 +676,7 @@ function Grava() {
               exit;
             }
             // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
-            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) {
                 if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
@@ -649,7 +694,7 @@ function Grava() {
             }
           } else {
             // Verifica se já existe pessoa jurídica com o CNPJ informado
-            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
@@ -658,7 +703,7 @@ function Grava() {
               exit;
             }
             // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
-            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) {
                 if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {

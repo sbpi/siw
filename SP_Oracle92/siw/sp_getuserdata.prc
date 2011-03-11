@@ -11,7 +11,7 @@ begin
             a.tipo_autenticacao, a.gestor_portal, a.gestor_dashboard as gestor_dashbord, a.gestor_conteudo,
             case a.tipo_autenticacao when 'B' then 'BD' when 'A' then 'MS-AD' else 'O-LDAP' end as nm_tipo_autenticacao,
             b.sq_tipo_pessoa, b.nome, b.nome_resumido, 
-            c.sq_tipo_vinculo, c.interno, c.nome as nm_tipo_vinculo,
+            c.sq_tipo_vinculo, c.interno, c.nome as nm_tipo_vinculo, c.contratado,
             d.sq_pessoa_endereco, e.codigo,
             f.cpf, f.sexo,
             case f.sexo when 'F' then 'Feminino' when 'M' then 'Masculino' else null end as nm_sexo,

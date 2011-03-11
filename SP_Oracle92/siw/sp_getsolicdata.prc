@@ -711,7 +711,7 @@ begin
                 case d1.cumprimento when 'I' then 'Não' when 'P' then 'Sim' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res, d2.sq_tipo_pessoa,
                 coalesce(d21.ativo,'N') st_prop,
-                d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
+                d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,      d3.interno, d3.contratado,
                 d4.sexo,              d4.cpf,
                 d22.sq_forma_pagamento, d22.nome as nm_forma_pagamento, d22.sigla as sg_forma_pagamento,
                 d23.nome as pais_estrang,
@@ -1036,7 +1036,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.protocolo_siw,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -1044,6 +1044,7 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
+                case when b.protocolo_siw is not null then dados_solic(b.protocolo_siw) end as dados_vinc,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla sg_unid_origem,
@@ -1053,7 +1054,8 @@ begin
                 b8.sigla as sg_tramite_eliminacao,
                 d.numero_original,    d.numero_documento,            d.ano,
                 d.prefixo,            d.digito,                      d.interno,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                to_char(d.numero_documento)||'/'||substr(to_char(d.ano),3) as protocolo,
+                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo_completo,
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
                 d.data_autuacao,      d.pessoa_origem,               d.processo,
                 d.circular,           d.copias,                      d.volumes,

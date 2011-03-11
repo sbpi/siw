@@ -249,7 +249,7 @@ function Rel_Permissao() {
           ShowHTML('        <td align="left">'.ExibePessoaRel($w_dir,$w_cliente,f($row,'sq_pessoa'),f($row,'nome'),f($row,'nome_resumido'),'Volta').'</td>');
         }
         ShowHTML('        <td align="center">'.nvl(f($row,'nm_sexo'),'---').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
+        ShowHTML('        <td>'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
         if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
@@ -409,7 +409,7 @@ function TelaUsuarioRel() {
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>DADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
     // Outra parte
-    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null,null, null, null, null, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null,null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row1) {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>Vínculo: </b></td>');

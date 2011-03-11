@@ -11,7 +11,7 @@ function selecaoPessoaOrigem($label, $accesskey, $hint, $chave, $chaveAux, $camp
   ShowHTML('<INPUT type="hidden" name="' . $campo . '" value="' . $chave . '">');
   ShowHTML('<INPUT type="hidden" name="obj_origem" value="' . $chave . '">');
   if ($chave > '') {
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, null, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS as $row) {
       $RS = $row;
       break;

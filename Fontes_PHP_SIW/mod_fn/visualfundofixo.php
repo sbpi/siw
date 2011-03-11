@@ -126,13 +126,13 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     } 
 
     // Outra parte
-    $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+    $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null, null, null, null, null);
     foreach ($RS_Query as $row) {$RS_Query = $row; break;}
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>SUPRIDO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (count($RS_Query)<=0) {
       $l_html.=chr(13).'      <tr><td colspan=2 align=center><font size=1>Suprido não informado';
     } else {
-      $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
+      $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>';
       $l_html.=chr(13).'          '.f($RS_Query,'nm_pessoa').' ('.f($RS_Query,'nome_resumido').') - ';
       if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) {
         $l_html.=chr(13).'      '.f($row,'cpf').'</b></td></tr>';

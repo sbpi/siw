@@ -89,6 +89,7 @@ if (count($_POST) > 0) {
     $w_nome_resumido    = f($RS,'NOME_RESUMIDO');
     $w_cpf              = f($RS,'CPF');
     $w_sexo             = f($RS,'SEXO');
+    $w_mail             = f($RS,'email');
     $w_sq_tipo_vinculo  = f($RS,'SQ_TIPO_VINCULO');
     $w_tipo_pessoa      = f($RS,'SQ_TIPO_PESSOA');
     $w_unidade          = f($RS,'SQ_UNIDADE');

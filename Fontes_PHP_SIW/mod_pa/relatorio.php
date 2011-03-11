@@ -233,7 +233,7 @@ function Tramitacao() {
           ShowHTML('        <td>' . f($row, 'nm_destino') . '</td>');
           ShowHTML('        <td>' . f($row, 'nm_despacho') . '</td>');
           ShowHTML('        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
-          ShowHTML('        <td align="center">' . formataDataEdicao(f($row, 'phpdt_envio'), 3) . '</td>');
+          ShowHTML('        <td align="center">' . substr(formataDataEdicao(f($row, 'phpdt_envio'),6),0,-3) . '</td>');
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGR&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="GR">Emitir</A>&nbsp');
           ShowHTML('        </td>');
@@ -245,7 +245,7 @@ function Tramitacao() {
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a></td>');
-          ShowHTML('        <td align="center">' . formataDataEdicao(f($row, 'phpdt_envio'), 3) . '</td>');
+          ShowHTML('        <td align="center">' . substr(formataDataEdicao(f($row, 'phpdt_envio'), 6),0,-3) . '</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('      </tr>');
         }
@@ -478,14 +478,13 @@ function Etiqueta() {
   global $w_Disabled;
 
   // Recupera as variáveis utilizadas na filtragem
-  $p_posicao = $_REQUEST['p_posicao'];
-  $p_protocolo = $_REQUEST['p_protocolo'];
-  $w_volume = $_REQUEST['w_volume'];
-  $p_chave = $_REQUEST['p_chave'];
-  $p_chave_aux = $_REQUEST['p_chave_aux'];
-  $p_prefixo = substr($p_protocolo, 0, 5);
-  $p_numero = substr($p_protocolo, 6, 6);
-  $p_ano = substr($p_protocolo, 13, 4);
+  $p_posicao        = $_REQUEST['p_posicao'];
+  $w_volume         = $_REQUEST['w_volume'];
+  $p_chave          = $_REQUEST['p_chave'];
+  $p_chave_aux      = $_REQUEST['p_chave_aux'];
+  $p_prefixo        = $_REQUEST['p_prefixo'];
+  $p_numero         = $_REQUEST['p_numero'];
+  $p_ano            = $_REQUEST['p_ano'];
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
@@ -503,7 +502,9 @@ function Etiqueta() {
     SaltaCampo();
     CheckBranco();
     ValidateOpen('Validacao');
-    Validate('p_protocolo', 'Número de protocolo', '1', '1', '20', '20', '', '0123456789./-');
+    Validate('p_prefixo', 'Prefixo', '1', '', '5', '5', '', '0123456789');
+    Validate('p_numero', 'Número', '1', '1', '1', '6', '', '0123456789');
+    Validate('p_ano', 'Ano', '1', '1', '4', '4', '', '0123456789');
     Validate('w_volume', 'Número do volume', '1', '', '1', '2', '', '0123456789');
 //     ShowHTML('  var i; ');
 //     ShowHTML('  var w_erro=true; ');
@@ -527,7 +528,7 @@ function Etiqueta() {
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } elseif ($O == 'P') {
-    BodyOpen('onLoad=\'document.Form.p_protocolo.focus()\';');
+    BodyOpen('onLoad=\'document.Form.p_numero.focus()\';');
   } else {
     BodyOpen('onLoad=\'this.focus()\';');
   }
@@ -609,16 +610,11 @@ function Etiqueta() {
       $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
       // Recupera os dados do documento
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PADGERAL');
-      //exibeArray($RS);
       ShowHTML('<table cellpadding=0 cellspacing=0 border=1>');
       ShowHTML('<tr><td width="480"  height="200">');
       ShowHTML('  <table width="100%" cellpadding=3 cellspacing=0 border=0>');
       ShowHTML('    <tr><td colspan=2><font size=2><b>' . f($RS_Cliente, 'nome_resumido') . '/' . f($RS, 'sg_unidade_resp') . '</b></font>');
-      if (nvl(f($RS, 'processo'), '') == 'S') {
-        ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>' . f($RS, 'protocolo') . '</font></td>');
-      } else {
-        ShowHTML('    <tr><td><font size=2><b>DOCUMENTO: </b>' . f($RS, 'protocolo') . '</font></td>');
-      }
+      ShowHTML('    <tr><td><font size=2><b>'.((nvl(f($RS, 'processo'),'')=='S') ? 'PROCESSO' : 'DOCUMENTO').': </b>'.f($RS, 'protocolo_completo').'</font></td>');
       If (nvl($_REQUEST['w_volume'], '') != '') {
         ShowHTML('<td rowspan="2" class="volume" width="28%"><h1>');
         if (strlen($_REQUEST['w_volume']) > 1) {
@@ -645,7 +641,7 @@ function Etiqueta() {
         ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . substr(upper(nvl(f($RS, 'descricao'), '---')), 0, 1000) . '...</font>');
       else
         ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . upper(nvl(f($RS, 'descricao'), '---')) . '</font>');
-      ShowHTML('    <tr><td colspan=2 align="right">' . geraCB(str_replace('/', '', str_replace('-', '', str_replace('.', '', f($RS, 'protocolo'))))));
+      ShowHTML('    <tr><td colspan=2 align="right">' . geraCB(str_replace('/', '', str_replace('-', '', str_replace('.', '', f($RS, 'protocolo_completo'))))));
       ShowHTML('  </table>');
       ShowHTML('<br></td></tr>');
       ShowHTML('</table>');
@@ -661,7 +657,7 @@ function Etiqueta() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td width="12%"><b><u>P</u>rotocolo:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="' . $p_protocolo . '" onKeyDown="FormataProtocolo(this,event);"></td>');
+    ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
     ShowHTML('      <td align="left"><b><u>V</u>olume:</b><br><input ' . $w_Disabled . ' accesskey="V" type="text" name="w_volume" class="sti" SIZE="3" MAXLENGTH="2" VALUE="' . $w_volume . '" onKeyDown="FormataProtocolo(this,event);"></td>');
 //     ShowHTML('      <tr><td><b>Posição da etiqueta');
 //     if ($p_posicao=='S') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="S"> Etiqueta localizada na parte superior da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="S"> Etiqueta localizada na parte superior da folha');
@@ -800,10 +796,7 @@ function EmitirEtiqueta() {
   ShowHTML('<tr><td width="480"  height="200">');
   ShowHTML('  <table width="100%" cellpadding=3 cellspacing=0 border=0>');
   ShowHTML('    <tr><td colspan=2><font size=2><b>' . f($RS_Cliente, 'nome_resumido') . '/' . f($RS, 'sg_unidade_resp') . '</b></font>');
-  if (nvl(f($RS, 'processo'), '') == 'S')
-    ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>' . f($RS, 'protocolo') . '</font>');
-  else
-    ShowHTML('    <tr><td><font size=2><b>DOCUMENTO: </b>' . f($RS, 'protocolo') . '</font>');
+  ShowHTML('    <tr><td><font size=2><b>'.((nvl(f($RS, 'processo'),'')=='S') ? 'PROCESSO' : 'DOCUMENTO').': </b>'.f($RS, 'protocolo_completo').'</font></td>');
   If (nvl($_REQUEST['w_volume'], '') != '') {
     ShowHTML('<td rowspan="2" class="volume" width="28%"><h2>');
     if (strlen($_REQUEST['w_volume']) > 1) {
@@ -829,7 +822,7 @@ function EmitirEtiqueta() {
     ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . substr(upper(nvl(f($RS, 'descricao'), '---')), 0, 100) . '...</font>');
   else
     ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . upper(nvl(f($RS, 'descricao'), '---')) . '</font>');
-  ShowHTML('    <tr><td colspan=2 align="right">' . geraCB(str_replace('/', '', str_replace('-', '', str_replace('.', '', f($RS, 'protocolo'))))));
+  ShowHTML('    <tr><td colspan=2 align="right">' . geraCB(str_replace('/', '', str_replace('-', '', str_replace('.', '', f($RS, 'protocolo_completo'))))));
   ShowHTML('  </table>');
   ShowHTML('</td></tr>');
   ShowHTML('</table>');

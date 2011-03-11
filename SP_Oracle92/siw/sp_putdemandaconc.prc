@@ -125,7 +125,7 @@ begin
                                p_solicitante        => p_pessoa,
                                p_cadastrador        => p_pessoa,
                                p_solic_pai          => null,
-                               p_codigo             => null,
+                               p_vinculo            => null,
                                p_processo           => 'N',
                                p_circular           => 'N',
                                p_especie_documento  => crec.sq_especie_documento,

@@ -37,7 +37,8 @@ begin
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.descricao,
              c.numero_original,
-             c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo,
+             to_char(c.numero_documento)||'/'||substr(to_char(c.ano),3) as protocolo,
+             c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo_completo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case when c5.sq_siw_solicitacao is not null
@@ -47,7 +48,7 @@ begin
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
-             d.nu_guia||'/'||d.ano_guia||'-'||d6.sigla as guia_tramite,
+             to_char(d.nu_guia)||'/'||substr(to_char(d.ano_guia),3)||'-'||d6.sigla as guia_tramite,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
              case d.interno when 'S' then d3.nome else d4.nome end as nm_destino,
              d1.sq_tipo_despacho, d1.nome as nm_despacho,
@@ -108,14 +109,16 @@ begin
               (p_tipo      = 2 and (b1.acesso > 0 or w.sq_pessoa  = d.cadastrador or (p_restricao = 'RELPATRAM' and (w.sq_unidade = d.unidade_origem or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null))))) or
               w_filtro = 'true'
              );
-   Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PACLASSIF, PADTRANSF,PADELIM,PADEMPREST,PAENVCEN,PADDESM,PADALTREG', p_restricao) > 0 Then
+   Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PACLASSIF,PADVINCULA,PADTRANSF,PADELIM,PADEMPREST,PAENVCEN,PADDESM,PADALTREG', p_restricao) > 0 Then
       -- Recupera guias de tramitação
       open p_result for
-      select b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao,
+      select a.sigla as sg_menu,
+             b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao,
              b2.nome, b2.sigla,
              b3.sigla as sg_tramite,
              c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
-             c.sq_documento_pai, c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
+             c.sq_documento_pai, c.processo,
+             c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -188,6 +191,7 @@ begin
          and w.sq_pessoa   = p_pessoa
          and (p_restricao = 'PACLASSIF' or 
               p_restricao = 'PADALTREG' or 
+              p_restricao = 'PADVINCULA' or
               (acesso(c.sq_siw_solicitacao, p_pessoa) >=8 or d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))
              )
          and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero))
@@ -202,7 +206,20 @@ begin
          and (p_ini         is null or (p_ini         is not null and b.inicio between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
          and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c5.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c5.codigo = replace(p_cd_assunto,'#','')))))
-         and (p_assunto     is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
+         and (p_assunto     is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
+                                                                       0 < (select count(*)
+                                                                             from pa_documento_log x
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and acentos(x.resumo) like '%'||acentos(p_assunto)||'%'
+                                                                           )  or 
+                                                                       0 < (select count(*)
+                                                                             from siw_solic_log x
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and acentos(x.observacao) like '%'||acentos(p_assunto)||'%'
+                                                                           )
+                                                                      )
+                                       ) 
+             )
          and (p_solicitante is null or (p_solicitante is not null and c.sq_especie_documento = p_solicitante))
          and (p_proponente  is null or (p_proponente  is not null and (to_char(c.pessoa_origem) = p_proponente or c3.nome_indice like '%'||acentos(p_proponente)||'%' or c3.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
          and (p_processo    is null or (p_processo    is not null and 0 < (select count(*)
@@ -219,13 +236,15 @@ begin
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
+              (p_restricao = 'PADVINCULA' and b.sq_solic_pai is null and c.copias is null) or
               (p_restricao = 'PADTRANSF'  and (b3.sigla <> 'CA' and d5.cliente is not null and c.data_setorial is null)) or
               (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and b3.sigla <> 'CA' and b.sq_solic_pai is null and c.data_setorial is not null and (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
-              (p_restricao = 'PACLASSIF'  and b3.sigla <> 'CA' and b.sq_solic_pai is null and (c5.provisorio = 'S' or w_filtro = 'true')) or
+              (p_restricao = 'PACLASSIF'  and b3.sigla <> 'CA' and b.sq_solic_pai is null and c.copias is null and (c5.provisorio = 'S' or w_filtro = 'true')) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null) or
               (p_restricao = 'PADALTREG'  and b3.sigla <> 'CA' and
+                                              c.copias is null and
                                               (-- Se for gestor do sistema e um parâmetro de busca tiver sido informado
                                                ((w1.sq_modulo is not null or w.gestor_sistema ='S') and 
                                                 w_filtro = 'true'
@@ -360,7 +379,20 @@ begin
          and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
          and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
-         and (p_assunto     is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
+         and (p_assunto     is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
+                                                                       0 < (select count(*)
+                                                                             from pa_documento_log x
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and acentos(x.resumo) like '%'||acentos(p_assunto)||'%'
+                                                                           )  or 
+                                                                       0 < (select count(*)
+                                                                             from siw_solic_log x
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and acentos(x.observacao) like '%'||acentos(p_assunto)||'%'
+                                                                           )
+                                                                      )
+                                       ) 
+             )
          and (p_solicitante is null or (p_solicitante is not null and c.sq_especie_documento = p_solicitante))
          and (p_proponente  is null or (p_proponente  is not null and (to_char(c.pessoa_origem) = p_proponente or c3.nome_indice like '%'||acentos(p_proponente)||'%' or c3.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
          and (p_processo    is null or (p_processo    is not null and 0 < (select count(*)
@@ -443,7 +475,20 @@ begin
          and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
          and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
-         and (p_assunto     is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
+         and (p_assunto     is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
+                                                                       0 < (select count(*)
+                                                                             from pa_documento_log x
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and acentos(x.resumo) like '%'||acentos(p_assunto)||'%'
+                                                                           )  or 
+                                                                       0 < (select count(*)
+                                                                             from siw_solic_log x
+                                                                            where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                              and acentos(x.observacao) like '%'||acentos(p_assunto)||'%'
+                                                                           )
+                                                                      )
+                                       ) 
+             )
          and (p_solicitante is null or (p_solicitante is not null and c.sq_especie_documento = p_solicitante))
          and (p_proponente  is null or (p_proponente  is not null and (to_char(c.pessoa_origem) = p_proponente or c3.nome_indice like '%'||acentos(p_proponente)||'%' or c3.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
          and (p_processo    is null or (p_processo    is not null and 0 < (select count(*)

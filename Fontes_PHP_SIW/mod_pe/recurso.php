@@ -186,7 +186,7 @@ function Inicial	() {
       case 'PESSOA': 
         include_once($w_dir_volta.'classes/sp/db_getBenef.php');
         include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
-        $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_ch_vinculo,0),null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_ch_vinculo,0),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
         if (count($RS1)>0) {
           foreach($RS1 as $row) { $RS1 = $row; break; }
           $w_nome             = f($RS1,'nm_pessoa');

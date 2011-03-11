@@ -1155,7 +1155,7 @@ begin
                 d1.cumprimento,
                 case d1.cumprimento when 'I' then 'Não' when 'P' then 'Sim' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
                 d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res, d2.nome_indice as nm_prop_ind, d2.nome_resumido_ind as nm_prop_res_ind,
-                d3.sq_tipo_vinculo,   d3.nome as nm_tipo_vinculo,
+                d3.sq_tipo_vinculo,   d3.nome as nm_tipo_vinculo,      d3.interno,                    d3.contratado,
                 d4.sexo,              d4.cpf,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
@@ -1475,7 +1475,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,      b.sq_plano,
+                b.palavra_chave,      b.sq_plano,                    b.protocolo_siw,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -1486,11 +1486,15 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
+                case when b.protocolo_siw is not null then dados_solic(b.protocolo_siw) end as dados_vinc,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla as sg_unid_origem,
                 b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,
                 b8.sq_siw_solicitacao as sq_eliminacao, b8.fim as dt_eliminacao, b8.sigla as sg_tramite_eliminacao,
+                coalesce(ba.qtd,0) as qtd_juntado,
+                coalesce(bb.qtd,0) as qtd_vinculado,
+                coalesce(bc.qtd,0) as qtd_copia,
                 d.numero_original,    d.data_recebimento,            d.numero_documento,
                 d.ano,                d.prefixo,                     d.digito,
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
@@ -1502,7 +1506,11 @@ begin
                 case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                case when da.sq_siw_solicitacao is not null and d.copias is not null
+                     then da.numero_documento||'/'||substr(da.ano,3)||'('||d.copias||')'
+                     else d.numero_documento||'/'||substr(d.ano,3) 
+                end as protocolo,
+                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo_completo,
                 case d.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo_protocolo,
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
@@ -1534,7 +1542,11 @@ begin
                    inner        join eo_unidade                    a2 on (a.sq_unid_executora        = a2.sq_unidade)
                    inner             join siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)
-                      inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                      inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite and
+                                                                          (p_tipo                    <> 1 or
+                                                                           (p_tipo                   = 1 and b1.sigla = 'CI')
+                                                                          )	
+                                                                         )
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join pa_documento_assunto     d4 on (d.sq_siw_solicitacao       = d4.sq_siw_solicitacao and
@@ -1583,11 +1595,34 @@ begin
                                             where sq_menu = p_menu
                                            group by sq_siw_solicitacao
                                           )                        b9 on (b.sq_siw_solicitacao       = b9.sq_siw_solicitacao)
+                      left           join (select sq_solic_pai, count(*) as qtd
+                                             from siw_solicitacao
+                                            where sq_menu = p_menu
+                                              and sq_solic_pai is not null
+                                           group by sq_solic_pai
+                                          )                        ba on (b.sq_siw_solicitacao       = ba.sq_solic_pai)
+                      left           join (select x.protocolo_siw, count(*) as qtd
+                                             from siw_solicitacao         x
+                                                  inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where x.sq_menu       = p_menu
+                                              and x.protocolo_siw is not null
+                                              and y.copias        is null -- vinculados
+                                           group by protocolo_siw
+                                          )                        bb on (b.sq_siw_solicitacao       = bb.protocolo_siw)
+                      left           join (select x.protocolo_siw, count(*) as qtd
+                                             from siw_solicitacao         x
+                                                  inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where x.sq_menu       = p_menu
+                                              and x.protocolo_siw is not null
+                                              and y.copias        is not null -- cópias
+                                           group by protocolo_siw
+                                          )                        bc on (b.sq_siw_solicitacao       = bc.protocolo_siw)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)
                           left       join co_tipo_pessoa           d3 on (d2.sq_tipo_pessoa          = d3.sq_tipo_pessoa)
                         left         join pa_caixa                 d8 on (d.sq_caixa                 = d8.sq_caixa)
                           left       join eo_unidade               d9 on (d8.sq_unidade              = d9.sq_unidade)
+                      left           join pa_documento             da  on (b.protocolo_siw           = da.sq_siw_solicitacao)
                         left         join eo_unidade               q  on (d.unidade_int_posse        = q.sq_unidade)
                           left       join eo_unidade_resp          q1 on (q.sq_unidade               = q1.sq_unidade and
                                                                           q1.tipo_respons            = 'T'           and
@@ -1613,13 +1648,39 @@ begin
                        left          join sg_autenticacao          l  on (k.recebedor                = l.sq_pessoa)
                        left          join pa_tipo_despacho         k1 on (k.sq_tipo_despacho         = k1.sq_tipo_despacho)
           where a.sq_menu        = p_menu
+            and ((p_tipo         = 1     and b1.sigla = 'CI' and b.cadastrador     = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 3     and b2.acesso > 0) or
+                 (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         in (5,9)) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI') or
+                 (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
+                 (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null 
+                                         and b7.protocolo is null and b8.protocolo is null and d51.Sigla='ELIM'
+                                         and to_char(sysdate,'yyyymmyy') > substr(b9.prazo_guarda,7,4)||substr(b9.prazo_guarda,4,2)||substr(b9.prazo_guarda,1,2)
+                 ) -- Eliminação
+                )
+            and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
+                 ((p_restricao = 'GRPACC'      and d5.codigo           is not null)   or 
+                  (p_restricao = 'GRPAPRIO'    and k1.sq_tipo_despacho is not null)   or 
+                  (p_restricao = 'GRPAPROP'    and d.pessoa_origem     is not null)   or 
+                  (p_restricao = 'GRPARESPATU' and b.executor          is not null)   or
+                  (p_restricao = 'GRPAVINC'    and b.sq_solic_pai      is not null)
+                 )
+                )
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and d.prefixo            = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and d.numero_documento   = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and d.ano                = p_cidade))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.unidade_int_posse  = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_projeto        is null or (p_projeto     is not null and ((p_tipo = 9 and b.protocolo_siw = p_projeto) or
+                                                                             (p_tipo<> 9 and b.sq_solic_pai  = p_projeto)
+                                                                            )
+                                             )
+                )
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa = p_atividade))
             and (p_uf             is null or (p_uf          is not null and d.processo           = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
@@ -1658,28 +1719,6 @@ begin
                                                                                         )
                                                                                 )
                                              )
-                )
-            and ((p_tipo         = 1     and b1.sigla = 'CI' and b.cadastrador     = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
-                 (p_tipo         = 3     and b2.acesso > 0) or
-                 (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI') or
-                 (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
-                 (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null 
-                                         and b7.protocolo is null and b8.protocolo is null and d51.Sigla='ELIM'
-                                         and to_char(sysdate,'yyyymmyy') > substr(b9.prazo_guarda,7,4)||substr(b9.prazo_guarda,4,2)||substr(b9.prazo_guarda,1,2)
-                 ) -- Eliminação
-                )
-            and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
-                 ((p_restricao = 'GRPACC'      and d5.codigo           is not null)   or 
-                  (p_restricao = 'GRPAPRIO'    and k1.sq_tipo_despacho is not null)   or 
-                  (p_restricao = 'GRPAPROP'    and d.pessoa_origem     is not null)   or 
-                  (p_restricao = 'GRPARESPATU' and b.executor          is not null)   or
-                  (p_restricao = 'GRPAVINC'    and b.sq_solic_pai      is not null)
-                 )
                 );
    Elsif p_restricao = 'RHCC' Then
       -- Recupera os centros de custo para contratos de trabalho de pessoal

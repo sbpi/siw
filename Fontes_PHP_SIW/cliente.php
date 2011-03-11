@@ -99,6 +99,8 @@ $p_ordena       = $_REQUEST['p_ordena'];
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
+$w_usuario = RetornaUsuario();
+if (nvl($SG,'')!='') $w_menu = RetornaMenu($w_cliente, $SG);
 
 $P1           = $_REQUEST['P1'];
 $P2           = $_REQUEST['P2'];
@@ -131,6 +133,12 @@ switch ($O) {
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $SQL = new db_getLinkSubMenu; $RS = $SQL->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) $w_submenu='Existe'; else $w_submenu='';
+
+// Recupera os dados do menu
+if (nvl($w_menu,'')!='') {
+  $sql = new db_getMenuData;
+  $RS_Menu = $sql->getInstanceOf($dbms, $w_menu);
+}
 
 Main();
 
@@ -372,7 +380,7 @@ function Geral() {
         } 
       } elseif ($O=='I' && nvl($w_cgccpf,'')!='') {
         // Recupera os dados do beneficiário em co_pessoa
-        $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null);
+        $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null, null, null, null, null);
         if (count($RS)>0) {
           foreach($RS as $row) { $RS = $row; break; }
           $w_sq_pessoa              = f($RS,'sq_pessoa');
@@ -719,11 +727,13 @@ function Enderecos() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
-    ShowHTML('        ATENÇÃO:<ul>');
-    ShowHTML('        <li>A cada alteração do <u>endereço residencial</u>, uma cópia do comprovante de residência deve ser enviado ao departamento de Recursos Humanos.');
-    ShowHTML('        </ul></b></font></td>');
-    ShowHTML('      </tr>');  
+    if (nvl(f($RS_Menu,'sg_modulo'),'')=='GP') {
+      ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+      ShowHTML('        ATENÇÃO:<ul>');
+      ShowHTML('        <li>A cada alteração do <u>endereço residencial</u>, uma cópia do comprovante de residência deve ser enviado ao departamento de Recursos Humanos.');
+      ShowHTML('        </ul></b></font></td>');
+      ShowHTML('      </tr>');  
+    }
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_sq_pessoa='.$w_sq_pessoa.'&w_cgccpf='.$w_cgccpf.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
@@ -762,7 +772,7 @@ function Enderecos() {
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
-    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
+    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       if (count($RS_Cliente)>0) {
@@ -969,7 +979,7 @@ function Telefones() {
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
-    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
+    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade

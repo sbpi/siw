@@ -139,13 +139,13 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       if (count($RSPensao)) {
         $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PENSIONISTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
         foreach($RSPensao as $row) {
-          $html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
+          $html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>';
           $html.=chr(13).'          '.f($row,'nome').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
           $html.=chr(13).'          <tr><td><b>Tipo de pensão:</b></td>'; 
           $html.=chr(13).'              <td>'.f($row,'tipo_pensao').': '.formatNumber(f($row,'valor')).'</td></tr>';
           $html.=chr(13).'          <tr><td><b>Período de pagamento:</b></td>'; 
           $html.=chr(13).'              <td>'.formataDataEdicao(f($row,'inicio')).((nvl(f($row,'fim'),'')=='') ? ' em diante' : ' a '.formataDataEdicao(f($row,'fim'))).'</td></tr>';
-          $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'chave'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+          $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'chave'),0),null,null,null,null,1,null,null,null,null,null,null,null, null, null, null, null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
           $html.=chr(13).'      <tr><td colspan="2">';
           $html.=chr(13).'          <tr><td><b>Sexo:</b></td>'; 
@@ -219,10 +219,10 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
 	      foreach($RSContrato as $row){
 	        if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
 	          $html.=chr(13).'      </table><tr><td colspan="2"><table width="99%" border="0">';
-	          $html.=chr(13).'      <tr><td colspan="2" bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>CONTRATO VIGENTE</b></td></tr>';
+	          $html.=chr(13).'      <tr><td colspan="2" bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>CONTRATO VIGENTE</b></td></tr>';
 	          $j++;
 	        } elseif ($i==0) {
-	          $html.=chr(13).'      <tr><br><td id="contratos" colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b><span id="colxpand"></span> CONTRATOS ANTIGOS</b></td></tr>';
+	          $html.=chr(13).'      <tr><br><td id="contratos" colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b><span id="colxpand"></span> CONTRATOS ANTIGOS</b></td></tr>';
 	          $html.=chr(13).'      </table><tr><td colspan="2"><table id="contratos_antigos" width="99%" border="0">';        
 	          $i++;
 	        }                

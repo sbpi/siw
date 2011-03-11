@@ -457,12 +457,12 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       else                                 $l_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Outra parte não informada';
     } else {
       foreach($RSQuery as $row) { 
-        $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
+        $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>';
         $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')';
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) $l_html.=chr(13).'          - '.f($row,'cpf').'</b>';
         else                                   $l_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         if ($l_P1==4) {
-          $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+          $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null, null, null, null, null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
           if (f($RSQuery1,'sq_tipo_pessoa')==1) {
             $l_html.=chr(13).'      <tr><td colspan="2">';

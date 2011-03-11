@@ -160,19 +160,26 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     // Dados do proposto
     if ($l_proposto='S') {
-      $sql = new db_getBenef; $RSQuery = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getBenef; $RSQuery = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BENEFICIÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (count($RSQuery)==0) {
         $l_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Beneficiário não informado';
       } else {
         foreach($RSQuery as $row) { 
-          $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
+          $l_html.=chr(13).'      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%" style="border: 1px solid rgb(0,0,0);">';
+          $l_html.=chr(13).'        <tr><td colspan=2 bgColor="#f0f0f0"><b>';
           if (f($row,'sq_tipo_pessoa')==1) {
-            $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
+            $l_html.=chr(13).'            '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
           } else {
-            $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - Passaporte: '.f($row,'passaporte_numero').' '.f($row,'nm_pais_passaporte').'</b>';
+            $l_html.=chr(13).'            '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - Passaporte: '.f($row,'passaporte_numero').' '.f($row,'nm_pais_passaporte').'</b>';
           }
+          if ($w_tramite_ativo=='S') {
+            $l_html.=chr(13).'        <tr><td colspan=2 style="border-top: 1px solid rgb(0,0,0);"><table border=0 cellpadding=0 cellspacing=0 width="100%">';
+            $l_html.=chr(13).'          <tr valign="top"><td>Vínculo: <b>'.f($row,'nm_tipo_vinculo').'</b><td>Interno: <b>'.retornaSimNao(f($row,'interno')).'</b><td>Contratado: <b>'.retornaSimNao(f($row,'contratado')).'</b>';
+            $l_html.=chr(13).'          </table>';
+          }
+          $l_html.=chr(13).'          </table>';
           $l_html.=chr(13).'      <tr><td colspan="2">';
           $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($row,'nm_sexo').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($row,'rg_numero').'</td></tr>';
@@ -521,7 +528,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             if ($w_trechos[$i][28]>'') $rowspan_local += 1;
             if ($w_trechos[$i][29]>'') $rowspan_local += 1;
             
-            $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
+            $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
             $l_html.=chr(13).'      <tr valign="top"><td><b>Estada:</b><td>'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3);
             if ($w_trechos[$i][32]=='S' || $w_trechos[$i][33]=='S')  {
               $l_html.=chr(13).'      <tr valign="top"><td><b>Horários:</b><td>';
@@ -673,7 +680,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               if ($w_trechos[$i][28]>'') $rowspan_local += 1;
               if ($w_trechos[$i][29]>'') $rowspan_local += 1;
               
-              $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
+              $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
               $l_html.=chr(13).'      <tr valign="top"><td><b>Estada:</b><td>'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3);
               if ($w_trechos[$i][32]=='S' || $w_trechos[$i][33]=='S')  {
                 $l_html.=chr(13).'      <tr valign="top"><td><b>Horários:</b><td>';

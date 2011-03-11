@@ -78,7 +78,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
       $w_linha = 6;
     } 
     if (nvl($w_pasta,'.')!=f($row,'pasta')) {
-      $l_html.=chr(13).'      <tr><td colspan=10 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>PASTA '.f($row,'pasta').'</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan=10 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>PASTA '.f($row,'pasta').'</b></td></tr>';
       $w_pasta = f($row,'pasta');
     }
     $l_html.=chr(13).'     <tr valign="top">';

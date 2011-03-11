@@ -4,7 +4,7 @@
 // -------------------------------------------------------------------------
 function visualfornecedor($l_sq_pessoa,$O) {
   extract($GLOBALS);
-  $sql = new db_getBenef; $l_RS = $sql->getInstanceOf($dbms,$w_cliente,$l_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $l_RS = $sql->getInstanceOf($dbms,$w_cliente,$l_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($l_RS as $row){$l_RS=$row; break;}
   // Se for listagem dos dados
   $w_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';

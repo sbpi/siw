@@ -2156,7 +2156,7 @@ function TelaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
     // Outra parte
-    $SQL = new db_getBenef; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
+    $SQL = new db_getBenef; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     if (count($RS1)<=0) {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
@@ -2265,7 +2265,7 @@ function TelaUsuario() {
     ShowHTML('</table>');
   } else {
     // Outra parte
-    $SQL = new db_getBenef; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
+    $SQL = new db_getBenef; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad="this.focus();"');

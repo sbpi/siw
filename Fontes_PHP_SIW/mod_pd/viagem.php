@@ -838,7 +838,7 @@ function Geral() {
 
   // Se não puder cadastrar para outros, carrega os dados do usuário logado
   if ($w_cadgeral == 'N') {
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $_SESSION['USERNAME'], null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $_SESSION['USERNAME'], null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
     if (count($RS) > 0) {
       foreach ($RS as $row) {
         $RS = $row;
@@ -1260,7 +1260,7 @@ function OutraParte() {
   } else {
     if (strpos($_REQUEST['Botao'], 'Alterar') === false && strpos($_REQUEST['Botao'], 'Procurar') === false && ($O == 'A' || $w_sq_pessoa > '' || $w_cpf > '' || $w_cnpj > '')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null);
+      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null, null, null, null, null);
       if (count($RS) > 0) {
         foreach ($RS as $row) {
           $RS = $row;
@@ -1319,7 +1319,7 @@ function OutraParte() {
     if (strpos('CREDITO,DEPOSITO', $w_forma_pagamento) !== false) {
 
       if (Nvl($w_sq_banco, '') == '' && Nvl($w_nr_conta, '') == '') {
-        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, $w_cnpj, null, null, null, null, null, null, null, null, null, null, null, null, null);
         if (count($RS) > 0) {
 
           foreach ($RS as $row) {
@@ -1562,7 +1562,7 @@ function OutraParte() {
         ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'">'); */
       ShowHTML('      </table>');
       if ($w_nome > '') {
-        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, $w_nome, 1, null, null, null, null, null, null, null);
+        $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, $w_nome, 1, null, null, null, null, null, null, null, null, null, null, null);
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
         ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -2188,7 +2188,7 @@ function Bilhetes() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2436,7 +2436,7 @@ function AltSolic() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2803,7 +2803,7 @@ function RegistroAlteracao() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -2990,7 +2990,7 @@ function ImprimeAlteracao() {
   ShowHTML('    <td align="center" style="font-size:12px"><br>ANEXO IV - ALTERAÇÕES - Reemissão<br><br></td>');
   ShowHTML('</table>');
 
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -3507,7 +3507,7 @@ function DadosFinanceiros() {
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -3774,7 +3774,7 @@ function PagamentoDiaria() {
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -4347,7 +4347,7 @@ function Diarias() {
     ShowHTML('        <tr><td valign="top" colspan="2">');
     ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
-    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -5035,7 +5035,7 @@ function Diarias_Solic() {
     ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
     ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
     ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
-    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row) {
       $RS1 = $row;
       break;
@@ -5958,7 +5958,7 @@ function InformarPassagens() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -6079,7 +6079,7 @@ function InformarCotacao() {
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . ' (' . $w_chave . ')</td>');
   ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_inicio')) . ' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS, 'phpdt_fim')) . ' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -6167,7 +6167,7 @@ function InformarCotacao() {
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
   ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
   ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null, null, null, null, null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
   ShowHTML('          </TABLE></td></tr>');
@@ -6788,7 +6788,7 @@ function PrestarContas() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . '</td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -7377,7 +7377,7 @@ function Reembolso() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS, 'codigo_interno') . '</td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;
@@ -7706,7 +7706,7 @@ function ReembolsoValor() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null);
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
   foreach ($RS1 as $row) {
     $RS1 = $row;
     break;

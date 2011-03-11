@@ -976,7 +976,7 @@ function Geral() {
     if($O=='I') SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
     else        SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
     if($O=='I' && nvl($w_solicitante,'')>'') {
-     $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_solicitante, null,null, null, null, null, null, null, null, null, null, null, null);
+     $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_solicitante, null,null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      foreach($RS1 as $row1){$RS1=$row1; break;}
      $w_sq_unidade_resp = f($RS1,'sq_unidade_benef');
     }

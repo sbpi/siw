@@ -26,7 +26,7 @@ begin
                b.nome_resumido, b.nome, b.nome_indice, b.nome_resumido_ind, 
                c.sigla as lotacao, c.sq_unidade, c.codigo, 
                d.nome as localizacao, d.sq_localizacao, d.ramal, 
-               e.nome as vinculo, e.contratado,
+               e.nome as vinculo, e.interno, e.contratado,
                f.logradouro, g.nome as nm_cidade, g.co_uf,
                coalesce(h.qtd,0) as qtd_modulo,
                coalesce(i.qtd,0) as qtd_visao,

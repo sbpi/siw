@@ -46,7 +46,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
 
   // Recupera os dados do beneficiário
   $sql = new db_getBenef;
-  $l_rs1 = $sql->getInstanceOf($dbms, $v_cliente, Nvl(f($l_rs_solic, 'sq_prop'), 0), null, null, null, null, null, null, null, null, null, null, null, null);
+  $l_rs1 = $sql->getInstanceOf($dbms, $v_cliente, Nvl(f($l_rs_solic, 'sq_prop'), 0), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   $l_existe_rs1 = count($l_rs1);
   if ($l_existe_rs1 > 0) {
     foreach ($l_rs1 as $l_row) {
