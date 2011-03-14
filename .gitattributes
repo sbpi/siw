@@ -1255,6 +1255,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoJunta.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoReceb.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoVincula.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoAAtuac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoPosto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoUni.php -text
@@ -4040,6 +4041,7 @@ SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text
 SP_Oracle92/siw/sp_putDocumentoJunta.prc -text
 SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
+SP_Oracle92/siw/sp_putDocumentoVincula.prc -text
 SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text

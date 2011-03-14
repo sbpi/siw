@@ -29,11 +29,11 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   if (nvl(f($RS,'protocolo_siw'),'')!='') {
     $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
     if (nvl(f($RS,'copias'),0)>0) {
-      if (f($RS_Vinc,'tipo_documento')=='D') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
-      else                                   $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
+      else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
     } else {
-      if (f($RS_Vinc,'tipo_documento')=='D') $w_tipo_vinc = 'VINCULADO AO PROCESSO ';
-      else                                   $w_tipo_vinc = 'VINCULADO AO DOCUMENTO ';
+      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO ';
+      else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO ';
     }
     $w_tipo_vinc.=f($RS_Vinc,'protocolo');
   }
@@ -447,7 +447,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,0,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'desc');
+    $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'asc');
     if (count($RS)>0 && $l_ocorrencia=='S') {
       $i=0;
       foreach($RS as $row) {

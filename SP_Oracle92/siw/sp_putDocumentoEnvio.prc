@@ -25,20 +25,21 @@ create or replace procedure sp_putDocumentoEnvio
    w_chave         number(18) := null;
    w_chave_dem     number(18) := null;
    w_tramite       number(18);
-   w_sg_tramite    varchar2(2);
+   w_sg_tramite    siw_menu.sigla%type;
    w_retorno_unid  number(18) := null;
    w_pai           number(18) := null;
    w_parametro     pa_parametro%rowtype;
+   w_data          date := sysdate;
    
    cursor c_dados is
       -- cursor para recuperar o protocolo indicado e os juntados a ele
-      select a.sq_siw_solicitacao as chave 
-        from pa_documento               a
-             inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+      select a.sq_siw_solicitacao as chave, sigla as sg_tramite_atual
+        from pa_documento                 a
+             inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+               inner join siw_tramite     c on (b.sq_siw_tramite     = c.sq_siw_tramite)
        where a.sq_siw_solicitacao = p_chave
           or b.sq_solic_pai       = p_chave;
 begin
-   
    -- Recupera os parâmetros do módulo
    select a.* into w_parametro
      from pa_parametro        a 
@@ -59,6 +60,35 @@ begin
    End If;
    
   for crec in c_dados loop
+     -- Se o protocolo estiver arquivado setorialmente, desarquiva automaticamente
+     If crec.sg_tramite_atual = 'AS' Then
+        -- Coloca o protocolo em tramitação
+        select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+           from siw_tramite a
+          where a.sq_menu = p_menu
+            and a.ordem   = 2;
+        
+        -- Atualiza a tabela de solicitações
+        Update siw_solicitacao set sq_siw_tramite = w_tramite Where sq_siw_solicitacao = crec.chave;
+
+        -- Atualiza a tabela de documentos
+        update pa_documento set observacao_setorial = null, data_setorial = null where sq_siw_solicitacao = crec.chave;
+
+         -- Registra os dados do desarquivamento
+         Insert Into siw_solic_log 
+             (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
+              sq_siw_tramite,            data,               devolucao, 
+              observacao
+             )
+         (Select 
+              sq_siw_solic_log.nextval,  p_chave,            p_pessoa,
+              a.sq_siw_tramite,          w_data,             'N',
+              'Desarquivamento setorial automático.'
+             from siw_solicitacao a
+            where a.sq_siw_solicitacao = crec.chave
+         );
+     End If;
+     
      -- Recupera o trâmite para o qual está sendo enviada a solicitação
      If w_sg_tramite = 'CI' Then
         select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
@@ -77,7 +107,7 @@ begin
             )
         (Select 
              w_chave,                   crec.chave,         p_pessoa,
-             p_tramite,                 sysdate,            'N',
+             p_tramite,                 w_data,             'N',
              'Envio da fase "'||a.nome||'" '||' para a fase "'||b.nome||'".'
             from siw_tramite a,
                  siw_tramite b
@@ -117,14 +147,14 @@ begin
         ano_guia,                recebedor)
      values
        (w_chave_dem,             crec.chave,                 w_chave,                   p_tipo_despacho,            p_interno, 
-        p_unidade_origem,        p_unidade_destino,          p_pessoa_destino,          p_pessoa,                   sysdate,
-        p_despacho,              sysdate,                    p_emite_aviso,             coalesce(p_dias_aviso,0),   p_retorno_limite,
+        p_unidade_origem,        p_unidade_destino,          p_pessoa_destino,          p_pessoa,                   w_data,
+        p_despacho,              w_data,                     p_emite_aviso,             coalesce(p_dias_aviso,0),   p_retorno_limite,
         w_retorno_unid,          p_pessoa_externa,           p_unidade_externa,         'N',                        p_nu_guia,
         p_ano_guia,              case p_unidade_origem when p_unidade_destino then p_pessoa else null end);
      
      If p_unidade_origem = p_unidade_destino Then
         -- Se o envio for para a própria unidade, não emite guia de tramitação e já registra o recebimento
-        update pa_documento_log set recebimento = sysdate where sq_documento_log = w_chave_dem;
+        update pa_documento_log set recebimento = w_data where sq_documento_log = w_chave_dem;
         p_nu_guia          := null;
         p_ano_guia         := null;
         p_unidade_autuacao := null;

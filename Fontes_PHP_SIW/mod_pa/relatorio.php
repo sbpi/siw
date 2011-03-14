@@ -624,23 +624,35 @@ function Etiqueta() {
         }
         ShowHTML('</h1></td>');
       }
+		  if (nvl(f($RS,'protocolo_siw'),'')!='') {
+		    $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
+		    if (nvl(f($RS,'copias'),0)>0) {
+		      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
+		      else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+		    } else {
+		      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO: ';
+		      else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO: ';
+		    }
+		    $w_tipo_vinc.=f($RS_Vinc,'protocolo_completo');
+		    ShowHTML('      <tr><td nowrap><font size=2><b>'.$w_tipo_vinc.'</b></font></td>');
+		  }
       ShowHTML('<td rowspan="3" width="5%">&nbsp;</td>');
       if (nvl(f($RS, 'processo'), '') == 'S')
         ShowHTML('        <tr><td nowrap><font size=2><b>AUTUAÇÃO: </b>' . formataDataEdicao(f($RS, 'data_autuacao')) . '</font>');
       else
         ShowHTML('        <tr><td align="left" nowrap><font size=2><b>REGISTRO: </b>' . formataDataEdicao(f($RS, 'inclusao')) . '</font>');
       if (nvl(f($RS, 'nm_pessoa_interes'), '') != '') {
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>' . upper(f($RS, 'nm_pessoa_interes')) . '</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_pessoa_interes')) . '</font>');
       } elseif (nvl(f($RS, 'processo'), '') == 'S') {
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>' . upper(f($RS, 'nm_unidade_autua')) . '</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_unidade_autua')) . '</font>');
       } else {
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>' . upper(f($RS, 'nm_origem')) . '</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(nvl(f($RS, 'nm_origem'),'---')) . '</font>');
       }
       ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>' . f($RS, 'cd_assunto') . ' - ' . upper(f($RS, 'ds_assunto')) . '</font>');
       if (strlen(Nvl(f($RS, 'descricao'), '-')) > 1000)
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . substr(upper(nvl(f($RS, 'descricao'), '---')), 0, 1000) . '...</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b>' . substr(upper(nvl(f($RS, 'descricao'), '---')), 0, 1000) . '...</font>');
       else
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . upper(nvl(f($RS, 'descricao'), '---')) . '</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b>' . upper(nvl(f($RS, 'descricao'), '---')) . '</font>');
       ShowHTML('    <tr><td colspan=2 align="right">' . geraCB(str_replace('/', '', str_replace('-', '', str_replace('.', '', f($RS, 'protocolo_completo'))))));
       ShowHTML('  </table>');
       ShowHTML('<br></td></tr>');
@@ -806,22 +818,35 @@ function EmitirEtiqueta() {
     }
     ShowHTML('</h2></td>');
   }
+  if (nvl(f($RS,'protocolo_siw'),'')!='') {
+    $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
+    if (nvl(f($RS,'copias'),0)>0) {
+      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
+      else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+    } else {
+      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO: ';
+      else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO: ';
+    }
+    $w_tipo_vinc.=f($RS_Vinc,'protocolo_completo');
+    ShowHTML('      <tr><td nowrap><font size=2><b>'.$w_tipo_vinc.'</b></font></td>');
+  }
+  ShowHTML('<td rowspan="3" width="5%">&nbsp;</td>');
   if (nvl(f($RS, 'processo'), '') == 'S')
-    ShowHTML('    <tr><td align="left" nowrap><font size=2><b>AUTUAÇÃO: </b>' . formataDataEdicao(f($RS, 'data_autuacao')) . '</font>');
+    ShowHTML('        <tr><td nowrap><font size=2><b>AUTUAÇÃO: </b>' . formataDataEdicao(f($RS, 'data_autuacao')) . '</font>');
   else
-    ShowHTML('        <tr><td nowrap><font size=2><b>REGISTRO: </b>' . formataDataEdicao(f($RS, 'inclusao')) . '</font>');
+    ShowHTML('        <tr><td align="left" nowrap><font size=2><b>REGISTRO: </b>' . formataDataEdicao(f($RS, 'inclusao')) . '</font>');
   if (nvl(f($RS, 'nm_pessoa_interes'), '') != '') {
-    ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>' . upper(f($RS, 'nm_pessoa_interes')) . '</font>');
+    ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_pessoa_interes')) . '</font>');
   } elseif (nvl(f($RS, 'processo'), '') == 'S') {
-    ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>' . upper(f($RS, 'nm_unidade_autua')) . '</font>');
+    ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_unidade_autua')) . '</font>');
   } else {
-    ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>' . upper(f($RS, 'nm_origem')) . '</font>');
+    ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(nvl(f($RS, 'nm_origem'),'---')) . '</font>');
   }
   ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>' . f($RS, 'cd_assunto') . ' - ' . upper(f($RS, 'ds_assunto')) . '</font>');
-  if (strlen(Nvl(f($RS, 'descricao'), '-')) > 100)
-    ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . substr(upper(nvl(f($RS, 'descricao'), '---')), 0, 100) . '...</font>');
+  if (strlen(Nvl(f($RS, 'descricao'), '-')) > 1000)
+    ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b>' . substr(upper(nvl(f($RS, 'descricao'), '---')), 0, 1000) . '...</font>');
   else
-    ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>' . upper(nvl(f($RS, 'descricao'), '---')) . '</font>');
+    ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b>' . upper(nvl(f($RS, 'descricao'), '---')) . '</font>');
   ShowHTML('    <tr><td colspan=2 align="right">' . geraCB(str_replace('/', '', str_replace('-', '', str_replace('.', '', f($RS, 'protocolo_completo'))))));
   ShowHTML('  </table>');
   ShowHTML('</td></tr>');

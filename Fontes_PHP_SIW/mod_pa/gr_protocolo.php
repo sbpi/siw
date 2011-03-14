@@ -227,7 +227,7 @@ function Gerencial() {
     } 
     if ($p_pais>'' || $p_regiao>'' || $p_cidade>'') {
       $w_linha++;
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',STR_PAD_LEFT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
     } 
     if ($p_prioridade>''){
       $w_linha++;

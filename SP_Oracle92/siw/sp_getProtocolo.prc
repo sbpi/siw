@@ -24,8 +24,22 @@ create or replace procedure sp_getProtocolo
     p_processo     in varchar2 default null,
     p_result       out sys_refcursor) is
     
-    w_filtro varchar2(10);
+    w_filtro    varchar2(10);
+    w_arq_set   varchar2(1) := 'N';
+    w_parametro pa_parametro%rowtype;
 begin
+   -- Recupera os parâmetros do módulo de  protocolo
+   select b.* into w_parametro
+     from siw_menu                a
+          inner join pa_parametro b on (a.sq_pessoa = b.cliente)
+    where a.sq_menu = p_menu;
+
+   If p_despacho is not null Then
+      If p_despacho = w_parametro.despacho_arqsetorial Then
+         w_arq_set := 'S';
+      End If;
+   End If;
+
    If p_prefixo is not null or p_numero is not null or p_ano is not null or
       p_empenho is not null or p_solicitante is not null or p_unidade is not null or 
       p_proponente is not null or p_assunto is not null or p_processo is not null or 
@@ -198,11 +212,11 @@ begin
          and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))
          and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
          and (p_unid_autua  is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
+         and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
          and (p_unid_posse  is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_chave       is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux   is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_nu_guia     is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
-         and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
          and (p_ini         is null or (p_ini         is not null and b.inicio between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
          and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c5.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c5.codigo = replace(p_cd_assunto,'#','')))))
@@ -273,6 +287,11 @@ begin
               )
              );
    Elsif p_restricao = 'PADTRAM' Then
+      If w_arq_set = 'S' Then
+         -- Se arquivamento setorial, libera crítica somente se o protocolo desejado for informado
+         If p_numero is not null and p_ano is not null Then w_filtro := 'true'; Else w_filtro := 'false'; End If;
+      End If;
+   
       -- Recupera guias de tramitação
       open p_result for
       select b.sq_siw_solicitacao, b.inicio, b.fim, b.sq_siw_tramite, b.sq_solic_pai, b.descricao,
@@ -344,7 +363,7 @@ begin
          and b.sq_solic_pai is null
          and (p_despacho   is null or (p_despacho    is not null and 
                                        ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and w_filtro = 'true'))) or 
-                                        (b4.ativo = 'N' and b4.sigla = 'AS' and w_filtro = 'true')
+                                        (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null and p_ano is not null)
                                        ) and
                                        ((p_despacho not in (a1.despacho_autuar,
                                                             a1.despacho_anexar,
@@ -368,15 +387,16 @@ begin
               )
              )
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
-         and (w_filtro = 'true' or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
-         and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-         and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
-         and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
-         and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero and c.ano = p_ano))
-         and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
-         and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
-         and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
+         and (w_filtro      = 'true' or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
+         and (p_chave       is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
+         and (p_chave_aux   is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
+         and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
+         and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero and c.ano = p_ano))
+         and (p_nu_guia     is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
+         and (p_unid_autua  is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
+         and (p_unid_posse  is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
+         and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
          and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
          and (p_assunto     is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
@@ -472,6 +492,7 @@ begin
          and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))
          and (p_unid_autua  is null or (p_unid_autua  is not null and d.unidade_origem     = p_unid_autua))
          and (p_unidade     is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
+         and (p_unid_posse  is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
          and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))

@@ -1507,10 +1507,10 @@ begin
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
                 case when da.sq_siw_solicitacao is not null and d.copias is not null
-                     then da.numero_documento||'/'||substr(da.ano,3)||'('||d.copias||')'
-                     else d.numero_documento||'/'||substr(d.ano,3) 
+                     then to_char(da.numero_documento)||'/'||substr(to_char(da.ano),3)||'('||to_char(d.copias)||')'
+                     else to_char(d.numero_documento)||'/'||substr(to_char(d.ano),3) 
                 end as protocolo,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo_completo,
+                to_char(d.prefixo)||'.'||substr(1000000+to_char(d.numero_documento),2,6)||'/'||to_char(d.ano)||'-'||substr(100+to_char(d.digito),2,2) as protocolo_completo,
                 case d.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo_protocolo,
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
