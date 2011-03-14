@@ -1456,25 +1456,25 @@ function Renumera() {
   global $w_Disabled;
 
   // Recupera as variáveis utilizadas na filtragem
-  $w_protocolo = $_REQUEST['w_protocolo'];
-  $w_protocolo_ant = $_REQUEST['w_protocolo_ant'];
-  $w_prefixo = nvl($_REQUEST['w_prefixo'], substr($w_protocolo, 0, 5));
-  $w_numero = $_REQUEST['w_numero'];
-  $w_ano = nvl($_REQUEST['w_ano'], substr($w_protocolo, 13, 4));
+  $w_prefixo_ant    = $_REQUEST['w_prefixo_ant'];
+  $w_numero_ant     = $_REQUEST['w_numero_ant'];
+  $w_ano_ant        = $_REQUEST['w_ano_ant'];
+  
+  $w_prefixo        = nvl($_REQUEST['w_prefixo'], $w_prefixo_ant);
+  $w_numero         = $_REQUEST['w_numero'];
+  $w_ano            = nvl($_REQUEST['w_ano'], $w_ano_ant);
 
   Cabecalho();
   head();
   ScriptOpen('JavaScript');
-  FormataProtocolo();
-  ShowHTML('function carregaDados(p_campo) { ');
-  ShowHTML('  if (document.Form.w_protocolo_ant.value!=p_campo.value) {');
-  ShowHTML('    document.Form.w_prefixo.value=p_campo.value.substring(0,5);');
-  ShowHTML('    document.Form.w_ano.value=p_campo.value.substring(13,17);');
-  ShowHTML('    document.Form.w_protocolo_ant.value=p_campo.value;');
+  ShowHTML('  function carregaDados () {');
+  ShowHTML('    if ($("#w_prefixo_ant").val()!="") $("#w_prefixo").val($("#w_prefixo_ant").val());');
+  ShowHTML('    if ($("#w_ano_ant").val()!="") $("#w_ano").val($("#w_ano_ant").val());');
   ShowHTML('  }');
-  ShowHTML('}');
   ValidateOpen('Validacao');
-  Validate('w_protocolo', 'Número de protocolo', '1', '1', '20', '20', '', '0123456789./-');
+  Validate('w_prefixo_ant', 'Prefixo atual', '1', '1', '5', '5', '', '0123456789');
+  Validate('w_numero_ant', 'Número atual', '1', '1', '1', '6', '', '0123456789');
+  Validate('w_ano_ant', 'Ano atual', '1', '1', '4', '4', '', '0123456789');
   Validate('w_prefixo', 'Prefixo', '1', '1', '5', '5', '', '0123456789');
   Validate('w_numero', 'Número', '1', '1', '1', '6', '', '0123456789');
   Validate('w_ano', 'Ano', '1', '1', '4', '4', '', '0123456789');
@@ -1489,8 +1489,8 @@ function Renumera() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  if (nvl($w_protocolo, '') == '') {
-    BodyOpen('onLoad=\'document.Form.w_protocolo.focus()\';');
+  if (nvl($w_prefixo_ant, '') == '') {
+    BodyOpen('onLoad=\'document.Form.w_prefixo_ant.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_prefixo.focus()\';');
   }
@@ -1506,15 +1506,17 @@ function Renumera() {
   ShowHTML('  <li>As regras para a renumeração de protocolo são:<ul><li>O ano do novo protocolo não pode ser superior ao ano corrente;<li>O protocolo atual deve existir;<li>O novo protocolo não pode estar associado a um documento/processo existente.</ul>');
   ShowHTML('  </ul></b></font></td>');
   AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
-  ShowHTML('<INPUT type="hidden" name="w_protocolo_ant" value="' . $w_protocolo_ant . '">');
   ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
   ShowHTML('    <table width="97%" border="0">');
   ShowHTML('      <tr valign="top">');
-  ShowHTML('        <td><b><u>P</u>rotocolo atual:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="' . $w_protocolo . '" onKeyDown="FormataProtocolo(this,event);" onBlur="carregaDados(this);"></td>');
+  ShowHTML('        <td><b >Protocolo atual:<br>');
+  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" id="w_prefixo_ant" name="w_prefixo_ant" size="5" maxlength="5" value="' . $w_prefixo_ant . '" onBlur="carregaDados();">.');
+  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" id="w_numero_ant" style="text-align:right;" name="w_numero_ant" size="6" maxlength="6" value="' . $w_numero_ant . '">/');
+  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" id="w_ano_ant" name="w_ano_ant" size="4" maxlength="4" value="' . $w_ano_ant . '" onBlur="carregaDados();"></td>');
   ShowHTML('        <td><b>Novo protocolo:<br>');
-  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" name="w_prefixo" size="5" maxlength="5" value="' . $w_prefixo . '">.');
-  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" name="w_numero" size="6" maxlength="6" value="' . $w_numero . '">/');
-  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" name="w_ano" size="4" maxlength="4" value="' . $w_ano . '"></td>');
+  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" id="w_prefixo" name="w_prefixo" size="5" maxlength="5" value="' . $w_prefixo . '">.');
+  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" id="w_numero" name="w_numero" style="text-align:right;" size="6" maxlength="6" value="' . $w_numero . '">/');
+  ShowHTML('            <INPUT ' . $w_Disabled . ' class="sti" type="text" id="w_ano" name="w_ano" size="4" maxlength="4" value="' . $w_ano . '"></td>');
   ShowHTML('      <tr valign="top"><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
   ShowHTML('      <tr><td align="center" colspan="2"><hr>');
   ShowHTML('      <tr><td align="center" colspan="2"><input class="stb" type="submit" name="Botao" value="Gravar"></td></tr>');
@@ -1894,20 +1896,17 @@ function Grava() {
         // Verifica se o protocolo atual existe
         $sql = new db_getProtocolo;
         $RS = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, 'EXISTE', null, null,
-                        Nvl(substr($_REQUEST['w_protocolo'], 0, 5), ''), Nvl(substr($_REQUEST['w_protocolo'], 6, 6), ''),
-                        Nvl(substr($_REQUEST['w_protocolo'], 13, 4), ''), null, null, null, null, null, null, null, 
+                        Nvl($_REQUEST['w_prefixo_ant'], ''), Nvl($_REQUEST['w_numero_ant'], ''),
+                        Nvl($_REQUEST['w_ano_ant'], ''), null, null, null, null, null, null, null, 
                         null, null, null, null, null, null, null, null);
         if (count($RS) == 0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Protocolo atual não encontrado!\');');
           ScriptClose();
-          retornaFormulario('w_protocolo');
+          retornaFormulario('w_prefixo_ant');
           break;
         } else {
-          foreach ($RS as $row) {
-            $RS = $row;
-            break;
-          }
+          foreach ($RS as $row) { $RS = $row; break; }
           $w_chave = f($RS, 'sq_siw_solicitacao');
         }
         // Verifica se o novo protocolo existe
@@ -1931,13 +1930,10 @@ function Grava() {
         $RS = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, 'EXISTE', null, null,
                         Nvl($_REQUEST['w_prefixo'], ''), Nvl($_REQUEST['w_numero'], ''), Nvl($_REQUEST['w_ano'], ''),
                         null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        foreach ($RS as $row) {
-          $RS = $row;
-          break;
-        }
+        foreach ($RS as $row) { $RS = $row; break; }
 
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Protocolo ' . $_REQUEST['w_protocolo'] . ' renumerado com sucesso para ' . f($RS, 'protocolo') . '!\');');
+        ShowHTML('  alert("Protocolo ' . $_REQUEST['w_prefixo_ant'].'.'.$_REQUEST['w_numero_ant'].'/'.$_REQUEST['w_ano_ant'] . ' renumerado com sucesso para ' . f($RS, 'protocolo') . '!");');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();
       } else {
