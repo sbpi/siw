@@ -193,6 +193,13 @@ $p_caixa            = $_REQUEST['p_caixa'];
 $p_unidade          = $_REQUEST['p_unidade'];
 $p_tipo_despacho    = nvl($_REQUEST['w_tipo_despacho'], $_REQUEST['p_tipo_despacho']);
 $p_detalhamento     = $_REQUEST['p_detalhamento'];
+if (nvl($p_classif, '') != '') {
+  $sql = new db_getAssunto_PA;
+  $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
+  foreach ($RS_Assunto as $row) { $RS_Assunto = $row; break; }
+  $p_sq_acao_ppa = f($row,'codigo');
+}
+    
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $sql = new db_getLinkSubMenu;

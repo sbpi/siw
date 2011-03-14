@@ -169,10 +169,17 @@ $p_ano_guia         = $_REQUEST['p_ano_guia'];
 $p_ini              = $_REQUEST['p_ini'];
 $p_fim              = $_REQUEST['p_fim'];
 $p_classif          = $_REQUEST['p_classif'];
+$p_classif_nm       = substr($_REQUEST['p_classif_nm'],0,strpos($_REQUEST['p_classif_nm'],' '));
 $p_caixa            = $_REQUEST['p_caixa'];
 $p_unidade          = $_REQUEST['p_unidade'];
 $p_tipo_despacho    = nvl($_REQUEST['w_tipo_despacho'], $_REQUEST['p_tipo_despacho']);
 $p_detalhamento     = $_REQUEST['p_detalhamento'];
+if (nvl($p_classif, '') != '') {
+  $sql = new db_getAssunto_PA;
+  $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
+  foreach ($RS_Assunto as $row) { $RS_Assunto = $row; break; }
+  $p_sq_acao_ppa = f($row,'codigo');
+}
 
 $sql = new db_getMenuData;
 $RS_Menu = $sql->getInstanceOf($dbms, $w_menu);
@@ -229,16 +236,6 @@ function Inicial() {
   }
 
   if ($O == 'L') {
-    if (nvl($p_classif, '') != '') {
-      $sql = new db_getAssunto_PA;
-      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $p_classif, null, null, null, null, null, null, null, null, 'REGISTROS');
-      foreach ($RS_Assunto as $row) {
-        $RS_Assunto = $row;
-        break;
-      }
-      $p_sq_acao_ppa = f($row,'codigo');
-    }
-
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo;
     $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, $p_prefixo, $p_numero, $p_ano, 
@@ -1084,15 +1081,6 @@ function Juntar() {
   }
 
   if ($O == 'L') {
-    if (nvl($w_assunto, '') != '') {
-      $sql = new db_getAssunto_PA;
-      $RS_Assunto = $sql->getInstanceOf($dbms, $w_cliente, $w_assunto, null, null, null, null, null, null, null, null, 'REGISTROS');
-      foreach ($RS_Assunto as $row) {
-        $RS_Assunto = $row;
-        break;
-      }
-      $p_sq_acao_ppa = f($row, 'codigo');
-    }
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo;
     $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, $p_prefixo, $p_numero, $p_ano, 

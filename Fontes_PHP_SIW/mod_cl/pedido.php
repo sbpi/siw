@@ -2052,14 +2052,11 @@ function Concluir() {
   formatavalor();
   ValidateOpen('Validacao');
   if ($w_fundo_fixo=='N') {
-    if ($w_pa=='S') {
-      Validate('w_protocolo_nm','Número do protocolo','hidden','1','20','20','','0123456789./-');
-    }
-    Validate('w_nota_conclusao','Nota de conclusão','1','','1','500','1','1');
-  } else {
-	  if ($w_cliente == 10135 && $w_pa == 'S') {
-	    //Se ABDI, vincula a compra com o módulo de protocolo
+    if ($w_pa == 'S') {
+      //Vincula a compra com o módulo de protocolo
       Validate('w_nota_conclusao','Detalhamento do assunto','1','1','1','2000','1','1');
+    } else {
+      Validate('w_nota_conclusao','Nota de conclusão','1','','1','500','1','1');
     }
   }
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -2092,24 +2089,18 @@ function Concluir() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="100%" border="0">');
   if ($w_fundo_fixo=='N') {
-    if ($w_pa=='S') {
-      SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo da compra.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
-    }
-    ShowHTML('    <tr><td colspan=4><b><u>N</u>ota de conclusão:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se desejar, registre observações a respeito desta solicitação.">'.$w_nota_conclusao.'</TEXTAREA></td>');
-  } else {
-    if ($w_cliente == 10135 && $w_pa == 'S') {
-	    //Se ABDI, vincula a viagem com o módulo de protocolo
-	    ShowHTML('    <tr><td colspan=3><font size=2><b>DADOS PARA GERAÇÃO DO PROTOCOLO</b></font></td></tr>');
-	    ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-	    ShowHTML('    <tr valign="top"><td width="30%"><b>Detalhamento do assunto:</b><td title="Descreva de forma objetiva o conteúdo do documento."><textarea ' . $w_Disabled . ' accesskey="O" name="w_nota_conclusao" class="STI" ROWS=5 cols=75>' . $w_nota_conclusao . '</TEXTAREA></td>');
-      ShowHTML('    <tr><td><b><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    if ($w_pa == 'S') {
+      //Se ABDI, vincula a viagem com o módulo de protocolo
+      ShowHTML('    <tr><td colspan=3><font size=2><b>DADOS PARA GERAÇÃO DO PROTOCOLO</b></font></td></tr>');
+      ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('    <tr valign="top"><td width="30%"><b>Detalhamento do assunto:</b><td title="Descreva de forma objetiva o conteúdo do documento."><textarea ' . $w_Disabled . ' accesskey="O" name="w_nota_conclusao" class="STI" ROWS=5 cols=75>' . $w_nota_conclusao . '</TEXTAREA></td>');
     } else {
-	    ShowHTML('<INPUT type="hidden" name="w_nota_conclusao" value="'.$w_nota_conclusao.'">');
-      ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('    <tr><td colspan=4><b><u>N</u>ota de conclusão:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se desejar, registre observações a respeito desta solicitação.">'.$w_nota_conclusao.'</TEXTAREA></td>');
     }
   }
+  ShowHTML('    <tr><td width="30%"><b><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Gravar">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
