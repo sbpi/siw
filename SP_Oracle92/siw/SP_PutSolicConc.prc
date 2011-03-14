@@ -290,7 +290,7 @@ begin
       values (w_chave_dem, w_chave_arq);
    End If;
 
-   If w_cliente = 10135 and w_mod_pa = 'S' Then
+   If w_mod_pa = 'S' and coalesce(p_fundo_fixo,'S') = 'N' Then
       for crec in c_protocolo loop
           -- Cria o documento no sistema de protocolo
           sp_putdocumentogeral(p_operacao           => case when crec.protocolo_siw is null then 'I' else 'A' end,

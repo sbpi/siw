@@ -398,7 +398,7 @@ begin
          and (p_unid_posse  is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_ini         is null or (p_ini         is not null and b.inicio             between p_ini and p_fim))
          and (p_empenho     is null or (p_empenho     is not null and acentos(c.numero_original) like '%'||acentos(p_empenho)||'%'))
-         and (p_cd_assunto  is null or (p_cd_assunto  is not null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
+         and (p_cd_assunto  is null or (p_cd_assunto  is not null and b.sq_solic_pai is null and ((instr(p_cd_assunto,'#') = 0 and c9.codigo like p_cd_assunto||'%') or (instr(p_cd_assunto,'#') > 0 and c9.codigo = replace(p_cd_assunto,'#','')))))
          and (p_assunto     is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
                                                                        0 < (select count(*)
                                                                              from pa_documento_log x

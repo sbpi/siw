@@ -52,7 +52,8 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
                   else null 
              end as intermediario,
              case f.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_final_anos) else f.descricao end as final
-        from pa_documento                        a
+        from pa_caixa                            a3
+             inner     join pa_documento         a  on (a3.sq_caixa            =  a.sq_caixa)
              inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
                inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
              inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')
@@ -60,7 +61,7 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
                  left  join pa_tipo_guarda       d on (c.fase_corrente_guarda = d.sq_tipo_guarda)
                  left  join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda)
                  left  join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
-       where a.sq_caixa      = p_chave
+       where a3.sq_caixa     = p_chave
          and a1.sq_solic_pai is null
       group by a.data_central, c.fase_intermed_anos, c.fase_final_anos, e.sigla, e.descricao, f.sigla, f.descricao;
 begin

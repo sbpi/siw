@@ -2,7 +2,7 @@ create or replace trigger TG_PA_DOCUMENTO_IN_UP
   before insert or update on pa_documento  
   for each row
 declare
-  w_chave varchar2(30) := null;
+   w_chave         varchar2(30) := null;
 begin
   If INSERTING Then
      PA_CriaParametro(:new.unidade_autuacao, :new.data_recebimento, w_chave);
