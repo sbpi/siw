@@ -45,9 +45,9 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
      
     // Identificação do lançamento
     $l_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    if(nvl(f($RS,'processo'),'')!='') {
+    if(nvl(f($RS,'processo'),'')!='' || nvl(f($RS,'protocolo_siw'),'')!='') {
       $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
-      if ($w_embed!='WORD' && f($RS,'protocolo_siw')>'') {
+      if ($w_embed!='WORD' && nvl(f($RS,'protocolo_siw'),'')!='') {
         $l_html.=chr(13).'        <td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
       } else {
         $l_html.=chr(13).'        <td>'.f($RS,'processo');
@@ -80,8 +80,8 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td><td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
 
     }
-    $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Pagamento por fundo fixo?<b></td><td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
     // Dados da conclusão da solicitação, se ela estiver nessa situação
     if (nvl(f($RS,'nota_conclusao'),'')!='') {

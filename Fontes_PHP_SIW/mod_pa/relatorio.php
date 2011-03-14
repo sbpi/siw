@@ -485,6 +485,13 @@ function Etiqueta() {
   $p_prefixo        = $_REQUEST['p_prefixo'];
   $p_numero         = $_REQUEST['p_numero'];
   $p_ano            = $_REQUEST['p_ano'];
+  
+  if (nvl($_REQUEST['p_protocolo'],'')!='' && nvl($p_numero,'')=='') {
+    $l_protocolo = explode('/',$_REQUEST['p_protocolo']);
+    $p_numero = $l_protocolo[0];
+    $p_ano    = $l_protocolo[1];
+    if (strlen($p_ano)==2) $p_ano = '20'.$p_ano;
+  }
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
@@ -641,7 +648,7 @@ function Etiqueta() {
         ShowHTML('        <tr><td nowrap><font size=2><b>AUTUAÇÃO: </b>' . formataDataEdicao(f($RS, 'data_autuacao')) . '</font>');
       else
         ShowHTML('        <tr><td align="left" nowrap><font size=2><b>REGISTRO: </b>' . formataDataEdicao(f($RS, 'inclusao')) . '</font>');
-      if (nvl(f($RS, 'nm_pessoa_interes'), '') != '') {
+      if (nvl(f($RS, 'nm_pessoa_interes'), '') != '' && f($RS, 'interno')=='N') {
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_pessoa_interes')) . '</font>');
       } elseif (nvl(f($RS, 'processo'), '') == 'S') {
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_unidade_autua')) . '</font>');
@@ -835,7 +842,7 @@ function EmitirEtiqueta() {
     ShowHTML('        <tr><td nowrap><font size=2><b>AUTUAÇÃO: </b>' . formataDataEdicao(f($RS, 'data_autuacao')) . '</font>');
   else
     ShowHTML('        <tr><td align="left" nowrap><font size=2><b>REGISTRO: </b>' . formataDataEdicao(f($RS, 'inclusao')) . '</font>');
-  if (nvl(f($RS, 'nm_pessoa_interes'), '') != '') {
+  if (nvl(f($RS, 'nm_pessoa_interes'), '') != '' && f($RS, 'interno')=='N') {
     ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_pessoa_interes')) . '</font>');
   } elseif (nvl(f($RS, 'processo'), '') == 'S') {
     ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b>' . upper(f($RS, 'nm_unidade_autua')) . '</font>');

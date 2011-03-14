@@ -32,21 +32,24 @@ create or replace procedure SP_PutDemandaConc
             d.sq_unid_executora, 'N' as processo, 'N' as circular,
             e.sq_pessoa,
             f.sq_siw_tramite,
-            g.despacho_arqsetorial
-       from pa_especie_documento      a
-            inner   join siw_menu     b on (a.cliente            = b.sq_pessoa and
-                                            b.sigla              = 'PADCAD'
-                                           )
-              inner join siw_tramite  f on (b.sq_menu            = f.sq_menu and
-                                            f.ordem              = 1
-                                           )
-            inner   join pa_parametro g on (a.cliente            = g.cliente),
-            siw_solicitacao           c
-            inner   join siw_menu     d on (c.sq_menu            = d.sq_menu)
-            inner   join pd_missao    e on (c.sq_siw_solicitacao = e.sq_siw_solicitacao)
+            g.despacho_arqsetorial as novo_tramite, h.sigla as sg_despacho,
+            'arquivamento setorial' as nm_novo_tramite
+       from pa_especie_documento          a
+            inner   join siw_menu         b on (a.cliente              = b.sq_pessoa and
+                                                b.sigla                = 'PADCAD'
+                                               )
+              inner join siw_tramite      f on (b.sq_menu              = f.sq_menu and
+                                                f.ordem                = 1
+                                               )
+            inner   join pa_parametro     g on (a.cliente              = g.cliente)
+              inner join pa_tipo_despacho h on (g.despacho_arqsetorial = h.sq_tipo_despacho),
+            siw_solicitacao               c
+            inner   join siw_menu         d on (c.sq_menu              = d.sq_menu)
+            inner   join pd_missao        e on (c.sq_siw_solicitacao   = e.sq_siw_solicitacao)
       where a.cliente            = w_cliente
         and a.sigla              = 'SOVI'
         and c.sq_siw_solicitacao = p_chave;
+
 begin
   -- Recupera o cliente e os dados da solicitação, do menu e do módulo
   select * into w_solic  from siw_solicitacao where sq_siw_solicitacao = p_chave;
@@ -155,11 +158,11 @@ begin
                                p_unidade_origem     => crec.sq_unid_executora,
                                p_unidade_destino    => crec.sq_unid_executora,
                                p_pessoa_destino     => null,
-                               p_tipo_despacho      => crec.despacho_arqsetorial,
+                               p_tipo_despacho      => crec.novo_tramite,
                                p_prefixo            => null,
                                p_numero             => null,
                                p_ano                => null,
-                               p_despacho           => 'Envio automatizado para arquivamento setorial.',
+                               p_despacho           => 'Envio automatizado para '||crec.nm_novo_tramite||'.',
                                p_emite_aviso        => 'N',
                                p_dias_aviso         => null,
                                p_retorno_limite     => null,
@@ -169,11 +172,13 @@ begin
                                p_ano_guia           => w_ano_guia,
                                p_unidade_autuacao   => w_unidade_guia
                               );
-          -- Executa arquivamento setorial
-          sp_putdocumentoarqset(p_chave             => w_chave_nova,
-                                p_usuario           => p_pessoa,
-                                p_observacao        => p_nota_conclusao
-                               );
+          If crec.sg_despacho = 'ARQUIVAR S' Then
+             -- Executa arquivamento setorial
+             sp_putdocumentoarqset(p_chave             => w_chave_nova,
+                                   p_usuario           => p_pessoa,
+                                   p_observacao        => p_nota_conclusao
+                                  );
+          End If;
           -- Vincula a viagem com o protocolo
           update siw_solicitacao set protocolo_siw = w_chave_nova where sq_siw_solicitacao = p_chave;
       end loop;

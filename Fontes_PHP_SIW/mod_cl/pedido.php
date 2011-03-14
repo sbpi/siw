@@ -190,7 +190,7 @@ if (f($RS_Menu,'ultimo_nivel')=='S') {
 
 // Verifica se o cliente tem o módulo de protocolo e arquivo
 $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
-if (count($RS)>0) $w_pa='S'; else $w_pa='N'; 
+if (count($RS)>0) $w_pa='S'; else $w_pa='N';
 
 // Recupera os parâmetros de funcionamento do módulo de compras
 $sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'CL',null);
@@ -2037,8 +2037,12 @@ function Concluir() {
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}  
-  $w_nota_conclusao = f($RS,'nota_conclusao');
+  $w_nota_conclusao = nvl(f($RS,'nota_conclusao'),f($RS,'justificativa'));
   $w_fundo_fixo     = f($RS,'fundo_fixo');
+  
+  if (nvl($w_troca,'')!='') {
+    $w_nota_conclusao = $_REQUEST['w_nota_conclusao'];
+  }
 
   Cabecalho();
   head();
@@ -2051,7 +2055,12 @@ function Concluir() {
     if ($w_pa=='S') {
       Validate('w_protocolo_nm','Número do protocolo','hidden','1','20','20','','0123456789./-');
     }
-    Validate('w_nota_conclusao','Nota de conclusão','1','','','500','1','1');
+    Validate('w_nota_conclusao','Nota de conclusão','1','','1','500','1','1');
+  } else {
+	  if ($w_cliente == 10135 && $w_pa == 'S') {
+	    //Se ABDI, vincula a compra com o módulo de protocolo
+      Validate('w_nota_conclusao','Detalhamento do assunto','1','1','1','2000','1','1');
+    }
   }
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2088,9 +2097,17 @@ function Concluir() {
     }
     ShowHTML('    <tr><td colspan=4><b><u>N</u>ota de conclusão:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se desejar, registre observações a respeito desta solicitação.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   } else {
-    ShowHTML('<INPUT type="hidden" name="w_nota_conclusao" value="'.$w_nota_conclusao.'">');
+    if ($w_cliente == 10135 && $w_pa == 'S') {
+	    //Se ABDI, vincula a viagem com o módulo de protocolo
+	    ShowHTML('    <tr><td colspan=3><font size=2><b>DADOS PARA GERAÇÃO DO PROTOCOLO</b></font></td></tr>');
+	    ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+	    ShowHTML('    <tr valign="top"><td width="30%"><b>Detalhamento do assunto:</b><td title="Descreva de forma objetiva o conteúdo do documento."><textarea ' . $w_Disabled . ' accesskey="O" name="w_nota_conclusao" class="STI" ROWS=5 cols=75>' . $w_nota_conclusao . '</TEXTAREA></td>');
+      ShowHTML('    <tr><td><b><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    } else {
+	    ShowHTML('<INPUT type="hidden" name="w_nota_conclusao" value="'.$w_nota_conclusao.'">');
+      ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    }
   }
-  ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');

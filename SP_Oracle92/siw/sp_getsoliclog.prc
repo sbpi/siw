@@ -545,7 +545,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_documento_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
+            select b.sq_documento_log as chave_log, b.sq_documento_log*100 as sq_siw_solic_log, 0, b.data_inclusao, 
                    case when b.resumo is null
                         then b1.nome
                         else case b1.sq_tipo_despacho 

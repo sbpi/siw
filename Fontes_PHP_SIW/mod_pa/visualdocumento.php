@@ -447,7 +447,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$l_chave,null,0,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'asc');
+    $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'desc');
     if (count($RS)>0 && $l_ocorrencia=='S') {
       $i=0;
       foreach($RS as $row) {

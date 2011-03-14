@@ -18,23 +18,29 @@ create or replace procedure SP_PutSolicConc
     p_enquadramento       in number    default null,
     p_fundo_fixo          in varchar2  default null
    ) is
-   i               number(18);
-   w_chave_dem     number(18) := null;
-   w_chave_arq     number(18) := null;
-   w_menu          siw_menu%rowtype;
-   w_menu_lic      siw_menu%rowtype;
-   w_sg_modulo     siw_modulo.sigla%type;
-   w_sg_menu       siw_menu.sigla%type;
-   w_solic         siw_solicitacao%rowtype;
-   w_pedido        cl_solicitacao%rowtype;
-   w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
-   w_valor         siw_solicitacao.valor%type;
-   w_rubrica       number(18);
-   w_lancamento    number(18);
-   w_sq_financ     number(18)   := null;
-   w_cd_financ     varchar2(60) := null;
-   w_sq_doc        number(18)   := null;
-   w_operacao      varchar2(1);
+   i                number(18);
+   w_chave_dem      number(18) := null;
+   w_chave_arq      number(18) := null;
+   w_cliente        siw_menu.sq_pessoa%type;
+   w_menu           siw_menu%rowtype;
+   w_menu_lic       siw_menu%rowtype;
+   w_sg_modulo      siw_modulo.sigla%type;
+   w_sg_menu        siw_menu.sigla%type;
+   w_solic          siw_solicitacao%rowtype;
+   w_pedido         cl_solicitacao%rowtype;
+   w_chave_nova     siw_solicitacao.sq_siw_solicitacao%type;
+   w_valor          siw_solicitacao.valor%type;
+   w_rubrica        number(18);
+   w_lancamento     number(18);
+   w_sq_financ      number(18)   := null;
+   w_cd_financ      varchar2(60) := null;
+   w_sq_doc         number(18)   := null;
+   w_operacao       varchar2(1);
+   w_mod_pa         varchar2(1);
+   w_codigo_interno varchar2(60);
+   w_nu_guia        pa_documento_log.nu_guia%type;
+   w_ano_guia       pa_documento_log.ano_guia%type;
+   w_unidade_guia   number(18);
    
    cursor c_vencedor is
        select x.*
@@ -150,6 +156,33 @@ create or replace procedure SP_PutSolicConc
                                                         )
                  inner join cl_material           a5 on (a3.sq_material               = a5.sq_material)
        where a.sq_siw_solicitacao = p_chave;
+
+   cursor c_protocolo is
+     select a.sq_especie_documento, a.sigla, a.sq_assunto, b.sq_menu, b.sq_unid_executora, 
+            c.protocolo_siw, c.codigo_interno, trunc(c.inclusao) as inclusao, 
+            p_nota_conclusao as descricao, 'N' as processo, 'N' as circular,
+            c.solicitante as sq_pessoa, c.sq_unidade,
+            f.sq_siw_tramite,
+            g.despacho_autuar as novo_tramite, h.sigla as sg_despacho,
+            'autuação de processo' as nm_novo_tramite
+       from pa_especie_documento          a
+            inner   join siw_menu         b on (a.cliente              = b.sq_pessoa and
+                                                b.sigla                = 'PADCAD'
+                                               )
+              inner join siw_tramite      f on (b.sq_menu              = f.sq_menu and
+                                                f.ordem                = 1
+                                               )
+            inner   join pa_parametro     g on (a.cliente              = g.cliente)
+              inner join pa_tipo_despacho h on (g.despacho_autuar      = h.sq_tipo_despacho),
+            siw_solicitacao               c
+            inner   join siw_menu         d on (c.sq_menu              = d.sq_menu and
+                                                d.sigla                = 'CLPCCAD'
+                                               )
+            inner   join cl_solicitacao   e on (c.sq_siw_solicitacao   = e.sq_siw_solicitacao)
+      where a.cliente            = w_cliente
+        and a.sigla              = 'SOCS'
+        and c.sq_siw_solicitacao = p_chave;
+
 begin
    -- Recupera o módulo da solicitação
    select b.sigla, c.sigla into w_sg_menu, w_sg_modulo
@@ -157,6 +190,18 @@ begin
           inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
             inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
     where a.sq_siw_solicitacao = p_chave;
+    
+   -- Recupera os dados do serviço
+   select * into w_menu from siw_menu where sq_menu = p_menu;
+   w_cliente := w_menu.sq_pessoa;
+   
+   -- Verifica se o cliente tem o módulo de protocolo e arquivo contratado
+   select case count(*) when 0 then 'N' else 'S' end
+     into w_mod_pa
+     from siw_cliente_modulo a
+          inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
+    where a.sq_pessoa = w_cliente 
+      and b.sigla     = 'PA';
     
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
@@ -245,8 +290,82 @@ begin
       values (w_chave_dem, w_chave_arq);
    End If;
 
-   -- Recupera os dados do serviço
-   select * into w_menu from siw_menu where sq_menu = p_menu;
+   If w_cliente = 10135 and w_mod_pa = 'S' Then
+      for crec in c_protocolo loop
+          -- Cria o documento no sistema de protocolo
+          sp_putdocumentogeral(p_operacao           => case when crec.protocolo_siw is null then 'I' else 'A' end,
+                               p_chave              => crec.protocolo_siw,
+                               p_copia              => null,
+                               p_menu               => crec.sq_menu,
+                               p_unidade            => crec.sq_unidade,
+                               p_unid_autua         => crec.sq_unid_executora,
+                               p_solicitante        => p_pessoa,
+                               p_cadastrador        => p_pessoa,
+                               p_solic_pai          => null,
+                               p_vinculo            => null,
+                               p_processo           => 'N',
+                               p_circular           => 'N',
+                               p_especie_documento  => crec.sq_especie_documento,
+                               p_doc_original       => crec.codigo_interno,
+                               p_inicio             => crec.inclusao,
+                               p_volumes            => null,
+                               p_dt_autuacao        => null,
+                               p_copias             => null,
+                               p_natureza_documento => null,
+                               p_fim                => null,
+                               p_data_recebimento   => trunc(sysdate),
+                               p_interno            => 'S',
+                               p_pessoa_origem      => null,
+                               p_pessoa_interes     => crec.sq_pessoa,
+                               p_cidade             => null,
+                               p_assunto            => crec.sq_assunto,
+                               p_descricao          => crec.descricao,
+                               p_chave_nova         => w_chave_nova,
+                               p_codigo_interno     => w_codigo_interno
+                              );
+          -- Envia para arquivamento setorial
+          sp_putdocumentoenvio(p_menu               => crec.sq_menu,
+                               p_chave              => w_chave_nova,
+                               p_pessoa             => p_pessoa,
+                               p_tramite            => crec.sq_siw_tramite,
+                               p_interno            => 'S',
+                               p_unidade_origem     => crec.sq_unidade,
+                               p_unidade_destino    => crec.sq_unid_executora,
+                               p_pessoa_destino     => null,
+                               p_tipo_despacho      => crec.novo_tramite,
+                               p_prefixo            => null,
+                               p_numero             => null,
+                               p_ano                => null,
+                               p_despacho           => 'Envio automatizado para '||crec.nm_novo_tramite||'.',
+                               p_emite_aviso        => 'N',
+                               p_dias_aviso         => null,
+                               p_retorno_limite     => null,
+                               p_pessoa_externa     => null,
+                               p_unidade_externa    => null,
+                               p_nu_guia            => w_nu_guia,
+                               p_ano_guia           => w_ano_guia,
+                               p_unidade_autuacao   => w_unidade_guia
+                              );
+          If crec.sg_despacho = 'ARQUIVAR S' Then
+             -- Executa arquivamento setorial
+             sp_putdocumentoarqset(p_chave             => w_chave_nova,
+                                   p_usuario           => p_pessoa,
+                                   p_observacao        => p_nota_conclusao
+                                  );
+          Elsif crec.sq_unidade <> crec.sq_unid_executora Then
+             -- Recebe automaticamente
+             sp_putdocumentoreceb(p_operacao 	 => 'R',
+                                  p_pessoa     => p_pessoa,
+                                  p_unid_autua => crec.sq_unid_executora,
+                                  p_nu_guia    => w_nu_guia,
+                                  p_ano_guia   => w_ano_guia,
+                                  p_observacao => null);
+             
+          End If;
+          -- Vincula a viagem com o protocolo
+          update siw_solicitacao set protocolo_siw = w_chave_nova where sq_siw_solicitacao = p_chave;
+      end loop;
+   End If;
 
    -- Se eliminação de protocolo, coloca os protocolos da solicitação no tramite correto
    If w_menu.sigla = 'PAELIM' Then
