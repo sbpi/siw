@@ -163,7 +163,7 @@ $p_prefixo          = $_REQUEST['p_prefixo'];
 $p_numero           = $_REQUEST['p_numero'];
 $p_ano              = $_REQUEST['p_ano'];
 $p_unid_autua       = $_REQUEST['p_unid_autua'];
-$p_unid_posse       = $_REQUEST['p_unid_posse'];
+$p_unid_posse       = nvl($_REQUEST['p_unid_posse'],$_SESSION['LOTACAO']);
 $p_nu_guia          = $_REQUEST['p_nu_guia'];
 $p_ano_guia         = $_REQUEST['p_ano_guia'];
 $p_ini              = $_REQUEST['p_ini'];
@@ -260,6 +260,7 @@ function Inicial() {
     Validate('p_prefixo', 'Prefixo', '1', '', '5', '5', '', '0123456789');
     Validate('p_numero', 'Número', '1', '', '1', '6', '', '0123456789');
     Validate('p_ano', 'Ano', '1', '', '4', '4', '', '0123456789');
+    Validate('p_unid_posse', 'Unidade de posse', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     //Validate('p_sq_acao_ppa', 'Código do assunto', 'HIDDEN', '', '1', '10', '1', '1');
     Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
@@ -367,7 +368,7 @@ function Inicial() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, null, 'p_unid_posse', 'MOD_PA', null);
+    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, $w_usuario, 'p_unid_posse', 'CADPA', null);
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
     ShowHTML('          <td><b>Número:<br><INPUT class="STI" type="text" name="p_empenho" size="10" maxlength="30" value="' . $p_empenho . '">');
     selecaoEspecieDocumento('<u>E</u>spécie documental:', 'E', 'Selecione a espécie do documento.', $p_solicitante, null, 'p_solicitante', null, null);
@@ -378,7 +379,7 @@ function Inicial() {
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" ' . $w_Disabled . ' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="' . $p_proponente . '"></td>');
     ShowHTML('      <tr valign="top">');
 //    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="'.$p_sq_acao_ppa.'"></td>');
-    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
+    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto/Despacho:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
 //    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
     ShowHTML('      <tr valign="top">');
@@ -1124,6 +1125,7 @@ function Juntar() {
     Validate('p_prefixo', 'Prefixo', '1', '', '5', '5', '', '0123456789');
     Validate('p_numero', 'Número', '1', '', '1', '6', '', '0123456789');
     Validate('p_ano', 'Ano', '1', '', '4', '4', '', '0123456789');
+    Validate('p_unid_posse', 'Unidade de posse', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
     Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
@@ -1283,7 +1285,7 @@ function Juntar() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, null, 'p_unid_posse', 'MOD_PA', null);
+    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, $w_usuario, 'p_unid_posse', 'CADPA', null);
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
     ShowHTML('          <td><b>Número:<br><INPUT class="STI" type="text" name="p_empenho" size="10" maxlength="30" value="' . $p_empenho . '">');
     selecaoEspecieDocumento('<u>E</u>spécie documental:', 'E', 'Selecione a espécie do documento.', $p_solicitante, null, 'p_solicitante', null, null);
@@ -1295,7 +1297,7 @@ function Juntar() {
 //    ShowHTML('      <tr valign="top">');
 //    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
+    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto/Despacho:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
     ShowHTML('      <tr valign="top">');
     SelecaoAssuntoRadio('C<u>l</u>assificação:', 'L', 'Clique na lupa para selecionar a classificação do documento.', $w_assunto, null, 'w_assunto', 'FOLHA', null, '2');
@@ -1665,8 +1667,6 @@ function ArqSetorial() {
   global $w_Disabled;
   global $p_unid_posse;
   
-  $p_unid_posse = nvl($p_unid_posse,$_SESSION['LOTACAO']);
-  
   if (is_array($_REQUEST['w_chave'])) {
     $itens = $_REQUEST['w_chave'];
   } else {
@@ -1917,7 +1917,7 @@ function ArqSetorial() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, null, 'p_unid_posse', 'MOD_PA', null);
+    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, $w_usuario, 'p_unid_posse', 'CADPA', null);
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
     ShowHTML('          <td><b>Número:<br><INPUT class="STI" type="text" name="p_empenho" size="10" maxlength="30" value="' . $p_empenho . '">');
     selecaoEspecieDocumento('<u>E</u>spécie documental:', 'E', 'Selecione a espécie do documento.', $p_solicitante, null, 'p_solicitante', null, null);
@@ -1928,7 +1928,7 @@ function ArqSetorial() {
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" ' . $w_Disabled . ' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="' . $p_proponente . '"></td>');
     ShowHTML('      <tr valign="top">');
 //    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="'.$p_sq_acao_ppa.'"></td>');
-    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
+    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto/Despacho:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
 //    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');
     ShowHTML('      <tr valign="top">');

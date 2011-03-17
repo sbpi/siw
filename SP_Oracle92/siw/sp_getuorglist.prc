@@ -12,7 +12,8 @@ begin
       p_restricao = 'RECURSO'      or p_restricao = 'PLANEJAMENTO'     or p_restricao = 'EXECUCAO' or 
       p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO' or
       p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'      or p_restricao = 'MOD_PA_SET' or
-      p_restricao = 'CL_PITCE'     or p_restricao = 'CL_RENAPI'
+      p_restricao = 'CL_PITCE'     or p_restricao = 'CL_RENAPI'        or p_restricao = 'ACESSOS' or
+      p_restricao = 'CADPA'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
@@ -40,7 +41,7 @@ begin
                                                    (p_restricao          = 'EXTERNO' and (a.externo  = 'N' or (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade))))
                                                   )
                 )
-            and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
+            and (p_chave               is null or coalesce(p_restricao,'x') in ('ACESSOS','CADPA') or (p_chave is not null and a.sq_unidade = p_chave))
             and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
             and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             and (p_restricao           is null or (p_restricao is not null and
@@ -55,12 +56,41 @@ begin
                                                     (p_restricao = 'MOD_CL_PAI'   and i.sq_unidade is not null and i.ativo = 'S' and i.sq_unidade_pai  is null) or 
                                                     (p_restricao = 'MOD_PA_PROT'  and h.sq_unidade is not null and h.ativo = 'S' and h.autua_processo  = 'S') or 
                                                     (p_restricao = 'MOD_PA_SET'   and h.sq_unidade is not null and h.ativo = 'S' and (h.sq_unidade_pai is null or h.arquivo_setorial = 'S')) or 
-                                                    (p_restricao = 'MOD_PA_CE'   and h.sq_unidade is not null and h.ativo = 'S' and (h.sq_unidade_pai  is null or h.arquivo_setorial = 'S')) or 
+                                                    (p_restricao = 'MOD_PA_CE'    and h.sq_unidade is not null and h.ativo = 'S' and (h.sq_unidade_pai  is null or h.arquivo_setorial = 'S')) or 
                                                     (p_restricao = 'RECURSO'      and g.sq_unidade is not null and g.gestao_recursos  = 'S') or 
                                                     (p_restricao = 'PLANEJAMENTO' and g.sq_unidade is not null and g.planejamento     = 'S') or 
-                                                    (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S') or 
-                                                    (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI')) or         
-                                                    (p_restricao = 'CL_RENAPI'    and a.unidade_gestora = 'S')
+                                                    (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S') or
+                                                    (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI')) or
+                                                    (p_restricao = 'CL_RENAPI'    and a.unidade_gestora = 'S') or
+                                                    (p_restricao = 'CADPA'        and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
+                                                                                                       UNION
+                                                                                                       select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
+                                                                                                       UNION
+                                                                                                       select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
+                                                                                                       UNION 
+                                                                                                       select sq_unidade from eo_unidade_resp where sq_pessoa = p_chave and fim is null
+                                                                                                       UNION 
+                                                                                                       select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_chave
+                                                                                                       UNION
+                                                                                                       select distinct x.sq_unidade 
+                                                                                                         from eo_unidade x
+                                                                                                              inner join sg_pessoa_modulo y on (x.sq_pessoa = y.cliente)
+                                                                                                              inner join siw_modulo       z on (y.sq_modulo = z.sq_modulo)
+                                                                                                         where y.sq_pessoa = p_chave
+                                                                                                           and z.sigla     = 'PA'
+                                                                                                      )
+                                                    ) or
+                                                    (p_restricao = 'ACESSOS'      and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
+                                                                                                       UNION
+                                                                                                       select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
+                                                                                                       UNION
+                                                                                                       select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
+                                                                                                       UNION 
+                                                                                                       select sq_unidade from eo_unidade_resp where sq_pessoa = p_chave and fim is null
+                                                                                                       UNION
+                                                                                                       select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_chave
+                                                                                                      )
+                                                    )
                                                    )
                                                   )
                 )
@@ -68,7 +98,7 @@ begin
    Else
       If upper(p_restricao) = 'IS NULL' Then
          open p_result for
-            select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+            select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, a.externo,
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, coalesce(d.nome,'Informar') as responsavel,
                    coalesce(e.qtd,0) as qtd_resp,
                    coalesce(f.qtd,0) as qtd_local
@@ -321,7 +351,7 @@ begin
             order by 1;
       Else
          open p_result for
-            select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+            select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,  a.externo,
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, coalesce(d.nome,'Informar') as responsavel,
                    coalesce(e.qtd,0) as qtd_resp,
                    coalesce(f.qtd,0) as qtd_local

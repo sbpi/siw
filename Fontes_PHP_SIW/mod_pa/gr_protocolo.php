@@ -349,7 +349,7 @@ function Gerencial() {
       Validate('p_cidade','Ano','','','1','4','','0123456789');
       Validate('p_proponente','Origem externa','','','2','90','1','');
       //Validate('p_sq_acao_ppa','Código do assunto','','','1','10','1','1');
-      Validate('p_assunto','Detalhamento do assunto','','','2','90','1','1');
+      Validate('p_assunto','Detalhamento do assunto/Despacho','','','2','90','1','1');
       Validate('p_processo','Interessado','','','2','90','1','1');
       Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
@@ -929,7 +929,7 @@ function Gerencial() {
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr valign="top">');
     //ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="'.$p_sq_acao_ppa.'"></td>');
-    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="'.$p_assunto.'"></td>');
+    ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto/Despacho:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="'.$p_assunto.'"></td>');
 //    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" '.$w_Disabled.' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="'.$p_processo.'"></td>');
     ShowHTML('      <tr valign="top">');

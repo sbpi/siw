@@ -536,7 +536,7 @@ function Inicial() {
             $w_acao    = 'Encerrar';
           } else {
             $w_destino = 'lancamento';
-            $w_acao    = ((substr(f($row,'sigla'),2)=='R') ? 'Receber' : 'Pagar');
+            $w_acao    = ((substr(f($row,'sigla'),2,1)=='R') ? 'Receber' : 'Pagar');
           }
           if (f($row,'sg_tramite')=='EE' || $P2==2) {
             if (f($row,'sigla')!='FNDFUNDO') {

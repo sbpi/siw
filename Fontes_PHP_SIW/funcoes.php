@@ -100,7 +100,7 @@ function callback($buffer) {
 // =========================================================================
 // Abre e fecha a arvore.
 // -------------------------------------------------------------------------
-function colapsar($chave,$fechado=null){
+function colapsar($chave,$fechado='none'){
   $saida = "&nbsp;";
   $saida .= "<img src='images/".(($fechado=="none") ? "mais" : "menos").".jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$chave.",this)'/>";
   $saida .= "&nbsp;";

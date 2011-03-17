@@ -57,6 +57,13 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
     }   
     
+    if (nvl(f($RS,'solic_origem'),'')!='') {
+      // Recupera dados da solicitação de compra
+      $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'solic_origem'),null);
+      $imp = explode('|@|',f($RS1,'dados_solic'));
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Lançamento original: </b></td>';
+      $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'solic_origem'),$imp,'N',$l_tipo).'</td>';
+    } 
     if (Nvl(f($RS,'cd_acordo'),'')>'') {
       if (!($l_P1==4 || $l_tipo=='WORD')) {
         $l_html.=chr(13).'      <tr><td width="30%"><b>Contrato: </b></td>';
@@ -75,26 +82,42 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'        <td>---</td>';
       }
-      if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
-        // Recupera dados da solicitação de compra
-        $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_solic_vinculo'),null);
-        $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
-        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_vinculo'),f($RS1,'dados_solic'),'N',$l_tipo).'</td>';
-      }
-    } else {
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
-      if (Nvl(f($RS,'dados_pai'),'')!='') {
-        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
-      } else {
-        $l_html.=chr(13).'        <td>---</td>';
-      }
     }
-    if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
-      if (Nvl(f($RS,'dados_avo'),'')!='') {
-        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_avo'),f($RS,'dados_avo'),'N',$l_tipo).'</td>';
+    $exibe = true; 
+    if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
+      // Recupera dados da solicitação de compra
+      $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_solic_vinculo'),null);
+      $vinc = explode('|@|',f($RS1,'dados_solic'));
+      if ($vinc[5]=='PJCAD') { 
+        $texto = 'Projeto'; $exibe = false;
       } else {
-        $l_html.=chr(13).'        <td>---</td>';
+        $texto = $vinc[4];
+      }
+      $l_html.=chr(13).'      <tr><td width="30%"><b>'.$texto.': </b></td>';
+      $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_vinculo'),f($RS1,'dados_solic'),'N',$l_tipo).'</td>';
+    }
+    if (nvl(f($RS,'dados_pai'),'')!='') {
+      $pai = explode('|@|',f($RS,'dados_pai'));
+      if ($pai[5]=='PJCAD' && $exibe) {
+	      $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
+	      if (Nvl(f($RS,'dados_pai'),'')!='') {
+	        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
+	      } else {
+	        $l_html.=chr(13).'        <td>---</td>';
+	      }
+	      $exibe = false;
+      }
+    } 
+    if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT' || nvl(f($RS,'dados_avo'),'')!='') {
+      $avo = explode('|@|',f($RS,'dados_avo'));
+      if ($avo[5]=='PJCAD' && $exibe) {
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
+        if (Nvl(f($RS,'dados_avo'),'')!='') {
+          $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_avo'),f($RS,'dados_avo'),'N',$l_tipo).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>---</td>';
+        }
+        $exibe = false;
       }
     }
 /*

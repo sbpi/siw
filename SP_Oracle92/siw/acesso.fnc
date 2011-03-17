@@ -66,7 +66,7 @@ create or replace function Acesso
   w_cadastrador            siw_solicitacao.cadastrador%type;
   w_unidade_solicitante    siw_solicitacao.sq_unidade%type;
   w_solic_pai              siw_solicitacao.sq_solic_pai%type;
-  w_sq_pessoa_executor     siw_solicitacao.executor%type;
+  w_executor               siw_solicitacao.executor%type;
   w_opiniao_solicitante    siw_solicitacao.opiniao%type;
   w_ordem                  siw_tramite.ordem%type;
   w_sq_cc                  siw_solicitacao.sq_cc%type;
@@ -84,7 +84,6 @@ create or replace function Acesso
   w_sair                   number(18);
   w_unidade_atual          number(18);
   w_chefe_beneficiario     number(18);
-  w_executor               number(18);
   Result                   number := 0;
   w_unidade_resp           number(18);
   w_anterior               number(18);
@@ -135,29 +134,18 @@ begin
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
         b2.nome, b2.interno,
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
-        d.sq_siw_tramite, coalesce(o.sq_pessoa, d.solicitante), d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
-        case when d.sq_cc is not null 
-             then d.sq_cc
-             else case when i.sq_cc is not null
-                       then i.sq_cc
-                       else j.sq_cc
-                  end
-        end as sq_cc,
+        d.sq_siw_tramite, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
         e.ordem, e.sigla, e.ativo, e.chefia_imediata, e.assina_tramite_anterior, e.beneficiario_cumpre, e.gestor_cumpre,
-        coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),
-        h.sq_pessoa_endereco, d.executor,
-        coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
+        h.sq_pessoa_endereco 
    into w_cliente, w_acesso_geral, w_consulta_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
         w_nm_vinculo, w_interno,
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
-        w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, 
-        w_opiniao_solicitante, w_solic_pai, w_sq_cc,
+        w_sq_siw_tramite, w_cadastrador, w_unidade_solicitante, w_executor, 
+        w_opiniao_solicitante, w_solic_pai,
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata, w_anterior_assina, w_beneficiario_assina, w_gestor_cumpre,
-        w_sq_pessoa_titular, w_sq_pessoa_substituto,
-        w_sq_endereco_unidade, w_executor,
-        w_unidade_resp
+        w_sq_endereco_unidade
    from sg_autenticacao                     b
         inner   join co_pessoa              b1 on (b.sq_pessoa              = b1.sq_pessoa)
           inner join co_tipo_vinculo        b2 on (b1.sq_tipo_vinculo       = b2.sq_tipo_vinculo),
@@ -166,28 +154,9 @@ begin
           inner join siw_modulo             a1 on (a.sq_modulo              = a1.sq_modulo)
         inner   join siw_tramite            e  on (e.sq_siw_tramite         = coalesce(p_tramite, d.sq_siw_tramite))
         inner   join eo_unidade             h  on (d.sq_unidade             = h.sq_unidade)
-        left    join eo_unidade_resp        f  on (d.sq_unidade             = f.sq_unidade and
-                                                   f.tipo_respons           = 'T'          and
-                                                   f.fim                    is null
-                                                  )
-        left    join eo_unidade_resp        g  on (d.sq_unidade             = g.sq_unidade and
-                                                   g.tipo_respons           = 'S'          and
-                                                   g.fim                    is null
-                                                  )
-        left    join siw_solicitacao        i  on (d.sq_solic_pai           = i.sq_siw_solicitacao)
-          left  join siw_solicitacao        j  on (i.sq_solic_pai           = j.sq_siw_solicitacao)
-        left    join pj_projeto             k  on (d.sq_siw_solicitacao     = k.sq_siw_solicitacao)
-          left  join eo_unidade             k1 on (k.sq_unidade_resp        = k1.sq_unidade)
-        left    join gd_demanda             l  on (d.sq_siw_solicitacao     = l.sq_siw_solicitacao)
-          left  join eo_unidade             l1 on (l.sq_unidade_resp        = l1.sq_unidade)
-        left    join pe_programa            m  on (d.sq_siw_solicitacao     = m.sq_siw_solicitacao)
-          left  join eo_unidade             m1 on (m.sq_unidade_resp        = m1.sq_unidade)
-        left    join cl_solicitacao         n  on (d.sq_siw_solicitacao     = n.sq_siw_solicitacao)
-          left  join eo_unidade             n1 on (n.sq_unidade             = n1.sq_unidade)
-        left    join pd_missao              o  on (d.sq_siw_solicitacao     = o.sq_siw_solicitacao)
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
-  
+
  Result := 0;
  
  -- Verifica se o usuário está ativo
@@ -205,6 +174,39 @@ begin
  -- Verifica se a solicitação é de consulta geral
  If w_consulta_geral = 'S' and w_interno = 'S' Then Result := 1; End If;
  
+ -- Se for serviço de protocolo, verifica se o usuário é de uma das unidades de posse
+ If w_sigla = 'PADCAD' Then
+    select count(*) into w_existe
+      from pa_documento a
+     where a.sq_siw_solicitacao = p_solicitacao
+       and a.unidade_int_posse in (select w_sq_unidade_lotacao from dual
+                                   UNION
+                                   select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
+                                   UNION
+                                   select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
+                                   UNION 
+                                   select sq_unidade from eo_unidade_resp where sq_pessoa = p_usuario and fim is null
+                                   UNION
+                                   select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_usuario
+                                   UNION
+                                   select distinct x.sq_unidade 
+                                     from eo_unidade x
+                                          inner join sg_pessoa_modulo y on (x.sq_pessoa = y.cliente)
+                                          inner join siw_modulo       z on (y.sq_modulo = z.sq_modulo)
+                                     where y.sq_pessoa = p_usuario
+                                       and z.sigla     = 'PA'
+                                  );
+    If w_existe > 0 Then
+       Return 10;
+    Elsif w_consulta_geral = 'S' Then
+       Return 1;
+    End If;
+ End If;
+ -- Se usuário é do tipo de vínculo ABDI ou SECRETARIA EXECUTIVA e o ambiente for PDP, concede acesso de consulta
+ If w_cliente in (14014,11134) and upper(w_nm_vinculo) in ('ABDI','SECRETARIA EXECUTIVA') Then
+    Result := 1;
+ End If;
+  
  -- Verifica se o usuário é representante de projeto
  select count(*) into w_existe from pj_projeto_representante a where a.sq_pessoa = p_usuario and a.sq_siw_solicitacao = p_solicitacao;
  If w_existe > 0 Then Result := 1; End If;
@@ -222,11 +224,6 @@ begin
             inner join siw_tipo_interessado        c on (b.sq_tipo_interessado = c.sq_tipo_interessado and c.sigla = 'MPGCO')
     where a.sq_siw_solicitacao = w_solic_pai;
    If w_existe > 0 Then Result := 1; End If;
- End If;
- 
- -- Se usuário é do tipo de vínculo ABDI ou SECRETARIA EXECUTIVA e o ambiente for PDP, concede acesso de consulta
- If w_cliente in (14014,11134) and upper(w_nm_vinculo) in ('ABDI','SECRETARIA EXECUTIVA') Then
-    Result := 1;
  End If;
  
  -- Verifica se o usuário é o solicitante
@@ -289,6 +286,91 @@ begin
     end if;
  End If;
  
+ -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence ou, 
+ -- se a solicitacao for do módulo de contratos, se o usuário é gestor do módulo financeiro
+ select count(*)
+   into w_existe
+   from sg_pessoa_modulo a
+  where a.sq_pessoa          = p_usuario
+    and (a.sq_modulo         = w_modulo or
+         (w_modulo           in (select sq_modulo from siw_modulo where sigla in ('AC','PR','PD')) and
+          a.sq_modulo        = (select sq_modulo from siw_modulo where sigla = 'FN')
+         )
+        )
+    and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
+         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
+         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))
+        );
+ If w_existe > 0 or w_gestor_sistema = 'S' Then
+    Result := Result + 6;
+    If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
+       -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
+       -- e se não for gestor do sistema, complementa o resultado para somar 16
+       Result := Result + 10;
+    End If;
+ Else
+    -- Verifica se é titular ou substituto de alguma unidade responsável por etapa
+    select count(*) into w_existe
+      from pj_projeto_etapa           a
+           inner join eo_unidade_resp b on (a.sq_unidade   = b.sq_unidade and
+                                            b.sq_pessoa    = p_usuario    and
+                                            b.fim          is null
+                                           )
+     where a.sq_siw_solicitacao = p_solicitacao
+       and a.sq_unidade         = w_unidade_beneficiario;
+    If w_existe > 0 Then 
+       Result := Result + 8; 
+    Else
+       -- Verifica se é responsável por alguma etapa do projeto ou por alguma questão ou por alguma meta
+       select count(*) into w_existe from (
+         -- Verifica se o usuário é responsável por alguma meta
+         select 1 from siw_solic_meta a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+         UNION
+         -- Verifica se o usuário é responsável por alguma questão
+         select 1 from siw_restricao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+         UNION
+         -- Verifica se o usuário é responsável por alguma etapa
+         select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+       ) a;
+       If w_existe > 0 Then Result := Result + 8; End If;
+    End If;
+ End If;
+
+ -- Recupera as informações da opção à qual a solicitação pertence
+ select coalesce(o.sq_pessoa, d.solicitante), 
+        case when d.sq_cc is not null 
+             then d.sq_cc
+             else case when i.sq_cc is not null
+                       then i.sq_cc
+                       else j.sq_cc
+
+                  end
+        end as sq_cc,
+        coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),  
+        coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
+   into w_solicitante, w_sq_cc, w_sq_pessoa_titular, w_sq_pessoa_substituto, w_unidade_resp
+   from siw_solicitacao                     d
+        left    join eo_unidade_resp        f  on (d.sq_unidade             = f.sq_unidade and
+                                                   f.tipo_respons           = 'T'          and
+                                                   f.fim                    is null
+                                                  )
+        left    join eo_unidade_resp        g  on (d.sq_unidade             = g.sq_unidade and
+                                                   g.tipo_respons           = 'S'          and
+                                                   g.fim                    is null
+                                                  )
+        left    join siw_solicitacao        i  on (d.sq_solic_pai           = i.sq_siw_solicitacao)
+          left  join siw_solicitacao        j  on (i.sq_solic_pai           = j.sq_siw_solicitacao)
+        left    join pj_projeto             k  on (d.sq_siw_solicitacao     = k.sq_siw_solicitacao)
+          left  join eo_unidade             k1 on (k.sq_unidade_resp        = k1.sq_unidade)
+        left    join gd_demanda             l  on (d.sq_siw_solicitacao     = l.sq_siw_solicitacao)
+          left  join eo_unidade             l1 on (l.sq_unidade_resp        = l1.sq_unidade)
+        left    join pe_programa            m  on (d.sq_siw_solicitacao     = m.sq_siw_solicitacao)
+          left  join eo_unidade             m1 on (m.sq_unidade_resp        = m1.sq_unidade)
+        left    join cl_solicitacao         n  on (d.sq_siw_solicitacao     = n.sq_siw_solicitacao)
+          left  join eo_unidade             n1 on (n.sq_unidade             = n1.sq_unidade)
+        left    join pd_missao              o  on (d.sq_siw_solicitacao     = o.sq_siw_solicitacao)
+  where d.sq_siw_solicitacao     = p_solicitacao;
+
  -- Se o serviço for vinculado à unidade
  If w_vinculacao = 'U' Then
     -- Verifica se o usuário está lotado ou se é titular/substituto 
@@ -426,57 +508,6 @@ begin
    w_beneficiario := 0;
  End If;
  
- -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence ou, 
- -- se a solicitacao for do módulo de contratos, se o usuário é gestor do módulo financeiro
- select count(*)
-   into w_existe
-   from sg_pessoa_modulo a
-  where a.sq_pessoa          = p_usuario
-    and (a.sq_modulo         = w_modulo or
-         (w_modulo           in (select sq_modulo from siw_modulo where sigla in ('AC','PR','PD')) and
-          a.sq_modulo        = (select sq_modulo from siw_modulo where sigla = 'FN')
-         )
-        )
-    and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
-         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
-         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))
-        );
- If w_existe > 0 or w_gestor_sistema = 'S' Then
-    Result := Result + 6;
-    If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
-       -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
-       -- e se não for gestor do sistema, complementa o resultado para somar 16
-       Result := Result + 10;
-    End If;
- Else
-    -- Verifica se é titular ou substituto de alguma unidade responsável por etapa
-    select count(*) into w_existe
-      from pj_projeto_etapa           a
-           inner join eo_unidade_resp b on (a.sq_unidade   = b.sq_unidade and
-                                            b.sq_pessoa    = p_usuario    and
-                                            b.fim          is null
-                                           )
-     where a.sq_siw_solicitacao = p_solicitacao
-       and a.sq_unidade         = w_unidade_beneficiario;
-    If w_existe > 0 Then 
-       Result := Result + 8; 
-    Else
-       -- Verifica se é responsável por alguma etapa do projeto ou por alguma questão ou por alguma meta
-       select count(*) into w_existe from (
-         -- Verifica se o usuário é responsável por alguma meta
-         select 1 from siw_solic_meta a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-         UNION
-         -- Verifica se o usuário é responsável por alguma questão
-         select 1 from siw_restricao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-         UNION
-         -- Verifica se o usuário é responsável por alguma etapa
-         select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-       ) a;
-       If w_existe > 0 Then Result := Result + 8; End If;
-    End If;
- End If;
-
-
  -- A condição abaixo verifica se:
  -- 1) o trâmite atual pode ser cumprido pelo cumpridor do trâmite anterior
  -- 2) o trâmite atual pode ser cumprido pelo beneficiário da solicitação

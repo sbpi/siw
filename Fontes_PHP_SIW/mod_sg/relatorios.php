@@ -15,6 +15,7 @@ include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getLocalList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
+include_once($w_dir_volta.'classes/sp/db_getUserUnit.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 include_once($w_dir_volta.'classes/sp/db_getUserResp.php');
@@ -546,6 +547,38 @@ function TelaUsuarioRel() {
     } 
   }   
   ShowHTML('         </table></td></tr>');
+
+  // Unidades que tem acesso
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>UNIDADES QUE TEM ACESSO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
+  $sql = new DB_GetUserUnit; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null);
+  $RS1 = SortArray($RS1,'nm_unidade','asc');
+  ShowHTML('      <tr><td colspan="2">');
+  ShowHTML('        <table border="1" bordercolor="#00000">');
+  ShowHTML('          <tr align="center">');
+  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Unidade</b></div></td>');
+  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Motivo</b></div></td>');
+  ShowHTML('          </tr>');
+  if (count($RS1)==0) {
+    ShowHTML('      <tr><td colspan=3 align="center"><b>Não tem acesso a nenhuma unidade</b></td></tr>');
+  } else {
+    $w_cor=$w_TrBgColor;
+    foreach($RS1 as $row1) {
+      ShowHTML('      <tr valign="top">');
+      if ($w_tipo!='WORD') {
+        ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'nm_unidade').'('.f($row1,'sigla').')',f($row1,'sq_unidade'),$TP).'</b></td>');
+      } else { 
+        ShowHTML('        <td>'.f($row1,'nm_unidade').' ('.f($row1,'sigla').')</b></td>');        
+      }
+      echo('        <td nowrap>');  
+      if (f($row1,'tipo')=='LOTACAO')  ShowHTML('Lotado na unidade</td>');  
+      elseif (f($row1,'tipo')=='RESP') ShowHTML('Responde pela unidade</td>');
+      else                             ShowHTML('Acesso concedido</td>');
+      
+      ShowHTML('      </tr>');
+    } 
+  }   
+  ShowHTML('         </table></td></tr>');
+  
   //Visao
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>VISÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   $sql = new DB_GetUserVision; $RS1 = $sql->getInstanceOf($dbms, null, $w_sq_pessoa);

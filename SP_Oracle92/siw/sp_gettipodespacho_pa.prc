@@ -18,6 +18,16 @@ begin
             and ((p_nome    is null) or (p_nome    is not null and upper(a.nome)      like '%'||upper(p_nome)||'%'))
             and ((p_sigla   is null) or (p_sigla   is not null and upper(a.sigla)     = upper(p_sigla)))
             and ((p_ativo   is null) or (p_ativo   is not null and a.ativo            = p_ativo));
+   Elsif p_restricao = 'TODOS' Then
+      -- Recupera os tipos de despachos, menos os definidos na tabela de parâmetros
+      open p_result for 
+         select a.sq_tipo_despacho chave, a.cliente, a.nome, a.sigla, a.descricao, a.ativo,
+                case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
+           from pa_tipo_despacho       a
+          where a.cliente   = p_cliente
+            and ((p_chave   is null) or (p_chave   is not null and a.sq_tipo_despacho = p_chave))
+            and ((p_nome    is null) or (p_nome    is not null and upper(a.nome)      like '%'||upper(p_nome)||'%'))
+            and ((p_sigla   is null) or (p_sigla   is not null and upper(a.sigla)     = upper(p_sigla)));
    Elsif p_restricao = 'SELECAO' Then
       -- Recupera os tipos de despachos, menos os definidos na tabela de parâmetros
       open p_result for 

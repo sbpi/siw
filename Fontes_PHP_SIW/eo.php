@@ -206,7 +206,8 @@ function Unidade() {
     } 
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="0" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    $SQL = new db_getUorgList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,'IS NULL',null,null,null);
+    $SQL = new db_getUorgList; 
+    $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,'IS NULL',null,null,null);
     $RS = SortArray($RS,'ordem','asc','nome','asc');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><b>Estrutura organizacional inexistente.</b></td></tr>');
@@ -230,7 +231,7 @@ function Unidade() {
         ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
         ShowHTML('</li>');
         ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-        $SQL = new db_getUorgList; $RS1 = $SQL->getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
+        $RS1 = $SQL->getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc','nome','asc');
         foreach($RS1 as $row1) {
           $w_ContImg += 1;
@@ -246,7 +247,7 @@ function Unidade() {
           ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row1,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
           ShowHTML('   </li>');
           ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-          $SQL = new db_getUorgList; $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
+          $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
           $RS2 = SortArray($RS2,'ordem','asc','nome','asc');
           foreach($RS2 as $row2) {
             $w_ContImg += 1;
@@ -262,7 +263,7 @@ function Unidade() {
             ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row2,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
             ShowHTML('         </li>');
             ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-            $SQL = new db_getUorgList; $RS3 = $SQL->getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
+            $RS3 = $SQL->getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
             $RS3 = SortArray($RS3,'ordem','asc','nome','asc');
             foreach($RS3 as $row3) {
               $w_ContImg += 1;
@@ -278,7 +279,7 @@ function Unidade() {
               ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row3,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
               ShowHTML('            </li>');
               ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-              $SQL = new db_getUorgList; $RS4 = $SQL->getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
+              $RS4 = $SQL->getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
               $RS4 = SortArray($RS4,'ordem','asc','nome','asc');
               foreach($RS4 as $row4) {
                 $w_ContImg += 1;
@@ -294,7 +295,7 @@ function Unidade() {
                 ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row4,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                 ShowHTML('               </li>');
                 ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                $SQL = new db_getUorgList; $RS5 = $SQL->getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
+                $RS5 = $SQL->getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
                 $RS5 = SortArray($RS5,'ordem','asc','nome','asc');
                 foreach($RS5 as $row5) {
                   $w_ContImg += 1;
@@ -310,7 +311,7 @@ function Unidade() {
                   ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row5,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                   ShowHTML('                  </li>');
                   ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                  $SQL = new db_getUorgList; $RS6 = $SQL->getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
+                  $RS6 = $SQL->getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
                   $RS6 = SortArray($RS6,'ordem','asc','nome','asc');
                   foreach($RS6 as $row6) {
                     $w_ContImg += 1;
@@ -326,7 +327,7 @@ function Unidade() {
                     ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row6,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                     ShowHTML('                     </li>');
                     ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                    $SQL = new db_getUorgList; $RS7 = $SQL->getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
+                    $RS7 = $SQL->getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
                     $RS7 = SortArray($RS7,'ordem','asc','nome','asc');
                     foreach($RS7 as $row7) {
                       $w_ContImg += 1;
@@ -342,7 +343,7 @@ function Unidade() {
                       ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row7,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                       ShowHTML('                        </li>');
                       ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                      $SQL = new db_getUorgList; $RS8 = $SQL->getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
+                      $RS8 = $SQL->getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
                       $RS8 = SortArray($RS8,'ordem','asc','nome','asc');
                       foreach($RS8 as $row8) {
                         $w_ContImg += 1;
@@ -358,7 +359,7 @@ function Unidade() {
                         ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row8,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                         ShowHTML('                           </li>');
                         ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
-                        $SQL = new db_getUorgList; $RS9 = $SQL->getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
+                        $RS9 = $SQL->getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
                         $RS9 = SortArray($RS9,'ordem','asc','nome','asc');
                         foreach($RS9 as $row9) {
                           $w_ContImg += 1;

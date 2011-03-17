@@ -141,6 +141,7 @@ function Tramitacao() {
   $p_ano = substr($p_protocolo, 13, 4);
   $p_unid_autua = $_REQUEST['p_unid_autua'];
   $p_unid_posse = $_REQUEST['p_unid_posse'];
+  if (nvl(montaFiltro('GET'),'')=='') $p_unid_posse = $_SESSION['LOTACAO'];
   $p_nu_guia = $_REQUEST['p_nu_guia'];
   $p_ano_guia = $_REQUEST['p_ano_guia'];
   $p_ini = $_REQUEST['p_ini'];
@@ -298,11 +299,13 @@ function Tramitacao() {
 function Transferencia() {
   extract($GLOBALS);
   global $w_Disabled;
-
+  global $p_unid_autua;
+  
   // Recupera as variáveis utilizadas na filtragem
   $p_protocolo = $_REQUEST['p_protocolo'];
   $p_chave = $_REQUEST['p_chave'];
   $p_unid_autua = $_REQUEST['p_unid_autua'];
+  if (nvl(montaFiltro('GET'),'')=='') $p_unid_autua = $_SESSION['LOTACAO'];
   $p_nu_guia = $_REQUEST['p_nu_guia'];
   $p_ano_guia = $_REQUEST['p_ano_guia'];
   $p_ini = $_REQUEST['p_ini'];
@@ -430,7 +433,7 @@ function Transferencia() {
     ShowHTML('    <table width="97%" border="0">');
     SelecaoCaixa('<u>C</u>aixa:', 'C', "Selecione a caixa transferida.", $w_caixa, $w_cliente, null, 'w_caixa', 'TRAMITE', null);
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade original da caixa:', 'U', 'Selecione a unidade que transferiu a caixa.', $p_unidade, null, 'p_unidade', 'MOD_PA', null);
+    SelecaoUnidade('<U>U</U>nidade original da caixa:', 'U', 'Selecione a unidade que transferiu a caixa.', $p_unid_autua, null, 'p_unid_autua', 'MOD_PA', null);
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Perío<u>d</u>o entre:</b><br><input ' . $w_Disabled . ' accesskey="D" type="text" name="p_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_ini . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input ' . $w_Disabled . ' accesskey="T" type="text" name="p_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('      <tr><td align="center"><hr>');

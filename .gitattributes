@@ -1109,6 +1109,7 @@ Fontes_PHP_SIW/classes/sp/db_getUserModule.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserTypeData.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserTypeList.php -text
+Fontes_PHP_SIW/classes/sp/db_getUserUnit.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserVision.php -text
 Fontes_PHP_SIW/classes/sp/db_getUsuario.php -text
 Fontes_PHP_SIW/classes/sp/db_getUsuarioTabs.php -text
@@ -1399,6 +1400,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSPParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSPSP.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSPTabs.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSgPesMod.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSgPesUni.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSgTraPes.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSistema.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliConf.php -text
@@ -4007,6 +4009,7 @@ SP_Oracle92/siw/sp_getusermail.prc -text
 SP_Oracle92/siw/sp_getusermodule.prc -text
 SP_Oracle92/siw/sp_getusertypedata.prc -text
 SP_Oracle92/siw/sp_getusertypelist.prc -text
+SP_Oracle92/siw/sp_getuserunit.prc -text
 SP_Oracle92/siw/sp_getuservision.prc -text
 SP_Oracle92/siw/sp_getusuario.prc -text
 SP_Oracle92/siw/sp_getusuariotabs.prc -text
@@ -4220,6 +4223,7 @@ SP_Oracle92/siw/sp_putrespacao.prc -text
 SP_Oracle92/siw/sp_putsgpermen.prc -text
 SP_Oracle92/siw/sp_putsgpesmen.prc -text
 SP_Oracle92/siw/sp_putsgpesmod.prc -text
+SP_Oracle92/siw/sp_putsgpesuni.prc -text
 SP_Oracle92/siw/sp_putsgtrapes.prc -text
 SP_Oracle92/siw/sp_putsistema.prc -text
 SP_Oracle92/siw/sp_putsiwcliconf.prc -text

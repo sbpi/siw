@@ -14,7 +14,9 @@ create or replace procedure SP_GetCaixa
     p_result      out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao = 'PACAIXA' or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' or p_restricao = 'CENTRAL' Then
+   If p_restricao is null        or p_restricao = 'PACAIXA' or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or 
+      p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ'  or p_restricao = 'CENTRAL' 
+   Then
       -- Recupera os grupos da caixa
       open p_result for 
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
@@ -38,19 +40,7 @@ begin
             and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
             and (p_ini       is null or (p_ini       is not null and (cast(a.intermediario as  date) between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
-            and (coalesce(p_restricao,'null') not in ('PACAIXA','PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
-                 (p_restricao = 'PACAIXA' and (a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_usuario
-                                                                UNION
-                                                                select sq_unidade from eo_unidade_resp where sq_pessoa = p_usuario and fim is null
-                                                                UNION
-                                                                select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
-                                                                 UNION
-                                                                select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
-                                                               )
-                                               or 0 < (select count(*) from sg_autenticacao where gestor_sistema = 'S' and sq_pessoa = p_usuario)
-                                               or 0 < (select count(*) from sg_pessoa_modulo x join siw_modulo y on (x.sq_modulo = y.sq_modulo and y.sigla = 'PA') where x.sq_pessoa = p_usuario)
-                                              )
-                 ) or
+            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
                  (p_restricao = 'TRAMITE' and a.arquivo_guia_ano is null and a.arquivo_data is null and c.qtd > 0) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
@@ -70,7 +60,8 @@ begin
                 c.numero_original,    c.numero_documento,                c.interno,   c.pasta,
                 case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
                 case c.processo when 'S' then c.data_autuacao else d.inicio end as dt_limite,
-                c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo,
+                to_char(c.numero_documento)||'/'||substr(to_char(c.ano),3) as protocolo,
+                c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo_completo,
                 a.arquivo_guia_numero||'/'||a.arquivo_guia_ano||'-'||coalesce(b3.sigla,b.sigla) as guia_transferencia, 
                 case when c.pessoa_origem is null then d1.sq_unidade else c1.sq_pessoa end as sq_origem,
                 case when c.pessoa_origem is null then d1.nome else c1.nome end as nm_origem,

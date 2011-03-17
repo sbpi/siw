@@ -366,7 +366,7 @@ function Inicial() {
       ShowHTML('<tr>');
       if ($w_tipo!='WORD') {
         ShowHTML('    <td>');
-        if (!(strpos($SG,'CONT')===false)) ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Buscaparcela&R='.$w_pagina.$par.'&O=P&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        if ((strpos($SG,'CONT')!==false) ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Buscaparcela&R='.$w_pagina.$par.'&O=P&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         else                               ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       }
     } 
@@ -392,7 +392,7 @@ function Inicial() {
     if ($w_tipo!='WORD') {    
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
-      if (!(strpos($SG,'CONT')===false))  {
+      if (strpos($SG,'CONT')!==false)  {
         ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
         ShowHTML('          <td><b>'.LinkOrdena('Projeto débito','cd_solic_vinculo').'</td>');
       } else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
@@ -411,7 +411,7 @@ function Inicial() {
     } else {
       ShowHTML('          <td><b>Código</td>');
       ShowHTML('          <td><b>Pessoa</td>');
-      if (!(strpos($SG,'CONT')===false))  {
+      if (strpos($SG,'CONT')!==false)  {
         ShowHTML('          <td><b>Contrato (Parcela)</td>');
         ShowHTML('          <td><b>Projeto débito</td>');
       }

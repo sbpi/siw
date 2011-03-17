@@ -17,9 +17,11 @@ begin
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
-                end nm_chefia
-         from siw_tramite a 
-         where a.sq_menu = p_chave
+                end nm_chefia,
+                b.sigla as sg_menu
+         from siw_menu               b 
+              inner join siw_tramite a on (b.sq_menu = a.sq_menu)
+         where b.sq_menu = p_chave
            and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo))
         order by a.ordem;
    Elsif upper(p_restricao) = 'FLUXO' Then

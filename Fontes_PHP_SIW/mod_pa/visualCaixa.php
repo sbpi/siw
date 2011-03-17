@@ -43,8 +43,8 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
       if ($l_espelho=='N') {
         $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align="center"><font size="2"><b>CAIXA Nº '.f($row,'numero').'/'.f($row,'sg_unidade').'</b></font></td></tr>';
       } else {
-        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" align="center"><font size="2"><b>CAIXA Nº '.f($row,'numero').'/'.f($row,'sg_unidade').'</b></font></td>';
-        $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align="right"><A class="SS" href="'.montaURL_JS($w_dir,'tabelas.php?par=IMPRIMIR'.'&R='.$w_pagina.'IMPRIMIR'.'&O=V&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" class="HL"  title="Imprime o espelho da caixa.">Imprimir espelho</A>&nbsp';
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" '.(($l_formato=='WORD') ? 'colspan="2"' : '').' align="center"><font size="2"><b>CAIXA Nº '.f($row,'numero').'/'.f($row,'sg_unidade').'</b></font></td>';
+        if ($l_formato!='WORD') $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align="right"><A class="SS" href="'.montaURL_JS($w_dir,'tabelas.php?par=IMPRIMIR'.'&R='.$w_pagina.'IMPRIMIR'.'&O=V&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" class="HL"  title="Imprime o espelho da caixa.">Imprimir espelho</A>&nbsp';
       }
       $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
       $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Assunto:</b></td>';
