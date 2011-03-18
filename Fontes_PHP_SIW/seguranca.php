@@ -197,7 +197,6 @@ function Usuarios() {
     } else {
       ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     } 
-
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -233,8 +232,11 @@ function Usuarios() {
         } else { 
           ShowHTML('        <td align="center" nowrap><font color="#BC3131" size="1"><b>'.f($row,'username').'</b>');
         } 
-
-        ShowHTML('        <td align="left" title="'.f($row,'nome').'">'.ExibePessoa('mod_sg/',$w_cliente,f($row,'sq_pessoa'),f($row,'nome'),f($row,'nome_resumido'),'Volta').'</td>');
+        if ($SG=='SGUSU') {
+          ShowHTML('        <td title="'.f($row,'nome').'">'.ExibePessoaRel('mod_sg/',$w_cliente,f($row,'sq_pessoa'),f($row,'nome'),f($row,'nome_resumido'),'Usuario').'</td>');
+        } else {
+          ShowHTML('        <td title="'.f($row,'nome').'">'.ExibePessoa('mod_sg/',$w_cliente,f($row,'sq_pessoa'),f($row,'nome'),f($row,'nome_resumido'),'Volta').'</td>');
+        }
         ShowHTML('        <td align="center" title="'.f($row,'nm_sexo').'">'.nvl(f($row,'sexo'),'-').'</td>');
         ShowHTML('        <td>'.f($row,'lotacao').'</td>');
         ShowHTML('        <td>'.Nvl(f($row,'vinculo'),'---').'</td>');

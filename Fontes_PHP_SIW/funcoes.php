@@ -102,7 +102,7 @@ function callback($buffer) {
 // -------------------------------------------------------------------------
 function colapsar($chave,$fechado='none'){
   $saida = "&nbsp;";
-  $saida .= "<img src='images/".(($fechado=="none") ? "mais" : "menos").".jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$chave.",this)'/>";
+  $saida .= "<img border=0 src='images/".(($fechado=="none") ? "mais" : "menos").".jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$chave.",this)'/>";
   $saida .= "&nbsp;";
   return $saida;
 }
@@ -453,14 +453,13 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
       if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.nvl($l_chave,$w_chave).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
     }
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
-    $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
-    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'w_mes='.$w_mes.'&&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
+    $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'w_mes='.$w_mes.'&&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');
 
-    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.nvl($l_chave,$w_chave).'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
-   // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-    $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
-   // echo $parametros;
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
+   // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+    $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
     ShowHTML('</TD></TR>');
   }
@@ -905,6 +904,22 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 }
 
 // =========================================================================
+// Montagem da URL com os dados de uma pessoa no relatório de permissões
+// -------------------------------------------------------------------------
+function ExibePessoaRel($p_dir,$p_cliente,$p_pessoa,$p_nome,$p_nome_resumido,$p_tipo) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_nome,'')=='') {
+    $l_string='&nbsp;';
+  } elseif ($p_tipo=='Volta') {
+    $l_string .= '<A class="hl" HREF="'.$conRootSIW.$p_dir.'relatorios.php?par=TELAUSUARIOREL&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&w_tipo='.$p_tipo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG=" title="'.$p_nome.'">'.$p_nome_resumido.'</a>';
+  } else {
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$p_dir.'relatorios.php?par=TELAUSUARIOREL&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&w_tipo='.$p_tipo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4).'\',\''.$p_tipo.'\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="'.$p_nome.'">'.$p_nome_resumido.'</A>';
+  }
+  return $l_string;
+}
+
+
+// =========================================================================
 // Montagem da URL com os dados de uma fatura
 // -------------------------------------------------------------------------
 function ExibeFatura($p_cliente,$p_fatura,$p_nr_fatura) {
@@ -916,20 +931,6 @@ function ExibeFatura($p_cliente,$p_fatura,$p_nr_fatura) {
   }
   return $l_string;
 }
-
-// =========================================================================
-// Montagem da URL com os dados de uma pessoa no relatório de permissões
-// -------------------------------------------------------------------------
-function ExibePessoaRel($p_dir,$p_cliente,$p_pessoa,$p_nome,$p_nome_resumido,$p_tipo) {
-  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  if (Nvl($p_nome,'')=='') {
-    $l_string='---';
-  } else {
-    $l_string .= '<A class="hl" HREF="'.$conRootSIW.$p_dir.'relatorios.php?par=TELAUSUARIOREL&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&w_tipo='.$p_tipo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG=" title="'.$p_nome.'">'.$p_nome_resumido.'</a>';
-  }
-  return $l_string;
-}
-
 
 // =========================================================================
 // Montagem da URL com os dados de um fornecedor

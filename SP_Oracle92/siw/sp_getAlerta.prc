@@ -30,7 +30,8 @@ begin
                          case when to_char(j.sq_siw_solicitacao) is null then null else f.descricao end,
                          case when to_char(l.sq_siw_solicitacao) is null then null else f.descricao end,
                          case when to_char(h.sq_siw_solicitacao) is null then null else h.assunto end,
-                         case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end
+                         case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end,
+                         case c.sigla when 'CO' then f.justificativa else null end
                         ) as titulo,
                 coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else f.titulo end,
                          case when to_char(i.sq_siw_solicitacao) is null then null else f.titulo end,
@@ -38,7 +39,8 @@ begin
                          case when to_char(k.sq_siw_solicitacao) is null then null else f.titulo end,
                          case when to_char(l.sq_siw_solicitacao) is null then null else f.descricao end,
                          case when to_char(h.sq_siw_solicitacao) is null then null else h.assunto end,
-                         case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end
+                         case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end,
+                         case c.sigla when 'CO' then coalesce(f.descricao,f.justificativa) else null end
                         ) as titulo1,
                 coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g.aviso_prox_conc end,
                          case when to_char(i.sq_siw_solicitacao) is null then null else i.aviso_prox_conc end,
@@ -64,18 +66,18 @@ begin
                          case when to_char(k.sq_siw_solicitacao) is null then null else k.fim_real end,
                          case when to_char(h.sq_siw_solicitacao) is null then null else h.fim_real end
                         ) as fim_real,
-                f2.nome_resumido||' ('||f8.sigla||')' as nm_resp,
-                coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g1.nome end,
-                         case when to_char(h.sq_siw_solicitacao) is null then null else h1.nome end,
-                         case when to_char(i.sq_siw_solicitacao) is null then null else h1.nome end,
+                f2.nome_resumido||' ('||f7.sigla||')' as nm_resp,
+                coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g.nome end,
+                         case when to_char(h.sq_siw_solicitacao) is null then null else h.nome end,
+                         case when to_char(i.sq_siw_solicitacao) is null then null else h.nome end,
                          f3.nome
                         ) as nm_unid_resp,
-                case when (c.sigla='SR' and e.sigla='AT') then f2.sq_pessoa     else case c.sigla when 'PD' then l1.sq_pessoa     else f4.sq_pessoa     end end as sq_exec,
+                case when (c.sigla='SR' and e.sigla='AT') then f2.sq_pessoa else case c.sigla when 'PD' then l.sq_pessoa else f4.sq_pessoa end end as sq_exec,
                 case when (c.sigla='SR' and e.sigla='AT') 
-                     then f2.nome_resumido||' ('||f8.sigla||')' 
+                     then f2.nome_resumido||' ('||f7.sigla||')' 
                      else case c.sigla when 'PD' 
-                                       then l1.nome_resumido||' ('||coalesce(l3.sigla,'---')||')'
-                                       else case when f4.sq_pessoa is null then null else f4.nome_resumido||' ('||f6.sigla||')' end
+                                       then l.nome_resumido||' ('||coalesce(l.sigla,'---')||')'
+                                       else case when f4.sq_pessoa is null then null else f4.nome_resumido||' ('||f4.sigla||')' end
                           end 
                 end as nm_exec
            from siw_cliente                              a
@@ -89,6 +91,7 @@ begin
                                                                )
                 inner           join siw_menu            d  on (a.sq_pessoa          = d.sq_pessoa and
                                                                 d.tramite            = 'S' and
+                                                                d.consulta_geral     = 'N' and
                                                                 (p_mail              = 'N' or
                                                                  (p_mail             = 'S' and d.envia_email = p_mail)
                                                                 )
@@ -120,24 +123,52 @@ begin
                                                                 )
                                                                )
                       inner     join co_pessoa           f2 on (f.solicitante        = f2.sq_pessoa)
-                        left    join sg_autenticacao     f7 on (f2.sq_pessoa         = f7.sq_pessoa)
-                          left  join eo_unidade          f8 on (f7.sq_unidade        = f8.sq_unidade)
+                        left    join (select w.cliente, w.sq_pessoa, x.sigla
+                                       from sg_autenticacao       w
+                                            inner join eo_unidade x on (w.sq_unidade = x.sq_unidade)
+                                      where (p_cliente is null or (p_cliente is not null and w.cliente = p_cliente))
+                                     )                   f7 on (f2.sq_pessoa_pai     = f7.cliente and
+                                                                f2.sq_pessoa         = f7.sq_pessoa
+                                                               )
                       inner     join eo_unidade          f3 on (f.sq_unidade         = f3.sq_unidade)
-                      left      join co_pessoa           f4 on (f.executor           = f4.sq_pessoa)
-                        left    join sg_autenticacao     f5 on (f4.sq_pessoa         = f5.sq_pessoa)
-                          left  join eo_unidade          f6 on (f5.sq_unidade        = f6.sq_unidade)
-                      left      join pj_projeto          g  on (f.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                        left    join eo_unidade          g1 on (g.sq_unidade_resp    = g1.sq_unidade)
-                      left      join gd_demanda          h  on (f.sq_siw_solicitacao = h.sq_siw_solicitacao)
-                        left    join eo_unidade          h1 on (h.sq_unidade_resp    = h1.sq_unidade)
+                      left      join (select w.cliente, v.sq_pessoa, v.nome_resumido, x.sigla
+                                       from co_pessoa                    v
+                                            inner   join sg_autenticacao w on (v.sq_pessoa  = w.sq_pessoa)
+                                              inner join eo_unidade      x on (w.sq_unidade = x.sq_unidade)
+                                      where (p_cliente is null or (p_cliente is not null and v.sq_pessoa_pai = p_cliente))
+                                     )                   f4 on (f2.sq_pessoa_pai     = f4.cliente and
+                                                                f.executor           = f4.sq_pessoa
+                                                               )
+                      left      join (select w.sq_siw_solicitacao, w.aviso_prox_conc, w.dias_aviso, w.inicio_real, w.fim_real,
+                                             x.nome, x.sigla, x.sq_pessoa as cliente
+                                       from pj_projeto            w
+                                            inner join eo_unidade x on (w.sq_unidade_resp = x.sq_unidade)
+                                      where (p_cliente is null or (p_cliente is not null and x.sq_pessoa = p_cliente))
+                                     )                   g  on (f2.sq_pessoa_pai     = g.cliente and
+                                                                f.sq_siw_solicitacao = g.sq_siw_solicitacao
+                                                               )
+                      left      join (select w.sq_siw_solicitacao, w.assunto, w.aviso_prox_conc, w.dias_aviso, w.inicio_real, w.fim_real,
+                                             x.nome, x.sigla, x.sq_pessoa as cliente
+                                       from gd_demanda            w
+                                            inner join eo_unidade x on (w.sq_unidade_resp = x.sq_unidade)
+                                      where (p_cliente is null or (p_cliente is not null and x.sq_pessoa = p_cliente))
+                                     )                   h  on (f2.sq_pessoa_pai     = h.cliente and
+                                                                f.sq_siw_solicitacao = h.sq_siw_solicitacao
+                                                               )
                       left      join ac_acordo           i  on (f.sq_siw_solicitacao = i.sq_siw_solicitacao)
                       left      join fn_lancamento       j  on (f.sq_siw_solicitacao = j.sq_siw_solicitacao)
                       left      join pe_programa         k  on (f.sq_siw_solicitacao = k.sq_siw_solicitacao)
-                      left      join pd_missao           l  on (f.sq_siw_solicitacao = l.sq_siw_solicitacao)
-                        left    join pd_categoria_diaria l4 on (l.diaria            = l4.sq_categoria_diaria)
-                        left    join co_pessoa           l1 on (l.sq_pessoa          = l1.sq_pessoa)
-                        left    join sg_autenticacao     l2 on (l1.sq_pessoa         = l2.sq_pessoa)
-                          left  join eo_unidade          l3 on (l2.sq_unidade        = l3.sq_unidade)
+                      left      join (select u.sq_siw_solicitacao, u.prestou_contas, w.cliente, v.sq_pessoa, v.nome_resumido, x.sigla, 
+                                             y.dias_prestacao_contas
+                                       from pd_missao                          u
+                                            inner     join co_pessoa           v on (u.sq_pessoa  = v.sq_pessoa)
+                                              inner   join sg_autenticacao     w on (v.sq_pessoa  = w.sq_pessoa)
+                                                inner join eo_unidade          x on (w.sq_unidade = x.sq_unidade)
+                                            inner     join pd_categoria_diaria y on (u.diaria     = y.sq_categoria_diaria)
+                                      where (p_cliente is null or (p_cliente is not null and v.sq_pessoa_pai = p_cliente))
+                                     )                   l  on (f2.sq_pessoa_pai     = l.cliente and
+                                                                f.sq_siw_solicitacao = l.sq_siw_solicitacao
+                                                               )
           where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
             and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (g.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(g.dias_aviso as integer))<=trunc(sysdate))))) or
@@ -146,10 +177,10 @@ begin
                  (c.sigla    = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (i.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(i.dias_aviso as integer))<=trunc(sysdate))))) or
                  (c.sigla    = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (j.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(j.dias_aviso as integer))<=trunc(sysdate))))) or
                  (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (k.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(k.dias_aviso as integer))<=trunc(sysdate))))) or
-                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(l4.dias_prestacao_contas,w.dias_prestacao_contas,0) as integer))<=trunc(sysdate)) or
+                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(l.dias_prestacao_contas,w.dias_prestacao_contas,0) as integer))<=trunc(sysdate)) or
                  (c.sigla    = 'SR' and f.fim < trunc(sysdate))
                 ) 
-          ) lista where 1 < lista.acesso;
+          ) lista where 0 < lista.acesso;
    Elsif p_restricao = 'HORAS' Then
       open p_result for
          select a.sq_pessoa_pai as cliente, a.sq_pessoa as sq_usuario, 
@@ -273,8 +304,7 @@ begin
    Elsif p_restricao = 'DOCUMENTOS' Then
       -- Verifica os documentos que um usuário tem acesso
       open p_result for
-         select * from (
-         select acesso(sq_siw_solicitacao, usuario, null) as acesso, lista.* 
+         select * 
            from (select a.sq_pessoa as cliente, 
                         a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                         a2.email,
@@ -286,7 +316,8 @@ begin
                         coalesce(d2.link, replace(d.link,'inicial','visual')) as link, coalesce(d2.sigla, d.sigla) as sigla, 
                         coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p2, coalesce(d2.p3, d.p3) as p3, coalesce(d2.p4, d.p4) as p4,
                         e.sigla as sg_tramite, case when (c.sigla = 'SR' and e.sigla='AT') then 'Aguardando opinião' else e.nome end as nm_tramite, 
-                        f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
+                        f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante, 
+                        acesso(f.sq_siw_solicitacao, a1.sq_pessoa, null) as acesso,
                         f3.nome as nm_unid_cad, f3.sigla as sg_unid_cad,
                         case when (f.fim<trunc(sysdate)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                         coalesce(f.codigo_interno,to_char(f.sq_siw_solicitacao)) as codigo,
@@ -294,7 +325,8 @@ begin
                                  case when to_char(j.sq_siw_solicitacao) is null then null else f.descricao end,
                                  case when to_char(l.sq_siw_solicitacao) is null then null else f.descricao end,
                                  case when to_char(h.sq_siw_solicitacao) is null then null else h.assunto end,
-                                 case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end
+                                 case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end,
+                                 case c.sigla when 'CO' then f.justificativa else null end
                                 ) as titulo,
                         coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else f.titulo end,
                                  case when to_char(i.sq_siw_solicitacao) is null then null else f.titulo end,
@@ -302,7 +334,8 @@ begin
                                  case when to_char(k.sq_siw_solicitacao) is null then null else f.titulo end,
                                  case when to_char(l.sq_siw_solicitacao) is null then null else f.descricao end,
                                  case when to_char(h.sq_siw_solicitacao) is null then null else h.assunto end,
-                                 case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end
+                                 case c.sigla when 'SR' then coalesce(f.descricao,f.justificativa) else null end,
+                                 case c.sigla when 'CO' then coalesce(f.descricao,f.justificativa) else null end
                                 ) as titulo1,
                         coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g.aviso_prox_conc end,
                                  case when to_char(i.sq_siw_solicitacao) is null then null else i.aviso_prox_conc end,
@@ -328,32 +361,34 @@ begin
                                  case when to_char(k.sq_siw_solicitacao) is null then null else k.fim_real end,
                                  case when to_char(h.sq_siw_solicitacao) is null then null else h.fim_real end
                                 ) as fim_real,
-                        f2.nome_resumido||' ('||f8.sigla||')' as nm_resp,
-                        coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g1.nome end,
-                                 case when to_char(h.sq_siw_solicitacao) is null then null else h1.nome end,
-                                 case when to_char(i.sq_siw_solicitacao) is null then null else h1.nome end,
+                        f2.nome_resumido||' ('||f7.sigla||')' as nm_resp,
+                        coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g.nome end,
+                                 case when to_char(h.sq_siw_solicitacao) is null then null else h.nome end,
+                                 case when to_char(i.sq_siw_solicitacao) is null then null else h.nome end,
                                  f3.nome
                                 ) as nm_unid_resp,
-                        coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g1.sigla end,
-                                 case when to_char(h.sq_siw_solicitacao) is null then null else h1.sigla end,
-                                 case when to_char(i.sq_siw_solicitacao) is null then null else h1.sigla end,
+                        coalesce(case when to_char(g.sq_siw_solicitacao) is null then null else g.sigla end,
+                                 case when to_char(h.sq_siw_solicitacao) is null then null else h.sigla end,
+                                 case when to_char(i.sq_siw_solicitacao) is null then null else h.sigla end,
                                  f3.sigla
                                 ) as sg_unid_resp,
-                        case when (c.sigla='SR' and e.sigla='AT') then f2.sq_pessoa     else case c.sigla when 'PD' then l1.sq_pessoa     else f4.sq_pessoa     end end as sq_exec,
+                        case when (c.sigla='SR' and e.sigla='AT') then f2.sq_pessoa else case c.sigla when 'PD' then l.sq_pessoa else f4.sq_pessoa end end as sq_exec,
                         case when (c.sigla='SR' and e.sigla='AT') 
-                             then f2.nome_resumido||' ('||f8.sigla||')' 
+                             then f2.nome_resumido||' ('||f7.sigla||')' 
                              else case c.sigla when 'PD' 
-                                               then l1.nome_resumido||' ('||coalesce(l3.sigla,'---')||')'
-                                               else case when f4.sq_pessoa is null then null else f4.nome_resumido||' ('||f6.sigla||')' end
+                                               then l.nome_resumido||' ('||coalesce(l.sigla,'---')||')'
+                                               else case when f4.sq_pessoa is null then null else f4.nome_resumido||' ('||f4.sigla||')' end
                                   end 
                         end as nm_exec
                    from siw_cliente                             a
-                        left            join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
-                        inner           join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai)
+                        inner           join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai and 
+                                                                       (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
+                                                                      )
                           inner         join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S' and a2.username <> '000.000.001-91')
                           inner         join co_tipo_vinculo    a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo)
                         inner           join siw_menu           d  on (a.sq_pessoa          = d.sq_pessoa and
-                                                                       d.tramite            = 'S'
+                                                                       d.tramite            = 'S' and
+                                                                       d.consulta_geral     = 'N'
                                                                       )
                           inner         join eo_unidade         d1 on (d.sq_unid_executora  = d1.sq_unidade)
                           left          join siw_menu           d2 on (d.sq_menu            = d2.sq_menu_pai and
@@ -376,27 +411,54 @@ begin
                                                                        )
                                                                       )
                               inner     join co_pessoa          f2 on (f.solicitante        = f2.sq_pessoa)
-                                left    join sg_autenticacao    f7 on (f2.sq_pessoa         = f7.sq_pessoa)
-                                  left  join eo_unidade         f8 on (f7.sq_unidade        = f8.sq_unidade)
                               inner     join eo_unidade         f3 on (f.sq_unidade         = f3.sq_unidade)
-                              left      join co_pessoa          f4 on (f.executor           = f4.sq_pessoa)
-                                left    join sg_autenticacao    f5 on (f4.sq_pessoa         = f5.sq_pessoa)
-                                  left  join eo_unidade         f6 on (f5.sq_unidade        = f6.sq_unidade)
-                              left      join pj_projeto         g  on (f.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                                left    join eo_unidade         g1 on (g.sq_unidade_resp    = g1.sq_unidade)
-                              left      join gd_demanda         h  on (f.sq_siw_solicitacao = h.sq_siw_solicitacao)
-                                left    join eo_unidade         h1 on (h.sq_unidade_resp    = h1.sq_unidade)
+                                left    join (select w.cliente, w.sq_pessoa, x.sigla
+                                               from sg_autenticacao       w
+                                                    inner join eo_unidade x on (w.sq_unidade = x.sq_unidade)
+                                              where (p_cliente is null or (p_cliente is not null and w.cliente = p_cliente))
+                                             )                  f7 on (f2.sq_pessoa_pai     = f7.cliente and
+                                                                       f2.sq_pessoa         = f7.sq_pessoa
+                                                                      )
+                                left    join (select w.cliente, v.sq_pessoa, v.nome_resumido, x.sigla
+                                               from co_pessoa                    v
+                                                    inner   join sg_autenticacao w on (v.sq_pessoa  = w.sq_pessoa)
+                                                      inner join eo_unidade      x on (w.sq_unidade = x.sq_unidade)
+                                              where (p_cliente is null or (p_cliente is not null and v.sq_pessoa_pai = p_cliente))
+                                             )                  f4 on (f2.sq_pessoa_pai     = f4.cliente and
+                                                                       f.executor           = f4.sq_pessoa
+                                                                      )
+                              left      join (select w.sq_siw_solicitacao, w.aviso_prox_conc, w.dias_aviso, w.inicio_real, w.fim_real,
+                                                     x.nome, x.sigla, x.sq_pessoa as cliente
+                                               from pj_projeto            w
+                                                    inner join eo_unidade x on (w.sq_unidade_resp = x.sq_unidade)
+                                              where (p_cliente is null or (p_cliente is not null and x.sq_pessoa = p_cliente))
+                                             )                  g  on (f2.sq_pessoa_pai     = g.cliente and
+                                                                       f.sq_siw_solicitacao = g.sq_siw_solicitacao
+                                                                      )
+                              left      join (select w.sq_siw_solicitacao, w.assunto, w.aviso_prox_conc, w.dias_aviso, w.inicio_real, w.fim_real,
+                                                     x.nome, x.sigla, x.sq_pessoa as cliente
+                                               from gd_demanda            w
+                                                    inner join eo_unidade x on (w.sq_unidade_resp = x.sq_unidade)
+                                              where (p_cliente is null or (p_cliente is not null and x.sq_pessoa = p_cliente))
+                                             )                  h  on (f2.sq_pessoa_pai     = g.cliente and
+                                                                       f.sq_siw_solicitacao = h.sq_siw_solicitacao
+                                                                      )
                               left      join ac_acordo          i  on (f.sq_siw_solicitacao = i.sq_siw_solicitacao)
                               left      join fn_lancamento      j  on (f.sq_siw_solicitacao = j.sq_siw_solicitacao)
                               left      join pe_programa        k  on (f.sq_siw_solicitacao = k.sq_siw_solicitacao)
-                              left      join pd_missao          l  on (f.sq_siw_solicitacao = l.sq_siw_solicitacao)
-                                left    join co_pessoa          l1 on (l.sq_pessoa          = l1.sq_pessoa)
-                                left    join sg_autenticacao    l2 on (l1.sq_pessoa         = l2.sq_pessoa)
-                                  left  join eo_unidade         l3 on (l2.sq_unidade        = l3.sq_unidade)
+                              left      join (select u.sq_siw_solicitacao, w.cliente, v.sq_pessoa, v.nome_resumido, x.sigla
+                                               from pd_missao                      u
+                                                    inner     join co_pessoa       v on (u.sq_pessoa  = v.sq_pessoa)
+                                                      inner   join sg_autenticacao w on (v.sq_pessoa  = w.sq_pessoa)
+                                                        inner join eo_unidade      x on (w.sq_unidade = x.sq_unidade)
+                                              where (p_cliente is null or (p_cliente is not null and v.sq_pessoa_pai = p_cliente))
+                                             )                  l  on (f2.sq_pessoa_pai     = l.cliente and
+                                                                       f.sq_siw_solicitacao = l.sq_siw_solicitacao
+                                                                      )
+                        left            join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
                   where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
-                    and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-                ) lista
-         ) result where 1 < result.acesso;
+                ) k
+          where 0 < k.acesso;
    Elsif p_restricao = 'USUARIOS' Then
       -- Verifica os usuários que tem acesso a um documento
       open p_result for         

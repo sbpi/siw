@@ -15,7 +15,6 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
 
   if (count($l_rs_solic)) {
     $l_blocos = 1;
-    if ($l_blocos) $l_html .= '<tr><td colspan=2><p><hr noshade color=#000000 size=4></p></td></tr>'.chr(13).chr(10);
     $l_html .= '<tr>'.chr(13).chr(10);
     if ($l_tipo!='TELAUSUARIO') {
       $l_html .= '    <td><b>DOCUMENTOS EM ATRASO OU ALERTA: '.chr(13).chr(10);
@@ -85,22 +84,22 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
       $l_html .= '</td>'.chr(13).chr(10);
       $l_html .= '      <td>'.crlf2br(f($row,'titulo')).'</td>'.chr(13).chr(10);
       if ($l_tipo=='TELA') {
-        $l_html .= '      <td nowrap>'.ExibePessoa(null,$l_cliente,f($row,'solicitante'),'Visual',f($row,'nm_resp')).'</td>'.chr(13).chr(10);
+        $l_html .= '      <td>'.ExibePessoa(null,$l_cliente,f($row,'solicitante'),'Visual',f($row,'nm_resp')).'</td>'.chr(13).chr(10);
       } else {
-        $l_html .= '      <td nowrap>'.f($row,'nm_resp').'</td>'.chr(13).chr(10);
+        $l_html .= '      <td>'.f($row,'nm_resp').'</td>'.chr(13).chr(10);
       }
       if ($l_tipo=='TELA' && nvl(f($row,'sq_exec'),'')!='') {
-        $l_html .= '      <td nowrap>'.ExibePessoa(null,$l_cliente,f($row,'sq_exec'),'Visual',f($row,'nm_exec')).'</td>'.chr(13).chr(10);
+        $l_html .= '      <td>'.ExibePessoa(null,$l_cliente,f($row,'sq_exec'),'Visual',f($row,'nm_exec')).'</td>'.chr(13).chr(10);
       } else {
-        $l_html .= '      <td nowrap>'.nvl(f($row,'nm_exec'),'---').'</td>'.chr(13).chr(10);
+        $l_html .= '      <td>'.nvl(f($row,'nm_exec'),'---').'</td>'.chr(13).chr(10);
       }
       if ($l_tipo!='TELAUSUARIO') {
         $l_html .= '      <td>'.formataDataEdicao(f($row,'fim'),5).'</td>'.chr(13).chr(10);
         $l_html .= '      <td>'.f($row,'nm_tramite').'</td>'.chr(13).chr(10);
       } else {
-          $l_html .= '      <td nowrap>'.f($row,'sg_unid_cad').'</td>'.chr(13).chr(10);
-          $l_html .= '      <td nowrap>'.f($row,'sg_unid_resp').'</td>'.chr(13).chr(10);
-          $l_html .= '      <td nowrap align="center">'.f($row,'acesso').'</td>'.chr(13).chr(10);
+          $l_html .= '      <td>'.f($row,'sg_unid_cad').'</td>'.chr(13).chr(10);
+          $l_html .= '      <td>'.f($row,'sg_unid_resp').'</td>'.chr(13).chr(10);
+          $l_html .= '      <td align="center">'.f($row,'acesso').'</td>'.chr(13).chr(10);
       }
       $l_html .= '    </tr>'.chr(13).chr(10);
     }
@@ -187,9 +186,9 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
       $l_html .= exibeImagemRestricao(f($row,'restricao')).'</td>'.chr(13).chr(10);
       $l_html .= '        <td>'.f($row,'titulo').'</b>'.chr(13).chr(10);
       if ($l_tipo=='TELA') {
-        $l_html .= '      <td nowrap>'.ExibePessoa(null,$l_cliente,f($row,'sq_resp_etapa'),'Visual',f($row,'nm_resp_etapa')).'</td>'.chr(13).chr(10);
+        $l_html .= '      <td>'.ExibePessoa(null,$l_cliente,f($row,'sq_resp_etapa'),'Visual',f($row,'nm_resp_etapa')).'</td>'.chr(13).chr(10);
       } else {
-        $l_html .= '        <td nowrap>'.f($row,'nm_resp_etapa').'</b>'.chr(13).chr(10);
+        $l_html .= '        <td>'.f($row,'nm_resp_etapa').'</b>'.chr(13).chr(10);
       }
       if ($l_tipo=='TELA') {
         $l_html .= '        <td>'.ExibeUnidade(null,$l_cliente,f($row,'sg_unid_resp_etapa'),f($row,'sq_unidade'),'Visual').'</b>'.chr(13).chr(10);
@@ -199,7 +198,7 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
       $l_html .= '        <td align="center">'.formataDataEdicao(f($row,'inicio_previsto'),5).'</td>'.chr(13).chr(10);
       $l_html .= '        <td align="center">'.formataDataEdicao(f($row,'fim_previsto'),5).'</td>'.chr(13).chr(10);
       $l_html .= '        <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_real'),5),'---').'</td>'.chr(13).chr(10);
-      $l_html .= '        <td align="right" width="1%" nowrap>'.formatNumber(f($row,'perc_conclusao')).' %</td>'.chr(13).chr(10);
+      $l_html .= '        <td align="right" width="1%">'.formatNumber(f($row,'perc_conclusao')).' %</td>'.chr(13).chr(10);
       $l_html .= '      </tr>'.chr(13).chr(10);
     }
   

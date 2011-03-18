@@ -1520,8 +1520,7 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
   // Recupera o logo do cliente a ser usado nas listagens
   $sql = new db_getCustomerData;
   $RS = $sql->getInstanceOf($dbms, $w_cliente);
-  if (f($RS, 'logo') > '')
-    $w_logo = '/img/logo' . substr(f($RS, 'logo'), (strpos(f($RS, 'logo'), '.') ? strpos(f($RS, 'logo'), '.') + 1 : 0) - 1, 30);
+  if (f($RS, 'logo') > '') $w_logo = '/img/logo' . substr(f($RS, 'logo'), (strpos(f($RS, 'logo'), '.') ? strpos(f($RS, 'logo'), '.') + 1 : 0) - 1, 30);
   if ($w_tipo == 'PDF') {
     headerpdf(f($RS_Menu, 'nome'), $w_pag);
     $w_embed = 'WORD';
@@ -1538,8 +1537,7 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="' . $conRootSIW . '">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
-    if ($w_embed != 'WORD')
-      CabecalhoRelatorio($w_cliente, f($RS_Cab, 'nome'), 4, $w_chave);
+    if ($w_embed != 'WORD') CabecalhoRelatorio($w_cliente, f($RS_Cab, 'nome'), 4, $w_chave);
     $w_embed = 'HTML';
   }
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');

@@ -82,6 +82,10 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
+
+$w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
+$w_tipo      = $_REQUEST['w_tipo'];
+
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -300,28 +304,32 @@ function Rel_Permissao() {
 function TelaUsuarioRel() {
   extract($GLOBALS);
   global $w_Disabled, $w_TP;
-  $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
-  $w_tipo      = $_REQUEST['w_tipo'];
   $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
-  if ($w_tipo=='WORD') {
+  $menu = $_REQUEST['menu'];
+  $docs = $_REQUEST['docs'];
+
+  if ($w_tipo == 'PDF') {
+    headerpdf('Visualização de Usuário', $w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,'Visualização',$w_pag);
+    CabecalhoWord($w_cliente,'Visualização de Usuário',$w_pag);
     $w_embed = 'WORD';
-    //CabecalhoWord($w_cliente,$w_TP,0);
   } else {
+    $sql = new db_getLinkData;
+    $RS_Cab = $sql->getInstanceOf($dbms, $w_cliente, 'PADCAD');
     Cabecalho();
-    $w_embed = 'EMBED';
     head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização</TITLE>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Usuário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
-    CabecalhoRelatorio($w_cliente,'Visualização',4,$w_sq_pessoa);
+    CabecalhoRelatorio($w_cliente,'Visualização de Usuário',4,null);
+    $w_embed = 'HTML';
   }
-  if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></font></center>');
-  }   
+  
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td>');
   ShowHTML('    <table width="99%" border="0">');
@@ -333,7 +341,9 @@ function TelaUsuarioRel() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td width="30%"><b>Chave interna: </b></td>');
     ShowHTML('          <td>'.$w_sq_pessoa.'</td></tr>');
-    ShowHTML('          <td width="30%"><b>Nome: </b></td>');
+    ShowHTML('      <td width="30%"><b>Nome de usuário: </b></td>');
+    ShowHTML('          <td>'.f($RS,'username').'</td></tr>');
+    ShowHTML('      <td width="30%"><b>Nome: </b></td>');
     ShowHTML('          <td>'.f($RS,'nome').'</td></tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Nome resumido: </b></td>');
@@ -634,100 +644,73 @@ function TelaUsuarioRel() {
     } 
   }
   ShowHTML('         </table></td></tr>');    
+
   //Opcoes do menu
-
-
-
-  ShowHTML('      <tr><td colspan="2"><table border=0 width="100%"><tr valign="top">');
-
-
-
-  ShowHTML('      <td><table border=0 width="100%">');
-  ShowHTML('      <tr><td><br><font size="2"><b>OPÇÕES DO MENU<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-  $w_imagemPadrao='images/Folder/SheetLittle.gif';
-  $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
-  ShowHTML('      <tr><td align="center" colspan="2">');
-  ShowHTML('        <table width=100%>');
-  if (count($RS)==0) {
-    ShowHTML('      <tr><td colspan=10 align="center"><b>Nenhuma opção de menu para este usuário</b></td></tr>');
-  } else {
-    foreach ($RS as $row) {
-      if (f($row,'Filho')>0) {
-        ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
-        $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
-        foreach ($RS1 as $row1) {
-          if (f($row1,'Filho')>0) {
-            ShowHTML('      <tr valign="top">');
-            ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
-            $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
-            foreach ($RS2 as $row2) {
-              if (f($row2,'Filho')>0) {
-                ShowHTML('      <tr valign="top">');
-                ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
-                $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
-                foreach ($RS3 as $row3) {
-                  ShowHTML('      <tr valign="top">');
-                  ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
-                } 
-              } else {
-                if (f($row2,'IMAGEM')>'') {
-                  $w_imagem=f($row2,'IMAGEM');
-                } else {
-                  $w_imagem=$w_imagemPadrao;
-                } 
-                ShowHTML('      <tr valign="top">');
-                ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome'));
-              } 
-            } 
-            ShowHTML('   </div>');
-          } else {
-            if (f($row1,'IMAGEM')>'') {
-              $w_imagem=f($row1,'IMAGEM');
-            } else {
-              $w_imagem=$w_imagemPadrao;
-            } 
-            ShowHTML('      <tr valign="top">');
-            ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome'));
-          }  
-        } 
-        ShowHTML('   </div>');
-      } else {
-        if (f($row,'IMAGEM')>'') {
-          $w_imagem=f($row,'IMAGEM');
-        } else {
-          $w_imagem=$w_imagemPadrao;
-        } 
-        ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td nowrap><img src="'.$w_imagem.'" border=0 align="center"><b> '.f($row,'nome'));
-      } 
-    } 
-  } 
-  ShowHTML('         </table></td></tr>');
-
-  ShowHTML('      </table>');
-
-  ShowHTML('      <td><table border=0 width="100%">');
-  ShowHTML('      <tr><td colspan=2><br><font size="2"><b>DOCUMENTOS NÃO CONCLUÍDOS ACESSÍVEIS AO USUÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-
-  // Recupera solicitações a serem listadas
-  $sql = new db_getAlerta; $RS_Solic = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
-  $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
-  
-  ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, null, null));
-
+  ShowHTML('      <tr><td colspan="2"><A name="MENU"><table border=0 width="100%"><tr valign="top">');
+  ShowHTML('          <td width="25%" nowrap><br><font size="2"><b>'.(($w_embed!='WORD') ? '<a class="SS" border="0" href="'.montaURL_JS($w_dir, $w_pagina.$par.'&O='.$O.'&w_sq_pessoa='.$w_sq_pessoa.'&w_tipo='.$w_tipo.'&menu='.(($menu) ? '' : 'S').'&docs='.$docs.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'#MENU"><img border=0 src="images/'.(($menu) ? 'menos' : 'mais').'.jpg" style="cursor:pointer"></a> ' : '').'OPÇÕES DO MENU<hr NOSHADE color=#000000 SIZE=1></b></font>');
+  if (nvl($menu,'')!='' || $w_embed=='WORD') {
+    ShowHTML('        <table border=0>');
+    $w_imagemPadrao='images/Folder/SheetLittle.gif';
+	  $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
+	  if (count($RS)==0) {
+	    ShowHTML('      <tr><td align="center"><b>Nenhuma opção de menu para este usuário</b></td></tr>');
+	  } else {
+	    foreach ($RS as $row) {
+	      if (f($row,'Filho')>0) {
+	        ShowHTML('      <tr><td><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
+	        $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
+	        foreach ($RS1 as $row1) {
+	          if (f($row1,'Filho')>0) {
+	            ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+	            $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
+	            foreach ($RS2 as $row2) {
+	              if (f($row2,'Filho')>0) {
+	                ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+	                $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
+	                foreach ($RS3 as $row3) {
+	                  ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
+	                } 
+	              } else {
+	                if (f($row2,'IMAGEM')>'') $w_imagem=f($row2,'IMAGEM'); else $w_imagem=$w_imagemPadrao;
+	                ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome'));
+	              } 
+	            } 
+	          } else {
+	            if (f($row1,'IMAGEM')>'') $w_imagem=f($row1,'IMAGEM'); else  $w_imagem=$w_imagemPadrao;
+	            ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome'));
+	          }  
+	        } 
+	      } else {
+	        if (f($row,'IMAGEM')>'') $w_imagem=f($row,'IMAGEM'); else  $w_imagem=$w_imagemPadrao;
+	        ShowHTML('      <tr><td><img src="'.$w_imagem.'" border=0 align="center"><b> '.f($row,'nome'));
+	      } 
+	    } 
+	  } 
+	  ShowHTML('         </table></td>');
+  }
+  ShowHTML('          <td width="75%"><A name="DOCS"><br><font size="2">'.(($w_embed!='WORD') ? '<a class="SS" border="0" href="'.montaURL_JS($w_dir, $w_pagina.$par.'&O='.$O.'&w_sq_pessoa='.$w_sq_pessoa.'&w_tipo='.$w_tipo.'&menu='.$menu.'&docs='.(($docs) ? '' : 'S').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'#DOCS"><img border=0 src="images/'.(($docs) ? 'menos' : 'mais').'.jpg" style="cursor:pointer"> </a>' : '').'<b>DOCUMENTOS NÃO CONCLUÍDOS ACESSÍVEIS AO USUÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font>');
+  if (nvl($docs,'')!='' || $w_embed=='WORD') {
+	  // Recupera solicitações a serem listadas
+	  $sql = new db_getAlerta; $RS_Solic = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
+	  $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
+    ShowHTML('        <table border=0><tr><td>');
+	  ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, null, null));
+  }
+    
   ShowHTML('      </table>');
 
   ShowHTML('</table>');
   ShowHTML('</table>');  
   ShowHTML('</table>');
-  if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></font></center>');
-  } 
-  if ($w_tipo!='WORD') {
-    ShowHTML('</body>');
-    ShowHTML('</html>');
-  }   
+  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  var comando, texto;');
+  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+  ShowHTML('  }');
+  ScriptClose();
+  if     ($w_tipo=='PDF')  RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================
