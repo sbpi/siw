@@ -33,9 +33,9 @@ create or replace procedure SP_PutSiwUsuario
    w_gestor_seguranca  sg_autenticacao.gestor_seguranca%type  := p_gestor_seguranca;
    w_gestor_sistema    sg_autenticacao.gestor_sistema%type    := p_gestor_sistema;
    w_tipo_autenticacao sg_autenticacao.tipo_autenticacao%type := p_tipo_autenticacao;
-   w_gestor_portal     sg_autenticacao.gestor_portal%type    := p_gestor_portal;
-   w_gestor_dashboard  sg_autenticacao.gestor_dashboard%type    := p_gestor_dashboard;
-   w_gestor_conteudo   sg_autenticacao.gestor_conteudo%type    := p_gestor_conteudo;
+   w_gestor_portal     sg_autenticacao.gestor_portal%type     := p_gestor_portal;
+   w_gestor_dashboard  sg_autenticacao.gestor_dashboard%type  := p_gestor_dashboard;
+   w_gestor_conteudo   sg_autenticacao.gestor_conteudo%type   := p_gestor_conteudo;
 begin
    -- Verifica se o usuário já existe em CO_PESSOA_FISICA ou em SG_AUTENTICACAO
    if w_cpf is not null or p_username is not null then
