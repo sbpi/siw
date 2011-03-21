@@ -705,7 +705,7 @@ function Geral() {
   } 
   //Recupera os dados dos contratos do colaborador
   $sql = new db_getGPContrato; $RSContrato = $sql->getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
-  if (count($RSContrato==0)) {
+  if (count($RSContrato)==0) {
     ScriptOpen('JavaScript');
     ShowHTML('  alert("Você não tem nenhum contrato ativo!");');
     ScriptClose();
