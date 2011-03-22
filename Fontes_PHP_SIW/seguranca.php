@@ -301,7 +301,7 @@ function Usuarios() {
     ShowHTML('      </tr>');
 
     ShowHTML('      <tr>');
-    selecaoUnidade('<U>L</U>otação:','L',null,$p_lotacao,null,'p_lotacao',null,null);
+    selecaoUnidade('<U>L</U>otação/unidades que o usuário tem acesso:','L',null,$p_lotacao,null,'p_lotacao',null,null);
     ShowHTML('      </tr>');
 
     ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');

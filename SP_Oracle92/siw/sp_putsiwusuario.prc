@@ -82,6 +82,9 @@ begin
    w_gestor_seguranca  := coalesce(p_gestor_seguranca,w_gestor_seguranca,'N'); -- Default: Não
    w_gestor_sistema    := coalesce(p_gestor_sistema,w_gestor_sistema,'N'); -- Default: Não
    w_tipo_autenticacao := coalesce(p_tipo_autenticacao,w_tipo_autenticacao,'B'); -- Default: autenticação pelo banco de dados
+   w_gestor_portal     := coalesce(p_gestor_portal,w_gestor_portal,'N'); -- Default: Não
+   w_gestor_dashboard  := coalesce(p_gestor_dashboard,w_gestor_dashboard,'N'); -- Default: Não
+   w_gestor_conteudo   := coalesce(p_gestor_conteudo,w_gestor_conteudo,'N'); -- Default: Não
 
    if p_vinculo is null and w_vinculo is null then
       -- Default: primeiro vinculo interno ordenado alfabeticamente

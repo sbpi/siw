@@ -14,9 +14,9 @@ create or replace function RetornaLimiteProtocolo(p_chave in number) return varc
 
   cursor c_dados is
       select case a2.sigla
-                  when 'AS' then case d.sigla when 'ANOS' then to_char(to_date(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy'),'dd/mm/yyyy')+cast(c.fase_corrente_anos as integer),'dd/mm/yyyy') else d.descricao end
-                  when 'AT' then case e.sigla when 'ANOS' then to_char(to_date(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy'),'dd/mm/yyyy')+cast(c.fase_intermed_anos as integer),'dd/mm/yyyy') else e.descricao end
-                  when 'EL' then case e.sigla when 'ANOS' then to_char(to_date(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy'),'dd/mm/yyyy')+cast(c.fase_intermed_anos as integer),'dd/mm/yyyy') else e.descricao end
+                  when 'AS' then case d.sigla when 'ANOS' then to_char(to_date(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||to_number(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy')+cast(c.fase_corrente_anos as integer)),'dd/mm/yyyy'),'dd/mm/yyyy') else d.descricao end
+                  when 'AT' then case e.sigla when 'ANOS' then to_char(to_date(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||to_number(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy')+cast(c.fase_intermed_anos as integer)),'dd/mm/yyyy'),'dd/mm/yyyy') else e.descricao end
+                  when 'EL' then case e.sigla when 'ANOS' then to_char(to_date(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||to_number(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy')+cast(c.fase_intermed_anos as integer)),'dd/mm/yyyy'),'dd/mm/yyyy') else e.descricao end
              end as intermediario
         from pa_documento                        a
              inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)

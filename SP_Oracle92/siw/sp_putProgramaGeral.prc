@@ -130,7 +130,9 @@ begin
           sq_unidade_resp  = p_unid_resp,
           ln_programa      = p_ln_programa,
           aviso_prox_conc  = p_aviso,
-          dias_aviso       = p_dias
+          dias_aviso       = p_dias,
+          sq_pehorizonte   = p_horizonte,
+          sq_penatureza    = p_natureza
       where sq_siw_solicitacao = p_chave;
 
    Elsif p_operacao = 'E' Then -- Exclusão

@@ -114,7 +114,7 @@ if (strpos('PADOCANEXO,PAINTERESS,PADOCASS', $SG) !== false) {
   $O = 'V';
 } elseif ($O == '') {
   // Se for acompanhamento, entra na filtragem
-  if ($P1 == 3 || $SG == 'PADTRAM' || $SG == 'PADRECEB' || $SG == 'PACLASSIF')
+  if ($P1 == 3 || $SG == 'PADTRAM' || $SG == 'PADRECEB' || $SG == 'PACLASSIF' || $SG == 'PAENVCEN')
     $O = 'P'; else
     $O='L';
 }
@@ -4635,7 +4635,7 @@ function Grava() {
       $w_caixa = $_REQUEST['w_caixa'];
       if ($w_caixa == 0) {
         $SQL = new dml_putCaixa;
-        $SQL->getInstanceOf($dbms, 'I', $w_cliente, null, $_SESSION['LOTACAO'], null, null, null,
+        $SQL->getInstanceOf($dbms, 'I', $w_cliente, null, $_REQUEST['p_unid_posse'], null, null, null,
                 null, null, null, null, null, null, null, null, null, null, &$w_chave_nova);
       }
 

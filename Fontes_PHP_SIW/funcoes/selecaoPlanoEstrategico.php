@@ -21,7 +21,7 @@ function selecaoPlanoEstrategico($label,$accesskey,$hint,$chave,$chaveAux,$campo
       }
     }
   } elseif($restricao=='SERVICOS') {
-    $sql = new db_getPlanoEstrategico; $RST = $sql->getInstanceOf($dbms,$w_cliente,null,$w_menu,null,null,null,$l_ativo,'SERVICOS');
+    $sql = new db_getPlanoEstrategico; $RST = $sql->getInstanceOf($dbms,$w_cliente,null,f($RS_Menu,'sq_menu'),null,null,null,$l_ativo,'SERVICOS');
     foreach ($RST as $row) {
       if (f($row,'filho')==0) {
         if (nvl(f($row,'chave'),0)==nvl($chave,0)) {

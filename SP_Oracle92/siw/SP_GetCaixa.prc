@@ -30,8 +30,10 @@ begin
                 coalesce(c.qtd,0) as qtd
            from pa_caixa              a 
                 inner join eo_unidade b on (a.sq_unidade = b.sq_unidade)
-                left  join (select sq_caixa, count(sq_siw_solicitacao) as qtd
-                              from pa_documento
+                left  join (select x.sq_caixa, count(x.sq_siw_solicitacao) as qtd
+                              from pa_documento x
+                                   inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                  where y.sq_solic_pai is null
                             group by sq_caixa
                            )          c on (a.sq_caixa   = c.sq_caixa)
           where a.cliente    = p_cliente
@@ -101,6 +103,7 @@ begin
                     -- inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite) LINHA ALTERADA EM 14/02/2011 PARA A NÃO EXIBIÇÃO DE REGISTROS CANCELADOS
                     inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite and d2.sigla <> 'CA')
           where a.cliente     = p_cliente
+            and d.sq_solic_pai is null
             and (p_chave      is null or (p_chave      is not null and a.sq_caixa            = p_chave  ))
             and (p_unidade    is null or (p_unidade    is not null and a.sq_unidade          = p_unidade))
             and (p_nu_guia    is null or (p_nu_guia    is not null and a.arquivo_guia_numero = p_nu_guia and a.arquivo_guia_ano = p_ano_guia))
