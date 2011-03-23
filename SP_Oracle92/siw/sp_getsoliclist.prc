@@ -1495,7 +1495,7 @@ begin
                 d.volumes,            d.unidade_int_posse,           d.pasta,
                 d.tipo_juntada,       d.data_central,
                 case d.interno when 'S' then e.sigla else d2.nome_resumido end as nm_origem_doc,
-                case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
+                case d.tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
                 case when da.sq_siw_solicitacao is not null and d.copias is not null

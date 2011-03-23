@@ -183,7 +183,8 @@ begin
                left        join (select x.sq_pessoa, y.sq_modulo, y.sigla
                                    from sg_pessoa_modulo      x
                                         inner join siw_modulo y on (x.sq_modulo = y.sq_modulo)
-                                  where y.sigla = 'PA'
+                                  where y.sigla     = 'PA'
+                                    and x.sq_pessoa = p_pessoa
                                 )                    w1 on (w.sq_pessoa             = w1.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
@@ -238,21 +239,8 @@ begin
               (p_restricao = 'PADALTREG'  and b3.sigla <> 'CA' and
                                               c.copias is null and
                                               (-- Se for gestor do sistema e um parâmetro de busca tiver sido informado
-                                               ((w1.sq_modulo is not null or w.gestor_sistema ='S') and 
-                                                w_filtro = 'true'
-                                               ) or
-                                               -- Se o documento tiver sido criado pelo (setor de lotação do usuário/setor gerenciado pelo usuário) e estiver nele
-                                               (b.cadastrador = p_pessoa and 
-                                                (w.sq_unidade = c.unidade_int_posse or 
-                                                 0            < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)
-                                                )
-                                               ) or
-                                               -- Se o documento original for do (setor de lotação do usuário/setor gerenciado pelo usuário) e estiver nele.
-                                               (b.sq_unidade  = c.unidade_int_posse and 
-                                                (w.sq_unidade = c.unidade_int_posse or 
-                                                 0            < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)
-                                                )
-                                               ) or
+                                               (w_filtro = 'true' and (w1.sq_modulo is not null or w.gestor_sistema ='S')
+                                              ) or
                                                -- Se espécie for DEFINIR e o protocolo estiver no (setor de lotação do usuário/setor gerenciado pelo usuário)
                                                (c2.sigla      = 'DEFINIR' and
                                                 0            < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)
@@ -260,8 +248,34 @@ begin
                                                -- Se protocolo for solicitação de viagem ou prestação de contas de viagem e o usuário for do setor de viagens
                                                (c2.sigla      in ('PRCOV','SOVI') and
                                                 0             < (select count(*) from siw_menu where sigla = 'PDINICIAL' and sq_unid_executora = w.sq_unidade)
+                                               ) or
+                                               -- Se o documento for criado pelo usuário ou por um dos setores que ele tem acesso e estiver nele.
+                                               (b.cadastrador = p_pessoa and
+                                                c.unidade_int_posse in (select sq_unidade from sg_autenticacao where sq_pessoa = p_pessoa
+                                                                        UNION
+                                                                        select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                                                        UNION
+                                                                        select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                                                        UNION 
+                                                                        select sq_unidade from eo_unidade_resp where sq_pessoa = p_pessoa and fim is null
+                                                                        UNION
+                                                                        select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_pessoa
+                                                                       )
+                                               ) or
+                                               (b.sq_unidade  = c.unidade_int_posse and
+                                                (b.sq_unidade       in (select sq_unidade from sg_autenticacao where sq_pessoa = p_pessoa
+                                                                        UNION
+                                                                        select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                                                        UNION
+                                                                        select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                                                        UNION 
+                                                                        select sq_unidade from eo_unidade_resp where sq_pessoa = p_pessoa and fim is null
+                                                                        UNION
+                                                                        select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_pessoa
+                                                                       )
+                                                )
                                                )
-                                              )
+                                              )	
               )
              );
    Elsif p_restricao = 'PADTRAM' Then

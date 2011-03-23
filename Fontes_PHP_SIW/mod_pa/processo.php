@@ -203,36 +203,16 @@ function Inicial() {
   global $w_Disabled;
 
   switch ($SG) {
-    case 'PADAUTUA': $w_nm_operacao = 'Autuar';
-      $w_rotina = 'Autuar';
-      break;
-    case 'PADANEXA': $w_nm_operacao = 'Anexar';
-      $w_rotina = 'Anexar';
-      break;
-    case 'PADJUNTA': $w_nm_operacao = 'Apensar';
-      $w_rotina = 'Apensar';
-      break;
-    case 'PADVINCULA': $w_nm_operacao = 'Vincular processos';
-      $w_rotina = 'Vincular';
-      break;
-    case 'PADTRANSF': $w_nm_operacao = 'Arquivar';
-      $w_rotina = 'Arquivar';
-      break;
-    case 'PADELIM': $w_nm_operacao = 'Eliminar';
-      $w_rotina = 'Eliminar';
-      break;
-    case 'PADARQ': $w_nm_operacao = 'Arquivar';
-      $w_rotina = 'ArqCentral';
-      break;
-    case 'PADEMPREST': $w_nm_operacao = 'Emprestar';
-      $w_rotina = 'Emprestar';
-      break;
-    case 'PADDESM': $w_nm_operacao = 'Desmembrar';
-      $w_rotina = 'Desmembrar';
-      break;
-    case 'PADALTREG': $w_nm_operacao = 'Alterar';
-      $w_rotina = 'Alterar';
-      break;
+    case 'PADAUTUA':    $w_nm_operacao = 'Autuar';              $w_rotina = 'Autuar';     break;
+    case 'PADANEXA':    $w_nm_operacao = 'Anexar';              $w_rotina = 'Anexar';     break;
+    case 'PADJUNTA':    $w_nm_operacao = 'Apensar';             $w_rotina = 'Apensar';    break;
+    case 'PADVINCULA':  $w_nm_operacao = 'Vincular processos';  $w_rotina = 'Vincular';   break;
+    case 'PADTRANSF':   $w_nm_operacao = 'Arquivar';            $w_rotina = 'Arquivar';   break;
+    case 'PADELIM':     $w_nm_operacao = 'Eliminar';            $w_rotina = 'Eliminar';   break;
+    case 'PADARQ':      $w_nm_operacao = 'Arquivar';            $w_rotina = 'ArqCentral'; break;
+    case 'PADEMPREST':  $w_nm_operacao = 'Emprestar';           $w_rotina = 'Emprestar';  break;
+    case 'PADDESM':     $w_nm_operacao = 'Desmembrar';          $w_rotina = 'Desmembrar'; break;
+    case 'PADALTREG':   $w_nm_operacao = 'Alterar';             $w_rotina = 'Alterar';    break;
   }
 
   if ($O == 'L') {
@@ -1174,9 +1154,7 @@ function Juntar() {
       ShowHTML('  }');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
       ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para ' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados') . '?\')) return false;');
-      // Se não for encaminhamento
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
+      ShowHTML('  theForm.Botao.disabled=true;');
     }
     ValidateClose();
     ScriptClose();
@@ -1191,7 +1169,7 @@ function Juntar() {
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<table border="0" width="100%">');
 
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -2389,7 +2367,7 @@ function Grava() {
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Desmembramento realizado com sucesso!\');');
-      ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Inicial&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
+      ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Inicial&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

@@ -25,13 +25,13 @@ begin
 
     -- Registra os dados da autuação
     Insert Into siw_solic_log 
-        (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
-         sq_siw_tramite,            data,               devolucao, 
+        (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa, 
+         sq_siw_tramite,            data,                 devolucao, 
          observacao
         )
     (Select 
-         sq_siw_solic_log.nextval,  p_chave,            p_usuario,
-         a.sq_siw_tramite,          w_data,             'N',
+         sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_usuario,
+         a.sq_siw_tramite,          w_data,               'N',
          'Arquivamento setorial: '||p_observacao
         from siw_solicitacao a
        where a.sq_siw_solicitacao = p_chave

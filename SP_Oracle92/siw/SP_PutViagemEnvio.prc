@@ -35,7 +35,7 @@ create or replace procedure SP_PutViagemEnvio
       select * from pd_missao where sq_siw_solicitacao = p_chave;
       
    cursor c_financeiro_pendente (l_cliente in number, l_pessoa in number) is
-      select w.sq_siw_solicitacao, w2.sq_menu
+      select x.codigo_interno as cd_viagem, w.sq_siw_solicitacao, w2.sq_menu
         from fn_lancamento                  w
              inner     join siw_solicitacao w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
                inner   join siw_menu        w2 on (w1.sq_menu            = w2.sq_menu and 
@@ -44,8 +44,10 @@ create or replace procedure SP_PutViagemEnvio
                                                   )
                inner   join siw_tramite     w3 on (w1.sq_siw_tramite     = w3.sq_siw_tramite and
                                                    w3.sigla              = 'PP'
-                                                  )
-       where w.pessoa = l_pessoa;
+                                                  ),
+             siw_solicitacao                x
+       where w.pessoa             = l_pessoa
+         and x.sq_siw_solicitacao = p_chave;
       
    cursor c_reembolso is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
@@ -417,7 +419,7 @@ begin
                                 p_tramite       => w_pp,
                                 p_novo_tramite  => w_ee,
                                 p_devolucao     => 'N',
-                                p_despacho      => 'Liberação automática de pagamento.'
+                                p_despacho      => 'Pagamento desbloqueado em função da realização da prestação de contas '||crec.cd_viagem||'.'
                                );
             end loop;   
          End If;

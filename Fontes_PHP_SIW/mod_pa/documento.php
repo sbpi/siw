@@ -2211,7 +2211,7 @@ function BuscaAssunto() {
   $w_nome     = upper($_REQUEST['w_nome']);
   $w_codigo   = upper($_REQUEST['w_codigo']);
   $w_cliente  = $_REQUEST['w_cliente'];
-  $chaveaux   = $_REQUEST['chaveaux'];
+  $chaveAux   = $_REQUEST['chaveAux'];
   $restricao  = $_REQUEST['restricao'];
   $campo      = $_REQUEST['campo'];
 
@@ -2258,7 +2258,7 @@ function BuscaAssunto() {
   if (count($RS) > 200 || ($w_nome > '' || $w_codigo > '')) {
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this))', null, $P1, $P2, $P3, $P4, $TP, $SG, null, null);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="' . $w_cliente . '">');
-    ShowHTML('<INPUT type="hidden" name="chaveaux" value="' . $chaveaux . '">');
+    ShowHTML('<INPUT type="hidden" name="chaveAux" value="' . $chaveAux . '">');
     ShowHTML('<INPUT type="hidden" name="restricao" value="' . $restricao . '">');
     ShowHTML('<INPUT type="hidden" name="campo" value="' . $campo . '">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td><div align="justify"><b><ul>Instruções</b>:<li>Informe parte do nome do assunto ou o código.<li>Quando a relação for exibida, selecione o assunto desejada clicando sobre a palavra <i>"Selecionar"</i> ao seu lado.<li>Após informar o nome da unidade, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
@@ -2859,7 +2859,7 @@ function Tramitacao() {
       ShowHTML('    <tr valign="top">');
       ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
       ShowHTML('    <tr><td>Usuário arquivador:<td colspan=2><b>' . $_SESSION['NOME'] . '</b></td></tr>');
-      SelecaoUnidade('Unidade ar<U>q</U>uivadora:', 'Q', 'Selecione o arquivo setorial.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA_SET', null,1,'<td>');
+      SelecaoUnidade('Unidade ar<U>q</U>uivadora:', 'Q', 'Selecione o arquivo setorial.', nvl($w_sq_unidade,$p_unid_posse), $w_usuario, 'w_sq_unidade', 'CADPA', null,1,'<td>');
       ShowHTML('    <tr valign="top"><td><b>Acondicionamento:</b><td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea ' . $w_Disabled . ' accesskey="O" name="w_despacho" class="STI" ROWS=5 cols=75>' . $w_despacho . '</TEXTAREA></td>');
       ShowHTML('    <tr><td><b><U>A</U>ssinatura Eletrônica:<td><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       ShowHTML('   <tr><td align="center" colspan=3><hr>');
@@ -2876,19 +2876,15 @@ function Tramitacao() {
         SelecaoPessoaOrigem('<u>P</u>essoa de destino:', 'P', 'Clique na lupa para selecionar a pessoa de destino.', $w_pessoa_destino, null, 'w_pessoa_destino', null, null, null, 2);
         ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="' . $w_unidade_externa . '"></td>');
       } else {
-        if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
-          SelecaoUnidade('Ar<U>q</U>uivo setorial:', 'Q', 'Selecione o arquivo setorial.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA_SET', null);
-        } else {
-          SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
-          ShowHTML('      <tr>' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') || $w_gestor == false) ? '' : '<td>') . '<td colspan="3"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
-        }
+        SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
+        ShowHTML('      <tr>' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') || $w_gestor == false) ? '' : '<td>') . '<td colspan="3"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
       }
     }
     if ($p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
       ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESPACHO: ' . $w_nm_tipo_despacho . '</b></font></td></tr>');
       if ($p_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $p_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
-        SelecaoProtocolo('ao <U>p</U>rocesso:', 'U', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo, null, 'w_protocolo', 'JUNTADA', null);
+        SelecaoProtocolo('ao <U>p</U>rocesso:', 'U', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo, $p_unid_posse, 'w_protocolo', 'JUNTADA', null);
         //ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
       }
 
@@ -3707,15 +3703,15 @@ function Recebimento() {
             ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
           ShowHTML('        <td align="top">');
           if (nvl(f($row, 'despacho_arqcentral'), '') == '') {
-            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=R&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=R&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET') . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
           } else {
-            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=T&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=T&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET') . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
           }
           if (!$w_outra_unidade) {
             if (nvl(f($row, 'despacho_arqcentral'), '') == '') {
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=S&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '">Recusar</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=S&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET') . '">Recusar</A>&nbsp');
             } else {
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=U&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '">Recusar</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=U&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET') . '">Recusar</A>&nbsp');
             }
           }
           ShowHTML('        </td>');
@@ -3736,13 +3732,16 @@ function Recebimento() {
           ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
           ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
           ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
-          if (strlen(Nvl(f($row, 'descricao'), '-')) > 50)
-            $w_titulo = substr(Nvl(f($row, 'descricao'), '-'), 0, 50) . '...'; else
+          if (strlen(Nvl(f($row, 'descricao'), '-')) > 50) {
+            $w_titulo = substr(Nvl(f($row, 'descricao'), '-'), 0, 50) . '...'; 
+          } else {
             $w_titulo=Nvl(f($row, 'descricao'), '-');
-          if (f($row, 'sg_tramite') == 'CA')
+          }
+          if (f($row, 'sg_tramite') == 'CA') {
             ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . $w_titulo . '</strike></td>');
-          else
+          } else {
             ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
+          }
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('      </tr>');
         }
@@ -3765,6 +3764,7 @@ function Recebimento() {
       ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
       ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
       ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML(montaFiltro('POST'));
       ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('  ATENÇÃO:<ul>');
       ShowHTML('  <li>Outro usuário recebeu esta guia. Clique no botão "Abandonar" para voltar à tela de filtragem de recebimentos.');
@@ -3772,6 +3772,7 @@ function Recebimento() {
       ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
       ShowHTML('  <table width="97%" border="0">');
       ShowHTML('    <tr><td align="center" colspan=4><hr>');
+      ShowHTML('</FORM>');
     } else {
       // Chama a rotina de visualização dos protocolos da guia
       ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
@@ -3782,6 +3783,7 @@ function Recebimento() {
 	    ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
 	    ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
 	    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML(montaFiltro('POST'));
 	    ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
 	    ShowHTML('  ATENÇÃO:<ul>');
 	    if ($O == 'R') {
@@ -3814,6 +3816,7 @@ function Recebimento() {
     ShowHTML('  </table>');
     ShowHTML('  </TD>');
     ShowHTML('</tr>');
+    ShowHTML('</FORM>');
   } elseif ($O == 'T' || $O == 'U') {
     ShowHTML('<tr><td align="center" colspan=3>');
     // Chama a rotina de visualização dos protocolos da guia
@@ -3825,6 +3828,7 @@ function Recebimento() {
     ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
     ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML(montaFiltro('POST'));
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
     ShowHTML('  ATENÇÃO:<ul>');
     if ($O == 'T') {
@@ -3854,6 +3858,7 @@ function Recebimento() {
     ShowHTML('  </table>');
     ShowHTML('  </TD>');
     ShowHTML('</tr>');
+    ShowHTML('</FORM>');
   } elseif ($O == 'P') {
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -3915,7 +3920,7 @@ function BuscaProtocolo() {
 
   $w_ano = $_REQUEST['w_ano'];
   $w_cliente = $_REQUEST['w_cliente'];
-  $chaveaux = $_REQUEST['chaveaux'];
+  $chaveAux = $_REQUEST['chaveAux'];
   $restricao = $_REQUEST['restricao'];
   $campo = $_REQUEST['campo'];
 
@@ -3989,6 +3994,9 @@ function BuscaProtocolo() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
+    if (nvl($chaveAux,'')!='') {
+      Validate('l_uorg_resp', 'Unidade de posse', 'SELECT', '1', '1', '18', '', '1');
+    }
     Validate('l_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     Validate('l_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
     Validate('l_assunto', 'Detalhamento do assunto/Despacho', '', '', '2', '90', '1', '1');
@@ -4033,7 +4041,7 @@ function BuscaProtocolo() {
   if ((!is_Array($RS1)) || count($RS1) > 50 || $l_exibe > '') {
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this))', null, $P1, $P2, $P3, $P4, $TP, $SG, null, null);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="' . $w_cliente . '">');
-    ShowHTML('<INPUT type="hidden" name="chaveaux" value="' . $chaveaux . '">');
+    ShowHTML('<INPUT type="hidden" name="chaveAux" value="' . $chaveAux . '">');
     ShowHTML('<INPUT type="hidden" name="restricao" value="' . $restricao . '">');
     ShowHTML('<INPUT type="hidden" name="campo" value="' . $campo . '">');
     ShowHTML('<INPUT type="hidden" name="exibe" value="">');
@@ -4051,7 +4059,11 @@ function BuscaProtocolo() {
     }
 
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade de posse:', 'U', 'Selecione a Unidade de posse do protocolo na relação.', $l_uorg_resp, null, 'l_uorg_resp', null, null);
+    if (nvl($chaveAux,'')!='') {
+      SelecaoUnidade('<U>U</U>nidade de posse:', 'U', 'Selecione a Unidade de posse do protocolo na relação.', nvl($l_uorg_resp,$chaveAux), $w_usuario, 'l_uorg_resp', 'CADPA', null);  
+    } else {
+      SelecaoUnidade('<U>U</U>nidade de posse:', 'U', 'Selecione a Unidade de posse do protocolo na relação.', $l_uorg_resp, null, 'l_uorg_resp', null, null);
+    }
     selecaoTipoDespacho('Último des<u>p</u>acho:', 'P', 'Selecione o despacho desejado.', $w_cliente, $l_prioridade, null, 'l_prioridade', 'SELECAO', null);
 
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
@@ -4496,7 +4508,7 @@ function Grava() {
         $SQL = new dml_putDocumentoEnvio;
         $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'],
                 $_REQUEST['w_interno'], $_REQUEST['w_unidade_posse'], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
-                $_REQUEST['w_tipo_despacho'], $p_prefixo, $p_numero, $p_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
+                $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
                 $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'], $_REQUEST['w_unidade_externa'],
                 &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
         // Envia e-mail comunicando a tramitação
@@ -4604,7 +4616,7 @@ function Grava() {
             $SQL->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $_POST['w_chave'][$i], $w_usuario,
                     $_POST['w_tramite'][$_POST['w_chave'][$i]], $_REQUEST['w_interno'],
                     $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
-                    $_REQUEST['w_tipo_despacho'], $p_prefixo, $p_numero, $p_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'],
+                    $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'],
                     $_REQUEST['w_dias'], $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'],
                     $_REQUEST['w_unidade_externa'], &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
           }

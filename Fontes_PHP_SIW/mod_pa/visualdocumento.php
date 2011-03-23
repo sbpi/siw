@@ -22,8 +22,10 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   
   if (nvl(f($RS,'sq_solic_pai'),'')!='') {
     $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PADCAD');
-    if (f($RS,'tipo_juntada')=='A') $w_tipo_juntada = 'ANEXO AO PROCESSO '.f($RS_Pai,'protocolo');
-    else                            $w_tipo_juntada = 'APENSO AO PROCESSO '.f($RS_Pai,'protocolo');
+    if (f($RS,'tipo_juntada')=='A') $w_tipo_juntada = 'ANEXO AO PROCESSO ';
+    else                            $w_tipo_juntada = 'APENSO AO PROCESSO ';
+    if ($l_formato!='WORD') $w_tipo_juntada.='<A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($RS_Pai, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($RS_Pai,'protocolo') . '&nbsp;</a>';
+    else                    $w_tipo_juntada.=f($RS_Pai,'protocolo');
   }
 
   if (nvl(f($RS,'protocolo_siw'),'')!='') {
@@ -35,7 +37,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO ';
       else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO ';
     }
-    $w_tipo_vinc.=f($RS_Vinc,'protocolo');
+    if ($l_formato!='WORD') $w_tipo_vinc.='<A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($RS_Vinc, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($RS_Vinc,'protocolo') . '&nbsp;</a>';
+    else                    $w_tipo_vinc.=f($RS_Vinc,'protocolo');
   }
 
   $l_html.=chr(13).'    <table width="100%" border="0" cellspacing="3">';
@@ -275,7 +278,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     foreach ($RS_Juntado as $row) {
       $l_html.=chr(13).'      <tr valign="top">';
       $l_html.=chr(13).'        <td>'.f($row,'nm_tipo_juntada').'</td>';
-      $l_html.=chr(13).'        <td align="center">'.f($row,'protocolo').'</td>';
+      if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
       $l_html.=chr(13).'        <td>'.f($row,'nm_especie').'</td>';
       $l_html.=chr(13).'        <td>'.f($row,'numero_original').'</td>';
       $l_html.=chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
@@ -288,34 +291,64 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'</tr>';
   }
 
-  $sql = new db_getSolicList; $RS_Copias = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',9,
+  $sql = new db_getSolicList; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',9,
       $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
       $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
       $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
       $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, f($RS,'sq_siw_solicitacao'), $p_atividade, 
       null, null, $p_empenho, $p_numero_orig);
-  $RS_Copias = SortArray($RS_Copias,'copias','asc','sq_siw_solicitacao','asc');
+  $RS_Vinc = SortArray($RS_Vinc,'copias','asc','sq_siw_solicitacao','asc');
   
-  if (count($RS_Copias)>0) {
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>CÓPIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
-    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-    $l_html.=chr(13).'       <tr valign="top" align="center">';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
-    $l_html.=chr(13).'       </tr>';
-    foreach ($RS_Copias as $row) {
-      $l_html.=chr(13).'      <tr valign="top">';
-      $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
-      $l_html.=chr(13).'        <td align="center">'.f($row,'protocolo').'</td>';
-      $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
-      $l_html.=chr(13).'      </tr>';
-    } 
-    $l_html.=chr(13).'      </center>';
-    $l_html.=chr(13).'    </table>';
-    $l_html.=chr(13).'  </td>';
-    $l_html.=chr(13).'</tr>';
+  if (count($RS_Vinc)>0) {
+    $RS_Copias = array();
+    $RS_Vinculos = array();
+    
+    foreach($RS_Vinc as $row) {
+      if (nvl(f($row,'copias'),'')!='') array_push($RS_Copias, $row);
+      else array_push($RS_Vinculos, $row);
+    }
+
+    if (count($RS_Vinculos)>0) {
+      $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>PROTOCOLOS VINCULADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'       <tr valign="top" align="center">';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
+      $l_html.=chr(13).'       </tr>';
+      foreach ($RS_Vinculos as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
+        $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'      </center>';
+      $l_html.=chr(13).'    </table>';
+      $l_html.=chr(13).'  </td>';
+      $l_html.=chr(13).'</tr>';
+    }
+
+    if (count($RS_Copias)>0) {
+	    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>CÓPIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+	    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+	    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+	    $l_html.=chr(13).'       <tr valign="top" align="center">';
+	    $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
+	    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
+	    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
+	    $l_html.=chr(13).'       </tr>';
+	    foreach ($RS_Copias as $row) {
+	      $l_html.=chr(13).'      <tr valign="top">';
+	      $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
+	      if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
+	      $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
+	      $l_html.=chr(13).'      </tr>';
+	    } 
+	    $l_html.=chr(13).'      </center>';
+	    $l_html.=chr(13).'    </table>';
+	    $l_html.=chr(13).'  </td>';
+	    $l_html.=chr(13).'</tr>';
+    }
   }
 
   if ($O=='T') {
