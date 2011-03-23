@@ -11,8 +11,8 @@ function SelecaoTipoConclusao($label,$accesskey,$hint,$chave,$campo,$restricao,$
   } 
   ShowHTML('          <option value="">---'); 
   //if (nvl($chave,-1)==0) ShowHTML('          <option value="0" SELECTED>Conclusão com renovação');  else ShowHTML('          <option value="0">Conclusão com renovação');
-  if (nvl($chave,-1)==1) ShowHTML('          <option value="1" SELECTED>Encerramento na data prevista');  else ShowHTML('          <option value="1">Encerramento na data prevista');
-  if (nvl($chave,-1)==2) ShowHTML('          <option value="2" SELECTED>Rescisão');                       else ShowHTML('          <option value="2">Rescisão');
+  if (nvl($chave,-1)==1) ShowHTML('          <option value="1" SELECTED>Encerramento do contrato');   else ShowHTML('          <option value="1">Encerramento do contrato');
+  if (nvl($chave,-1)==2) ShowHTML('          <option value="2" SELECTED>Rescisão');                   else ShowHTML('          <option value="2">Rescisão');
   ShowHTML('          </select>');
 } 
 ?>

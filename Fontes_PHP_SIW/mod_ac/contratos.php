@@ -4026,22 +4026,22 @@ function Concluir() {
     FormataValor();
     ValidateOpen('Validacao');
     Validate('w_tipo_conc','Tipo da conclusão','SELECT',1,1,1,'','1');
+    Validate('w_fim_real','Data da rescisão','DATA',1,10,10,'','0123456789/');
+    CompData('w_inicio_real','Início da execução','<=','w_fim_real','Término da execução');
     if ($w_tipo_conc==2) {
-      Validate('w_fim_real','Data da rescisão','DATA',1,10,10,'','0123456789/');
-      CompData('w_inicio_real','Início da execução','<=','w_fim_real','Término da execução');
       Validate('w_nota_conclusao','Motivo da rescisão','','1','1','2000','1','1');
     } else {
-      Validate('w_nota_conclusao','Observação','','','1','2000','1','1');
+      Validate('w_nota_conclusao','Observação','','','2','2000','1','1');
     } 
 
     if ($w_tipo_conc==0) {
-      Validate('w_inicio','Início da vigência','DATA',1,10,10,'','0123456789/');
-      Validate('w_fim','Término da vigência','DATA',1,10,10,'','0123456789/');
-      CompData('w_inicio','Início da vigência','<=','w_fim','Término da vigência');
-      if (substr($SG,0,3)!='GCA') {
-        Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
-      }
-    } 
+	    Validate('w_inicio','Início da vigência','DATA',1,10,10,'','0123456789/');
+	    Validate('w_fim','Término da vigência','DATA',1,10,10,'','0123456789/');
+	    CompData('w_inicio','Início da vigência','<=','w_fim','Término da vigência');
+	    if (substr($SG,0,3)!='GCA') {
+	      Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
+	    }
+    }
 
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     if ($P1!=1) {
@@ -4056,9 +4056,7 @@ function Concluir() {
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_tipo_conc==2) {
-    BodyOpenClean('onLoad=\'document.Form.w_fim_real.focus()\';');
-  } elseif ($w_troca>'') {
+  if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'document.Form.w_tipo_conc.focus()\';');
@@ -4084,12 +4082,11 @@ function Concluir() {
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
   ShowHTML('          <tr valign="top">');
-  SelecaoTipoConclusao('Tip<u>o</u>:','O','Selecione o tipo de conclusão.',$w_tipo_conc,'w_tipo_conc',$w_menu,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nota_conclusao\'; document.Form.submit();"');
+  SelecaoTipoConclusao('Tip<u>o</u>:','O','Selecione o tipo de conclusão.',$w_tipo_conc,'w_tipo_conc',$w_menu,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_fim_real\'; document.Form.submit();"');
   if ($w_tipo_conc==2) {
-    ShowHTML('              <td><b>Da<u>t</u>a da rescisão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_real).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data da rescisão.">'.ExibeCalendario('Form','w_fim_real').'</td>');
+    ShowHTML('              <td><b>Da<u>t</u>a da rescisão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_real).'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data da rescisão.">'.ExibeCalendario('Form','w_fim_real').'</td>');
   } else {
-    ShowHTML('              <td><b>Da<u>t</u>a de encerramento:</b><br><input DISABLED accesskey="T" type="text" name="w_fim_real1" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_real).'" onKeyDown="FormataData(this,event);" title="Data de término da vigência."></td>');
-    ShowHTML('<INPUT type="hidden" name="w_fim_real" value="'.FormataDataEdicao($w_fim_real).'">');
+    ShowHTML('              <td><b>Da<u>t</u>a de encerramento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_real).'" onKeyDown="FormataData(this,event);" title="Data de término de encerramento.">'.ExibeCalendario('Form','w_fim_real').'</td>');
   } 
   ShowHTML('          </table>');
   if ($w_tipo_conc==2) {
