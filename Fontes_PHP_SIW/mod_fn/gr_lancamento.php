@@ -217,8 +217,13 @@ function Gerencial() {
     }
     if ($p_objeto>'')   { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Objeto <td>[<b>'.$p_objeto.'</b>]'; }
     if ($p_palavra>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código interno <td>[<b>'.$p_palavra.'</b>]'; }
-    if ($p_ini_i>'')    { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Início vigência <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
-    if ($p_fim_i>'')    { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Término vigência <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
+    
+    if (substr(f($RS_Menu,'sigla'),3)=='CONT') {
+      if ($p_ini_i>'')    { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Vigência entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
+    } elseif (substr(f($RS_Menu,'sigla'),3)=='VIA') {
+      if ($p_ini_i>'')    { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Viagem entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
+    }
+    if ($p_fim_i>'')    { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Pagamento entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
     if ($p_atraso>'')   { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código externo <td>[<b>'.$p_atraso.'</b>]'; }
     if ($p_empenho>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Número do empenho<td>[<b>'.$p_empenho.'</b>]'; }
     if ($p_processo>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Número do processo<td>[<b>'.$p_processo.'</b>]'; }
@@ -305,10 +310,12 @@ function Gerencial() {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_objeto','Plano de trabalho','','','2','90','1','1');
       else                                                  Validate('p_objeto','Objeto','','','2','90','1','1');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
-      Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
-      Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
+      if (substr(f($RS_Menu,'sigla'),3)=='CONT')    $texto = 'Vigência';
+      elseif (substr(f($RS_Menu,'sigla'),3)=='VIA') $texto = 'Viagem';
+      Validate('p_ini_i',$texto.' inicial','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f',$texto.' final','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas de recebimento ou nenhuma delas!\');');
+      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
@@ -321,20 +328,15 @@ function Gerencial() {
       ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
-      CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
-      Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
-      Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
+      CompData('p_ini_i','Data inicial','<=','p_ini_f','Data final');
+      Validate('p_fim_i','Pagamento inicial','DATA','','10','10','','0123456789/');
+      Validate('p_fim_f','Pagamento final','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas de conclusão ou nenhuma delas!\');');
+      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
       ShowHTML('     theForm.p_fim_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
-      CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
-      ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\''.substr(f($RS_Menu,'sigla'),0,3).'ETAPA\' && theForm.p_projeto.selectedIndex==0) {');
-      ShowHTML('     alert (\'A agregação por etapa exige a seleção de um projeto!\');');
-      ShowHTML('     theForm.p_projeto.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');      
+      CompData('p_fim_i','Pagamento inicial','<=','p_fim_f','Pagamento final');
       ValidateClose();
       ScriptClose();
     } else {
@@ -512,16 +514,16 @@ function Gerencial() {
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-            if ($w_nm_quebra!=f($row1,'nm_'.$agrega_projeto)) {
+            if ($w_nm_quebra!=((substr(f($RS_Menu,'sigla'),3)=='CONT') ? f($row1,'nm_solic_vinculo') : f($row1,'nm_projeto'))) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_'.$agrega_projeto));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.((substr(f($RS_Menu,'sigla'),3)=='CONT') ? f($row1,'nm_solic_vinculo') : f($row1,'nm_projeto')));
               } 
-              $w_nm_quebra=f($row1,'nm_'.$agrega_projeto);
-              if (substr(f($RS_Menu,'sigla'),3)=='CONT') $w_chave=f($row1,'sq_solic_vinculo'); else $w_chave=f($row1,'sq_solic_pai');
+              $w_nm_quebra=((substr(f($RS_Menu,'sigla'),3)=='CONT') ? f($row1,'nm_solic_vinculo') : f($row1,'nm_projeto'));
+              $w_chave=((substr(f($RS_Menu,'sigla'),3)=='CONT') ? f($row1,'sq_solic_vinculo') : f($row1,'sq_projeto'));
               $w_chave_aux=-1;
               $w_qt_quebra=0.00;
               $t_solic=0.00;
@@ -784,7 +786,13 @@ function Gerencial() {
       else
         ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'CC'.'">Classificação');
     } 
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU')                                                    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
+    if (substr(f($RS_Menu,'sigla'),3)!='VIA') {
+      if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU') {
+        ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');
+      } else {
+        ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
+      }
+    }
     if (Nvl($p_agrega,substr(f($RS_Menu,'sigla'),0,3).'PROP')==substr(f($RS_Menu,'sigla'),0,3).'PROP') {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Bolsista');
       else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Outra parte');
@@ -856,8 +864,12 @@ function Gerencial() {
     ShowHTML('          <td><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="sti" type="text" name="p_objeto" size="25" maxlength="90" value="'.$p_objeto.'"></td>');
     ShowHTML('          <td><b>Dias para <U>t</U>érmino da vigência:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Iní<u>c</u>io vigência entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td><b>Fi<u>m</u> vigência entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
+    if (substr(f($RS_Menu,'sigla'),3)=='CONT') {
+      ShowHTML('          <td><b>Iní<u>c</u>io vigência entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    } elseif (substr(f($RS_Menu,'sigla'),3)=='VIA') {
+      ShowHTML('          <td><b>V<u>i</u>agem entre:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    }
+    ShowHTML('          <td><b><u>P</u>agamento entre:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr valign="top">');
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
