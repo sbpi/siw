@@ -69,6 +69,49 @@ begin
                   )
                  )
                 );
+   Elsif p_restricao = 'RESFIN' Then
+      open p_result for 
+        select a.codigo_interno, a.inicio, a.fim, a.sq_siw_solicitacao, d.sq_acordo_aditivo, d.codigo, d.ini_aditivo, d.fim_aditivo, d.valor valor_previsto, e.liquidado valor_liquidado, e.pago as valor_pago
+          from siw_solicitacao        a
+               inner join siw_tramite b on (a.sq_siw_tramite     = b.sq_siw_tramite)
+               inner join ac_acordo   c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+               inner join (select k.sq_siw_solicitacao, l.sq_acordo_aditivo, l.codigo, l.inicio as ini_aditivo, l.fim as fim_aditivo, nvl(sum(nvl(k.valor,0)),0) as valor
+                             from ac_acordo_parcela                  k
+                                  inner       join ac_acordo        k1 on (k.sq_siw_solicitacao  = k1.sq_siw_solicitacao)
+                                    inner     join siw_solicitacao  k2 on (k1.sq_siw_solicitacao = k2.sq_siw_solicitacao)
+                                  left        join ac_acordo_aditivo l on (k.sq_acordo_aditivo   = l.sq_acordo_aditivo and l.prorrogacao = 'S')
+                           group by k.sq_siw_solicitacao, l.sq_acordo_aditivo, l.codigo, l.inicio, l.fim
+                          )           d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+               left  join (select k.sq_siw_solicitacao, l.sq_acordo_aditivo, 
+                                  nvl(sum(nvl(m1.valor,0) + nvl(p1.valor,0)),0) liquidado, 
+                                  nvl(sum(case when m1.conclusao is not null then nvl(m1.valor,0) else 0 end + case when p1.conclusao is not null then nvl(p1.valor,0) else 0 end),0) pago
+                             from ac_acordo_parcela                  k
+                                  inner       join ac_acordo        k1 on (k.sq_siw_solicitacao  = k1.sq_siw_solicitacao)
+                                    inner     join siw_solicitacao  k2 on (k1.sq_siw_solicitacao = k2.sq_siw_solicitacao)
+                                  left        join ac_acordo_aditivo l on (k.sq_acordo_aditivo   = l.sq_acordo_aditivo and l.prorrogacao = 'S')
+                                  inner       join fn_lancamento     m on (k.sq_acordo_parcela   = m.sq_acordo_parcela)
+                                    inner     join siw_solicitacao  m1 on (m.sq_siw_solicitacao  = m1.sq_siw_solicitacao)
+                                      inner   join siw_tramite      m2 on (m1.sq_siw_tramite     = m2.sq_siw_tramite and m2.sigla <> 'CA')
+                                    left      join fn_lancamento_doc n on (m.sq_siw_solicitacao  = n.sq_siw_solicitacao)
+                                      left    join fn_imposto_doc    o on (n.sq_lancamento_doc   = o.sq_lancamento_doc)
+                                        left  join fn_lancamento     p on (o.solic_imposto       = p.sq_siw_solicitacao)
+                                        left  join siw_solicitacao  p1 on (p.sq_siw_solicitacao  = p1.sq_siw_solicitacao)
+                           group by k.sq_siw_solicitacao, l.sq_acordo_aditivo
+                          ) e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao and coalesce(d.sq_acordo_aditivo,0) = coalesce(e.sq_acordo_aditivo,0))
+          where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_aditivo   is null or (p_aditivo   is not null and d.sq_acordo_aditivo  = p_aditivo))
+            and (p_dt_ini    is null or (p_dt_ini    is not null and (a.inicio      between p_dt_ini      and p_dt_fim or 
+                                                                      a.fim         between p_dt_ini      and p_dt_fim or
+                                                                      p_dt_ini      between a.inicio      and a.fim or
+                                                                      p_dt_fim      between a.inicio      and a.fim or
+                                                                      d.ini_aditivo between p_dt_ini      and p_dt_fim or 
+                                                                      d.fim_aditivo between p_dt_ini      and p_dt_fim or
+                                                                      p_dt_ini      between d.ini_aditivo and d.fim_aditivo or
+                                                                      p_dt_fim      between d.ini_aditivo and d.fim_aditivo
+                                                                     )
+                                        )
+                )
+        order by a.sq_siw_solicitacao, d.sq_acordo_aditivo;
    Elsif p_restricao = 'RELJUR' Then
       open p_result for 
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
@@ -80,28 +123,28 @@ begin
                 f.vencimento as dt_lancamento, f.valor as vl_lancamento, f.sg_tramite as fn_tramite,
                 f.processo, f.referencia_inicio, f.referencia_fim,
                 f.sq_acordo_nota, f.valor_inicial, f.valor_excedente, f.valor_reajuste
-           from ac_acordo_parcela                  a
-                left     join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
-                                                         a.sq_siw_solicitacao = c.sq_siw_solicitacao
-                                                        )
-                left          join ac_parcela_nota d on (a.sq_acordo_parcela  = d.sq_acordo_parcela)
-                  left        join ac_acordo_nota  e on (d.sq_acordo_nota     = e.sq_acordo_nota)
-                    left      join (select w.sq_acordo_nota, w.valor_inicial, w.valor_excedente, w.valor_reajuste,
-                                           x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
-                                           y.codigo_interno, x.vencimento, 
-                                           z.sigla as sg_tramite, x.processo, x.referencia_inicio, x.referencia_fim
-                                       from fn_lancamento_doc              w
-                                            inner     join fn_lancamento   x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao and
-                                                                                 x.sq_acordo_parcela  is not null
-                                                                                )
-                                              inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                 nvl(z.sigla,'-')     <> 'CA'
-                                                                                )
-                                      where w.sq_acordo_nota is not null
-                                    )              f on (a.sq_acordo_parcela  = f.sq_acordo_parcela and 
-                                                         e.sq_acordo_nota     = f.sq_acordo_nota
-                                                        )
+           from ac_acordo_parcela                   a
+                left      join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
+                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
+                                                         )
+                left      join ac_parcela_nota      d on (a.sq_acordo_parcela  = d.sq_acordo_parcela)
+                  left    join ac_acordo_nota       e on (d.sq_acordo_nota     = e.sq_acordo_nota)
+                    left  join (select w.sq_acordo_nota, w.valor_inicial, w.valor_excedente, w.valor_reajuste,
+                                       x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
+                                       y.codigo_interno, x.vencimento, 
+                                       z.sigla as sg_tramite, x.processo, x.referencia_inicio, x.referencia_fim
+                                  from fn_lancamento_doc              w
+                                       inner     join fn_lancamento   x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao and
+                                                                            x.sq_acordo_parcela  is not null
+                                                                           )
+                                         inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                           inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                           nvl(z.sigla,'-')     <> 'CA'
+                                                                             )
+                                 where w.sq_acordo_nota is not null
+                               )                    f on (a.sq_acordo_parcela  = f.sq_acordo_parcela and 
+                                                          e.sq_acordo_nota     = f.sq_acordo_nota
+                                                         )
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_aditivo   is null or (p_aditivo   is not null and c.sq_acordo_aditivo  = p_aditivo))
