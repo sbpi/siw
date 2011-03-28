@@ -324,7 +324,7 @@ function ExibeDocs() {
   ShowHTML('         <img src="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'logo1'),null,null,null,'EMBED').'" vspace="0" hspace="0" border="1"></td></tr>');
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-  ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b>');
+  ShowHTML('          <td>'.$_SESSION['USUARIO'].': <b>'.$_SESSION['NOME_RESUMIDO'].'</b>');
   $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) ShowHTML('          <br>Exercício:<b>'.$_SESSION['ANO'].'</b></TD>');
   if($w_cliente!="14014" && $w_cliente!="11134") ShowHTML('          <td align="right"><a class="hl" href="help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
@@ -430,7 +430,7 @@ function TrocaSenha() {
   AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
-  ShowHTML('      <tr><td valign="top">Usuário:<br><b>'.$_SESSION["NOME"].' ('.$_SESSION["USERNAME"].')</b></td>');
+  ShowHTML('      <tr><td valign="top">'.$_SESSION['USUARIO'].': <br><b>'.$_SESSION["NOME"].' ('.$_SESSION["USERNAME"].')</b></td>');
 
   if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
     // Entra se for troca da assinatura ou se for troca da senha e autenticação no banco
@@ -699,7 +699,7 @@ function Sair() {
     $l_log = @fopen($l_arquivo, 'a');
       
     fwrite($l_log, '['.date(ymd.'_'.Gis.'_'.time()).']'.$crlf);
-    fwrite($l_log, 'Usuário: '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
+    fwrite($l_log, $_SESSION['USUARIO'].': '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
     fwrite($l_log, 'IP     : '.$_SERVER['REMOTE_ADDR'].$crlf);
     fwrite($l_log, 'Ação   : LOGOUT'.$crlf.$crlf);
 

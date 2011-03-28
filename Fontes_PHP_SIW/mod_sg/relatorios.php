@@ -341,7 +341,7 @@ function TelaUsuarioRel() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td width="30%"><b>Chave interna: </b></td>');
     ShowHTML('          <td>'.$w_sq_pessoa.'</td></tr>');
-    ShowHTML('      <td width="30%"><b>Nome de usuário: </b></td>');
+    ShowHTML('      <td width="30%"><b>Nome de '.((nvl(f($RS,'sexo'),'M')=='M') ? 'usuário' : 'usuária').': </b></td>');
     ShowHTML('          <td>'.f($RS,'username').'</td></tr>');
     ShowHTML('      <td width="30%"><b>Nome: </b></td>');
     ShowHTML('          <td>'.f($RS,'nome').'</td></tr>');

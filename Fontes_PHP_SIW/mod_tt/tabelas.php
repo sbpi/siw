@@ -758,7 +758,7 @@ function UsuarioCentral() {
       selecaoPessoaTT('Usuá<u>r</u>io:','R',null,$w_sq_central_fone,$w_cliente,'w_usuario','TTUSUCENTRAL');
     } else {
       $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
-      ShowHTML('      <tr><td valign="top"><font size="1">Usuário: <br><b>'.f($RS,'nome').'</b>');
+      ShowHTML('      <tr><td valign="top"><font size="1">'.((nvl(f($RS,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária').': <br><b>'.f($RS,'nome').'</b>');
     }
     ShowHTML('      <tr><td valign="top"><font size="1"><b><u>C</u>odigo:   </b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="8"  MAXLENGTH="2"  VALUE="'.$w_codigo.'"></td>');
     ShowHTML('      <tr><td align="LEFT" colspan=2><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -939,7 +939,7 @@ function RamalUsr() {
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     } elseif ($O=='A') {
       $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
-      ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
+      ShowHTML('      <td><font size="1">'.((nvl(f($RS,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária').':<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       if ($w_fim!='') {
@@ -947,13 +947,13 @@ function RamalUsr() {
       }
     } elseif ($O=='F') {
       $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
-      ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
+      ShowHTML('      <td><font size="1">'.((nvl(f($RS,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária').':<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     } else {
       $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
-      ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
+      ShowHTML('      <td><font size="1">'.((nvl(f($RS,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária').':<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
       ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       if (Nvl($w_fim,'')!='') {

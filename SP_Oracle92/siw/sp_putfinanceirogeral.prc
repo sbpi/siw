@@ -26,8 +26,9 @@ create or replace procedure SP_PutFinanceiroGeral
     p_numero_processo     in varchar2 default null,
     p_per_ini             in date     default null,
     p_per_fim             in date     default null,
-    p_condicao            in varchar2  default null,  
+    p_condicao            in varchar2 default null,  
     p_vinculo             in number   default null,
+    p_rubrica             in number   default null,
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -83,14 +84,14 @@ begin
            sq_tipo_lancamento,   sq_tipo_pessoa,    emissao,             vencimento,
            observacao,           aviso_prox_conc,   dias_aviso,          tipo,
            processo,             referencia_inicio, referencia_fim,      condicoes_pagamento,
-           sq_solic_vinculo
+           sq_solic_vinculo,     sq_projeto_rubrica
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
            p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica,
            p_numero_processo,    w_inicio,          w_fim,               p_condicao,
-           p_vinculo
+           p_vinculo,            p_rubrica
       );
 
       -- Insere log da solicitação
@@ -142,7 +143,8 @@ begin
           referencia_inicio    = p_per_ini,
           referencia_fim       = p_per_fim,
           condicoes_pagamento  = p_condicao,
-          sq_solic_vinculo     = p_vinculo
+          sq_solic_vinculo     = p_vinculo,
+          sq_projeto_rubrica   = p_rubrica
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then
@@ -160,6 +162,14 @@ begin
                informacoes      = null,
                codigo_deposito  = null
          where sq_siw_solicitacao = p_chave;
+      End If;
+      
+      -- Se recebeu rubrica, atualiza os itens do lançamento que estão com esse campo nulo
+      If p_rubrica is not null Then
+         update fn_documento_item
+            set sq_projeto_rubrica = p_rubrica
+         where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave)
+           and sq_projeto_rubrica is null;
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Recupera os dados do menu

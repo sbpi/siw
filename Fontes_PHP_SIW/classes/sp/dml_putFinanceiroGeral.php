@@ -13,7 +13,8 @@ class dml_putFinanceiroGeral {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_cadastrador, $p_sqcc, 
           $p_descricao, $p_vencimento, $p_valor, $p_data_hora, $p_aviso, $p_dias, $p_cidade, $p_projeto, $p_sq_acordo_parcela, 
           $p_observacao, $p_sq_tipo_lancamento, $p_sq_forma_pagamento, $p_sq_tipo_pessoa, $p_forma_atual, $p_vencimento_atual, 
-          $p_tipo_rubrica, $p_numero_processo, $p_per_ini, $p_per_fim, $p_condicao, $p_vinculo, $p_chave_nova, $p_codigo_interno) {
+          $p_tipo_rubrica, $p_numero_processo, $p_per_ini, $p_per_fim, $p_condicao, $p_vinculo, $p_rubrica, 
+          $p_chave_nova, $p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putFinanceiroGeral';
      $params=array('p_operacao'                 =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                  =>array($p_cliente,                                       B_INTEGER,        32),
@@ -44,6 +45,7 @@ class dml_putFinanceiroGeral {
                    'p_per_fim'                  =>array(tvl($p_per_fim),                                  B_DATE,           32),
                    'p_condicao'                 =>array(tvl($p_condicao),                                 B_VARCHAR,      4000),
                    'p_vinculo'                  =>array(tvl($p_vinculo),                                  B_INTEGER,        32),
+                   'p_rubrica'                  =>array(tvl($p_rubrica),                                  B_INTEGER,        32),
                    'p_chave_nova'               =>array(&$p_chave_nova,                                   B_INTEGER,        32),
                    'p_codigo_interno'           =>array(&$p_codigo_interno,                               B_VARCHAR,        60)
                   );

@@ -172,6 +172,7 @@ function Valida() {
       $_SESSION['LOGON']           = 'Sim';
       $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
       $_SESSION['ANO']             = Date('Y');
+      $_SESSION['USUARIO']         = ((nvl(f($RS,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária');
       
       // Registra no servidor syslog
       $w_resultado = enviaSyslog('LV','LOGIN','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO']);
@@ -195,7 +196,7 @@ function Valida() {
         $l_log = @fopen($l_arquivo, 'a');
 
         fwrite($l_log, '['.date(ymd.'_'.Gis.'_'.time()).']'.$crlf);
-        fwrite($l_log, 'Usuário: '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
+        fwrite($l_log, $_SESSION['USUARIO'].': '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
         fwrite($l_log, 'IP     : '.$_SERVER['REMOTE_ADDR'].$crlf);
         fwrite($l_log, 'Ação   : LOGIN'.$crlf.$crlf);
 
@@ -243,7 +244,7 @@ function Valida() {
         $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
         $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
         DesconectaBD();
-        $w_html .= '         <li>Nome de usuário: <b>'.$_SESSION['USERNAME'].'</b></li>'.$crlf;
+        $w_html .= '         <li>Nome de '.lower($_SESSION['USUARIO']).': <b>'.$_SESSION['USERNAME'].'</b></li>'.$crlf;
         if ($w_tipo=='B') {
           $w_html .= '         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.$crlf;
         } else {
@@ -409,7 +410,7 @@ function LogOn() {
     ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
     ShowHTML('      <table width="100%" height="100%" border="0" cellpadding=0 cellspacing=0> ');
     ShowHTML('        <tr><td bgcolor="#003300" width="100%" height="100%" valign="middle"><font size="2" color="#FFFFFF">&nbsp;');
-    ShowHTML('            Usuário: <input class="cText" id="Login1" name="Login1" size="14" maxlength="60" value="'.$w_username.'">');
+    ShowHTML('            '.$_SESSION['USUARIO'].': <input class="cText" id="Login1" name="Login1" size="14" maxlength="60" value="'.$w_username.'">');
     ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19" onKeyUp="this.value=trim(this.value);" AUTOCOMPLETE="off">');
     ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
     ShowHTML('            <input class="cButton" type="submit" value="Recriar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu nome de usuário e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');

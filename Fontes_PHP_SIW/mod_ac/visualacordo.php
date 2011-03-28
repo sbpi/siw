@@ -51,7 +51,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     if ($w_mod_pa=='S') {
       if ($w_embed!='WORD' && nvl(f($RS,'protocolo_siw'),'')!='') {
-        $l_html.=chr(13).'      <tr><td bgcolor="'.$conTrBgColor.'" nowrap><font size="2"><b>PROCESSO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a><td bgcolor="'.$conTrBgColor.'" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
+        $l_html.=chr(13).'      <tr><td bgcolor="'.$conTrBgColor.'" nowrap><font size="2"><b>PROCESSO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'protocolo').'&nbsp;</a><td bgcolor="'.$conTrBgColor.'" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
       } else {
         $l_html.=chr(13).'      <tr><td bgcolor="'.$conTrBgColor.'" nowrap><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="'.$conTrBgColor.'" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
       }
@@ -868,7 +868,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $w_cont     = 1;
       $w_bloco    = '';
       foreach($RS as $row) {
-        if ($w_bloco!=f($row,'sq_acordo_aditivo') and $w_aditivo>0) {
+        if ($w_bloco!=f($row,'sq_acordo_aditivo') && $w_aditivo>0 && f($row,'prorrogacao')=='S') {
           $l_html.=chr(13).'        <tr valign="top" bgColor="'.$conTrBgColor.'">';
           $l_html.=chr(13).'        <td align="right" colspan="2"><b>Totais do período</b></td>';
           $l_html.=chr(13).'        <td align="right"><b>Previsto</b></td>';

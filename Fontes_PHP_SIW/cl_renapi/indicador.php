@@ -774,7 +774,7 @@ function AferidorPerm() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border=1 width="100%"><tr><td bgcolor="#FAEBD7">');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('        <tr><td colspan=2><font size="1">Usuário:<br><b><font size=1 class="hl">'.$_SESSION['NOME'].'</font></b></td>');
+  ShowHTML('        <tr><td colspan=2><font size="1">'.$_SESSION['USUARIO'].':<br><b><font size=1 class="hl">'.$_SESSION['NOME'].'</font></b></td>');
   ShowHTML('        <tr valign="top">');
   ShowHTML('          <td><font size="1">Gestor do Sistema:<br><b><font size=1 class="hl">'.retornaSimNao($w_gestor_sistema).'</font></b></td>');
   ShowHTML('          <td><font size="1">Gestor do módulo de '.lower(f($RS_Menu,'nm_modulo')).':<br><b><font size=1 class="hl">'.retornaSimNao($w_gestor_modulo).'</font></b></td>');

@@ -1217,7 +1217,7 @@ function Grava() {
                 $w_html .= '         <ul>'.$crlf;
                 $SQL = new db_getCustomerSite; $RS = $SQL->getInstanceOf($dbms,$w_cliente);
                 $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
-                $w_html .= '         <li>Nome de usuário: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
+                $w_html .= '         <li>Nome de '.((nvl($_REQUEST['w_sexo'],'M')=='M') ? 'usuário' : 'usuária').': <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
                 if (strpos('AO',$_REQUEST['w_tipo_autenticacao'])===false){
                   $w_html .= '         <li>Senha de acesso: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
                 } else {

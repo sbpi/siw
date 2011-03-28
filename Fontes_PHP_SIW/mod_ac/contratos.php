@@ -585,7 +585,7 @@ function Inicial() {
         ShowHTML('        <td>'.f($row,'nm_acordo').'</td>');
         if ($w_mod_pa=='S') {
 	        if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
-	          ShowHTML('        <td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'processo').'&nbsp;</a>');
+	          ShowHTML('        <td align="right"><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'protocolo').'&nbsp;</a>');
 	        } else {
 	          ShowHTML('        <td>'.f($row,'processo'));
 	        }
@@ -5330,9 +5330,9 @@ function Grava() {
           $sql = new db_getAcordoAditivo; $RS_Aditivo = $sql->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,null,null,null,'LANCAMENTOF');
           foreach($RS_Aditivo as $row) {
             if(count($RS_Aditivo)>0) {
-              $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),f($row,'sq_menu'),
-                null,null,null,null,null,null,null,null,null,null,null,null,
-                null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+              $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),
+                        f($row,'sq_menu'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+                        null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         }       

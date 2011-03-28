@@ -2315,7 +2315,7 @@ function NovaSenha() {
   $SQL = new db_getCustomerSite; $RS = $SQL->getInstanceOf($dbms, $w_cliente);
   $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
   DesconectaBD();
-  $w_html .= '         <li>Nome de usuário: <b>'.$w_username.'</b></li>'.$crlf;
+  $w_html .= '         <li>Nome de '.lower($_SESSION['USUARIO']).': <b>'.$w_username.'</b></li>'.$crlf;
   if ($w_tipo=='B') {
     $w_html .= '         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.$crlf;
   } else {

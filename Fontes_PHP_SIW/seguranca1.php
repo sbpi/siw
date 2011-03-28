@@ -208,7 +208,7 @@ function AcessoTramite() {
   if ($w_sq_pessoa>'') {
     // Recupera o nome do usuário selecionado
     $SQL = new db_getPersonData; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
-    ShowHTML('          <td align="right">Usuário:<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
+    ShowHTML('          <td align="right">'.((nvl(f($RS1,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária').':<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
   } 
 
   ShowHTML('    </TABLE>');
@@ -685,7 +685,7 @@ function AcessoMenu() {
   if ($w_sq_pessoa>'') {
     // Recupera o nome do usuário selecionado
     $SQL = new db_getPersonData; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
-    ShowHTML('          <td align="right">Usuário:<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
+    ShowHTML('          <td align="right">'.((nvl(f($RS1,'sexo'),'M')=='M') ? 'Usuário' : 'Usuária').':<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
   } 
   ShowHTML('    </TABLE>');
   ShowHTML('</TABLE>');

@@ -658,6 +658,8 @@ begin
                 d.publicacao,         d.sq_lcfonte_recurso,
                 d.limite_variacao,    d.sq_especificacao_despesa,    d.indice_base,
                 d.tipo_reajuste,
+                to_char(b4.numero_documento)||'/'||substr(to_char(b4.ano),3) as protocolo,
+                to_char(b4.prefixo)||'.'||substr(1000000+to_char(b4.numero_documento),2,6)||'/'||to_char(b4.ano)||'-'||substr(100+to_char(b4.digito),2,2) as protocolo_completo,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 round(months_between(d.fim,d.inicio)) as meses_acordo,
                 case when b.titulo is null then 'Não informado ('||d2.nome_resumido||')' else b.titulo end as nm_acordo,
@@ -698,6 +700,7 @@ begin
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                      left           join pa_documento         b4  on (b.protocolo_siw           = b4.sq_siw_solicitacao)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso, calculaIDCC(x.sq_siw_solicitacao) as idcc, calculaIGCC(x.sq_siw_solicitacao) as igcc

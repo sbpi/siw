@@ -12,16 +12,21 @@ create or replace procedure SP_PutLancamentoItem
     p_solic_item          in number   default null
    ) is
    
-   w_sigla siw_menu.sigla%type;
+   w_sigla     siw_menu.sigla%type;
+   w_chave_aux fn_documento_item.sq_documento_item%type := p_chave_aux;
+   w_reg       number(18);
 begin
    If p_operacao = 'I' Then -- Inclusão
+        
+      select sq_documento_item.nextval into w_chave_aux from dual;
+      
       insert into fn_documento_item
         (sq_documento_item,           sq_lancamento_doc,  sq_projeto_rubrica,   descricao,
          quantidade,                  valor_unitario,     ordem,                data_cotacao,
          valor_cotacao,               sq_solicitacao_item
         )
       values
-        (sq_documento_item.nextval,   p_chave,            p_sq_projeto_rubrica, p_descricao,
+        (w_chave_aux,                 p_chave,            p_sq_projeto_rubrica, p_descricao,
          p_quantidade,                p_valor_unitario,   p_ordem,              p_data_cotacao,
          coalesce(p_valor_cotacao,0), p_solic_item
         );
@@ -38,6 +43,22 @@ begin
        where sq_documento_item = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_item where sq_documento_item = p_chave_aux;
+   End If;
+   
+   If p_operacao in ('I','A') Then
+      If p_sq_projeto_rubrica is not null Then
+         -- Se recebeu rubrica e for única para todos os itens, atualiza o lançamento
+         select count(distinct sq_projeto_rubrica) into w_reg from fn_documento_item where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+         If w_reg < 2 Then
+            update fn_lancamento set sq_projeto_rubrica = p_sq_projeto_rubrica where sq_siw_solicitacao = p_chave;
+         End If;
+      Else
+         -- Se não recebeu rubrica mas o lancamento tem uma indicada, atribui ao item
+         select sq_projeto_rubrica into w_reg from fn_lancamento where sq_siw_solicitacao = p_chave;
+         If w_reg is not null Then
+            update fn_documento_item set sq_projeto_rubrica = w_reg where sq_documento_item = w_chave_aux;
+         End If;
+      End If;
    End If;
    
    -- Se for pagamento de diária, acumula valores no documento e na solicitação

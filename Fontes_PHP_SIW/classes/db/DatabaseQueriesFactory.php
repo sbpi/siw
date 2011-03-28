@@ -28,7 +28,7 @@ class DatabaseQueriesFactory {
       $l_log = @fopen($l_arquivo, 'a');
       
       fwrite($l_log, '['.date(ymd.'_'.Gis.'_'.time()).']'.$crlf);
-      fwrite($l_log, 'Usuário: '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
+      fwrite($l_log, $_SESSION['USUARIO'].': '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
       fwrite($l_log, 'IP     : '.$_SERVER['REMOTE_ADDR'].$crlf);
       fwrite($l_log, 'Comando: '.$query.$crlf);
       if (is_array($params)) {

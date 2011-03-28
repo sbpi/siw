@@ -365,7 +365,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
   ShowHTML('    <TD ALIGN="RIGHT"><B><FONT SIZE=3 COLOR="#000000">'.$p_titulo.'</FONT>');
   ShowHTML('  </TR>');
   ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
-  ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
+  ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.$_SESSION['USUARIO'].': '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
   if (nvl($p_pagina,0)>0) ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$p_pagina.'</B></TD></TR>');
   ShowHTML('  <TR><TD colspan=2><HR></td></tr>');
   ShowHTML('</TABLE>');
@@ -443,7 +443,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
     }
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo);
     ShowHTML('</FONT></TR><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
-    ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');  
+    ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.$_SESSION['USUARIO'].': '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');  
   }
   if (($p_tipo!='WORD' && $w_tipo!='WORD')) {
     if($titulo == 'S'){

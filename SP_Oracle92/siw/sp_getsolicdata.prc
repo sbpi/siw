@@ -294,6 +294,8 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                to_char(b4.numero_documento)||'/'||substr(to_char(b4.ano),3) as protocolo,
+                to_char(b4.prefixo)||'.'||substr(1000000+to_char(b4.numero_documento),2,6)||'/'||to_char(b4.ano)||'-'||substr(100+to_char(b4.digito),2,2) as protocolo_completo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
@@ -365,6 +367,7 @@ begin
                 inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                 inner             join ac_parametro         a5 on (a.sq_pessoa                = a5.cliente)
                 inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                   left           join pa_documento         b4  on (b.protocolo_siw           = b4.sq_siw_solicitacao)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                    left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                    inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
@@ -483,7 +486,7 @@ begin
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
-                b.codigo_externo,     d.observacao,                  
+                b.codigo_externo,     d.observacao,                  d.sq_projeto_rubrica,
                 d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_forma_pagamento,          d.sq_agencia,
                 d.operacao_conta,     d.numero_conta,                d.sq_pais_estrang,
