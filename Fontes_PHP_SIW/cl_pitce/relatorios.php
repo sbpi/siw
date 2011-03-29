@@ -335,16 +335,16 @@ function Rel_Progresso() {
                         ShowHTML('        <td>'.f($row1,'sg_unidade'));
                       }  
                       $sql = new db_getSolicAreas; $RSPacote = $sql->getInstanceOf($dbms,f($row,'sq_projeto'),f($row1,'sq_projeto_etapa'),'PACOTE');
-									    $RSPacote = SortArray($RSPacote,'sigla','asc');
-									    if(count($RSPacote) > 0){
-									      foreach($RSPacote as $row2){
-									        if(f($row2,'sq_unidade')!=f($row1,'sq_unidade')){
-									          if($P4!=1) ShowHTML(', '.ExibeUnidade(null,$w_cliente,f($row2,'sigla'),f($row2,'sq_unidade'),$TP));
-									          else       ShowHTML(', '.f($row2,'sigla'));
-									        }
-									      }
-									      ShowHTML('</td>');
-									    }
+                      $RSPacote = SortArray($RSPacote,'sigla','asc');
+                      if(count($RSPacote) > 0){
+                        foreach($RSPacote as $row2){
+                          if(f($row2,'sq_unidade')!=f($row1,'sq_unidade')){
+                            if($P4!=1) ShowHTML(', '.ExibeUnidade(null,$w_cliente,f($row2,'sigla'),f($row2,'sq_unidade'),$TP));
+                            else       ShowHTML(', '.f($row2,'sigla'));
+                          }
+                        }
+                        ShowHTML('</td>');
+                      }
                       if ($w_embed != 'WORD') {
                         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'nm_resp_etapa')).'</b>');
                       } else {

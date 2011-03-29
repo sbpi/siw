@@ -2135,8 +2135,7 @@ function Bilhetes() {
     Validate('w_data', 'Data de emissão', 'DATA', '1', 10, 10, '', '0123456789/');
     CompData('w_data', 'Data de saída', '<=', formataDataEdicao(time()), 'data atual');
     Validate('w_cia_aerea', 'Companhia cotada', 'SELECT', '1', 1, 18, '', '1');
-    Validate('w_utilizado', 'Utilização', 'SELECT', '1', 1, 18, '1', '');
-    Validate('w_numero', 'Número', '', 1, 1, 20, '1', '1');
+    Validate('w_numero', 'Número', '', 1, 1, 10, '1', '1');
     Validate('w_classe', 'Classe', '', '1', 1, 1, '1', '1');
     Validate('w_trecho', 'Trecho', '', 1, 1, 60, '1', '1');
     Validate('w_rloc', 'Número vôo', '', '', 1, 6, '1', '1');
@@ -2148,6 +2147,7 @@ function Bilhetes() {
     CompValor('w_valor_tax', 'Valor da taxa de embarque', '>=', '0,00', 'zero');
     Validate('w_valor_pta', 'Valor da transmissão do pta', 'VALOR', '1', 4, 18, '', '0123456789,.');
     CompValor('w_valor_pta', 'Valor da transmissão do pta', '>=', '0,00', 'zero');
+    Validate('w_utilizado', 'Utilização', 'SELECT', '1', 1, 18, '1', '');
     Validate('w_observacao', 'Observação', '', '', '1', '500', '1', '1');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
@@ -2277,7 +2277,7 @@ function Bilhetes() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b>Data de emis<u>s</u>ão:</b><br><input ' . $w_Disabled . ' accesskey="S" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $w_data . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> ' . ExibeCalendario('Form', 'w_data') . '</td>');
     SelecaoCiaTrans('<u>C</u>ompanhia', 'C', 'Selecione a companhia de transporte que emitiu o bilhete.', $w_cliente, $w_cia_aerea, null, 'w_cia_aerea', null, null);
-    ShowHTML('        <td><b><u>N</u>úmero:</b><br><input ' . $w_Disabled . ' accesskey="N" type="text" name="w_numero" class="sti" SIZE="20" MAXLENGTH="20" VALUE="' . $w_numero . '"></td>');
+    ShowHTML('        <td><b><u>N</u>úmero: (sem prefixo da companhia aérea)</b><br><input ' . $w_Disabled . ' accesskey="N" type="text" name="w_numero" class="sti" SIZE="20" MAXLENGTH="20" VALUE="' . $w_numero . '"></td>');
     ShowHTML('        <td><b>C<u>l</u>asse:</b><br><input ' . $w_Disabled . ' accesskey="L" type="text" name="w_classe" class="sti" SIZE="3" MAXLENGTH="1" style="text-align:center; text-transform:uppercase;" VALUE="' . $w_classe . '"></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
@@ -5579,41 +5579,41 @@ function Encaminhamento() {
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   if (substr(Nvl($w_erro, 'nulo'), 0, 1) != '0' || $w_sg_tramite != 'CI') {
-	  if ($w_sg_tramite == 'CI') {
-	    if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
-	      Validate('w_justificativa', 'Justificativa', '', '1', '1', '2000', '1', '1');
-	    }
-	    if ($w_fim_semana == 'S') {
-	      Validate('w_justif_dia_util', 'Justificativa', '1', '1', 5, 2000, '1', '1');
-	    }
-	  } else {
-	    if ($w_sg_tramite == 'EE' || $w_ativo == 'N') {
-	      Validate('w_despacho', 'Despacho', '1', '1', '1', '2000', '1', '1');
-	    } else {
-	      Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
-	      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-	      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
-	      ShowHTML('     theForm.w_despacho.focus();');
-	      ShowHTML('     return false;');
-	      ShowHTML('  }');
-	      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-	      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
-	      ShowHTML('     theForm.w_despacho.focus();');
-	      ShowHTML('     return false;');
-	      ShowHTML('  }');
-	      if (Nvl(substr($w_erro, 0, 1), '') == '1' || substr(Nvl($w_erro, 'nulo'), 0, 1) == '2') {
-	        if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
-	          Validate('w_justificativa', 'Justificativa', '', '', '1', '2000', '1', '1');
-	          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
-	          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
-	          ShowHTML('     theForm.w_justificativa.focus();');
-	          ShowHTML('     return false;');
-	          ShowHTML('}');
-	        }
-	      }
-	    }
-	    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-	  }
+    if ($w_sg_tramite == 'CI') {
+      if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
+        Validate('w_justificativa', 'Justificativa', '', '1', '1', '2000', '1', '1');
+      }
+      if ($w_fim_semana == 'S') {
+        Validate('w_justif_dia_util', 'Justificativa', '1', '1', 5, 2000, '1', '1');
+      }
+    } else {
+      if ($w_sg_tramite == 'EE' || $w_ativo == 'N') {
+        Validate('w_despacho', 'Despacho', '1', '1', '1', '2000', '1', '1');
+      } else {
+        Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
+        ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+        ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+        ShowHTML('     theForm.w_despacho.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
+        ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+        ShowHTML('     theForm.w_despacho.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        if (Nvl(substr($w_erro, 0, 1), '') == '1' || substr(Nvl($w_erro, 'nulo'), 0, 1) == '2') {
+          if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
+            Validate('w_justificativa', 'Justificativa', '', '', '1', '2000', '1', '1');
+            ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
+            ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
+            ShowHTML('     theForm.w_justificativa.focus();');
+            ShowHTML('     return false;');
+            ShowHTML('}');
+          }
+        }
+      }
+      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    }
   }
   if ($P1 != 1 || ( $P1 == 1 && $w_tipo == 'Volta')) {
     // Se não for encaminhamento e nem o sub-menu do cadastramento

@@ -651,50 +651,50 @@ function TelaUsuarioRel() {
   if (nvl($menu,'')!='' || $w_embed=='WORD') {
     ShowHTML('        <table border=0>');
     $w_imagemPadrao='images/Folder/SheetLittle.gif';
-	  $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
-	  if (count($RS)==0) {
-	    ShowHTML('      <tr><td align="center"><b>Nenhuma opção de menu para este usuário</b></td></tr>');
-	  } else {
-	    foreach ($RS as $row) {
-	      if (f($row,'Filho')>0) {
-	        ShowHTML('      <tr><td><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
-	        $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
-	        foreach ($RS1 as $row1) {
-	          if (f($row1,'Filho')>0) {
-	            ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
-	            $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
-	            foreach ($RS2 as $row2) {
-	              if (f($row2,'Filho')>0) {
-	                ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
-	                $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
-	                foreach ($RS3 as $row3) {
-	                  ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
-	                } 
-	              } else {
-	                if (f($row2,'IMAGEM')>'') $w_imagem=f($row2,'IMAGEM'); else $w_imagem=$w_imagemPadrao;
-	                ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome'));
-	              } 
-	            } 
-	          } else {
-	            if (f($row1,'IMAGEM')>'') $w_imagem=f($row1,'IMAGEM'); else  $w_imagem=$w_imagemPadrao;
-	            ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome'));
-	          }  
-	        } 
-	      } else {
-	        if (f($row,'IMAGEM')>'') $w_imagem=f($row,'IMAGEM'); else  $w_imagem=$w_imagemPadrao;
-	        ShowHTML('      <tr><td><img src="'.$w_imagem.'" border=0 align="center"><b> '.f($row,'nome'));
-	      } 
-	    } 
-	  } 
-	  ShowHTML('         </table></td>');
+    $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
+    if (count($RS)==0) {
+      ShowHTML('      <tr><td align="center"><b>Nenhuma opção de menu para este usuário</b></td></tr>');
+    } else {
+      foreach ($RS as $row) {
+        if (f($row,'Filho')>0) {
+          ShowHTML('      <tr><td><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
+          $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row,'sq_menu'));
+          foreach ($RS1 as $row1) {
+            if (f($row1,'Filho')>0) {
+              ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+              $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row1,'sq_menu'));
+              foreach ($RS2 as $row2) {
+                if (f($row2,'Filho')>0) {
+                  ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                  $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,f($row2,'sq_menu'));
+                  foreach ($RS3 as $row3) {
+                    ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
+                  } 
+                } else {
+                  if (f($row2,'IMAGEM')>'') $w_imagem=f($row2,'IMAGEM'); else $w_imagem=$w_imagemPadrao;
+                  ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome'));
+                } 
+              } 
+            } else {
+              if (f($row1,'IMAGEM')>'') $w_imagem=f($row1,'IMAGEM'); else  $w_imagem=$w_imagemPadrao;
+              ShowHTML('      <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome'));
+            }  
+          } 
+        } else {
+          if (f($row,'IMAGEM')>'') $w_imagem=f($row,'IMAGEM'); else  $w_imagem=$w_imagemPadrao;
+          ShowHTML('      <tr><td><img src="'.$w_imagem.'" border=0 align="center"><b> '.f($row,'nome'));
+        } 
+      } 
+    } 
+    ShowHTML('         </table></td>');
   }
   ShowHTML('          <td width="75%"><A name="DOCS"><br><font size="2">'.(($w_embed!='WORD') ? '<a class="SS" border="0" href="'.montaURL_JS($w_dir, $w_pagina.$par.'&O='.$O.'&w_sq_pessoa='.$w_sq_pessoa.'&w_tipo='.$w_tipo.'&menu='.$menu.'&docs='.(($docs) ? '' : 'S').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'#DOCS"><img border=0 src="images/'.(($docs) ? 'menos' : 'mais').'.jpg" style="cursor:pointer"> </a>' : '').'<b>DOCUMENTOS NÃO CONCLUÍDOS ACESSÍVEIS AO USUÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font>');
   if (nvl($docs,'')!='' || $w_embed=='WORD') {
-	  // Recupera solicitações a serem listadas
-	  $sql = new db_getAlerta; $RS_Solic = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
-	  $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
+    // Recupera solicitações a serem listadas
+    $sql = new db_getAlerta; $RS_Solic = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
+    $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
     ShowHTML('        <table border=0><tr><td>');
-	  ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, null, null));
+    ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, null, null));
   }
     
   ShowHTML('      </table>');

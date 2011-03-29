@@ -17,7 +17,7 @@ class db_getMtSituacao {
                    'p_chave'                    =>array(tvl($p_chave),                    B_INTEGER,        32),
                    'p_ativo'                    =>array(tvl($p_ativo),                    B_VARCHAR,         1),
                    'p_nome'                     =>array(tvl($p_nome),                     B_VARCHAR,        60),
-		           'p_sigla'                    =>array(tvl($p_sigla),                    B_VARCHAR,         2),
+               'p_sigla'                    =>array(tvl($p_sigla),                    B_VARCHAR,         2),
                    'p_result'                   =>array(null,                             B_CURSOR,         -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

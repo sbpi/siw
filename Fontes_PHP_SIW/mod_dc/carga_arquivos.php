@@ -495,10 +495,10 @@ function Grava() {
                     $w_diretorio  = nvl($w_diretorio,f($RS,'diretorio'));
                     $w_descricao  = nvl($file['descricao'],f($RS,'descricao'));
                     $w_tipo       = nvl($file['tipo'],f($RS,'tipo'));
-	                }  
-	                if ($w_diretorio=='/') $w_diretorio = null;
+                  }  
+                  if ($w_diretorio=='/') $w_diretorio = null;
                   //echo '['.$operacao.'] '.'['.$w_chave.'] '.'['.$_REQUEST['w_sq_sistema'].'] '.'['.$file['nome'].'] '.'['.$w_descricao.'] '.'['.$w_tipo.'] '.'['.$w_diretorio.'] ';
-	                $SQL->getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],$file['nome'],$w_descricao,$w_tipo,$w_diretorio);
+                  $SQL->getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],$file['nome'],$w_descricao,$w_tipo,$w_diretorio);
                 }
               }
               flush();

@@ -634,18 +634,18 @@ function Etiqueta() {
         }
         ShowHTML('</h1></td>');
       }
-		  if (nvl(f($RS,'protocolo_siw'),'')!='') {
-		    $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
-		    if (nvl(f($RS,'copias'),0)>0) {
-		      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
-		      else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
-		    } else {
-		      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO: ';
-		      else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO: ';
-		    }
-		    $w_tipo_vinc.=f($RS_Vinc,'protocolo_completo');
-		    ShowHTML('      <tr><td nowrap><font size=2><b>'.$w_tipo_vinc.'</b></font></td>');
-		  }
+      if (nvl(f($RS,'protocolo_siw'),'')!='') {
+        $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
+        if (nvl(f($RS,'copias'),0)>0) {
+          if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
+          else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+        } else {
+          if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO: ';
+          else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO: ';
+        }
+        $w_tipo_vinc.=f($RS_Vinc,'protocolo_completo');
+        ShowHTML('      <tr><td nowrap><font size=2><b>'.$w_tipo_vinc.'</b></font></td>');
+      }
       ShowHTML('<td rowspan="3" width="5%">&nbsp;</td>');
       if (nvl(f($RS, 'processo'), '') == 'S')
         ShowHTML('        <tr><td nowrap><font size=2><b>AUTUAÇÃO: </b>' . formataDataEdicao(f($RS, 'data_autuacao')) . '</font>');

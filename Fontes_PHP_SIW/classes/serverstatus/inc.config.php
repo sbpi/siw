@@ -1,13 +1,13 @@
 <?php
 /*
-*	display serverstatus
-*	Class to view virtual server usage analysing apache server status
+*  display serverstatus
+*  Class to view virtual server usage analysing apache server status
 *
-*	@author Aresch Yavari <ay@databay.de>
-*	Copyright 2006 Databay AG, Aresch Yavari
-*	E-Mail: ay@databay.de
-*	Phone: +49 241 991210
-*	License: LGPL
+*  @author Aresch Yavari <ay@databay.de>
+*  Copyright 2006 Databay AG, Aresch Yavari
+*  E-Mail: ay@databay.de
+*  Phone: +49 241 991210
+*  License: LGPL
 */
 
 $refreshtime = 2;

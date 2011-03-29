@@ -307,7 +307,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html.=chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</b></div></td>';
       //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orc.</b></div></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
-	    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Desafios</b></div></td>';
+      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Desafios</b></div></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
       //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>';

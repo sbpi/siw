@@ -2821,82 +2821,82 @@ function Grava() {
       }
       break;
     case 'DOCS':  //CADASTRO DE DOCUMENTOS
-	    // Verifica se a Assinatura Eletrônica é válida
-	    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-	      if (UPLOAD_ERR_OK==0) {
-	        $w_maximo = $_REQUEST['w_upload_maximo'];
-	        foreach ($_FILES as $Chv => $Field) {
-	          if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
-	            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-	            ScriptOpen('JavaScript');
-	            ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
-	            ScriptClose();
-	            retornaFormulario('w_observacao');
-	            exit();
-	          }
-	          $w_tamanho = $Field['size'];          
-	          if ($Field['size'] > 0) {
-	            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-	            if ($Field['size'] > $w_maximo) {
-	              ScriptOpen('JavaScript');
-	              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
-	              ScriptClose();
-	              retornaFormulario('w_observacao');
-	              exit();
-	            } 
-	            // Se já há um nome para o arquivo, mantém 
-	            if ($_REQUEST['w_atual']>'') {
-	              $sql = new db_getUorgAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
-	              foreach ($RS as $row) {
-	                if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
-	                if (strpos(f($row,'caminho'),'.')!==false) {
-	                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
-	                } else {
-	                  $w_file = basename(f($row,'caminho'));
-	                }
-	              }
-	            } else {
-	              $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
-	              if (strpos($Field['name'],'.')!==false) {
-	                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
-	              }
-	            }
-	            $w_tipo    = $Field['type'];
-	            $w_nome    = $Field['name'];
-	            if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-	            } elseif(nvl($Field['name'],'')!='') {
-	            ScriptOpen('JavaScript');
-	            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-	            ScriptClose();
-	            retornaFormulario('w_caminho');
-	            exit();
-	          }  
-	        } 
-	        // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
-	        if ($O=='E' && $_REQUEST['w_atual']>'') {
-	          $sql = new db_getMetaAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
-	          foreach ($RS as $row) {
-	            if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
-	          }
-	        } 
-	        $SQL = new dml_putMetaAnexo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
-	             $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-	      } else {
-	        ScriptOpen('JavaScript');
-	        ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
-	        ScriptClose();
-	        exit();
-	      } 
-	      ScriptOpen('JavaScript');
-	      ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'\';');
-	      ScriptClose();
-	    } else {
-	      ScriptOpen('JavaScript');
-	      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-	      ScriptClose();
-	      retornaFormulario('w_assinatura');
-	    }
-	    break;      
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (UPLOAD_ERR_OK==0) {
+          $w_maximo = $_REQUEST['w_upload_maximo'];
+          foreach ($_FILES as $Chv => $Field) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            }
+            $w_tamanho = $Field['size'];          
+            if ($Field['size'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              if ($Field['size'] > $w_maximo) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ScriptClose();
+                retornaFormulario('w_observacao');
+                exit();
+              } 
+              // Se já há um nome para o arquivo, mantém 
+              if ($_REQUEST['w_atual']>'') {
+                $sql = new db_getUorgAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+                foreach ($RS as $row) {
+                  if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+                  if (strpos(f($row,'caminho'),'.')!==false) {
+                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                  } else {
+                    $w_file = basename(f($row,'caminho'));
+                  }
+                }
+              } else {
+                $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+                if (strpos($Field['name'],'.')!==false) {
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+                }
+              }
+              $w_tipo    = $Field['type'];
+              $w_nome    = $Field['name'];
+              if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+              } elseif(nvl($Field['name'],'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
+            }  
+          } 
+          // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+          if ($O=='E' && $_REQUEST['w_atual']>'') {
+            $sql = new db_getMetaAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+            foreach ($RS as $row) {
+              if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+            }
+          } 
+          $SQL = new dml_putMetaAnexo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
+               $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        } else {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ScriptClose();
+          exit();
+        } 
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;      
     default:
       exibevariaveis();
       ScriptOpen('JavaScript');

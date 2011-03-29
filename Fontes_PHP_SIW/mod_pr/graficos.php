@@ -374,7 +374,7 @@ function Gera_Gantt() {
   $j = 0;
   foreach($RS as $row) {
     // you need to set groups to graphic be created
-	$ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
+  $ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
     if (strlen($ordem.'. '.f($row,'titulo')) > 45) $l_titulo = substr($ordem.'. '.f($row,'titulo'),0,45).'..'; else $l_titulo = $ordem.'. '.f($row,'titulo');
     $definitions['groups']['group'][$i]['name'] = $l_titulo;
     $definitions['groups']['group'][$i]['start'] = f($row,'inicio_previsto');
@@ -485,11 +485,11 @@ $maiorData  = 0;
 
 foreach ($RS as $row) {
 
- if($menorData > f($row,'inicio_previsto'))		$menorData = f($row,'inicio_previsto');
- if($menorData > f($row,'inicio_real') && nvl(f($row,'inicio_real'),'') != '' )			$menorData = f($row,'inicio_real');
+ if($menorData > f($row,'inicio_previsto'))    $menorData = f($row,'inicio_previsto');
+ if($menorData > f($row,'inicio_real') && nvl(f($row,'inicio_real'),'') != '' )      $menorData = f($row,'inicio_real');
 
- if($maiorData < f($row,'fim_previsto'))		$maiorData = f($row,'fim_previsto');
- if($maiorData < f($row,'fim_real') && nvl(f($row,'fim_real'),'')!='')			$maiorData = f($row,'fim_real');
+ if($maiorData < f($row,'fim_previsto'))    $maiorData = f($row,'fim_previsto');
+ if($maiorData < f($row,'fim_real') && nvl(f($row,'fim_real'),'')!='')      $maiorData = f($row,'fim_real');
 
 $ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
 
@@ -517,12 +517,12 @@ $ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
     array_push($data, $array);
 
 
-	$realExecutado = array(	"id"        => $i ,
-							"dt_inicio" =>  formataDataEdicao(f($row,'inicio_real')	,7) ,
-							"dt_fim"    =>  formataDataEdicao(f($row,'fim_real')	,7)
-	);
+  $realExecutado = array(  "id"        => $i ,
+              "dt_inicio" =>  formataDataEdicao(f($row,'inicio_real')  ,7) ,
+              "dt_fim"    =>  formataDataEdicao(f($row,'fim_real')  ,7)
+  );
 
-	array_push($execReal,$realExecutado);
+  array_push($execReal,$realExecutado);
     $array = '';
     $i++;
   }
@@ -543,25 +543,25 @@ $graph->SetFrame(false);
 $graph->scale->SetDateLocale('pt_BR');
 
 foreach($execReal as $row){
-	$activity = new GanttBar($row["id"],"",$row["dt_inicio"],$row["dt_fim"]);
-	$activity->SetPattern(BAND_RDIAG,"green");
-	$activity->SetFillColor("green");
+  $activity = new GanttBar($row["id"],"",$row["dt_inicio"],$row["dt_fim"]);
+  $activity->SetPattern(BAND_RDIAG,"green");
+  $activity->SetFillColor("green");
     $activity->SetHeight(0.2);
-	$graph->Add($activity);
+  $graph->Add($activity);
 }
 
 //Desenha barra que define as dimensões básicas
 
 if($maiorData  != 0 &&  $menorData  != 9999999999){
 
-	$menorData = formataDataEdicao(addDays($menorData,-17),7);
-	$maiorData = formataDataEdicao(addDays($maiorData,20),7);
+  $menorData = formataDataEdicao(addDays($menorData,-17),7);
+  $maiorData = formataDataEdicao(addDays($maiorData,20),7);
 
-	$activity = new GanttBar($i,"", $menorData , $maiorData );
-	$activity->SetPattern(BAND_SOLID,"white");
-	$activity->SetFillColor("white");
-	$activity->SetHeight(0.001);
-	$graph->AddObject($activity);
+  $activity = new GanttBar($i,"", $menorData , $maiorData );
+  $activity->SetPattern(BAND_SOLID,"white");
+  $activity->SetFillColor("white");
+  $activity->SetHeight(0.001);
+  $graph->AddObject($activity);
 }
 
 // Setup scale
@@ -577,7 +577,7 @@ switch ($w_scale) {
   case 'm' :
     $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH );
     $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
-//	$graph->scale->week->SetStyle(MONTHSTYLE_SHORTNAME);
+//  $graph->scale->week->SetStyle(MONTHSTYLE_SHORTNAME);
     break;
   default  :
     $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH);
@@ -585,7 +585,7 @@ switch ($w_scale) {
 }
 
 
-	$graph->title->SetFont(FF_VERAMONO);
+  $graph->title->SetFont(FF_VERAMONO);
 
 // Add the specified activities
 

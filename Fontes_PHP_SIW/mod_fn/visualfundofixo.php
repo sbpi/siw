@@ -589,7 +589,7 @@ function rubricalinha($v_RS3){
     $v_html.=chr(13).'      </tr>';
     $w_total += f($row,'valor_total');
   } 
-  if ($w_total>0) {
+  if ($w_total>0 && count($v_RS3)>1) {
     $v_html.=chr(13).'      <tr valign="top">';
     $v_html.=chr(13).'        <td align="right" colspan="'.((strpos(f($RS_Menu,'sigla'),'VIA')!==false) ? 7 : 5).'"><b>Total</b></td>';
     $v_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;</td>';

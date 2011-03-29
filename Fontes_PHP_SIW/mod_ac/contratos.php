@@ -584,11 +584,11 @@ function Inicial() {
         else                  ShowHTML('        '.f($row,'codigo_interno').'');
         ShowHTML('        <td>'.f($row,'nm_acordo').'</td>');
         if ($w_mod_pa=='S') {
-	        if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
-	          ShowHTML('        <td align="right"><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'protocolo').'&nbsp;</a>');
-	        } else {
-	          ShowHTML('        <td>'.f($row,'processo'));
-	        }
+          if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
+            ShowHTML('        <td align="right"><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'protocolo').'&nbsp;</a>');
+          } else {
+            ShowHTML('        <td>'.f($row,'processo'));
+          }
         } elseif ($w_segmento=='Público') ShowHTML('        <td>'.f($row,'processo').'</td>');        
         if ($_SESSION['INTERNO']=='S') {
           if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N',$w_embed).'</td>');
@@ -4035,12 +4035,12 @@ function Concluir() {
     } 
 
     if ($w_tipo_conc==0) {
-	    Validate('w_inicio','Início da vigência','DATA',1,10,10,'','0123456789/');
-	    Validate('w_fim','Término da vigência','DATA',1,10,10,'','0123456789/');
-	    CompData('w_inicio','Início da vigência','<=','w_fim','Término da vigência');
-	    if (substr($SG,0,3)!='GCA') {
-	      Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
-	    }
+      Validate('w_inicio','Início da vigência','DATA',1,10,10,'','0123456789/');
+      Validate('w_fim','Término da vigência','DATA',1,10,10,'','0123456789/');
+      CompData('w_inicio','Início da vigência','<=','w_fim','Término da vigência');
+      if (substr($SG,0,3)!='GCA') {
+        Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
+      }
     }
 
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');

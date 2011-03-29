@@ -404,7 +404,7 @@ function Vinculacao() {
 
     $w_texto = ExibeImagemSolic(f($RS1,'sigla'),f($RS1,'inicio'),f($RS1,'fim'),f($RS1,'inicio_real'),f($RS1,'fim_real'),f($RS1,'aviso_prox_conc'),f($RS1,'aviso'),f($RS1,'sg_tramite'), null).
                ' '.exibeSolic($w_dir,f($RS1,'sq_siw_solicitacao'),nvl(f($RS1,'codigo_interno'),f($RS1,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($RS1,'restricao'),'P')).
-		       ' - '.Nvl(f($RS1,'titulo'),'-');
+           ' - '.Nvl(f($RS1,'titulo'),'-');
 
     // Recupera as vinculações existentes
     $sql = new db_getSolic_Vinculo; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,'MENU');

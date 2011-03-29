@@ -3,7 +3,7 @@
 abstract class BaseBarcode {
     //
 
-  	protected $name;
+    protected $name;
     protected $value;
     //
 

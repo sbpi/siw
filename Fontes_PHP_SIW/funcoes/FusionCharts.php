@@ -14,13 +14,13 @@ function encodeDataURL($strDataURL, $addNoCacheStr=false) {
         // We add ?FCCurrTime=xxyyzz
         // If the dataURL already contains a ?, we add &FCCurrTime=xxyyzz
         // We replace : with _, as FusionCharts cannot handle : in URLs
-		if (strpos(strDataURL,"?")<>0)
-			$strDataURL .= "&FCCurrTime=" . Date("H_i_s");
-		else
-			$strDataURL .= "?FCCurrTime=" . Date("H_i_s");
+    if (strpos(strDataURL,"?")<>0)
+      $strDataURL .= "&FCCurrTime=" . Date("H_i_s");
+    else
+      $strDataURL .= "?FCCurrTime=" . Date("H_i_s");
     }
-	// URL Encode it
-	return urlencode($strDataURL);
+  // URL Encode it
+  return urlencode($strDataURL);
 }
 
 
@@ -58,8 +58,8 @@ function datePart($mask, $dateTimeStr) {
 // $chartWidth - Intended width for the chart (in pixels)
 // $chartHeight - Intended height for the chart (in pixels)
 function renderChart($chartSWF, $strURL, $strXML, $chartId, $chartWidth, $chartHeight) {
-	//First we create a new DIV for each chart. We specify the name of DIV as "chartId"Div.			
-	//DIV names are case-sensitive.
+  //First we create a new DIV for each chart. We specify the name of DIV as "chartId"Div.      
+  //DIV names are case-sensitive.
 
     // The Steps in the script block below are:
     //
@@ -68,11 +68,11 @@ function renderChart($chartSWF, $strURL, $strXML, $chartId, $chartWidth, $chartH
     //    who do not have Flash Player installed. You can configure it as per your needs.
     //
     //  2) The chart is rendered using FusionCharts Class. Each chart's instance (JavaScript) Id 
-    //     is named as chart_"chartId".		
+    //     is named as chart_"chartId".    
     //
     //  3) Check whether we've to provide data using dataXML method or dataURL method
     //     save the data for usage below 
-	if ($strXML=="")
+  if ($strXML=="")
         $tempData = "//Set the dataURL of the chart\n\t\tchart_$chartId.setDataURL(\"$strURL\")";
     else
         $tempData = "//Provide entire XML data using dataXML method\n\t\tchart_$chartId.setDataXML(\"$strXML\")";
@@ -81,19 +81,19 @@ function renderChart($chartSWF, $strURL, $strXML, $chartId, $chartWidth, $chartH
     $chartIdDiv = $chartId . "Div";
 
     // create a string for outputting by the caller
-	$render_chart = <<<RENDERCHART
-	<!-- START Script Block for Chart $chartId -->
-	<div id="$chartIdDiv" align="center">
-		Chart.
-	</div>
-	<script type="text/javascript">	
-		//Instantiate the Chart	
-		var chart_$chartId = new FusionCharts("$chartSWF", "$chartId", "$chartWidth", "$chartHeight");
-		$tempData
-		//Finally, render the chart.
-		chart_$chartId.render("$chartIdDiv");
-	</script>	
-	<!-- END Script Block for Chart $chartId -->
+  $render_chart = <<<RENDERCHART
+  <!-- START Script Block for Chart $chartId -->
+  <div id="$chartIdDiv" align="center">
+    Chart.
+  </div>
+  <script type="text/javascript">  
+    //Instantiate the Chart  
+    var chart_$chartId = new FusionCharts("$chartSWF", "$chartId", "$chartWidth", "$chartHeight");
+    $tempData
+    //Finally, render the chart.
+    chart_$chartId.render("$chartIdDiv");
+  </script>  
+  <!-- END Script Block for Chart $chartId -->
 RENDERCHART;
 
   return $render_chart;
@@ -122,15 +122,15 @@ function renderChartHTML($chartSWF, $strURL, $strXML, $chartId, $chartWidth, $ch
         $strFlashVars .= "&dataXML=" . $strXML;
 
 $HTML_chart = <<<HTMLCHART
-	<!-- START Code Block for Chart $chartId -->
-	<OBJECT classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase=http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0"  width="$chartWidth" height="$chartHeight" id="$chartId">
-		<param name="allowScriptAccess" value="always" />
-		<param name="movie" value="$chartSWF"/>		
-		<param name="FlashVars" value="$strFlashVars" />
-		<param name="quality" value="high" />
-		<embed src="$chartSWF" FlashVars="$strFlashVars" quality="high" width="$chartWidth" height="$chartHeight" name="$chartId" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
-	</object>
-	<!-- END Code Block for Chart $chartId -->
+  <!-- START Code Block for Chart $chartId -->
+  <OBJECT classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase=http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0"  width="$chartWidth" height="$chartHeight" id="$chartId">
+    <param name="allowScriptAccess" value="always" />
+    <param name="movie" value="$chartSWF"/>    
+    <param name="FlashVars" value="$strFlashVars" />
+    <param name="quality" value="high" />
+    <embed src="$chartSWF" FlashVars="$strFlashVars" quality="high" width="$chartWidth" height="$chartHeight" name="$chartId" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+  </object>
+  <!-- END Code Block for Chart $chartId -->
 HTMLCHART;
 
   return $HTML_chart;

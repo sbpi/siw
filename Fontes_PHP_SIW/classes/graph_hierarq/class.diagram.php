@@ -119,7 +119,7 @@
             }
             $xml = new XmlParser($data);
 
-            $this->struct = $xml->struct;					
+            $this->struct = $xml->struct;          
 
       //Ajusta os caracteres com acentuação
       $this->struct = $this->encodeRecursivo( $this->struct );

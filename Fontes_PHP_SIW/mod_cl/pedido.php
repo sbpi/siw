@@ -2571,10 +2571,10 @@ function Grava() {
 
           // Grava vinculação orçamentária-financeira
           $SQL = new dml_putCLGeral; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],$_REQUEST['w_menu'],null,
-	          null,null,null,$_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
-	          $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-	          $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,null);
-	          
+            null,null,null,$_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
+            $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,null);
+            
           // Grava tipo de pagamento e nota de conclusão
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
             null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,

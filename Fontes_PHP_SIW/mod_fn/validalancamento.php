@@ -44,7 +44,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   //-----------------------------------------------------------------------------
   // 1 - Verifica se o valor do lançamento é maior que zero
   if (f($l_rs_solic,'valor')==0) {
-    $l_erro=$l_erro.'<li>O lançamento não pode ter valor zero.';
+    $l_erro.='<li>O lançamento não pode ter valor zero.';
     $l_tipo=0;
   }
 
@@ -54,43 +54,44 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     $l_existe_rs1=0;
   } else {
     $l_existe_rs1=count($l_rs1);
-    $l_item = false;    
+    $l_item = false;
+    if (nvl(f($l_rs_solic,'sq_projeto_rubrica'),0)!=0) $l_item = true;
     foreach($l_rs1 as $l_row) {
-      if (nvl(f($l_rs_solic,'tipo_rubrica'),0)!=4 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=5) {
+      if (nvl(f($l_rs_solic,'sq_projeto_rubrica'),0)==0 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=4 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=5) {
         $sql = new db_getLancamentoRubrica; $l_rs2 = $sql->getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if($l_existe_rs2>0) {
           $l_valor_rubrica=0;
           foreach($l_rs2 as $l_row2) $l_valor_rubrica += f($l_row2,'valor'); 
           if (((f($l_row,'valor')!=$l_valor_rubrica) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
-            $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.formatNumber(Nvl($l_valor_rubrica,0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
+            $l_erro.='<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.formatNumber(Nvl($l_valor_rubrica,0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
             $l_tipo=0;
           }          
         }
-      } elseif (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
+      } elseif ($l_item || nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
         if (f($l_row,'detalha_item')=='S') $l_item = true;
         $sql = new db_getLancamentoItem; $l_rs2 = $sql->getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
-          $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.formatNumber(Nvl(f($l_row,'total_item'),0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
+          $l_erro.='<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.formatNumber(Nvl(f($l_row,'total_item'),0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
           $l_tipo=0;
         }
       }
     }
     if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc') && f($l_rs_tramite,'ativo')=='S') {
-      $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores dos documentos (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_doc'),0)).'</b>).';
+      $l_erro.='<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores dos documentos (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_doc'),0)).'</b>).';
       $l_tipo=0;
     }
   }
 
   // 3 - Se o lançamento está ligado a acordo com nota, ele deve ter pelo menos uma nota e a parcela ao qual está ligado também.
   if (f($l_rs_solic,'notas_acordo')>0 && f($l_rs_solic,'qtd_nota')==0) {
-    $l_erro=$l_erro.'<li>Este lançamento deve ter pelo menos uma nota.';
+    $l_erro.='<li>Este lançamento deve ter pelo menos uma nota.';
     $l_tipo=0;
   }
 
   if (f($l_rs_solic,'notas_acordo')>0 && f($l_rs_solic,'notas_parcela')==0) {
-    $l_erro=$l_erro.'<li>A parcela deste lançamento deve ter pelo menos uma nota.';
+    $l_erro.='<li>A parcela deste lançamento deve ter pelo menos uma nota.';
     $l_tipo=0;
   }
 
@@ -101,7 +102,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   } else { 
     $l_existe_rs3=count($l_rs3);    
     if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_nota') && f($l_rs_tramite,'ativo')=='S') {
-      $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores das notas (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_nota'),0)).'</b>).';
+      $l_erro.='<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores das notas (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_nota'),0)).'</b>).';
       $l_tipo=0;
     }
   }
@@ -114,7 +115,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
       foreach($l_rs_tipo as $l_row){$l_rs_tipo=$l_row; break;}
       if (count($l_rs_tipo)>0) {
         if (f($l_rs_tipo,'sg_tramite')<>'AT') {
-          $l_erro=$l_erro.'<li>Para a execução de novos lançamentos para o projeto <b>'.f($l_rs_solic,'nm_projeto').'</b>, o lançamento de dotação inicial deve estar liquidado.';
+          $l_erro.='<li>Para a execução de novos lançamentos para o projeto <b>'.f($l_rs_solic,'nm_projeto').'</b>, o lançamento de dotação inicial deve estar liquidado.';
           $l_tipo=0;        
         }
       }
@@ -127,12 +128,12 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     foreach ($l_rs1 as $row){$l_rs1 = $row; break;}
     if ($l_existe_rs1==0) {
       // Verifica se foi indicada a pessoa
-      $l_erro=$l_erro.'<li>A pessoa não foi informada';
+      $l_erro.='<li>A pessoa não foi informada';
       $l_tipo=0;
     } else {
       if (!(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==Nvl(f($l_rs1,'sq_tipo_pessoa'),0))) {
         // Verifica se a pessoa informada é do tipo indicada no cadastro do lançamento 
-        $l_erro=$l_erro.'<li>A pessoa não é do tipo informado na tela de dados gerais.';
+        $l_erro.='<li>A pessoa não é do tipo informado na tela de dados gerais.';
         $l_tipo=0;
       } 
     } 
@@ -154,36 +155,34 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
      }
     } 
     if ($l_erro_banco==1) {
-      $l_erro=$l_erro.'<li>Dados bancários incompletos. Acesse a operação "Pessoa", confira os dados e grave a tela.';
+      $l_erro.='<li>Dados bancários incompletos. Acesse a operação "'.(($P2==1) ? 'Ajustar beneficiário' : 'Pessoa').'", confira os dados e grave a tela.';
       $l_tipo=0;
     }
 
-
+    // 4 - Recupera os documentos associados ao lançamento
+    $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
+    if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
+    if ($l_existe_rs1==0) {
+      // 5 - Verifica se foi informado pelo menos um documento
+      $l_erro.='<li>Não foram informados documentos para o lançamento. Acesse a operação "'.(($P2==1) ? 'Ajustar documentos' : 'Docs').'" e informe pelo menos um.';
+      $l_tipo=0;
+    } else {
+      if ($l_item && $l_existe_rs2==0 && (nvl(f($l_rs_solic,'sq_projeto_rubrica'),0)!=0 || nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')) {
+        // 7 - Verifica se foi informado pelo menos um item no documento
+        $l_erro.='<li>Não foram informados itens para o documento. Acesse a operação "'.(($P2==1) ? 'Ajustar documentos' : 'Itens do documento').'" e informe pelo menos um.';
+        $l_tipo=0;
+      } 
+    }
+    
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao
   // cadastramento inicial
   if (f($l_rs_tramite,'ordem')>1 || f($l_rs_solic,'sigla')=='FNDREEMB') {
-      $l_erro=$l_erro;
-      if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE' || f($l_rs_solic,'sigla')=='FNDREEMB') {
-        // 4 - Recupera os documentos associados ao lançamento
-        $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
-        if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
-        if ($l_existe_rs1==0) {
-          // 5 - Verifica se foi informado pelo menos um documento
-          $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Acesse a operação "Docs" e informe pelo menos um.';
-          $l_tipo=0;
-        } else {
-          if ($l_item && $l_existe_rs2==0 && nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
-            // 7 - Verifica se foi informado pelo menos um item no documento
-            $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Acesse a operação "Itens" do documento e informe pelo menos um.';
-            $l_tipo=0;
-          } 
-        }
-      } elseif ((Nvl(f($l_rs_tramite,'sigla'),'---')=='AT')&&(Nvl(f($l_rs_solic,'tipo_rubrica'),0)==1)) {
+      if ((f($l_rs_tramite,'sigla')=='AT')&&(Nvl(f($l_rs_solic,'tipo_rubrica'),0)==1)) {
         // Verifica se o tipo de movimentação é dotação inicial e se for nao pode haver retorno 
         // para fases anteriores se houver outros lancamentos ativos.
         $sql = new db_getLancamentoProjeto; $l_rs1 = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_solic,'sq_menu'),'LANCAMENTOS');
         if(count($l_rs1)>0) {
-          $l_erro=$l_erro.'<li>O envio deste lançamento só pode ser feito após o cancelamento de todos os outros lançamentos deste projeto.';
+          $l_erro.='<li>O envio deste lançamento só pode ser feito após o cancelamento de todos os outros lançamentos deste projeto.';
           $l_tipo=0;
         }
       }
@@ -203,7 +202,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
             }
           }
           if ($w_pendencia!='') {
-            $l_erro=$l_erro.'<li>Pagamento bloqueado em função de prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
+            $l_erro.='<li>Pagamento bloqueado em função de prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
             $l_tipo=0;
           }
         }

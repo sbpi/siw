@@ -64,7 +64,7 @@ if (!empty($_FILES)) {
 
 
   // } else {
-  // 	echo 'Invalid file type.';
+  //   echo 'Invalid file type.';
   // }
 }
 ?>

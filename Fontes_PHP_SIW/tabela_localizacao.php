@@ -138,7 +138,7 @@ function Cidade() {
     $w_ddd          = f($RS,'ddd');
     $w_codigo_ibge  = f($RS,'codigo_ibge');
     $w_capital      = f($RS,'capital');
-	$w_aeroportos   = f($RS,'aeroportos');
+  $w_aeroportos   = f($RS,'aeroportos');
   } 
 
   Cabecalho();
@@ -152,7 +152,7 @@ function Cidade() {
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_ddd','DDD','1','','2','4','','1');
       Validate('w_codigo_ibge','IBGE','1','','1','20','1','1');
-	    Validate('w_aeroportos','Aeroporto(s)','1','1','1','1','','0123456789');
+      Validate('w_aeroportos','Aeroporto(s)','1','1','1','1','','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -210,7 +210,7 @@ function Cidade() {
     ShowHTML('          <td><b>'.LinkOrdena('DDD','ddd').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('IBGE','codigo_ibge').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Capital','capital').'</td>');
-	  ShowHTML('          <td><b>'.LinkOrdena('Aeroportos','aeroportos').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aeroportos','aeroportos').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 
@@ -229,7 +229,7 @@ function Cidade() {
         ShowHTML('        <td align="center">'.f($row,'ddd').'</td>');
         ShowHTML('        <td align="center">'.f($row,'codigo_ibge').'</td>');
         ShowHTML('        <td align="center">'.f($row,'capital').'</td>');
-		ShowHTML('        <td align="center">'.f($row,'aeroportos').'</td>');
+    ShowHTML('        <td align="center">'.f($row,'aeroportos').'</td>');
         if ($w_libera_edicao=='S') {
           ShowHTML('        <td align="top" nowrap>'); 
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_cidade='.f($row,'sq_cidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');

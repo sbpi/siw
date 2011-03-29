@@ -77,7 +77,7 @@ class phpmailerTest extends TestCase
         $this->Mail->Username = "";
         $this->Mail->Password = "";
         $this->Mail->PluginDir = $INCLUDE_DIR;
-		$this->Mail->AddReplyTo("no_reply@phpmailer.sf.net", "Reply Guy");
+    $this->Mail->AddReplyTo("no_reply@phpmailer.sf.net", "Reply Guy");
         $this->Mail->Sender = "unit_test@phpmailer.sf.net";
 
         if(strlen($this->Mail->Host) > 0)

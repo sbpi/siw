@@ -52,7 +52,7 @@ function VerfHora() {
 // Abre a tag SCRIPT
 function ScriptOpen($Language) { 
   extract($GLOBALS);
-  print chr(13).chr(10).'<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
+  //print chr(13).chr(10).'<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
   print chr(13).chr(10).'<SCRIPT LANGUAGE="'.$Language.'"><!--'.chr(13).chr(10); 
 }
 
@@ -553,20 +553,20 @@ function FormataValor() {
 ?>
 
     function FormataValor(campo, maximo, tammax, teclapres) {     
-		var mascara = "";
-		var decimal = "";
-	  //campo.setAttribute("id", campo.name);              		
-		mascara = repeteCaracter("#",tammax);
+    var mascara = "";
+    var decimal = "";
+    //campo.setAttribute("id", campo.name);                  
+    mascara = repeteCaracter("#",tammax);
 
-		if(mascara != ""){
-			decimal = "," + mascara;
-		}
+    if(mascara != ""){
+      decimal = "," + mascara;
+    }
 
-	   $(campo).bind("keyup", function(e){
-	   var sinal = "";
-	   if(campo.value.indexOf('-') != -1) sinal = "-"; 
-			$(campo).val( sinal + mascaraGlobal('[###.]###' + decimal ,$(campo).val()) );
-		});        
+     $(campo).bind("keyup", function(e){
+     var sinal = "";
+     if(campo.value.indexOf('-') != -1) sinal = "-"; 
+      $(campo).val( sinal + mascaraGlobal('[###.]###' + decimal ,$(campo).val()) );
+    });        
     }
 <?php
 
@@ -574,23 +574,23 @@ function FormataValor() {
 
 function FormataCPF() {
 ?>
-  function FormataCPF (campo,teclapres) {		
-	   campo.setAttribute("id", campo.name);              				
-	   $(campo).bind("keyup", function(e){
-			$(campo).val( mascaraGlobal('###.###.###-##' ,$(campo).val()) );
-		});   
+  function FormataCPF (campo,teclapres) {    
+     campo.setAttribute("id", campo.name);                      
+     $(campo).bind("keyup", function(e){
+      $(campo).val( mascaraGlobal('###.###.###-##' ,$(campo).val()) );
+    });   
   }
 <?php
 }
 
 function FormataCNPJ() {
 ?>
-	function FormataCNPJ (campo,teclapres) { 
-		campo.setAttribute("id", campo.name);              				
-		   $(campo).bind("keyup", function(e){
-				$(campo).val( mascaraGlobal('##.###.###/####-##' ,$(campo).val()) );
-			});   	
-	}
+  function FormataCNPJ (campo,teclapres) { 
+    campo.setAttribute("id", campo.name);                      
+       $(campo).bind("keyup", function(e){
+        $(campo).val( mascaraGlobal('##.###.###/####-##' ,$(campo).val()) );
+      });     
+  }
 <?php
 }
 
@@ -615,12 +615,12 @@ function FormataProtocolo() {
 
 function FormataCEP() {
 ?>
-		function FormataCEP (campo,teclapres) { 
-		 campo.setAttribute("id", campo.name);              				
-		   $(campo).bind("keyup", function(e){
-				$(campo).val( mascaraGlobal('#####-###' ,$(campo).val()) );
-			});  
-		}
+    function FormataCEP (campo,teclapres) { 
+     campo.setAttribute("id", campo.name);                      
+       $(campo).bind("keyup", function(e){
+        $(campo).val( mascaraGlobal('#####-###' ,$(campo).val()) );
+      });  
+    }
 <?php
 }
 

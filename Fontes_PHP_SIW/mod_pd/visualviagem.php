@@ -218,27 +218,27 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>---</td></tr>';
           }  
           if (nvl(f($RS,'sq_forma_pagamento'),'')!='') {
-	          $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento das diárias</td>';
-	          $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
-	          if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
-	            $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
-	            $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
-	            if (f($RS,'exige_operacao')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td><td>'.Nvl(f($RS,'numero_conta'),'---').'</td></tr>';
-	          } elseif (f($RS,'sg_forma_pagamento')=='ORDEM') {
-	            $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
-	            $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
-	          } elseif (f($RS,'sg_forma_pagamento')=='EXTERIOR') {
-	            $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'banco_estrang').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>ABA Code:</b></td><td>'.Nvl(f($RS,'aba_code'),'---').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>SWIFT Code:</b></td><td>'.Nvl(f($RS,'swift_code'),'---').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>Endereço da agência:</b></td><td>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td><td>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>Cidade:</b></td><td>'.f($RS,'cidade_estrang').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>País:</b></td><td>'.f($RS,'pais_estrang').'</td>';
-	            $l_html.=chr(13).'          <tr><td><b>Informações adicionais:</b></td><td>'.nvl(f($RS,'informacoes'),'---').'</td>';
-	          }
+            $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento das diárias</td>';
+            $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+            if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
+              $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
+              $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
+              if (f($RS,'exige_operacao')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td><td>'.Nvl(f($RS,'numero_conta'),'---').'</td></tr>';
+            } elseif (f($RS,'sg_forma_pagamento')=='ORDEM') {
+              $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
+              $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
+            } elseif (f($RS,'sg_forma_pagamento')=='EXTERIOR') {
+              $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'banco_estrang').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>ABA Code:</b></td><td>'.Nvl(f($RS,'aba_code'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>SWIFT Code:</b></td><td>'.Nvl(f($RS,'swift_code'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>Endereço da agência:</b></td><td>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td><td>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>Cidade:</b></td><td>'.f($RS,'cidade_estrang').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>País:</b></td><td>'.f($RS,'pais_estrang').'</td>';
+              $l_html.=chr(13).'          <tr><td><b>Informações adicionais:</b></td><td>'.nvl(f($RS,'informacoes'),'---').'</td>';
+            }
           } 
         } 
       }
@@ -1138,23 +1138,23 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
       if($l_diaria=='S' && (is_array($w_tot_diaria_P) || $w_financeiro) && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
-		    // Garante que os arrays dos pagamentos previsto e realizado têm as mesmas moedas.
-		    if (count($w_tot_diaria_S)>0) {
-		      foreach($w_tot_diaria_S as $k => $v) {
-		        if (!isset($w_tot_diaria_P[$k])) {
-		          $w_tot_diaria_P[$k] = '0';
-		        }
-		      }
-		      ksort($w_tot_diaria_P);
-		    }
-		    if (count($w_tot_diaria_P)>0) {
-		      foreach($w_tot_diaria_P as $k => $v) {
-		        if (!isset($w_tot_diaria_S[$k])) {
-		          $w_tot_diaria_S[$k] = '0';
-		        }
-		      }
-		      ksort($w_tot_diaria_S);
-		    }
+        // Garante que os arrays dos pagamentos previsto e realizado têm as mesmas moedas.
+        if (count($w_tot_diaria_S)>0) {
+          foreach($w_tot_diaria_S as $k => $v) {
+            if (!isset($w_tot_diaria_P[$k])) {
+              $w_tot_diaria_P[$k] = '0';
+            }
+          }
+          ksort($w_tot_diaria_P);
+        }
+        if (count($w_tot_diaria_P)>0) {
+          foreach($w_tot_diaria_P as $k => $v) {
+            if (!isset($w_tot_diaria_S[$k])) {
+              $w_tot_diaria_S[$k] = '0';
+            }
+          }
+          ksort($w_tot_diaria_S);
+        }
       
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';

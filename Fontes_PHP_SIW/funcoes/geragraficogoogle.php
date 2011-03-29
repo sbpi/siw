@@ -77,20 +77,20 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     
     //Data  
     $l_data = $l_x;
-	
-	// Verifica se deve ser exibido rótulo com valor de cada barra
-	$l_rotulo = true;
-	foreach($l_data as $k => $v) {
-	  if (strlen($v) > 7) { 
-	    // Se valor tiver mais que seis posições, não mostra o valor da barra pois "encavala"
-	    $l_rotulo = false; 
-	    break; 
-	  }
-	}
-	
+  
+  // Verifica se deve ser exibido rótulo com valor de cada barra
+  $l_rotulo = true;
+  foreach($l_data as $k => $v) {
+    if (strlen($v) > 7) { 
+      // Se valor tiver mais que seis posições, não mostra o valor da barra pois "encavala"
+      $l_rotulo = false; 
+      break; 
+    }
+  }
+  
     $graph->Data->addData($l_data);
 
-	if (is_array($l_x)) {
+  if (is_array($l_x)) {
       sort($l_x);
       $l_scale_min = $l_x[0];
       $l_scale_min = floor($l_scale_min-(0.1*$l_scale_min));
@@ -101,11 +101,11 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
       $l_scale_min = str_replace(',','.',$l_scale_min);      
       $graph->Data->setScale(array($l_scale_min,$l_scale_max));
       $graph->Graph->setAxisRange(array(1, $l_scale_min, $l_scale_max));
-	  if ($l_rotulo) {
-	    $y = count($l_data)-1; // ajuste para colocar os valores na ordem correta
-	    for($i = 0; $i < count($l_data); $i++){
-          $graph->Graph->addShapeMarker(array('t'.number_format($l_data[$y-$i],2,'.',''), '333333', 0, $i,10.0));                	  
-	    }	
+    if ($l_rotulo) {
+      $y = count($l_data)-1; // ajuste para colocar os valores na ordem correta
+      for($i = 0; $i < count($l_data); $i++){
+          $graph->Graph->addShapeMarker(array('t'.number_format($l_data[$y-$i],2,'.',''), '333333', 0, $i,10.0));                    
+      }  
       }
     } 
     

@@ -212,12 +212,14 @@ function abreFecha(string){
 		img.attr("src","images/menos.jpg");
 		img.attr("alt","Minimizar");
 		tipo = "abrir";
+        $('#tr-'+string+'-xp').val('true');
 	}else{
 		img.removeAttr("src");
 		img.attr("src","images/mais.jpg");	
 		img.removeAttr("alt");
 		img.attr("alt","Expandir");
 		tipo = "fechar";
+        $('#'+string+'-xp').val('false');
 	}
 
 	
@@ -313,6 +315,7 @@ function colapsar(chave,obj){
 	var src = $(obj).attr("src");
 	var img = "img[id^=img-" + chave + "]";
 	var parte = "";
+
 	if(src.indexOf("mais") != -1){
 
 		$(id).each(function(){
@@ -324,7 +327,7 @@ function colapsar(chave,obj){
 		});
 
 		$(obj).attr("src",src.replace("mais","menos"));
-
+        $(".p_arvore").val('true');
 	}else{
 
 		$(id).each(function(){
@@ -339,6 +342,7 @@ function colapsar(chave,obj){
 		});
 	
 		$(obj).attr("src",src.replace("menos","mais"));
+        $(".p_arvore").val('false');
 	}
 }
 function replaceExtChars(text) {

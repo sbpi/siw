@@ -20,7 +20,7 @@ class dml_CoCidade {
                    'p_co_uf'           =>array($p_co_uf,           B_VARCHAR,      3),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     60),
                    'p_capital'         =>array($p_capital,         B_VARCHAR,      1),
-				   'p_aeroportos'      =>array($p_aeroportos,      B_NUMERIC,     32)
+           'p_aeroportos'      =>array($p_aeroportos,      B_NUMERIC,     32)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

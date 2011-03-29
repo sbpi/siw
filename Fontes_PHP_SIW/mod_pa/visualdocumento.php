@@ -144,14 +144,14 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'   <tr><td valign="top"><b>Observação:</b></td>';
       $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'ob_assunto'),'---')).'</td></tr>';
       if ($w_sg_tramite=='AT') {
-	      $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
-	      $l_html.=chr(13).'       <td align="justify"><table border=1>';
-	      $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
-	      $l_html.=chr(13).'         <tr valign="top">';
-	      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
-	      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
-	      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
-	      $l_html.=chr(13).'         </table>';
+        $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
+        $l_html.=chr(13).'       <td align="justify"><table border=1>';
+        $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
+        $l_html.=chr(13).'         <tr valign="top">';
+        $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
+        $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
+        $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
+        $l_html.=chr(13).'         </table>';
       }
     } 
 
@@ -329,25 +329,25 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     }
 
     if (count($RS_Copias)>0) {
-	    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>CÓPIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-	    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
-	    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-	    $l_html.=chr(13).'       <tr valign="top" align="center">';
-	    $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
-	    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
-	    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
-	    $l_html.=chr(13).'       </tr>';
-	    foreach ($RS_Copias as $row) {
-	      $l_html.=chr(13).'      <tr valign="top">';
-	      $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
-	      if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
-	      $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
-	      $l_html.=chr(13).'      </tr>';
-	    } 
-	    $l_html.=chr(13).'      </center>';
-	    $l_html.=chr(13).'    </table>';
-	    $l_html.=chr(13).'  </td>';
-	    $l_html.=chr(13).'</tr>';
+      $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>CÓPIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'       <tr valign="top" align="center">';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
+      $l_html.=chr(13).'       </tr>';
+      foreach ($RS_Copias as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
+        if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
+        $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'      </center>';
+      $l_html.=chr(13).'    </table>';
+      $l_html.=chr(13).'  </td>';
+      $l_html.=chr(13).'</tr>';
     }
   }
 

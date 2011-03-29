@@ -179,66 +179,66 @@ function Inicial() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-	  ShowHTML('<tr><td>');    
-	  if ($w_submenu>'') {
-	    $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-	    foreach($RS1 as $row) {
-	      ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-	      break;
-	    }
-	  } else {
-	    ShowHTML('<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-	  }
-	  if (montaFiltro('GET')>'') {
-	    ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
-	  } else {
-	    ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-	  } 
-	  ShowHTML('    <td align="right"><b>Registros: '.count($RS_Benef));
-	  ShowHTML('<tr><td align="center" colspan=3>');
-	  ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-	  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-	  ShowHTML('          <td><b>'.LinkOrdena('Nome','nm_pessoa').'</td>');
-	  ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</td>');
-	  ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
-	  ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
-	  ShowHTML('          <td><b>Operações</td>');
-	  ShowHTML('        </tr>');
-	  if (count($RS_Benef)<=0) {
-	    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
-	  } else {
-	    if (count($RS_Benef)<$P4) $P3=1;
-	    $RS1 = array_slice($RS_Benef, (($P3-1)*$P4), $P4);
-	    foreach($RS1 as $row) {
-	      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-	      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-	      ShowHTML('        <td>'.ExibeFornecedor(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nm_pessoa')).'</b></td>');
-	      if(nvl(f($row,'nm_cidade'),'')!='')ShowHTML('        <td>'.f($row,'nm_cidade').((nvl(f($row,'pd_pais'),'N')=='S') ? ' - '.f($row,'co_uf') : ' ('.f($row,'nm_pais').')').'</td>');
-	      else                               ShowHTML('        <td>---</td>');
-	      ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
-	      ShowHTML('        <td align="center">'.Nvl(f($row,'identificador_primario'),'---').'</td>');
-	      ShowHTML('        <td align="top" nowrap>');
-	      if ($w_submenu>'') {
-	        ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
-	      } else {
-	      ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
-	      } 
-	      //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
-	      ShowHTML('        </td>');
-	      ShowHTML('      </tr>');
-	    } 
-	  } 
-	  ShowHTML('      </center>');
-	  ShowHTML('    </table>');
-	  ShowHTML('  </td>');
-	  ShowHTML('</tr>');
-	  ShowHTML('<tr><td align="center" colspan=3>');
-	  if ($R>'') {
-	    MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
-	  } else {
-	    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
-	  } 
-	  ShowHTML('</tr>');  
+    ShowHTML('<tr><td>');    
+    if ($w_submenu>'') {
+      $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+      foreach($RS1 as $row) {
+        ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        break;
+      }
+    } else {
+      ShowHTML('<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    }
+    if (montaFiltro('GET')>'') {
+      ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
+    } else {
+      ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+    } 
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS_Benef));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nm_pessoa').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS_Benef)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      if (count($RS_Benef)<$P4) $P3=1;
+      $RS1 = array_slice($RS_Benef, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.ExibeFornecedor(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nm_pessoa')).'</b></td>');
+        if(nvl(f($row,'nm_cidade'),'')!='')ShowHTML('        <td>'.f($row,'nm_cidade').((nvl(f($row,'pd_pais'),'N')=='S') ? ' - '.f($row,'co_uf') : ' ('.f($row,'nm_pais').')').'</td>');
+        else                               ShowHTML('        <td>---</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
+        ShowHTML('        <td align="center">'.Nvl(f($row,'identificador_primario'),'---').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        if ($w_submenu>'') {
+          ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
+        } else {
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
+        } 
+        //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
+    } 
+    ShowHTML('</tr>');  
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');

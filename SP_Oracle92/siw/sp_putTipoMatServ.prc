@@ -29,6 +29,15 @@ begin
              descricao       = p_descricao,
              codigo_externo  = p_codigo_externo
        where sq_tipo_material = p_chave;
+       
+       -- Atualiza a classe dos tipos subordinados
+       update cl_tipo_material 
+          set classe = p_classe 
+       where sq_tipo_material in (select sq_tipo_material
+                                    from cl_tipo_material
+                                  connect by prior sq_tipo_material = sq_tipo_pai
+                                  start with sq_tipo_material = p_chave
+                                 );
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       delete cl_tipo_material where sq_tipo_material = p_chave;

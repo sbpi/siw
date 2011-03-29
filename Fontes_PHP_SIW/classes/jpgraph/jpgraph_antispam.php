@@ -1,10 +1,10 @@
 <?php
 //=======================================================================
-// File:	JPGRAPH_ANTISPAM.PHP
-// Description:	Genarate anti-spam challenge
-// Created: 	2004-10-07
-// Author:	Johan Persson (johanp@aditus.nu)
-// Ver:		$Id: jpgraph_antispam.php 21 2005-05-30 20:35:34Z ljp $
+// File:  JPGRAPH_ANTISPAM.PHP
+// Description:  Genarate anti-spam challenge
+// Created:   2004-10-07
+// Author:  Johan Persson (johanp@aditus.nu)
+// Ver:    $Id: jpgraph_antispam.php 21 2005-05-30 20:35:34Z ljp $
 //
 // Copyright (c) Aditus Consulting. All rights reserved.
 //========================================================================
@@ -549,76 +549,76 @@ class AntiSpam {
     var $iDD=null;
 
     function AntiSpam($aData='') {
-	$this->iData = $aData;
-	$this->iDD = new HandDigits();	
+  $this->iData = $aData;
+  $this->iDD = new HandDigits();  
     }
 
     function Set($aData) {
-	$this->iData = $aData;
+  $this->iData = $aData;
     }
 
     function Rand($aLen) {
-	$d='';
-	for($i=0; $i < $aLen; ++$i) {
-	    if( rand(0,9) < 6 ) {
-		// Digits
-		$d .= chr( ord('1') + rand(0,8) );
-	    }
-	    else {
-		// Letters
-		do {
-		    $offset = rand(0,25);
-		} while ( $offset==14 );
-		$d .= chr( ord('a') + $offset );
-	    }
-	}
-	$this->iData = $d;
-	return $d;
+  $d='';
+  for($i=0; $i < $aLen; ++$i) {
+      if( rand(0,9) < 6 ) {
+    // Digits
+    $d .= chr( ord('1') + rand(0,8) );
+      }
+      else {
+    // Letters
+    do {
+        $offset = rand(0,25);
+    } while ( $offset==14 );
+    $d .= chr( ord('a') + $offset );
+      }
+  }
+  $this->iData = $d;
+  return $d;
     }
 
     function Stroke($aStrokeFileName="") {
 
-	$n=strlen($this->iData);
-	if( $n==0 ) {
-	    return false;
-	}
+  $n=strlen($this->iData);
+  if( $n==0 ) {
+      return false;
+  }
 
-	for($i=0; $i < $n; ++$i ) {
-	    if( $this->iData[$i]==='0' || strtolower($this->iData[$i])==='o') {
-		return false;
-	    }
-	}
+  for($i=0; $i < $n; ++$i ) {
+      if( $this->iData[$i]==='0' || strtolower($this->iData[$i])==='o') {
+    return false;
+      }
+  }
 
-	$img = @imagecreatetruecolor($n*$this->iDD->iWidth, $this->iDD->iHeight);
-	if( $img < 1 ) {
-	    return false;
-	}
+  $img = @imagecreatetruecolor($n*$this->iDD->iWidth, $this->iDD->iHeight);
+  if( $img < 1 ) {
+      return false;
+  }
 
-	$start=0;
-	for($i=0; $i < $n; ++$i ) {
-	    $dimg = imagecreatefromstring(base64_decode($this->iDD->chars[strtolower($this->iData[$i])][1]));
-	    imagecopy($img,$dimg,$start,0,0,0,imagesx($dimg), $this->iDD->iHeight);
-	    $start += imagesx($dimg);
-	}
-	$resimg = @imagecreatetruecolor($start+4, $this->iDD->iHeight+4);
-	if( $resimg < 1 ) {
-	    return false;
-	}
+  $start=0;
+  for($i=0; $i < $n; ++$i ) {
+      $dimg = imagecreatefromstring(base64_decode($this->iDD->chars[strtolower($this->iData[$i])][1]));
+      imagecopy($img,$dimg,$start,0,0,0,imagesx($dimg), $this->iDD->iHeight);
+      $start += imagesx($dimg);
+  }
+  $resimg = @imagecreatetruecolor($start+4, $this->iDD->iHeight+4);
+  if( $resimg < 1 ) {
+      return false;
+  }
 
-	imagecopy($resimg,$img,2,2,0,0,$start, $this->iDD->iHeight);
+  imagecopy($resimg,$img,2,2,0,0,$start, $this->iDD->iHeight);
 
-	if( $aStrokeFileName!="" ) {
-	    if( file_exists($aStrokeFileName) ) {
-		if( !@unlink($aStrokeFileName) )
-		    return false;
-	    }
-	    imagejpeg($resimg,$aStrokeFileName);
-	    return;
-	}
+  if( $aStrokeFileName!="" ) {
+      if( file_exists($aStrokeFileName) ) {
+    if( !@unlink($aStrokeFileName) )
+        return false;
+      }
+      imagejpeg($resimg,$aStrokeFileName);
+      return;
+  }
 
-	header("Content-type: image/jpeg");
-	$res=imagejpeg($resimg);
-	return $res;
+  header("Content-type: image/jpeg");
+  $res=imagejpeg($resimg);
+  return $res;
     }
 }
 

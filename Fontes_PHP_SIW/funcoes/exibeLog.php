@@ -72,14 +72,14 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
       else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'responsavel').'</td>';
       if (substr($SG,0,2)=='GC') $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'nm_tipo_log').'</td>';
       if ($l_formato=='HTML') {
-	      // Se o usuário registrou a anotação, ele pode alterá-la
-	      if ($w_usuario==f($row,'sq_pessoa') && f($row,'ativo')=='S') {
-	        $l_html.=chr(13).'        <td width="1%" nowrap>&nbsp';
-	        $l_html.=chr(13).'          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'anotacao.php?par=Inicial&R='.$w_pagina.$par.'&O=A&p_chave='.$l_chave.'&p_chave_aux='.f($row,'chave_log').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'Anotacao\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Alterar a anotação">AL</A>&nbsp';
-	        $l_html.=chr(13).'          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'anotacao.php?par=Inicial&R='.$w_pagina.$par.'&O=E&p_chave='.$l_chave.'&p_chave_aux='.f($row,'chave_log').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'Anotacao\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Excluir a anotação">EX</A>&nbsp';
-	      } else {
-	        $l_html.=chr(13).'        <td width="1%" nowrap>&nbsp;---';
-	      }
+        // Se o usuário registrou a anotação, ele pode alterá-la
+        if ($w_usuario==f($row,'sq_pessoa') && f($row,'ativo')=='S') {
+          $l_html.=chr(13).'        <td width="1%" nowrap>&nbsp';
+          $l_html.=chr(13).'          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'anotacao.php?par=Inicial&R='.$w_pagina.$par.'&O=A&p_chave='.$l_chave.'&p_chave_aux='.f($row,'chave_log').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'Anotacao\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Alterar a anotação">AL</A>&nbsp';
+          $l_html.=chr(13).'          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'anotacao.php?par=Inicial&R='.$w_pagina.$par.'&O=E&p_chave='.$l_chave.'&p_chave_aux='.f($row,'chave_log').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'Anotacao\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Excluir a anotação">EX</A>&nbsp';
+        } else {
+          $l_html.=chr(13).'        <td width="1%" nowrap>&nbsp;---';
+        }
       }
       $l_html.=chr(13).'      </tr>';
     } 
@@ -185,7 +185,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
     } 
   } 
   $l_html.=chr(13).'         </table></td></tr>';
-	  
+    
   return $l_html;
 }
 ?>

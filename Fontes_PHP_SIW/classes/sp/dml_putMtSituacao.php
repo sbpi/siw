@@ -20,10 +20,10 @@ class dml_putMtSituacao {
                    'p_entrada'           =>array(tvl($p_entrada),                 B_VARCHAR,         1),
                    'p_saida'             =>array(tvl($p_saida),                   B_VARCHAR,         1),
                    'p_estorno'           =>array(tvl($p_estorno),                 B_VARCHAR,         1),
-		           'p_consumo'           =>array(tvl($p_consumo),                 B_VARCHAR,         1),
-			       'p_permanente'        =>array(tvl($p_permanente),              B_VARCHAR,         1),
-				   'p_inativa_bem'       =>array(tvl($p_inativa_bem),             B_VARCHAR,         1),
-				   'p_situacao_fisica'   =>array(tvl($p_situacao_fisica),         B_VARCHAR,         1),				  
+               'p_consumo'           =>array(tvl($p_consumo),                 B_VARCHAR,         1),
+             'p_permanente'        =>array(tvl($p_permanente),              B_VARCHAR,         1),
+           'p_inativa_bem'       =>array(tvl($p_inativa_bem),             B_VARCHAR,         1),
+           'p_situacao_fisica'   =>array(tvl($p_situacao_fisica),         B_VARCHAR,         1),          
                    'p_ativo'             =>array(tvl($p_ativo),                   B_VARCHAR,         1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -366,13 +366,13 @@ function Grava() {
           $result = $xml->xpath('Tasks/Task');
           foreach($xml->Tasks->Task as $row) {
             if ($row->ID!='0') {
-              $w_titulo     = substr(utf8_decode(str_replace('–','-',str_replace('	','  ',$row->Name))),0,100);
+              $w_titulo     = substr(utf8_decode(str_replace('–','-',str_replace('  ','  ',$row->Name))),0,100);
               $w_inicio     = utf8_decode($row->Start);
               $w_inicio     = substr($w_inicio,8,2).'/'.substr($w_inicio,5,2).'/'.substr($w_inicio,0,4);
               $w_fim        = utf8_decode($row->Finish);
               $w_fim        = substr($w_fim,8,2).'/'.substr($w_fim,5,2).'/'.substr($w_fim,0,4);
               $w_perc       = utf8_decode($row->PercentComplete);
-              $w_descricao  = trim(substr(utf8_decode(str_replace('–','-',str_replace('	','  ',$row->Notes))),0,2000));
+              $w_descricao  = trim(substr(utf8_decode(str_replace('–','-',str_replace('  ','  ',$row->Notes))),0,2000));
               $w_codigo     = utf8_decode($row->OutlineNumber);
               $w_ordem      = utf8_decode($row->OutlineNumber);
               if (strpos($w_ordem,'.')===false) {

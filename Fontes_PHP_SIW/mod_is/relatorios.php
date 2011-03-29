@@ -598,7 +598,7 @@ function Rel_PPA() {
     $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
-	$sql = new db_getAcaoPPA_IS; 
+  $sql = new db_getAcaoPPA_IS; 
     if ($p_cd_programa>'' && $p_codigo=='') $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
     else                                    $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
     if (Nvl($p_ordena,'')>'') {
@@ -2132,7 +2132,7 @@ function Rel_Sintetico_PPA() {
     $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     $sql = new db_getAcaoPPA_IS; 
-	if ($p_cd_programa>'' && $p_codigo=='') $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
+  if ($p_cd_programa>'' && $p_codigo=='') $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
     else                                    $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
     $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc');
   } 

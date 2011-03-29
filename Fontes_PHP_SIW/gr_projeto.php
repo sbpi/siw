@@ -848,7 +848,7 @@ function Gerencial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-	
+  
     if (count($RS1)>0 && $p_graf=='N') {
       if($p_tipo == 'PDF'){
         $w_embed = 'WORD';

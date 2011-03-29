@@ -61,7 +61,7 @@ if (!empty($_FILES)) {
   echo "1";
 
   // } else {
-  // 	echo 'Invalid file type.';
+  //   echo 'Invalid file type.';
   // }
 }
 ?>
@@ -121,7 +121,7 @@ if (!empty($_FILES) && $w_caminho) {
   echo "1";
 
   // } else {
-  // 	echo 'Invalid file type.';
+  //   echo 'Invalid file type.';
   // }
 }
 -->

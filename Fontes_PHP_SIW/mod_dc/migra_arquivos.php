@@ -492,10 +492,10 @@ function analisa_arquivo($arquivo, $opcao, &$lista, $dir_destino) {
       $begin = true;
     }
     if (!$return) {
-	    if (stripos($buffer,'SYS_REF')!==FALSE) {
-	      $recordset = true;
-	      $buffer = str_Ireplace(' SYS_REFCURSOR', ' REFCURSOR', $buffer);
-	    }
+      if (stripos($buffer,'SYS_REF')!==FALSE) {
+        $recordset = true;
+        $buffer = str_Ireplace(' SYS_REFCURSOR', ' REFCURSOR', $buffer);
+      }
       if (stripos($buffer,' FUNCTION ')!==FALSE) {
         $function = true;
       }
@@ -511,35 +511,35 @@ function analisa_arquivo($arquivo, $opcao, &$lista, $dir_destino) {
         $buffer = str_Ireplace(' PROCEDURE ', ' FUNCTION ', $buffer);
       }
       
-	    if (($function && stripos($buffer,'RETURN')!==false) || ($procedure && stripos($buffer,') IS')!==false)) {
-	      if ($function) {
-	        $buffer = str_Ireplace('RETURN', ' RETURNS', $buffer);
-	        $buffer = str_Ireplace(' IS', ' AS $$', $buffer);
-	      } else {
-	        $buffer = str_Ireplace(') IS', ') RETURNS '.(($recordset) ? 'REFCURSOR' : 'VOID').' AS $$', $buffer);
-	      }
-	      $buffer .= $crlf.'DECLARE'."\r\n";
-	      $return = true;
-	    }
+      if (($function && stripos($buffer,'RETURN')!==false) || ($procedure && stripos($buffer,') IS')!==false)) {
+        if ($function) {
+          $buffer = str_Ireplace('RETURN', ' RETURNS', $buffer);
+          $buffer = str_Ireplace(' IS', ' AS $$', $buffer);
+        } else {
+          $buffer = str_Ireplace(') IS', ') RETURNS '.(($recordset) ? 'REFCURSOR' : 'VOID').' AS $$', $buffer);
+        }
+        $buffer .= $crlf.'DECLARE'."\r\n";
+        $return = true;
+      }
     } else {
-	    /*
-	    if (stripos($buffer,'cursor')!==false) {
-	      $buffer = str_Ireplace('cursor', '', $buffer);
-	      if (stripos($buffer,'(')!==false) {
-	        $buffer = str_Ireplace('(', 'CURSOR (', $buffer);
-	        $buffer = str_Ireplace(' IS', ' FOR', $buffer);
-	      } else {
-	        $buffer = str_Ireplace(' IS', ' CURSOR FOR', $buffer);
-	      }
-	    }
-	    */
+      /*
+      if (stripos($buffer,'cursor')!==false) {
+        $buffer = str_Ireplace('cursor', '', $buffer);
+        if (stripos($buffer,'(')!==false) {
+          $buffer = str_Ireplace('(', 'CURSOR (', $buffer);
+          $buffer = str_Ireplace(' IS', ' FOR', $buffer);
+        } else {
+          $buffer = str_Ireplace(' IS', ' CURSOR FOR', $buffer);
+        }
+      }
+      */
 
-	    if (stripos($buffer,'.nextval')!==false) {
-	      $temp = substr($buffer,0,stripos($buffer,'.nextval'));
+      if (stripos($buffer,'.nextval')!==false) {
+        $temp = substr($buffer,0,stripos($buffer,'.nextval'));
         $sequence = substr($temp,strrpos($temp,' ')+1);
         $sequence = str_replace('(','',str_replace(')','',$sequence));
-	      $buffer = str_Ireplace($sequence.'.nextval','nextVal(\''.$sequence.'\')',$buffer);
-	    }
+        $buffer = str_Ireplace($sequence.'.nextval','nextVal(\''.$sequence.'\')',$buffer);
+      }
     }
 
     $l_array['descricao'] .= $crlf.$buffer;
@@ -560,13 +560,13 @@ function analisa_arquivo($arquivo, $opcao, &$lista, $dir_destino) {
   if (!$existe || $atualiza) {
     $w_destino = fopen($destino, 'w');
     if (is_writable($destino)) {
-	    if (fwrite($w_destino, ($l_array['descricao'])) === FALSE) {
-	        echo "Não foi possível escrever no arquivo ($destino)";
-	        exit;
-	    }
+      if (fwrite($w_destino, ($l_array['descricao'])) === FALSE) {
+          echo "Não foi possível escrever no arquivo ($destino)";
+          exit;
+      }
     } else {
-	    echo "O arquivo ($destino) não permite escrita!";
-	    exit;
+      echo "O arquivo ($destino) não permite escrita!";
+      exit;
     }
     fclose($w_destino);
     $l_array['gerado'] = 'S';

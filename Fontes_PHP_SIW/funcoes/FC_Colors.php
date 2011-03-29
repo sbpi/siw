@@ -35,13 +35,13 @@ $arr_FCColors[19] = "669900" ;//Shade of green
 
 function getFCColor() 
 {
-	//accessing the global variables
-	global $FC_ColorCounter;
-	global $arr_FCColors;
-	
-	//Update index
-	$FC_ColorCounter++;
-	//Return color
-	return($arr_FCColors[$FC_ColorCounter % count($arr_FCColors)]);
+  //accessing the global variables
+  global $FC_ColorCounter;
+  global $arr_FCColors;
+  
+  //Update index
+  $FC_ColorCounter++;
+  //Return color
+  return($arr_FCColors[$FC_ColorCounter % count($arr_FCColors)]);
 }
 ?>

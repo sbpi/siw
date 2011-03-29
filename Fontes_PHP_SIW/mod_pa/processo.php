@@ -1325,11 +1325,11 @@ function Vincular() {
 
           $w_chave = f($row,'sq_siw_solicitacao');
           $w_sigla = f($row,'sg_menu');
-			    
+          
           // Recupera os dados do processo a ser vinculado
-			    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_sigla);
-			    
-			    if (nvl($w_protocolo,'')!='') {
+          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_sigla);
+          
+          if (nvl($w_protocolo,'')!='') {
             $w_prefixo  = substr($_REQUEST['w_protocolo'], 0, 5);
             $w_numero   = substr($_REQUEST['w_protocolo'], 6, 6);
             $w_ano      = substr($_REQUEST['w_protocolo'], 13, 4);
@@ -1344,7 +1344,7 @@ function Vincular() {
               $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),$w_sigla);
               break;
             }
-			    }
+          }
         }
       }
     }
@@ -1391,59 +1391,59 @@ function Vincular() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
-	  ShowHTML('<HR>');
-	  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-	  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-	  ShowHTML('<INPUT type="hidden" name="w_chave_dest" value="'.$w_chave_dest.'">');
-	  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-	  ShowHTML(MontaFiltro('POST'));
-	  ShowHTML('<tr><td bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-	  ShowHTML('  Orientação:<ul>');
-	  ShowHTML('  <li>Informe os dados solicitados e clique no botão "Gravar" para confirmar a operação ou no botão "Abandonar" para voltar à tela anterior.');
-	  ShowHTML('  </ul></b></font></td>');
-	  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-	  ShowHTML('  <table width="97%" border="0">');
-	  ShowHTML('    <tr><td colspan=2><b>DADOS DO PROCESSO DE ORIGEM</b></td></tr>');
-	  ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-	  ShowHTML('    <tr><td width="30%">'.f($RS,'nm_tipo').':<td><b>'.f($RS,'protocolo').'</b></td></tr>');
-	  if (f($RS,'interno')=='S') {
-	    ShowHTML('   <tr><td width="30%">Unidade:</td><td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_origem'),f($RS,'sq_unidade'),$TP).'</td></tr>');
-	  } else {
-		  ShowHTML('   <tr><td>Pessoa:</td><td>'.f($RS,'nm_pessoa_origem').'</td></tr>');
-		  ShowHTML('   <tr><td>Interessado principal:</td><td>'.f($RS,'nm_pessoa_interes').'</td></tr>');
-	  }
-	  ShowHTML('   <tr><td>Cidade:</td><td>'.f($RS,'nm_cidade').'</td></tr>');
-	  ShowHTML('   <tr><td>Espécie documental:</td><td>'.f($RS,'nm_especie').'</td></tr>');
-	  ShowHTML('   <tr><td>Número:</td><td>'.f($RS,'numero_original').'</td></tr>');
-	  ShowHTML('   <tr><td>Data do documento:</td><td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>');
-	
-	  ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
-	  ShowHTML('    <tr><td colspan=2><b>VINCULAR AO PROCESSO</b></td></tr>');
-	  ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-	  SelecaoProtocolo('<U>P</U>rocesso:', 'P', 'Selecione o processo ao qual deseja vincular o processo informado acima.', $w_protocolo, null, 'w_protocolo', 'JUNTADA', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_protocolo\'; document.Form.submit();"',1,'<td>');
-	  if (is_Array($RS1)) {
-	    if (f($RS1,'interno')=='S') {
-	      ShowHTML('   <tr><td width="30%">Unidade:</td><td>'.ExibeUnidade('../',$w_cliente,f($RS1,'nm_unid_origem'),f($RS1,'sq_unidade'),$TP).'</td></tr>');
-	    } else {
-	      ShowHTML('   <tr><td>Pessoa:</td><td>'.f($RS1,'nm_pessoa_origem').'</td></tr>');
-	      ShowHTML('   <tr><td>Interessado principal:</td><td>'.f($RS1,'nm_pessoa_interes').'</td></tr>');
-	    }
-	    ShowHTML('   <tr><td>Cidade:</td><td>'.f($RS1,'nm_cidade').'</td></tr>');
-	    ShowHTML('   <tr><td>Espécie documental:</td><td>'.f($RS1,'nm_especie').'</td></tr>');
-	    ShowHTML('   <tr><td>Número:</td><td>'.f($RS1,'numero_original').'</td></tr>');
-	    ShowHTML('   <tr><td>Data do documento:</td><td>'.formataDataEdicao(f($RS1,'inicio')).'</td></tr>');
-		
-		  ShowHTML('    <tr><td width="30%"><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-		  ShowHTML('    <tr><td colspan=2 align="center"><hr>');
-		  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Gravar">');
-		  ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-		  ShowHTML('      </td>');
-		  ShowHTML('    </tr>');
+    ShowHTML('<HR>');
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_dest" value="'.$w_chave_dest.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML(MontaFiltro('POST'));
+    ShowHTML('<tr><td bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('  <li>Informe os dados solicitados e clique no botão "Gravar" para confirmar a operação ou no botão "Abandonar" para voltar à tela anterior.');
+    ShowHTML('  </ul></b></font></td>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('  <table width="97%" border="0">');
+    ShowHTML('    <tr><td colspan=2><b>DADOS DO PROCESSO DE ORIGEM</b></td></tr>');
+    ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('    <tr><td width="30%">'.f($RS,'nm_tipo').':<td><b>'.f($RS,'protocolo').'</b></td></tr>');
+    if (f($RS,'interno')=='S') {
+      ShowHTML('   <tr><td width="30%">Unidade:</td><td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_origem'),f($RS,'sq_unidade'),$TP).'</td></tr>');
+    } else {
+      ShowHTML('   <tr><td>Pessoa:</td><td>'.f($RS,'nm_pessoa_origem').'</td></tr>');
+      ShowHTML('   <tr><td>Interessado principal:</td><td>'.f($RS,'nm_pessoa_interes').'</td></tr>');
     }
-		ShowHTML('  </table>');
-	  ShowHTML('  </TD>');
-	  ShowHTML('</tr>');
-	  ShowHTML('</FORM>');
+    ShowHTML('   <tr><td>Cidade:</td><td>'.f($RS,'nm_cidade').'</td></tr>');
+    ShowHTML('   <tr><td>Espécie documental:</td><td>'.f($RS,'nm_especie').'</td></tr>');
+    ShowHTML('   <tr><td>Número:</td><td>'.f($RS,'numero_original').'</td></tr>');
+    ShowHTML('   <tr><td>Data do documento:</td><td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>');
+  
+    ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
+    ShowHTML('    <tr><td colspan=2><b>VINCULAR AO PROCESSO</b></td></tr>');
+    ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
+    SelecaoProtocolo('<U>P</U>rocesso:', 'P', 'Selecione o processo ao qual deseja vincular o processo informado acima.', $w_protocolo, null, 'w_protocolo', 'JUNTADA', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_protocolo\'; document.Form.submit();"',1,'<td>');
+    if (is_Array($RS1)) {
+      if (f($RS1,'interno')=='S') {
+        ShowHTML('   <tr><td width="30%">Unidade:</td><td>'.ExibeUnidade('../',$w_cliente,f($RS1,'nm_unid_origem'),f($RS1,'sq_unidade'),$TP).'</td></tr>');
+      } else {
+        ShowHTML('   <tr><td>Pessoa:</td><td>'.f($RS1,'nm_pessoa_origem').'</td></tr>');
+        ShowHTML('   <tr><td>Interessado principal:</td><td>'.f($RS1,'nm_pessoa_interes').'</td></tr>');
+      }
+      ShowHTML('   <tr><td>Cidade:</td><td>'.f($RS1,'nm_cidade').'</td></tr>');
+      ShowHTML('   <tr><td>Espécie documental:</td><td>'.f($RS1,'nm_especie').'</td></tr>');
+      ShowHTML('   <tr><td>Número:</td><td>'.f($RS1,'numero_original').'</td></tr>');
+      ShowHTML('   <tr><td>Data do documento:</td><td>'.formataDataEdicao(f($RS1,'inicio')).'</td></tr>');
+    
+      ShowHTML('    <tr><td width="30%"><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('    <tr><td colspan=2 align="center"><hr>');
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Gravar">');
+      ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+      ShowHTML('      </td>');
+      ShowHTML('    </tr>');
+    }
+    ShowHTML('  </table>');
+    ShowHTML('  </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
   } elseif ($O=='P') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');

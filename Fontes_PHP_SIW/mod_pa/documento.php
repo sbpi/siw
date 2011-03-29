@@ -2632,23 +2632,23 @@ function Tramitacao() {
     } elseif ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
       ShowHTML('  var unid_arq = 0;');
       ShowHTML('  for (i=1; i < theForm["w_chave[]"].length; i++) {');
-	    ShowHTML('    if (theForm["w_chave[]"][i].checked) {');
-	    ShowHTML('       w_erro=false; ');
-	    ShowHTML('       chave=theForm["w_chave[]"][i].value; ');
-	    ShowHTML('       if (unid_arq>0 && (theForm["w_unid_origem["+chave+"]"].value!=unid_arq || theForm["w_unid_origem["+chave+"]"].value!=theForm.w_sq_unidade[theForm.w_sq_unidade.selectedIndex].value)) {');
-	    ShowHTML('         w_erro=true; ');
+      ShowHTML('    if (theForm["w_chave[]"][i].checked) {');
+      ShowHTML('       w_erro=false; ');
+      ShowHTML('       chave=theForm["w_chave[]"][i].value; ');
+      ShowHTML('       if (unid_arq>0 && (theForm["w_unid_origem["+chave+"]"].value!=unid_arq || theForm["w_unid_origem["+chave+"]"].value!=theForm.w_sq_unidade[theForm.w_sq_unidade.selectedIndex].value)) {');
+      ShowHTML('         w_erro=true; ');
       ShowHTML('       }');
-	    ShowHTML('       unid_arq = theForm["w_unid_origem["+chave+"]"].value; ');
-	    ShowHTML('    }');
-	    ShowHTML('  }');
+      ShowHTML('       unid_arq = theForm["w_unid_origem["+chave+"]"].value; ');
+      ShowHTML('    }');
+      ShowHTML('  }');
       ShowHTML('  if (unid_arq!=theForm.w_sq_unidade[theForm.w_sq_unidade.selectedIndex].value) {');
       ShowHTML('    w_erro=true; ');
       ShowHTML('  }');
-	    ShowHTML('  if (w_erro) {');
+      ShowHTML('  if (w_erro) {');
       ShowHTML('    alert("Os protocolos selecionados devem estar de posse da mesma unidade, que deve ser igual à unidade arquivadora selecionada!"); ');
-	    ShowHTML('    return false;');
-	    ShowHTML('  }');
-	    Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '2000', '1', '1');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+      Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '2000', '1', '1');
     } else {
       Validate('w_despacho', 'Detalhamento do despacho', '', '1', '1', '2000', '1', '1');
     }
@@ -3776,39 +3776,39 @@ function Recebimento() {
     } else {
       // Chama a rotina de visualização dos protocolos da guia
       ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
-	    ShowHTML('<HR>');
-	    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
-	    ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
-	    ShowHTML('<INPUT type="hidden" name="w_unid_prot" value="' . $w_unid_prot . '">');
-	    ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
-	    ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
-	    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML('<HR>');
+      AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
+      ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
+      ShowHTML('<INPUT type="hidden" name="w_unid_prot" value="' . $w_unid_prot . '">');
+      ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="' . $w_nu_guia . '">');
+      ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="' . $w_ano_guia . '">');
+      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
       ShowHTML(montaFiltro('POST'));
-	    ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
-	    ShowHTML('  ATENÇÃO:<ul>');
-	    if ($O == 'R') {
-	      ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
-	      ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
-	    } else {
-	      ShowHTML('  <li>Antes de recusar o recebimento, verifique com atenção se essa é realmente sua intenção.');
-	      ShowHTML('  <li>Não será possível reverter esta ação.');
-	    }
-	    ShowHTML('  </ul></b></font></td>');
-	    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
-	    ShowHTML('  <table width="97%" border="0">');
-	    if ($w_interno == 'N')
-	      ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
-	    if ($O == 'S') {
-	      ShowHTML('    <tr><td colspan=5 align="center"><hr>');
-	      ShowHTML('      <tr><td colspan="5" title="OPCIONAL. Se desejar, registre observações sobre a recusa."><b><u>O</u>bservações sobre a recusa:</b><br><textarea ccesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
-	    }
-	    ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-	    ShowHTML('    <tr><td align="center" colspan=4><hr>');
-	    if ($O == 'R') {
-	      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
-	    } else {
-	      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Recusar">');
-	    }
+      ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+      ShowHTML('  ATENÇÃO:<ul>');
+      if ($O == 'R') {
+        ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
+        ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
+      } else {
+        ShowHTML('  <li>Antes de recusar o recebimento, verifique com atenção se essa é realmente sua intenção.');
+        ShowHTML('  <li>Não será possível reverter esta ação.');
+      }
+      ShowHTML('  </ul></b></font></td>');
+      ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
+      ShowHTML('  <table width="97%" border="0">');
+      if ($w_interno == 'N')
+        ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
+      if ($O == 'S') {
+        ShowHTML('    <tr><td colspan=5 align="center"><hr>');
+        ShowHTML('      <tr><td colspan="5" title="OPCIONAL. Se desejar, registre observações sobre a recusa."><b><u>O</u>bservações sobre a recusa:</b><br><textarea ccesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>' . $w_observacao . '</TEXTAREA></td>');
+      }
+      ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('    <tr><td align="center" colspan=4><hr>');
+      if ($O == 'R') {
+        ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+      } else {
+        ShowHTML('      <input class="STB" type="submit" name="Botao" value="Recusar">');
+      }
     }
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';" name="Botao" value="Abandonar">');
     ShowHTML('      </td>');
@@ -4285,14 +4285,14 @@ function Grava() {
       if (nvl($_REQUEST['w_copias'],0)>0) {
         $w_vinculo = $w_chave_nova;
         for ($i=1; $i<=$_REQUEST['w_copias']; ++$i) {
-		      $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $w_copia, $_REQUEST['w_menu'],
-		              nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'], $_SESSION['LOTACAO']),
-		              nvl($_REQUEST['w_pessoa_origem'], $_SESSION['SQ_PESSOA']), $_SESSION['SQ_PESSOA'], $_REQUEST['w_solic_pai'],
-		              $w_vinculo, $_REQUEST['w_processo'], $_REQUEST['w_circular'], $_REQUEST['w_especie_documento'],
-		              $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'], $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
-		              $i, $_REQUEST['w_natureza_documento'], $_REQUEST['w_fim'], $_REQUEST['w_data_recebimento'],
-		              $_REQUEST['w_interno'], $_REQUEST['w_pessoa_origem'], $_REQUEST['w_pessoa_interes'], $_REQUEST['w_cidade'],
-		              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], &$w_nova_chave, &$w_codigo_interno);
+          $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $w_copia, $_REQUEST['w_menu'],
+                  nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'], $_SESSION['LOTACAO']),
+                  nvl($_REQUEST['w_pessoa_origem'], $_SESSION['SQ_PESSOA']), $_SESSION['SQ_PESSOA'], $_REQUEST['w_solic_pai'],
+                  $w_vinculo, $_REQUEST['w_processo'], $_REQUEST['w_circular'], $_REQUEST['w_especie_documento'],
+                  $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'], $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
+                  $i, $_REQUEST['w_natureza_documento'], $_REQUEST['w_fim'], $_REQUEST['w_data_recebimento'],
+                  $_REQUEST['w_interno'], $_REQUEST['w_pessoa_origem'], $_REQUEST['w_pessoa_interes'], $_REQUEST['w_cidade'],
+                  $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], &$w_nova_chave, &$w_codigo_interno);
         }
       }
 
@@ -4553,20 +4553,20 @@ function Grava() {
         ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRANS&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unidade=' . $w_unidade_autuacao . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
         ScriptClose();
       } elseif (nvl($_REQUEST['w_arq_setorial'], '') == 'S') {
-	      $SQL = new dml_putDocumentoArqSet;
-	      for ($i = 0; $i <= count($_POST['w_chave']) - 1; $i = $i + 1) {
-	        if (Nvl($_POST['w_chave'][$i], '') > '') {
-	          $SQL->getInstanceOf($dbms, $_POST['w_chave'][$i], $_SESSION['SQ_PESSOA'], $_REQUEST['w_despacho']);
-	        }
-	      }
-	
-	      ScriptOpen('JavaScript');
-	      ShowHTML('  alert(\'Arquivamento setorial realizado com sucesso!\');');
+        $SQL = new dml_putDocumentoArqSet;
+        for ($i = 0; $i <= count($_POST['w_chave']) - 1; $i = $i + 1) {
+          if (Nvl($_POST['w_chave'][$i], '') > '') {
+            $SQL->getInstanceOf($dbms, $_POST['w_chave'][$i], $_SESSION['SQ_PESSOA'], $_REQUEST['w_despacho']);
+          }
+        }
+  
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Arquivamento setorial realizado com sucesso!\');');
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
         $sql = new db_getLinkData;
         $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $SG);
         ShowHTML('  location.href=\''.montaURL_JS($w_dir, f($RS1, 'link').'&O=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
-	      ScriptClose();
+        ScriptClose();
       } else {
         // Se o destino for pessoa jurídica, pede unidade da pessoa
         if (nvl($_REQUEST['w_pessoa_destino'], '') != '') {

@@ -307,49 +307,49 @@ function Mesa() {
     }
 
     if ($_SESSION['DBMS']!=8) {
-	    // Recupera os dados da unidade de lotação do usuário
-	    include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-	    $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
-	    if (nvl($w_viagem,'')!='') {
-	      $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-	      $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
-	          formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
-	          null, null, null, null, null, null, null,null, null, null, null, null, null, null, $w_usuario);
-	      $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
+      // Recupera os dados da unidade de lotação do usuário
+      include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
+      $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
+      if (nvl($w_viagem,'')!='') {
+        $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+        $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
+            formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
+            null, null, null, null, null, null, null,null, null, null, null, null, null, null, $w_usuario);
+        $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
 
-	      // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-	      foreach($RS_Viagem as $row) {
-	        $w_saida   = f($row,'phpdt_saida');
-	        $w_chegada = f($row,'phpdt_chegada');
-	        if (f($row,'concluida')=='S') {
-	          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_datas, 'Viagem a serviço\r\nSituação: Finalizada', 'N');
-	        } elseif (f($row,'sg_tramite')=='AE' ||f($row,'sg_tramite')=='EE') {
-	          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_datas, 'Viagem a serviço\r\nSituação: Confirmada', 'N');
-	        } else {
-	          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_datas, 'Viagem a serviço\r\nSituação: Prevista', 'N');
-	        }
-	        $w_datas[formataDataEdicao($w_saida)]['valor']= str_replace('serviço','serviço (saída às '.date('H:i',$w_saida).'h)',$w_datas[formataDataEdicao($w_saida)]['valor']);
-	        $w_datas[formataDataEdicao($w_chegada)]['valor']= str_replace('serviço','serviço (chegada às '.date('H:i',$w_chegada).'h)',$w_datas[formataDataEdicao($w_chegada)]['valor']);
-	      }
-	      reset($RS_Viagem);
-	      foreach($RS_Viagem as $row) {
-	        $w_saida   = f($row,'phpdt_saida');
-	        $w_chegada = f($row,'phpdt_chegada');
-	        retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_cores, $conTrBgColorLightRed1, 'N');
-	        if (date('H',$w_saida)>13)   $w_cores[formataDataEdicao($w_saida)]['valor']   = $conTrBgColorLightRed2;
-	        if (date('H',$w_chegada)<14) $w_cores[formataDataEdicao($w_chegada)]['valor'] = $conTrBgColorLightRed2;
-	      }
-	    }
+        // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+        foreach($RS_Viagem as $row) {
+          $w_saida   = f($row,'phpdt_saida');
+          $w_chegada = f($row,'phpdt_chegada');
+          if (f($row,'concluida')=='S') {
+            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_datas, 'Viagem a serviço\r\nSituação: Finalizada', 'N');
+          } elseif (f($row,'sg_tramite')=='AE' ||f($row,'sg_tramite')=='EE') {
+            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_datas, 'Viagem a serviço\r\nSituação: Confirmada', 'N');
+          } else {
+            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_datas, 'Viagem a serviço\r\nSituação: Prevista', 'N');
+          }
+          $w_datas[formataDataEdicao($w_saida)]['valor']= str_replace('serviço','serviço (saída às '.date('H:i',$w_saida).'h)',$w_datas[formataDataEdicao($w_saida)]['valor']);
+          $w_datas[formataDataEdicao($w_chegada)]['valor']= str_replace('serviço','serviço (chegada às '.date('H:i',$w_chegada).'h)',$w_datas[formataDataEdicao($w_chegada)]['valor']);
+        }
+        reset($RS_Viagem);
+        foreach($RS_Viagem as $row) {
+          $w_saida   = f($row,'phpdt_saida');
+          $w_chegada = f($row,'phpdt_chegada');
+          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), &$w_cores, $conTrBgColorLightRed1, 'N');
+          if (date('H',$w_saida)>13)   $w_cores[formataDataEdicao($w_saida)]['valor']   = $conTrBgColorLightRed2;
+          if (date('H',$w_chegada)<14) $w_cores[formataDataEdicao($w_chegada)]['valor'] = $conTrBgColorLightRed2;
+        }
+      }
 
-	    if (nvl($w_pessoal,'')!='') {
-	      $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
-	      $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc'); 
-	      // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-	      foreach($RS_Afast as $row) retornaArrayDias(f($row,'inicio_data'), f($row,'fim_data'), &$w_datas, f($row,'nm_tipo_afastamento'), 'S');
-	      foreach($RS_Afast as $row) retornaArrayDias(f($row,'inicio_data'), f($row,'fim_data'), &$w_cores, $conTrBgColorLightRed1, 'S');
-	    }
+      if (nvl($w_pessoal,'')!='') {
+        $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
+        $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc'); 
+        // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+        foreach($RS_Afast as $row) retornaArrayDias(f($row,'inicio_data'), f($row,'fim_data'), &$w_datas, f($row,'nm_tipo_afastamento'), 'S');
+        foreach($RS_Afast as $row) retornaArrayDias(f($row,'inicio_data'), f($row,'fim_data'), &$w_cores, $conTrBgColorLightRed1, 'S');
+      }
     }
-	    
+      
     // Verifica a quantidade de colunas a serem exibidas
     $w_colunas = 1;
     if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_pessoal,'')!='') $w_colunas += 1;

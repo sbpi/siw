@@ -955,7 +955,7 @@ function Gerencial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     if (count($RS1)>0 && $p_graf=='N') {
-		  include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
+      include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
       if($p_tipo == 'PDF') $w_embed = 'WORD';
       $w_legenda = array('Em aviso de atraso','Atrasados','Cadastramento','Em execução','Concluídos','Total');
       ShowHTML('<tr><td align="center"><br>');

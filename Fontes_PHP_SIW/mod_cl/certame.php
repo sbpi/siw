@@ -2160,8 +2160,8 @@ function PesquisaPreco() {
         }
       }
 
-	  ShowHTML(' if( (theForm.w_ddd.value.length > 0) || (theForm.w_email.value.length > 0) || (theForm.w_logradouro.value.length > 0) ){');
-	  ShowHTML('   if( (theForm.w_sq_pais.value == 0) || (theForm.w_co_uf.value == 0) || (theForm.w_sq_cidade.value == 0)  ){');
+    ShowHTML(' if( (theForm.w_ddd.value.length > 0) || (theForm.w_email.value.length > 0) || (theForm.w_logradouro.value.length > 0) ){');
+    ShowHTML('   if( (theForm.w_sq_pais.value == 0) || (theForm.w_co_uf.value == 0) || (theForm.w_sq_cidade.value == 0)  ){');
       ShowHTML('      alert("Dados do bloco endereço/telefone exigem o campo cidade preenchido!");');
       ShowHTML('      theForm.w_sq_pais.focus();');
       ShowHTML('      return false;');

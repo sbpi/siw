@@ -216,24 +216,24 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $i = 0;
       $j = 0;
       if (count($RSContrato)) {
-	      foreach($RSContrato as $row){
-	        if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
-	          $html.=chr(13).'      </table><tr><td colspan="2"><table width="99%" border="0">';
-	          $html.=chr(13).'      <tr><td colspan="2" bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>CONTRATO VIGENTE</b></td></tr>';
-	          $j++;
-	        } elseif ($i==0) {
-	          $html.=chr(13).'      <tr><br><td id="contratos" colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b><span id="colxpand"></span> CONTRATOS ANTIGOS</b></td></tr>';
-	          $html.=chr(13).'      </table><tr><td colspan="2"><table id="contratos_antigos" width="99%" border="0">';        
-	          $i++;
-	        }                
-	
-	        //Recupera os dados do vínculo do colaborador
-	        $sql = new db_getVincKindData; $RSVinculo = $sql->getInstanceOf($dbms, f($row,'sq_tipo_vinculo'));
-	
-	        //Recupera os dados da modalidade do contrato
-	        $sql = new db_getGPModalidade; $RSModalidade = $sql->getInstanceOf($dbms,$w_cliente,f($row,'sq_modalidade_contrato'),null,null,'S',null,null);
-	        foreach($RSModalidade as $row1){$RSModalidade = $row1; break;}
-	        
+        foreach($RSContrato as $row){
+          if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
+            $html.=chr(13).'      </table><tr><td colspan="2"><table width="99%" border="0">';
+            $html.=chr(13).'      <tr><td colspan="2" bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>CONTRATO VIGENTE</b></td></tr>';
+            $j++;
+          } elseif ($i==0) {
+            $html.=chr(13).'      <tr><br><td id="contratos" colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b><span id="colxpand"></span> CONTRATOS ANTIGOS</b></td></tr>';
+            $html.=chr(13).'      </table><tr><td colspan="2"><table id="contratos_antigos" width="99%" border="0">';        
+            $i++;
+          }                
+  
+          //Recupera os dados do vínculo do colaborador
+          $sql = new db_getVincKindData; $RSVinculo = $sql->getInstanceOf($dbms, f($row,'sq_tipo_vinculo'));
+  
+          //Recupera os dados da modalidade do contrato
+          $sql = new db_getGPModalidade; $RSModalidade = $sql->getInstanceOf($dbms,$w_cliente,f($row,'sq_modalidade_contrato'),null,null,'S',null,null);
+          foreach($RSModalidade as $row1){$RSModalidade = $row1; break;}
+          
           $html.=chr(13).'        <tr><td width="30%"><br><b>Matrícula:</b></td>';
           $html.=chr(13).'          <td>'.f($row,'matricula').' </td>';    
           $html.=chr(13).'        </tr>';         
@@ -338,49 +338,49 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $sql = new db_getGPFolhaPontoMensal; $RSMensal = $sql->getInstanceOf($dbms,f($row,'chave'),null,null);
           $RSMensal = SortArray($RSMensal,'mes','desc');
           if (count($RSMensal)) {
-	          $html.=chr(13).'      </tr>';
-	          $html.=chr(13).'  <tr><td colspan="2"><table width="100%" border="1">';
-	          $html.=chr(13).'      <tr align="center" valign="top"><td colspan="5"><b>RESUMO DA FOLHA DE PONTO';
-	          $html.=chr(13).'      <td colspan="6"><b>BANCO DE HORAS';
-	          $html.=chr(13).'      <tr align="center" valign="top"><td bgcolor="#f0f0f0"><b>Período';
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas trabalhadas';
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas Extras';
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Atrasos';
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Banco de horas do mês';            
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Saldo inicial';
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Movimentações mensais';
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Total';          
-	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas autorizadas';
-	          foreach($RSMensal as $row3) { 
-	            $html.=chr(13).'      <tr align="center" valign="top">';
-	            if ($p_formato=='HTML') {
-                $html.=chr(13).'      <td nowrap><A class="HL" HREF="'.$w_dir.'folha.php?par=Visual&O=V&w_usuario='.f($row3,'sq_pessoa').'&w_chave='.f($row3,'sq_contrato_colaborador').'&w_mes='.substr(f($row3,'mes'),4,2).'/'.substr(f($row3,'mes'),0,4).'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.MontaFiltro('GET').'" target="visualFolha" title="Exibe detalhamento da folha de ponto">'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4).'</a>&nbsp;';	              
-	            }else{
-	              $html.=chr(13).'      <td nowrap>'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4);
-	            }	            //
-	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_trabalhadas'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_extras'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_atrasos'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_saldo'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_mensal'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
-	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_autorizadas'),'00:00');
-	          }          
-	          $html.=chr(13).'        </table><br><br><br>';
+            $html.=chr(13).'      </tr>';
+            $html.=chr(13).'  <tr><td colspan="2"><table width="100%" border="1">';
+            $html.=chr(13).'      <tr align="center" valign="top"><td colspan="5"><b>RESUMO DA FOLHA DE PONTO';
+            $html.=chr(13).'      <td colspan="6"><b>BANCO DE HORAS';
+            $html.=chr(13).'      <tr align="center" valign="top"><td bgcolor="#f0f0f0"><b>Período';
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas trabalhadas';
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas Extras';
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Atrasos';
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Banco de horas do mês';            
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Saldo inicial';
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Movimentações mensais';
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Total';          
+            $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas autorizadas';
+            foreach($RSMensal as $row3) { 
+              $html.=chr(13).'      <tr align="center" valign="top">';
+              if ($p_formato=='HTML') {
+                $html.=chr(13).'      <td nowrap><A class="HL" HREF="'.$w_dir.'folha.php?par=Visual&O=V&w_usuario='.f($row3,'sq_pessoa').'&w_chave='.f($row3,'sq_contrato_colaborador').'&w_mes='.substr(f($row3,'mes'),4,2).'/'.substr(f($row3,'mes'),0,4).'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.MontaFiltro('GET').'" target="visualFolha" title="Exibe detalhamento da folha de ponto">'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4).'</a>&nbsp;';                
+              }else{
+                $html.=chr(13).'      <td nowrap>'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4);
+              }              //
+              $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_trabalhadas'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_extras'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_atrasos'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_saldo'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_mensal'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
+              $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_autorizadas'),'00:00');
+            }          
+            $html.=chr(13).'        </table><br><br><br>';
           }
-	      }
+        }
 
         // Exibe as viagens do colaborador
-	      $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+        $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
         $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$l_usuario,'PD',4,
             formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
             null, null, null, null, null, null, null,null, null, null, null, null, null, null, $l_usuario);
         $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
         if (count($RS_Viagem)>0){
-	        $html.=chr(13).'      </table><table width="99%"><tr><td colspan="2"><table width="100%" border="0">';
-	        $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VIAGENS A SERVIÇO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';        
-	        // Exibe as viagens a serviço do usuário logado
+          $html.=chr(13).'      </table><table width="99%"><tr><td colspan="2"><table width="100%" border="0">';
+          $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VIAGENS A SERVIÇO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';        
+          // Exibe as viagens a serviço do usuário logado
           $html.=chr(13).'                <table width="100%" bordercolor="#000000" border="1">';
           $html.=chr(13).'                  <tr align="center" valign="middle">';
           $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Início</td>';
@@ -405,9 +405,9 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           }
           $html.=chr(13).'    </table>';
         }
-	
+  
         // Exibe afastamentos do usuário logado
-	      $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms,$w_cliente,$l_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
+        $sql = new db_getAfastamento; $RS_Afast = $sql->getInstanceOf($dbms,$w_cliente,$l_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
         $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc');
         if (count($RS_Afast)>0) {
           // Mostra os períodos de indisponibilidade
@@ -430,7 +430,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
             $html.=chr(13).'                    <td>'.f($row,'nm_tipo_afastamento');
           }
           $html.=chr(13).'                </table></tr>';
-	      }
+        }
         $html.=chr(13).'        </table>';
       }
       

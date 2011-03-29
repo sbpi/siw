@@ -121,7 +121,7 @@ exit;
 // =========================================================================
 // Rotina de dados gerais
 // -------------------------------------------------------------------------
-function Inicial	() {
+function Inicial  () {
   extract($GLOBALS);
 
   Global $w_Disabled;

@@ -103,6 +103,7 @@ function callback($buffer) {
 function colapsar($chave,$fechado='none'){
   $saida = "&nbsp;";
   $saida .= "<img border=0 src='images/".(($fechado=="none") ? "mais" : "menos").".jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$chave.",this)'/>";
+  $saida .= "\n<input type='hidden' name='".$chave."' />";
   $saida .= "&nbsp;";
   return $saida;
 }
@@ -265,6 +266,7 @@ function headerWord($p_orientation='LANDSCAPE') {
 function montaArvore($string){
     $string = str_replace(".","-",$string);
     $img = "<img src='images/mais.jpg' alt='Expandir' onclick='abreFecha(\"$string\")' id='img-$string' style='cursor:pointer'/>";
+    $img .= "\n <input class=\"p_arvore\" type=\"hidden\" name=\"p_xp[$string]\" id=\"tr-$string-xp\" value=\"".nvl($_REQUEST['p_xp'][$string],'false')."\" />";
     return $img;
 }
 
@@ -401,17 +403,17 @@ function LinkOrdena($p_label,$p_campo,$p_form=null) {
     }
   }
   if ($p_form>'') {
-	  if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
-	    if (strpos(upper($l_ordena),' DESC') !== false) {
-	      $l_string = $p_campo.' asc';
-	      $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
-	    } else {
-	      $l_string = $p_campo.' desc';
-	      $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
-	    }
-	  } else {
-	    $l_string = $p_campo.' asc';
-	  }
+    if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
+      if (strpos(upper($l_ordena),' DESC') !== false) {
+        $l_string = $p_campo.' asc';
+        $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
+      } else {
+        $l_string = $p_campo.' desc';
+        $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
+      }
+    } else {
+      $l_string = $p_campo.' asc';
+    }
     return '<a class="ss" href="javascript:this.status.value" onClick="javascript:document.'.$p_form.'.action=\''.$w_dir.$w_pagina.$par.'\'; document.'.$p_form.'.O.value=\''.$O.'\'; document.'.$p_form.'.w_troca.value=\'w_assinatura\'; document.'.$p_form.'.p_ordena.value=\''.$l_string.'\'; document.'.$p_form.'.submit();" title="Ordena a listagem por esta coluna.">'.$p_label.'</a>'.$l_img;
   } else {
     if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
@@ -2959,6 +2961,7 @@ function Cabecalho() {
 // Rotina de abertura da tag HEAD
 // -------------------------------------------------------------------------
 function head() {
+  extract($GLOBALS);
   ShowHTML('<HEAD>');
   ShowHTML('<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">');
   ShowHTML('<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">');
@@ -2966,6 +2969,7 @@ function head() {
   ShowHTML('<META NAME="robots" CONTENT="noindex,nofollow">');
   ShowHTML('<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR">');
   ShowHTML('<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1">');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
 }
 
 // =========================================================================
@@ -3872,6 +3876,7 @@ function BodyOpenClean($cProperties) {
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/swfobject.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.uploadify.v2.1.0.min.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.colorbox.js"></script>');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.

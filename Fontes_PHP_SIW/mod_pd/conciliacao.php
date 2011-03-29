@@ -960,23 +960,23 @@ function Grava() {
                       if ($w_duplicado) {
                         $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado na base de dados';
                       } else {
-	                      $w_hn_bilhete  = f($RS_Bil,'chave');
-	                      $w_hn_solic    = f($RS_Bil,'sq_siw_solicitacao');
-	                      $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario');
-	                      if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
-	                        $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
-	                      }
-	                      $sql = new db_getPD_Fatura; $RS_FatBil = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
-	                                    null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
-	                      if (count($RS_FatBil)>0) {
-	                        foreach($RS_FatBil as $row1) { $RS_FatBil = $row1; break; } 
-	                        $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" consta da fatura '.f($RS_FatBil,'nr_fatura').' da agência de viagem '.f($RS_FatBil,'nm_agencia_res');
-	                      }
-	                      /* Crítica de projeto não deve ser feita
-	                      if (f($RS_Bil,'cd_pai')!=$faturas[$w_fatura]['cd_projeto']) {
-	                        $w_erro.=$crlf.'Número do bilhete: '.f($RS_Bil,'codigo_interno').' está vinculada ao projeto '.f($RS_Bil,'cd_pai').', divergindo do projeto da fatura ('.$faturas[$w_fatura]['cd_projeto'].')';
-	                      }
-	                      */
+                        $w_hn_bilhete  = f($RS_Bil,'chave');
+                        $w_hn_solic    = f($RS_Bil,'sq_siw_solicitacao');
+                        $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario');
+                        if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
+                          $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
+                        }
+                        $sql = new db_getPD_Fatura; $RS_FatBil = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
+                                      null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
+                        if (count($RS_FatBil)>0) {
+                          foreach($RS_FatBil as $row1) { $RS_FatBil = $row1; break; } 
+                          $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" consta da fatura '.f($RS_FatBil,'nr_fatura').' da agência de viagem '.f($RS_FatBil,'nm_agencia_res');
+                        }
+                        /* Crítica de projeto não deve ser feita
+                        if (f($RS_Bil,'cd_pai')!=$faturas[$w_fatura]['cd_projeto']) {
+                          $w_erro.=$crlf.'Número do bilhete: '.f($RS_Bil,'codigo_interno').' está vinculada ao projeto '.f($RS_Bil,'cd_pai').', divergindo do projeto da fatura ('.$faturas[$w_fatura]['cd_projeto'].')';
+                        }
+                        */
                       }
                     }
                   }

@@ -673,7 +673,7 @@ function Inicial() {
 // Rotina dos dados gerais
 // -------------------------------------------------------------------------
 function Geral() {
-		
+    
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave              = $_REQUEST['w_chave'];
@@ -1020,10 +1020,10 @@ function Geral() {
       ShowHTML('      <tr>');
       SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
       if (nvl($w_solic_vinculo,'')!='') {
-			  $sql = new db_getSolicCL; $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
-									          $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getSolicCL; $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
+                            $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
-				ShowHTML('      <tr valign="top">');
+        ShowHTML('      <tr valign="top">');
         ShowHTML('        <td><b>Valor da compra:</b><br>'.formatNumber(f($RS_Compra,'valor')).'</td>');
         ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(f($RS_Compra,'justificativa')).'</td>');
         ShowHTML('      </tr>');

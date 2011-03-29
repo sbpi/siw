@@ -99,13 +99,13 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if (nvl(f($RS,'dados_pai'),'')!='') {
       $pai = explode('|@|',f($RS,'dados_pai'));
       if ($pai[5]=='PJCAD' && $exibe) {
-	      $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
-	      if (Nvl(f($RS,'dados_pai'),'')!='') {
-	        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
-	      } else {
-	        $l_html.=chr(13).'        <td>---</td>';
-	      }
-	      $exibe = false;
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
+        if (Nvl(f($RS,'dados_pai'),'')!='') {
+          $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>---</td>';
+        }
+        $exibe = false;
       }
     } 
     if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT' || nvl(f($RS,'dados_avo'),'')!='') {
@@ -451,7 +451,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $w_vl_total = 0;
           foreach ($RS2 as $row2) {
             $l_html.=chr(13).'          <tr valign="top"><td>';
-		        $l_html.=chr(13).ExibeImagemSolic(f($row2,'imp_sigla'),f($row2,'imp_inicio'),f($row2,'imp_vencimento'),f($row2,'imp_inicio'),f($row2,'imp_quitacao'),f($row2,'imp_aviso'),f($row2,'aviso'),f($row2,'imp_sg_tramite'), null);
+            $l_html.=chr(13).ExibeImagemSolic(f($row2,'imp_sigla'),f($row2,'imp_inicio'),f($row2,'imp_vencimento'),f($row2,'imp_inicio'),f($row2,'imp_quitacao'),f($row2,'imp_aviso'),f($row2,'aviso'),f($row2,'imp_sg_tramite'), null);
             if (nvl(f($row2,'solic_imposto'),'')!='') {
               $l_html.=chr(13).'        '.exibeSolic($w_dir,f($row2,'solic_imposto'),f($row2,'imp_codigo'),'N',$l_tipo).'</td>';
             }
@@ -472,70 +472,70 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <td colspan=3 align="right"><b>Líquido</td>';
           $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
         } else {
-	        $l_html.=chr(13).'            <td rowspan=2><b>Tributo</td>';
-	        $l_html.=chr(13).'            <td colspan=2><b>Retenção</td>';
-	        $l_html.=chr(13).'            <td colspan=2><b>Normal</td>';
-	        $l_html.=chr(13).'            <td colspan=2><b>Total</td>';
-	        $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" align="center">';
-	        $l_html.=chr(13).'            <td><b>Valor</td>';
-	        $l_html.=chr(13).'            <td><b>Alíquota</td>';
-	        $l_html.=chr(13).'            <td><b>Valor</td>';
-	        $l_html.=chr(13).'            <td><b>Alíquota</td>';
-	        $l_html.=chr(13).'            <td><b>Valor</td>';
-	        $l_html.=chr(13).'            <td><b>Alíquota</td>';
-	        $w_al_total=0;
-	        $w_al_retencao=0;
-	        $w_al_normal=0;
-	        $w_vl_total=0;
-	        $w_vl_retencao=0;
-	        $w_vl_normal=0;
-	        foreach ($RS2 as $row2) {
-	          $l_html.=chr(13).'          <tr valign="top">';
-	          $l_html.=chr(13).'          <td nowrap align="right">'.f($row2,'nm_imposto').'</td>';
-	          $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_retencao')).'</td>';
-	          $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_retencao')).'%</td>';
-	          $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_normal')).'</td>';
-	          $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_normal')).'%</td>';
-	          $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
-	          $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_total')).'%</td>';
-	          $w_vl_total=$w_vl_total+f($row2,'vl_total');
-	          $w_vl_retencao=$w_vl_retencao+f($row2,'vl_retencao');
-	          $w_vl_normal=$w_vl_normal+f($row2,'vl_normal');
-	        } 
-	        if (Nvl(f($row,'valor'),0)==0) {
-	          $w_valor=1;
-	        } else {
-	          $w_valor=Nvl(f($row,'valor'),0);
-	        }
-	        $w_al_total=100-(($w_valor-($w_vl_normal+$w_vl_retencao))*100/$w_valor);
-	        $w_al_retencao=100-(($w_valor-$w_vl_retencao)*100/$w_valor);
-	        $w_al_normal=100-(($w_valor-$w_vl_normal)*100/$w_valor);
-	        $l_html.=chr(13).'          <tr valign="top">';
-	        $l_html.=chr(13).'          <td align="center"><b>Totais</td>';
-	        $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
-	        $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
-	        $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
-	        $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
-	        $l_html.=chr(13).'          <td align="center"><b>Líquido</td>';
-	        $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao);
-	        $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
-	        $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+          $l_html.=chr(13).'            <td rowspan=2><b>Tributo</td>';
+          $l_html.=chr(13).'            <td colspan=2><b>Retenção</td>';
+          $l_html.=chr(13).'            <td colspan=2><b>Normal</td>';
+          $l_html.=chr(13).'            <td colspan=2><b>Total</td>';
+          $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" align="center">';
+          $l_html.=chr(13).'            <td><b>Valor</td>';
+          $l_html.=chr(13).'            <td><b>Alíquota</td>';
+          $l_html.=chr(13).'            <td><b>Valor</td>';
+          $l_html.=chr(13).'            <td><b>Alíquota</td>';
+          $l_html.=chr(13).'            <td><b>Valor</td>';
+          $l_html.=chr(13).'            <td><b>Alíquota</td>';
+          $w_al_total=0;
+          $w_al_retencao=0;
+          $w_al_normal=0;
+          $w_vl_total=0;
+          $w_vl_retencao=0;
+          $w_vl_normal=0;
+          foreach ($RS2 as $row2) {
+            $l_html.=chr(13).'          <tr valign="top">';
+            $l_html.=chr(13).'          <td nowrap align="right">'.f($row2,'nm_imposto').'</td>';
+            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_retencao')).'</td>';
+            $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_retencao')).'%</td>';
+            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_normal')).'</td>';
+            $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_normal')).'%</td>';
+            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+            $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_total')).'%</td>';
+            $w_vl_total=$w_vl_total+f($row2,'vl_total');
+            $w_vl_retencao=$w_vl_retencao+f($row2,'vl_retencao');
+            $w_vl_normal=$w_vl_normal+f($row2,'vl_normal');
+          } 
+          if (Nvl(f($row,'valor'),0)==0) {
+            $w_valor=1;
+          } else {
+            $w_valor=Nvl(f($row,'valor'),0);
+          }
+          $w_al_total=100-(($w_valor-($w_vl_normal+$w_vl_retencao))*100/$w_valor);
+          $w_al_retencao=100-(($w_valor-$w_vl_retencao)*100/$w_valor);
+          $w_al_normal=100-(($w_valor-$w_vl_normal)*100/$w_valor);
+          $l_html.=chr(13).'          <tr valign="top">';
+          $l_html.=chr(13).'          <td align="center"><b>Totais</td>';
+          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
+          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
+          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
+          $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
+          $l_html.=chr(13).'          <td align="center"><b>Líquido</td>';
+          $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao);
+          $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
+          $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_total);
         }
         $l_html.=chr(13).'          </table>';
       } 
       $w_total=$w_total+f($row,'valor');
     }
     if (count($RS)>1) { 
-	    if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-	    $l_html.=chr(13).'      <tr valign="top">';
-	    if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
-	      $l_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
-	    } else {
-	      $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '3' : '4').'"><b>Total</b></td>';
-	    }
-	    $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
-	    if(Nvl($w_tipo_rubrica,0)==0 && Nvl($w_tipo_rubrica,0)==5) $l_html.=chr(13).'          <td align="right">&nbsp;</td>';
-	    $l_html.=chr(13).'      </tr>';
+      if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      $l_html.=chr(13).'      <tr valign="top">';
+      if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
+        $l_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
+      } else {
+        $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '3' : '4').'"><b>Total</b></td>';
+      }
+      $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
+      if(Nvl($w_tipo_rubrica,0)==0 && Nvl($w_tipo_rubrica,0)==5) $l_html.=chr(13).'          <td align="right">&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
     }
     $l_html.=chr(13).'         </table></td></tr>';
   } 
@@ -658,7 +658,7 @@ function rubricalinha($v_RS3){
     $v_html.=chr(13).'      </tr>';
     $w_total += f($row,'valor_total');
   } 
-  if ($w_total>0) {
+  if ($w_total>0 && count($v_RS3)>1) {
     $v_html.=chr(13).'      <tr valign="top">';
     $v_html.=chr(13).'        <td align="right" colspan="'.((strpos(f($RS_Menu,'sigla'),'VIA')!==false) ? 7 : 5).'"><b>Total</b></td>';
     $v_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;</td>';

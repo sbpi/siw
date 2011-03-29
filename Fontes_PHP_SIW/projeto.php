@@ -1,6 +1,7 @@
 <?php
 header('Expires: '.-1500);
 session_start();
+
 $w_dir_volta    = '';
 include_once($w_dir_volta.'constants.inc');
 include_once($w_dir_volta.'jscript.php');
@@ -79,6 +80,7 @@ include_once($w_dir_volta.'funcoes/selecaoContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'visualprojeto.php');
 
+//exibeVariaveis();
 
 // =========================================================================
 //  /Projeto.php
@@ -2652,6 +2654,7 @@ function Cronograma() {
 // -------------------------------------------------------------------------
 function AtualizaEtapa() {
   extract($GLOBALS);
+  //exibeArray($_REQUEST['p_xp']);
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_pai  = $_REQUEST['w_chave_pai'];
@@ -2819,7 +2822,7 @@ function AtualizaEtapa() {
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
     ScriptClose();
-  } 
+  }
   ShowHTML('</HEAD>');
   if ($w_troca > '') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -2831,6 +2834,27 @@ function AtualizaEtapa() {
     }
   } else {
     BodyOpenClean('onLoad=\'this.focus()\';');
+  }
+  if (nvl($w_chave, '') != '') {
+    ScriptOpen('JavaScript');
+    ShowHTML('function closeColorbox() {');
+    ShowHTML('  $.colorbox.close();');
+    ShowHTML('} ');
+    ShowHTML('$(document).ready(function() {');
+    ShowHTML('  $("tr[id*=\'tr-' . $w_chave . '\']").each(function(index){');
+    ShowHTML('      var	img = $("#" + (this.id).replace("tr","img")); ');
+    ShowHTML('      if($("#" + this.id + "-xp").val() == "true"){');
+	ShowHTML('        img.removeAttr("src"); ');
+	ShowHTML('        img.removeAttr("alt"); ');
+	ShowHTML('        img.attr("src","images/mais.jpg"); ');
+    ShowHTML('        abreFecha((this.id).replace("tr-",""));');
+    ShowHTML('      } ');
+    ShowHTML('  });');
+    //ShowHTML('  $(".exemplo").colorbox({width:"80%", height:"100%", iframe:true, onClosed:function(){ location.reload(); }});');
+    ShowHTML('  $(".exemplo").colorbox({width:"80%", height:"100%", iframe:true, onClosed:function(){ $("form").submit(); }});');
+    ShowHTML('  $("#cancelar").click(function(){parent.closeColorbox()});');
+    ShowHTML('});');
+    ScriptClose();
   }
   ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).'- Etapas'.'</font></B>');
   ShowHTML('<HR>');
@@ -2846,6 +2870,8 @@ function AtualizaEtapa() {
     ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
+    AbreForm('Form',$w_pagina.$par,'POST',null,null,$P1,$w_p2,$P3,null,$w_TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
@@ -3009,7 +3035,7 @@ function AtualizaEtapa() {
         ShowHTML('        <td><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de início previsto do projeto.">'.ExibeCalendario('Form','w_inicio_real').'</td>');
         ShowHTML('        <td><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto do projeto.">'.ExibeCalendario('Form','w_fim_real').'</td>');
       }
-      ShowHTML('      <tr><td colspan=3><b><u>S</u>ituação atual da etapa:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva a situação em a etapa encontra-se.">'.$w_situacao_atual.'</TEXTAREA></td>');
+      ShowHTML('      <tr><td colspan=3><b><u>S</u>ituação atual da etapa:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva a situação em que a etapa encontra-se.">'.$w_situacao_atual.'</TEXTAREA></td>');
     } 
     ShowHTML('      <tr>');
     if ($P1!=1 && $O!='V'){
@@ -3018,11 +3044,13 @@ function AtualizaEtapa() {
     if ($O!='V') {
       ShowHTML('      <tr><td align="center" colspan=4><hr>');
       if ($O=='A') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+      //ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+      ShowHTML('            <input class="STB" type="button" id="cancelar" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
+    ShowHTML('    </form>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
@@ -4643,14 +4671,14 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
       // Se for listagem de etapas no cadastramento do projeto, exibe operações de alteração, exclusão e recursos
       if ($l_tipo == 'PROJETO') {
         $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp';
-        $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">EX</A>&nbsp';
+       $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">EX</A>&nbsp';
         $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'AnexosEtapas&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_etapa='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Arquivos'.'&SG=PJETAPAARQ" title="Vincula arquivos à etapa">AR</A>&nbsp';
         // A linha abaixo foi comentada por Alexandre, até que se ache uma solução adequada para vincular
         // os recursos às etapas.
         //if($SG!='PJBETAPA')   $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'EtapaRecurso&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_menu='.$w_menu.'&w_sg='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Recursos&SG='.$SG.'" title="Recursos da etapa">Rec</A>&nbsp';
         // Caso contrário, é listagem de atualização de etapas. Neste caso, coloca apenas a opção de alteração
       } else {
-        $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
+        $l_html .= chr(13).'          <A class="exemplo" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
         $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'AnexosEtapas&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_etapa='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Arquivos'.'&SG=PJETAPAARQ" title="Arquivos">Arquivos</A>&nbsp';
       } 
     } else {
@@ -5536,7 +5564,8 @@ function Grava() {
           $_REQUEST['w_situacao_atual'],$_REQUEST['w_exequivel'],null,null);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-      ShowHTML('  location.href=\''.$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      //ShowHTML('  parent.location.href=\''.$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('parent.closeColorbox();');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

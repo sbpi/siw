@@ -545,7 +545,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>]';
         $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&p_indicador=S&p_indicador=S&p_prevista=S&p_realizada=S&p_pendente=S&p_proximo=S&p_questoes=S&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
       }
-	 
+   
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'         <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0" align="center"><b>Etapa</b></td>';

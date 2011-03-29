@@ -1867,8 +1867,8 @@ function Unidade() {
     } else {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td valign="center">');
       AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-	    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-	    ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
       $w_ContOut=0;
       $w_ContImg=0;
       ShowHTML('<div id="container">');
@@ -1880,98 +1880,98 @@ function Unidade() {
         $RS1 = SortArray($RS1,'ordem','asc','nome','asc');
         if (count($RS1)) {
           ShowHTML('   <ul class="Xtree">');
-	        foreach($RS1 as $row1) {
-	          if (f($row1,'externo')=='S') continue;
-	          ShowHTML(imprimeLinha(1,$w_lotacao,$w_marcado,$row1));
-	          $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
-	          $RS2 = SortArray($RS2,'ordem','asc','nome','asc');
-	          if (count($RS2)) {
-	            ShowHTML('      <ul class="Xtree">');
-		          foreach($RS2 as $row2) {
-		            if (f($row2,'externo')=='S') continue;
-		            ShowHTML(imprimeLinha(2,$w_lotacao,$w_marcado,$row2));
-		            $RS3 = $SQL->getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
-		            $RS3 = SortArray($RS3,'ordem','asc','nome','asc');
-		            if (count($RS3)) {
-		              ShowHTML('         <ul class="Xtree">');
-			            foreach($RS3 as $row3) {
-			              if (f($row3,'externo')=='S') continue;
+          foreach($RS1 as $row1) {
+            if (f($row1,'externo')=='S') continue;
+            ShowHTML(imprimeLinha(1,$w_lotacao,$w_marcado,$row1));
+            $RS2 = $SQL->getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
+            $RS2 = SortArray($RS2,'ordem','asc','nome','asc');
+            if (count($RS2)) {
+              ShowHTML('      <ul class="Xtree">');
+              foreach($RS2 as $row2) {
+                if (f($row2,'externo')=='S') continue;
+                ShowHTML(imprimeLinha(2,$w_lotacao,$w_marcado,$row2));
+                $RS3 = $SQL->getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
+                $RS3 = SortArray($RS3,'ordem','asc','nome','asc');
+                if (count($RS3)) {
+                  ShowHTML('         <ul class="Xtree">');
+                  foreach($RS3 as $row3) {
+                    if (f($row3,'externo')=='S') continue;
                     ShowHTML(imprimeLinha(3,$w_lotacao,$w_marcado,$row3));
-			              $RS4 = $SQL->getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
-			              $RS4 = SortArray($RS4,'ordem','asc','nome','asc');
-			              if (count($RS4)) {
-			                ShowHTML('            <ul class="Xtree">');
-				              foreach($RS4 as $row4) {
-				                if (f($row4,'externo')=='S') continue;
-				                ShowHTML(imprimeLinha(4,$w_lotacao,$w_marcado,$row4));
-				                $RS5 = $SQL->getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
-				                $RS5 = SortArray($RS5,'ordem','asc','nome','asc');
-				                if (count($RS5)) {
-				                  ShowHTML('               <ul class="Xtree">');
-					                foreach($RS5 as $row5) {
-					                  if (f($row5,'externo')=='S') continue;
-					                  ShowHTML(imprimeLinha(5,$w_lotacao,$w_marcado,$row5));
-					                  $RS6 = $SQL->getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
-					                  $RS6 = SortArray($RS6,'ordem','asc','nome','asc');
-					                  if (count($RS6)) {
-					                    ShowHTML('                  <ul class="Xtree">');
-						                  foreach($RS6 as $row6) {
-						                    if (f($row6,'externo')=='S') continue;
-						                    ShowHTML(imprimeLinha(6,$w_lotacao,$w_marcado,$row6));
-						                    $RS7 = $SQL->getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
-						                    $RS7 = SortArray($RS7,'ordem','asc','nome','asc');
-						                    if (count($RS7)) {
-						                      ShowHTML('                     <ul class="Xtree">');
-							                    foreach($RS7 as $row7) {
-							                      if (f($row7,'externo')=='S') continue;
-							                      ShowHTML(imprimeLinha(7,$w_lotacao,$w_marcado,$row7));
-							                      $RS8 = $SQL->getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
-							                      $RS8 = SortArray($RS8,'ordem','asc','nome','asc');
-							                      if (count($RS8)) {
-							                        ShowHTML('                        <ul class="Xtree">');
-								                      foreach($RS8 as $row8) {
-								                        if (f($row8,'externo')=='S') continue;
-								                        ShowHTML(imprimeLinha(8,$w_lotacao,$w_marcado,$row8));
-								                        $RS9 = $SQL->getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
-								                        $RS9 = SortArray($RS9,'ordem','asc','nome','asc');
-								                        if (count($RS9)) {
-									                        ShowHTML('                           <ul class="Xtree">');
-									                        foreach($RS9 as $row9) {
-									                          if (f($row9,'externo')=='S') continue;
-									                          ShowHTML(imprimeLinha(9,$w_lotacao,$w_marcado,$row9));
-									                        } 
-								                          ShowHTML('                           </ul>');
-								                        }
-								                      } 
-						                          ShowHTML('                        </ul>');
-							                      } 
-							                    } 
-								                  ShowHTML('                     </ul>');
-								                }
-					                    } 
-					                    ShowHTML('                  </ul>');
-					                  }
-					                } 
-					                ShowHTML('               </ul>');
-				                }
-				              }
-			                ShowHTML('            </ul>');
-			              }
-			            } 
-		              ShowHTML('         </ul>');
-		            } 
-		          }
-	            ShowHTML('      </ul>');
-	          }
-	        }
+                    $RS4 = $SQL->getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
+                    $RS4 = SortArray($RS4,'ordem','asc','nome','asc');
+                    if (count($RS4)) {
+                      ShowHTML('            <ul class="Xtree">');
+                      foreach($RS4 as $row4) {
+                        if (f($row4,'externo')=='S') continue;
+                        ShowHTML(imprimeLinha(4,$w_lotacao,$w_marcado,$row4));
+                        $RS5 = $SQL->getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
+                        $RS5 = SortArray($RS5,'ordem','asc','nome','asc');
+                        if (count($RS5)) {
+                          ShowHTML('               <ul class="Xtree">');
+                          foreach($RS5 as $row5) {
+                            if (f($row5,'externo')=='S') continue;
+                            ShowHTML(imprimeLinha(5,$w_lotacao,$w_marcado,$row5));
+                            $RS6 = $SQL->getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
+                            $RS6 = SortArray($RS6,'ordem','asc','nome','asc');
+                            if (count($RS6)) {
+                              ShowHTML('                  <ul class="Xtree">');
+                              foreach($RS6 as $row6) {
+                                if (f($row6,'externo')=='S') continue;
+                                ShowHTML(imprimeLinha(6,$w_lotacao,$w_marcado,$row6));
+                                $RS7 = $SQL->getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
+                                $RS7 = SortArray($RS7,'ordem','asc','nome','asc');
+                                if (count($RS7)) {
+                                  ShowHTML('                     <ul class="Xtree">');
+                                  foreach($RS7 as $row7) {
+                                    if (f($row7,'externo')=='S') continue;
+                                    ShowHTML(imprimeLinha(7,$w_lotacao,$w_marcado,$row7));
+                                    $RS8 = $SQL->getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
+                                    $RS8 = SortArray($RS8,'ordem','asc','nome','asc');
+                                    if (count($RS8)) {
+                                      ShowHTML('                        <ul class="Xtree">');
+                                      foreach($RS8 as $row8) {
+                                        if (f($row8,'externo')=='S') continue;
+                                        ShowHTML(imprimeLinha(8,$w_lotacao,$w_marcado,$row8));
+                                        $RS9 = $SQL->getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
+                                        $RS9 = SortArray($RS9,'ordem','asc','nome','asc');
+                                        if (count($RS9)) {
+                                          ShowHTML('                           <ul class="Xtree">');
+                                          foreach($RS9 as $row9) {
+                                            if (f($row9,'externo')=='S') continue;
+                                            ShowHTML(imprimeLinha(9,$w_lotacao,$w_marcado,$row9));
+                                          } 
+                                          ShowHTML('                           </ul>');
+                                        }
+                                      } 
+                                      ShowHTML('                        </ul>');
+                                    } 
+                                  } 
+                                  ShowHTML('                     </ul>');
+                                }
+                              } 
+                              ShowHTML('                  </ul>');
+                            }
+                          } 
+                          ShowHTML('               </ul>');
+                        }
+                      }
+                      ShowHTML('            </ul>');
+                    }
+                  } 
+                  ShowHTML('         </ul>');
+                } 
+              }
+              ShowHTML('      </ul>');
+            }
+          }
           ShowHTML('   </ul>');
         } 
       }
       ShowHTML('</ul></div>');
-	    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
-	    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" height="1" bgcolor="#000000">');
-	    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><input class="stb" type="submit" name="Botao" value="Gravar">');
-	    ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" height="1" bgcolor="#000000">');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><input class="stb" type="submit" name="Botao" value="Gravar">');
+      ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
     } 
     ShowHTML('    </table>');
     ShowHTML('  </table>');

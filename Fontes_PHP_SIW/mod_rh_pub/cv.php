@@ -1709,9 +1709,9 @@ function Grava() {
             } 
           } 
           $SQL = new dml_putCVIdent; $SQL->getInstanceOf($dbms,$O,
-		          $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],
-		          $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],
-		          $_REQUEST['w_rg_emissor'],$_REQUEST['w_rg_emissao'],$_REQUEST['w_cpf'],$_REQUEST['w_passaporte_numero']);
+              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],
+              $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],
+              $_REQUEST['w_rg_emissor'],$_REQUEST['w_rg_emissao'],$_REQUEST['w_cpf'],$_REQUEST['w_passaporte_numero']);
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');

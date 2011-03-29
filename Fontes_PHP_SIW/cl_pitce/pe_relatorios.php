@@ -420,7 +420,7 @@ function Rel_Executivo() {
   ShowHTML('</center>');
   // if     ($w_tipo=='PDF')  RodapePDF();
   // elseif ($w_tipo!='WORD') Rodape();
-	if ($w_embed =='WORD') RodapePdf();
+  if ($w_embed =='WORD') RodapePdf();
   if ($p_tipo!='WORD') Rodape();
   
   
