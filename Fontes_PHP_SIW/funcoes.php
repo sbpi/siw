@@ -266,7 +266,7 @@ function headerWord($p_orientation='LANDSCAPE') {
 function montaArvore($string){
     $string = str_replace(".","-",$string);
     $img = "<img src='images/mais.jpg' alt='Expandir' onclick='abreFecha(\"$string\")' id='img-$string' style='cursor:pointer'/>";
-    $img .= "\n <input class=\"p_arvore\" type=\"hidden\" name=\"p_xp[$string]\" id=\"tr-$string-xp\" value=\"".nvl($_REQUEST['p_xp'][$string],'false')."\" />";
+    $img .= "\n <input class=\"p_arvore\" type=\"hidden\" name=\"p_xp[$string]\" id=\"tr-$string-xp\" value=\"".nvl($_REQUEST['p_xp'][$string],'false')."\" />\n";
     return $img;
 }
 
@@ -1088,7 +1088,7 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
     if($w_embed == 'WORD'){
         $l_string .= $p_etapa;
     }else{
-        $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.(($w_dir=='mod_pr/') ? '' : $w_dir).'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+        $l_string .= '<A name="'.$p_chave_aux.'" class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.(($w_dir=='mod_pr/') ? '' : $w_dir).'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
     }
   }
   return $l_string;
@@ -2963,13 +2963,14 @@ function Cabecalho() {
 function head() {
   extract($GLOBALS);
   ShowHTML('<HEAD>');
-  ShowHTML('<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">');
-  ShowHTML('<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">');
-  ShowHTML('<META NAME="author" CONTENT="SBPI Consultoria Ltda">');
-  ShowHTML('<META NAME="robots" CONTENT="noindex,nofollow">');
-  ShowHTML('<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR">');
-  ShowHTML('<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1">');
+  ShowHTML('<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />');
+  ShowHTML('<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" />');
+  ShowHTML('<META NAME="author" CONTENT="SBPI Consultoria Ltda" />');
+  ShowHTML('<META NAME="robots" CONTENT="noindex,nofollow" />');
+  ShowHTML('<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />');
+  ShowHTML('<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.colorbox.js"></script>');
 }
 
 // =========================================================================
@@ -3818,7 +3819,7 @@ function BodyOpen($cProperties) {
    ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
    ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />');
    ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
-   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
+//   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
 
 
@@ -3841,7 +3842,7 @@ function BodyOpenImage($cProperties, $cImage, $cFixed) {
    ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />');
 
    ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
-   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
+//   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
@@ -3872,11 +3873,10 @@ function BodyOpenClean($cProperties) {
   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
   ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
+//  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/swfobject.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.uploadify.v2.1.0.min.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
-  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.colorbox.js"></script>');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
@@ -3903,7 +3903,7 @@ function BodyOpenWord($cProperties=null) {
   $l_html.='<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ';
   $l_html.='<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen" />';
   $l_html.='<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>';
-  $l_html.='<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
+//  $l_html.='<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
   $l_html.='<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandPrint.css">'.chr(13);
   $l_html.='<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
     'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.

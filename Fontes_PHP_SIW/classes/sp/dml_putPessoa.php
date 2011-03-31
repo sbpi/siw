@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putPessoa  {
-   function getInstanceOf($dbms, $operacao, $p_cliente, $p_restricao, $p_tipo_pessoa, $p_sq_pessoa, $p_cpf, $p_cnpj, $p_nome, 
+   function getInstanceOf($dbms, $operacao, $p_cliente, $p_restricao, $p_tipo_pessoa, $p_tipo_vinculo, $p_sq_pessoa, $p_cpf, $p_cnpj, $p_nome,
         $p_nome_resumido, $p_sexo, $p_nascimento, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_passaporte, $p_sq_pais_passaporte, 
         $p_inscricao_estadual, $p_logradouro, $p_complemento, $p_bairro, $p_sq_cidade, $p_cep, $p_ddd, $p_nr_telefone, $p_nr_fax, 
         $p_nr_celular, $p_email, $p_chave_nova) {
@@ -19,6 +19,7 @@ class dml_putPessoa  {
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        10),
                    'p_tipo_pessoa'               =>array(tvl($p_tipo_pessoa),                              B_INTEGER,        32),
+                   'p_tipo_vinculo'              =>array(tvl($p_tipo_vinculo),                             B_INTEGER,        32),
                    'p_sq_pessoa'                 =>array(tvl($p_sq_pessoa),                                B_INTEGER,        32),
                    'p_cpf'                       =>array(tvl($p_cpf),                                      B_VARCHAR,        14),
                    'p_cnpj'                      =>array(tvl($p_cnpj),                                     B_VARCHAR,        18),

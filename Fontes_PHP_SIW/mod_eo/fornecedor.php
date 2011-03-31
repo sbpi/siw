@@ -332,6 +332,7 @@ function Geral() {
   $w_troca          = $_REQUEST['w_troca'];
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
   $w_tipo_pessoa    = $_REQUEST['w_tipo_pessoa'];
+  $w_tipo_vinculo   = $_REQUEST['w_tipo_vinculo'];
 
   $p_nome           = upper($_REQUEST['p_nome']);
   $p_cpf            = $_REQUEST['p_cpf'];
@@ -390,6 +391,7 @@ function Geral() {
         $w_cnpj                 = f($row,'cnpj');
         $w_inscricao_estadual   = f($row,'inscricao_estadual');
         $w_tipo_pessoa          = f($row,'sq_tipo_pessoa');
+        $w_tipo_vinculo         = f($row,'sq_tipo_vinculo');
         break;
       }
     } 
@@ -429,6 +431,7 @@ function Geral() {
       Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
     }
     Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
+    Validate('w_tipo_vinculo','Tipo de vínculo','SELECT',1,1,18,'','1');
     if ($w_tipo_pessoa==1) {
       Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
@@ -477,7 +480,7 @@ function Geral() {
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IA',$O)!==false) {
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -513,6 +516,8 @@ function Geral() {
     } else {
       ShowHTML('          <td><b><u>I</u>nscrição estadual:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inscricao_estadual" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_inscricao_estadual.'"></td>');
     } 
+    ShowHTML('        <tr valign="top">');
+    selecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_tipo_vinculo,null,'w_tipo_vinculo','S',$w_nm_tipo_pessoa,'N',null,null,3);
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -723,7 +728,7 @@ function Grava() {
         }
 
         $SQL = new dml_putPessoa; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,'FORNECEDOR',
-            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
+            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_tipo_vinculo'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
             $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],
             $_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],$_REQUEST['w_passaporte_numero'],
@@ -748,6 +753,7 @@ function Grava() {
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
         ScriptClose();
         retornaFormulario('w_assinatura');
+        exit();
       }       
       break;
     default:

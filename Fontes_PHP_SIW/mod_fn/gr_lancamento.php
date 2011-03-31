@@ -310,15 +310,18 @@ function Gerencial() {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_objeto','Plano de trabalho','','','2','90','1','1');
       else                                                  Validate('p_objeto','Objeto','','','2','90','1','1');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
-      if (substr(f($RS_Menu,'sigla'),3)=='CONT')    $texto = 'Vigência';
-      elseif (substr(f($RS_Menu,'sigla'),3)=='VIA') $texto = 'Viagem';
-      Validate('p_ini_i',$texto.' inicial','DATA','','10','10','','0123456789/');
-      Validate('p_ini_f',$texto.' final','DATA','','10','10','','0123456789/');
-      ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
-      ShowHTML('     theForm.p_ini_i.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
+      if (strpos('CONT,VIA',substr(f($RS_Menu,'sigla'),3))!==false) {
+        if (substr(f($RS_Menu,'sigla'),3)=='CONT')    $texto = 'Vigência';
+        elseif (substr(f($RS_Menu,'sigla'),3)=='VIA') $texto = 'Viagem';
+        Validate('p_ini_i',$texto.' inicial','DATA','','10','10','','0123456789/');
+        Validate('p_ini_f',$texto.' final','DATA','','10','10','','0123456789/');
+        ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
+        ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+        ShowHTML('     theForm.p_ini_i.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        CompData('p_ini_i','Data inicial','<=','p_ini_f','Data final');
+      }
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
@@ -328,7 +331,6 @@ function Gerencial() {
       ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
-      CompData('p_ini_i','Data inicial','<=','p_ini_f','Data final');
       Validate('p_fim_i','Pagamento inicial','DATA','','10','10','','0123456789/');
       Validate('p_fim_f','Pagamento final','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');

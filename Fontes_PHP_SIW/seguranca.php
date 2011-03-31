@@ -2373,7 +2373,7 @@ function TelaUsuario() {
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
-  if (strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))!==false) {
+  if (strpos('Cliente,Fornecedor',f($RS,'nome_vinculo'))!==false) {
     ShowHTML('<TITLE>Pessoa externa</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad="this.focus();"');
@@ -2506,7 +2506,11 @@ function TelaUsuario() {
     } else {
       foreach ($RS1 as $row1) {
         ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
+        if (nvl(f($RS,'nome_vinculo'),'')=='') {
+          ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
+        } else {
+          ShowHTML('      <tr><td colspan="3" bgcolor="#D0D0D0"><font size=2><b>Tipo de vínculo: '.f($RS,'nome_vinculo').'</td>');
+        }
         ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td>');
         ShowHTML('      <tr><td colspan="2">Nome:<br><font size=2><b>'.f($row1,'nm_pessoa').' ('.$l_sq_pessoa.')');
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));

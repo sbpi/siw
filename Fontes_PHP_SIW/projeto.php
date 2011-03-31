@@ -640,9 +640,9 @@ function Inicial() {
       ShowHTML('  </table>');
     }
   } elseif (strpos('CP',$O)!==false) {
-    if ($P1!=1) ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    if ($P1!=1) ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr/>');
     elseif ($O == 'C') // Se for cópia 
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Para selecionar o projeto que deseja copiar, informe nos campos abaixo os critérios de seleção e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Para selecionar o projeto que deseja copiar, informe nos campos abaixo os critérios de seleção e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr/>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
     AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
@@ -980,7 +980,7 @@ function Geral() {
   elseif (strpos('EV',$O)!==false)BodyOpenClean('onLoad=\'this.focus()\';');
   else  BodyOpenClean('onLoad=\'document.Form.w_codigo_interno.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IAEV',$O)!==false) {
     if ($w_pais=='') {
@@ -1203,7 +1203,7 @@ function Descritivo() {
   elseif (strpos('EV',$O)!==false)BodyOpenClean('onLoad=\'this.focus()\';');
   else  BodyOpenClean('onLoad=\'document.Form.w_objetivo_superior.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IAEV',$O)!==false) {
     if (strpos('EV',$O)!==false) {
@@ -1311,7 +1311,7 @@ function Anexos() {
     BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -1376,7 +1376,7 @@ function Anexos() {
     if ($w_caminho>'') {
       ShowHTML('              <b>'.LinkArquivo('SS',$w_cliente,$w_caminho,'_blank','Clique para exibir o arquivo atual.','Exibir',null).'</b>');
     } 
-    ShowHTML('      <tr><td align="center"><hr>');
+    ShowHTML('      <tr><td align="center"><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">');
     } else {
@@ -1460,7 +1460,7 @@ function AnexosEtapas() {
     BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan=2 align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
@@ -1543,7 +1543,7 @@ function AnexosEtapas() {
     if ($w_caminho>'') {
       ShowHTML('              <b>'.LinkArquivo('SS',$w_cliente,$w_caminho,'_blank','Clique para exibir o arquivo atual.','Exibir',null).'</b>');
     } 
-    ShowHTML('      <tr><td align="center"><hr>');
+    ShowHTML('      <tr><td align="center"><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">');
     } else {
@@ -1655,7 +1655,7 @@ function Rubrica() {
   elseif ($O=='L' || $O=='E') BodyOpenClean('onLoad=\'this.focus()\';');
   else BodyOpen('onLoad=\'document.Form.w_sq_cc.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -1783,7 +1783,7 @@ function Rubrica() {
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Aplicação financeira</b>?',$w_aplicacao_financeira,'w_aplicacao_financeira');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -1881,7 +1881,7 @@ function AtualizaRubrica() {
   elseif ($O=='L' || $O=='V') BodyOpenClean(null);
   else BodyOpen('onLoad=\'document.Form.w_valor_real.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="3"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -1897,21 +1897,22 @@ function AtualizaRubrica() {
     ShowHTML('  <li>Clique na operação "Atualizar" para informar o orçamento realizado da rubrica.');
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr><td><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS).'</b></td>');
+    ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</td>');
-    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
-    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</td>');
-    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AF','aplicacao_financeira').'</td>');
-    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','ativo').'</td>');
-    ShowHTML('          <td colspan="2"><b>Orçamento</td>');
-    if($O==L)ShowHTML('          <td rowspan="2" valign="top"><b>Operação </td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</b></td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</b></td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</b></td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AF','aplicacao_financeira').'</b></td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','ativo').'</b></td>');
+    ShowHTML('          <td colspan="2"><b>Orçamento</b></td>');
+    if($O==L)ShowHTML('          <td rowspan="2" valign="top"><b>Operação </b></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td align="center"><b>'.LinkOrdena('Previsto','total_previsto').'</td>');
-    ShowHTML('          <td align="center"><b>'.LinkOrdena('Realizado','total_real').'</td>');        
+    ShowHTML('          <td align="center"><b>'.LinkOrdena('Previsto','total_previsto').'</b></td>');
+    ShowHTML('          <td align="center"><b>'.LinkOrdena('Realizado','total_real').'</b></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1939,9 +1940,9 @@ function AtualizaRubrica() {
         ShowHTML('      </tr>');
       } 
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="5" align="right"><b>Totais</td>'); 
-        ShowHTML('        <td align="right"><b>'.formatNumber($w_total_previsto).'</td>');
-        ShowHTML('        <td align="right"><b>'.formatNumber($w_total_real).'</td>');
+        ShowHTML('        <td colspan="5" align="right"><b>Totais</b></td>');
+        ShowHTML('        <td align="right"><b>'.formatNumber($w_total_previsto).'</b></td>');
+        ShowHTML('        <td align="right"><b>'.formatNumber($w_total_real).'</b></td>');
         ShowHTML('      </tr>');
     } 
     ShowHTML('      </center>');
@@ -1997,7 +1998,7 @@ function AtualizaRubrica() {
     }
     ShowHTML('      <tr>');
     ShowHTML('      </table>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if (count($RS_Cronograma)>0) {
       ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
@@ -2193,7 +2194,7 @@ function Etapas() {
   elseif ($O=='L' || $O=='E') BodyOpenClean(null);
   else BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -2418,7 +2419,7 @@ function Etapas() {
     ShowHTML('          <tr>');
     ShowHTML('      <tr>');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -2521,7 +2522,7 @@ function Cronograma() {
   elseif ($O=='I' || $O=='A') BodyOpenClean('onLoad=\'document.Form.w_inicio.focus()\';');
   else BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>'); 
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<tr><td colspan="2"><table border="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
@@ -2624,7 +2625,7 @@ function Cronograma() {
     else        ShowHTML('<INPUT type="hidden" name="w_valor_real" value="'.Nvl($w_valor_real,0).'">');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -2654,11 +2655,11 @@ function Cronograma() {
 // -------------------------------------------------------------------------
 function AtualizaEtapa() {
   extract($GLOBALS);
-  //exibeArray($_REQUEST['p_xp']);
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_pai  = $_REQUEST['w_chave_pai'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_ancora     = $_REQUEST['w_ancora'];
   
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
@@ -2825,18 +2826,21 @@ function AtualizaEtapa() {
   }
   ShowHTML('</HEAD>');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   } elseif ($O=='I' || $O=='A') {
     if ($w_pacote=='N') {
-      BodyOpenClean('onLoad=\'document.Form.w_situacao_atual.focus()\';');
+      BodyOpenClean('onLoad=\'document.Form.w_situacao_atual.focus();\'');
     } else {
-      BodyOpenClean('onLoad=\'document.Form.w_perc_conclusao.focus()\';');
+      BodyOpenClean('onLoad=\'document.Form.w_perc_conclusao.focus();\'');
     }
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus();\'');
   }
   if (nvl($w_chave, '') != '') {
     ScriptOpen('JavaScript');
+    if (nvl($w_ancora, '') != '') {
+      ShowHTML('  location.href=\'#' . $w_ancora . '\';');
+    }
     ShowHTML('function closeColorbox() {');
     ShowHTML('  $.colorbox.close();');
     ShowHTML('} ');
@@ -2851,13 +2855,13 @@ function AtualizaEtapa() {
     ShowHTML('      } ');
     ShowHTML('  });');
     //ShowHTML('  $(".exemplo").colorbox({width:"80%", height:"100%", iframe:true, onClosed:function(){ location.reload(); }});');
-    ShowHTML('  $(".exemplo").colorbox({width:"80%", height:"100%", iframe:true, onClosed:function(){ $("form").submit(); }});');
+    ShowHTML('  $(".exemplo").colorbox({width:"80%", transition:elastic, height:"80%", iframe:true, onClosed:function(){ $("form").submit(); }});');
     ShowHTML('  $("#cancelar").click(function(){parent.closeColorbox()});');
     ShowHTML('});');
     ScriptClose();
   }
-  ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).'- Etapas'.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<font color="#000000"><b>'.substr($w_TP,0,(strpos($w_TP,'-')-1)).'- Etapas'.'</b></font>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -2866,12 +2870,16 @@ function AtualizaEtapa() {
 
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td>');
-    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr>');
+    ShowHTML('  <td>');
+    ShowHTML('    <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('  </td>');
+    ShowHTML('  <td align="right"><b>Registros existentes: '.count($RS).'</b></td>');
+    ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    AbreForm('Form',$w_pagina.$par,'POST',null,null,$P1,$w_p2,$P3,null,$w_TP,$SG,$R,$O);
+    AbreForm('Form',$w_pagina.$par.'#'.$w_ancora,'POST',null,null,$P1,$w_p2,$P3,null,$w_TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_ancora" id="w_ancora" value="'.$w_ancora.'">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
@@ -2960,13 +2968,16 @@ function AtualizaEtapa() {
         $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
       } 
       ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo));
+      ShowHTML('      </TABLE>');
       ShowHTML('      </FORM>');
+      ShowHTML('      </td></tr>');
     } 
-    ShowHTML('<tr><td colspan=9><b>Observações:<ul>');
-    ShowHTML('  <li>Pacotes de trabalho destacados em negrito.');
-    ShowHTML('  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.');
-    ShowHTML('  </ul>');
-    ShowHTML('    </table>');
+    ShowHTML('<tr>');
+    ShowHTML('  <td colspan=9><b>Observações:');
+    ShowHTML('    <ul>');
+    ShowHTML('      <li>Pacotes de trabalho destacados em negrito.');
+    ShowHTML('      <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.');
+    ShowHTML('    </ul>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
@@ -2974,6 +2985,7 @@ function AtualizaEtapa() {
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_ancora" id="w_ancora" value="'.$w_ancora.'">');
     ShowHTML('<INPUT type="hidden" name="w_perc_ant" value="'.formatNumber($w_perc_conclusao).'">');
     ShowHTML('<INPUT type="hidden" name="w_pacote" value="'.$w_pacote.'">');
     ShowHTML('<INPUT type="hidden" name="w_exequivel" value="N">');
@@ -3042,7 +3054,7 @@ function AtualizaEtapa() {
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
     }     
     if ($O!='V') {
-      ShowHTML('      <tr><td align="center" colspan=4><hr>');
+      ShowHTML('      <tr><td align="center" colspan=4><hr/>');
       if ($O=='A') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       //ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
       ShowHTML('            <input class="STB" type="button" id="cancelar" name="Botao" value="Cancelar">');
@@ -3172,7 +3184,7 @@ function AtualizaEtapa() {
     ShowHTML('      </td></tr></table>');
     ShowHTML('      </tr>');
     if ($O=='V') {
-      ShowHTML('      <tr><td align="center" colspan=4><hr>');
+      ShowHTML('      <tr><td align="center" colspan=4><hr/>');
       ShowHTML('            <input class="STB" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
     } 
   } else {
@@ -3182,7 +3194,7 @@ function AtualizaEtapa() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
+  ShowHTML('</center></div>');
   Rodape();
 } 
 
@@ -3219,7 +3231,7 @@ function InteressadoPacote() {
     BodyOpenClean('onLoad=\'this.focus()\';');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).' - Partes Interessadas'.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -3314,7 +3326,7 @@ function InteressadoPacote() {
     ShowHTML('      </tr></table>');
     ShowHTML('    </table>');    
   }
-  ShowHTML('      <tr><td align="center" colspan=4><hr>');
+  ShowHTML('      <tr><td align="center" colspan=4><hr/>');
   ShowHTML('            <input class="STB" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
   ShowHTML('</table>');
   ShowHTML('</center>');
@@ -3371,7 +3383,7 @@ function Recursos() {
   elseif ($O=='I' || $O=='A') BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
   else BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>'); 
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -3424,7 +3436,7 @@ function Recursos() {
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td valign="top"><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_finalidade" class="STI" ROWS=5 cols=75 title="Descreva, se necessário, a finalidade deste recurso para o projeto (funções desempenhadas, papel, objetivos etc).">'.$w_finalidade.'</TEXTAREA></td>');
     ShowHTML('      <tr>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -3470,7 +3482,7 @@ function EtapaRecursos() {
   $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null);
   BodyOpenClean('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
@@ -3582,7 +3594,7 @@ function Interessados() {
   elseif ($O=='I')   BodyOpenClean('onLoad=\'document.Form.w_chave_aux.focus()\';');
   else                BodyOpenClean('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -3638,7 +3650,7 @@ function Interessados() {
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Envia e-mail ao interessado quando houver encaminhamento?</b>',$w_envia_email,'w_envia_email');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -3716,7 +3728,7 @@ function Areas() {
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else               BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -3776,7 +3788,7 @@ function Areas() {
     SelecaoInfluencia('In<U>f</U>luência:','F','Selecione de influência.',$w_influencia,'w_influencia',null,null);
     ShowHTML('      <tr><td valign="top"><b><u>P</u>apel desempenhado:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_papel" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução do projeto.">'.$w_papel.'</TEXTAREA></td>');
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -3866,7 +3878,7 @@ function Pacote() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr><td align="center" colspan=8><hr>');
+      ShowHTML('      <tr><td align="center" colspan=8><hr/>');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
     foreach($RS as $row)  {
@@ -3881,7 +3893,7 @@ function Pacote() {
       }
     }
     ShowHTML('      </table>');
-    ShowHTML('      <tr><td align="center" colspan=5><hr>');
+    ShowHTML('      <tr><td align="center" colspan=5><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -3967,7 +3979,7 @@ function PrestacaoContas() {
     BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.removeTP($w_TP).'</FONT></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="'.$conTrBgColor.'">');
   if ($O=='P') {
@@ -3977,7 +3989,7 @@ function PrestacaoContas() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'I');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_siw_solicitacao" value="'.$w_siw_solicitacao.'">');
-    ShowHTML('  <tr bgcolor="'.$conTrBgColor.'"><td colspan=2><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Após informar a prestação de contas desejada, clique sobre o botão <i>Aplicar filtro</i>.<li>Quando os itens da prestação de contas forem listados, informe se há pendência. Se houver obrservação, informe-as.</ul><hr><b>Filtro</b></div>');
+    ShowHTML('  <tr bgcolor="'.$conTrBgColor.'"><td colspan=2><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Após informar a prestação de contas desejada, clique sobre o botão <i>Aplicar filtro</i>.<li>Quando os itens da prestação de contas forem listados, informe se há pendência. Se houver obrservação, informe-as.</ul><hr/><b>Filtro</b></div>');
     ShowHTML('  <tr bgcolor="'.$conTrBgColor.'"><td colspan=2>');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr>');
@@ -4204,12 +4216,12 @@ function Excluir() {
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else               BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJGERAL',$w_pagina.$par,$O);
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -4219,7 +4231,7 @@ function Excluir() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=4><hr>');
+  ShowHTML('    <tr><td align="center" colspan=4><hr/>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Excluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
@@ -4313,11 +4325,11 @@ function Encaminhamento() {
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   if($SG=='PJCADBOLSA') AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJBENVIO',$w_pagina.$par,$O);
   else                  AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJENVIO',$w_pagina.$par,$O);
   ShowHTML(MontaFiltro('POST'));
@@ -4358,7 +4370,7 @@ function Encaminhamento() {
   ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução do projeto.">'.$w_despacho.'</TEXTAREA></td>');
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=4><hr>');
+  ShowHTML('    <tr><td align="center" colspan=4><hr/>');
   if ($w_erro=='') {
     ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   } else {
@@ -4412,12 +4424,12 @@ function Anotar() {
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else               BodyOpenClean('onLoad=\'document.Form.w_observacao.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   if($SG=='PJCADBOLSA')  ShowHTML('<FORM  name="Form" method="POST" enctype="multipart/form-data" onSubmit="return(Validacao(this));" action="'.$w_pagina.'Grava&SG=PJBENVIO&O='.$O.'&w_menu='.$w_menu.'">');
   else                   ShowHTML('<FORM  name="Form" method="POST" enctype="multipart/form-data" onSubmit="return(Validacao(this));" action="'.$w_pagina.'Grava&SG=PJENVIO&O='.$O.'&w_menu='.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
@@ -4442,7 +4454,7 @@ function Anotar() {
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=4><hr>');
+  ShowHTML('    <tr><td align="center" colspan=4><hr/>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Gravar">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
@@ -4514,12 +4526,12 @@ function Concluir() {
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else               BodyOpenClean('onLoad=\'document.Form.w_inicio_real.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
-  ShowHTML('<HR>');
+  ShowHTML('<hr/>');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -4556,7 +4568,7 @@ function Concluir() {
   ShowHTML('          </table>');
   ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=4><hr>');
+  ShowHTML('    <tr><td align="center" colspan=4><hr/>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
@@ -4627,14 +4639,14 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
     else       $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
     if (nvl($l_nivel,0)==0) {
-      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
+      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td><b>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
     } else {
-      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
+      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td><b>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table></td>';
     }
-    if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
-    else       $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
+    if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap><b>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b></td>';
+    else       $l_html .= chr(13).'        <td><b>'.$l_resp.'</b><td>';
   } else {
-    $l_html .= chr(13).'        <td colspan=3 align="right"><b>Linha resumo </b></td>'; 
+    $l_html .= chr(13).'        <td colspan=3 align="right"><b>Linha resumo </b></td>';
   }
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_inicio,5).'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_fim,5).'</td>';
@@ -4678,7 +4690,8 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
         //if($SG!='PJBETAPA')   $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'EtapaRecurso&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_menu='.$w_menu.'&w_sg='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Recursos&SG='.$SG.'" title="Recursos da etapa">Rec</A>&nbsp';
         // Caso contrário, é listagem de atualização de etapas. Neste caso, coloca apenas a opção de alteração
       } else {
-        $l_html .= chr(13).'          <A class="exemplo" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
+        $l_html .= chr(13).'          <A class="exemplo" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_ancora='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
+        //$l_html .= chr(13).'          <A class="exemplo" href="http://www.google.com.br/" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
         $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'AnexosEtapas&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_etapa='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Arquivos'.'&SG=PJETAPAARQ" title="Arquivos">Arquivos</A>&nbsp';
       } 
     } else {
@@ -4763,10 +4776,10 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   if (nvl($l_nivel,0)==0) {
     $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
   } else {
-    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td><b>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
   }
-  if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
-  else       $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
+  if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap><b>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
+  else       $l_html .= chr(13).'        <td><b>'.$l_resp.'</b>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_inicio,5).'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_fim,5).'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
@@ -5565,7 +5578,11 @@ function Grava() {
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
       //ShowHTML('  parent.location.href=\''.$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      if($_REQUEST['w_chave_aux']) {
+        ShowHTML('    parent.Form.w_ancora.value =' . $_REQUEST['w_chave_aux'] . ';');
+      }
       ShowHTML('parent.closeColorbox();');
+      
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

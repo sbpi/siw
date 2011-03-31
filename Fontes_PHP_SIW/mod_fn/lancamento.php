@@ -567,7 +567,7 @@ function Inicial() {
           } elseif (f($RS_Menu,'sigla')=='FNDVIA' || substr($SG,3)=='CONT') {
             ShowHTML('          <td colspan=6 align="right"><b>Total desta página&nbsp;</td>');
           } else {
-            ShowHTML('          <td colspan=5 align="right"><b>Total desta página&nbsp;</td>');
+            ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
           }
           ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial,2).'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
@@ -585,7 +585,7 @@ function Inicial() {
           } elseif (f($RS_Menu,'sigla')=='FNDVIA' || substr($SG,3)=='CONT') {
             ShowHTML('          <td colspan=6 align="right"><b>Total da listagem&nbsp;</td>');
           } else {
-            ShowHTML('          <td colspan=5 align="right"><b>Total da listagem&nbsp;</td>');
+            ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
           }
           ShowHTML('          <td align="right"><b>'.formatNumber($w_total,2).'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
@@ -887,8 +887,15 @@ function Geral() {
   SaltaCampo();
   FormataDataHora();
   FormataValor();
+  ShowHTML('function closeColorbox() {');
+  ShowHTML('  $.colorbox.close();');
+  ShowHTML('} ');
+  ShowHTML('$(document).ready(function() {');
+  ShowHTML('  $(".exemplo").colorbox({width:"100%", height:"100%", iframe:true, onClosed:function(){ $("form").submit(); }});');
+  ShowHTML('  $("#cancelar").click(function(){parent.closeColorbox()});');
+  ShowHTML('});');
   ValidateOpen('Validacao');
-  if ($O=='I' || $O=='A') {
+    if ($O=='I' || $O=='A') {
     if (substr($SG,3)!='CONT') {
       Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
       if(nvl($w_sq_menu_relac,'')!='') {
@@ -1178,7 +1185,8 @@ function Geral() {
     
       // Beneficiário
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
-      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
+      //ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="exemplo" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
+      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
       ShowHTML('    <tr><td colspan="3"><table width="100%" border="0" bordercolor="#FFFFFF" bgcolor="#FFFFFF">');
       $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl($w_pessoa,0),null,null,null,null,Nvl($w_tipo_pessoa,0),null,null,null,null,null,null,null,null,null,null,null);

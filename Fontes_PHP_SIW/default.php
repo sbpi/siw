@@ -410,7 +410,7 @@ function LogOn() {
     ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
     ShowHTML('      <table width="100%" height="100%" border="0" cellpadding=0 cellspacing=0> ');
     ShowHTML('        <tr><td bgcolor="#003300" width="100%" height="100%" valign="middle"><font size="2" color="#FFFFFF">&nbsp;');
-    ShowHTML('            '.$_SESSION['USUARIO'].': <input class="cText" id="Login1" name="Login1" size="14" maxlength="60" value="'.$w_username.'">');
+    ShowHTML('            Usuário: <input class="cText" id="Login1" name="Login1" size="14" maxlength="60" value="'.$w_username.'">');
     ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19" onKeyUp="this.value=trim(this.value);" AUTOCOMPLETE="off">');
     ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
     ShowHTML('            <input class="cButton" type="submit" value="Recriar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu nome de usuário e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');

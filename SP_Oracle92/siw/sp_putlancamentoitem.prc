@@ -53,10 +53,13 @@ begin
             update fn_lancamento set sq_projeto_rubrica = p_sq_projeto_rubrica where sq_siw_solicitacao = p_chave;
          End If;
       Else
-         -- Se não recebeu rubrica mas o lancamento tem uma indicada, atribui ao item
-         select sq_projeto_rubrica into w_reg from fn_lancamento where sq_siw_solicitacao = p_chave;
-         If w_reg is not null Then
-            update fn_documento_item set sq_projeto_rubrica = w_reg where sq_documento_item = w_chave_aux;
+         select count(*) into w_reg from fn_lancamento where sq_projeto_rubrica is not null and sq_siw_solicitacao = p_chave;
+         If w_reg > 0 Then 
+            -- Se não recebeu rubrica mas o lancamento tem uma indicada, atribui ao item
+            select sq_projeto_rubrica into w_reg from fn_lancamento where sq_siw_solicitacao = p_chave;
+            If w_reg is not null Then
+               update fn_documento_item set sq_projeto_rubrica = w_reg where sq_documento_item = w_chave_aux;
+            End If;
          End If;
       End If;
    End If;

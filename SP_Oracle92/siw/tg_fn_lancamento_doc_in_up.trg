@@ -32,7 +32,8 @@ declare
            case b.sigla when 'CPMF' then 'I' when 'ISS' then 'M' else 'T' end prazo
       from fn_imposto_incid                     a
            inner        join fn_imposto         b on (a.sq_imposto         = b.sq_imposto and
-                                                      b.calculo            = 0
+                                                      b.calculo            = 0 and
+                                                      b.ativo              = 'S'
                                                      )
            inner        join fn_lancamento      c on (a.sq_tipo_lancamento = c.sq_tipo_lancamento and
                                                       c.sq_siw_solicitacao = :new.sq_siw_solicitacao

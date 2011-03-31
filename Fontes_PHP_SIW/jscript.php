@@ -53,11 +53,11 @@ function VerfHora() {
 function ScriptOpen($Language) { 
   extract($GLOBALS);
   //print chr(13).chr(10).'<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
-  print chr(13).chr(10).'<SCRIPT LANGUAGE="'.$Language.'"><!--'.chr(13).chr(10); 
+  print chr(13).chr(10).'<script type="text/javascript" language="'.$Language.'"><!--'.chr(13).chr(10);
 }
 
 // Encerra a tag SCRIPT
-function ScriptClose() { print "--></SCRIPT>"."\r\n"; }
+function ScriptClose() { print "--></script>"."\r\n"; }
 
 // Abre a função de validação de formulários
 function ValidateOpen($FunctionName) { 

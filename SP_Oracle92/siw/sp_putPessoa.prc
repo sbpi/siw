@@ -3,6 +3,7 @@ create or replace procedure sp_putPessoa
      p_cliente             in number    default null,
      p_restricao           in varchar2  default null,
      p_tipo_pessoa         in number    default null,
+     p_tipo_vinculo        in number    default null,
      p_sq_pessoa           in number    default null,
      p_cpf                 in varchar2  default null,
      p_cnpj                in varchar2  default null,
@@ -35,26 +36,48 @@ create or replace procedure sp_putPessoa
    w_chave_fone      number(18);
    w_tipo_endereco   number(18);
    w_chave_endereco  number(18);
-   w_sq_tipo_vinculo number(18);
+   w_sq_tipo_vinculo number(18) := p_tipo_vinculo;
    w_fornecedor      varchar(1);
    w_cliente         varchar(1);
 begin
     
    If p_operacao = 'I' Then
-      -- Carrega a chave da tabela CO_TIPO_VINCULO
+      -- Recupera a chave da tabela CO_TIPO_VINCULO
       If p_restricao = 'FORNECEDOR' Then
+         select count(*) into w_existe from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
+         If w_existe = 0 Then
+            -- Se não existir o tipo de vínculo, cria.
+            insert into co_tipo_vinculo (sq_tipo_vinculo, sq_tipo_pessoa, cliente, nome) values (sq_tipo_vinculo.nextval, p_tipo_pessoa, p_cliente, 'Fornecedor');
+         End If;
+                        
          select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
          w_fornecedor := 'S';
          w_cliente    := 'N';
       Elsif p_restricao = 'CLIENTE' Then
+         select count(*) into w_existe from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
+         If w_existe = 0 Then
+            -- Se não existir o tipo de vínculo, cria.
+            insert into co_tipo_vinculo (sq_tipo_vinculo, sq_tipo_pessoa, cliente, nome) values (sq_tipo_vinculo.nextval, p_tipo_pessoa, p_cliente, 'Cliente');
+         End If;
+                        
          select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
          w_cliente    := 'S';
          w_fornecedor := 'N';
       Else
+         select count(*) into w_existe from co_tipo_vinculo where nome = 'Outros' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
+         If w_existe = 0 Then
+            -- Se não existir o tipo de vínculo, cria.
+            insert into co_tipo_vinculo (sq_tipo_vinculo, sq_tipo_pessoa, cliente, nome) values (sq_tipo_vinculo.nextval, p_tipo_pessoa, p_cliente, 'Outros');
+         End If;
+                        
         select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Outros' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
          w_cliente    := 'N';
          w_fornecedor := 'N';
       End If;
+      
+      -- Se recebeu o tipo de vínculo, prevalece sobre o que foi recuperado
+      If p_tipo_vinculo is not null Then w_sq_tipo_vinculo := p_tipo_vinculo; End If;
+      
       -- recupera a próxima chave da pessoa
       select sq_pessoa.nextval into w_chave_pessoa from dual;
       
@@ -65,8 +88,9 @@ begin
         (w_chave_pessoa, p_cliente,     w_sq_tipo_vinculo, p_tipo_pessoa,    p_nome, p_nome_resumido, w_fornecedor, w_cliente);
    Else -- Caso contrário, altera
       update co_pessoa
-         set nome          = coalesce(p_nome, nome),
-             nome_resumido = coalesce(p_nome_resumido, nome_resumido)
+         set nome            = coalesce(p_nome, nome),
+             nome_resumido   = coalesce(p_nome_resumido, nome_resumido),
+             sq_tipo_vinculo = w_sq_tipo_vinculo
        where sq_pessoa = p_sq_pessoa;
    End If;
    

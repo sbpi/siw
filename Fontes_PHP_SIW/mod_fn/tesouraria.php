@@ -832,7 +832,7 @@ function Geral() {
         // Igual ao do lançamento financeiro
         if (nvl(f($RS_Vinc,'sq_cc'),'')!='') {
           $w_sq_menu_relac = 'CLASSIF';
-          $w_sq_cc = f($$RS_Vinc,'sq_cc'); 
+          $w_sqcc = f($RS_Vinc,'sq_cc'); 
         } else {
           $w_dados_vinc     = explode('|@|',f($RS_Vinc,'dados_solic'));
           $w_sq_menu_relac  = $w_dados_vinc[3];
@@ -842,7 +842,7 @@ function Geral() {
         // Padrão vinculado à finalidade
         if (nvl(f($RS_Imposto,'sq_cc_vinculo'),'')!='') {
           $w_sq_menu_relac = 'CLASSIF';
-          $w_sq_cc = f($RS_Imposto,'sq_cc_vinculo'); 
+          $w_sqcc = f($RS_Imposto,'sq_cc_vinculo'); 
         } elseif (nvl(f($RS_Imposto,'sq_solic_vinculo'),'')!='') {
           $sql = new db_getSolicData; $RS_Vinc_pai = $sql->getInstanceOf($dbms,f($RS_Imposto,'sq_solic_vinculo'));
           $dados_vinc = explode('|@|',f($RS_Vinc_pai,'dados_solic'));
