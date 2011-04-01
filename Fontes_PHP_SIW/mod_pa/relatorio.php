@@ -459,7 +459,7 @@ function Transferencia() {
 // -------------------------------------------------------------------------
 function ConteudoCaixa() {
   extract($GLOBALS);
-  $w_chave = $_REQUEST['w_chave'];
+  $w_chave   = $_REQUEST['w_chave'];
   $w_formato = $_REQUEST['w_formato'];
   $w_espelho = nvl($_REQUEST['w_espelho'], 'N');
 
@@ -467,10 +467,10 @@ function ConteudoCaixa() {
     HeaderWord($_REQUEST['orientacao']);
   } else {
     Cabecalho();
-    BodyOpen(null);
   }
   ShowHTML(VisualCaixa($w_chave, $w_formato, $w_espelho));
-  Rodape();
+  ShowHTML('</body>');
+  ShowHTML('</html>');
 }
 
 // =========================================================================

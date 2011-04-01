@@ -87,6 +87,7 @@ function SortArray() {
 function exibeCalendario ($form,$campo) {
   extract($GLOBALS);
   return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'calendario.php?form='.$form.'&field='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0, location=0, directories=0, status=0, menubar=0, scrollbars=0, resizable=0, width=150, height=160, left=500, top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+  return '   <a class="box" HREF="calendario.php?form='.$form.'&field='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
   //return '   <a class="ss" HREF="javascript:this.status.value;" onClick="javascript:window.open("calendar.php?form=frmMain&field=txtDate","","top=50,left=400,width=200,height=120,menubar=no,toolbar=no,scrollbars=no,resizable=no,status=no"); return false;
 }
 
@@ -2970,7 +2971,47 @@ function head() {
   ShowHTML('<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />');
   ShowHTML('<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.colorbox.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.fancybox-1.3.4.pack.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery-ui.js"></script>');
+  	?>
+    <script language="javascript" type="text/javascript">
+    /* Array com os feriados */
+    var disabledDays = ["2-21-2010","2-24-2010","2-27-2010","2-28-2010","3-3-2010","3-17-2010","4-2-2010","4-3-2010","4-4-2010","4-5-2010"];
+    var dates = [new Date("1/1/2011"), new Date("1/2/2011")];
+
+    function highlightDays(date) {
+      for (var i = 0; i < dates.length; i++) {
+        if (date - dates[i] == 0) {
+          return [false,'', 'TOOLTIP'];
+        }
+      }
+      return [true];
+    }
+
+
+    $(function() {
+      $( ".calendario" ).datepicker({
+        showOn: "button",
+        buttonImage: "images/icone/GotoTop.gif",
+        dateFormat: "dd/mm/yy",
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dayNamesShort : ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+        dayNamesMin : ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+        dayNames: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out','Nov','Dez'],
+        currentText:  "Hoje",
+        closeText:  "Fechar",
+        gotoCurrent:  true,
+        buttonImageOnly: true,
+        autoSize: true,
+        beforeShowDay: highlightDays
+      });
+    });
+  </script>
+  <?php
 }
 
 // =========================================================================

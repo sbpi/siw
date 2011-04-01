@@ -1561,7 +1561,6 @@ function Concluir() {
   ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
   ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
   ShowHTML('          <td colspan=4><b>Documento original</td>');
-  ShowHTML('          <td colspan=3><b>Localização</td>');
   ShowHTML('          <td rowspan=2><b>Devolução</td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1569,9 +1568,6 @@ function Concluir() {
   ShowHTML('          <td><b>Nº</td>');
   ShowHTML('          <td><b>Data</td>');
   ShowHTML('          <td><b>Procedência</td>');
-  ShowHTML('          <td><b>Caixa</td>');
-  ShowHTML('          <td><b>Pasta</td>');
-  ShowHTML('          <td><b>Local</td>');
   ShowHTML('        </tr>');
   if (count($RS1)<=0) {
     // Se não foram selecionados registros, exibe mensagem
@@ -1587,9 +1583,6 @@ function Concluir() {
       ShowHTML('        <td>&nbsp;'.f($row,'numero_original').'</td>');
       ShowHTML('        <td>&nbsp;'.formataDataEdicao(f($row,'data_recebimento'),5).'&nbsp;</td>');
       ShowHTML('        <td>&nbsp;'.f($row,'nm_origem_doc').'</td>');
-      ShowHTML('        <td>&nbsp;'.f($row,'nr_caixa').'/'.f($row,'sg_unid_caixa').'</td>');
-      ShowHTML('        <td>&nbsp;'.f($row,'pasta').'</td>');
-      ShowHTML('        <td>&nbsp;'.f($row,'nm_arquivo_local').'</td>');
       ShowHTML('<INPUT type="hidden" name="w_protocolo[]" value="'.f($row,'chave').'">');
       ShowHTML('        <td align="center" '.((nvl(f($row,'sq_eliminacao'),'')!='') ? 'title="Protocolo eliminado ou em eliminação!"': '').'><input '.$w_Disabled.' '.((nvl(f($row,'sq_eliminacao'),'')!='') ? 'READONLY': '').' accesskey="D" type="text" name="w_devolucao[]" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao(f($row,'devolucao')).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da devolução do item."></td>');
       ShowHTML('        </tr>');
@@ -2054,17 +2047,20 @@ function Grava() {
         } else {
           // Grava as quantidades autorizadas
           $SQL = new dml_putPAEmpItem; 
-          for ($i=0; $i<=count($_POST['w_protocolo'])-1; $i=$i+1) {
-            if ($_REQUEST['w_protocolo'][$i]>'') {
+          for ($i=0; $i<=count($_REQUEST['w_protocolo'])-1; $i=$i+1) {
+            if ($_REQUEST['w_devolucao'][$i]>'') {
               $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_protocolo'][$i],$_REQUEST['w_chave'],$_REQUEST['w_devolucao'][$i]);
             }
           }
 
-          $RS = $sql->getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null);
+          $sql = new db_getPAEmpItem; $RS = $sql->getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null);
           $concluir = true;
           foreach($RS as $row) {
             // Se pelo menos um item não foi devolvido, não encerra a solicitação
-            if (nvl(f($row,'devolucao'),'')=='') $concluir = false;
+            if (nvl(f($row,'devolucao'),'')=='') {
+              $concluir = false;
+              break;
+            }
           }
           if ($concluir) {
             // Se todos os itens foram devolvidos, encerra a solicitação
@@ -2100,16 +2096,16 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'INICIAL':           Inicial(); break;
-  case 'GERAL':             Geral(); break;
-  case 'ITENS':             Itens(); break;
-  case 'ANEXOS':            Anexos(); break;
-  case 'VISUAL':            Visual(); break;
-  case 'EXCLUIR':           Excluir(); break;
+  case 'INICIAL':           Inicial();        break;
+  case 'GERAL':             Geral();          break;
+  case 'ITENS':             Itens();          break;
+  case 'ANEXOS':            Anexos();         break;
+  case 'VISUAL':            Visual();         break;
+  case 'EXCLUIR':           Excluir();        break;
   case 'ENVIO':             Encaminhamento(); break;
-  case 'ANOTACAO':          Anotar(); break;
-  case 'CONCLUIR':          Concluir(); break;
-  case 'GRAVA':             Grava(); break; 
+  case 'ANOTACAO':          Anotar();         break;
+  case 'CONCLUIR':          Concluir();       break;
+  case 'GRAVA':             Grava();          break;
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

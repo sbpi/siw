@@ -887,13 +887,7 @@ function Geral() {
   SaltaCampo();
   FormataDataHora();
   FormataValor();
-  ShowHTML('function closeColorbox() {');
-  ShowHTML('  $.colorbox.close();');
-  ShowHTML('} ');
-  ShowHTML('$(document).ready(function() {');
-  ShowHTML('  $(".exemplo").colorbox({width:"100%", height:"100%", iframe:true, onClosed:function(){ $("form").submit(); }});');
-  ShowHTML('  $("#cancelar").click(function(){parent.closeColorbox()});');
-  ShowHTML('});');
+  openBox('reload');
   ValidateOpen('Validacao');
     if ($O=='I' || $O=='A') {
     if (substr($SG,3)!='CONT') {
@@ -1185,8 +1179,7 @@ function Geral() {
     
       // Beneficiário
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
-      //ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="exemplo" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
-      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
+      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="boxClean SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
       ShowHTML('    <tr><td colspan="3"><table width="100%" border="0" bordercolor="#FFFFFF" bgcolor="#FFFFFF">');
       $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl($w_pessoa,0),null,null,null,null,Nvl($w_tipo_pessoa,0),null,null,null,null,null,null,null,null,null,null,null);
@@ -1301,10 +1294,10 @@ function Geral() {
       // Documentos
       ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
       if (substr($SG,0,3)=='FNR') {
-        if (f($row,'rubrica')=='S') ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
-        else                        ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
+        if (f($row,'rubrica')=='S') ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="box SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
+        else                        ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="box SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
       } else {
-        ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
+        ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="box SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
       }
       ShowHTML('    <tr><td colspan="3"><table width="100%" bgcolor="#FFFFFF">');
       $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
@@ -1852,7 +1845,11 @@ function OutraParte() {
       if ($w_tipo_pessoa==1) ShowHTML('        <tr><td colspan=4><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
       else                   ShowHTML('        <tr><td colspan=4><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
       ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
-      ShowHTML('            <INPUT class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
+      if ($P2==1) {
+        ShowHTML('            <INPUT class="stb" type="button" onClick="parent.$.fancybox.close();" name="Botao" value="Cancelar">');
+      } else {
+        ShowHTML('            <INPUT class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
+      }
       ShowHTML('        <tr><td colspan=4><p>&nbsp</p>');
       ShowHTML('        <tr><td colspan=4 heigth=1 bgcolor="#000000">');
       ShowHTML('        <tr><td colspan=4>');
@@ -2015,7 +2012,11 @@ function OutraParte() {
         // Se não for lançamento para parcela de contrato
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Alterar pessoa" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.submit();">');
       } 
-      ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
+      if ($P2==1) {
+        ShowHTML('            <INPUT type="button" class="stb" onClick="javascript:parent.$.fancybox.close();" name="Botao" value="Cancelar">');
+      } else {
+        ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
+      }
       ShowHTML('          </td>');
       ShowHTML('      </tr>');
       ShowHTML('    </table>');
@@ -2092,8 +2093,8 @@ function Documentos() {
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Documentos</TITLE>');
   Estrutura_CSS($w_cliente);
+  ScriptOpen('JavaScript');
   if (strpos('IAEGCP',$O)!==false) {
-    ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
     SaltaCampo();
@@ -2113,8 +2114,8 @@ function Documentos() {
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
-    ScriptClose();
   } 
+  ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
@@ -2141,7 +2142,7 @@ function Documentos() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
     if (strpos(f($RS_Menu,'sigla'),'VIA')===false) ShowHTML('      <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;'); 
-    ShowHTML('      <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -4384,6 +4385,7 @@ function Grava() {
   $w_tipo       = '';
   $w_nome       = '';
   Cabecalho();
+  head();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
@@ -4478,9 +4480,7 @@ function Grava() {
           $_REQUEST['w_agencia_estrang'],$_REQUEST['w_cidade_estrang'],$_REQUEST['w_informacoes'],$_REQUEST['w_codigo_deposito'],
           $_REQUEST['w_tipo_pessoa_atual'],$_REQUEST['w_conta']);
       ScriptOpen('JavaScript');
-      ShowHTML('  window.close();');
-      ShowHTML('  opener.location.reload();');
-      ShowHTML('  opener.focus();');
+      ShowHTML('  parent.location.reload();');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

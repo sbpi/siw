@@ -68,7 +68,6 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>';
     $l_html.=chr(13).'          <td rowspan=2 width="1%" nowrap><b>Tipo</td>';
     $l_html.=chr(13).'          <td colspan=4><b>Documento original</td>';
-    $l_html.=chr(13).'          <td colspan=3><b>Localização</td>';
     if ($w_sg_tramite=='EE' || $w_sg_tramite=='AT') $l_html.=chr(13).'          <td rowspan=2><b>Devolução</td>';
     $l_html.=chr(13).'        </tr>';
     $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
@@ -76,9 +75,6 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td><b>Nº</td>';
     $l_html.=chr(13).'          <td><b>Data</td>';
     $l_html.=chr(13).'          <td><b>Procedência</td>';
-    $l_html.=chr(13).'          <td><b>Caixa</td>';
-    $l_html.=chr(13).'          <td><b>Pasta</td>';
-    $l_html.=chr(13).'          <td><b>Local</td>';
     $l_html.=chr(13).'        </tr>';
     if (count($RS1)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -97,9 +93,6 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>&nbsp;'.f($row,'numero_original').'</td>';
         $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>';
         $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nm_origem_doc').'</td>';
-        $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nr_caixa').'/'.f($row,'sg_unid_caixa').'</td>';
-        $l_html.=chr(13).'        <td align="center">&nbsp;'.f($row,'pasta').'</td>';
-        $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nm_arquivo_local').'</td>';
         if ($w_sg_tramite=='EE' || $w_sg_tramite=='AT') $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'devolucao'),5).'&nbsp;</td>';
       }
     } 

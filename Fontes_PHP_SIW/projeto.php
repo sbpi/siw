@@ -882,6 +882,7 @@ function Geral() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
+  openBox();
   CheckBranco();
   FormataData();
   SaltaCampo();
@@ -2733,8 +2734,9 @@ function AtualizaEtapa() {
   cabecalho();
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Etapas de projeto</TITLE>');
+  ScriptOpen('JavaScript');
+  openBox();
   if (strpos('IAEP',$O)!==false) {
-    ScriptOpen('JavaScript');
     ShowHTML ('$(document).ready(function() {');
     ShowHTML ('$("input[name=w_perc_conclusao]").blur(function()');
     ShowHTML ('{');
@@ -2822,16 +2824,16 @@ function AtualizaEtapa() {
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
-    ScriptClose();
   }
+  ScriptClose();
   ShowHTML('</HEAD>');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   } elseif ($O=='I' || $O=='A') {
     if ($w_pacote=='N') {
-      BodyOpenClean('onLoad=\'document.Form.w_situacao_atual.focus();\'');
+      BodyOpen('onLoad=\'document.Form.w_situacao_atual.focus();\'');
     } else {
-      BodyOpenClean('onLoad=\'document.Form.w_perc_conclusao.focus();\'');
+      BodyOpen('onLoad=\'document.Form.w_perc_conclusao.focus();\'');
     }
   } else {
     BodyOpenClean('onLoad=\'this.focus();\'');
@@ -2841,22 +2843,16 @@ function AtualizaEtapa() {
     if (nvl($w_ancora, '') != '') {
       ShowHTML('  location.href=\'#' . $w_ancora . '\';');
     }
-    ShowHTML('function closeColorbox() {');
-    ShowHTML('  $.colorbox.close();');
-    ShowHTML('} ');
     ShowHTML('$(document).ready(function() {');
     ShowHTML('  $("tr[id*=\'tr-' . $w_chave . '\']").each(function(index){');
-    ShowHTML('      var	img = $("#" + (this.id).replace("tr","img")); ');
-    ShowHTML('      if($("#" + this.id + "-xp").val() == "true"){');
-	ShowHTML('        img.removeAttr("src"); ');
-	ShowHTML('        img.removeAttr("alt"); ');
-	ShowHTML('        img.attr("src","images/mais.jpg"); ');
-    ShowHTML('        abreFecha((this.id).replace("tr-",""));');
-    ShowHTML('      } ');
+    ShowHTML('    var	img = $("#" + (this.id).replace("tr","img")); ');
+    ShowHTML('    if($("#" + this.id + "-xp").val() == "true"){');
+    ShowHTML('      img.removeAttr("src"); ');
+    ShowHTML('      img.removeAttr("alt"); ');
+    ShowHTML('      img.attr("src","images/mais.jpg"); ');
+    ShowHTML('      abreFecha((this.id).replace("tr-",""));');
+    ShowHTML('    } ');
     ShowHTML('  });');
-    //ShowHTML('  $(".exemplo").colorbox({width:"80%", height:"100%", iframe:true, onClosed:function(){ location.reload(); }});');
-    ShowHTML('  $(".exemplo").colorbox({width:"80%", transition:elastic, height:"80%", iframe:true, onClosed:function(){ $("form").submit(); }});');
-    ShowHTML('  $("#cancelar").click(function(){parent.closeColorbox()});');
     ShowHTML('});');
     ScriptClose();
   }
@@ -3057,7 +3053,7 @@ function AtualizaEtapa() {
       ShowHTML('      <tr><td align="center" colspan=4><hr/>');
       if ($O=='A') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       //ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
-      ShowHTML('            <input class="STB" type="button" id="cancelar" name="Botao" value="Cancelar">');
+      ShowHTML('            <input class="STB" type="button" onClick="parent.$.fancybox.close();" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -4639,12 +4635,12 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
     else       $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
     if (nvl($l_nivel,0)==0) {
-      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td><b>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
+      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
     } else {
-      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td><b>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table></td>';
+      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table></td>';
     }
-    if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap><b>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b></td>';
-    else       $l_html .= chr(13).'        <td><b>'.$l_resp.'</b><td>';
+    if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b></td>';
+    else       $l_html .= chr(13).'        <td>'.$l_resp.'</b><td>';
   } else {
     $l_html .= chr(13).'        <td colspan=3 align="right"><b>Linha resumo </b></td>';
   }
@@ -4690,8 +4686,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
         //if($SG!='PJBETAPA')   $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'EtapaRecurso&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_menu='.$w_menu.'&w_sg='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Recursos&SG='.$SG.'" title="Recursos da etapa">Rec</A>&nbsp';
         // Caso contrário, é listagem de atualização de etapas. Neste caso, coloca apenas a opção de alteração
       } else {
-        $l_html .= chr(13).'          <A class="exemplo" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_ancora='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
-        //$l_html .= chr(13).'          <A class="exemplo" href="http://www.google.com.br/" title="Atualiza dados da etapa">Atualizar</A>&nbsp';
+        $l_html .= chr(13).'          <a class="box HL" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_ancora='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da etapa">Atualizar</a>&nbsp';
         $l_html .= chr(13).'          <A class="HL" HREF="'.$w_pagina.'AnexosEtapas&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_etapa='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Arquivos'.'&SG=PJETAPAARQ" title="Arquivos">Arquivos</A>&nbsp';
       } 
     } else {
@@ -4778,8 +4773,8 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   } else {
     $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td><b>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
   }
-  if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap><b>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
-  else       $l_html .= chr(13).'        <td><b>'.$l_resp.'</b>';
+  if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
+  else       $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_inicio,5).'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_fim,5).'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
@@ -5320,8 +5315,9 @@ function Grava() {
   $w_tipo       ='';
   $w_nome       ='';
   cabecalho();
+  head();
   ShowHTML('</HEAD>');
-  BodyOpenClean('onLoad=this.focus();');
+  BodyOpenClean('onLoad=\'this.focus()\';');
   if($SG=='PJGERAL' || $SG=='PJBGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -5571,25 +5567,26 @@ function Grava() {
    } 
   } elseif($SG=='PJCAD' || $SG=='PJCADBOLSA') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      $SQL = new dml_putAtualizaEtapa; $SQL->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$w_usuario,
-          $_REQUEST['w_perc_conclusao'],$_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],
-          $_REQUEST['w_situacao_atual'],$_REQUEST['w_exequivel'],null,null);
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
+      $SQL = new dml_putAtualizaEtapa;
+      $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $w_usuario,
+              $_REQUEST['w_perc_conclusao'], $_REQUEST['w_inicio_real'], $_REQUEST['w_fim_real'],
+              $_REQUEST['w_situacao_atual'], $_REQUEST['w_exequivel'], null, null);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
       //ShowHTML('  parent.location.href=\''.$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       if($_REQUEST['w_chave_aux']) {
-        ShowHTML('    parent.Form.w_ancora.value =' . $_REQUEST['w_chave_aux'] . ';');
+        ShowHTML('    $("#w_ancora", window.parent.document).val("'.$_REQUEST['w_chave_aux'].'");');
       }
-      ShowHTML('parent.closeColorbox();');
-      
+      ShowHTML('  parent.$("form").submit();');
+      ShowHTML('  parent.closeBox();');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
       ScriptClose();
       retornaFormulario('w_assinatura');
-    } 
+    }
   } elseif($SG=='PJRECURSO') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {

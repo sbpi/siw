@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização dos dados do documento
 // -------------------------------------------------------------------------
-function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
+function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
   extract($GLOBALS);
   
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
@@ -11,7 +11,11 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
   $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,'PASTA');
   $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
   
-  if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';
+  if ($l_formato!='WORD') {
+    $l_html = BodyOpenMail(null);
+  } else {
+    $l_html = BodyOpenWord(null);
+  }
   $w_linha = 99;
   $w_pag   = 1;
   $w_pasta = '';
@@ -25,7 +29,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
         $l_html.=chr(13).'</table>';
         $l_html.=chr(13).'<br style="page-break-after:always">';
       }
-      $l_html.=chr(13).'<table width="95%" border="0" cellspacing="3">';
+      $l_html.=chr(13).'<center><table width="97%" border="0" cellspacing="3">';
       if ($l_formato=='WORD' || $w_pag==1) {
         $l_html.=chr(13).'<tr><td colspan="2">';
         $l_html.=chr(13).'  <table width="100%" border=0>';
@@ -104,7 +108,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
     $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
   }
   $l_html.=chr(13).'  </table>';
-  $l_html.=chr(13).'</table>';
+  $l_html.=chr(13).'</table></center>';
   return $l_html;
 }
 ?>

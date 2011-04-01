@@ -682,6 +682,37 @@ function FormataDataMA() {
   print "} "."\r\n";
 }
 
+// Abre box modal
+function openBox($action=null,$width="80%",$height="95%",$autoScale="true",$autoDimensions="true",$centerOnScroll="true",$type="iframe") {
+  print '  $(document).ready(function() {'."\r\n";
+  print '    $(".cancelar").click(function(){'."\r\n";
+  print '      closeBox()'."\r\n";
+  print '    });'."\r\n";
+  print '    $(".boxClean").fancybox({'."\r\n";
+  print '      "width"           : "'.$width.'",'."\r\n";
+  print '      "height"          : "'.$height.'",'."\r\n";
+  print '      "autoScale"       : '.$autoScale.','."\r\n";
+  print '      "autoDimensions"  : '.$autoDimensions.','."\r\n";
+  print '      "centerOnScroll"  : '.$centerOnScroll.','."\r\n";
+  print '      "type"            : "'.$type.'"'."\r\n";
+  print '    });'."\r\n";
+  print '    $(".box").fancybox({'."\r\n";
+  print '      "width"           : "'.$width.'",'."\r\n";
+  print '      "height"          : "'.$height.'",'."\r\n";
+  print '      "autoScale"       : '.$autoScale.','."\r\n";
+  print '      "autoDimensions"  : '.$autoDimensions.','."\r\n";
+  print '      "centerOnScroll"  : '.$centerOnScroll.','."\r\n";
+  print '      "type"            : "'.$type.'"'."\r\n";
+  if (lower($action)=='submit')     print '    , "onClosed"        : function() { $("form").submit(); }'."\r\n";
+  if (lower($action)=='reload')     print '    , "onClosed"        : function() { document.location.reload(true); }'."\r\n";
+  print '    });'."\r\n";
+  print '  });'."\r\n";
+
+  print '  function closeBox() {'."\r\n";
+  print '    parent.$.fancybox.close();'."\r\n";
+  print '  }'."\r\n";
+}
+
 // Abre a tag SCRIPT
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
   extract($GLOBALS);
