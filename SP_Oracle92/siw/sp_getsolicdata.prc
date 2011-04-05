@@ -4,10 +4,16 @@ create or replace procedure SP_GetSolicData
     p_result    out sys_refcursor
    ) is
    w_menu siw_menu.sq_menu%type := 0;
+   w_reg number(18);
 begin
    If p_chave is not null Then
       -- Recupera o menu ao qual a solicitação está ligada   
-      select sq_menu into w_menu from siw_solicitacao where sq_siw_solicitacao = p_chave;
+      select count(*) into w_reg from siw_solicitacao where sq_siw_solicitacao = p_chave;
+      If w_reg > 0 Then
+        select sq_menu into w_menu from siw_solicitacao where sq_siw_solicitacao = p_chave;      
+      Else
+        w_menu := 0;
+      End If;
   End If;
    
    If p_restricao is null Then
