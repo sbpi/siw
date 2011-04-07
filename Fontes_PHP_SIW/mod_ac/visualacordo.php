@@ -755,12 +755,15 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Aditivo</b></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
       $l_html.=chr(13).'            <td colspan=3 bgColor="'.$conTrBgColor.'"><b>Valores</b></td>';
+      $l_html.=chr(13).'            <td colspan=2 bgColor="'.$conTrBgColor.'"><b>Saldos</b></td>';
       $l_html.=chr(13).'            <td colspan=2 bgColor="'.$conTrBgColor.'"><b>%</b></td>';
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Previsto</b></td>';
-      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Liquidado</b></td>';
-      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Pago</b></td>';
+      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Previsto (1)</b></td>';
+      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Liquidado (2)</b></td>';
+      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Pago (3)</b></td>';
+      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>A liquidar (1)-(2)</b></td>';
+      $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>A pagar (2)-(3)</b></td>';
       $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Liquidado</b></td>';
       $l_html.=chr(13).'            <td bgColor="'.$conTrBgColor.'"><b>Pago</b></td>';
       $l_html.=chr(13).'          </tr>';
@@ -784,6 +787,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_previsto')).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_liquidado')).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_pago')).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_previsto')-f($row,'valor_liquidado')).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_liquidado')-f($row,'valor_pago')).'</td>';
         if (f($row,'valor_previsto')!=0) {
           $l_html.=chr(13).'        <td align="center">'.formatNumber(f($row,'valor_liquidado')/f($row,'valor_previsto')*100,2).'</td>';
           $l_html.=chr(13).'        <td align="center">'.formatNumber(f($row,'valor_pago')/f($row,'valor_previsto')*100,2).'</td>';
@@ -803,6 +808,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_i).'</b></td>';
         $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_e).'</b></td>';
         $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_r).'</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_i-$w_total_e).'</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_e-$w_total_r).'</b></td>';
         if ($w_total_i!=0) {
           $l_html.=chr(13).'        <td align="center"><b>'.formatNumber($w_total_e/$w_total_i*100,2).'</td>';
           $l_html.=chr(13).'        <td align="center"><b>'.formatNumber($w_total_r/$w_total_i*100,2).'</td>';

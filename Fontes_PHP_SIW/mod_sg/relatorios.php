@@ -617,7 +617,7 @@ function TelaUsuarioRel() {
   //Tramites
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>TRÂMITES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   $sql = new db_getTramiteUser; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_pessoa,'ACESSO',null,null,null);
-  $RS1 = SortArray($RS1,'nm_modulo','asc','nm_servico','asc','nm_tramite','asc');
+  $RS1 = SortArray($RS1,'nm_modulo','asc','nm_servico','asc','or_tramite','asc');
   ShowHTML('      <tr><td colspan="2">');
   ShowHTML('        <table border="1" bordercolor="#00000">');
   ShowHTML('          <tr align="center">');
@@ -637,7 +637,7 @@ function TelaUsuarioRel() {
          ShowHTML('        <td rowspan="'.f($row1,'qtd_servico').'">'.f($row1,'nm_modulo').'</b></td>');        
       if($w_menu_atual==0 || $w_menu_atual <> f($row1,'sq_menu'))
          ShowHTML('        <td rowspan="'.f($row1,'qtd_tramite').'">'.f($row1,'nm_servico').'</b></td>');        
-      ShowHTML('        <td>'.f($row1,'nm_tramite').'</td>');
+      ShowHTML('        <td>'.f($row1,'or_tramite').' - '.f($row1,'nm_tramite').'</td>');
       ShowHTML('      </tr>');
       $w_modulo_atual = f($row1,'sq_modulo');
       $w_menu_atual   = f($row1,'sq_menu');

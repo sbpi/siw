@@ -201,6 +201,7 @@ begin
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m3.codigo_interno as cd_acordo, m.objeto as obj_acordo,
+                case when m4.qtd is null then 'S' else 'N' end as usuario_logado, -- Se igual a S, somente o usuário logado participou da tramitação 
                 m1.ordem as or_parcela,
                 m2.qtd_nota,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
@@ -243,6 +244,18 @@ begin
                                             where w.sq_pessoa = p_pessoa
                                            group by y.sq_siw_solicitacao
                                           )                    j  on (d.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                      left           join (select y.sq_siw_solicitacao, count(z1.sq_siw_solic_log) as qtd
+                                             from co_pessoa                      w
+                                                  inner     join siw_menu        x on (w.sq_pessoa_pai      = x.sq_pessoa and 
+                                                                                       x.sq_menu            = coalesce(p_menu,x.sq_menu))
+                                                    inner   join siw_solicitacao y on (x.sq_menu            = y.sq_menu)
+                                                      inner join fn_lancamento   z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                                      inner join siw_solic_log  z1 on (y.sq_siw_solicitacao = z1.sq_siw_solicitacao and
+                                                                                       z1.sq_pessoa         <> p_pessoa
+                                                                                      )
+                                            where w.sq_pessoa = p_pessoa
+                                           group by y.sq_siw_solicitacao
+                                          )                    m4  on (d.sq_siw_solicitacao      = m4.sq_siw_solicitacao)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
                                                                       a3.tipo_respons            = 'T'           and
                                                                       a3.fim                     is null
@@ -301,7 +314,7 @@ begin
                       left           join ac_acordo_parcela    m1 on (d.sq_acordo_parcela        = m1.sq_acordo_parcela and
                                                                       d.sq_acordo_parcela        is not null
                                                                      )
-                        left         join (select count(y.sq_acordo_nota) as qtd_nota, y.sq_acordo_parcela
+                        left         join (select y.sq_acordo_parcela, count(y.sq_acordo_nota) as qtd_nota
                                              from ac_parcela_nota y
                                             group by y.sq_acordo_parcela
                                           )                    m2 on (m1.sq_acordo_parcela       = m2.sq_acordo_parcela)

@@ -76,7 +76,7 @@ begin
       open p_result for
           select a.sq_modulo, a.nome as nm_modulo,
                  b.sq_menu,   b.nome as nm_servico,
-                 c.sq_siw_tramite, c.nome as nm_tramite,
+                 c.sq_siw_tramite, c.ordem as or_tramite, c.nome as nm_tramite,
                  d.sq_pessoa, d.sq_pessoa_endereco,
                  e.qtd_servico,
                  f.qtd_tramite

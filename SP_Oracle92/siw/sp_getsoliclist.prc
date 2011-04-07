@@ -1966,8 +1966,10 @@ begin
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente)
-                inner join siw_solic_vinculo a3 on (a3.sq_menu           = a2.servico_cliente)
-                inner join siw_solicitacao   b  on (a3.sq_siw_solicitacao= b.sq_siw_solicitacao)
+                inner join siw_solic_vinculo a3 on (a2.servico_cliente   = a3.sq_menu)
+                inner join siw_solicitacao   b  on (a3.sq_siw_solicitacao= b.sq_siw_solicitacao and
+                                                    a2.sq_siw_tramite    = b.sq_siw_tramite
+                                                   )
                 inner   join siw_menu        b2 on (b.sq_menu            = b2.sq_menu)
                   inner join siw_modulo      b3 on (b2.sq_modulo         = b3.sq_modulo)
                 left    join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)

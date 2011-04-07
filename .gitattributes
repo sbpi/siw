@@ -822,7 +822,6 @@ Fontes_PHP_SIW/classes/sp/db_getCivStateList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCnpjCpf.php -text
 Fontes_PHP_SIW/classes/sp/db_getCodigo.php -text
 Fontes_PHP_SIW/classes/sp/db_getColuna.php -text
-Fontes_PHP_SIW/classes/sp/db_getColunaColuna[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/db_getColunaColuna.php -text
 Fontes_PHP_SIW/classes/sp/db_getCompanyData.php -text
 Fontes_PHP_SIW/classes/sp/db_getContaBancoData.php -text
@@ -1000,7 +999,6 @@ Fontes_PHP_SIW/classes/sp/db_getRelacionamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getRestricaoEtapa.php -text
 Fontes_PHP_SIW/classes/sp/db_getRestricao_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSF.php -text
-Fontes_PHP_SIW/classes/sp/db_getSIWArquivo[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/db_getSPParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getSPSP.php -text
 Fontes_PHP_SIW/classes/sp/db_getSPTabs.php -text
@@ -1084,7 +1082,6 @@ Fontes_PHP_SIW/classes/sp/db_getTipoTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getTramiteData.php -text
 Fontes_PHP_SIW/classes/sp/db_getTramiteList.php -text
-Fontes_PHP_SIW/classes/sp/db_getTramiteResp[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/db_getTramiteResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getTramiteSolic.php -text
 Fontes_PHP_SIW/classes/sp/db_getTramiteUser.php -text
@@ -1171,12 +1168,9 @@ Fontes_PHP_SIW/classes/sp/dml_putAcordoFornecimento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNota.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNotaCancel.php -text
-Fontes_PHP_SIW/classes/sp/dml_putAcordoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoParc.php -text
-Fontes_PHP_SIW/classes/sp/dml_putAcordoPreposto[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoPreposto.php -text
-Fontes_PHP_SIW/classes/sp/dml_putAcordoRep[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoRep.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoTermo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAfastamento.php -text
@@ -1310,7 +1304,6 @@ Fontes_PHP_SIW/classes/sp/dml_putLCSituacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoDoc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoItem.php -text
-Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoRubrica.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
@@ -1359,7 +1352,6 @@ Fontes_PHP_SIW/classes/sp/dml_putPessoa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlanoEstrategico.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlano_Menu.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPrestacaoContas.php -text
-Fontes_PHP_SIW/classes/sp/dml_putProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgQualitativa_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgramaConc.php -text
@@ -1384,7 +1376,6 @@ Fontes_PHP_SIW/classes/sp/dml_putRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRecurso_Disp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRecurso_Indisp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRecurso_Menu.php -text
-Fontes_PHP_SIW/classes/sp/dml_putRelacionamento[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putRelacionamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRenumeraProtocolo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRespAcao.php -text
@@ -1428,7 +1419,6 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicRelAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRestricao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolic_Vinculo.php -text
-Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTCentral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTClassificacao.php -text
@@ -1459,7 +1449,6 @@ Fontes_PHP_SIW/classes/sp/dml_putTipoSP.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoTabela.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTrigEvento.php -text
-Fontes_PHP_SIW/classes/sp/dml_putTrigger[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidadeMedida.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidade_CL.php -text

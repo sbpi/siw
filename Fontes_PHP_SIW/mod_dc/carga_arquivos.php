@@ -16,6 +16,7 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getArquivo.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuList.php');
+include_once($w_dir_volta.'classes/sp/db_exec.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putArquivo.php');
 include_once($w_dir_volta.'funcoes/selecaoSistema.php');
@@ -161,7 +162,7 @@ function Inicial() {
     Validate('w_raiz','Diretório raiz','1','1','4','80','1','1');
     ShowHTML('  theForm.Botao.disabled=true;');
   } else {
-    ShowHTML('  if ((!theForm.w_opcao[0].checked) && (!theForm.w_opcao[1].checked) && (!theForm.w_opcao[2].checked)) { ');
+    ShowHTML('  if ((!theForm.w_opcao[0].checked) && (!theForm.w_opcao[1].checked) && (!theForm.w_opcao[2].checked) && (!theForm.w_opcao[3].checked) && (!theForm.w_opcao[4].checked) && (!theForm.w_opcao[5].checked)) { ');
     ShowHTML('     alert(\'Você deve indicar um dos parâmetros de execução!\'); ');
     ShowHTML('     return false; ');
     ShowHTML('  }');
@@ -241,6 +242,9 @@ function Inicial() {
       ShowHTML('      <tr><td>');
       SelecaoSistema('Vincular ao <u>s</u>istema:','S','Indique apenas se desejar atualizar as informaçoes do banco',null,$w_cliente,'w_sq_sistema',null,null);
       ShowHTML('      <tr><td><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="nomes" ><td>Identificar inclusão de arquivos inexistentes (opção válida apenas para arquivos PHP)');
+      ShowHTML('      <tr><td><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="sintaxephp" ><td>Verificar arquivos PHP com erro de sintaxe (opção válida apenas para arquivos PHP)');
+      ShowHTML('      <tr><td><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="sp" ><td>Verificar existência de stored procedure chamada pelo arquivo (opção válida apenas para arquivos PHP)');
+      ShowHTML('      <tr><td><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="removearquivosp" ><td>Remover arquivo com chamada a stored procedure inexistente (opção válida apenas para arquivos PHP)');
       ShowHTML('      <tr><td colspan="2"><b>Aplicar busca a arquivos com a extensão:</b> (informe as extensões com letras maiúsculas e separe-as com vírgulas)<br><INPUT TYPE="text" class="STI" NAME="w_extensao" VALUE="'.nvl($w_extensao,'PHP, INC').'" SIZE="80" MaxLength="80">');
 
       ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -453,6 +457,7 @@ function Grava() {
           }
           ShowHTML('</DL>');
         } else {
+          $total = 0;
           // Para cada diretório indicado, verifica e trata os arquivos
           for ($i=0; $i<=count($_REQUEST['w_dir'])-1; $i += 1)   {
             // Informa o diretório em execução
@@ -463,11 +468,18 @@ function Grava() {
                 array_walk_recursive($lista,'flatArray',&$base);
               }
               ShowHTML('<b>Processando a lista de diretórios selecionados</b>');
+              if ($w_opcao!='nomes') ShowHTML('<form name="Form"><b>Arquivos Processados:</b><INPUT TYPE=TEXT name="contador" VALUE="" style="text-align=right; border=0; background-color='.$conBodyBgColor.'" SIZE=3>/<INPUT TYPE=TEXT name="total" VALUE="" style="border=0; background-color='.$conBodyBgColor.'" SIZE=3></form>');
               ShowHTML('<DL>');
             }
             ShowHTML('<DT><b>'.$_REQUEST['w_dir'][$i].'</b>');
             // Recupera a lista de arquivos do diretório
             $arquivos = retrieveTree($_REQUEST['w_dir'][$i]);
+            if ($w_opcao!='nomes') {
+              $total+=count($arquivos);
+              ScriptOpen('JavaScript');
+              ShowHTML('document.Form.total.value="'.$total.'"');
+              ScriptClose();
+            }
             $sql = new db_getArquivo;
             $SQL = new dml_putArquivo; 
             foreach($arquivos as $k => $v) {
@@ -476,9 +488,30 @@ function Grava() {
                 if ($w_opcao=='atualiza') { $cont += 1; ShowHTML('<DD>'.$cont.' - '.basename($v)); }
                 $arquivo = $v;
                 $file = analisa_arquivo($arquivo, $w_opcao, $base);
-
-                // Se foi indicada a atualização do banco de dados, verifica se o arquivo já existe e grava.
-                if ($w_opcao=='atualiza' && strlen($file['nome'])<=40) {
+                if (($w_opcao=='sp' || $w_opcao=='removearquivosp') && $file['tipo']===false) {
+                  $cont += 1;
+                  echo '<DD><b>'.$cont.' - '.basename($arquivo);
+                  if ($w_opcao=='removearquivosp') {
+                    unlink($arquivo);
+                    echo ' REMOVIDO';
+                  }
+                  ShowHTML('</b>');
+                  ShowHTML('<DD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;===> ['.$file['descricao'].'] ');
+                  ScriptOpen('JavaScript');
+                  ShowHTML('document.Form.contador.value="'.$cont.'"');
+                  ScriptClose();
+                } elseif ($w_opcao=='sintaxephp') {
+                  $cont += 1;
+                  if ($file['tipo']===false) {
+                    ShowHTML('<DD><b>'.$cont.' - '.basename($arquivo).'</b>');
+                    ShowHTML('<DD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;===> ['.$file['descricao'].'] ');
+                  } else {
+                    ScriptOpen('JavaScript');
+                    ShowHTML('document.Form.contador.value="'.$cont.'"');
+                    ScriptClose();
+                  }
+                } elseif ($w_opcao=='atualiza' && strlen($file['nome'])<=40) {
+                  // Se foi indicada a atualização do banco de dados, verifica se o arquivo já existe e grava.
                   $w_diretorio  = nvl((substr(strrev($file['diretorio']),0,1)=='/') ? substr($file['diretorio'],0,-1) : $file['diretorio'],'/');
                   $RS = $sql->getInstanceOf($dbms,$w_cliente,'existe',null,$_REQUEST['w_sq_sistema'],$file['nome'],$w_diretorio,null);
                   if (!count($RS)) {
@@ -537,7 +570,8 @@ function retrieveTree($l_raiz, $recursive = false) {
         } 
     } 
     closedir($dir); 
-  } 
+  }
+  if (!$recursive && is_array($l_array)) sort($l_array);
   return (isset($l_array) ? $l_array : false); 
 }
 
@@ -553,6 +587,7 @@ function flatArray($item, $key, $base) {
 // Analisa o código fonte do arquivo informado
 // -------------------------------------------------------------------------
 function analisa_arquivo($arquivo, $opcao, &$lista) {
+  extract($GLOBALS);
   global $w_raiz;
   $l_array['nome']      = basename($arquivo);
   $l_diretorio          = str_replace($w_raiz,'',str_replace(basename($arquivo),'',$arquivo));
@@ -560,6 +595,23 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
   $l_array['diretorio'] = $l_diretorio;
   $l_array['tipo']      = null;
   $l_array['descricao'] = null;
+
+  if ($opcao=='sintaxephp') {
+    // Se verificação de sintaxe PHP, não precisa executar toda a função. Apenas executa PHP -L e retorna o resultado se houver erro.
+    $comando = 'php -l '.$arquivo;
+    $l_error_reporting = error_reporting(); error_reporting(0);
+    $result = shell_exec($comando);
+    error_reporting($l_error_reporting);
+    $l_array['tipo']      = true;
+    if(!$result) {
+      echo("Erro na execução de: [".$comando."]");
+      exit();
+    } elseif (substr($result,0,25)!='No syntax errors detected') {
+      $l_array['tipo']      = false;
+      $l_array['descricao'] = $result;
+    }
+    return $l_array;
+  }
 
   $w_origem = fopen($arquivo, 'r');
     
@@ -604,9 +656,9 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
             $arq_inclusao = str_replace('../','',substr($arq_inclusao,0,strpos($arq_inclusao,'\'')));
           }
           if (nvl($arq_inclusao,'') > '') {
-            if (!array_key_exists($arq_inclusao,$lista) && !array_key_exists($l_diretorio.$arq_inclusao,$lista)) {
-              if ($opcao=='atualiza' && $print) { $cont += 1; $print = false; ShowHTML('<DD><b>'.$cont.' - '.basename($arquivo).'</b>'); }
-              ShowHTML('<DD>===> [linha '.$i.', inclusão de arquivo inexistente ('.$arq_inclusao.')] ');
+            if (!file_exists($w_raiz.$arq_inclusao)) {
+              if ($print) { $cont += 1; $print = false; ShowHTML('<DD><b>'.basename($arquivo).'</b>'); }
+              ShowHTML('<DD>===> [linha '.$i.': inclusão de arquivo inexistente ('.$w_raiz.$arq_inclusao.')] ');
             }
           }
         } elseif 
@@ -647,10 +699,36 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
             $arq_inclusao = str_replace('../','',strrev(substr($arq_inclusao,0,strpos($arq_inclusao,'\''))));
           }
           if (nvl($arq_inclusao,'') > '') {
-            if (!array_key_exists($arq_inclusao,$lista) && !array_key_exists($l_diretorio.$arq_inclusao,$lista)) {
+            if (!file_exists($w_raiz.$arq_inclusao)) {
               if ($print) { $print = false; ShowHTML('<DD><b>'.basename($arquivo).'</b>'); }
-              ShowHTML('<DD>===> [linha '.$i.', referência a arquivo inexistente ('.$arq_inclusao.')] ');
+              ShowHTML('<DD>===> [linha '.$i.', referência a arquivo inexistente ('.$w_raiz.$arq_inclusao.')]</b> ');
             }
+          }
+        }
+      } elseif ($opcao=='sp' || $opcao=='removearquivosp') {
+        // Verifica se há chamada para stored procedure
+        if (strpos(lower($buffer),'$sql=')!==false && strpos(lower($buffer),'sys.')===false) {
+          // Recupera a stored procedure que está sendo chamada
+          $sp = upper(substr($buffer,strpos($buffer,'$sql')));
+          if (strpos($sp,'FUNCTION')!==false) {
+            $sp = substr($sp,strpos($sp,'FUNCTION')+8);
+            $sp = substr($sp,strpos($sp,'\'')+1);
+          }
+          $sp = substr($sp,strpos($sp,'\'')+1);
+          $sp = substr($sp,0,strpos($sp,'\''));
+
+          if (nvl($sp,'') > '') {
+            $comando = 'select count(*) qtd from all_objects where owner = \'SIWGP\' and object_name = \''.$sp.'\'';
+            $sql = new db_exec; $RS = $sql->getInstanceOf($dbms, $comando, &$numRows);
+            $existe = false;
+            foreach($RS as $row) {
+               foreach ($row as $key => $val) {
+                 if (nvl($val,0)>0) $existe = true;
+               }
+            };
+
+            $l_array['tipo']      = $existe;
+            $l_array['descricao'] = 'linha '.$i.', chamada de stored procedure inexistente ('.$sp.')';
           }
         }
       } elseif ($opcao=='atualiza') {

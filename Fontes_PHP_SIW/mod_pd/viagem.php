@@ -186,6 +186,9 @@ $w_usuario = RetornaUsuario();
 $w_menu = RetornaMenu($w_cliente, $SG);
 $w_ano = RetornaAno();
 
+//Garante que o usuário logado não foi alterado por abertura da aplicação em outra janela do navegador
+if ($w_usuario!=$_SESSION['SQ_PESSOA']) EncerraSessao();
+
 $w_copia = $_REQUEST['w_copia'];
 $p_projeto = upper($_REQUEST['p_projeto']);
 $p_atividade = upper($_REQUEST['p_atividade']);

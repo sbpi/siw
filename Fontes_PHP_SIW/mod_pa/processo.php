@@ -243,7 +243,7 @@ function Inicial() {
     Validate('p_unid_posse', 'Unidade de posse', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     //Validate('p_sq_acao_ppa', 'Código do assunto', 'HIDDEN', '', '1', '10', '1', '1');
-    Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
+    Validate('p_assunto', 'Detalhamento do assunto', '', '', '4', '90', '1', '1');
     Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Término', 'DATA', '', '10', '10', '', '0123456789/');
@@ -1108,7 +1108,7 @@ function Juntar() {
     Validate('p_unid_posse', 'Unidade de posse', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
-    Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
+    Validate('p_assunto', 'Detalhamento do assunto', '', '', '4', '90', '1', '1');
     Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Término', 'DATA', '', '10', '10', '', '0123456789/');
@@ -1717,7 +1717,7 @@ function ArqSetorial() {
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     Validate('p_unid_posse', 'Unidade de posse', 'SELECT', '1', '1', '18', '', '1');
     //Validate('p_sq_acao_ppa', 'Código do assunto', 'HIDDEN', '', '1', '10', '1', '1');
-    Validate('p_assunto', 'Detalhamento do assunto', '', '', '2', '90', '1', '1');
+    Validate('p_assunto', 'Detalhamento do assunto', '', '', '4', '90', '1', '1');
     Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Término', 'DATA', '', '10', '10', '', '0123456789/');

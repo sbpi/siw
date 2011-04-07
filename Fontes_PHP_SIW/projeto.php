@@ -882,7 +882,6 @@ function Geral() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
-  openBox();
   CheckBranco();
   FormataData();
   SaltaCampo();
@@ -5736,7 +5735,7 @@ function Grava() {
             $w_tipo    = $Field['type'];
             $w_nome    = $Field['name'];
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-          } else {
+          } elseif (nvl($Field['name'], '') != '') {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
             ScriptClose();
@@ -5813,7 +5812,7 @@ function Grava() {
             $w_tipo    = $Field['type'];
             $w_nome    = $Field['name'];
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-          }else{
+          } elseif (nvl($Field['name'], '') != '') {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
             ScriptClose();
@@ -5864,6 +5863,7 @@ function Grava() {
               retornaFormulario('w_observacao');
               exit();
             }
+
             if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
@@ -5882,7 +5882,7 @@ function Grava() {
               $w_tipo    = $Field['type'];
               $w_nome    = $Field['name'];
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-            }else{
+            } elseif (nvl($Field['name'], '') != '') {
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
                 ScriptClose();
