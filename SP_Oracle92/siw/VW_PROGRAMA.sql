@@ -27,7 +27,6 @@ SELECT s.sq_siw_solicitacao,
                    AND mm.nome = 'Projetos'
                 CONNECT BY PRIOR sol.sq_siw_solicitacao = sol.sq_solic_pai
                  START WITH sol.sq_siw_solicitacao = s.sq_siw_solicitacao)) as valor_orcado,
-
        pl.sq_plano as id_plano_estrategico,
        pl.titulo as plano_estrategico,
        un.sq_unidade as id_unidade_responsavel,

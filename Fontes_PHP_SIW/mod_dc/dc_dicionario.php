@@ -2635,6 +2635,7 @@ function SPParam() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
+  head();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen('onLoad=this.focus();');

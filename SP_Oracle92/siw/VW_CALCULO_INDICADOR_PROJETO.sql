@@ -47,9 +47,7 @@ where sq_etapa_pai in (
            from dual
 
          ),0) as igc
-
   FROM siw_solicitacao s, siw_menu m, siw_tramite t, co_pessoa p
-
  WHERE s.sq_menu = m.sq_menu
    AND s.sq_siw_tramite = t.sq_siw_tramite
    AND t.sigla = 'EE'

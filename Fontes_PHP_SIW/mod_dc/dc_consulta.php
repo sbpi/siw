@@ -121,7 +121,9 @@ function Usuario() {
     $sql = new db_getUsuario; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_usuario,$w_chave);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -252,7 +254,9 @@ function Tabela() {
     $sql = new db_getTabela; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_chave,$w_sq_usuario,null,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nome','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -337,7 +341,6 @@ function Tabela() {
     ShowHTML('  </table></td></tr>');
     $sql = new db_getRelacionamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_sq_tabela,$w_chave,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
-    Cabecalho();
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML('<tr><td><B>Relacionamentos ('.count($RS).')</B></td>');
@@ -379,7 +382,6 @@ function Tabela() {
     $w_cor='';
     $sql = new db_getSPTabs; $RS = $sql->getInstanceOf($dbms,null,$w_sq_tabela);
     $RS = SortArray($RS,'nm_sp_tipo','asc','nm_usuario','asc','nome','asc');
-    Cabecalho();
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML('<tr><td><B>Stored Procedures ('.count($RS).')</B></td>');
@@ -409,7 +411,6 @@ function Tabela() {
     ShowHTML('</table>');
     $sql = new db_getProcTabela; $RS = $sql->getInstanceOf($dbms,null,$w_sq_tabela);
     $RS = SortArray($RS,'chave','asc');
-    Cabecalho();
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML('<tr><td><B>Procedures ('.count($RS).')</B></td>');
@@ -455,7 +456,9 @@ function Trigger() {
     $sql = new db_getTrigger; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_trigger,$w_sq_tabela,$w_sq_usuario,$w_chave);
     $RS = SortArray($RS,'nm_usuario','asc','nm_trigger','asc','nm_tabela','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -508,7 +511,9 @@ function StoredProcedure() {
     $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,$w_sq_usuario,$w_chave,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_sp_tipo','asc','nm_sp','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -551,6 +556,7 @@ function StoredProcedure() {
   } elseif ($O=='NIVEL2') {
     $sql = new db_getStoredProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_sp,null,null,$w_sq_usuario,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
+    cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
@@ -724,7 +730,10 @@ function Indice() {
   if ($O=='L') {
     $sql = new db_getIndice; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_indice,null,$w_sq_usuario,$w_chave,null,$w_sq_tabela);
     $RS = SortArray($RS,'nm_indice','asc','nm_usuario','asc','nm_tabela','asc');
+    Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -784,7 +793,9 @@ function Coluna() {
     $sql = new db_getColuna; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_coluna','asc','nm_tabela','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -912,7 +923,9 @@ function Arquivo() {
     $sql = new db_getArquivo; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -1032,7 +1045,9 @@ function Procedure() {
     $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -1105,7 +1120,6 @@ function Procedure() {
     $w_cor='';
     $sql = new db_getProcSP; $RS = $sql->getInstanceOf($dbms,$w_sq_procedure,null);
     $RS = SortArray($RS,'chave','asc');
-    Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
@@ -1134,7 +1148,6 @@ function Procedure() {
     $w_cor='';
     $sql = new db_getProcTabs; $RS = $sql->getInstanceOf($dbms,$w_sq_procedure,null);
     $RS = SortArray($RS,'chave','asc');
-    Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
@@ -1163,8 +1176,6 @@ function Procedure() {
     $w_cor='';
     $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
-    Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
     ShowHTML('<td><B>Arquivos</B></td>');
@@ -1238,8 +1249,6 @@ function Relacionamento() {
     $w_cor='';
     $sql = new db_getRelacCols; $RS = $sql->getInstanceOf($dbms,$w_sq_relacionamento,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
-    Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
     ShowHTML('<td><B>Relacionamentos</B></td>');
@@ -1508,7 +1517,9 @@ function Main() {
     case 'PROCEDURE':       Procedure();        break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      head();
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('</head>');
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
