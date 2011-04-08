@@ -899,7 +899,7 @@ function Geral() {
     Validate('w_assunto','Detalhamento','1',1,5,2000,'1','1');
     Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade','Setor solicitante','HIDDEN',1,1,18,'','0123456789');
-    Validate('w_sq_demanda_tipo','Tipo da demana','SELECT',1,1,18,'','0123456789');
+    Validate('w_sq_demanda_tipo','Tipo da demanda','SELECT',1,1,18,'','0123456789');
     if ($w_reuniao=='N') {
       Validate('w_recebimento','Data da solicitação','DATA',1,10,10,'','0123456789/');       
       Validate('w_limite_conclusao','Limite previsto para conclusão','DATA',1,10,10,'','0123456789/');
@@ -1296,7 +1296,7 @@ function Informar() {
   }
   Validate('w_responsavel','Responsável','HIDDEN',1,1,18,'','0123456789');
   Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
-  Validate('w_sq_demanda_tipo','Tipo da demana','SELECT',1,1,18,'','0123456789');
+  Validate('w_sq_demanda_tipo','Tipo da demanda','SELECT',1,1,18,'','0123456789');
   Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
   Validate('w_palavra_chave','Palavras-chave','','',2,90,'1','1');
   ValidateClose();
