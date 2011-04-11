@@ -226,6 +226,22 @@ begin
    If w_existe > 0 Then Result := 1; End If;
  End If;
  
+ -- Verifica se o usuário é gestor do módulo financeiro e, 
+ -- se a solicitacao for do módulo de contratos, projetos ou passagens
+ select count(*)
+   into w_existe
+   from sg_pessoa_modulo a
+  where a.sq_pessoa           = p_usuario
+    and w_modulo              in (select sq_modulo from siw_modulo where sigla in ('AC','PR','PD')) 
+    and a.sq_modulo           = (select sq_modulo from siw_modulo where sigla = 'FN')
+    and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
+         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
+         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))
+        );
+ If w_existe > 0 Then
+    Result := 1;
+ End If;
+ 
  -- Verifica se o usuário é o solicitante
  If w_solicitante = p_usuario Then 
     Result                   := Result + 2; 
@@ -286,21 +302,17 @@ begin
     end if;
  End If;
  
- -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence ou, 
- -- se a solicitacao for do módulo de contratos, se o usuário é gestor do módulo financeiro
+ -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence
  select count(*)
    into w_existe
    from sg_pessoa_modulo a
-  where a.sq_pessoa          = p_usuario
-    and (a.sq_modulo         = w_modulo or
-         (w_modulo           in (select sq_modulo from siw_modulo where sigla in ('AC','PR','PD')) and
-          a.sq_modulo        = (select sq_modulo from siw_modulo where sigla = 'FN')
-         )
-        )
+  where a.sq_pessoa           = p_usuario
+    and a.sq_modulo           = w_modulo
     and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
          a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
          a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))
         );
+    
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
     If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
