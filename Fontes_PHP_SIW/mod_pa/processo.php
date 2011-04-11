@@ -2401,7 +2401,6 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
       if ($_REQUEST['w_envio'] == 'N') {
-;
         // Se arquivamento
         $SQL = new dml_putDocumentoArqCen;
         for ($i = 0; $i <= count($_POST['w_chave']) - 1; $i = $i + 1) {

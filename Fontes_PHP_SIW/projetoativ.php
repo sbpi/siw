@@ -2323,6 +2323,7 @@ function Grava() {
   $w_tipo    = '';
   $w_nome    = '';
   Cabecalho();
+  head();
   ShowHTML('</HEAD>');
   BodyOpenClean('onLoad=this.focus();');
   switch ($SG) {

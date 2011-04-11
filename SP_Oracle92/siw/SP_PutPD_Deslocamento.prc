@@ -20,8 +20,8 @@ create or replace procedure SP_PutPD_Deslocamento
    ) is
    w_existe     varchar2(1);
 begin
-   If p_operacao in ('A','E') Then
-      -- Qualquer alteração ou exclusão nos trechos influencia o cálculo automático de diárias.
+   If p_operacao in ('I','A','E') Then
+      -- Qualquer inclusao, alteração ou exclusão nos trechos influencia o cálculo automático de diárias.
       -- Por isso elas são removidas.
       delete pd_diaria where sq_siw_solicitacao = p_chave and tipo = (select tipo from pd_deslocamento where sq_deslocamento = p_chave_aux);
    End If;
