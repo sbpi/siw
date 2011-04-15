@@ -557,7 +557,7 @@ function Caixa() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
     if ((strpos('AE', $O) === false)) {
-      selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, null, 'w_unidade', 'MOD_PA_SET', null, 3);
+      selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, $w_usuario, 'w_unidade', 'CADPA', null, 3);
     } else {
       ShowHTML('          <td colspan=3>Unidade:<br/><b> '.$w_nome_unidade.'<b>');
       ShowHTML('        <tr><td colspan=3>Número:<br><b> '.$w_numero.'</b><p>');

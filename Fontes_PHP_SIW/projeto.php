@@ -325,7 +325,13 @@ function Inicial() {
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($w_tipo == 'PDF'){
+  } elseif ($w_tipo=='EXCEL') {
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    $w_embed = 'WORD';
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } elseif($w_tipo == 'PDF'){
     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
     $w_embed = 'WORD';
     HeaderPdf($w_TP,$w_pag);
@@ -4146,6 +4152,9 @@ function Visual() {
   global $w_dir_volta;
   if ($w_tipo=='PDF') {
     headerPDF('Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);

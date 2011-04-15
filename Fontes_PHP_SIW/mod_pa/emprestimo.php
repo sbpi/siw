@@ -1156,6 +1156,10 @@ function Visual() {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,6);
+    $w_embed = 'WORD';
   } else {
     Cabecalho();
     head();
@@ -1169,15 +1173,17 @@ function Visual() {
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualEmprestimo($w_chave,'L',$w_usuario,$P1,$w_embed));
-  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
-  ScriptOpen('JavaScript');
-  ShowHTML('  var comando, texto;');
-  ShowHTML('  if (window.name!="content") {');
-  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
-  ShowHTML('  }');
-  ScriptClose();
-  if     ($w_tipo=='PDF')  RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  if ($w_embed!='WORD') {
+    ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+    ScriptOpen('JavaScript');
+    ShowHTML('  var comando, texto;');
+    ShowHTML('  if (window.name!="content") {');
+    ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+    ShowHTML('  }');
+    ScriptClose();
+  }
+  if ($w_tipo=='PDF') RodapePDF();
+  else                Rodape();
 }
 // =========================================================================
 // Rotina de exclusão

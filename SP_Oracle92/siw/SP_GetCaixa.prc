@@ -37,6 +37,25 @@ begin
                             group by sq_caixa
                            )          c on (a.sq_caixa   = c.sq_caixa)
           where a.cliente    = p_cliente
+            and (p_usuario   is null or (p_usuario   is not null and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_usuario
+                                                                                      UNION
+                                                                                      select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
+                                                                                      UNION
+                                                                                      select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
+                                                                                      UNION 
+                                                                                      select sq_unidade from eo_unidade_resp where sq_pessoa = p_usuario and fim is null
+                                                                                      UNION
+                                                                                      select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_usuario
+                                                                                      UNION
+                                                                                      select distinct x.sq_unidade 
+                                                                                        from eo_unidade x
+                                                                                             inner join sg_pessoa_modulo y on (x.sq_pessoa = y.cliente)
+                                                                                             inner join siw_modulo       z on (y.sq_modulo = z.sq_modulo)
+                                                                                        where y.sq_pessoa = p_usuario
+                                                                                          and z.sigla     = 'PA'
+                                                                                     )
+                                        )
+                )
             and (p_chave     is null or (p_chave     is not null and a.sq_caixa         = p_chave  ))
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
             and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))

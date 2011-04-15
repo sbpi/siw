@@ -374,7 +374,11 @@ function Inicial() {
     $w_embed = 'WORD';
     if ($w_filtro > '')
       ShowHTML($w_filtro);
-  }elseif ($w_tipo == 'PDF') {
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,6);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'PDF') {
     $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 60 : 35);
     $w_embed = 'WORD';
     HeaderPdf('Consulta de ' . f($RS_Menu, 'nome'), $w_pag);
@@ -384,10 +388,10 @@ function Inicial() {
     $w_embed = 'HTML';
     cabecalho();
     head();
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    ShowHTML('<base HREF="' . $conRootSIW . '">');
     if ($P1 == 2 || $P1 == 3)
       ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=' . $w_dir_volta . MontaURL('MESA') . '">');
-    ShowHTML('<TITLE>' . $conSgSistema . ' - Listagem de Viagens</TITLE>');
+    ShowHTML('<title>' . $conSgSistema . ' - Listagem de Viagens</title>');
     ScriptOpen('Javascript');
     Modulo();
     FormataCPF();
@@ -415,20 +419,20 @@ function Inicial() {
     }
     ValidateClose();
     ScriptClose();
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    ShowHTML('</head>');
+    ShowHTML('<base HREF="' . $conRootSIW . '">');
     if ($w_embed == 'WORD') {
       // Se for Word
       BodyOpenWord();
     } elseif ($w_troca > '') {
       // Se for recarga da página
-      BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus();\'');
+      BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();\'');
     } elseif (strpos('CP', $O) !== false) {
-      BodyOpen('onLoad=\'document.Form.p_projeto.focus()\';');
+      BodyOpen('onLoad="document.Form.p_projeto.focus();"');
     } elseif ($P1 == 2) {
       BodyOpen(null);
     } else {
-      BodyOpen('onLoad=this.focus();');
+      BodyOpen('onLoad="this.focus();"');
     }
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
@@ -916,16 +920,16 @@ function Geral() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus();"');
   } elseif (strpos('EV', $O) !== false) {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
+    BodyOpen('onLoad="document.Form.w_descricao.focus();"');
   }
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IAEV', $O) !== false) {
@@ -1497,20 +1501,20 @@ function OutraParte() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
     // Se o beneficiário ainda não foi selecionado
     if (strpos($_REQUEST['Botao'], 'Procurar') !== false) {
       // Se está sendo feita busca por nome
-      BodyOpenClean('onLoad=\'this.focus()\';');
+      BodyOpenClean('onLoad="this.focus();"');
     } else {
-      BodyOpenClean('onLoad=\'this.focus()\';');
+      BodyOpenClean('onLoad="this.focus();"');
     }
   } elseif ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_nome.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1876,14 +1880,14 @@ function Trechos() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } elseif ($O == 'I' || $O == 'A') {
-    BodyOpenClean('onLoad=\'document.Form.w_pais_orig.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_pais_orig.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2110,7 +2114,7 @@ function Bilhetes() {
   }
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Bilhetes</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Bilhetes</title>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -2170,14 +2174,14 @@ function Bilhetes() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . (($w_numero == 'S') ? $w_troca : 'Botao[0]') . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . (($w_numero == 'S') ? $w_troca : 'Botao[0]') . '.focus();"');
   } elseif ($O == 'I' || $O == 'A') {
-    BodyOpenClean('onLoad=\'document.Form.w_data.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_data.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2421,11 +2425,11 @@ function AltSolic() {
     ValidateClose();
   }
   ScriptClose();
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . (($w_numero == 'S') ? $w_troca : 'Botao[0]') . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . (($w_numero == 'S') ? $w_troca : 'Botao[0]') . '.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2741,7 +2745,7 @@ function RegistroAlteracao() {
   }
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Alterações de viagem</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Alterações de viagem</title>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -2783,16 +2787,16 @@ function RegistroAlteracao() {
     ValidateClose();
   }
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } elseif ($O == 'I' || $O == 'A') {
-    BodyOpenClean('onLoad=\'document.Form.w_valor_tar.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_valor_tar.focus();"');
   } elseif ($O == 'E') {
-    BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_assinatura.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2973,7 +2977,7 @@ function ImprimeAlteracao() {
   $w_data = formataDataEdicao(f($RS, 'autorizacao_data'));
 
   Cabecalho();
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   bodyOpen(null);
   ShowHTML('<center>');
 
@@ -3122,14 +3126,14 @@ function Vinculacao() {
     }
   }
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } elseif ($O == 'I' && Nvl($p_assunto, '') == '') {
-    BodyOpenClean('onLoad=\'document.Form.p_assunto.focus()\';');
+    BodyOpenClean('onLoad="document.Form.p_assunto.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -3495,10 +3499,10 @@ function DadosFinanceiros() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  BodyOpen('onLoad=\'this.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  BodyOpen('onLoad="this.focus();"');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   if ($P1 != 1) {
@@ -3631,7 +3635,7 @@ function PagamentoDiaria() {
   $w_desc_transporte = Nvl(formatNumber(f($RS, 'desconto_transporte')), 0);
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Pagamento de diárias</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Pagamento de diárias</title>');
   ScriptOpen('JavaScript');
   FormataValor();
   ValidateOpen('Validacao');
@@ -3762,10 +3766,10 @@ function PagamentoDiaria() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  BodyOpen('onLoad=\'this.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  BodyOpen('onLoad="this.focus();"');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   if ($P1 != 1) {
@@ -3903,7 +3907,7 @@ function Diarias() {
   // Verifica se a misão permite registro de diárias, hospedagens ou locações de veículos
   if (nvl(f($RS_Solic, 'diaria'), '') == '' && f($RS_Solic, 'hospedagem') == 'N' && f($RS_Solic, 'veiculo') == 'N') {
     Cabecalho();
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    ShowHTML('<base HREF="' . $conRootSIW . '">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
@@ -4070,7 +4074,7 @@ function Diarias() {
 
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Diárias</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Diárias</title>');
   if ($O == 'L') {
     ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
     ShowHTML('  function altera (solic, texto) {');
@@ -4328,15 +4332,15 @@ function Diarias() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($O != 'L') {
     BodyOpen('onLoad="this.focus(); marcaDiaria(); marcaHospedagem(); marcaLocacao();"');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus();"');
   }
   if ($P1 == 1) {
-    ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+    ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
   } else {
@@ -4670,7 +4674,7 @@ function Diarias_Solic() {
   // Verifica se a misão permite registro de diárias, hospedagens ou locações de veículos
   if (nvl(f($RS_Solic, 'diaria'), '') == '' && f($RS_Solic, 'hospedagem') == 'N' && f($RS_Solic, 'veiculo') == 'N') {
     Cabecalho();
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    ShowHTML('<base HREF="' . $conRootSIW . '">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
@@ -4846,7 +4850,7 @@ function Diarias_Solic() {
 
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Diárias</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Diárias</title>');
   if ($O == 'L') {
     ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
     ShowHTML('  function altera (solic, texto) {');
@@ -5019,14 +5023,14 @@ function Diarias_Solic() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($O != 'L') {
     BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus();"');
   }
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   if ($P1 != 1) {
@@ -5423,6 +5427,10 @@ function Visual() {
   if ($w_tipo == 'PDF') {
     headerpdf('Visualização de ' . f($RS_Menu, 'nome'), $w_pag);
     $w_embed = 'WORD';
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,8);
+    $w_embed = 'WORD';
   } elseif ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 0);
@@ -5430,26 +5438,28 @@ function Visual() {
   } else {
     Cabecalho();
     head();
-    ShowHTML('<TITLE>' . $conSgSistema . ' - Visualização de viagem</TITLE>');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-    BodyOpenClean('onLoad=\'this.focus()\'; ');
+    ShowHTML('<title>' . $conSgSistema . ' - Visualização de viagem</title>');
+    ShowHTML('</head>');
+    ShowHTML('<base HREF="' . $conRootSIW . '">');
+    BodyOpenClean('onLoad="this.focus();" ');
     if ($w_tipo != 'WORD')
       CabecalhoRelatorio($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 4, $w_chave);
     $w_embed = 'HTML';
   }
-  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><b><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(VisualViagem($w_chave, 'L', $w_usuario, $P1, $w_embed));
-  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
-  ScriptOpen('JavaScript');
-  ShowHTML('  var comando, texto;');
-  ShowHTML('  if (window.name!="content") {');
-  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
-  ShowHTML('  }');
-  ScriptClose();
-  if ($w_tipo == 'PDF')      RodapePDF();
-  elseif ($w_tipo != 'WORD') Rodape();
+  if ($w_embed!='WORD') {
+    ShowHTML('<center><b><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+    ScriptOpen('JavaScript');
+    ShowHTML('  var comando, texto;');
+    ShowHTML('  if (window.name!="content") {');
+    ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+    ShowHTML('  }');
+    ScriptClose();
+  }
+  if ($w_tipo=='PDF') RodapePDF();
+  else                Rodape();
 }
 
 // =========================================================================
@@ -5484,14 +5494,14 @@ function Excluir() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   }
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -5627,14 +5637,14 @@ function Encaminhamento() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus();"');
   }
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -5747,14 +5757,14 @@ function Anotar() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
+    BodyOpen('onLoad="document.Form.w_observacao.focus();"');
   }
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -5842,10 +5852,10 @@ function Concluir() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -5946,10 +5956,10 @@ function InformarPassagens() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  BodyOpen('onLoad=\'this.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  BodyOpen('onLoad="this.focus();"');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -6054,7 +6064,7 @@ function InformarCotacao() {
   $w_observacao = nvl($_REQUEST['w_observacao'], f($RS, 'cotacao_observacao'));
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Informar cotação</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Informar cotação</title>');
   ScriptOpen('JavaScript');
   CheckBranco();
   SaltaCampo();
@@ -6067,10 +6077,10 @@ function InformarCotacao() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  BodyOpen('onLoad=\'this.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  BodyOpen('onLoad="this.focus();"');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -6128,7 +6138,7 @@ function InformarCotacao() {
   $w_emissao_bilhete    = FormataDataEdicao(f($RS,'emissao_bilhete'));
   Cabecalho();
   head();
-  ShowHTML('<TITLE>'.$conSgSistema.' - Informar cotação</TITLE>');
+  ShowHTML('<title>'.$conSgSistema.' - Informar cotação</title>');
   ScriptOpen('JavaScript');
   CheckBranco();
   FormataData();
@@ -6155,10 +6165,10 @@ function InformarCotacao() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=\'this.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="'.$conRootSIW.'">');
+  BodyOpen('onLoad="this.focus();"');
+  ShowHTML('<b><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -6459,9 +6469,9 @@ function relAnexo() {
   ShowHTML('  });');
   ShowHTML('});');
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-  BodyOpenClean('onLoad=\'this.focus()\';');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  BodyOpenClean('onLoad="this.focus();"');
   ShowHTML('<table width="100%" border="0" cellpadding="10" cellspacing="0">');
   ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
   ShowHTML('    <table width="100%" border="0">');
@@ -6538,18 +6548,18 @@ function Anexo() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } elseif ($O == 'I') {
-    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_nome.focus();"');
   } elseif ($O == 'A') {
-    BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_descricao.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
-  ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
+  ShowHTML('<b><FONT COLOR="#000000">' . $w_TP . '</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -6715,7 +6725,7 @@ function PrestarContas() {
   }
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Prestação de contas</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Prestação de contas</title>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -6773,12 +6783,12 @@ function PrestarContas() {
    */
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '' && $w_reembolso == 'S' && $w_ressarcimento == 'S' && nvl($w_cumprimento, '') != '' && $w_cumprimento != 'C') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'document.Form.w_cumprimento.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_cumprimento.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -7331,7 +7341,7 @@ function Reembolso() {
   }
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Dados do reembolso</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Dados do reembolso</title>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -7362,12 +7372,12 @@ function Reembolso() {
   
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '' && $w_reembolso == 'S' && $w_ressarcimento == 'S') {
-    BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad="document.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -7652,7 +7662,7 @@ function ReembolsoValor() {
   }
   Cabecalho();
   head();
-  ShowHTML('<TITLE>' . $conSgSistema . ' - Cadastro de valor de reembolso</TITLE>');
+  ShowHTML('<title>' . $conSgSistema . ' - Cadastro de valor de reembolso</title>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -7681,22 +7691,22 @@ function ReembolsoValor() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
-    BodyOpenClean('onLoad=\'document.Form.' . (($P1 != 1 && $w_passagem == 'S') ? $w_troca : 'Botao[0]') . '.focus()\';');
+    BodyOpenClean('onLoad="document.Form.' . (($P1 != 1 && $w_passagem == 'S') ? $w_troca : 'Botao[0]') . '.focus();"');
   } elseif ($O == 'I' || $O == 'A') {
     if ($O == 'I' || $w_tipo_reg == 'S') {
       if (f($RS_Solic, 'internacional') == 'N') {
-        BodyOpenClean('onLoad=\'document.Form.w_valor_solicitado.focus()\';');
+        BodyOpenClean('onLoad="document.Form.w_valor_solicitado.focus();"');
       } else {
-        BodyOpenClean('onLoad=\'document.Form.w_moeda.focus()\';');
+        BodyOpenClean('onLoad="document.Form.w_moeda.focus();"');
       }
     } else {
-      BodyOpenClean('onLoad=\'document.Form.w_valor_autorizado.focus()\';');
+      BodyOpenClean('onLoad="document.Form.w_valor_autorizado.focus();"');
     }
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -7790,8 +7800,8 @@ function Grava() {
   $w_tipo = '';
   $w_nome = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PDIDENT':
@@ -8682,7 +8692,7 @@ function Main() {
       break;
     default:
       Cabecalho();
-      ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+      ShowHTML('<base HREF="' . $conRootSIW . '">');
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

@@ -390,54 +390,56 @@ function Inicial() {
       //ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
       //ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     //}      
-    ShowHTML('    <b>Registros: '.count($RS));
-    ShowHTML('<tr><td colspan=3>');
+    ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
+    ShowHTML('<tr><td colspan=3><div id="tudo">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {    
-      ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
+    if ($w_tipo!='WORD') {
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
       if (substr($SG,3)=='CONT')  {
-        ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Projeto débito','cd_solic_vinculo').'</td>');
-      } else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+        $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
+        $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Projeto débito','cd_solic_vinculo').'</td>');
+      } else {
+        $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+      }
       if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
-        ShowHTML('          <td><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
+        $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
       }
       if (substr($SG,3)=='CONT') {
-        ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
+        $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
       } elseif (f($RS_Menu,'sigla')=='FNDVIA') {
-        ShowHTML('          <td><b>'.LinkOrdena('Período da viagem','referencia_inicio').'</td>');
+        $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Período da viagem','referencia_inicio').'</td>');
       }
-      ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td><b>Código</td>');
-      ShowHTML('          <td><b>Pessoa</td>');
+      $colspan++; ShowHTML('          <td><b>Código</td>');
+      $colspan++; ShowHTML('          <td><b>Pessoa</td>');
       if (substr($SG,3)=='CONT')  {
-        ShowHTML('          <td><b>Contrato (Parcela)</td>');
-        ShowHTML('          <td><b>Projeto débito</td>');
+        $colspan++; ShowHTML('          <td><b>Contrato (Parcela)</td>');
+        $colspan++; ShowHTML('          <td><b>Projeto débito</td>');
       } else {
-        ShowHTML('          <td><b>Vinculação</td>');
+        $colspan++; ShowHTML('          <td><b>Vinculação</td>');
       }
       if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
-        ShowHTML('          <td><b>Projeto</td>');
+        $colspan++; ShowHTML('          <td><b>Projeto</td>');
       }
       if (substr($SG,3)=='CONT') {
-        ShowHTML('          <td><b>Referência</td>');
+        $colspan++; ShowHTML('          <td><b>Referência</td>');
       } elseif (f($RS_Menu,'sigla')=='FNDVIA') {
-        ShowHTML('          <td><b>Período da viagem</td>');
+        $colspan++; ShowHTML('          <td><b>Período da viagem</td>');
       }
-      ShowHTML('          <td><b>Vencimento</td>');
+      $colspan++; ShowHTML('          <td><b>Vencimento</td>');
       ShowHTML('          <td><b>Valor</td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $w_parcial=0;
+      $w_parcial = 0;
       if($w_tipo!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       else                $RS1 = $RS;
       $w_alerta = false;
@@ -497,7 +499,7 @@ function Inicial() {
         $w_parcial += Nvl(f($row,'valor'),0);
         if ($w_tipo!='WORD') {
           if ($_SESSION['INTERNO']=='S') {
-            ShowHTML('        <td align="top" nowrap>');
+            ShowHTML('        <td align="top" nowrap class="remover">');
             if ($P1!=3) {
               // Se não for acompanhamento
               if ($P1==1) {
@@ -562,15 +564,9 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          if (substr($SG,3)=='CONT' && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
-            ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
-          } elseif (f($RS_Menu,'sigla')=='FNDVIA' || substr($SG,3)=='CONT') {
-            ShowHTML('          <td colspan=6 align="right"><b>Total desta página&nbsp;</td>');
-          } else {
-            ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
-          }
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial,2).'&nbsp;</td>');
-          ShowHTML('          <td colspan=2>&nbsp;</td>');
+          if ($w_tipo!='WORD') ShowHTML('          <td>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -580,21 +576,14 @@ function Inicial() {
             else                            $w_total += f($row,'valor');
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          if (substr($SG,3)=='CONT' && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
-            ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
-          } elseif (f($RS_Menu,'sigla')=='FNDVIA' || substr($SG,3)=='CONT') {
-            ShowHTML('          <td colspan=6 align="right"><b>Total da listagem&nbsp;</td>');
-          } else {
-            ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
-          }
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Total da listagem&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_total,2).'&nbsp;</td>');
-          ShowHTML('          <td colspan=2>&nbsp;</td>');
+          if ($w_tipo!='WORD') ShowHTML('          <td>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 
     } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
+    ShowHTML('    </table></div>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     if ($w_alerta) {
@@ -603,7 +592,7 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($w_tipo!='WORD') {
       ShowHTML('<tr><td align="center" colspan=3>');
-      if ($R>'') {
+      if ($R>'' || $P4 > $conPageSize) {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
       } else {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));

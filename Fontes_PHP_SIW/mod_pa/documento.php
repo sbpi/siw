@@ -1524,6 +1524,10 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
   if ($w_tipo == 'PDF') {
     headerpdf(f($RS_Menu, 'nome'), $w_pag);
     $w_embed = 'WORD';
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,6);
+    $w_embed = 'WORD';
   } elseif ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente, f($RS_Menu, 'nome'), 0);
@@ -1534,15 +1538,14 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
     Cabecalho();
     head();
     ShowHTML('<TITLE>' . $conSgSistema . ' - ' . f($RS_Cab, 'nome') . '</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-    BodyOpenClean('onLoad=\'this.focus()\'; ');
+    ShowHTML('</HEAD>');
+    BodyOpenClean('onLoad="this.focus()"; ');
     if ($w_embed != 'WORD') CabecalhoRelatorio($w_cliente, f($RS_Cab, 'nome'), 4, $w_chave);
     $w_embed = 'HTML';
   }
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
-  ShowHTML('<tr><td colspan="2" align="center">');
   ShowHTML(VisualDocumento($w_chave, $w_o, $w_usuario, $w_p1, $w_embed, $w_identificacao, $w_assunto_princ, $w_orcamentaria, $w_indicador, $w_recurso, $w_interessado, $w_anexo, $w_meta, $w_ocorrencia, $w_consulta));
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   ScriptOpen('JavaScript');
@@ -1551,8 +1554,8 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
   ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
   ShowHTML('  }');
   ScriptClose();
-  if     ($w_tipo=='PDF')  RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  if ($w_tipo=='PDF') RodapePDF();
+  else                Rodape();
 }
 
 // =========================================================================
@@ -1724,17 +1727,17 @@ function Encaminhamento() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</HEAD>');
   if ($w_troca > '') {
-    BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
+    BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_retorno_limite.focus()\';');
+    BodyOpen('onLoad="document.Form.w_retorno_limite.focus();"');
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align="center">');
-  ShowHTML('<table width="95%" border="0" cellspacing="3">');
+  ShowHTML('<table width="95%" border="0" cellspacing="3"><tr><td>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML(VisualDocumento($w_chave, 'V', $w_usuario, $w_p1, $w_formato, 'S', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'));
   ShowHTML('<HR>');
@@ -4797,5 +4800,4 @@ function Main() {
       Rodape();
   }
 }
-
 ?>

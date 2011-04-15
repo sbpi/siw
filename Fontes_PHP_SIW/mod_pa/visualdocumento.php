@@ -99,9 +99,9 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'   <tr><td><b>Espécie documental:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_especie').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Número:</b></td>';
-    $l_html.=chr(13).'       <td>'.f($RS,'numero_original').'</td></tr>';
+    $l_html.=chr(13).'       <td align="left">'.f($RS,'numero_original').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data do documento:</b></td>';
-    $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>';
+    $l_html.=chr(13).'       <td align="left">'.formataDataEdicao(f($RS,'inicio')).'</td></tr>';
     /*
     if (nvl(f($RS,'copias'),'')!='') {
       $l_html.=chr(13).'   <tr><td><b>Nº de cópias:</b></td>';
@@ -110,14 +110,14 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     */
     if (nvl(f($RS,'volumes'),'')!='') {
       $l_html.=chr(13).'   <tr><td><b>Nº de volumes:</b></td>';
-      $l_html.=chr(13).'       <td>'.formatNumber(f($RS,'volumes'),0).'</td></tr>';
+      $l_html.=chr(13).'       <td align="left">'.formatNumber(f($RS,'volumes'),0).'</td></tr>';
     }
     $l_html.=chr(13).'   <tr><td><b>Natureza:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_natureza').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data de criação/recebimento:</b></td>';
-    $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'data_recebimento')).'</td></tr>';
+    $l_html.=chr(13).'       <td align="left">'.formataDataEdicao(f($RS,'data_recebimento')).'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data limite para conclusão:</b></td>';
-    $l_html.=chr(13).'       <td>'.nvl(formataDataEdicao(f($RS,'fim')),'---').'</td></tr>';
+    $l_html.=chr(13).'       <td align="left">'.nvl(formataDataEdicao(f($RS,'fim')),'---').'</td></tr>';
     $l_html.=chr(13).'   <tr><td valign="top"><b>Classificação:</b></td>';
     $l_html.=chr(13).'       <td align="justify">'.f($RS,'cd_assunto').'-'.f($RS,'ds_assunto').'</td></tr>';
     $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento do assunto:</b></td>';

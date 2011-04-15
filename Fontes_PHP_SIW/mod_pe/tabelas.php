@@ -546,7 +546,6 @@ function Plano() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Estrutura_Texto_Fecha();
   if ($O!='H') {
     Estrutura_Fecha();
@@ -578,7 +577,7 @@ function Natureza() {
     }else{
       $RS = SortArray($RS,'nome','asc');
     }    
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados chave informada
     $sql = new db_getNatureza_pe; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -588,10 +587,10 @@ function Natureza() {
   } 
   Cabecalho();
   head();
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -609,7 +608,7 @@ function Natureza() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
-  } elseif (!(strpos('IA',$O)===false)) {
+  } elseif (strpos('IA',$O)!==false) {
     BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
@@ -618,18 +617,18 @@ function Natureza() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <td align="right"><b>'.exportaExcel().'Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3><div id="tudo">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
@@ -641,19 +640,18 @@ function Natureza() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
+    ShowHTML('    </table></div>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -688,7 +686,6 @@ function Natureza() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -714,7 +711,7 @@ function Horizonte() {
     }else{
       $RS = SortArray($RS,'nome','asc');
     }    
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $sql = new db_getHorizonte_pe; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -725,10 +722,10 @@ function Horizonte() {
   } 
   Cabecalho();
   head();
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -741,12 +738,12 @@ function Horizonte() {
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
     ScriptClose();
-  } 
+  }
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
-  } elseif (!(strpos('IA',$O)===false)) {
+  } elseif (strpos('IA',$O)!==false) {
     BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
@@ -755,18 +752,18 @@ function Horizonte() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <td align="right">'.exportaExcel().'<b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3><div id="tudo">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -778,19 +775,18 @@ function Horizonte() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td align="top" nowrap class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
+    ShowHTML('    </table></div>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -827,7 +823,6 @@ function Horizonte() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape(); 
 } 
 // =========================================================================
@@ -862,7 +857,7 @@ function Objetivo(){
     } else {
       $RS = SortArray($RS,'nome','asc'); 
     }
-  } elseif (!(strpos('AEVT',$O)===false)) {
+  } elseif (strpos('AEVT',$O)!==false) {
     $sql = new db_getObjetivo_PE; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,$w_cliente,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_nome      = f($RS,'nome');
@@ -876,11 +871,11 @@ function Objetivo(){
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Objetivos</TITLE>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('IAET',$O)===false)) {
+  if (strpos('IAET',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
     ValidateOpen('Validacao');  
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','3','100','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
       Validate('w_descricao','Descrição','1','1','2','4000','1','1');
@@ -967,7 +962,6 @@ function Objetivo(){
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -975,8 +969,8 @@ function Objetivo(){
     else       MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
@@ -1008,7 +1002,7 @@ function Objetivo(){
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>'); 
-  } elseif (!(strpos('T',$O)===false)){
+  } elseif ($O=='T'){
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -1039,7 +1033,6 @@ function Objetivo(){
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Estrutura_Texto_Fecha();
   Estrutura_Fecha();
   Estrutura_Fecha();
@@ -1110,7 +1103,6 @@ function Telaplano(){
       ShowHTML('      </tr>');
     } 
   } 
-  ShowHTML('         </center>');
   ShowHTML('       </table>');
   ShowHTML('      </td>');
   ShowHTML('      </tr> ');
@@ -1329,7 +1321,6 @@ function Telaplano(){
       ShowHTML('      </tr>');
     }
   } 
-  ShowHTML('         </center>');
   ShowHTML('       </table>');
   ShowHTML('      </td>');
   ShowHTML('      </tr> ');
@@ -1416,11 +1407,9 @@ function Telaplano(){
       }
     }
   } 
-  ShowHTML('      </center>');
   ShowHTML('    </table>');
   ShowHTML('  </td>');
   ShowHTML('</tr>');
-  ShowHTML('         </center>');
   ShowHTML('      </td>');
   ShowHTML('      </tr> ');
 
@@ -1482,7 +1471,7 @@ function Arquivo() {
     // Recupera todos os registros para a listagem 
     $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,'ARQUIVOS');
     $RS = SortArray($RS,'nome','asc');
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado 
     $sql = new db_getPlanoEstrategico; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,'ARQUIVOS');
     foreach ($RS as $row) {
@@ -1494,10 +1483,10 @@ function Arquivo() {
   } 
   Cabecalho();
   head();
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Título','1','1','1','255','1','1');
       Validate('w_descricao','Descrição','1','1','1','1000','1','1');
       if ($O=='I') {
@@ -1522,7 +1511,7 @@ function Arquivo() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
 
   ShowHTML('<table border=1 width="100%"><tr><td bgcolor="#FAEBD7">');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1566,12 +1555,11 @@ function Arquivo() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG='.$SG.'&O='.$O.'" name="Form" onSubmit="return(Validacao(this));" enctype="multipart/form-data" method="POST">');
     ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
     ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
@@ -1620,7 +1608,6 @@ function Arquivo() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -1647,7 +1634,7 @@ function TipoInter() {
     } else {
       $RS = SortArray($RS,'nm_servico','asc','ordem','asc','nome','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     $sql = new db_getTipoInteressado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_servico,$w_chave,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_servico          = f($RS,'sq_menu');
@@ -1663,12 +1650,12 @@ function TipoInter() {
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de interessado</TITLE>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_servico','Serviço','SELECT','1','1','10','','1');
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
       Validate('w_sigla','Sigla','1','1','2','15','1','1');
@@ -1704,8 +1691,8 @@ function TipoInter() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <td align="right" nowrap>'.exportaExcel().'<b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3><div id="tudo">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Serviço','nm_servico').'</td>');
@@ -1714,7 +1701,7 @@ function TipoInter() {
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
-    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('          <td class="remover"><b> Operações </td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1736,7 +1723,7 @@ function TipoInter() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td  class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui deste registro.">EX </A>&nbsp');
         ShowHTML('        </td>');
@@ -1744,8 +1731,7 @@ function TipoInter() {
         $w_atual = f($row,'nm_servico');
       } 
     } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
+    ShowHTML('    </table></div>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') {
@@ -1755,8 +1741,8 @@ function TipoInter() {
     } 
     ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -1798,7 +1784,6 @@ function TipoInter() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
 } 
 // =========================================================================
 // Rotina de tipos de recurso
@@ -2068,7 +2053,6 @@ function TipoRecurso() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Estrutura_Texto_Fecha();
   Estrutura_Fecha();
   Estrutura_Fecha();
@@ -2098,7 +2082,7 @@ function TipoIndicador() {
     }else{
       $RS = SortArray($RS,'nome','asc');
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $sql = new db_getTipoIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
@@ -2109,10 +2093,10 @@ function TipoIndicador() {
   } 
   Cabecalho();
   head();
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -2130,7 +2114,7 @@ function TipoIndicador() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
-  } elseif (!(strpos('IA',$O)===false)) {
+  } elseif (strpos('IA',$O)!==false) {
     BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
@@ -2139,7 +2123,7 @@ function TipoIndicador() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
@@ -2169,12 +2153,11 @@ function TipoIndicador() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -2211,7 +2194,6 @@ function TipoIndicador() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape(); 
 } 
 // =========================================================================
@@ -2234,7 +2216,7 @@ function UnidadeMedida() {
     } else {
       $RS = SortArray($RS,'sigla','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     $sql = new db_getUnidadeMedida; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave            = f($RS,'chave');
@@ -2247,12 +2229,12 @@ function UnidadeMedida() {
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Unidades de medida</TITLE>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_sigla','Sigla','1','1','1','10','1','1');
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -2313,7 +2295,6 @@ function UnidadeMedida() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -2324,8 +2305,8 @@ function UnidadeMedida() {
     } 
     ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -2364,7 +2345,6 @@ function UnidadeMedida() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
 } 
 // =========================================================================
 // Rotina de unidade
@@ -2393,7 +2373,7 @@ function Unidade() {
     }else{
       $RS = SortArray($RS,'nome','asc');
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $sql = new db_getUnidade_PE; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -2407,11 +2387,11 @@ function Unidade() {
   } 
   Cabecalho();
   head();
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     FormataCNPJ();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       if ($O=='I') {
         Validate('w_chave','Unidade','1','1','1','50','1','1');
       } 
@@ -2432,7 +2412,7 @@ function Unidade() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
-  } elseif (!(strpos('A',$O)===false)) {
+  } elseif ($O=='A') {
     BodyOpen('onLoad="document.Form.w_descricao.focus()";');
   } elseif ($O=='I') {
     BodyOpen('onLoad="document.Form.w_chave.focus()";');
@@ -2443,7 +2423,7 @@ function Unidade() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>'); 
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
@@ -2481,12 +2461,11 @@ function Unidade() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled   = ' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -2541,7 +2520,6 @@ function Unidade() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -2985,7 +2963,7 @@ function Main() {
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+    ShowHTML('<div align=center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></div>');
     Rodape();
     exibevariaveis();
   break;

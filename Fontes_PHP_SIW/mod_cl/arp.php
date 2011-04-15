@@ -3207,8 +3207,9 @@ function Grava() {
   $w_tipo       = '';
   $w_nome       = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'CLRPCAD':
@@ -3220,11 +3221,11 @@ function Grava() {
           $_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],
           $_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],
           $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',$_REQUEST['w_numero_original'],
-          $_REQUEST['w_data_recebimento'],'N',$_REQUEST['w_interno'],$_REQUEST['w_especie_documento'],null,
+          $_REQUEST['w_data_recebimento'],'N',$_REQUEST['w_interno'],$_REQUEST['w_especie_documento'],null,null,null,null,
           &$w_chave_nova,$_REQUEST['w_copia']);
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
-          ScriptClose();
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+        ScriptClose();
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
@@ -3645,7 +3646,8 @@ function Grava() {
       ShowHTML('  history.back(1);');
       ScriptClose();
       break;
-  } 
+  }
+  rodape();
 } 
 
 // =========================================================================

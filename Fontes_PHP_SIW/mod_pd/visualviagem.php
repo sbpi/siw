@@ -64,40 +64,42 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   // Se for listagem ou envio, exibe os dados de identificação do acordo
   // Se for listagem dos dados
   if ($l_o=='L' || $l_o=='V') {
+    $l_html.=chr(13).'<br />';
     $l_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
-    $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+    $l_html .= chr(13).'    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $l_html.=chr(13).'      <tr><td colspan="14" height="2" bgcolor="#000000"></td></tr>';
     if ($w_mod_pa=='S' && nvl(f($RS,'protocolo_siw'),'')!='') {
-      if ($w_embed!='WORD') {
-        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="protocolo">'.f($RS,'protocolo').'&nbsp;</a></tr>';
+      if ($l_tipo!='WORD') {
+        $l_html.=chr(13).'      <tr><td colspan="10" bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td colspan="4" bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="protocolo">'.f($RS,'protocolo').'&nbsp;</a></tr>';
       } else {
-        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: '.nvl(f($RS,'protocolo'),'---').'</tr>';
+        $l_html.=chr(13).'      <tr><td colspan="10" bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td colspan="4" bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: '.nvl(f($RS,'protocolo'),'---').'</tr>';
       }
     } else {
-      $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14" bgcolor="#f0f0f0" align=justify><font size="2"><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
     }
-    $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="14" height="2" bgcolor="#000000"></td></tr>';
     
     // Identificação da viagem
     if ($l_identificacao=='S') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS GERAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>DADOS GERAIS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
       
       // Exibe a vinculação
-      $l_html.=chr(13).'      <tr><td valign="top"><b>Vinculação: </b></td>';
-      if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
-      else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+      $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
+      if($l_tipo!='WORD') $l_html.=chr(13).'        <td colspan="12">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+      else                $l_html.=chr(13).'        <td colspan="12">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
       if(nvl(f($RS,'sq_solic_pai'),'')!='' && f($RS,'ativo')=='S') {
         // Exibe saldos das rubricas
         $sql = new db_getPD_Financeiro; $RS_Fin = $sql->getInstanceOf($dbms,$w_cliente,null,f($RS,'sq_solic_pai'),null,null,null,null,null,null,null,null,null,'ORCAM_SIT');
         $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Disponibilidade orçamentária:</b></td>';
-        $l_html.=chr(13).'      <td><table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Disponibilidade orçamentária:</b></td>';
+        $l_html.=chr(13).'      <td colspan="12"><table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Rubrica</td>';
-        $l_html.=chr(13).'          <td><b>Descrição</td>';
-        $l_html.=chr(13).'          <td><b>% Executado</td>';
-        $l_html.=chr(13).'         <td><b>Saldo (R$)</td>';
+        $l_html.=chr(13).'          <td><b>Rubrica</b></td>';
+        $l_html.=chr(13).'          <td><b>Descrição</b></td>';
+        $l_html.=chr(13).'          <td><b>% Executado</b></td>';
+        $l_html.=chr(13).'         <td><b>Saldo (R$)</b></td>';
         $l_html.=chr(13).'        </tr>';
         if (count($RS_Fin)<=0) {
           $l_html.=chr(13).'      <tr><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>';
@@ -111,7 +113,6 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $l_html.=chr(13).'      </tr>';
           } 
         } 
-        $l_html.=chr(13).'      </center>';
         $l_html.=chr(13).'    </table>';
         $l_html.=chr(13).'  </td>';
         $l_html.=chr(13).'</tr>';
@@ -119,127 +120,127 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       
       if (nvl(f($RS,'nm_etapa'),'')>'') {
         if (substr($w_sigla,0,3)=='GCB') {   
-          $l_html.=chr(13).'      <tr valign="top"><td><b>Modalidade: </b></td>';
-          $l_html.=chr(13).'          <td>      '.f($RS,'nm_etapa').'</td></tr>';
+          $l_html.=chr(13).'      <tr valign="top" width="30%"><td><b>Modalidade: </b></td>';
+          $l_html.=chr(13).'          <td colspan="12">      '.f($RS,'nm_etapa').'</td></tr>';
         } else { 
-          $l_html.=chr(13).'      <tr valign="top"><td><b>Etapa: </b></td>';
-          $l_html.=chr(13).'          <td>      '.f($RS,'nm_etapa').'</td></tr>';
+          $l_html.=chr(13).'      <tr valign="top" width="30%"><td><b>Etapa: </b></td>';
+          $l_html.=chr(13).'          <td colspan="12">      '.f($RS,'nm_etapa').'</td></tr>';
         }
       } 
   
       // Se a classificação foi informada, exibe.
       if (Nvl(f($RS,'sq_cc'),'')>'') {
         $l_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
-        $l_html .= chr(13).'        <td>'.f($RS,'nm_cc').' </td></tr>';
+        $l_html .= chr(13).'        <td colspan="12">'.f($RS,'nm_cc').' </td></tr>';
       }
       
-      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Objetivo/assunto/evento:</b></td><td>'.crLf2Br(f($RS,'descricao')).'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Objetivo/assunto/evento:</b></td><td colspan="12">'.crLf2Br(f($RS,'descricao')).'</td></tr>';
       if ($l_tipo!='WORD') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Unidade proponente:</b></td><td colspan="12">'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td>';
       } else {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Unidade proponente:</b></td><td colspan="12">'.f($RS,'nm_unidade_resp').'</td></tr>';
       } 
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Período:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Categoria da diária:</b></td><td>'.Nvl(f($RS,'nm_diaria'),'---').' </b></td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b></td><td>'.Nvl(f($RS,'nm_hospedagem'),'---').' </b></td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b></td><td>'.Nvl(f($RS,'nm_veiculo'),'---').' </b></td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Período:</b></td><td colspan="12">'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Categoria da diária:</b></td><td colspan="12">'.Nvl(f($RS,'nm_diaria'),'---').' </td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b></td><td colspan="12">'.Nvl(f($RS,'nm_hospedagem'),'---').'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b></td><td colspan="12">'.Nvl(f($RS,'nm_veiculo'),'---').' </td></tr>';
       if (f($RS,'internacional')=='N') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Diária em fim de semana:</b></td><td>'.retornaSimNao(f($RS,'diaria_fim_semana')).' </b></td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Diária em fim de semana:</b></td><td colspan="12">'.retornaSimNao(f($RS,'diaria_fim_semana')).' </td></tr>';
       }
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Contato na ausência:</b></td><td>'.nvl(f($RS,'proponente'),'---').' </b></td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Agenda:</b></td><td>'.nvl(crLf2Br(f($RS,'assunto')),'---').' </b></td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Contato na ausência:</b></td><td colspan="12">'.nvl(f($RS,'proponente'),'---').' </td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Agenda:</b></td><td colspan="12">'.nvl(crLf2Br(f($RS,'assunto')),'---').' </td></tr>';
       if (Nvl(f($RS,'justificativa_dia_util'),'')>'') {
         // Se o campo de justificativa de dias úteis para estiver preenchido, exibe
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Justif. viagem contendo fim de semana/feriado:</b></td><td>'.crLf2Br(f($RS,'justificativa_dia_util')).' </b></td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Justif. viagem contendo fim de semana/feriado:</b></td><td colspan="12">'.crLf2Br(f($RS,'justificativa_dia_util')).' </td></tr>';
       } 
       if (Nvl(f($RS,'justificativa'),'')>'') {
         // Se o campo de justificativa estiver preenchido, exibe
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Justif. pedido com menos de '.f($RS,'dias_antecedencia').' dias:</b></td><td>'.crLf2Br(f($RS,'justificativa')).' </b></td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Justif. pedido com menos de '.f($RS,'dias_antecedencia').' dias:</b></td><td colspan="12">'.crLf2Br(f($RS,'justificativa')).' </td></tr>';
       } 
     }
-
+    
     // Dados do proposto
-    if ($l_proposto='S') {
+    if ($l_proposto=='S') {
       $sql = new db_getBenef; $RSQuery = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BENEFICIÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>BENEFICIÁRIO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
       if (count($RSQuery)==0) {
-        $l_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Beneficiário não informado';
+        $l_html.=chr(13).'      <tr><td colspan=14 align="center"><font size=1>Beneficiário não informado';
       } else {
         foreach($RSQuery as $row) { 
-          $l_html.=chr(13).'      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%" style="border: 1px solid rgb(0,0,0);">';
-          $l_html.=chr(13).'        <tr><td colspan=2 bgColor="#f0f0f0"><b>';
+          $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="1" bordercolor="#00000">';
+          $l_html.=chr(13).'        <tr><td colspan="14" bgColor="#f0f0f0"><b>';
           if (f($row,'sq_tipo_pessoa')==1) {
             $l_html.=chr(13).'            '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
           } else {
             $l_html.=chr(13).'            '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - Passaporte: '.f($row,'passaporte_numero').' '.f($row,'nm_pais_passaporte').'</b>';
           }
           if ($w_tramite_ativo=='S') {
-            $l_html.=chr(13).'        <tr><td colspan=2 style="border-top: 1px solid rgb(0,0,0);"><table border=0 cellpadding=0 cellspacing=0 width="100%">';
-            $l_html.=chr(13).'          <tr valign="top"><td>Vínculo: <b>'.f($row,'nm_tipo_vinculo').'</b><td>Interno: <b>'.retornaSimNao(f($row,'interno')).'</b><td>Contratado: <b>'.retornaSimNao(f($row,'contratado')).'</b>';
+            $l_html.=chr(13).'        <tr><td colspan="14" width="30%" style="border-top: 1px solid rgb(0,0,0);"><table border=0 cellpadding=0 cellspacing=0 width="100%">';
+            $l_html.=chr(13).'        <tr valign="top"><td colspan="6">Vínculo: <b>'.f($row,'nm_tipo_vinculo').'</b><td colspan="2" width="30%">Interno: <b>'.retornaSimNao(f($row,'interno')).'</b><td colspan="2" width="30%">Contratado: <b>'.retornaSimNao(f($row,'contratado')).'</b></td></tr>';
             $l_html.=chr(13).'          </table>';
           }
           $l_html.=chr(13).'          </table>';
-          $l_html.=chr(13).'      <tr><td colspan="2">';
-          $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($row,'nm_sexo').'</td></tr>';
-          $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($row,'rg_numero').'</td></tr>';
-          $l_html.=chr(13).'      <tr><td><b>Data de emissão:</b></td><td>'.FormataDataEdicao(Nvl(f($row,'rg_emissao'),'---')).'</td>';
-          $l_html.=chr(13).'      <tr><td><b>Órgão emissor:</b></td><td>'.f($row,'rg_emissor').'</td></tr>';
+          $l_html.=chr(13).'      <tr><td colspan="14">';
+          $l_html.=chr(13).'      <tr><td width="30%"><b>Sexo:</b></td><td colspan="12">'.f($row,'nm_sexo').'</td></tr>';
+          $l_html.=chr(13).'      <tr><td width="30%"><b>Identidade:</b></td><td colspan="12" align="left">'.f($row,'rg_numero').'</td></tr>';
+          $l_html.=chr(13).'      <tr><td width="30%"><b>Data de emissão:</b></td><td colspan="12" align="left">'.FormataDataEdicao(Nvl(f($row,'rg_emissao'),'---')).'</td>';
+          $l_html.=chr(13).'      <tr><td width="30%"><b>Órgão emissor:</b></td><td colspan="12">'.f($row,'rg_emissor').'</td></tr>';
           if (Nvl(f($row,'passaporte_numero'),'')!='' && f($row,'sq_tipo_pessoa')==1) {
-            $l_html.=chr(13).'      <tr><td><b>Passaporte:</b></td><td>'.f($row,'passaporte_numero').' - '.f($row,'nm_pais_passaporte').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td width="30%"><b>Passaporte:</b></td><td colspan="12">'.f($row,'passaporte_numero').' - '.f($row,'nm_pais_passaporte').'</td></tr>';
           }
-          $l_html.=chr(13).'      <tr valign="top"><td><b>Telefone:</b></td>'; 
+          $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Telefone:</b></td>';
           if (nvl(f($row,'ddd'),'nulo')!='nulo') {
-            $l_html.=chr(13).'            <td>('.f($row,'ddd').') '.f($row,'nr_telefone').'</td></tr>';
+            $l_html.=chr(13).'            <td colspan="12">('.f($row,'ddd').') '.f($row,'nr_telefone').'</td></tr>';
           } else {
-            $l_html.=chr(13).'            <td>---</td></tr>';
+            $l_html.=chr(13).'            <td colspan="12">---</td></tr>';
           }
-          $l_html.=chr(13).'      <tr><td><b>Fax:</b></td><td>'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
-          $l_html.=chr(13).'      <tr><td><b>Celular:</b></td> <td>'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
+          $l_html.=chr(13).'      <tr><td width="30%"><b>Fax:</b></td><td colspan="12">'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
+          $l_html.=chr(13).'      <tr><td width="30%"><b>Celular:</b></td> <td colspan="12">'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
           if (nvl(f($row,'logradouro'),'')!='') {
-            $l_html.=chr(13).'      <tr valign="top"><td><b>Endereço:</b></td><td>'.f($row,'logradouro').'</td></tr>';
-            $l_html.=chr(13).'      <tr><td><b>Complemento:</b></td><td>'.Nvl(f($row,'complemento'),'---').'</td></tr>';
-            $l_html.=chr(13).'      <tr><td><b>Bairro:</b></td><td>'.Nvl(f($row,'bairro'),'---').'</td></tr>';
+            $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Endereço:</b></td><td colspan="12">'.f($row,'logradouro').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td width="30%"><b>Complemento:</b></td><td colspan="12">'.Nvl(f($row,'complemento'),'---').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td width="30%"><b>Bairro:</b></td><td colspan="12">'.Nvl(f($row,'bairro'),'---').'</td></tr>';
             $l_html.=chr(13).'      <tr valign="top">';
             if (f($row,'pd_pais')=='S') {
-              $l_html.=chr(13).'          <td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
+              $l_html.=chr(13).'          <td width="30%"><b>Cidade:</b></td><td colspan="12">'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
             } else {
-              $l_html.=chr(13).'          <td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
+              $l_html.=chr(13).'          <td width="30%"><b>Cidade:</b></td><td colspan="12">'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
             } 
-            $l_html.=chr(13).'      <tr><td><b>CEP:</b></td><td>'.f($row,'cep').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td width="30%"><b>CEP:</b></td><td colspan="12">'.f($row,'cep').'</td></tr>';
           }
           if (Nvl(f($row,'email'),'nulo')!='nulo') {
             if ($l_tipo!='WORD') {
-              $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</td></tr>';
+              $l_html.=chr(13).'      <tr><td width="30%"><b>e-Mail:</b></td><td colspan="12"><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</a></td></tr>';
             } else {
-              $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>'.f($row,'email').'</td></tr>';
+              $l_html.=chr(13).'      <tr><td width="30%"><b>e-Mail:</b></td><td colspan="12">'.f($row,'email').'</td></tr>';
             } 
           } else {
-            $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>---</td></tr>';
+            $l_html.=chr(13).'      <tr><td width="30%"><b>e-Mail:</b></td><td colspan="12">---</td></tr>';
           }  
           if (nvl(f($RS,'sq_forma_pagamento'),'')!='') {
-            $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento das diárias</td>';
-            $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td colspan=14 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento das diárias</b></td>';
+            $l_html.=chr(13).'      <tr><td width="30%"><b>Forma de recebimento:</b></td><td colspan="12">'.f($RS,'nm_forma_pagamento').'</td></tr>';
             if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
-              $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
-              $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
-              if (f($RS,'exige_operacao')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td><td>'.Nvl(f($RS,'numero_conta'),'---').'</td></tr>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Banco:</b></td><td colspan="12">'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Agência:</b></td><td colspan="12">'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
+              if (f($RS,'exige_operacao')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td colspan="12">'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Número da conta:</b></td><td colspan="12" align="left">'.Nvl(f($RS,'numero_conta'),'---').'</td></tr>';
             } elseif (f($RS,'sg_forma_pagamento')=='ORDEM') {
-              $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
-              $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Banco:</b></td><td colspan="12">'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Agência:</b></td><td colspan="12">'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
             } elseif (f($RS,'sg_forma_pagamento')=='EXTERIOR') {
-              $l_html.=chr(13).'          <tr><td><b>Banco:</b></td><td>'.f($RS,'banco_estrang').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>ABA Code:</b></td><td>'.Nvl(f($RS,'aba_code'),'---').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>SWIFT Code:</b></td><td>'.Nvl(f($RS,'swift_code'),'---').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>Endereço da agência:</b></td><td>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>Agência:</b></td><td>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td><td>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>Cidade:</b></td><td>'.f($RS,'cidade_estrang').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>País:</b></td><td>'.f($RS,'pais_estrang').'</td>';
-              $l_html.=chr(13).'          <tr><td><b>Informações adicionais:</b></td><td>'.nvl(f($RS,'informacoes'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Banco:</b></td><td colspan="12">'.f($RS,'banco_estrang').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>ABA Code:</b></td><td colspan="12">'.Nvl(f($RS,'aba_code'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>SWIFT Code:</b></td><td colspan="12">'.Nvl(f($RS,'swift_code'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Endereço da agência:</b></td><td colspan="12">'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Agência:</b></td><td colspan="12">'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Número da conta:</b></td><td colspan="12" align="left">'.Nvl(f($RS,'numero_conta'),'---').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Cidade:</b></td><td colspan="12">'.f($RS,'cidade_estrang').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>País:</b></td><td colspan="12">'.f($RS,'pais_estrang').'</td>';
+              $l_html.=chr(13).'          <tr><td width="30%"><b>Informações adicionais:</b></td><td colspan="12">'.nvl(f($RS,'informacoes'),'---').'</td>';
             }
-          } 
+          }
         } 
       }
     }
@@ -248,16 +249,16 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $sql = new db_getPD_Vinculacao; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null);
     $RS1 = SortArray($RS1,'inicio','asc');
     if (count($RS1)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>VINCULAÇÕES</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Nº</td>';
-      $l_html.=chr(13).'          <td><b>Projeto</td>';
-      $l_html.=chr(13).'          <td><b>Detalhamento</td>';
-      $l_html.=chr(13).'          <td><b>Início</td>';
-      $l_html.=chr(13).'          <td><b>Fim</td>';
-      $l_html.=chr(13).'          <td><b>Situação</td>';
+      $l_html.=chr(13).'          <td><b>Nº</b></td>';
+      $l_html.=chr(13).'          <td><b>Projeto</b></td>';
+      $l_html.=chr(13).'          <td><b>Detalhamento</b></td>';
+      $l_html.=chr(13).'          <td><b>Início</b></td>';
+      $l_html.=chr(13).'          <td><b>Fim</b></td>';
+      $l_html.=chr(13).'          <td><b>Situação</b></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$w_TrBgColor;
       $w_total=0;
@@ -304,31 +305,32 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } 
       $l_html.=chr(13).'         </table></td></tr>';
     } 
-    
+
     // Deslocamentos
     if($l_deslocamento=='S') {
       $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'S','PDGERAL');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ROTEIRO PREVISTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>ROTEIRO PREVISTO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Origem</td>';
-      $l_html.=chr(13).'          <td><b>Aeroporto</td>';
-      $l_html.=chr(13).'          <td><b>Destino</td>';
-      $l_html.=chr(13).'          <td><b>Aeroporto</td>';
-      $l_html.=chr(13).'          <td><b>Saída</td>';
-      $l_html.=chr(13).'          <td><b>Chegada</td>';
-      $l_html.=chr(13).'          <td><b>Agenda no<br>dia viagem</td>';
-      $l_html.=chr(13).'          <td><b>Transp.</td>';
-      $l_html.=chr(13).'          <td><b>Emite<br>bilhete</td>';
-      //$l_html.=chr(13).'          <td><b>Valor</td>';
-      //$l_html.=chr(13).'          <td><b>Cia.</td>';
-      //$l_html.=chr(13).'          <td><b>Vôo</td>';
+      $l_html.=chr(13).'          <td><b>Origem</b></td>';
+      $l_html.=chr(13).'          <td><b>Aeroporto</b></td>';
+      $l_html.=chr(13).'          <td><b>Destino</b></td>';
+      $l_html.=chr(13).'          <td><b>Aeroporto</b></td>';
+      $l_html.=chr(13).'          <td><b>Saída</b></td>';
+      $l_html.=chr(13).'          <td><b>Chegada</b></td>';
+      $l_html.=chr(13).'          <td><b>Agenda no<br />dia viagem</b></td>';
+      $l_html.=chr(13).'          <td><b>Transp.</b></td>';
+      $l_html.=chr(13).'          <td><b>Emite<br />bilhete</b></td>';
+      //$l_html.=chr(13).'          <td><b>Valor</b></td>';
+      //$l_html.=chr(13).'          <td><b>Cia.</b></td>';
+      //$l_html.=chr(13).'          <td><b>Vôo</b></td>';
       $l_html.=chr(13).'        </tr>';
+      
+
       if (count($RS1)==0) {
         // Se não foram selecionados registros, exibe mensagem 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan="9" align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem 
         $w_tot_bilhete  = 0;
@@ -357,26 +359,27 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'    </table>';
       $l_html.=chr(13).'  </td>';
       $l_html.=chr(13).'</tr>';
+      //$l_html.=chr(13).'    </table>';
 
       if (f($RS,'cumprimento')!='C' && f($RS,'cumprimento')!='N') {
         $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'P','PDGERAL');
         $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ROTEIRO REALIZADO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>ROTEIRO REALIZADO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Origem</td>';
-        $l_html.=chr(13).'          <td><b>Aeroporto</td>';
-        $l_html.=chr(13).'          <td><b>Destino</td>';
-        $l_html.=chr(13).'          <td><b>Aeroporto</td>';
-        $l_html.=chr(13).'          <td><b>Saída</td>';
-        $l_html.=chr(13).'          <td><b>Chegada</td>';
-        $l_html.=chr(13).'          <td><b>Agenda no<br>dia viagem</td>';
-        $l_html.=chr(13).'          <td><b>Transp.</td>';
-        $l_html.=chr(13).'          <td><b>Emite<br>bilhete</td>';
-        //$l_html.=chr(13).'          <td><b>Valor</td>';
-        //$l_html.=chr(13).'          <td><b>Cia.</td>';
-        //$l_html.=chr(13).'          <td><b>Vôo</td>';
+        $l_html.=chr(13).'          <td><b>Origem</b></td>';
+        $l_html.=chr(13).'          <td><b>Aeroporto</b></td>';
+        $l_html.=chr(13).'          <td><b>Destino</b></td>';
+        $l_html.=chr(13).'          <td><b>Aeroporto</b></td>';
+        $l_html.=chr(13).'          <td><b>Saída</b></td>';
+        $l_html.=chr(13).'          <td><b>Chegada</b></td>';
+        $l_html.=chr(13).'          <td><b>Agenda no<br />dia viagem</b></td>';
+        $l_html.=chr(13).'          <td><b>Transp.</b></td>';
+        $l_html.=chr(13).'          <td><b>Emite<br />bilhete</b></td>';
+        //$l_html.=chr(13).'          <td><b>Valor</b></td>';
+        //$l_html.=chr(13).'          <td><b>Cia.</b></td>';
+        //$l_html.=chr(13).'          <td><b>Vôo</b></td>';
         $l_html.=chr(13).'        </tr>';
         if (count($RS1)==0) {
           // Se não foram selecionados registros, exibe mensagem 
@@ -491,7 +494,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $i += 1;
           //}
         } 
-        if ($i>1) $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PREVISÃO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+        if ($i>1) {
+          $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>PREVISÃO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+          $l_html .= chr(13).'      <tr><td valign="top" colspan="14"><table border=0 width="100%" cellspacing=0>';
+        }
         $w_cor          = $conTrBgColor;
         $j              = $i;
         $i              = 1;
@@ -528,21 +534,21 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             if ($w_trechos[$i][28]>'') $rowspan_local += 1;
             if ($w_trechos[$i][29]>'') $rowspan_local += 1;
             
-            $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
-            $l_html.=chr(13).'      <tr valign="top"><td><b>Estada:</b><td>'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3);
+            $l_html.=chr(13).'      <tr><td colspan="14" bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
+            $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Estada:</b><td colspan="12">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3);
             if ($w_trechos[$i][32]=='S' || $w_trechos[$i][33]=='S')  {
-              $l_html.=chr(13).'      <tr valign="top"><td><b>Horários:</b><td>';
+              $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Horários:</b><td colspan="12">';
               if ($w_trechos[$i][32]=='S') $l_html.=chr(13).'Saída após  as 18:00';
               if ($w_trechos[$i][32]=='S' && $w_trechos[$i][33]=='S') $l_html.=chr(13).'/';
               if ($w_trechos[$i][33]=='S') $l_html.=chr(13).'Chegada até 12:00';
             }
             if ($w_trechos[$i][30]=='N' || $w_trechos[$i][31]=='N') {
-              $l_html.=chr(13).'      <tr valign="top"><td><b>Compromissos:</b><td>';
+              $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Compromissos:</b><td colspan="12">';
               if ($w_trechos[$i][30]=='N') $l_html.=chr(13).'Sem compromisso na ida';
               if ($w_trechos[$i][30]=='N' && $w_trechos[$i][31]=='N') $l_html.=chr(13).'/';
               if ($w_trechos[$i][31]=='N') $l_html.=chr(13).'Sem compromisso na volta';
             }
-            $l_html.=chr(13).'      <tr valign="top"><td><b>Diárias:</b><td>';
+            $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Diárias:</b><td colspan="12">';
             if ($w_trechos[$i][12]=='S') {
               $l_html.=chr(13).'Sim. '.((nvl($w_trechos[$i][28],'')!='') ? 'Observações: '.crlf2br($w_trechos[$i][28]) : '').'</td>';
             } else {
@@ -550,18 +556,21 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
             if ($w_trechos[$i][39]=='S') {
               if ($w_trechos[$i][15]=='S') {
-                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
+                  $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b><td colspan="12">'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
                 } else {
-                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não. '.((nvl($w_trechos[$i][36],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][36]) : '').'</td>';
+                  $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b><td colspan="12">Não. '.((nvl($w_trechos[$i][36],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][36]) : '').'</td>';
                 }
             }
             if ($w_trechos[$i][20]=='S' && $w_trechos[$i][27]>'' && f($RS,'veiculo')=='S') {
-              $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
+              $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b><td colspan="12">'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
             } else {
-              $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>Não.</td>';
+              $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b><td colspan="12">Não.</td>';
             }
           }
           $i += 1;
+        }
+         if ($i>1) {
+          $l_html .= chr(13).'      </table>';
         }
       }
 
@@ -644,7 +653,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               $i += 1;
             //}
           } 
-          if ($i>1) $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>REALIZAÇÃO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+          if ($i>1) {
+            $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>REALIZAÇÃO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+            $l_html .= chr(13).'      <tr><td valign="top" colspan="14"><table border=0 width="100%" cellspacing=0>';
+          }
           $w_cor          = $conTrBgColor;
           $j              = $i;
           $i              = 1;
@@ -680,21 +692,21 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               if ($w_trechos[$i][28]>'') $rowspan_local += 1;
               if ($w_trechos[$i][29]>'') $rowspan_local += 1;
               
-              $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
-              $l_html.=chr(13).'      <tr valign="top"><td><b>Estada:</b><td>'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3);
+              $l_html.=chr(13).'      <tr><td colspan="14" bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
+              $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Estada:</b><td colspan="12">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3);
               if ($w_trechos[$i][32]=='S' || $w_trechos[$i][33]=='S')  {
-                $l_html.=chr(13).'      <tr valign="top"><td><b>Horários:</b><td>';
+                $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Horários:</b><td colspan="12">';
                 if ($w_trechos[$i][32]=='S') $l_html.=chr(13).'Saída após  as 18:00';
                 if ($w_trechos[$i][32]=='S' && $w_trechos[$i][33]=='S') $l_html.=chr(13).'/';
                 if ($w_trechos[$i][33]=='S') $l_html.=chr(13).'Chegada até 12:00';
               }
               if ($w_trechos[$i][30]=='N' || $w_trechos[$i][31]=='N') {
-                $l_html.=chr(13).'      <tr valign="top"><td><b>Compromissos:</b><td>';
+                $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Compromissos:</b><td colspan="12">';
                 if ($w_trechos[$i][30]=='N') $l_html.=chr(13).'Sem compromisso na ida';
                 if ($w_trechos[$i][30]=='N' && $w_trechos[$i][31]=='N') $l_html.=chr(13).'/';
                 if ($w_trechos[$i][31]=='N') $l_html.=chr(13).'Sem compromisso na volta';
               }
-              $l_html.=chr(13).'      <tr valign="top"><td><b>Diárias:</b><td>';
+              $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Diárias:</b><td colspan="12">';
               if ($w_trechos[$i][12]=='S') {
                 $l_html.=chr(13).'Sim.</td>';
               } else {
@@ -702,44 +714,47 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               }
               if (f($RS,'hospedagem')=='S'&&$w_trechos[$i][39]=='S') {
                 if ($w_trechos[$i][15]=='S') {
-                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
+                  $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b><td colspan="12">'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
                 } else {
-                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não.'.((nvl($w_trechos[$i][36],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][36]) : '').'</td>';
+                  $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b><td colspan="12">Não.'.((nvl($w_trechos[$i][36],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][36]) : '').'</td>';
                 }
               }
               if ($w_trechos[$i][20]=='S' && $w_trechos[$i][27]>'' && f($RS,'veiculo')=='S') {
-                $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
+                $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b><td colspan="12">'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
               } else {
-                $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>Não.</td>';
+                $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b><td colspan="12">Não.</td>';
               }
             }
             $i += 1;
           }
+          if ($i>1) {
+            $l_html .= chr(13).'      </table>';
+          }
         }
       }
     }
-    
+
     // Alterações de viagem
     $sql = new db_getPD_Alteracao; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'autorizacao_data','asc', 'chave', 'asc');
     if (count($RS1)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALTERAÇÕES DE VIAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>ALTERAÇÕES DE VIAGEM</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td colspan=5><b>Diferenças</td>';
-      $l_html.=chr(13).'          <td colspan=3><b>Autorização</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Justificativa</td>';
+      $l_html.=chr(13).'          <td colspan=5><b>Diferenças</b></td>';
+      $l_html.=chr(13).'          <td colspan=3><b>Autorização</b></td>';
+      $l_html.=chr(13).'          <td rowspan=2><b>Justificativa</b></td>';
       $l_html.=chr(13).'        </tr>';
       $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Tarifas</td>';
-      $l_html.=chr(13).'          <td><b>Taxas</td>';
-      $l_html.=chr(13).'          <td><b>Hospedagens</td>';
-      $l_html.=chr(13).'          <td><b>Diárias</td>';
-      $l_html.=chr(13).'          <td><b>Total</td>';
-      $l_html.=chr(13).'          <td><b>Nome</td>';
-      $l_html.=chr(13).'          <td><b>Cargo</td>';
-      $l_html.=chr(13).'          <td><b>Data</td>';
+      $l_html.=chr(13).'          <td><b>Tarifas</b></td>';
+      $l_html.=chr(13).'          <td><b>Taxas</b></td>';
+      $l_html.=chr(13).'          <td><b>Hospedagens</b></td>';
+      $l_html.=chr(13).'          <td><b>Diárias</b></td>';
+      $l_html.=chr(13).'          <td><b>Total</b></td>';
+      $l_html.=chr(13).'          <td><b>Nome</b></td>';
+      $l_html.=chr(13).'          <td><b>Cargo</b></td>';
+      $l_html.=chr(13).'          <td><b>Data</b></td>';
       $l_html.=chr(13).'        </tr>';
       $w_cor=$conTrBgColor;
       $i             = 1;
@@ -758,7 +773,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'          <td align="center">'.FormataDataEdicao(f($row,'autorizacao_data'),5).'</td>';
         $l_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($row,'justificativa')),'---');
         if (nvl(f($row,'sq_siw_arquivo'),'')!='') {
-          $l_html.='<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nm_arquivo'),null).'</td>';
+          $l_html.='<br />'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nm_arquivo'),null).'</td>';
         }
         $l_html.=chr(13).'        </tr>';
       } 
@@ -847,18 +862,19 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
             $i += 1;
           //}
-        } 
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTO PREVISTO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
+        }
+
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>PAGAMENTO PREVISTO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'           <td><b>Localidade</td>';
-        $l_html.=chr(13).'           <td><b>Chegada</td>';
-        $l_html.=chr(13).'           <td><b>Saída</td>';
-        $l_html.=chr(13).'           <td><b>Item</td>';
-        $l_html.=chr(13).'           <td><b>Qtd.</td>';
-        $l_html.=chr(13).'           <td><b>$ Unitário</td>';
-        $l_html.=chr(13).'           <td><b>$ Total</td>';
+        $l_html.=chr(13).'           <td><b>Localidade</b></td>';
+        $l_html.=chr(13).'           <td><b>Chegada</b></td>';
+        $l_html.=chr(13).'           <td><b>Saída</b></td>';
+        $l_html.=chr(13).'           <td><b>Item</b></td>';
+        $l_html.=chr(13).'           <td><b>Qtd.</b></td>';
+        $l_html.=chr(13).'           <td><b>$ Unitário</b></td>';
+        $l_html.=chr(13).'           <td><b>$ Total</b></td>';
         $l_html.=chr(13).'         </tr>';
         $w_cor          = $conTrBgColor;
         $j              = $i;
@@ -891,7 +907,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             
             $l_html.=chr(13).'     <tr valign="top">';
             $l_html.=chr(13).'       <td rowspan="'.$rowspan_local.'"><b>'.$w_trechos[$i][5].'</b>';
-            $l_html.=chr(13).'<br>'.$w_trechos[$i][13].' '.formatNumber($w_tot_local);
+            $l_html.=chr(13).'<br />'.$w_trechos[$i][13].' '.formatNumber($w_tot_local);
             $l_html.=chr(13).'       <td align="center" rowspan="'.$rowspan.'">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</td>';
             $l_html.=chr(13).'       <td align="center" rowspan="'.$rowspan.'">'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</td>';
             if ($w_trechos[$i][25]>'' && nvl(f($RS,'diaria'),'')!='') {
@@ -1030,17 +1046,16 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $i += 1;
           }
         //} 
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTO REALIZADO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
-        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>PAGAMENTO REALIZADO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'           <td><b>Localidade</td>';
-        $l_html.=chr(13).'           <td><b>Chegada</td>';
-        $l_html.=chr(13).'           <td><b>Saída</td>';
-        $l_html.=chr(13).'           <td><b>Item</td>';
-        $l_html.=chr(13).'           <td><b>Qtd.</td>';
-        $l_html.=chr(13).'           <td><b>$ Unitário</td>';
-        $l_html.=chr(13).'           <td><b>$ Total</td>';
+        $l_html.=chr(13).'           <td><b>Localidade</b></td>';
+        $l_html.=chr(13).'           <td><b>Chegada</b></td>';
+        $l_html.=chr(13).'           <td><b>Saída</b></td>';
+        $l_html.=chr(13).'           <td><b>Item</b></td>';
+        $l_html.=chr(13).'           <td><b>Qtd.</b></td>';
+        $l_html.=chr(13).'           <td><b>$ Unitário</b></td>';
+        $l_html.=chr(13).'           <td><b>$ Total</b></td>';
         $l_html.=chr(13).'         </tr>';
         $w_cor          = $conTrBgColor;
         $j              = $i;
@@ -1072,7 +1087,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             
             $l_html.=chr(13).'     <tr valign="top">';
             $l_html.=chr(13).'       <td rowspan="'.$rowspan_local.'"><b>'.$w_trechos[$i][5].'</b>';
-            $l_html.=chr(13).'<br>'.$w_trechos[$i][13].' '.formatNumber($w_tot_local);
+            $l_html.=chr(13).'<br />'.$w_trechos[$i][13].' '.formatNumber($w_tot_local);
             $l_html.=chr(13).'       <td align="center" rowspan="'.$rowspan.'">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</td>';
             $l_html.=chr(13).'       <td align="center" rowspan="'.$rowspan.'">'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</td>';
             if ($w_trechos[$i][25]>'' && nvl(f($RS,'diaria'),'')!='') {
@@ -1156,54 +1171,53 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           ksort($w_tot_diaria_S);
         }
       
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>DIFERENÇA DE DIÁRIAS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center"><TD><B><FONT SIZE=2>VALOR';
-        foreach($w_tot_diaria_S as $k => $v) $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.$k; 
+        $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center"><td><b><font SIZE=2>VALOR</font></b></td>';
+        foreach($w_tot_diaria_S as $k => $v) $l_html.=chr(13).'       <td><b><font SIZE=2>'.$k.'</font></b></td>';
         
         $l_html.=chr(13).'       </tr>';
-        $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Devido';
+        $l_html.=chr(13).'       <tr align="RIGHT"><td><font SIZE=2>Devido</font></td>';
         if (is_array($w_tot_diaria_P)) {
           foreach($w_tot_diaria_P as $k => $v) {
-              $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($v);
+              $l_html.=chr(13).'       <td><font SIZE=2>'.formatNumber($v).'</font></td>';
           }
         } else {
           foreach($w_tot_diaria_S as $k => $v) {
-            $l_html.=chr(13).'       <TD><FONT SIZE=2>0,00';
+            $l_html.=chr(13).'       <td><font SIZE=2>0,00</font></td>';
           }
         }
-        $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Recebido';
+        $l_html.=chr(13).'       </tr>';
+        $l_html.=chr(13).'       <tr align="RIGHT"><td><font SIZE=2>Recebido</font></td>';
         foreach($w_tot_diaria_S as $k => $v) {
-            $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]);
+            $l_html.=chr(13).'       <td><font SIZE=2>'.formatNumber($w_tot_diaria_S[$k]).'</font></td>';
         }
         $l_html.=chr(13).'       </tr>';
-        $l_html.=chr(13).'       </tr>';
-        $l_html.=chr(13).'       <tr bgcolor="'.$conTrBgColor.'" align="RIGHT"><TD><B><FONT SIZE=2>Diferença';
+        $l_html.=chr(13).'       <tr bgcolor="'.$conTrBgColor.'" align="RIGHT"><td><b><font SIZE=2>Diferença</font></b></td>';
         foreach($w_tot_diaria_S as $k => $v) {
-          $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.formatNumber($w_tot_diaria_P[$k]-$v);
+          $l_html.=chr(13).'       <td><b><font SIZE=2>'.formatNumber($w_tot_diaria_P[$k]-$v).'</font></b></td>';
           if (($w_tot_diaria_P[$k]-$v)!=0) $w_diferenca = true;
         }
-        $l_html.=chr(13).'     </b></td></tr>';
-        $l_html.=chr(13).'        </table></td></tr>';
+        $l_html.=chr(13).'     </tr></table></td></tr>';
       }
       
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PRESTAÇÃO DE CONTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td valign="top" colspan="2">';
-      $l_html.=chr(13).'      <tr><td><b>Alteração no roteiro/horários:</b></td><td>'.f($RS,'nm_cumprimento').'</td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>PRESTAÇÃO DE CONTAS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td valign="top" colspan="14"><table border=0 width="100%" cellspacing=0>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Alteração no roteiro/horários:</b></td><td colspan="5">'.f($RS,'nm_cumprimento').'</td></tr>';
       if (f($RS,'cumprimento')=='P') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo da alteração:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Motivo da alteração:</b></td><td colspan="12">'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } elseif (f($RS,'cumprimento')=='C') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo do cancelamento:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Motivo do cancelamento:</b></td><td colspan="12">'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } 
       if ($w_diferenca && $w_financeiro) {
-        $l_html.=chr(13).'      <tr><td><b>Diferença de diárias:</b></td><td>';
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Diferença de diárias:</b></td><td colspan="12">';
         foreach($w_tot_diaria_S as $k => $v) {
           $l_html.=$k.' '.formatNumber($w_tot_diaria_P[$k]-$v).'&nbsp;&nbsp;&nbsp;';
         }
         $l_html.='</td>';
       }
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Reembolso ao beneficiário:</b></td><td>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Reembolso ao beneficiário:</b></td><td align="left">';
       if (f($RS,'reembolso')=='N') {
         $l_html.='R$ 0,00</td>';
       } else {
@@ -1218,10 +1232,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'        </tr>';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">';
         $l_html.=chr(13).'          <td><b>Moeda</b></td>';
-        $l_html.=chr(13).'          <td><b>Valor</td>';
-        $l_html.=chr(13).'          <td><b>Justificativa</td>';
-        $l_html.=chr(13).'          <td><b>Valor</td>';
-        $l_html.=chr(13).'          <td><b>Observação</td>';
+        $l_html.=chr(13).'          <td><b>Valor</b></td>';
+        $l_html.=chr(13).'          <td><b>Justificativa</b></td>';
+        $l_html.=chr(13).'          <td><b>Valor</b></td>';
+        $l_html.=chr(13).'          <td><b>Observação</b></td>';
         $l_html.=chr(13).'        </tr>';
         if (count($RS_Reembolso)<=0) {
           $l_html.=chr(13).'      <tr><td colspan=8 align="center"><font color="#BC3131"><b>VALORES NÃO INFORMADOS.</b></b></td></tr>';
@@ -1250,26 +1264,26 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'    </table>';
       }
       if (f($RS,'ressarcimento')=='S') {
-        $l_html.=chr(13).'      <tr><td><b>Data da devolução:</b></td><td>'.formataDataEdicao(f($RS,'ressarcimento_data')).'</td></tr>';      
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Código do depósito identificado:</b></td><td>'.nvl(f($RS,'deposito_identificado'),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Data da devolução:</b></td><td colspan="12" align="left">'.formataDataEdicao(f($RS,'ressarcimento_data')).'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Código do depósito identificado:</b></td><td colspan="12">'.nvl(f($RS,'deposito_identificado'),'---').'</td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Valor devolvido:</b></td><td>R$ '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor devolvido:</b></td><td colspan="12" align="left">R$ '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
       if (f($RS,'ressarcimento')=='S') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.nvl(CRLF2BR(f($RS,'ressarcimento_observacao')),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(CRLF2BR(f($RS,'ressarcimento_observacao')),'---').'</td></tr>';
       } 
-      if (f($RS,'cumprimento')!='C') $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Relatório de viagem:</b></td><td>'.nvl(CRLF2BR(f($RS,'relatorio')),'---').'</td></tr>';
+      if (f($RS,'cumprimento')!='C') $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Relatório de viagem:</b></td><td colspan="12">'.nvl(CRLF2BR(f($RS,'relatorio')),'---').'</td></tr>';
 
       if (nvl(f($RS,'sq_relatorio_viagem'),'')!='') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Anexo do relatório:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_relatorio_viagem'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo'),null).'</td>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Anexo do relatório:</b></td><td colspan="12">'.LinkArquivo('HL',$w_cliente,f($RS,'sq_relatorio_viagem'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo'),null).'</td>';
       }else{
             // Arquivos vinculados
         $sql = new db_getSolicRelAnexo;
         $RS1 = $sql->getInstanceOf($dbms, $l_chave, null, $w_cliente, '1');
         $RS1 = SortArray($RS1, 'nome', 'asc');
         if (count($RS1) > 0) {
-          $l_html.=chr(13) . '      <tr valign="top"><td><b>Anexos:</b></td>';
-//        $l_html.=chr(13).'      <br><font size="2"><b>ARQUIVOS ANEXADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-          $l_html.=chr(13) . '        <td>';
+          $l_html.=chr(13) . '      <tr valign="top"><td width="30%"><b>Anexos:</b></td>';
+//        $l_html.=chr(13).'      <br /><font size="2"><b>ARQUIVOS ANEXADOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+          $l_html.=chr(13) . '        <td colspan="12">';
           $w_cor = $w_TrBgColor;
           $l_html . '<ul>';
           foreach ($RS1 as $row) {
@@ -1285,15 +1299,15 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
 
       if (nvl(f($RS,'sq_arquivo_comprovante'),'')!='') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Comprovantes de viagem:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_arquivo_comprovante'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo_comprovante'),null).'</td>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Comprovantes de viagem:</b></td><td colspan="12">'.LinkArquivo('HL',$w_cliente,f($RS,'sq_arquivo_comprovante'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo_comprovante'),null).'</td>';
       }else{
       // Arquivos vinculados
         $sql = new db_getSolicRelAnexo;
         $RS1 = $sql->getInstanceOf($dbms, $l_chave, null, $w_cliente, '2');
         $RS1 = SortArray($RS1, 'nome', 'asc');
         if (count($RS1) > 0) {
-          $l_html.=chr(13) . '      <tr valign="top"><td><b>Comprovantes de viagem:</b></td>';
-          $l_html.=chr(13) . '        <td>';
+          $l_html.=chr(13) . '      <tr valign="top"><td width="30%"><b>Comprovantes de viagem:</b></td>';
+          $l_html.=chr(13) . '        <td colspan="12">';
           $w_cor = $w_TrBgColor;
           $l_html . '<ul>';
           foreach ($RS1 as $row) {
@@ -1311,9 +1325,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     // Cotação de passagens
     if($l_deslocamento=='S' && $w_or_tramite>=2 && $w_internacional=='S') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>COTAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td><b>Valor:</b></td><td>R$ '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.nvl(crlf2br(f($RS,'cotacao_observacao')),'---').'</td>';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>COTAÇÃO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor:</b></td><td colspan="12" align="left">R$ '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(crlf2br(f($RS,'cotacao_observacao')),'---').'</td>';
     }
 
     if ($w_or_tramite>5) {
@@ -1321,28 +1335,28 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $sql = new db_getPD_Bilhete; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
       if (count($RS1)>0) {
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BILHETES EMITIDOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>BILHETES EMITIDOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td rowspan=2><b>Emissão</td>';
-        $l_html.=chr(13).'          <td rowspan=2><b>Cia.</td>';
-        $l_html.=chr(13).'          <td rowspan=2><b>Número</td>';
-        $l_html.=chr(13).'          <td rowspan=2><b>Trecho</td>';
-        $l_html.=chr(13).'          <td rowspan=2><b>RLOC</td>';
-        $l_html.=chr(13).'          <td rowspan=2><b>Classe</td>';
-        $l_html.=chr(13).'          <td colspan=5><b>Valores</td>';
-        $l_html.=chr(13).'          <td colspan=3><b>Faturamento</td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Emissão</b></td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Cia.</b></td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Número</b></td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Trecho</b></td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>RLOC</b></td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Classe</b></td>';
+        $l_html.=chr(13).'          <td colspan=5><b>Valores</b></td>';
+        $l_html.=chr(13).'          <td colspan=3><b>Faturamento</b></td>';
         $l_html.=chr(13).'        </tr>';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Valor com desconto</td>';
-        $l_html.=chr(13).'          <td><b>Valor Bilhete</td>';
-        $l_html.=chr(13).'          <td><b>Embarque</td>';
-        $l_html.=chr(13).'          <td><b>Taxas</td>';
-        $l_html.=chr(13).'          <td><b>Total</td>';
-        $l_html.=chr(13).'          <td><b>Fatura</td>';
-        $l_html.=chr(13).'          <td nowrap><b>$ Desconto</td>';
-        $l_html.=chr(13).'          <td nowrap><b>$ Faturado</td>';
+        $l_html.=chr(13).'          <td><b>Valor com desconto</b></td>';
+        $l_html.=chr(13).'          <td><b>Valor Bilhete</b></td>';
+        $l_html.=chr(13).'          <td><b>Embarque</b></td>';
+        $l_html.=chr(13).'          <td><b>Taxas</b></td>';
+        $l_html.=chr(13).'          <td><b>Total</b></td>';
+        $l_html.=chr(13).'          <td><b>Fatura</b></td>';
+        $l_html.=chr(13).'          <td nowrap><b>$ Desconto</b></td>';
+        $l_html.=chr(13).'          <td nowrap><b>$ Faturado</b></td>';
         $l_html.=chr(13).'        </tr>';
         $w_cor=$conTrBgColor;
         $i             = 1;
@@ -1444,11 +1458,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
 
       if (count($w_orc)>0 || count($w_fin)>0) {
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PREVISÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-        $l_html.=chr(13).'      <tr><td colspan=2><table width="100%" border=0 cellpadding=0 cellspacing=5><tr valign="top">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>PREVISÃO ORÇAMENTÁRIA-FINANCEIRA</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14"><table width="100%" border=0 cellpadding=0 cellspacing=5><tr valign="top">';
         
         // Exibe previsão orçamentária
-        $l_html.=chr(13).'        <td align="center" width="50%"><table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'        <td align="center" width="50%" colspan="7"><table width=97%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'          <tr align="center">';
         if (count($w_orc_moeda)==1) {
           $l_html.=chr(13).'          <td colspan="2" bgColor="#f0f0f0"><b>ORÇAMENTÁRIO</b></td>';
@@ -1457,11 +1471,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Rubrica</b></td>';
           $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
         } else {
-          $l_html.=chr(13).'          <td colspan="'.(1+(2*count($w_orc_moeda))).'" bgColor="#f0f0f0"><b>ORÇAMENTÁRIO</b></td>';
+          $l_html.=chr(13).'          <td colspan="'.(1+count($w_orc_moeda)).'" bgColor="#f0f0f0"><b>ORÇAMENTÁRIO</b></td>';
           $l_html.=chr(13).'          </tr>';
           $l_html.=chr(13).'          <tr align="center">';
           $l_html.=chr(13).'          <td rowspan="2" bgColor="#f0f0f0"><b>Rubrica</b></td>';
-          $l_html.=chr(13).'          <td colspan="'.(2*count($w_orc_moeda)).'" bgColor="#f0f0f0"><b>Valor</b></td>';
+          $l_html.=chr(13).'          <td colspan="'.count($w_orc_moeda).'" bgColor="#f0f0f0"><b>Valor</b></td>';
           $l_html.=chr(13).'          </tr>';
           $l_html.=chr(13).'          <tr align="center">';
           foreach($w_orc_moeda as $k=>$v) $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>'.$k.'</b></td>';
@@ -1488,7 +1502,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         unset($w_tot);
 
         // Exibe previsão financeira
-        $l_html.=chr(13).'        <td align="center" width="50%"><table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'        <td align="center" width="50%" colspan="7"><table width=97%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'          <tr align="center">';
         if (count($w_fin_moeda)==1) {
           $l_html.=chr(13).'          <td colspan="2" bgColor="#f0f0f0"><b>FINANCEIRO</b></td>';
@@ -1497,11 +1511,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo de Lançamento</b></td>';
           $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
         } else {
-          $l_html.=chr(13).'          <td colspan="'.(1+(2*count($w_fin_moeda))).'" bgColor="#f0f0f0"><b>FINANCEIRO</b></td>';
+          $l_html.=chr(13).'          <td colspan="'.(1+count($w_fin_moeda)).'" bgColor="#f0f0f0"><b>FINANCEIRO</b></td>';
           $l_html.=chr(13).'          </tr>';
           $l_html.=chr(13).'          <tr align="center">';
           $l_html.=chr(13).'          <td rowspan="2" bgColor="#f0f0f0"><b>Classificação</b></td>';
-          $l_html.=chr(13).'          <td colspan="'.(2*count($w_fin_moeda)).'" bgColor="#f0f0f0"><b>Valor</b></td>';
+          $l_html.=chr(13).'          <td colspan="'.count($w_fin_moeda).'" bgColor="#f0f0f0"><b>Valor</b></td>';
           $l_html.=chr(13).'          </tr>';
           $l_html.=chr(13).'          <tr align="center">';
           foreach($w_fin_moeda as $k=>$v) $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>'.$k.'</b></td>';
@@ -1531,15 +1545,14 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       // Execução financeira
       if ($w_financeiro) {
         $RSF = SortArray($RSF,'inclusao','asc', 'codigo_interno', 'asc');
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EXECUÇÃO FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
-        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>EXECUÇÃO FINANCEIRA</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Código</td>';
-        $l_html.=chr(13).'          <td><b>Histórico</td>';
-        $l_html.=chr(13).'          <td><b>Valor</td>';
-        $l_html.=chr(13).'          <td><b>Situação atual</td>';
-        $l_html.=chr(13).'          <td><b>Data Pagamento</td>';
+        $l_html.=chr(13).'          <td><b>Código</b></td>';
+        $l_html.=chr(13).'          <td><b>Histórico</b></td>';
+        $l_html.=chr(13).'          <td><b>Valor</b></td>';
+        $l_html.=chr(13).'          <td><b>Situação atual</b></td>';
+        $l_html.=chr(13).'          <td><b>Data Pagamento</b></td>';
         $l_html.=chr(13).'        </tr>';
         $w_cor=$conTrBgColor;
         $i             = 1;
@@ -1580,17 +1593,17 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         null, null, null, null, null, null, null, null, null, 'OUTROS');
       $RS1 = SortArray($RS1,'nr_fatura','asc','nm_tipo_reg','asc', 'inicio_reg', 'asc', 'fim_reg', 'asc');
       if (count($RS1)>0) {
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DESPESAS COM HOSPEDAGENS, LOCAÇÃO DE VEÍCULOS E SEGUROS DE VIAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>DESPESAS COM HOSPEDAGENS, LOCAÇÃO DE VEÍCULOS E SEGUROS DE VIAGEM</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="14">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Fatura</td>';
-        $l_html.=chr(13).'          <td><b>Agência de Viagens</td>';
-        $l_html.=chr(13).'          <td><b>Tipo</td>';
-        $l_html.=chr(13).'          <td><b>Início</td>';
-        $l_html.=chr(13).'          <td><b>Fim</td>';
-        $l_html.=chr(13).'          <td><b>Valor</td>';
-        $l_html.=chr(13).'          <td><b>Hotel/Locadora/Seguradora</td>';
+        $l_html.=chr(13).'          <td><b>Fatura</b></td>';
+        $l_html.=chr(13).'          <td><b>Agência de Viagens</b></td>';
+        $l_html.=chr(13).'          <td><b>Tipo</b></td>';
+        $l_html.=chr(13).'          <td><b>Início</b></td>';
+        $l_html.=chr(13).'          <td><b>Fim</b></td>';
+        $l_html.=chr(13).'          <td><b>Valor</b></td>';
+        $l_html.=chr(13).'          <td><b>Hotel/Locadora/Seguradora</b></td>';
         $l_html.=chr(13).'        </tr>';
         $w_cor=$conTrBgColor;
         $i             = 1;
@@ -1621,8 +1634,8 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>ARQUIVOS ANEXOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14" align="center">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Título</b></td>';
@@ -1646,22 +1659,23 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'         </table></td></tr>';
     }
 
+    /* Bloco obsoleto
     // Arquivos gerados para a PCD
-    if (1==0) {//($l_anexo = 'S' && $w_or_tramite > 5) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
-      $l_html.=chr(13).'        <table width=100%  border="0" bordercolor="#00000">';
+    if ($l_anexo = 'S' && $w_or_tramite > 5) {
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>ARQUIVOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="0" bordercolor="#00000">';
       $l_html.=chr(13).'        <tr><td><a target="Emissao" class="hl" title="Emitir autorização e proposta de concessão." href="'.$w_dir.$w_pagina.'Emissao&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'">Autorização para emissão de bilhetes</A>';
       $l_html.=chr(13).'        <tr><td><a target="Relatorio" class="hl" title="Emitir relatório para prestacao de contas." href="'.$w_dir.$w_pagina.'Prestacaocontas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Relatório de viagem</A>';
       $l_html.=chr(13).'      </table></td></tr>';
     }
+    */
   }
    
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaViagem($w_cliente,$l_chave,'PDGERAL',null,null,null,Nvl($w_tramite,0));
   if ($w_erro>'') {
-    $l_html.=chr(13).'<tr><td colspan=2><HR>';
-    $l_html.=chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=2>';
+    $l_html.=chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=14>&nbsp;</td></tr>';
+    $l_html.=chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=14>';
     if (substr($w_erro,0,1)=='0') {
       $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> As pendências abaixo devem ser resolvidas antes do encaminhamento para as fases posteriores à atual.</font>';
     } elseif (substr($w_erro,0,1)=='1') {
@@ -1672,14 +1686,17 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $l_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
     $l_html.=chr(13).'  </td></tr>';
   } 
+  $l_html.=chr(13).'        </table></td></tr>';
+  $l_html.=chr(13).'      </table>';
 
   // Encaminhamentos
   if ($l_ocorrencia=='S') {
+    $l_html.=chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=14><table border=0 width="100%"><tr><td>';
     include_once($w_dir_volta.'funcoes/exibeLog.php');
     $l_html .= exibeLog($l_chave,$l_o,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+    $l_html.=chr(13).'        </table></td></tr>';
   } 
   $l_html.=chr(13).'    </table>';
-  $l_html.=chr(13).'</table>';
   return $l_html;
 }
 ?>

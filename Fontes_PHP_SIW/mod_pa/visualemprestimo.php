@@ -33,14 +33,14 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   } 
   // Se for listagem ou envio, exibe os dados de identificação do lançamento
   $l_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
-  $l_html.=chr(13).'<tr><td>';
+  $l_html.=chr(13).'<tr><td colspan="5">&nbsp;<br>';
   $l_html.=chr(13).'    <table width="99%" border="0">';
-  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><font size="2"><b>'.upper(f($RS,'nome')).' '.f($RS,'codigo_interno').' ('.$v_chave.')</b></td>';
-  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="5" height="2" bgcolor="#000000"></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="5" bgcolor="#f0f0f0"><font size="2"><b>'.upper(f($RS,'nome')).' '.f($RS,'codigo_interno').' ('.$v_chave.')</b></td>';
+  $l_html.=chr(13).'      <tr><td colspan="5" height="2" bgcolor="#000000"></td></tr>';
    
   // Identificação do lançamento
-  $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+  $l_html .= chr(13).'      <tr><td valign="top" colspan="5"><table border=0 width="100%" cellspacing=0>';
   $l_html .= chr(13).'    <tr><td width="30%"><b>Solicitante:<b></td>';
   if (!($l_P1==4 || $l_tipo=='WORD')){
     $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
@@ -54,16 +54,15 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
   }
   $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
-  $l_html.=chr(13).'      <tr><td><b>Data prevista para devolução:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
+  $l_html.=chr(13).'      <tr><td><b>Data prevista para devolução:</b></td><td align="left">'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
   $l_html.=chr(13).'          </table></td></tr>';    
   
   if ($l_O!='X') {
     //Listagem dos itens do pedido de compra. Não exibido quando operação igual a X (conclusão do pedido).
     $sql = new db_getPAEmpItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null);
     $RS1 = SortArray($RS1,'ano','asc','protocolo','asc'); 
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
-    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'      <tr><td colspan="5"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="5"><div align="center"><table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $l_html.=chr(13).'          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>';
     $l_html.=chr(13).'          <td rowspan=2 width="1%" nowrap><b>Tipo</td>';
@@ -103,7 +102,7 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     // Se for envio, executa verificações nos dados da solicitação
     $w_erro = ValidaEmprestimo($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
     if ($w_erro>'') {
-      $l_html.=chr(13).'<tr><td colspan=2><font size=2>';
+      $l_html.=chr(13).'<tr><td colspan="5"><font size=2>';
       $l_html.=chr(13).'<HR>';
       if (substr($w_erro,0,1)=='0') {
         $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
