@@ -14,14 +14,14 @@ function montaRelatorioXLS($conteudo = null){
   $conteudo = str_ireplace ('<a', '<x', str_replace ('</a', '</x', $conteudo));
   $conteudo = str_ireplace ('<img', '<x', str_replace ('</img', '</x', $conteudo));
   
-  $conteudo = preg_replace("(<td(.class.remover.*?)>(.*?)</td>)i","",$conteudo);
+  $conteudo = preg_replace("(<td(.class=\"remover\".*?)>(.*?)</td>)Ssi","",$conteudo);
 
-  header('Content-Type: application/vnd.ms-excel;');                 // This should work for IE & Opera
-  header("Content-type: application/x-msexcel");                    // This should work for the rest
-  header("Content-type: application/vnd.ms-excel; name='excel'");
-  header('Content-Disposition: attachment; filename=arquivo.xls');
-  header("Pragma: no-cache");
-  header("Expires: 0");
+//  header('Content-Type: application/vnd.ms-excel;');                 // This should work for IE & Opera
+//  header("Content-type: application/x-msexcel");                    // This should work for the rest
+//  header("Content-type: application/vnd.ms-excel; name='excel'");
+//  header('Content-Disposition: attachment; filename=arquivo.xls');
+//  header("Pragma: no-cache");
+//  header("Expires: 0");
   $body ='<html xmlns:o="urn:schemas-microsoft-com:office:office"';
   $body.='    xmlns:x="urn:schemas-microsoft-com:office:excel"';
   $body.='    xmlns="http://www.w3.org/TR/REC-html40">';

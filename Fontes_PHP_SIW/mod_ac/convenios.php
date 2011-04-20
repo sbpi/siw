@@ -99,10 +99,6 @@ include_once('validaconvenio.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
 $P1             = nvl($_REQUEST['P1'],0);
@@ -118,6 +114,13 @@ $w_pagina       = 'convenios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_ac/';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if (strpos($SG,'ANEXO')!==false || strpos($SG,'OUTRA')!==false|| strpos($SG,'DADOS')!==false|| strpos($SG,'PREPOSTO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
   if ((strpos('IG',$O)===false) && $_REQUEST['w_chave_aux']=='') $O='L';
 } elseif (strpos($SG,'ENVIO')!==false) {

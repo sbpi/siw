@@ -49,12 +49,6 @@ include_once('visualfornecedor.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio.
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
 $O              = upper($_REQUEST['O']);
@@ -63,6 +57,13 @@ $w_pagina       = 'fornecedor.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_eo/';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 $p_tipo_pessoa  = upper($_REQUEST['p_tipo_pessoa']);
 $p_tipo_vinculo = upper($_REQUEST['p_tipo_vinculo']);
 $p_clientes     = upper($_REQUEST['p_clientes']);

@@ -58,11 +58,6 @@ include_once($w_dir_volta.'funcoes/FC_Colors.php');
 //                   = V   : Geração de gráfico
 //                   = W   : Geração de documento no formato MS-Word (Office 2003)
 
-// Verifica se o usuário está autenticado
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -77,7 +72,15 @@ $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'gr_fundofixo.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if ($O=='') $O='P';
+
 switch ($O) {
   case 'V': $w_TP=$TP.' - Gráfico'; break;
   case 'P': $w_TP=$TP.' - Filtragem'; break;

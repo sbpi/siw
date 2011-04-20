@@ -51,10 +51,7 @@ include_once($w_dir_volta.'classes/sp/db_getArquivo.php');
 //                   = D      : Detalhes
 //                   = N      : Nova solicitação de envio
 //                   = NIVEL2 : Segundo nível de consulta
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
@@ -71,6 +68,13 @@ $w_dir          = 'mod_dc/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = upper($_REQUEST['w_copia']);
 $p_ordena       = lower($_REQUEST['p_ordena']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();

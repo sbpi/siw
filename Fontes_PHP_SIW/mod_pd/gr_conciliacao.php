@@ -57,13 +57,6 @@ include_once('visualfatura.php');
 //                   = P   : Filtragem
 //                   = V   : Geração de gráfico
 //                   = W   : Geração de documento no formato MS-Word (Office 2003)
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON'] != 'Sim') {
-  EncerraSessao();
-}
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -81,6 +74,12 @@ $w_pagina = 'gr_conciliacao.php?par=';
 $w_Disabled = 'ENABLED';
 $w_dir = 'mod_pd/';
 $w_troca = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] != 'Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O == '')
   $O = 'P';

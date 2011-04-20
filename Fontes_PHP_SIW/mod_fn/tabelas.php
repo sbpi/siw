@@ -47,10 +47,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 //                   = A   : Alteração
 //                   = E   : Exclusão
 //                   = L   : Listagem
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -68,6 +65,13 @@ $w_dir          = 'mod_fn/';
 $w_troca        = $_REQUEST['w_troca'];
 $p_ordena       = $_REQUEST['p_ordena'];
 $w_copia        = $_REQUEST['w_copia'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';    break;
   case 'A': $w_TP=$TP.' - Alteração';   break;

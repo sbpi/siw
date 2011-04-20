@@ -65,10 +65,7 @@ include_once('visualprograma.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -86,6 +83,13 @@ $w_dir          = 'mod_pe/';
 $w_troca        = $_REQUEST['w_troca'];
 $p_ordena       = lower($_REQUEST['p_ordena']);
 $w_SG           = upper($_REQUEST['w_SG']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if (strpos($SG,'RESP')!==false || strpos($SG,'ANEXO')!==false) {
   if ($O!='I' && $O!='E' && nvl($_REQUEST['w_chave_aux'],$_REQUEST['w_sq_pessoa'])=='') $O='L';
 } elseif (strpos($SG,'ENVIO')!==false) {

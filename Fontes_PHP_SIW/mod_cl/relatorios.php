@@ -34,10 +34,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoMatServ.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca    = $_REQUEST['w_troca'];
 $w_copia    = $_REQUEST['w_copia'];
@@ -56,7 +53,15 @@ $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_cl/';
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if ($O=='') $O='P';
+
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';    break;
   case 'A': $w_TP=$TP.' - Alteração';   break;

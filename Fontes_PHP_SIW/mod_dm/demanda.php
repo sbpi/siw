@@ -76,14 +76,6 @@ include_once('visualdemanda.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -100,6 +92,12 @@ $w_pagina       = 'demanda.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dm/';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($SG=='GDANEXO' || $SG=='GDINTERESS' || $SG=='GDAREAS') {
   if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O = 'L';

@@ -327,8 +327,8 @@ begin
                  left        join (select x.sq_documento_pai, count(*) as qtd
                                      from pa_documento               x
                                           inner join siw_solicitacao y on (x.sq_documento_pai = y.sq_siw_solicitacao)
-                                    where x.sq_documento_pai is null
-                                      and x.tipo_juntada     = 'P'
+                                    where x.sq_documento_pai is not null
+                                      and x.tipo_juntada     in ('P','A')
                                       and y.sq_menu          = p_menu
                                     group by x.sq_documento_pai
                                   )                    c5 on (c.sq_siw_solicitacao   = c5.sq_documento_pai)
@@ -350,9 +350,27 @@ begin
                      left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                      left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                         w
+               left          join (select x.sq_pessoa, y.sq_modulo, y.sigla
+                                     from sg_pessoa_modulo      x
+                                          inner join siw_modulo y on (x.sq_modulo = y.sq_modulo)
+                                    where y.sigla     = 'PA'
+                                      and x.sq_pessoa = p_pessoa
+                                  )                    w1 on (w.sq_pessoa             = w1.sq_pessoa)
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
+         and (w1.sq_pessoa  is not null or
+              c.unidade_int_posse in (select sq_unidade from sg_autenticacao where sq_pessoa = p_pessoa
+                                      UNION
+                                      select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                      UNION
+                                      select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                      UNION 
+                                      select sq_unidade from eo_unidade_resp where sq_pessoa = p_pessoa and fim is null
+                                      UNION
+                                      select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_pessoa
+                                     )
+             )
          and (p_despacho   is null or (p_despacho    is not null and 
                                        ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and w_filtro = 'true'))) or 
                                         (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null and p_ano is not null)
@@ -367,7 +385,7 @@ begin
                                         (p_despacho = a1.despacho_autuar     and c.processo = 'N') or
                                         (p_despacho = a1.despacho_anexar     and c.sq_documento_pai is null) or
                                         (p_despacho = a1.despacho_apensar    and c.sq_documento_pai is null) or
-                                        (p_despacho = a1.despacho_desmembrar and c.sq_documento_pai is null and coalesce(c5.qtd,0) = 0) 
+                                        (p_despacho = a1.despacho_desmembrar and c.sq_documento_pai is null and coalesce(c5.qtd,0) > 0) 
                                        )
                                       )
              )
@@ -468,9 +486,27 @@ begin
                    left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa)
                    left    join co_pessoa            d8 on (d.cadastrador          = d8.sq_pessoa),
                sg_autenticacao                       w
+               left        join (select x.sq_pessoa, y.sq_modulo, y.sigla
+                                   from sg_pessoa_modulo      x
+                                        inner join siw_modulo y on (x.sq_modulo = y.sq_modulo)
+                                  where y.sigla     = 'PA'
+                                    and x.sq_pessoa = p_pessoa
+                                )                    w1 on (w.sq_pessoa             = w1.sq_pessoa)
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
+         and (w1.sq_pessoa  is not null or
+              c.unidade_int_posse in (select sq_unidade from sg_autenticacao where sq_pessoa = p_pessoa
+                                      UNION
+                                      select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                      UNION
+                                      select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
+                                      UNION 
+                                      select sq_unidade from eo_unidade_resp where sq_pessoa = p_pessoa and fim is null
+                                      UNION
+                                      select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_pessoa
+                                     )
+             )
          and (p_prefixo     is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
          and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero))
          and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))

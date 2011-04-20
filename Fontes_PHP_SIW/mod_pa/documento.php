@@ -83,13 +83,7 @@ include_once('visualGT.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON'] != 'Sim') {
-  EncerraSessao();
-}
-// Declaração de variáveis
-$dbms = new abreSessao;
-$dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
 $P1 = nvl($_REQUEST['P1'], 0);
@@ -107,6 +101,12 @@ $w_dir = 'mod_pa/';
 $w_troca = $_REQUEST['w_troca'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 $w_SG = upper($_REQUEST['w_SG']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] != 'Sim') { EncerraSessao(); }
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if (strpos('PADOCANEXO,PAINTERESS,PADOCASS', $SG) !== false) {
   if ($O != 'I' && $O != 'E' && nvl($_REQUEST['w_chave_aux'], $_REQUEST['w_sq_pessoa']) == '')
     $O = 'L';
@@ -152,7 +152,6 @@ $p_atividade        = upper($_REQUEST['p_atividade']);
 $p_ativo            = upper($_REQUEST['p_ativo']);
 $p_solicitante      = upper($_REQUEST['p_solicitante']);
 $p_prioridade       = upper($_REQUEST['p_prioridade']);
-$p_unidade          = upper($_REQUEST['p_unidade']);
 $p_proponente       = upper($_REQUEST['p_proponente']);
 $p_ini_i            = upper($_REQUEST['p_ini_i']);
 $p_ini_f            = upper($_REQUEST['p_ini_f']);
@@ -1657,26 +1656,46 @@ function Encaminhamento() {
   $sql = new db_getSolicData;
   $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, f($RS_Menu, 'sigla'));
 
-//  if (strpos(upper(f($RS_Solic, 'nm_especie')), 'CIRCULAR') !== false) {
-//    Cabecalho();
-//    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-//    BodyOpenClean('onLoad=\'this.focus()\';');
-//    $Estrutura_Topo_Limpo;
-//    Estrutura_Menu();
-//    Estrutura_Corpo_Abre();
-//    $Estrutura_Texto_Abre;
-//    ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-//    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center"><font size=2 color="red">');
-//    ShowHTML('   A tramitação de circulares só pode ser feita através de opção específica no menu principal.');
-//    ShowHTML('</td></tr>');
-//    ShowHTML('</table>');
-//    Rodape();
-//    exit();
-//  }
+  // Recupera os dados da unidade central de protocolo
+  $sql = new db_getUorgList;
+  $RS_Prot = $sql->getInstanceOf($dbms, $w_cliente, null, 'MOD_PA_PROT', null, null, $w_ano);
+  foreach ($RS_Prot as $row) { $RS_Prot = $row; break; }
 
-  // Somente gestores do módulo e usuários lotados no setor de protocolo podem fazer envios externos.
-  if ($w_gestor == false)
-    $w_interno = 'S';
+  if ($w_tipo_despacho == f($RS_Parametro, 'despacho_autuar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_eliminar')) {
+    $w_envia_protocolo = 'S';
+  } else {
+    $w_envia_protocolo = 'N';
+  }
+
+  if ($w_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';
+
+  // Verifica se pode ser feito envio externo. Se não puder, nem mostra opção ao usuário
+  if ($w_envia_protocolo =='S' || $w_desmembrar=='S' || $w_gestor==false ||
+      $w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') ||
+      $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar') ||
+      $w_tipo_despacho == f($RS_Parametro, 'despacho_apensar')
+     )
+     $w_somente_interno = true;
+  else
+     $w_somente_interno = false;
+
+  // Configura o valor default do destino do envio
+  $w_interno = nvl($w_interno,'S');
+
+  // Verifica se há cópias para o documento
+  $sql = new db_getSolicList; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS_Menu, 'sq_menu'),$w_usuario,f($RS_Menu, 'sigla'),9,
+      $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+      $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+      $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+      $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, $w_chave, $p_atividade,
+      null, null, $p_empenho, $p_numero_orig);
+  if (count($RS_Vinc)>0) {
+    $RS_Vinc = SortArray($RS_Vinc,'copias','asc','sq_siw_solicitacao','asc');
+    $RS_Copias = array();
+    foreach($RS_Vinc as $row) {
+      if (nvl(f($row,'copias'),'')!='') array_push($RS_Copias, $row);
+    }
+  }
 
   Cabecalho();
   head();
@@ -1688,40 +1707,74 @@ function Encaminhamento() {
     SaltaCampo();
     FormataProtocolo();
     ValidateOpen('Validacao');
-    Validate('w_retorno_limite', 'Prazo de resposta', 'DATA', '', 10, 10, '', '0123456789/');
-    CompData('w_retorno_limite', 'Prazo de resposta', '>=', FormataDataEdicao(time()), 'data atual');
-    Validate('w_dias', 'Dias para encaminhamento', '1', '', 1, 3, '', '0123456789');
-    ShowHTML('  if (theForm.w_aviso[0].checked) {');
-    ShowHTML('     if (theForm.w_dias.value == \'\') {');
-    ShowHTML('        alert(\'Informe a partir de quantos dias após o envio você deseja ser avisado!\');');
-    ShowHTML('        theForm.w_dias.focus();');
-    ShowHTML('        return false;');
-    ShowHTML('     }');
-    ShowHTML('  }');
-    ShowHTML('  else {');
-    ShowHTML('     theForm.w_dias.value = \'\';');
-    ShowHTML('  }');
-    if ($w_gestor)
-      Validate('w_interno', 'Tipo da unidade/pessoa', 'SELECT', 1, 1, 1, 'SN', '');
-    if ($w_interno == 'N') {
-      Validate('w_pessoa_destino', 'Pessoa de destino', 'HIDDEN', 1, 1, 18, '', '0123456789');
-      Validate('w_unidade_externa', 'Unidade externa', '', '', 2, 60, '1', '1');
-    } else {
-      Validate('w_sq_unidade', 'Unidade de destino', 'SELECT', 1, 1, 18, '', '0123456789');
-    }
     Validate('w_tipo_despacho', 'Despacho', 'SELECT', 1, 1, 18, '', '0123456789');
-
-    if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
-      Validate('w_protocolo_nm', 'ao processo', 'hidden', '1', '20', '20', '', '0123456789./-');
-    }
-
-    Validate('w_despacho', 'Detalhamento do despacho', '', '', '1', '2000', '1', '1');
-    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-    if ($P1 != 1 || ($P1 == 1 && $w_tipo == 'Volta')) {
-      // Se não for encaminhamento e nem o sub-menu do cadastramento
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
-    } else {
+    if (nvl($w_tipo_despacho,'')!='') {
+      if (count($RS_Copias)==0 && ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar'))) {
+        Validate('w_protocolo_nm', 'ao processo', 'hidden', '1', '20', '20', '', '0123456789./-');
+        ShowHTML('  if (theForm.w_protocolo_nm.value == theForm.w_numero.value) {');
+        ShowHTML('    alert("Não é possível juntar um protocolo a ele mesmo!"); ');
+        ShowHTML('    return false;');
+        ShowHTML('  }');
+      }
+      if ($w_envia_protocolo == 'N' && $w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
+        Validate('w_retorno_limite', 'Prazo de resposta', 'DATA', '', 10, 10, '', '0123456789/');
+        CompData('w_retorno_limite', 'Prazo de resposta', '>=', FormataDataEdicao(time()), 'data atual');
+        Validate('w_dias', 'Dias para encaminhamento', '1', '', 1, 3, '', '0123456789');
+        ShowHTML('  if (theForm.w_aviso[0].checked) {');
+        ShowHTML('     if (theForm.w_dias.value == \'\') {');
+        ShowHTML('        alert(\'Informe a partir de quantos dias após o envio você deseja ser avisado!\');');
+        ShowHTML('        theForm.w_dias.focus();');
+        ShowHTML('        return false;');
+        ShowHTML('     }');
+        ShowHTML('  }');
+        ShowHTML('  else {');
+        ShowHTML('     theForm.w_dias.value = \'\';');
+        ShowHTML('  }');
+      }
+      if (count($RS_Copias)) {
+        ShowHTML('  for (ind=1; ind < theForm["w_sq_unidade[]"].length; ind++) {');
+        if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
+          Validate('["w_protocolo_nm[]"][ind]', 'ao processo', 'hidden', '1', '20', '20', '', '0123456789./-');
+          ShowHTML('  if(theForm["w_protocolo_nm[]"][ind].value == theForm.w_numero.value) {');
+          ShowHTML('    alert("Não é possível juntar um protocolo a ele mesmo!"); ');
+          ShowHTML('    return false;');
+          ShowHTML('  }');
+        }
+        if (!$w_somente_interno) Validate('["w_interno[]"][ind]', 'Tipo do destino', 'SELECT', 1, 1, 1, 'SN', '');
+        if ($w_somente_interno) {
+          Validate('["w_sq_unidade[]"][ind]','Unidade','SELECT','1','4','18','','0123456789.,');
+        } else {
+          ShowHTML('    if(theForm["w_interno[]"][ind].selectedIndex==1) {');
+          Validate('["w_sq_unidade[]"][ind]','Unidade','SELECT','1','4','18','','0123456789.,');
+          ShowHTML('    } else {');
+          Validate('["w_pessoa_destino_nm[]"][ind]','Pessoa de destino','','1','4','18','','0123456789.,');
+          Validate('["w_unidade_externa[]"][ind]','Unidade externa','','','2','60','1','1');
+          ShowHTML('    }');
+        }
+        ShowHTML('  }');
+      } else {
+        if ($w_envia_protocolo == 'N') {
+          if (!$w_somente_interno) Validate('w_interno', 'Tipo da unidade/pessoa', 'SELECT', 1, 1, 1, 'SN', '');
+          if ($w_interno == 'N') {
+            Validate('w_pessoa_destino', 'Pessoa de destino', 'HIDDEN', 1, 1, 18, '', '0123456789');
+            Validate('w_unidade_externa', 'Unidade externa', '', '', 2, 60, '1', '1');
+          } else {
+            if ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
+              Validate('w_sq_unidade', 'Unidade arquivadora', 'SELECT', 1, 1, 18, '', '0123456789');
+            } else {
+              Validate('w_sq_unidade', 'Unidade de destino', 'SELECT', 1, 1, 18, '', '0123456789');
+            }
+          }
+        }
+      }
+      if ($w_desmembrar == 'S') {
+        Validate('w_despacho', 'Protocolos a serem desmembrados', '', '1', '1', '2000', '1', '1');
+      } elseif ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
+        Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '2000', '1', '1');
+      } else {
+        Validate('w_despacho', 'Detalhamento do despacho', '', '1', '1', '2000', '1', '1');
+      }
+      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
       ShowHTML('  theForm.Botao.disabled=true;');
     }
     ValidateClose();
@@ -1730,9 +1783,13 @@ function Encaminhamento() {
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   ShowHTML('</HEAD>');
   if ($w_troca > '') {
-    BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();"');
+    if (strpos($w_troca,'[')===false) {
+      BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();"');
+    } else {
+      BodyOpen('onLoad="document.Form[\'' . substr($w_troca,0,strpos($w_troca,'[')).'[]\']'.substr($w_troca,strpos($w_troca,'[')) . '.focus();"');
+    }
   } else {
-    BodyOpen('onLoad="document.Form.w_retorno_limite.focus();"');
+    BodyOpen('onLoad="document.Form.w_tipo_despacho.focus();"');
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
@@ -1746,50 +1803,170 @@ function Encaminhamento() {
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%"><tr valign="top">');
   AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'PADENVIO', $w_pagina . $par, $O);
   ShowHTML(MontaFiltro('POST'));
-  ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="' . $w_menu . '">');
   ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="' . f($RS_Solic, 'unidade_int_posse') . '">');
   ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="' . f($RS_Solic, 'pessoa_ext_posse') . '">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="' . f($RS_Solic, 'sq_siw_tramite') . '">');
-  ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>NOVO TRÂMITE</b></font></td></tr>');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('           <td><b>Data de recebimento:</b><br>' . formataDataEdicao(f($RS_Solic, 'data_recebimento')) . '</td>');
-  ShowHTML('           <td colspan=2><b>Unidade remetente:</b><br>' . f($RS_Solic, 'nm_unid_origem') . '</td>');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('           <td title="Informe a data limite para que o destinatário encaminhe o documento."><b>Praz<u>o</u> de resposta:</b><br><input ' . $w_Disabled . ' accesskey="O" type="text" name="w_retorno_limite" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $w_retorno_limite . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'w_retorno_limite') . '</td>');
-  MontaRadioNS('<b>Emite alerta de não encaminhamento?</b>', $w_aviso, 'w_aviso');
-  ShowHTML('           <td valign="top"><b>Quantos <U>d</U>ias após esta tramitação?<br><INPUT ACCESSKEY="D" ' . $w_Disabled . ' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="' . $w_dias . '" title="A partir de quantos dias após este encaminhamento o sistema deve emitir o alerta."></td>');
-  ShowHTML('      <tr><td>&nbsp;</td></br>');
-  ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
-  ShowHTML('      <tr valign="top">');
-  if ($w_gestor) {
-    selecaoOrigem('<u>T</u>ipo da unidade/pessoa:', 'T', 'Indique se a unidade ou pessoa é interna ou externa.', $w_interno, null, 'w_interno', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+  if ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
+    ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="S">');
   } else {
-    ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
+    ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="N">');
   }
-  if ($w_interno == 'N') {
-    SelecaoPessoaOrigem('<u>P</u>essoa de destino:', 'P', 'Clique na lupa para selecionar a pessoa de destino.', $w_pessoa_destino, null, 'w_pessoa_destino', null, null, null);
-    ShowHTML('        <td><b>U<U>n</U>idade externa: (preencher apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="' . $w_unidade_externa . '"></td>');
-  } else {
-    ShowHTML('          <td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
-    ShowHTML('           </table>');
-  }
+  ShowHTML('      <tr><td colspan=3><b>Unidade remetente: ' . f($RS_Solic, 'nm_unid_origem') . '</b><hr size=1 noshade /></td>');
   ShowHTML('     <tr valign="top">');
   selecaoTipoDespacho('Des<u>p</u>acho:', 'P', 'Selecione o despacho desejado.', $w_cliente, $w_tipo_despacho, null, 'w_tipo_despacho', 'SELECAO', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
-  if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
-    //ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
-    SelecaoProtocolo('ao <U>p</U>rocesso:', 'U', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo, null, 'w_protocolo', 'JUNTADA', null);
+  if (count($RS_Copias)==0 && ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar'))) {
+    SelecaoProtocolo('ao <U>p</U>rocesso:', 'U', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo, $w_sq_unidade, 'w_protocolo', 'JUNTADA', null);
+    ShowHTML('<INPUT type="hidden" name="w_numero" value="' . f($RS_Solic, 'protocolo_completo') . '">');
   }
-  ShowHTML('           </table>');
-  ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea ' . $w_Disabled . ' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">' . $w_despacho . '</TEXTAREA></td>');
+  if (nvl($w_tipo_despacho,'')!='') {
+    if ($w_envia_protocolo == 'N' && $w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
+      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>NOVO TRÂMITE</b></font></td></tr>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('           <td title="Informe a data limite para que o destinatário encaminhe o documento."><b>Praz<u>o</u> de resposta:</b><br><input ' . $w_Disabled . ' accesskey="O" type="text" name="w_retorno_limite" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $w_retorno_limite . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'w_retorno_limite') . '</td>');
+      MontaRadioNS('<b>Emite alerta de não encaminhamento?</b>', $w_aviso, 'w_aviso');
+      ShowHTML('           <td valign="top"><b>Quantos <U>d</U>ias após esta tramitação?<br><INPUT ACCESSKEY="D" ' . $w_Disabled . ' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="' . $w_dias . '" title="A partir de quantos dias após este encaminhamento o sistema deve emitir o alerta."></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_aviso" value="N">');
+      ShowHTML('<INPUT type="hidden" name="w_dias" value="0">');
+    }
+    if (count($RS_Copias)) {
+      ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="S">');
+      ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_unidade[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="obj_origem[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_pessoa_destino[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_pessoa_destino_nm[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_unidade_externa[]" value="S">');
+      ShowHTML('<INPUT type="hidden" name="w_protocolo_nm[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_protocolo[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_numero[]" value="">');
+      // Se for envio de cópias
+      ShowHTML('<tr><td align="center" colspan=3>');
+      ShowHTML('    <TABLE WIDTH="100%" BORDER="1" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+      ShowHTML('        <tr align="center">');
+      ShowHTML('          <td><b>Protocolo</b></td>');
+      ShowHTML('          <td><b>Tipo</b></td>');
+      if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
+        ShowHTML('          <td><b>Ao protocolo</b></td>');
+      }
+      if (!$w_somente_interno) ShowHTML('          <td><b>Destinação</b></td>');
+      if ($w_somente_interno)  ShowHTML('          <td><b>Unidade</b></td>');
+      else                     ShowHTML('          <td><b>Unidade/Pessoa</b></td>');
+      ShowHTML('        </tr>');
 
-  ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=3><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
-  if ($P1 != 1 || ($P1 == 1 && $w_tipo == 'Volta')) {
-    ShowHTML('      <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '\';" name="Botao" value="Abandonar">');
+      // Protocolo original
+      $i = 1;
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.f($RS_Solic,'protocolo'));
+      ShowHTML('            <INPUT type="hidden" name="w_chave_aux[]" value="'.$w_chave.'">');
+      ShowHTML('        &nbsp;</td>');
+      ShowHTML('        <td width="1%" nowrap align="center">&nbsp;Original&nbsp;');
+      if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
+        SelecaoProtocolo('', '', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo[$i], $w_sq_unidade[$i], 'w_protocolo[]', 'JUNTADA', null, 1, '&nbsp;');
+        ShowHTML('<INPUT type="hidden" name="w_numero[]" value="' . f($RS_Solic, 'protocolo_completo') . '">');
+      }
+      if ($w_somente_interno) {
+        ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+      } else {
+        selecaoOrigem('', '', 'Indique se a unidade ou pessoa é interna ou externa.', nvl($w_interno[$i],'S'), null, 'w_interno[]', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_interno['.$i.']\'; document.Form.submit();"', 1, '&nbsp;');
+      }
+      if ($w_envia_protocolo == 'S') {
+        ShowHTML('      <td>' . upper(f($RS_Prot, 'nome')) . '</td>');
+        ShowHTML('<INPUT type="hidden" name="w_sq_unidade[]" value="' . f($RS_Prot, 'sq_unidade') . '">');
+        ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+      } elseif ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
+        SelecaoUnidade('', '', 'Selecione o arquivo setorial.', $w_sq_unidade[$i], $w_usuario, 'w_sq_unidade[]', 'CADPA', null,1,'&nbsp');
+        ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+      } elseif ($w_interno[$i] == 'N') {
+        SelecaoPessoaOrigem('<u>P</u>essoa de destino:', 'P', 'Clique na lupa para selecionar a pessoa de destino.', $w_pessoa_destino[$i], null, 'w_pessoa_destino[]', null, null, null, 2);
+        ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa[]" size="30" maxlength="60" value="' . $w_unidade_externa[$i] . '"></td>');
+      } else {
+        if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) {
+          SelecaoUnidade('','', 'Selecione a unidade de destino.', $w_sq_unidade[$i], $w_usuario, 'w_sq_unidade[]', 'CADPA', null,1,'&nbsp');
+        } else {
+          SelecaoUnidade('','', 'Selecione a unidade de destino.', $w_sq_unidade[$i], null, 'w_sq_unidade[]', 'MOD_PA', null,1,'&nbsp');
+        }
+      }
+      $i = 2;
+      foreach ($RS_Copias as $row) {
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.f($row,'protocolo'));
+        ShowHTML('            <INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'sq_siw_solicitacao').'">');
+        ShowHTML('        &nbsp;</td>');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;Cópia '.f($row,'copias').'&nbsp;');
+        if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
+          SelecaoProtocolo('', '', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo[$i], $w_sq_unidade[$i], 'w_protocolo[]', 'JUNTADA', null, 1, '&nbsp;');
+          ShowHTML('<INPUT type="hidden" name="w_numero[]" value="' . f($row, 'protocolo_completo') . '">');
+        }
+        if ($w_somente_interno) {
+          ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+        } else {
+          selecaoOrigem('', '', 'Indique se a unidade ou pessoa é interna ou externa.', nvl($w_interno[$i],'S'), null, 'w_interno[]', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_interno['.$i.']\'; document.Form.submit();"', 1, '&nbsp;');
+        }
+        if ($w_envia_protocolo == 'S') {
+          ShowHTML('      <td>' . upper(f($RS_Prot, 'nome')) . '</td>');
+          ShowHTML('<INPUT type="hidden" name="w_sq_unidade[]" value="' . f($RS_Prot, 'sq_unidade') . '">');
+          ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+        } elseif ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
+          SelecaoUnidade('', '', 'Selecione o arquivo setorial.', $w_sq_unidade[$i], $w_usuario, 'w_sq_unidade[]', 'CADPA', null,1,'&nbsp');
+          ShowHTML('<INPUT type="hidden" name="w_interno[]" value="S">');
+        } elseif ($w_interno[$i] == 'N') {
+          SelecaoPessoaOrigem('Pessoa: ', '', 'Clique na lupa para selecionar a pessoa de destino.', $w_pessoa_destino[$i], null, 'w_pessoa_destino[]', null, null, null, 2, null,null,'&nbsp;');
+          ShowHTML('    <br><b>Unidade externa:</b> <INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa[]" size="30" maxlength="60" value="' . $w_unidade_externa[$i] . '"></td>');
+        } else {
+          if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) {
+            SelecaoUnidade('','', 'Selecione a unidade de destino.', $w_sq_unidade[$i], $w_usuario, 'w_sq_unidade[]', 'CADPA', null,1,'&nbsp');
+          } else {
+            SelecaoUnidade('','', 'Selecione a unidade de destino.', $w_sq_unidade[$i], null, 'w_sq_unidade[]', 'MOD_PA', null,1,'&nbsp');
+          }
+        }
+        $i++;
+      }
+      ShowHTML('    </table>');
+    } else {
+      if ($w_envia_protocolo == 'S') {
+        ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO: ' . upper(f($RS_Prot, 'nome')) . '</b></font></td></tr>');
+        ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="' . f($RS_Prot, 'sq_unidade') . '">');
+        ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
+      } elseif ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
+        ShowHTML('    <tr><td colspan="3">&nbsp;</td></tr>');
+        ShowHTML('    <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DADOS DO ARQUIVAMENTO</b></font></td></tr>');
+        ShowHTML('    <tr valign="top">');
+        ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
+        ShowHTML('    <tr><td>Usuário arquivador:<td colspan=2><b>' . $_SESSION['NOME'] . '</b></td></tr>');
+        SelecaoUnidade('Unidade ar<U>q</U>uivadora:', 'Q', 'Selecione o arquivo setorial.', nvl($w_sq_unidade,f($RS_Solic,'unidade_int_posse')), $w_usuario, 'w_sq_unidade', 'CADPA', null,1,'<td>');
+      } else {
+        ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
+        ShowHTML('      <tr valign="top">');
+        if ($w_somente_interno) {
+          ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
+        } else {
+          selecaoOrigem('<u>T</u>ipo da unidade/pessoa:', 'T', 'Indique se a unidade ou pessoa é interna ou externa.', $w_interno, null, 'w_interno', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+        }
+        if ($w_interno == 'N') {
+          SelecaoPessoaOrigem('<u>P</u>essoa de destino:', 'P', 'Clique na lupa para selecionar a pessoa de destino.', $w_pessoa_destino, null, 'w_pessoa_destino', null, null, null, 2);
+          ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="' . $w_unidade_externa . '"></td>');
+        } else {
+          if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) {
+            SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', nvl($w_sq_unidade,f($RS_Solic,'unidade_int_posse')), $w_usuario, 'w_sq_unidade', 'CADPA', null);
+          } else {
+            SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
+          }
+          ShowHTML('      <tr>' . (($w_somente_interno) ? '' : '<td>') . '<td colspan="3"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
+        }
+      }
+    }
+    if ($w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
+      ShowHTML('    <tr><td colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea ' . $w_Disabled . ' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">' . $w_despacho . '</TEXTAREA></td>');
+    } else {
+      ShowHTML('    <tr><td colspan=3><b>Acondicionamento:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_despacho" class="STI" ROWS=5 cols=75>' . $w_despacho . '</TEXTAREA></td>');
+    }
+    ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('    <tr><td align="center" colspan=3><hr>');
+    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   }
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
@@ -2446,14 +2623,17 @@ function Tramitacao() {
 
   if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) $w_envia_arquivo = 'S'; else $w_envia_arquivo = 'N';
 
-  if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral') ||
-      $p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') ||
-      $w_gestor == false
-     )
-     $w_interno = 'S';
-
-  
   if ($p_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';
+
+  // Verifica se pode ser feito envio externo. Se não puder, nem mostra opção ao usuário
+  if ($w_envia_protocolo =='S' || $w_envia_arquivo=='S' || $w_desmembrar=='S' || $w_gestor==false ||
+      $p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') ||
+      $p_tipo_despacho == f($RS_Parametro, 'despacho_anexar') ||
+      $p_tipo_despacho == f($RS_Parametro, 'despacho_apensar')
+     )
+     $w_somente_interno = true;
+  else
+     $w_somente_interno = false;
 
   if ($O == 'L') {
     // Configura o valor default do destino do envio
@@ -2549,7 +2729,7 @@ function Tramitacao() {
     ShowHTML('     return false;');
     ShowHTML('  }');
     CompData('p_ini', 'Início', '<=', 'p_fim', 'Término');
-    Validate('p_unid_posse', 'Unidade de posse', 'SELECT', 1, 1, 18, '', '0123456789');
+    Validate('p_unid_posse', 'Unidade de posse', 'SELECT', '', '1', '18', '', '0123456789');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
     //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
     Validate('p_detalhamento', 'Detalhamento do assunto/Despacho', '', '', '4', '90', '1', '1');
@@ -2614,8 +2794,7 @@ function Tramitacao() {
       ShowHTML('  }');
     }  
     if ($w_envia_protocolo == 'N') {
-      if ($w_envia_arquivo == 'N' && $w_envia_protocolo == 'N' && $p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $w_gestor)
-        Validate('w_interno', 'Tipo da unidade/pessoa', 'SELECT', 1, 1, 1, 'SN', '');
+      if (!$w_somente_interno) Validate('w_interno', 'Tipo da unidade/pessoa', 'SELECT', 1, 1, 1, 'SN', '');
       if ($w_interno == 'N') {
         Validate('w_pessoa_destino', 'Pessoa de destino', 'HIDDEN', 1, 1, 18, '', '0123456789');
         Validate('w_unidade_externa', 'Unidade externa', '', '', 2, 60, '1', '1');
@@ -2739,19 +2918,10 @@ function Tramitacao() {
     ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="' . f($RS_Solic, 'unidade_int_posse') . '">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="' . f($RS_Solic, 'pessoa_ext_posse') . '">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_despacho" value="' . $p_tipo_despacho . '">');
-    if (nvl($_REQUEST['p_ordena'], '') == '')
-      ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
+    if (nvl($_REQUEST['p_ordena'], '') == '') ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_arq_central" value="'.(($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'S' : 'N').'">');
+    ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="'.(($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) ? 'S' : 'N').'">');
     ShowHTML(MontaFiltro('POST'));
-    if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) {
-      ShowHTML('<INPUT type="hidden" name="w_arq_central" value="S">');
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_arq_central" value="N">');
-    }
-    if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
-      ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="S">');
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="N">');
-    }
     if (count($RS) <= 0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan="9" align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -2870,7 +3040,7 @@ function Tramitacao() {
     } else {
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
-      if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') || $w_gestor == false) {
+      if ($w_somente_interno) {
         ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
       } else {
         selecaoOrigem('<u>T</u>ipo da unidade/pessoa:', 'T', 'Indique se a unidade ou pessoa é interna ou externa.', $w_interno, null, 'w_interno', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
@@ -2879,8 +3049,12 @@ function Tramitacao() {
         SelecaoPessoaOrigem('<u>P</u>essoa de destino:', 'P', 'Clique na lupa para selecionar a pessoa de destino.', $w_pessoa_destino, null, 'w_pessoa_destino', null, null, null, 2);
         ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="' . $w_unidade_externa . '"></td>');
       } else {
-        SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
-        ShowHTML('      <tr>' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial') || $w_gestor == false) ? '' : '<td>') . '<td colspan="3"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
+        if ($p_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $p_tipo_despacho == f($RS_Parametro, 'despacho_anexar') || $p_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) {
+          SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', nvl($w_sq_unidade,$p_unid_posse), $w_usuario, 'w_sq_unidade', 'CADPA', null);
+        } else {
+          SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
+        }
+        ShowHTML('      <tr>' . (($w_somente_interno) ? '' : '<td>') . '<td colspan="3"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
       }
     }
     if ($p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
@@ -3596,7 +3770,7 @@ function Recebimento() {
       ShowHTML('     theForm.p_ano.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
-      Validate('p_unid_posse', 'Unidade de posse', 'SELECT', '1', '1', '18', '', '0123456789');
+      Validate('p_unid_posse', 'Unidade de posse', 'SELECT', '', '1', '18', '', '0123456789');
       Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
       //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
       Validate('p_assunto', 'Detalhamento do assunto/Despacho', '', '', '4', '90', '1', '1');
@@ -4266,7 +4440,7 @@ function Grava() {
       $SQL = new dml_putDocumentoGeral;
       if (nvl($w_copia,0)==0) {
         $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $w_copia, $_REQUEST['w_menu'],
-              nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'], $_SESSION['LOTACAO']),
+              nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']),
               nvl($_REQUEST['w_pessoa_origem'], $_SESSION['SQ_PESSOA']), $_SESSION['SQ_PESSOA'], $_REQUEST['w_solic_pai'],
               $_REQUEST['w_vinculo'], $_REQUEST['w_processo'], $_REQUEST['w_circular'], $_REQUEST['w_especie_documento'],
               $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'], $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
@@ -4475,8 +4649,7 @@ function Grava() {
         }
       }
 
-      $sql = new db_getSolicData;
-      $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS_Menu, 'sigla'));
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS_Menu, 'sigla'));
       if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite'] || nvl(f($RS, 'unidade_int_posse'), '') != nvl($_REQUEST['w_unidade_posse'], '') || nvl(f($RS, 'pessoa_ext_posse'), '') != nvl($_REQUEST['w_pessoa_posse'], '')) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: Outro usuário já tramitou este documento!\');');

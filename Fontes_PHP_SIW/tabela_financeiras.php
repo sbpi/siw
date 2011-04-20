@@ -46,12 +46,6 @@ include_once('funcoes/selecaoBanco.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -68,6 +62,13 @@ $w_pagina       = 'tabela_financeiras.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 $p_ordena       = $_REQUEST['p_ordena'];
 $p_codigo       = $_REQUEST['p_codigo'];
 $p_nome         = trim(upper($_REQUEST['p_nome']));

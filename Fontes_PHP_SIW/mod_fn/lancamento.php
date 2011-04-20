@@ -95,10 +95,7 @@ include_once('validalancamento.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],9);
@@ -114,6 +111,11 @@ $w_pagina       = 'lancamento.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
   if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
 } elseif (strpos($SG,'ENVIO')!==false) {
@@ -389,8 +391,12 @@ function Inicial() {
     //if ($w_tipo!='WORD') {
       //ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
       //ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    //}      
-    ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
+    //}
+    if($w_tipo!='WORD') {
+      ShowHTML('   <b>Registros: '.count($RS));
+    }else{
+      ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
+    }
     ShowHTML('<tr><td colspan=3><div id="tudo">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

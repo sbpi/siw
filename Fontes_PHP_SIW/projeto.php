@@ -494,7 +494,7 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        if ($w_tipo!='EXCEL') ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_embed!='WORD') {
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_embed=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P'));
           // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
@@ -614,7 +614,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan=7 align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
-          ShowHTML('          <td colspan=2>&nbsp;</td>');
+          ShowHTML('          <td>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -626,7 +626,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan=7 align="right"><b>Total da listagem&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
-          ShowHTML('          <td colspan=2>&nbsp;</td>');
+          ShowHTML('          <td>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 
@@ -640,7 +640,7 @@ function Inicial() {
       if ($R > '') MontaBarra($dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
       else         MontaBarra($dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
       ShowHTML('</tr>');
-    } else {
+    } elseif ($w_tipo!='EXCEL') {
       ShowHTML('<tr><td colspan=2><table border=0>');
       ShowHTML('  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores:</b>'.ExibeImagemSolic(f($RS_Menu,'sigla'),null,null,null,null,null,null,null, null,true));
       ShowHTML('  </table>');

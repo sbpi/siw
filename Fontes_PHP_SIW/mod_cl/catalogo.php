@@ -52,12 +52,6 @@ include_once($w_dir_volta.'classes/sp/dml_putCLPesqFornecedor.php');
 //                   = D   : Detalhes
 //                   = M   : Configuração de serviços
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -73,6 +67,12 @@ $w_pagina     = 'catalogo.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_cl/';
 $w_troca      = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 $p_chave         = $_REQUEST['p_chave'];
 $p_tipo_material = $_REQUEST['p_tipo_material'];

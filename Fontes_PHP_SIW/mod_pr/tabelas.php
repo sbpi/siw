@@ -66,12 +66,6 @@ include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -88,6 +82,12 @@ $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pr/';
 $w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') {
   if ($SG=='PRVINC') {
@@ -352,15 +352,16 @@ function Vinculacao() {
     ShowHTML('<tr><td>');
     ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     ShowHTML('    <td align="right">');
-    ShowHTML('    <b>Registros: '.count($RS));
+    ShowHTML('    <b>'.exportaExcel().'Registros: '.count($RS));
+    ShowHTML('    </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Projeto','titulo').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
     ShowHTML('          <td colspan=2><b>Responsável</td>');
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_solic').'</td>');
@@ -384,7 +385,7 @@ function Vinculacao() {
         else                                 ShowHTML('        <td>---</td>');
         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         ShowHTML('        <td>'.ExibeUnidade(null,$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade_resp'),$TP).'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto">AL</A>&nbsp');
         ShowHTML('      </td></tr>');
       } 
@@ -1161,14 +1162,15 @@ function TipoRestricao() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>'.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS).'</b>');
     ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('<div id="tudo">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1181,7 +1183,7 @@ function TipoRestricao() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.nvl(f($row,'codigo_externo'),'---').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -1190,6 +1192,7 @@ function TipoRestricao() {
     } 
     ShowHTML('      </center>');
     ShowHTML('    </table>');
+    ShowHTML('    </div>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {

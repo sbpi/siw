@@ -48,12 +48,6 @@ include_once('funcoes/montaStringOpcao.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -69,6 +63,12 @@ $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'seguranca1.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 $p_localizacao  = upper($_REQUEST['p_localizacao']);
 $p_lotacao      = upper($_REQUEST['p_lotacao']);
