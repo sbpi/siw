@@ -514,6 +514,7 @@ function Inicial() {
       } else {
         $RS1 = $RS;
       }
+//      exibeArray($RS1);
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
@@ -571,7 +572,7 @@ function Inicial() {
                 ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Alteração de informações cadastrais">AL</A>&nbsp');
               }
               ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Excluir&R=' . $w_pagina . $par . '&O=E&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Exclusão.">EX</A>&nbsp');
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Envio&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Encaminhamento para outra fase.">EN</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Envio&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Encaminhamento para outra fase.">EN</A>&nbsp');
             } elseif ($P1 == 2) {
               // Se for execução
               if (f($row, 'sg_tramite') != 'PC')
@@ -597,7 +598,7 @@ function Inicial() {
               } elseif (f($row, 'sg_tramite') == 'PD') {
                 //ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PagDiaria&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar o pagamento de diárias.">Informar</A>&nbsp');
               }
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'envio&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'envio&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
               if (f($row, 'sg_tramite') == 'EE') {
                 ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Concluir&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Conclui a execução da solicitação.">CO</A>&nbsp');
               }
@@ -607,7 +608,7 @@ function Inicial() {
             }
           } else {
             if (RetornaGestor(f($row, 'sq_siw_solicitacao'), $w_usuario) == 'S') {
-              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'envio&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'envio&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
             } else {
               ShowHTML('          ---&nbsp');
             }
@@ -5539,10 +5540,10 @@ function Encaminhamento() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_tipo       = Nvl($_REQUEST['w_tipo'], '');
+  $w_tramite    = $_REQUEST['w_tramite'];
 
   if ($w_troca > '') {
-    // Se for recarga da página
-    $w_tramite            = $_REQUEST['w_tramite'];
+    // Se for recarga da página    
     $w_sg_tramite         = $_REQUEST['w_sg_tramite'];
     $w_sg_novo_tramite    = $_REQUEST['w_tramite'];
     $w_destinatario       = $_REQUEST['w_destinatario'];
@@ -5557,7 +5558,6 @@ function Encaminhamento() {
   } else {
     $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
     $w_inicio           = f($RS, 'inicio');
-    $w_tramite          = f($RS, 'sq_siw_tramite');
     $w_justificativa    = f($RS, 'justificativa');
     $w_prazo            = f($RS, 'limite_envio');
     $w_antecedencia     = f($RS, 'dias_antecedencia');

@@ -314,6 +314,12 @@ function Gerencial() {
     $w_embed = 'WORD';
     HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);
+  } elseif ($p_tipo=='EXCEL') {
+    $w_embed = 'WORD';
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,9);
+    if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
     $w_embed = 'HTML';
     Cabecalho();
@@ -951,9 +957,9 @@ function Gerencial() {
   ShowHTML('</table>');
   if($p_tipo == 'PDF'){
     RodapePdf();
+  }else{
+    Rodape();
   }
-  Rodape();
-  
 } 
 
 // =========================================================================
@@ -996,7 +1002,8 @@ function ImprimeCabecalho() {
 // -------------------------------------------------------------------------
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave) {
   extract($GLOBALS);
-  if($p_tipo == 'PDF' || $p_tipo == 'WORD'){
+
+  if($p_tipo == 'PDF' || $p_tipo == 'WORD' || $p_tipo == 'EXCEL'){
     $w_embed = 'WORD';  
   }
 

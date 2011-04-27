@@ -2883,9 +2883,10 @@ function Tramitacao() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right" nowrap><b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right" nowrap>');
+    ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE id="logo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) {
       ShowHTML('          <td></td>');
@@ -3818,9 +3819,10 @@ function Recebimento() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right"><b>Registros existentes: ' . count($RS));
+    ShowHTML('    <td align="right">');
+    ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Destino', 'sg_unid_dest') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Última Procedência', 'sg_unid_origem') . '</td>');
@@ -3829,7 +3831,7 @@ function Recebimento() {
     ShowHTML('          <td rowspan=2><b>Protocolo</td>');
     ShowHTML('          <td rowspan=2><b>Envio</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td><b>' . LinkOrdena('Espécie', 'nm_especie') . '</td>');
@@ -3878,7 +3880,7 @@ function Recebimento() {
             ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . $w_titulo . '</strike></td>');
           else
             ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
-          ShowHTML('        <td align="top">');
+          ShowHTML('        <td class="remover" align="top">');
           if (nvl(f($row, 'despacho_arqcentral'), '') == '') {
             ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=R&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET') . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
           } else {
