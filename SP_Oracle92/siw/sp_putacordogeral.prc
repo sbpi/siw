@@ -45,6 +45,7 @@ create or replace procedure SP_PutAcordoGeral
    w_log_esp    number(18);
    w_reg        ac_parametro%rowtype;
    w_menu       siw_menu%rowtype;
+   w_pa         varchar2(1);
    
    w_meses_vigencia_renovacao  number(4);
    w_valor_original            number(18,2);
@@ -98,7 +99,12 @@ create or replace procedure SP_PutAcordoGeral
          and d.fornecedor         = l_fornecedor
       order by b.numero_certame, e.nome, lpad(c.ordem,4);
 begin
-   If p_operacao in ('I','A') and p_numero_processo is not null Then
+   select case when count(*) = 0 then 'N' else 'S' end into w_pa
+     from siw_cliente_modulo a 
+          inner join siw_modulo b on (a.sq_modulo = b.sq_modulo and b.sigla = 'PA')
+    where a.sq_pessoa = p_cliente;
+    
+   If p_operacao in ('I','A') and p_numero_processo is not null and w_pa = 'S' Then
       -- Recupera a chave do protocolo
       select sq_siw_solicitacao into w_protocolo_siw 
         from pa_documento 
