@@ -5563,6 +5563,9 @@ function Encaminhamento() {
     $w_antecedencia     = f($RS, 'dias_antecedencia');
     $w_envio_regular    = f($RS, 'envio_regular');
     $w_justif_dia_util  = f($RS, 'justificativa_dia_util');
+    if (f($RS, 'sg_tramite') == 'CI') {
+      $w_tramite = f($RS, 'sq_siw_tramite');
+    }
     $w_fim_semana       = f($RS, 'fim_semana');
   }
 
@@ -5625,8 +5628,8 @@ function Encaminhamento() {
           }
         }
       }
-      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     }
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
   }
   if ($P1 != 1 || ( $P1 == 1 && $w_tipo == 'Volta')) {
     // Se não for encaminhamento e nem o sub-menu do cadastramento
@@ -8472,7 +8475,7 @@ function Grava() {
         if ((false !== (strpos(upper($_SERVER['HTTP_CONTENT_TYPE']), 'MULTIPART/FORM-DATA'))) || (false !== (strpos(upper($_SERVER['CONTENT_TYPE']), 'MULTIPART/FORM-DATA')))) {
           // Verifica se outro usuário já enviou a solicitação
           $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDINICIAL');
-          if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite']) {
+          if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite'] && f($RS, 'sg_tramite') != 'CI') {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!\');');
             ScriptClose();

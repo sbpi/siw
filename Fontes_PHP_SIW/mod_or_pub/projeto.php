@@ -487,14 +487,14 @@ function Inicial() {
               if (f($row,'sg_tramite')=='EA' || f($row,'sg_tramite')=='EE') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">AN</A>&nbsp');
               } 
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
               if (f($row,'sg_tramite')=='EE') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da ação.">CO</A>&nbsp');
               } 
             } else  {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as metas físicas da ação." target="Metas">Metas</A>&nbsp');
               if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
+                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
               } else {
                 ShowHTML('          ---&nbsp');
               }
@@ -515,7 +515,7 @@ function Inicial() {
                 Nvl(f($row,'substituto'),0) ==$w_usuario || 
                 Nvl(f($row,'tit_exec'),0)   ==$w_usuario || 
                 Nvl(f($row,'subst_exec'),0) ==$w_usuario) {
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
             } 
           } 
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as metas físicas da ação." target="Metas">Metas</A>&nbsp');
@@ -2961,15 +2961,18 @@ function Encaminhamento() {
   global $w_Disabled;
   $w_chave     = $_REQUEST['w_chave'];
   $w_chave_aux = $_REQUEST['w_chave_aux'];
+  $w_tramite   = $_REQUEST['w_tramite'];
+
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_tramite      = $_REQUEST['w_tramite'];
     $w_destinatario = $_REQUEST['w_destinatario'];
     $w_novo_tramite = $_REQUEST['w_novo_tramite'];
     $w_despacho     = $_REQUEST['w_despacho'];
   } else {
     $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'ORGERAL');
-    $w_tramite      = f($RS,'sq_siw_tramite');
+    if (f($RS, 'sg_tramite') == 'CI') {
+      $w_tramite = f($RS, 'sq_siw_tramite');
+    }
     $w_novo_tramite = f($RS,'sq_siw_tramite');
   } 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
@@ -3813,7 +3816,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
         $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],'ORGERAL');
-        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite'] && f($RS,'sq_siw_tramite') != 'CI') {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!\');');
           ScriptClose();

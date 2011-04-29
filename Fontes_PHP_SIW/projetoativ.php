@@ -279,73 +279,90 @@ function Inicial() {
     }
   }
 
-  if ($w_tipo=='WORD') {
+  if ($w_tipo == 'WORD') {
+    $w_embed = 'WORD';
     HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
+    CabecalhoWord($w_cliente, 'Consulta de ' . f($RS_Menu, 'nome'), 0);
     head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de '.f($RS_Menu,'nome').'</TITLE>');
+    ShowHTML('<TITLE>' . $conSgSistema . ' - Listagem de ' . f($RS_Menu, 'nome') . '</TITLE>');
     ShowHTML('</HEAD>');
+  } elseif ($w_tipo == 'PDF') {
+    $w_embed = 'WORD';
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 60 : 35);
+    HeaderPdf('Consulta de ' . f($RS_Menu, 'nome'), $w_pag);
+    if ($w_filtro > '')
+      ShowHTML($w_filtro);
+  } elseif ($w_tipo == 'EXCEL') {
+    $w_embed = 'WORD';
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 60 : 35);
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 0, 1, 9);
+    if ($w_filtro > '')
+      ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     head();
     Estrutura_CSS($w_cliente);
-    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de '.f($RS_Menu,'nome').'</TITLE>');
+    if ($P1 == 2)
+      ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=' . MontaURL('MESA') . '">');
+    ShowHTML('<TITLE>' . $conSgSistema . ' - Listagem de ' . f($RS_Menu, 'nome') . '</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
     SaltaCampo();
     FormataData();
     ValidateOpen('Validacao');
-    if (!(strpos('CP',$O)===false)) {
-      if ($P1!=1 || $O=='C') {
+    if (!(strpos('CP', $O) === false)) {
+      if ($P1 != 1 || $O == 'C') {
         // Se não for cadastramento ou se for cópia
-        Validate('p_chave','Número','','','1','18','','0123456789');
-        Validate('p_prazo','Dias para o término previsto','','','1','2','','0123456789');
-        Validate('p_proponente','Proponente externo','','','2','90','1','');
-        Validate('p_assunto','Assunto','','','2','90','1','1');
-        Validate('p_palavra','Palavras-chave','','','2','90','1','1');
-        Validate('p_ini_i','Início de','DATA','','10','10','','0123456789/');
-        Validate('p_ini_f','Início até','DATA','','10','10','','0123456789/');
+        Validate('p_chave', 'Número', '', '', '1', '18', '', '0123456789');
+        Validate('p_prazo', 'Dias para o término previsto', '', '', '1', '2', '', '0123456789');
+        Validate('p_proponente', 'Proponente externo', '', '', '2', '90', '1', '');
+        Validate('p_assunto', 'Assunto', '', '', '2', '90', '1', '1');
+        Validate('p_palavra', 'Palavras-chave', '', '', '2', '90', '1', '1');
+        Validate('p_ini_i', 'Início de', 'DATA', '', '10', '10', '', '0123456789/');
+        Validate('p_ini_f', 'Início até', 'DATA', '', '10', '10', '', '0123456789/');
         ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
         ShowHTML('     alert (\'Informe o período completo de início ou nenhuma das datas!\');');
         ShowHTML('     theForm.p_ini_i.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        CompData('p_ini_i','Início de','<=','p_ini_f','Início até');
-        Validate('p_fim_i','Término de','DATA','','10','10','','0123456789/');
-        Validate('p_fim_f','Término até','DATA','','10','10','','0123456789/');
+        CompData('p_ini_i', 'Início de', '<=', 'p_ini_f', 'Início até');
+        Validate('p_fim_i', 'Término de', 'DATA', '', '10', '10', '', '0123456789/');
+        Validate('p_fim_f', 'Término até', 'DATA', '', '10', '10', '', '0123456789/');
         ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
         ShowHTML('     alert (\'Informe o período completo de término ou nenhuma das datas!\');');
         ShowHTML('     theForm.p_fim_i.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        CompData('p_fim_i','Término de','<=','p_fim_f','Término até');
-      } 
-      Validate('P4','Linhas por página','1','1','1','4','','0123456789');
-    } 
+        CompData('p_fim_i', 'Término de', '<=', 'p_fim_f', 'Término até');
+      }
+      Validate('P4', 'Linhas por página', '1', '1', '1', '4', '', '0123456789');
+    }
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
+
+    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    if ($w_troca > '') {
+      // Se for recarga da página
+      BodyOpenClean('onLoad=\'document.Form.' . $w_troca . '.focus();\'');
+    } elseif ($O == 'I') {
+      BodyOpenClean('onLoad=\'document.Form.w_smtp_server.focus();\'');
+    } elseif ($O == 'A') {
+      BodyOpenClean('onLoad=\'document.Form.w_nome.focus();\'');
+    } elseif ($O == 'E') {
+      BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
+    } elseif (!(strpos('CP', $O) === false)) {
+      BodyOpenClean('onLoad=\'document.Form.p_chave_pai.focus()\';');
+    } else {
+      BodyOpenClean('onLoad=this.focus();');
+    }
   }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
-    // Se for recarga da página
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  } elseif ($O=='I') {
-    BodyOpenClean('onLoad=\'document.Form.w_smtp_server.focus();\'');
-  } elseif ($O=='A') {
-    BodyOpenClean('onLoad=\'document.Form.w_nome.focus();\'');
-  } elseif ($O=='E') {
-    BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
-  } elseif (!(strpos('CP',$O)===false)) {
-    BodyOpenClean('onLoad=\'document.Form.p_chave_pai.focus()\';');
-  } else {
-    BodyOpenClean('onLoad=this.focus();');
-  } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
-  if($w_tipo!='WORD') {
+  if($w_embed!='WORD') {
     if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
@@ -362,15 +379,15 @@ function Inicial() {
       if ($w_submenu>'') {
         $SQL = new db_getLinkSubMenu; $RS1 = $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
         foreach($RS1 as $row) {
-          if ($w_tipo!='WORD') ShowHTML('    <a accesskey="I" class="SS" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+          if ($w_embed!='WORD') ShowHTML('    <a accesskey="I" class="SS" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
           break;
         }
-        if ($w_tipo!='WORD') ShowHTML('    <a accesskey="C" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>&nbsp;');
+        if ($w_embed!='WORD') ShowHTML('    <a accesskey="C" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>&nbsp;');
       } else {
         ShowHTML('        <a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
-    if ((strpos(upper($R),'GR_')===false) && (strpos(upper($R),'PROJETO.')===false) && $P1!=6 && $w_tipo!='WORD') {
+    if ((strpos(upper($R),'GR_')===false) && (strpos(upper($R),'PROJETO.')===false) && $P1!=6 && $w_embed!='WORD') {
       if ($w_copia>'') {
         // Se for cópia
         if (MontaFiltro('GET')>'') {
@@ -386,10 +403,10 @@ function Inicial() {
         } 
       } 
     } 
-    if($p_volta=='LISTA'&&$w_tipo!='WORD') {
+    if($p_volta=='LISTA'&&$w_embed!='WORD') {
       ShowHTML('                         <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     }
-    ShowHTML('    <td align="right">');
+    ShowHTML('    <td align="right" colspan="2">');
     ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -400,7 +417,7 @@ function Inicial() {
     if (nvl($p_chave_pai,'')!='')     $w_colspan -= 1;
     if (nvl($p_atividade,'')!='')   $w_colspan -= 1;
 
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
       if (nvl($p_chave_pai,'')=='')   ShowHTML('          <td><b>'.LinkOrdena('Projeto','nm_projeto').'</td>');
       if (nvl($p_atividade,'')=='') ShowHTML('          <td><b>'.LinkOrdena('Etapa','cd_ordem').'</td>');
@@ -441,7 +458,7 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
-      if($w_tipo!='WORD') {
+      if($w_embed!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       } else {
         $RS1=$RS;
@@ -449,9 +466,9 @@ function Inicial() {
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap>');
+        ShowHTML('        <td nowrap align="left">');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        if ($w_tipo!='WORD') {
+        if ($w_embed!='WORD') {
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
           if (nvl($p_chave_pai,'')=='') {
             ShowHTML('        <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($row,'nm_projeto').'</a></td>');
@@ -474,8 +491,8 @@ function Inicial() {
         } else {
           ShowHTML('        '.f($row,'sq_siw_solicitacao'));
           if (nvl($p_chave_pai,'')=='') {
-            ShowHTML('        <td>'.f($row,'nm_projeto').'</td>');
-            ShowHTML('        <td>'.f($row,'cd_ordem').'</td>');
+            ShowHTML('        <td>&nbsp;&nbsp;'.f($row,'nm_projeto').'</td>');
+            ShowHTML('        <td>&nbsp;&nbsp;'.f($row,'cd_ordem').'</td>');
           } elseif (nvl($p_atividade,'')=='') {
             ShowHTML('        <td>'.f($row,'cd_ordem').'. '.f($row,'nm_etapa').'</td>');
           } 
@@ -497,7 +514,7 @@ function Inicial() {
         if ($_REQUEST['p_tamanho']=='N') {
           ShowHTML('        <td>'.Nvl(f($row,'assunto'),'-').'</td>');
         } else {
-          if ($w_tipo!='WORD' && strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
+          if ($w_embed!='WORD' && strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
           if (f($row,'sg_tramite')=='CA') {
             ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'"><strike>'.$w_titulo.'</strike></td>');
           } else {
@@ -518,7 +535,7 @@ function Inicial() {
           } 
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
-        if ($_SESSION['INTERNO']=='S' && $w_tipo!='WORD') {
+        if ($_SESSION['INTERNO']=='S' && $w_embed!='WORD') {
           ShowHTML('        <td align="top" nowrap>');
           if ($P1!=3) {
             // Se não for acompanhamento
@@ -570,7 +587,7 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total desta página&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -596,7 +613,7 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('<tr><td align="center" colspan=3>');
       if ($R>'') {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -718,11 +735,12 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Estrutura_Texto_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Rodape();
+//  Estrutura_Texto_Fecha();
+//  Estrutura_Fecha();
+//  Estrutura_Fecha();
+//  Estrutura_Fecha();
+  if($w_tipo=='PDF') RodapePdf();
+  else Rodape();
 } 
 
 // =========================================================================
