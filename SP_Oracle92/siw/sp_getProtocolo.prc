@@ -148,14 +148,18 @@ begin
                                                             c4.principal            = 'S'
                                                            )
                  inner     join (select sq_siw_solicitacao, max(sq_documento_log) chave 
-                                   from pa_documento_log
-                                  where  0 = instr(coalesce(resumo,'-'),'*** RECUSADO') and
-                                         (p_restricao   = 'PACLASSIF' or 
-                                          p_restricao   = 'PADALTREG' or
-                                          (p_restricao <> 'PACLASSIF' and recebimento is not null)
-                                         )
-                                 group by sq_siw_solicitacao
-                                )                    df on (c.sq_siw_solicitacao    = df.sq_siw_solicitacao)
+                  from pa_documento_log x
+                 where  (0 = instr(coalesce(resumo,'-'),'*** RECUSADO') or 
+                         (0 < instr(coalesce(resumo,'-'),'*** RECUSADO') and 
+                          1 = (select count(*) from pa_documento_log where sq_siw_solicitacao = x.sq_siw_solicitacao)
+                         )
+                        ) and 
+                        (p_restricao   = 'PACLASSIF' or 
+                         p_restricao   = 'PADALTREG' or
+                         (p_restricao <> 'PACLASSIF' and recebimento is not null)
+                        )
+                group by sq_siw_solicitacao
+               )                       df on (c.sq_siw_solicitacao    = df.sq_siw_solicitacao)
                    inner   join pa_documento_log     d  on (df.chave                = d.sq_documento_log)
                    inner   join eo_unidade           d2 on (d.unidade_origem        = d2.sq_unidade)
                      inner join pa_unidade           dc on (d2.sq_unidade           = dc.sq_unidade)
