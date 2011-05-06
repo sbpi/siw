@@ -254,7 +254,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('--> ');
   ShowHTML('</style> ');
   ShowHTML('</head> ');
-  BodyOpen('onLoad="this.focus();"');
+  BodyOpenMail();
   ShowHTML('<div class=Section1> ');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css"/>');
   ShowHTML('<base HREF="'.$conRootSIW.'">');
@@ -380,11 +380,12 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina, $l_lspan=null, $l_rspan=n
 function exportaExcel() {
   extract($GLOBALS);
   return('<form style="vertical-align: bottom; margin-left: 85%; float: left;" method="post" id="temp" action="'.$conRootSIW.'/funcoes/arquivoExcel.php">'.
-         '  <div><img id="botaoExcel" height="12" width="12" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.jpg" style="float: left;" alt="img" />'.
-         '    <input type="hidden" name="opcao" id="opcao" value="E">'.
-         '    <input type="hidden" id="texto" name="texto"/>'.
-         '    <input type="hidden" id="conteudo" name="conteudo"/>'.
-         '  </div>'.
+         '  <img id="botaoExcel" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.gif" style="float: left;" alt="img" />'.
+         '  <img id="botaoWord" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Word" SRC="images/word.gif" style="float: left;" alt="img" />'.
+         '  <input type="hidden" name="opcao" id="opcao" value="E">'.
+         '  <input type="hidden" name="caminho" id="caminho" value="'.$conRootSIW.'">'.
+         '  <input type="hidden" id="texto" name="texto"/>'.
+         '  <input type="hidden" id="conteudo" name="conteudo"/>'.
          '</form>');
 }
 
@@ -477,11 +478,11 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
     }
     ShowHTML('&nbsp;<img ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();" alt="img" />');
     $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
-    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'w_mes='.$w_mes.'&&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><img border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg" alt="img" /></a>');
-    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" alt="img" />');
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'w_mes='.$w_mes.'&&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><img border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" alt="img" /></a>');
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.gif" alt="img" />');
 
     $excel_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
-    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="E"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg" alt="img" />');
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="E"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.gif" alt="img" />');
     // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><img border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" alt="img" /></a>');
     $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" alt="img" />');

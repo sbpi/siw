@@ -362,6 +362,14 @@ function exportarArquivo(id){
     var texto = $("<div>").append( $(elemento).eq(0).clone()).html();
     texto = texto.replace('id=tudo','id=nada');
     $("#conteudo").val(texto);
+    $("#temp").attr('action',$('#caminho').val() + 'funcoes/arquivoExcel.php');
+    $("#temp").submit();
+  });
+  $("#botaoWord").click(function(event) {
+    var texto = $("<div>").append( $(elemento).eq(0).clone()).html();
+    texto = texto.replace('id=tudo','id=nada');
+    $("#conteudo").val(texto);
+    $("#temp").attr('action',$('#caminho').val() + 'funcoes/arquivoWord.php');
     $("#temp").submit();
   });
 

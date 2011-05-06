@@ -439,9 +439,9 @@ function Inicial() {
         } 
       } 
     }
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right"><b>'.exportaExcel().'Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
@@ -455,7 +455,7 @@ function Inicial() {
         ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
         ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
       }      
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td><b>Código</td>');
@@ -504,7 +504,7 @@ function Inicial() {
           ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
           ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
         } 
-        ShowHTML('        <td width="1%" nowrap>');
+        ShowHTML('        <td class="remover" width="1%" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6) {
           // Se não for acompanhamento
           if ($w_copia>'') {
@@ -3162,6 +3162,7 @@ function Informar() {
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
   ShowHTML('    <tr valign="top">');

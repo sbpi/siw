@@ -380,9 +380,9 @@ function Inicial() {
         } 
       } 
     }
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right"><b>'.exportaExcel().'Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
@@ -391,7 +391,7 @@ function Inicial() {
       ShowHTML('          <td colspan=2><b>Solicitante</td>');
       ShowHTML('          <td colspan=3><b>Protocolos</td>');
       if ($P1!=1) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover" rowspan="2"><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_solic').'</td>');
@@ -435,7 +435,7 @@ function Inicial() {
         ShowHTML('        <td align="center">'.f($row,'qtd_processo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'qtd_documento').'</td>');
         if ($P1!=1) ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
-        ShowHTML('        <td width="1%" nowrap>');
+        ShowHTML('        <td class="remover" width="1%" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6) {
           // Se não for acompanhamento
           if ($w_copia>'') {
@@ -543,7 +543,8 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Rodape();
+  if ($w_tipo=='PDF') RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================

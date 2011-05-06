@@ -377,9 +377,9 @@ function Inicial() {
         } 
       } 
     }
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right"><b>'.exportaExcel().'Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</td>');
@@ -388,7 +388,7 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('$ Estimado','valor').'</td>');
       if ($P1!=1) ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
       ShowHTML('        </tr>');
       
     } else {
@@ -422,7 +422,7 @@ function Inicial() {
         if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'valor'),2).'&nbsp;</td>');
         $w_parcial += f($row,'valor');
         if ($P1!=1) ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
-        ShowHTML('        <td width="1%" nowrap>');
+        ShowHTML('        <td class="remover" width="1%" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6) {
           // Se não for acompanhamento
           if ($w_copia>'') {
@@ -2325,6 +2325,7 @@ function SolicMail($p_solic,$p_tipo) {
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
+  exit();
   extract($GLOBALS);
 
   $w_file       = '';

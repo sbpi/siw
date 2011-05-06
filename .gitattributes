@@ -1559,6 +1559,7 @@ Fontes_PHP_SIW/funcoes/FC_Colors.php -text
 Fontes_PHP_SIW/funcoes/FusionCharts.js -text
 Fontes_PHP_SIW/funcoes/FusionCharts.php -text
 Fontes_PHP_SIW/funcoes/arquivoExcel.php -text
+Fontes_PHP_SIW/funcoes/arquivoWord.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordOR.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordRel.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordSint.php -text
@@ -1780,8 +1781,10 @@ Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/images/cancel.png -text
+Fontes_PHP_SIW/images/excel.gif -text
 Fontes_PHP_SIW/images/icone/GotoTop.gif -text
 Fontes_PHP_SIW/images/icone/dollar-green.png -text
+Fontes_PHP_SIW/images/word.gif -text
 Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/js/funcoes.js -text
 Fontes_PHP_SIW/js/jquery.MultiFile.js -text
@@ -3694,6 +3697,7 @@ SP_Oracle92/siw/dados_ferias.fnc -text
 SP_Oracle92/siw/dados_solic.fnc -text
 SP_Oracle92/siw/fn_criaparametro.prc -text
 SP_Oracle92/siw/fvalor.fnc -text
+SP_Oracle92/siw/geraSenha.fnc -text
 SP_Oracle92/siw/geracpfespecial.fnc -text
 SP_Oracle92/siw/gestor.fnc -text
 SP_Oracle92/siw/hash_md5.fnc -text

@@ -325,9 +325,9 @@ function Inicial() {
       } 
     } 
     ShowHTML('    <td align="right">');
-    ShowHTML('    <b>Registros: '.count($RS));
+    ShowHTML('    <b>'.exportaExcel().'Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','cd_programa').'</td>');
@@ -339,7 +339,7 @@ function Inicial() {
       if (!($P1==1 || $P1==2)) {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       } 
-      ShowHTML('          <td rowspan=2><b>Operações</td>');
+      ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('De','inicio').'</td>');
@@ -416,7 +416,7 @@ function Inicial() {
         } 
         if ($P1!=3 && $P1!=5) {
           if ($w_tipo!='WORD') {
-            ShowHTML('        <td align="top" nowrap>');
+            ShowHTML('        <td class="remover" align="top" nowrap>');
             // Se não for acompanhamento
             if ($w_copia>'') {
               // Se for listagem para cópia
