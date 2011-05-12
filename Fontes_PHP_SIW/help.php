@@ -426,7 +426,7 @@ function Menu() {
   ShowHTML('<table border="0" width="100%" cellpadding="0" cellspacing="0" >');
   if ($O=="L") {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
     ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');

@@ -2371,7 +2371,7 @@ function FichaRubrica() {
     $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,null,null,'FICHA');
     $RS = SortArray($RS,'phpdt_vencimento','desc','sq_lancamento','desc');
     ShowHTML('  <tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('      <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('      <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('  <tr><td colspan="2">');
     ShowHTML('  <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('    <tr bgcolor="'.$conTrBgColor.'" align="center">');

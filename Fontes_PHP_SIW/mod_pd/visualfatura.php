@@ -87,7 +87,7 @@ function visualFatura($w_sq_cliente, $p_fatura, $w_usuario, $P1, $w_embed) {
   $l_html.=chr(13) . '    <table width="99%" border="0">';
   $l_html.=chr(13) . '      <tr><td colspan="2"><br><font size="2"><b>DETALHAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
   if (strtoupper($tp_fatura) == 'OUTROS') {
-    $l_html.=chr(13) . '    <tr><td align="right"><b>Registros: ' . count($RS);
+    $l_html.=chr(13) . '    <tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS);
     $l_html.=chr(13) . '      <tr>';
     $l_html.=chr(13) . '        <td>';
     $l_html.=chr(13) . '<TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">';
@@ -157,7 +157,7 @@ function visualFatura($w_sq_cliente, $p_fatura, $w_usuario, $P1, $w_embed) {
     } else {
       $RS = SortArray($RS, 'inicio_reg', 'fim_reg', 'nr_fatura', 'asc');
     }
-    $l_html.=chr(13) . '    <tr><td align="right"><b>Registros: ' . count($RS);
+    $l_html.=chr(13) . '    <tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS);
     $l_html.=chr(13) . '      <tr>';
     $l_html.=chr(13) . '        <td>';
     $l_html.=chr(13) . '<TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">';

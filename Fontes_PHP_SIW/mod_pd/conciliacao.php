@@ -187,9 +187,9 @@ function Inicial() {
     ShowHTML('<tr><td>');
     ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('        <a accesskey="O" class="SS" href="'.$w_dir.$w_pagina.'Help&R='.$w_pagina.$par.'&O=O&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="help"><u>O</u>rientações</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>Data</font></td>');
     ShowHTML('          <td rowspan=2><b>Executado em</font></td>');
@@ -197,7 +197,7 @@ function Inicial() {
     ShowHTML('          <td rowspan=2><b>Tipo da fatura</font></td>');
     ShowHTML('          <td colspan=3><b>Linhas</font></td>');
     ShowHTML('          <td rowspan=2><b>Faturas<br>importadas</font></td>');
-    ShowHTML('          <td rowspan=2><b>Operações</font></td>');
+    ShowHTML('          <td class="remover" rowspan=2><b>Operações</font></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Total</font></td>');
@@ -220,7 +220,7 @@ function Inicial() {
         ShowHTML('        <td align="center">'.f($row,'importados').'&nbsp;</td>');
         ShowHTML('        <td align="center">'.f($row,'rejeitados').'&nbsp;</td>');
         ShowHTML('        <td align="center">'.((f($row,'qt_fatura')>0) ? f($row,'qt_fatura') : '').'&nbsp;</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          '.LinkArquivo('HL',$w_cliente,f($row,'chave_recebido'),'_blank','Exibe os dados do arquivo importado.','Arquivo',null).'&nbsp');
         ShowHTML('          '.LinkArquivo('HL',$w_cliente,f($row,'chave_result'),'_blank','Exibe o registro da importação.','Registro',null).'&nbsp');
         ShowHTML('        </td>');

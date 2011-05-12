@@ -1086,7 +1086,7 @@ function Interessados() {
     ShowHTML('  <li>Insira cada um dos interessados complementares, lembrando que o interessado principal já foi cadastrado na tela de identificação.');
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: ' . count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1215,7 +1215,7 @@ function Assuntos() {
     ShowHTML('  <li>Para alterar o assunto principal do documento, use a tela de identificação.');
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: ' . count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1395,7 +1395,7 @@ function Anexos() {
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: ' . count($RS));
+    ShowHTML('    <td align="right"><b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1816,7 +1816,7 @@ function Encaminhamento() {
   }
   ShowHTML('      <tr><td colspan=3><b>Unidade remetente: ' . f($RS_Solic, 'nm_unid_origem') . '</b><hr size=1 noshade /></td>');
   ShowHTML('     <tr valign="top">');
-  selecaoTipoDespacho('Des<u>p</u>acho:', 'P', 'Selecione o despacho desejado.', $w_cliente, $w_tipo_despacho, null, 'w_tipo_despacho', 'SELECAO', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
+  selecaoTipoDespacho('Des<u>p</u>acho:', 'P', 'Selecione o despacho desejado.', $w_cliente, $w_tipo_despacho, null, 'w_tipo_despacho', 'SELECAOCAD', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
   if (count($RS_Copias)==0 && ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar'))) {
     SelecaoProtocolo('ao <U>p</U>rocesso:', 'U', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo, $w_sq_unidade, 'w_protocolo', 'JUNTADA', null);
     ShowHTML('<INPUT type="hidden" name="w_numero" value="' . f($RS_Solic, 'protocolo_completo') . '">');
@@ -2457,9 +2457,9 @@ function BuscaAssunto() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if ($w_nome > '' || $w_codigo > '') {
-      ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS));
+      ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
       ShowHTML('<tr><td>');
-      ShowHTML('    <TABLE WIDTH="100%" border=0>');
+      ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
       if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
@@ -2470,7 +2470,7 @@ function BuscaAssunto() {
         ShowHTML('            <td><b>Descrição</td>');
         ShowHTML('            <td><b>Detalhamento</td>');
         ShowHTML('            <td><b>Observação</td>');
-        ShowHTML('            <td><b>Operações</td>');
+        ShowHTML('            <td class="remover"><b>Operações</td>');
         ShowHTML('          </tr>');
         foreach ($RS as $row) {
           $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
@@ -2490,7 +2490,7 @@ function BuscaAssunto() {
           ShowHTML('            </td>');
           ShowHTML('            <td>' . nvl(lower(f($row, 'detalhamento')), '---') . '</td>');
           ShowHTML('            <td>' . nvl(f($row, 'observacao'), '---') . '</td>');
-          ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'codigo') . '\', \'' . f($row, 'descricao') . '\', ' . f($row, 'chave') . ');">Selecionar</a>');
+          ShowHTML('            <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'codigo') . '\', \'' . f($row, 'descricao') . '\', ' . f($row, 'chave') . ');">Selecionar</a>');
         }
         ShowHTML('        </table></tr>');
         ShowHTML('      </center>');
@@ -2500,7 +2500,7 @@ function BuscaAssunto() {
       }
     }
   } else {
-    ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS));
+    ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td colspan=6>');
     ShowHTML('    <TABLE WIDTH="100%" border=0>');
     if (count($RS) <= 0) {
@@ -2884,7 +2884,7 @@ function Tramitacao() {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
     ShowHTML('    <td align="right" nowrap>');
-    ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
+    ShowHTML('   '.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE id="logo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3297,7 +3297,7 @@ function TramitCentral() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right" width="1%" nowrap><b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right" width="1%" nowrap>'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3568,7 +3568,7 @@ function Classificacao() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right"><b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3820,7 +3820,7 @@ function Recebimento() {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
     ShowHTML('    <td align="right">');
-    ShowHTML('   '.(($w_tipo!='WORD') ? exportaExcel() : '').' <b>Registros: '.count($RS));
+    ShowHTML('   '.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -4279,9 +4279,9 @@ function BuscaProtocolo() {
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
     if ($l_exibe > '') {
-      ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS1));
+      ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS1));
       ShowHTML('<tr><td>');
-      ShowHTML('    <TABLE WIDTH="100%" border=0>');
+      ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
       if (count($RS1) <= 0) {
         ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
@@ -4292,7 +4292,7 @@ function BuscaProtocolo() {
         ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
         ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</td>');
         ShowHTML('            <td colspan=4><b>Documento original</td>');
-        ShowHTML('            <td rowspan=2><b>Operações</td>');
+        ShowHTML('            <td class="remover" rowspan=2><b>Operações</td>');
         ShowHTML('          </tr>');
         ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
         ShowHTML('            <td><b>Espécie</td>');
@@ -4329,7 +4329,7 @@ function BuscaProtocolo() {
           ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
           ShowHTML('        <td align="center">' . FormataDataEdicao(f($row, 'inicio')) . '</td>');
           ShowHTML('        <td>' . f($row, 'nm_origem') . '</td>');
-          ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'protocolo_completo') . '\', \'' . f($row, 'protocolo_completo') . '\');">Selecionar</a>');
+          ShowHTML('        <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'protocolo_completo') . '\', \'' . f($row, 'protocolo_completo') . '\');">Selecionar</a>');
         }
         ShowHTML('        </table></tr>');
         ShowHTML('      </center>');
@@ -4339,7 +4339,7 @@ function BuscaProtocolo() {
       }
     }
   } elseif (count($RS1)) {
-    ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS1));
+    ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS1));
     ShowHTML('<tr><td colspan=6>');
     ShowHTML('    <TABLE WIDTH="100%" border=0>');
     if (count($RS1) <= 0) {

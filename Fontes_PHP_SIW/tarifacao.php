@@ -279,7 +279,7 @@ function Informar(){
     if ($P1!=3){    
       ShowHTML('                         <a accesskey="R" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=R&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>R</u>esumo</a>&nbsp;');
     } 
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -300,7 +300,7 @@ function Informar(){
       // Se for selecionada a visualização do assunto
       ShowHTML('          <td><b>'.LinkOrdena('Assunto','assunto').'</td>');
     } 
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=12 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -338,7 +338,7 @@ function Informar(){
             ShowHTML('        <td><font '.$w_cor_fonte.'>*** Privativo</td>');
           } 
         }  
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         if ($P1==3 && nvl(f($row,'trabalho'),'N')=='N'){
           ShowHTML('          ---&nbsp');
         } elseif (f($row,'trabalho')>'') {

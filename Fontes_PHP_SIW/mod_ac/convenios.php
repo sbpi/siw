@@ -1518,9 +1518,9 @@ function OutraParte() {
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L'){
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS1));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS1));
         ShowHTML('<tr><td colspan=3>');
-        ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+        ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
         ShowHTML('          <td><b>'.LinkOrdena('Nome','nm_pessoa').'</font></td>');
         ShowHTML('          <td><b>'.LinkOrdena('Nome resumido','nome_resumido').'</font></td>');
@@ -1531,7 +1531,7 @@ function OutraParte() {
           ShowHTML('          <td><b>'.LinkOrdena('CNPJ','cnpj').'</font></td>');
           ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo').'</font></td>');
         } 
-        ShowHTML('          <td><b>Operações</font></td>');
+        ShowHTML('          <td class="remover"><b>Operações</font></td>');
         ShowHTML('        </tr>');
         if (count($RS1)<=0) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não há pessoas que contenham o texto informado.</b></td></tr>');
@@ -1547,7 +1547,7 @@ function OutraParte() {
               ShowHTML('        <td>'.Nvl(f($row,'nm_tipo'),'---').'</td>');
             } 
 
-            ShowHTML('        <td nowrap>');
+            ShowHTML('        <td class="remover" nowrap>');
            
             if ($w_sq_tipo_pessoa==1) {
               ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=A&w_cpf='.f($row,'cpf').'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&Botao=Selecionar">Selecionar</A>&nbsp');
@@ -1913,9 +1913,9 @@ function Representante() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('                         <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');       
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS1));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS1));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>CPF</font></td>');
     ShowHTML('          <td><b>Nome</font></td>');
@@ -1924,7 +1924,7 @@ function Representante() {
     ShowHTML('          <td><b>Fax</font></td>');
     ShowHTML('          <td><b>Celular</font></td>');
     ShowHTML('          <td><b>e-Mail</font></td>');
-    ShowHTML('          <td><b>Operações</font></td>');
+    ShowHTML('          <td class="remover"><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS1)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1941,7 +1941,7 @@ function Representante() {
         ShowHTML('        <td>'.nvl(f($row,'nr_fax'),'---').'</td>');
         ShowHTML('        <td>'.nvl(f($row,'nr_celular'),'---').'</td>');
         ShowHTML('        <td>'.nvl(f($row,'email'),'---').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -2492,9 +2492,9 @@ function Parcelas() {
       }
     }
     if(nvl($w_sq_acordo_aditivo,'')>'') ShowHTML('                         <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=2>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if (nvl($w_sq_acordo_aditivo,'')=='') {
       ShowHTML('          <td><b>Ordem</font></td>');
@@ -2508,7 +2508,7 @@ function Parcelas() {
       ShowHTML('          <td colspan=4><b>Valor</font></td>');
     } 
     ShowHTML('          <td><b>Observação</font></td>');
-    ShowHTML('          <td><b>Operações</font></td>');
+    ShowHTML('          <td class="remover"><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (nvl($w_sq_acordo_aditivo,'')>'') {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2558,7 +2558,7 @@ function Parcelas() {
         } 
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>');
         ShowHTML('        <td>'.crlf2br(nvl(f($row,'observacao'),'---')).'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         if(nvl(f($row,'quitacao'),'')!='') {
           ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Parcelas pagas não podem ser alteradas.\')";>AL</A>&nbsp');
           ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Parcelas pagas não podem ser excluídas.\')";>EX</A>&nbsp');
@@ -2875,7 +2875,7 @@ function Anexo() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

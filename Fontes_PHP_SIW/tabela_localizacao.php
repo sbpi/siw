@@ -198,9 +198,9 @@ function Cidade() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     } 
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     //ShowHTML('          <td><b>Chave</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_cidade').'</td>');
@@ -212,7 +212,7 @@ function Cidade() {
     ShowHTML('          <td><b>'.LinkOrdena('Capital','capital').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Aeroportos','aeroportos').'</td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td><b>Operações</td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -231,7 +231,7 @@ function Cidade() {
         ShowHTML('        <td align="center">'.f($row,'capital').'</td>');
     ShowHTML('        <td align="center">'.f($row,'aeroportos').'</td>');
         if ($w_libera_edicao=='S') {
-          ShowHTML('        <td align="top" nowrap>'); 
+          ShowHTML('        <td class="remover" align="top" nowrap>'); 
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_cidade='.f($row,'sq_cidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_cidade='.f($row,'sq_cidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">EX</A>&nbsp');
           ShowHTML('        </td>');
@@ -440,9 +440,9 @@ function Estado() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     } 
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('País','nome_pais').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Região','nome_regiao').'</td>');
@@ -452,7 +452,7 @@ function Estado() {
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Padrão','padraodesc').'</td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td><b>Operações</td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -469,7 +469,7 @@ function Estado() {
         ShowHTML('        <td align="center">'.f($row,'codigo_ibge').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ativodesc').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padraodesc').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         if ($w_libera_edicao=='S') {
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pais='.f($row,'sq_pais').'&w_co_uf='.f($row,'co_uf').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_pais='.f($row,'sq_pais').'&w_co_uf='.f($row,'co_uf').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">EX</A>&nbsp');
@@ -671,9 +671,9 @@ function Regiao() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     } 
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_regiao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('País','nome_pais').'</td>');
@@ -681,7 +681,7 @@ function Regiao() {
     ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ordem','ordem').'</td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td><b>Operações</td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
     }  
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -697,7 +697,7 @@ function Regiao() {
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
         if ($w_libera_edicao=='S') {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_regiao='.f($row,'sq_regiao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_regiao='.f($row,'sq_regiao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">EX</A>&nbsp');
           ShowHTML('        </td>');
@@ -877,9 +877,9 @@ function Pais() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     } 
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_pais').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
@@ -890,7 +890,7 @@ function Pais() {
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Padrao','padraodesc').'</td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td><b>Operações</td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -909,7 +909,7 @@ function Pais() {
         ShowHTML('        <td align="center">'.f($row,'ativodesc').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padraodesc').'</td>');
         if ($w_libera_edicao=='S') {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pais='.f($row,'sq_pais').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_pais='.f($row,'sq_pais').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">EX</A>&nbsp');
           ShowHTML('        </td>');

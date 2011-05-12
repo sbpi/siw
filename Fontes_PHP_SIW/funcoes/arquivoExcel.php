@@ -14,7 +14,7 @@ function montaRelatorioXLS($conteudo = null){
   $conteudo = str_ireplace ('<a', '<x', str_replace ('</a', '</x', $conteudo));
   $conteudo = str_ireplace ('<img', '<x', str_replace ('</img', '</x', $conteudo));
   
-  $conteudo = preg_replace("(<td(.class=\"remover\".*?)>(.*?)</td>)Ssi","",$conteudo);
+  $conteudo = preg_replace("(<td(.class=(\"?)remover(\"?).*?)>(.*?)</td>)Ssi","",$conteudo);
 
   header('Content-Type: application/vnd.ms-excel;');                 // This should work for IE & Opera
   header("Content-type: application/x-msexcel");                    // This should work for the rest

@@ -345,7 +345,7 @@ function Conciliacao() {
   ShowHTML('<div align=center><center>');
 
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('    <tr><td align="right"><b>Registros: ' . count($RS1));
+  ShowHTML('    <tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS1));
   if ($O == 'L' || $w_embed == 'WORD') {
     if ($w_embed != 'WORD') {
       ShowHTML('<tr><td>');

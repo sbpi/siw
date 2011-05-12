@@ -1026,7 +1026,7 @@ function PesquisaPreco() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if ($p_forn!='' || $p_cpf!='' || $p_cnpj!='') {
-      ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+      ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
       ShowHTML('<tr><td>');
       ShowHTML('    <TABLE WIDTH="100%" border=0>');
       if (count($RS)==0) {

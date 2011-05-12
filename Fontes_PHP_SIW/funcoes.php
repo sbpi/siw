@@ -377,7 +377,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina, $l_lspan=null, $l_rspan=n
 // =========================================================================
 // Montagem de link para exportação de conteúdo para excel
 // -------------------------------------------------------------------------
-function exportaExcel() {
+function exportaOffice() {
   extract($GLOBALS);
   return('<form style="vertical-align: bottom; margin-left: 85%; float: left;" method="post" id="temp" action="'.$conRootSIW.'/funcoes/arquivoExcel.php">'.
          '  <img id="botaoExcel" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.gif" style="float: left;" alt="img" />'.

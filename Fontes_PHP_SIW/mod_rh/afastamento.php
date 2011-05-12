@@ -258,16 +258,16 @@ function Afastamento() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Colaborador','nome_resumido').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Localização','local').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo do afastamento','nm_tipo_afastamento').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Início','inicio_data').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Término','fim_data').'</td>');
-    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('          <td class="remover"><b> Operações </td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -283,7 +283,7 @@ function Afastamento() {
         ShowHTML('        <td align="left">'.f($row,'nm_tipo_afastamento').'</td>');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio_data')).' - '.f($row,'inicio_periodo').'</td>');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'fim_data')).' - '.f($row,'fim_periodo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">EX </A>&nbsp');
         ShowHTML('        </td>');
@@ -497,9 +497,9 @@ function BuscaColaborador() {
   ShowHTML('</tr>');
   ShowHTML('</form>');
   if ($w_nome >'') {
-    ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td>');
-    ShowHTML('    <TABLE WIDTH="100%" border=0>');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -515,7 +515,7 @@ function BuscaColaborador() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('            <td>'.f($row,'nome_resumido').'</td>');
         ShowHTML('            <td>'.f($row,'local').'</td>');
-        ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'sq_contrato_colaborador').'\');">Selecionar</a>');
+        ShowHTML('            <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'sq_contrato_colaborador').'\');">Selecionar</a>');
       } 
       ShowHTML('        </table></tr>');
       ShowHTML('      </center>');

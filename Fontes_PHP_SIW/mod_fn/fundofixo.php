@@ -380,9 +380,9 @@ function Inicial() {
       //ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
       //ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     //}      
-    ShowHTML('    <b>Registros: '.count($RS));
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {    
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
@@ -397,7 +397,7 @@ function Inicial() {
       }
       ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td><b>Código</td>');
@@ -462,7 +462,7 @@ function Inicial() {
         $w_parcial += Nvl(f($row,'valor'),0);
         if ($w_tipo!='WORD') {
           if ($_SESSION['INTERNO']=='S') {
-            ShowHTML('        <td align="top" nowrap>');
+            ShowHTML('        <td class="remover" align="top" nowrap>');
             if ($P1!=3) {
               // Se não for acompanhamento
               if ($P1==1) {

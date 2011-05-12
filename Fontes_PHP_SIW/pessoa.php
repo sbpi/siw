@@ -923,19 +923,19 @@ function BuscaUsuario() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if ($w_nome>'' || $w_sg_unidade>'') {
-        ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+        ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
         ShowHTML('<tr><td>');
-        ShowHTML('    <TABLE WIDTH="100%" border=0>');
+        ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
         if (count($RS)==0) {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
-            ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+            ShowHTML('        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
             ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
             ShowHTML('            <td><b>Nome resumido</font></td>');
             ShowHTML('            <td><b>Nome</font></td>');
             ShowHTML('            <td><b>Lotação</font></td>');
-            ShowHTML('            <td><b>Operações</font></td>');
+            ShowHTML('            <td class="remover" ><b>Operações</font></td>');
             ShowHTML('          </tr>');
             foreach($RS as $row) {
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -943,7 +943,7 @@ function BuscaUsuario() {
                 ShowHTML('            <td>'.f($row,'nome_resumido').'</td>');
                 ShowHTML('            <td>'.f($row,'nome').'</td>');
                 ShowHTML('            <td>'.f($row,'sg_unidade').' ('.f($row,'nm_local').')</td>');
-                ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'sq_pessoa').'\');">Selecionar</a>');
+                ShowHTML('            <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'sq_pessoa').'\');">Selecionar</a>');
             }
             ShowHTML('        </table></tr>');
             ShowHTML('      </center>');
@@ -1047,9 +1047,9 @@ function BuscaPessoa() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if ($p_nome!='' || $p_cpf!='' || $p_cnpj!='') {
-        ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+        ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
         ShowHTML('<tr><td>');
-        ShowHTML('    <TABLE WIDTH="100%" border=0>');
+        ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
         if (count($RS)==0) {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
@@ -1058,13 +1058,13 @@ function BuscaPessoa() {
             ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
             ShowHTML('            <td><b>CPF/CNPJ</font></td>');
             ShowHTML('            <td><b>Nome</font></td>');
-            ShowHTML('            <td><b>Operações</font></td>');
+            ShowHTML('            <td class="remover" ><b>Operações</font></td>');
             ShowHTML('          </tr>');
             foreach($RS as $row) {
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
                 ShowHTML('            <td align="center" width="1%" nowrap>'.nvl(f($row,'identificador_primario'),'---').'</td>');
-                ShowHTML('            <td>'.f($row,'nm_pessoa').'</td>');
+                ShowHTML('            <td class="remover">'.f($row,'nm_pessoa').'</td>');
                 ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'nm_pessoa').'\', '.f($row,'sq_pessoa').');">Selecionar</a>');
             }
             ShowHTML('        </table></tr>');

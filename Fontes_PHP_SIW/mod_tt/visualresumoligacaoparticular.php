@@ -10,7 +10,7 @@ function ResumLigPart($l_sq_usuario,$p_inicio,$p_fim,$p_ativo,$O){
     $sql = new db_getCall; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$l_sq_usuario,"1",null,null,null,null,$p_inicio,$p_fim,'N');
     $RS = SortArray($RS,'phpdt_ordem','asc');
     ShowHTML('<tr><td><font size="2">');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan="3">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
