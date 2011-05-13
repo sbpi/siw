@@ -363,7 +363,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (w1.sq_pessoa  is not null or
+         and ((w1.sq_pessoa is not null and p_unid_posse is not null) or
               c.unidade_int_posse in (select sq_unidade from sg_autenticacao where sq_pessoa = p_pessoa
                                       UNION
                                       select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null
@@ -499,7 +499,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (w1.sq_pessoa  is not null or
+         and ((w1.sq_pessoa is not null and p_unid_posse is not null) or
               c.unidade_int_posse in (select sq_unidade from sg_autenticacao where sq_pessoa = p_pessoa
                                       UNION
                                       select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_pessoa and fim is null

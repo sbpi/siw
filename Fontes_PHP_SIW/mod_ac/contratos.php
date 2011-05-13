@@ -1025,13 +1025,17 @@ function Geral() {
             null,null,null,null,null,null,null,null,null,null,substr($w_herda,0,strpos($w_herda,'|')),null,null,null,null,null,null,
             null,null,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) $RS = $RS[0];
+
+        // Recupera os dados do beneficiário em co_pessoa
+        $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,substr($w_herda,strpos($w_herda,'|')+1),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
+        if (count($RS_Benef)>0) $RS_Benef = $RS_Benef[0];
       } else {
         $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
       } 
       if (count($RS)>0) {
-        $w_codigo_interno       = f($RS,'codigo_interno');
-        $w_titulo               = f($RS,'titulo');
-        $w_sq_unidade_resp      = f($RS,'sq_unidade');
+        $w_codigo_interno       = ((nvl($w_herda,'')!='') ? '' : f($RS,'codigo_interno'));
+        $w_titulo               = ((nvl($w_herda,'')!='') ? f($RS_Benef,'nm_pessoa') : f($RS,'titulo'));
+        $w_sq_unidade_resp      = ((nvl($w_herda,'')!='') ? '' : f($RS,'sq_unidade'));
         $w_objeto               = f($RS,'objeto');
         $w_aviso                = f($RS,'aviso_prox_conc');
         $w_dias                 = f($RS,'dias_aviso');
@@ -1049,16 +1053,16 @@ function Geral() {
         $w_sq_menu              = f($RS,'sq_menu');
         $w_sq_unidade           = f($RS,'sq_unidade');
         $w_sq_tramite           = f($RS,'sq_siw_tramite');
-        $w_solicitante          = f($RS,'solicitante');
+        $w_solicitante          = ((nvl($w_herda,'')!='') ? '' : f($RS,'solicitante'));
         $w_cadastrador          = f($RS,'cadastrador');
         $w_executor             = f($RS,'executor');
-        $w_descricao            = f($RS,'descricao');
-        $w_justificativa        = f($RS,'justificativa');
-        $w_inicio               = FormataDataEdicao(f($RS,'inicio'));
+        $w_descricao            = ((nvl($w_herda,'')!='') ? f($RS,'justificativa') : f($RS,'descricao'));
+        $w_justificativa        = ((nvl($w_herda,'')!='') ? '' : f($RS,'justificativa'));
+        $w_inicio               = ((nvl($w_herda,'')!='') ? '' : FormataDataEdicao(f($RS,'inicio')));
         if (strpos('AEV',$O)!==false) {
           $w_inicio_atual       = FormataDataEdicao(f($RS,'inicio'));
         } 
-        $w_fim                  = FormataDataEdicao(f($RS,'fim'));
+        $w_fim                  = ((nvl($w_herda,'')!='') ? '' : FormataDataEdicao(f($RS,'fim')));
         $w_inclusao             = f($RS,'inclusao');
         $w_ultima_alteracao     = f($RS,'ultima_alteracao');
         $w_conclusao            = f($RS,'conclusao');
@@ -1072,7 +1076,7 @@ function Geral() {
         $w_palavra_chave        = f($RS,'palavra_chave');
         $w_numero_empenho       = f($RS,'empenho');
         $w_numero_processo      = f($RS,'processo');
-        $w_protocolo            = f($RS,'processo');
+        $w_protocolo            = nvl(f($RS,'protocolo_completo'),f($RS,'processo'));
         $w_protocolo_nm         = f($RS,'processo');
         $w_opiniao              = f($RS,'opiniao');
         $w_data_assinatura      = FormataDataEdicao(f($RS,'assinatura'));
@@ -1352,7 +1356,7 @@ function Geral() {
     }
     if($w_aditivo==0) {
       ShowHTML('        <tr valign="top">');
-      ShowHTML('              <td><b>Iní<u>c</u>io vigência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
+      ShowHTML('              <td><b>Iní<u>c</u>io vigência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
       if ($w_prazo_indeterm=='N') {
         ShowHTML('              <td><b><u>F</u>im vigência:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
       } 
@@ -1363,7 +1367,7 @@ function Geral() {
       }
     } else {
       ShowHTML('        <tr valign="top">');
-      ShowHTML('              <td><b>Início vigência:</b><br>'.Nvl($w_inicio,FormataDataEdicao(time())).'</td>');
+      ShowHTML('              <td><b>Início vigência:</b><br>'.$w_inicio.'</td>');
       if ($w_prazo_indeterm=='N') {
         ShowHTML('              <td><b>Fim vigência:</b><br>'.$w_fim.'</td>');
       } 

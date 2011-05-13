@@ -129,6 +129,7 @@ begin
                      then d.processo
                      else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),2)
                 end as processo,
+                to_char(b5.prefixo)||'.'||substr(1000000+to_char(b5.numero_documento),2,6)||'/'||to_char(b5.ano)||'-'||substr(100+to_char(b5.digito),2,2) as protocolo_completo,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 d1.nome as nm_espec_despesa, d1.codigo as cd_espec_despesa,
                 d2.nome as nm_eoindicador,
@@ -273,6 +274,7 @@ begin
                                                                  a2.sigla              = 'AT'
                                                                 )
                 inner       join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  inner     join lc_modalidade            b1 on (b.sq_lcmodalidade     = b1.sq_lcmodalidade)
                   inner     join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
                     inner   join cl_material              c1 on (c.sq_material         = c1.sq_material)
                     inner   join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
@@ -287,6 +289,7 @@ begin
                       left  join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
           where a1.sq_menu           = p_menu
             and h.sq_siw_solicitacao is null
+            and b1.gera_contrato     = 'S'
          order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo

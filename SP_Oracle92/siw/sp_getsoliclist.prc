@@ -1559,7 +1559,7 @@ begin
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
                 d.volumes,            d.unidade_int_posse,           d.pasta,
-                d.tipo_juntada,       d.data_central,
+                d.tipo_juntada,       d.data_central,                d.pessoa_ext_posse,
                 case d.interno when 'S' then e.sigla else d2.nome_resumido end as nm_origem_doc,
                 case d.tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
@@ -1583,7 +1583,8 @@ begin
                 e.sq_unidade as sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
-                k.sq_tipo_despacho, k.nm_tipo_despacho,
+                k.sq_tipo_despacho, k.nm_tipo_despacho, k.envio, k.recebimento,
+                to_char(k.envio,'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, to_char(k.recebimento,'dd/mm/yyyy, hh24:mi:ss') as phpdt_recebimento,
                 cast(b.fim as date)-cast(k.dias_aviso as integer) as aviso,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o.sigla||')' as nm_resp,
                 q.nome as nm_unidade_posse,                          q.sigla as sg_unidade_posse,
@@ -1628,7 +1629,8 @@ begin
                                                       inner join eo_unidade      y on (x.sq_unidade = y.sq_unidade)
                                             where z.sq_menu = p_menu
                                           )                        o  on (b.solicitante              = o.sq_pessoa)
-                   left              join (select v.sq_siw_solicitacao, w.sq_documento_log, w.dias_aviso, y.sq_tipo_despacho, y.nome as nm_tipo_despacho
+                   left              join (select w.sq_siw_solicitacao, w.sq_documento_log, w.envio, w.recebimento, w.dias_aviso, 
+                                                  y.sq_tipo_despacho, y.nome as nm_tipo_despacho
                                              from (select s.sq_siw_solicitacao, max(r.sq_documento_log) as chave 
                                                      from siw_solicitacao             s
                                                           inner join pa_documento_log r on (s.sq_siw_solicitacao = r.sq_siw_solicitacao)
@@ -1636,7 +1638,7 @@ begin
                                                    group by s.sq_siw_solicitacao
                                                   )                             v
                                                   inner   join pa_documento_log w on (v.chave              = w.sq_documento_log)
-                                                    inner join sg_autenticacao  x on (w.recebedor          = x.sq_pessoa)
+                                                    left  join sg_autenticacao  x on (w.recebedor          = x.sq_pessoa)
                                                     inner join pa_tipo_despacho y on (w.sq_tipo_despacho   = y.sq_tipo_despacho)
                                                     inner join siw_solicitacao  z on (w.sq_siw_solicitacao = z.sq_siw_solicitacao)
                                             where z.sq_menu = p_menu

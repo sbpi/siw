@@ -13,6 +13,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   
   // Recupera os dados do acordo
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
+  $w_SG              = f($RS,'sigla');
   $w_tramite         = f($RS,'sq_siw_tramite');
   $w_tramite_ativo   = f($RS,'ativo');
   $w_valor_inicial   = f($RS,'valor');
@@ -24,6 +25,16 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_idcc            = f($RS,'idcc');
   $w_igcc            = f($RS,'igcc');
   $w_exibe_idec      = f($RS,'exibe_idec');
+  
+  // Verifica as opções de submenu
+  $sql = new db_getLinkSubMenu; $RS_Submenu = $sql->getInstanceOf($dbms, $w_cliente, $w_SG);
+  $w_termo = false;
+  foreach($RS_Submenu as $row) {
+    if (strpos(f($row,'sigla'),'TERMO')!==false) {
+      $w_termo = true;
+      break;
+    }
+  }
   
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
@@ -416,7 +427,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
 
     // Exibe ficha completa
-    if ($l_P1==4 && substr($w_sigla,0,3)!='GCZ') {
+    if ($l_P1==4 && substr($w_sigla,0,3)!='GCZ' && $w_termo) {
       // Termo de referência
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TERMO DE REFERÊNCIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr valign="top">';

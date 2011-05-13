@@ -3478,15 +3478,16 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
   if (nvl($w_dt_grade,'')>'') {
     if (is_numeric($w_dt_grade)) {
       switch ($w_formato){
-        case 1: return date('d/m/Y',$w_dt_grade);                         break;
-        case 2: return date('H:i:s',$w_dt_grade);                         break;
-        case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
-        case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
-        case 5: return date('d/m/y',$w_dt_grade);                         break;
-        case 6: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
-        case 7: return date('m/d/Y',$w_dt_grade);                         break;
-        case 8: return date('Y-m-d H:i:s',$w_dt_grade);                   break;
-        case 9: return date('m/Y',$w_dt_grade);                           break;
+        case 1:  return date('d/m/Y',$w_dt_grade);                         break;
+        case 2:  return date('H:i:s',$w_dt_grade);                         break;
+        case 3:  return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
+        case 4:  return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
+        case 5:  return date('d/m/y',$w_dt_grade);                         break;
+        case 6:  return date('d/m/y, H:i:s',$w_dt_grade);                  break;
+        case 7:  return date('m/d/Y',$w_dt_grade);                         break;
+        case 8:  return date('Y-m-d H:i:s',$w_dt_grade);                   break;
+        case 9:  return date('m/Y',$w_dt_grade);                           break;
+        case 10: return date('d/m/y H:i',$w_dt_grade);                     break;
       }
     } else {
       return $w_dt_grade;

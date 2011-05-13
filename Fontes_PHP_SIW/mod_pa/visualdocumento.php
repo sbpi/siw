@@ -336,12 +336,22 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Recebido em</b></td>';
       $l_html.=chr(13).'       </tr>';
       foreach ($RS_Copias as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
         if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
-        $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
+        if (nvl(f($row,'pessoa_ext_posse'),'')!='') {
+          $l_html.=chr(13).'        <td>'.f($row,'nm_pessoa_posse').'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
+        }
+        if (nvl(f($row,'envio'),'')=='') {
+          $l_html.=chr(13).'        <td>NÃO ENVIADO</td>';
+        } else {
+          $l_html.=chr(13).'        <td'.((nvl(f($row,'recebimento'),'')=='') ? '>PENDENTE (enviado em '.formataDataEdicao(f($row,'phpdt_envio'),10).')' : ' align="center">'.formataDataEdicao(f($row,'phpdt_recebimento'),10)).'</td>';
+        }
         $l_html.=chr(13).'      </tr>';
       } 
       $l_html.=chr(13).'      </center>';

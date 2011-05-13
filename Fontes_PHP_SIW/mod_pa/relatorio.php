@@ -191,32 +191,32 @@ function Tramitacao() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
-    ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('<tr><td colspan=2 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
     ShowHTML('  <li>Selecione a guia desejada para impressão, clicando sobre a operação <i>Emitir</i>.');
     ShowHTML('  <li>A impressão não ocorre diretamente. Será gerado um arquivo no formato Word, que você poderá enviar para a impressora.');
     ShowHTML('  <li>ATENÇÃO: recomenda-se salvar o arquivo gerado, ao invés de abri-lo diretamente.');
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td>');
+    ShowHTML('<tr><td nowrap>');
     if (MontaFiltro('GET') > '') {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <td align="right" nowrap>'.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML('<tr><td align="center" colspan=2>');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td><b>' . linkOrdena('Guia', 'guia_tramite') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Destino', 'nm_destino') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Despacho', 'nm_despacho') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Protocolo', 'protocolo') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Envio', 'phpdt_envio') . '</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -234,7 +234,7 @@ function Tramitacao() {
           ShowHTML('        <td>' . f($row, 'nm_despacho') . '</td>');
           ShowHTML('        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
           ShowHTML('        <td align="center">' . substr(formataDataEdicao(f($row, 'phpdt_envio'),6),0,-3) . '</td>');
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td align="top" nowrap class="remover">');
           ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGR&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="GR">Emitir</A>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
@@ -251,11 +251,10 @@ function Tramitacao() {
         }
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('<tr><td align="center" colspan=2>');
     MontaBarra($w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=' . $O . '&P1=' . $P1 . '&P2=' . $P2 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET'), ceil(count($RS) / $P4), $P3, $P4, count($RS));
     ShowHTML('</tr>');
   } elseif ($O == 'P') {
@@ -288,7 +287,6 @@ function Tramitacao() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -352,7 +350,7 @@ function Transferencia() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -412,7 +410,6 @@ function Transferencia() {
         }
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -449,7 +446,6 @@ function Transferencia() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -543,7 +539,7 @@ function Etiqueta() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -609,7 +605,6 @@ function Etiqueta() {
         $w_atual = f($row, 'guia_tramite');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -698,7 +693,6 @@ function Etiqueta() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
