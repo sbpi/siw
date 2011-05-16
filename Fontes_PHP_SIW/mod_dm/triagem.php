@@ -466,7 +466,7 @@ function Inicial() {
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap class="remover">');
+        ShowHTML('        <td nowrap>');
         if ($w_tipo!='WORD') {
           if(Nvl(f($row,'inicio'),'')=='') ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'recebimento'),f($row,'limite_conclusao'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null,0,'SEMEXECUCAO'));
           else                             ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
@@ -523,7 +523,7 @@ function Inicial() {
         } 
         if ($w_tipo!='WORD') {
           if ($_SESSION['INTERNO']=='S') {
-            ShowHTML('        <td align="top" nowrap>');
+            ShowHTML('        <td class="remover" align="top" nowrap>');
             if ($P1!=3) {
               // Se não for acompanhamento
               if ($w_copia>'') {

@@ -281,14 +281,14 @@ function Inicial() {
     }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     //ShowHTML('          <td rowspan=2><b>'.linkOrdena('Último despacho','nm_despacho').'</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Protocolo', 'protocolo') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Unidade de Origem', 'nm_unid_origem') . '</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Limite', 'fim') . '</td>');
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td><b>' . linkOrdena('Espécie', 'nm_especie') . '</td>');
@@ -314,7 +314,7 @@ function Inicial() {
         ShowHTML('        <td align="center">' . date(d . '/' . m . '/' . y, f($row, 'inicio')) . '</td>');
         ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
         ShowHTML('        <td align="center">' . ((nvl(f($row, 'fim'), '') != '') ? date(d . '/' . m . '/' . y, f($row, 'fim')) : '&nbsp;') . '</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">' . $w_nm_operacao . '</A>&nbsp');
         if ($SG == 'PADALTREG')
           ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=E&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">Excluir</A>&nbsp');
@@ -1402,7 +1402,7 @@ function Vincular() {
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
-    ShowHTML('    <tr><td colspan=2><b>DADOS DO PROCESSO DE ORIGEM</b></td></tr>');
+    ShowHTML('    <tr><td colspan=2><b>PROCESSO A SER VINCULADO</b></td></tr>');
     ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('    <tr><td width="30%">'.f($RS,'nm_tipo').':<td><b>'.f($RS,'protocolo').'</b></td></tr>');
     if (f($RS,'interno')=='S') {
@@ -1417,7 +1417,7 @@ function Vincular() {
     ShowHTML('   <tr><td>Data do documento:</td><td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>');
   
     ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
-    ShowHTML('    <tr><td colspan=2><b>VINCULAR AO PROCESSO</b></td></tr>');
+    ShowHTML('    <tr><td colspan=2><b>VINCULAR AO PROCESSO DE ORIGEM</b></td></tr>');
     ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
     SelecaoProtocolo('<U>P</U>rocesso:', 'P', 'Selecione o processo ao qual deseja vincular o processo informado acima.', $w_protocolo, null, 'w_protocolo', 'JUNTADA', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_protocolo\'; document.Form.submit();"',1,'<td>');
     if (is_Array($RS1)) {
@@ -1453,7 +1453,7 @@ function Vincular() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
+    ShowHTML('      <tr><td><b>Processo a ser vinculado:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
     ShowHTML('      <tr><td colspan="2" align="center"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('          </td>');

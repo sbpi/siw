@@ -470,13 +470,10 @@ function Inicial() {
       }
     }
     ShowHTML('    <td align="right">');
-    if ($w_embed != 'WORD' && strpos(upper($R), 'GR_') === false) {
-      ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('     &nbsp;&nbsp;<a href="' . $w_dir . $w_pagina . $par . '&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . count($RS) . '&TP=' . $TP . '&SG=' . $SG . '&w_tipo=WORD' . MontaFiltro('GET') . '"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    }
-    ShowHTML('    <b>Registros: ' . count($RS));
+
+    ShowHTML('    '.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . (($w_embed == 'WORD') ? 1 : $conTableBorder) . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . (($w_embed == 'WORD') ? 1 : $conTableBorder) . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     if ($w_embed != 'WORD') {
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . LinkOrdena('Protocolo', 'protocolo') . '</td>');
@@ -486,7 +483,7 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>' . LinkOrdena('Assunto', 'cd_assunto') . '</td>');
       ShowHTML('          <td rowspan=2><b>' . LinkOrdena('Resumo', 'ds_assunto') . '</td>');
       if ($P1 == 1)
-        ShowHTML('          <td rowspan=2><b>Operações</td>');
+        ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
       ShowHTML('          <td><b>' . LinkOrdena('Espécie', 'nm_especie') . '</td>');
@@ -583,7 +580,7 @@ function Inicial() {
             ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
         }
         if ($w_embed != 'WORD' && $P1 == 1) {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           // Se não for acompanhamento
           if ($w_copia > '') {
             // Se for listagem para cópia
