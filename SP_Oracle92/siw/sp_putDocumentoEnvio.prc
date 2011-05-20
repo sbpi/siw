@@ -30,6 +30,7 @@ create or replace procedure sp_putDocumentoEnvio
    w_pai           number(18) := null;
    w_parametro     pa_parametro%rowtype;
    w_data          date := sysdate;
+   w_destino       siw_solicitacao.codigo_interno%type := '';
    
    cursor c_dados is
       -- cursor para recuperar o protocolo indicado e os juntados a ele
@@ -51,8 +52,8 @@ begin
    
    -- Recupera a chave do protocolo informado
    If p_prefixo is not null Then
-      select sq_siw_solicitacao
-        into w_pai
+      select sq_siw_solicitacao, ' (RECEBEDOR: '||x.prefixo||'.'||substr(1000000+x.numero_documento,2,6)||'/'||x.ano||'-'||substr(100+x.digito,2,2)||')'
+        into w_pai,  w_destino
         from pa_documento x
        where x.prefixo          = p_prefixo
          and x.numero_documento = p_numero
@@ -148,7 +149,7 @@ begin
      values
        (w_chave_dem,             crec.chave,                 w_chave,                   p_tipo_despacho,            p_interno, 
         p_unidade_origem,        p_unidade_destino,          p_pessoa_destino,          p_pessoa,                   w_data,
-        p_despacho,              w_data,                     p_emite_aviso,             coalesce(p_dias_aviso,0),   p_retorno_limite,
+        p_despacho||w_destino,   w_data,                     p_emite_aviso,             coalesce(p_dias_aviso,0),   p_retorno_limite,
         w_retorno_unid,          p_pessoa_externa,           p_unidade_externa,         'N',                        p_nu_guia,
         p_ano_guia,              case p_unidade_origem when p_unidade_destino then p_pessoa else null end);
      

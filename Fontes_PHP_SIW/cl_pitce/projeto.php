@@ -434,9 +434,9 @@ function Inicial() {
       } 
     } 
     ShowHTML('    <td align="right">');
-    ShowHTML('    <b>Registros: '.count($RS));
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
 
     if ($w_tipo!='WORD') {
@@ -452,7 +452,7 @@ function Inicial() {
         //if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Valor','valor').'</td>');
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       } 
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_solic').'</td>');
@@ -537,7 +537,7 @@ function Inicial() {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
         if ($_SESSION['INTERNO']=='S'&& $w_tipo!='WORD') {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           if ($P1!=3) {
             // Se não for acompanhamento
             if ($w_copia > '') {

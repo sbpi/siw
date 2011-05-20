@@ -563,5 +563,5 @@ begin
                              )                           i on (a.sq_solicitacao_item  = i.sq_solicitacao_item)
           where (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao));
    End If;
-end sp_getCLSolicItem;           
+end sp_getCLSolicItem;
 /

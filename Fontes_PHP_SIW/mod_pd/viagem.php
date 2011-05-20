@@ -447,7 +447,7 @@ function Inicial() {
   }
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
-    ShowHTML('<tr><td>');
+    ShowHTML('<tr><td nowrap>');
     if ($P1 == 1 && $w_copia == '') {
       // Se for cadastramento e não for resultado de busca para cópia
       if ($w_submenu > '') {
@@ -456,7 +456,7 @@ function Inicial() {
           $RS1 = $row;
           break;
         }
-        ShowHTML('<tr><td>');
+        ShowHTML('<tr><td nowrap>');
         ShowHTML('    <a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'Geral&R=' . $w_pagina . $par . '&O=I&SG=' . f($RS1, 'sigla') . '&w_menu=' . $w_menu . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . MontaFiltro('GET') . '"><u>I</u>ncluir</a>&nbsp;');
         ShowHTML('    <a accesskey="C" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=C&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>C</u>opiar</a>');
       } else {
@@ -479,7 +479,7 @@ function Inicial() {
         }
       }
     }
-    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML('    <td colspan=2 nowrap align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3440,10 +3440,6 @@ function DadosFinanceiros() {
   ShowHTML('        return (false);');
   ShowHTML('      }');
   ShowHTML('    } ');
-  ShowHTML('    if((theForm["w_qtd_diarias[]"][k].value.charAt(theForm["w_qtd_diarias[]"][k].value.indexOf(\',\')+1)!=5) && (theForm["w_qtd_diarias[]"][k].value.charAt(theForm["w_qtd_diarias[]"][k].value.indexOf(\',\')+1)!=0)) {');
-  ShowHTML('      alert(\'O valor decimal para quantidade de diarias deve ser 0 ou 5.\');');
-  ShowHTML('      return (false);');
-  ShowHTML('    }');
   ShowHTML('    var V1, V2;');
   ShowHTML('    V1 = theForm["w_qtd_diarias[]"][k].value.toString().replace(/\\$|\\./g,\'\');');
   ShowHTML('    V2 = theForm["w_maximo_diarias[]"][k].value.toString().replace(/\\$|\\./g,\'\');');
@@ -3589,7 +3585,7 @@ function DadosFinanceiros() {
       ShowHTML('       <td>' . $w_trechos[$i][3] . '</td>');
       ShowHTML('       <td align="center">' . $w_trechos[$i][4] . '</td>');
       ShowHTML('       <td align="center">' . $w_trechos[$i][5] . '</td>');
-      ShowHTML('       <td align="right"><input type="text" name="w_qtd_diarias[]" class="sti" SIZE="10" MAXLENGTH="5" VALUE="' . $w_trechos[$i][6] . '" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este destino."></td>');
+      ShowHTML('       <td align="right"><input type="text" name="w_qtd_diarias[]" class="sti" SIZE="10" MAXLENGTH="5" VALUE="' . $w_trechos[$i][6] . '" style="text-align:right;" onKeyDown="FormataValor(this,5,2,event);" title="Informe a quantidade de diárias para este destino."></td>');
       ShowHTML('       <td align="right"><input type="text" name="w_vlr_diarias[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_trechos[$i][7] . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário das diárias para este destino."></td>');
       ShowHTML('     </tr>');
       $i += 1;
@@ -3707,10 +3703,6 @@ function PagamentoDiaria() {
   ShowHTML('        return (false);');
   ShowHTML('      }');
   ShowHTML('    } ');
-  ShowHTML('    if((theForm["w_qtd_diarias[]"][k].value.charAt(theForm["w_qtd_diarias[]"][k].value.indexOf(\',\')+1)!=5) && (theForm["w_qtd_diarias[]"][k].value.charAt(theForm["w_qtd_diarias[]"][k].value.indexOf(\',\')+1)!=0)) {');
-  ShowHTML('      alert(\'O valor decimal para quantidade de diarias deve ser 0 ou 5.\');');
-  ShowHTML('      return (false);');
-  ShowHTML('    }');
   ShowHTML('    var V1, V2;');
   ShowHTML('    V1 = theForm["w_qtd_diarias[]"][k].value.toString().replace(/\\$|\\./g,\'\');');
   ShowHTML('    V2 = theForm["w_maximo_diarias[]"][k].value.toString().replace(/\\$|\\./g,\'\');');
@@ -3856,7 +3848,7 @@ function PagamentoDiaria() {
       ShowHTML('       <td>' . $w_trechos[$i][3] . '</td>');
       ShowHTML('       <td align="center">' . $w_trechos[$i][4] . '</td>');
       ShowHTML('       <td align="center">' . $w_trechos[$i][5] . '</td>');
-      ShowHTML('       <td align="right"><input type="text" name="w_qtd_diarias[]" class="sti" SIZE="10" MAXLENGTH="5" VALUE="' . $w_trechos[$i][6] . '" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este destino."></td>');
+      ShowHTML('       <td align="right"><input type="text" name="w_qtd_diarias[]" class="sti" SIZE="10" MAXLENGTH="5" VALUE="' . $w_trechos[$i][6] . '" style="text-align:right;" onKeyDown="FormataValor(this,5,2,event);" title="Informe a quantidade de diárias para este destino."></td>');
       ShowHTML('       <td align="right"><input type="text" name="w_vlr_diarias[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_trechos[$i][7] . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário das diárias para este destino."></td>');
       ShowHTML('     </tr>');
       $i += 1;
@@ -4000,7 +3992,7 @@ function Diarias() {
     $w_saida = $w_trechos[10];
     $w_chegada = $w_trechos[11];
     $w_diaria = $w_trechos[12];
-    $w_quantidade = formatNumber($w_trechos[8], 1);
+    $w_quantidade = formatNumber($w_trechos[8], 2);
     $w_valor = formatNumber($w_trechos[9]);
     $w_sg_moeda_diaria = $w_trechos[13];
     $w_vl_diaria = formatNumber($w_trechos[14]);
@@ -4191,7 +4183,7 @@ function Diarias() {
     ShowHTML('    w_val = replaceAll(w_val,",",".");');
     ShowHTML('    var w_res = parseFloat(w_val*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_valor.value="0,00";');
-    ShowHTML('    else obj.w_valor.value = mascaraGlobal("[###.]###,##",w_res*100);');
+    ShowHTML('    else obj.w_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('  }');
     ShowHTML('}');
     ShowHTML('function calculaHospedagem(valor) { ');
@@ -4204,7 +4196,7 @@ function Diarias() {
     ShowHTML('    w_val = replaceAll(w_val,",",".");');
     ShowHTML('    w_res = parseFloat(w_val*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_hospedagem_valor.value="0,00";');
-    ShowHTML('    else obj.w_hospedagem_valor.value = mascaraGlobal("[###.]###,##",w_res*100);');
+    ShowHTML('    else obj.w_hospedagem_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('  }');
     ShowHTML('}');
     ShowHTML('function calculaLocacao(valor) { ');
@@ -4220,7 +4212,7 @@ function Diarias() {
     ShowHTML('    w_per = replaceAll(w_per,",",".");');
     ShowHTML('    w_res = parseFloat(w_val*w_per*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_veiculo_valor.value="0,00";');
-    ShowHTML('    else obj.w_veiculo_valor.value = mascaraGlobal("[###.]###,##",w_res);');
+    ShowHTML('    else obj.w_veiculo_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('  }');
     ShowHTML('}');
 
@@ -4559,7 +4551,7 @@ function Diarias() {
     ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
 
     // Define as quantidades conforme regras
-    $w_quantidade = formatNumber($w_max_diaria, 1);
+    $w_quantidade = formatNumber($w_max_diaria, 2);
     $w_hospedagem_qtd = formatNumber($w_max_hosp, 1);
     $w_veiculo_qtd = formatNumber($w_max_veiculo, 1);
 
@@ -4768,7 +4760,7 @@ function Diarias_Solic() {
     $w_saida = $w_trechos[10];
     $w_chegada = $w_trechos[11];
     $w_diaria = $w_trechos[12];
-    $w_quantidade = formatNumber($w_trechos[8], 1);
+    $w_quantidade = formatNumber($w_trechos[8], 2);
     $w_valor = formatNumber($w_trechos[8] * $w_trechos[9]);
     $w_sg_moeda_diaria = $w_trechos[13];
     $w_vl_diaria = formatNumber($w_trechos[14]);
@@ -4872,7 +4864,7 @@ function Diarias_Solic() {
     ShowHTML('    w_val = replaceAll(w_val,",",".");');
     ShowHTML('    var w_res = parseFloat(w_val*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_valor.value="0,00";');
-    ShowHTML('    else obj.w_valor.value = mascaraGlobal("[###.]###,##",w_res*100);');
+    ShowHTML('    else obj.w_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('}');
     ShowHTML('function calculaHospedagem(valor) { ');
     ShowHTML('  var obj=document.Form;');
@@ -4897,7 +4889,7 @@ function Diarias_Solic() {
     ShowHTML('    w_per = replaceAll(w_per,",",".");');
     ShowHTML('    w_res = parseFloat(w_val*w_per*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_veiculo_valor.value="0,00";');
-    ShowHTML('    else obj.w_veiculo_valor.value = mascaraGlobal("[###.]###,##",w_res);');
+    ShowHTML('    else obj.w_veiculo_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('}');
 
     FormataValor();
@@ -4911,13 +4903,8 @@ function Diarias_Solic() {
       ShowHTML('    }');
       //CompValor('w_quantidade','Quantidade de diárias','>','0,0','zero');
       //CompValor('w_quantidade','Quantidade de diárias','<=',formatNumber($w_max_hosp,1),formatNumber($w_max_hosp,1));
-      ShowHTML('    if((theForm.w_quantidade.value.charAt(theForm.w_quantidade.value.indexOf(",")+1)!=5) && (theForm.w_quantidade.value.charAt(theForm.w_quantidade.value.indexOf(",")+1)!=0)) {');
-      ShowHTML('      alert("O valor decimal para quantidade de diarias deve ser 0 ou 5.");');
-      ShowHTML('      theForm.w_quantidade.focus();');
-      ShowHTML('      return (false);');
-      ShowHTML('    }');
       ShowHTML('    if(theForm.w_quantidade.value!=theForm.w_calc_dia_qtd.value && theForm.w_calc_dia_txt.value=="") {');
-      ShowHTML('      alert("Informe o motivo da quantidade de diárias ser diferente do valor calculado: ' . formatNumber($w_calc_dia_qtd, 1) . '");');
+      ShowHTML('      alert("Informe o motivo da quantidade de diárias ser diferente do valor calculado: ' . formatNumber($w_calc_dia_qtd, 2) . '");');
       ShowHTML('      theForm.w_calc_dia_txt.focus();');
       ShowHTML('      return (false);');
       ShowHTML('    }');
@@ -4962,11 +4949,6 @@ function Diarias_Solic() {
       ShowHTML('    }');
       //CompValor('w_hospedagem_qtd','Quantidade de hospedagens','>','0,0','zero');
       //CompValor('w_hospedagem_qtd','Quantidade de hospedagens','<=',formatNumber($w_max_hosp,1),formatNumber($w_max_hosp,1));
-      ShowHTML('    if((theForm.w_hospedagem_qtd.value.charAt(theForm.w_hospedagem_qtd.value.indexOf(",")+1)!=5) && (theForm.w_hospedagem_qtd.value.charAt(theForm.w_hospedagem_qtd.value.indexOf(",")+1)!=0)) {');
-      ShowHTML('      alert("O valor decimal para quantidade de hospedagens deve ser 0 ou 5.");');
-      ShowHTML('      theForm.w_hospedagem_qtd.focus();');
-      ShowHTML('      return (false);');
-      ShowHTML('    }');
       ShowHTML('    if(theForm.w_hospedagem_qtd.value!=theForm.w_calc_hsp_qtd.value && theForm.w_calc_hsp_txt.value=="") {');
       ShowHTML('      alert("Informe o motivo da quantidade de hospedagens ser diferente do valor calculado: ' . formatNumber($w_calc_hsp_qtd, 1) . '");');
       ShowHTML('      theForm.w_calc_hsp_txt.focus();');
@@ -4996,11 +4978,6 @@ function Diarias_Solic() {
       ShowHTML('    }');
       //CompValor('w_veiculo_qtd','Quantidade de locações','>','0,0','zero');
       //CompValor('w_veiculo_qtd','Quantidade de locações','<=',formatNumber($w_max_hosp,1),formatNumber($w_max_hosp,1));
-      ShowHTML('    if((theForm.w_veiculo_qtd.value.charAt(theForm.w_veiculo_qtd.value.indexOf(",")+1)!=5) && (theForm.w_veiculo_qtd.value.charAt(theForm.w_veiculo_qtd.value.indexOf(",")+1)!=0)) {');
-      ShowHTML('      alert("O valor decimal para quantidade de locações deve ser 0 ou 5.");');
-      ShowHTML('      theForm.w_veiculo_qtd.focus();');
-      ShowHTML('      return (false);');
-      ShowHTML('    }');
       ShowHTML('    if(theForm.w_veiculo_qtd.value!=theForm.w_calc_vei_qtd.value && theForm.w_calc_vei_txt.value=="") {');
       ShowHTML('      alert("Informe o motivo da quantidade de diárias de veículo ser diferente do valor calculado: ' . formatNumber($w_calc_vei_qtd, 1) . '");');
       ShowHTML('      theForm.w_calc_vei_txt.focus();');
@@ -5215,7 +5192,7 @@ function Diarias_Solic() {
             if ($w_trechos[$i][25] > '' && nvl(f($RS_Solic, 'diaria'), '') != '' && $w_trechos[$i][8] > 0) {
               ShowHTML('       <tr valign="top">');
               ShowHTML('         <td>Diária (' . $w_trechos[$i][13] . ')</td>');
-              ShowHTML('         <td align="right">' . formatNumber($w_trechos[$i][8], 1) . '</td>');
+              ShowHTML('         <td align="right">' . formatNumber($w_trechos[$i][8], 2) . '</td>');
               ShowHTML('         <td align="right">' . formatNumber($w_trechos[$i][9]) . '</td>');
               ShowHTML('         <td align="right">' . formatNumber($w_diarias, 2) . '</td>');
               ShowHTML('       </tr>');
@@ -5225,7 +5202,7 @@ function Diarias_Solic() {
               ShowHTML('         <td>Veículo (' . $w_trechos[$i][23] . ') -' . formatNumber($w_trechos[$i][24], 0) . '%</td>');
               ShowHTML('         <td align="right">' . formatNumber($w_trechos[$i][21], 1) . '</td>');
               ShowHTML('         <td align="right">' . formatNumber(-1 * $w_trechos[$i][9] * $w_trechos[$i][22] / 100) . '</td>');
-              ShowHTML('         <td align="right">' . formatNumber($w_locacoes, 2) . '</td>');
+              ShowHTML('         <td align="right">' . formatNumber($w_locacoes, 1) . '</td>');
               ShowHTML('       </tr>');
             }
             if ($w_trechos[$i][26] > '' && f($RS_Solic, 'hospedagem') == 'S' && $w_trechos[$i][16] > 0) {
@@ -5233,7 +5210,7 @@ function Diarias_Solic() {
               ShowHTML('         <td>Hospedagem (' . $w_trechos[$i][18] . ')</td>');
               ShowHTML('         <td align="right">' . formatNumber($w_trechos[$i][16], 1) . '</td>');
               ShowHTML('         <td align="right">' . formatNumber($w_trechos[$i][17]) . '</td>');
-              ShowHTML('         <td align="right">' . formatNumber($w_hospedagens, 2) . '</td>');
+              ShowHTML('         <td align="right">' . formatNumber($w_hospedagens, 1) . '</td>');
               ShowHTML('       </tr>');
             }
             ShowHTML('     </tr></table>');
@@ -5280,7 +5257,7 @@ function Diarias_Solic() {
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_hospedagem" value="' . $w_sg_moeda_hospedagem . '">');
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_veiculo" value="' . $w_sg_moeda_veiculo . '">');
     ShowHTML('<INPUT type="hidden" name="w_origem" value="AGENTE">');
-    ShowHTML('<INPUT type="hidden" name="w_calc_dia_qtd" value="' . formatNumber($w_calc_dia_qtd, 1) . '">');
+    ShowHTML('<INPUT type="hidden" name="w_calc_dia_qtd" value="' . formatNumber($w_calc_dia_qtd, 2) . '">');
     ShowHTML('<INPUT type="hidden" name="w_calc_hsp_qtd" value="' . formatNumber($w_calc_hsp_qtd, 1) . '">');
     ShowHTML('<INPUT type="hidden" name="w_calc_vei_qtd" value="' . formatNumber($w_calc_vei_qtd, 1) . '">');
 
@@ -5300,7 +5277,7 @@ function Diarias_Solic() {
         ShowHTML('          <tr valign="top"><td>');
       }
       ShowHTML('            <td><b>Valor base (' . $w_sg_moeda_diaria . '):</b><br><input type="text" READONLY name="w_vl_diaria" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_vl_diaria . '" style="text-align:right;" title="Valor cheio da diária."></td>');
-      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_diaria == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_quantidade" SIZE="5" MAXLENGTH="5" VALUE="' . (($w_diaria == 'N') ? '0,0' : $w_quantidade) . '" onBlur="calculaDiaria(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este local."></td>');
+      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_diaria == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_quantidade" SIZE="5" MAXLENGTH="5" VALUE="' . (($w_diaria == 'N') ? '0,0' : $w_quantidade) . '" onBlur="calculaDiaria(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,2,event);" title="Informe a quantidade de diárias para este local."></td>');
       ShowHTML('            <td><b>Valor a ser pago (' . $w_sg_moeda_diaria . '):</b><br><input type="text" READONLY name="w_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . (($w_diaria == 'N') ? '0,00' : $w_valor) . '" style="text-align:right;" title="Valor cheio da diária."></td>');
       ShowHTML('<INPUT type="hidden" name="w_justificativa_diaria" value="' . $w_justificativa_diaria . '">');
       ShowHTML('          <tr valign="top"><td>');

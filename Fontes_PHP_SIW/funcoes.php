@@ -379,7 +379,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina, $l_lspan=null, $l_rspan=n
 // -------------------------------------------------------------------------
 function exportaOffice() {
   extract($GLOBALS);
-  return('<form style="vertical-align: bottom; margin-left: 85%; float: left;" method="post" id="temp" action="'.$conRootSIW.'/funcoes/arquivoExcel.php">'.
+  return('<form style="vertical-align: bottom; margin-left: 80%; float: left;" method="post" id="temp" action="'.$conRootSIW.'/funcoes/arquivoExcel.php">'.
          '  <img id="botaoExcel" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.gif" style="float: left;" alt="img" />'.
          '  <img id="botaoWord" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Word" SRC="images/word.gif" style="float: left;" alt="img" />'.
          '  <input type="hidden" name="opcao" id="opcao" value="E">'.

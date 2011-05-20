@@ -29,7 +29,6 @@ begin
         -- Reverte envio em PA_DOCUMENTO
         update pa_documento a 
            set a.unidade_int_posse = crec.unidade_origem,
-               a.sq_documento_pai  = null,
                a.pessoa_ext_posse  = null
          where a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
 

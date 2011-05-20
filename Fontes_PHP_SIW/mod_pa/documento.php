@@ -904,13 +904,13 @@ function Geral() {
     if ($O == 'E')
       $w_Disabled = ' DISABLED ';
     AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
-    ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="' . $w_copia . '">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
     ShowHTML('<INPUT type="hidden" name="w_data_hora" value="' . f($RS_Menu, 'data_hora') . '">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="' . f($RS_Menu, 'sq_menu') . '">');
     ShowHTML('<INPUT type="hidden" name="w_processo" value="' . $w_processo . '">');
+    ShowHTML(MontaFiltro('POST'));
     if ($w_interno == 'S' and $w_processo == 'S')
       ShowHTML('<INPUT type="hidden" name="w_un_autuacao" value="' . f($RS_Menu, 'sq_unid_executora') . '">');
     ShowHTML('<INPUT type="hidden" name="w_circular" value="' . $w_circular . '">');
@@ -2761,7 +2761,7 @@ function Tramitacao() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td colspan=2 align="right">'.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS));
+    ShowHTML('    <td colspan=2 align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3171,7 +3171,7 @@ function TramitCentral() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right" width="1%" nowrap>'.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right" width="1%" nowrap><b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3442,7 +3442,7 @@ function Classificacao() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right"><b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3595,7 +3595,7 @@ function Recebimento() {
     // Recupera os protocolos da guia
     $sql = new db_getProtocolo;
     $RS_Dados = $sql->getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null,
-                    null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, 2, null, null, null,
+                    null, null, null, null, $p_unid_posse, $w_nu_guia, $w_ano_guia, null, null, 2, null, null, null,
                     null, null, null, null, null);
 
     if (count($RS_Dados)==0) {
@@ -3688,7 +3688,7 @@ function Recebimento() {
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    if ($w_nu_guia || $w_ano_guia || $w_unid_autua) {
+    if ($w_nu_guia || $w_ano_guia || $p_unid_posse) {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
@@ -3828,7 +3828,7 @@ function Recebimento() {
       ShowHTML('</FORM>');
     } else {
       // Chama a rotina de visualização dos protocolos da guia
-      ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
+      ShowHTML(VisualGR($p_unid_posse, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
       ShowHTML('<HR>');
       AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
       ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="' . $w_unid_autua . '">');
@@ -3873,7 +3873,7 @@ function Recebimento() {
   } elseif ($O == 'T' || $O == 'U') {
     ShowHTML('<tr><td align="center" colspan=3>');
     // Chama a rotina de visualização dos protocolos da guia
-    ShowHTML(VisualGT($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
+    ShowHTML(VisualGT($p_unid_posse, $w_nu_guia, $w_ano_guia, f($RS_Menu, 'sq_menu'), 'TELA'));
 
     ShowHTML('<HR>');
     AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
@@ -4020,7 +4020,7 @@ function BuscaProtocolo() {
 
   if ($l_filtro) {
     $sql = new db_getSolicList;
-    $RS1 = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, f($RS_Menu, 'sigla'), 5,
+    $RS1 = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, substr('PAD'.$restricao,0,10), 5,
                   $l_ini_i, $l_ini_f, $l_fim_i, $l_fim_f, $l_atraso, $l_solicitante,
                   $l_unidade, $l_prioridade, $l_ativo, $l_proponente,
                   $l_chave, $l_assunto, $l_pais, $l_regiao, $l_uf, $l_cidade, $l_usu_resp,
@@ -4030,6 +4030,7 @@ function BuscaProtocolo() {
   }
   
   Cabecalho();
+  head();
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   ShowHTML('<TITLE>Seleção de protocolo</TITLE>');
   head();
@@ -4098,10 +4099,9 @@ function BuscaProtocolo() {
     ShowHTML('<INPUT type="hidden" name="restricao" value="' . $restricao . '">');
     ShowHTML('<INPUT type="hidden" name="campo" value="' . $campo . '">');
     ShowHTML('<INPUT type="hidden" name="exibe" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td colspan=2><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
-    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="l_pais" size="6" maxlength="5" value="' . $l_pais . '">.<INPUT class="STI" type="text" name="l_regiao" style="text-align:right;" size="7" maxlength="6" value="' . $l_regiao . '">/<INPUT class="STI" type="text" name="l_cidade" size="4" maxlength="4" value="' . $l_cidade . '"></td>');
     if (nvl($restricao,'') != 'JUNTADA') { 
@@ -4153,26 +4153,34 @@ function BuscaProtocolo() {
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
     if ($l_exibe > '') {
-      ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS1));
+      ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS1));
       ShowHTML('<tr><td>');
       ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
       if (count($RS1) <= 0) {
         ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td>');
+        AbreForm('Form1', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
+        ShowHTML('<INPUT type="hidden" name="w_cliente" value="' . $w_cliente . '">');
+        ShowHTML('<INPUT type="hidden" name="chaveAux" value="' . $chaveAux . '">');
+        ShowHTML('<INPUT type="hidden" name="restricao" value="' . $restricao . '">');
+        ShowHTML('<INPUT type="hidden" name="campo" value="' . $campo . '">');
+        ShowHTML('<INPUT type="hidden" name="exibe" value="">');
+        ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+        ShowHTML(MontaFiltro('POST'));
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
         ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
-        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
-        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
-        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</td>');
+        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Protocolo</b></td>');
+        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</b></td>');
+        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</b></td>');
         ShowHTML('            <td colspan=4><b>Documento original</td>');
         ShowHTML('            <td class="remover" rowspan=2><b>Operações</td>');
         ShowHTML('          </tr>');
         ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
-        ShowHTML('            <td><b>Espécie</td>');
-        ShowHTML('            <td><b>Nº</td>');
-        ShowHTML('            <td><b>Data</td>');
-        ShowHTML('            <td><b>Procedência</td>');
+        ShowHTML('            <td><b>Espécie</b></td>');
+        ShowHTML('            <td><b>Nº</b></td>');
+        ShowHTML('            <td><b><b>Data</b></td>');
+        ShowHTML('            <td><b><b>Procedência</b></td>');
         ShowHTML('          </tr>');
         foreach ($RS1 as $row) {
           $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
@@ -4208,69 +4216,77 @@ function BuscaProtocolo() {
         ShowHTML('        </table></tr>');
         ShowHTML('      </center>');
         ShowHTML('    </table>');
+        ShowHTML('</FORM>');
         ShowHTML('  </td>');
         ShowHTML('</tr>');
       }
     }
   } elseif (count($RS1)) {
-    ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS1));
+    ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS1));
     ShowHTML('<tr><td colspan=6>');
     ShowHTML('    <TABLE WIDTH="100%" border=0>');
-    if (count($RS1) <= 0) {
-      ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
-    } else {
-      ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td>');
-      ShowHTML('        <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
-      ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
-      ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
-      ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
-      ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</td>');
-      ShowHTML('            <td colspan=4><b>Documento original</td>');
-      ShowHTML('            <td rowspan=2><b>Operações</td>');
-      ShowHTML('          </tr>');
-      ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
-      ShowHTML('            <td><b>Espécie</td>');
-      ShowHTML('            <td><b>Nº</td>');
-      ShowHTML('            <td><b>Data</td>');
-      ShowHTML('            <td><b>Procedência</td>');
-      ShowHTML('          </tr>');
-      foreach ($RS1 as $row) {
-        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
-        ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
-        ShowHTML('        <td nowrap>');
-        if (nvl(f($row, 'conclusao'), 'nulo') == 'nulo') {
-          if (f($row, 'fim') < addDays(time(), -1)) {
-            ShowHTML('           <img src="' . $conImgAtraso . '" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row, 'aviso_prox_conc') == 'S' && (f($row, 'aviso') <= addDays(time(), -1))) {
-            ShowHTML('           <img src="' . $conImgAviso . '" border=0 width=15 height=15 align="center">');
-          } else {
-            ShowHTML('           <img src="' . $conImgNormal . '" border=0 width=15 height=15 align="center">');
-          }
+    ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td>');
+    AbreForm('Form1', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="' . $w_cliente . '">');
+    ShowHTML('<INPUT type="hidden" name="chaveAux" value="' . $chaveAux . '">');
+    ShowHTML('<INPUT type="hidden" name="restricao" value="' . $restricao . '">');
+    ShowHTML('<INPUT type="hidden" name="campo" value="' . $campo . '">');
+    ShowHTML('<INPUT type="hidden" name="exibe" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML(montaFiltro('POST'));
+    ShowHTML('        <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
+    ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Protocolo</b></td>');
+    ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</b></td>');
+    ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</b></td>');
+    ShowHTML('            <td colspan=4><b>Documento original</td>');
+    ShowHTML('            <td class="remover" rowspan=2><b>Operações</td>');
+    ShowHTML('          </tr>');
+    ShowHTML('          <tr bgcolor="' . $conTrBgColor . '" align="center">');
+    ShowHTML('            <td><b>Espécie</b></td>');
+    ShowHTML('            <td><b>Nº</b></td>');
+    ShowHTML('            <td><b><b>Data</b></td>');
+    ShowHTML('            <td><b><b>Procedência</b></td>');
+    ShowHTML('          </tr>');
+    foreach ($RS1 as $row) {
+      $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+      ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
+      ShowHTML('        <td nowrap>');
+      if (nvl(f($row, 'conclusao'), 'nulo') == 'nulo') {
+        if (f($row, 'fim') < addDays(time(), -1)) {
+          ShowHTML('           <img src="' . $conImgAtraso . '" border=0 width=15 heigth=15 align="center">');
+        } elseif (f($row, 'aviso_prox_conc') == 'S' && (f($row, 'aviso') <= addDays(time(), -1))) {
+          ShowHTML('           <img src="' . $conImgAviso . '" border=0 width=15 height=15 align="center">');
         } else {
-          if (f($row, 'fim') < Nvl(f($row, 'fim_real'), f($row, 'fim'))) {
-            ShowHTML('           <img src="' . $conImgOkAtraso . '" border=0 width=15 heigth=15 align="center">');
-          } else {
-            ShowHTML('           <img src="' . $conImgOkNormal . '" border=0 width=15 height=15 align="center">');
-          }
+          ShowHTML('           <img src="' . $conImgNormal . '" border=0 width=15 height=15 align="center">');
         }
-        if ($w_tipo != 'WORD')
-          ShowHTML('        <A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
-        else
-          ShowHTML('        ' . f($row, 'protocolo') . '');
-        ShowHTML('        <td width="1%" nowrap>' . f($row, 'nm_tipo_protocolo') . '</td>');
-        ShowHTML('        <td width="1%" nowrap>' . ExibeUnidade('../', $w_cliente, f($row, 'sg_unidade_posse'), f($row, 'unidade_int_posse'), $TP) . '</td>');
-        ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
-        ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
-        ShowHTML('        <td align="center">' . FormataDataEdicao(f($row, 'inicio')) . '</td>');
-        ShowHTML('        <td>' . f($row, 'nm_origem') . '</td>');
-        ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'protocolo') . '\', \'' . f($row, 'protocolo') . '\');">Selecionar</a>');
+      } else {
+        if (f($row, 'fim') < Nvl(f($row, 'fim_real'), f($row, 'fim'))) {
+          ShowHTML('           <img src="' . $conImgOkAtraso . '" border=0 width=15 heigth=15 align="center">');
+        } else {
+          ShowHTML('           <img src="' . $conImgOkNormal . '" border=0 width=15 height=15 align="center">');
+        }
       }
-      ShowHTML('        </table></tr>');
-      ShowHTML('      </center>');
-      ShowHTML('    </table>');
-      ShowHTML('  </td>');
-      ShowHTML('</tr>');
+      if ($w_tipo != 'WORD')
+        ShowHTML('        <A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
+      else
+        ShowHTML('        ' . f($row, 'protocolo') . '');
+      ShowHTML('        <td width="1%" nowrap>' . f($row, 'nm_tipo_protocolo') . '</td>');
+      ShowHTML('        <td width="1%" nowrap>' . ExibeUnidade('../', $w_cliente, f($row, 'sg_unidade_posse'), f($row, 'unidade_int_posse'), $TP) . '</td>');
+      ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
+      ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
+      ShowHTML('        <td align="center">' . FormataDataEdicao(f($row, 'inicio')) . '</td>');
+      ShowHTML('        <td>' . f($row, 'nm_origem') . '</td>');
+      ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'protocolo') . '\', \'' . f($row, 'protocolo') . '\');">Selecionar</a>');
     }
+    ShowHTML('        </table></tr>');
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('</FORM>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } else {
+    ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
   }
   ShowHTML('    </table>');
   ShowHTML('    </TD>');
@@ -4575,11 +4591,11 @@ function Grava() {
         ScriptOpen('JavaScript');
         if ($P1 == 1 && nvl($_REQUEST['w_copia'],'')=='N') {
           // Se for envio da fase de cadastramento, remonta o menu principal
-          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRAM&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unidade=' . $w_unidade_autuacao . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
+          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRAM&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
         } else {
           $sql = new db_getLinkData;
           $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
-          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unidade=' . $w_unidade_autuacao . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
+          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
         }
         ScriptClose();
       }
@@ -4684,7 +4700,9 @@ function Grava() {
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS1, 'link') . '&O=&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG) . '\';');
         } else {
           ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');
-          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRAM&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unidade=' . $w_unidade_autuacao . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
+          $sql = new db_getLinkData;
+          $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
+          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
         }
         ScriptClose();
       }

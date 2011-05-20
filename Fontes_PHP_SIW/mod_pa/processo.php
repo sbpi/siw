@@ -809,7 +809,7 @@ function Central() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
-    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right"><b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1106,7 +1106,6 @@ function Juntar() {
     Validate('p_ano', 'Ano', '1', '', '4', '4', '', '0123456789');
     Validate('p_unid_posse', 'Unidade de posse', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('p_proponente', 'Origem externa', '', '', '2', '90', '1', '');
-    //Validate('p_sq_acao_ppa', 'Código do assunto', '', '', '1', '10', '1', '1');
     Validate('p_assunto', 'Detalhamento do assunto', '', '', '4', '90', '1', '1');
     Validate('p_processo', 'Interessado', '', '', '2', '90', '1', '1');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
@@ -1186,7 +1185,8 @@ function Juntar() {
     ShowHTML('<INPUT type="hidden" name="w_chave[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
-    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML(montaFiltro('POST'));
+    ShowHTML('    <td align="right"><b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('  <table width="97%" border="0">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1271,8 +1271,6 @@ function Juntar() {
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>O</U>rigem interna:', 'O', null, $p_unidade, null, 'p_unidade', null, null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" ' . $w_Disabled . ' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="' . $p_proponente . '"></td>');
-//    ShowHTML('      <tr valign="top">');
-//    ShowHTML('          <td><b>Código do <U>a</U>ssunto:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_sq_acao_ppa" size="10" maxlength="10" value="' . $p_sq_acao_ppa . '"></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Detalhamento do <U>a</U>ssunto/Despacho:<br><INPUT ACCESSKEY="A" ' . $w_Disabled . ' class="STI" type="text" name="p_assunto" size="40" maxlength="30" value="' . $p_assunto . '"></td>');
     ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" ' . $w_Disabled . ' class="STI" type="text" name="p_processo" size="30" maxlength="30" value="' . $p_processo . '"></td>');

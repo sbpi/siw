@@ -274,9 +274,9 @@ function Tabela() {
         ShowHTML('    <td><B>Tabelas do Usuário '.f($row,'nm_usuario').'</B>');
       break;
     }
-    ShowHTML('            <B>('.count($RS).')</B></td>');
+    ShowHTML('            <B>('.count($RS).')</B></td><td>'.exportaOffice().'</td>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Tabela    </b></td>');
     ShowHTML('          <td><b>Tipo      </b></td>');
@@ -468,9 +468,9 @@ function Trigger() {
     ShowHTML('<HR>');
     ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
-    ShowHTML('<tr><td><B>Triggers ('.count($RS).')</B></td>');
+    ShowHTML('<tr><td><B>Triggers ('.count($RS).')</B></td><td>'.exportaOffice().'</td>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tabela    </b></td>');
@@ -523,9 +523,9 @@ function StoredProcedure() {
     ShowHTML('<HR>');
     ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
-    ShowHTML('<td><B>StoredProcedures ('.count($RS).')</B></td>');
-    ShowHTML('<tr><td align="center" colspan=3></tr>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('<td><B>StoredProcedures ('.count($RS).')</B></td><td>'.exportaOffice().'</td>');
+    ShowHTML('<tr><td align="center" colspan="3"></td></tr>');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tipo      </b></td>');
@@ -742,9 +742,9 @@ function Indice() {
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
-    ShowHTML('<td><B>Índices ('.count($RS).')</B></td>');
+    ShowHTML('<td><B>Índices ('.count($RS).')</B></td><td>'.exportaOffice().'</td>');
     ShowHTML('<tr><td align="center" colspan=3></tr>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tipo      </b></td>');
@@ -805,9 +805,9 @@ function Coluna() {
     ShowHTML('<HR>');
     ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
-    ShowHTML('<td><B>Colunas ('.count($RS).')</B></td>');
+    ShowHTML('<td><B>Colunas ('.count($RS).')</B></td><td>'.exportaOffice().'</td>');
     ShowHTML('<tr><td align="center" colspan=3></tr>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Coluna</b></td>');
     ShowHTML('          <td><b>Tabela</b></td>');
@@ -935,9 +935,9 @@ function Arquivo() {
     ShowHTML('<HR>');
     ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
-    ShowHTML('<td><B>Procedures ('.count($RS).')</B></td>');
+    ShowHTML('<td><B>Procedures ('.count($RS).')</B></td><td>'.exportaOffice().'</td>');
     ShowHTML('<tr><td align="center" colspan=3></tr>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Diretório </b></td>');

@@ -574,9 +574,9 @@ function Lancamento() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
@@ -584,7 +584,7 @@ function Lancamento() {
     ShowHTML('          <td><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td><b> Operações </font></td>');
+    ShowHTML('          <td class="remover"><b> Operações </font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -604,7 +604,7 @@ function Lancamento() {
         ShowHTML('        <td align="center">'.f($row,'nm_despesa').'</td>');
         ShowHTML('        <td align="center">'.f($row,'qt_lancamentos').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
         ShowHTML('        </td>');

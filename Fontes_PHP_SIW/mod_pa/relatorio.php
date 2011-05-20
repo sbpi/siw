@@ -139,8 +139,8 @@ function Tramitacao() {
   $p_numero = substr($p_protocolo, 6, 6);
   $p_ano = substr($p_protocolo, 13, 4);
   $p_unid_autua = $_REQUEST['p_unid_autua'];
-  $p_unid_posse = $_REQUEST['p_unid_posse'];
-  if (nvl(montaFiltro('GET'),'')=='') $p_unid_posse = $_SESSION['LOTACAO'];
+  $p_unid_receb = $_REQUEST['p_unid_receb'];
+  if (nvl(montaFiltro('GET'),'')=='') $p_unid_receb = $_SESSION['LOTACAO'];
   $p_nu_guia = $_REQUEST['p_nu_guia'];
   $p_ano_guia = $_REQUEST['p_ano_guia'];
   $p_ini = $_REQUEST['p_ini'];
@@ -149,7 +149,7 @@ function Tramitacao() {
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getProtocolo; $RS = $sql->getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux,
-                    $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia,
+                    $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_receb, $p_nu_guia, $p_ano_guia,
                     $p_ini, $p_fim, 2, null, null, null, null, null, null, null, null);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
@@ -270,7 +270,7 @@ function Tramitacao() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><b><u>P</u>rotocolo:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="' . $p_protocolo . '" onKeyDown="FormataProtocolo(this,event);"></td>');
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_posse, null, 'p_unid_posse', 'MOD_PA', null);
+    SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:', 'U', 'Selecione a unidade de posse.', $p_unid_receb, null, 'p_unid_receb', 'MOD_PA', null);
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Perío<u>d</u>o entre:</b><br><input ' . $w_Disabled . ' accesskey="D" type="text" name="p_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_ini . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input ' . $w_Disabled . ' accesskey="T" type="text" name="p_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('      <tr><td align="center"><hr>');

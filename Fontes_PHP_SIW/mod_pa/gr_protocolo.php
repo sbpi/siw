@@ -346,7 +346,7 @@ function Gerencial() {
       //Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
       Validate('p_pais','Prefixo','','','1','5','','0123456789');
       Validate('p_regiao','Sequencial','','','1','6','','0123456789');
-      Validate('p_cidade','Ano','','','1','4','','0123456789');
+      Validate('p_cidade','Ano','','1','1','4','','0123456789');
       Validate('p_proponente','Origem externa','','','2','90','1','');
       //Validate('p_sq_acao_ppa','Código do assunto','','','1','10','1','1');
       Validate('p_assunto','Detalhamento do assunto/Despacho','','','2','90','1','1');
@@ -412,6 +412,7 @@ function Gerencial() {
       ShowHTML('<HR>');
     } 
   } 
+
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $w_embed == 'WORD') {
     if ($O=='L' && $w_embed != 'WORD') {
@@ -423,6 +424,7 @@ function Gerencial() {
       } 
     } 
     ImprimeCabecalho();
+    flush();
     if (count($RS1)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -680,7 +682,8 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-            } 
+            }
+            flush();
             break;
           case 'GRPAPRIO':
             if ($w_nm_quebra!=f($row,'nm_tipo_despacho')) {

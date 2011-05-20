@@ -370,13 +370,9 @@ function Inicial() {
       } 
     } 
     ShowHTML('    <td align="right">');
-    if ((strpos(upper($R),'GR_'))===false && $w_embed!='WORD') {
-      ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    } 
-    ShowHTML('    <b>Registros: '.count($RS));
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     if ($w_embed!='WORD') {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
@@ -397,7 +393,7 @@ function Inicial() {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detalhamento','descricao').'</td>');
       }
       if ($P1==3) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      ShowHTML('          <td rowspan=2><b>Operações</td>');
+      ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       if (f($RS_Menu,'data_hora')==0 || f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
         ShowHTML('          <td><b>'.LinkOrdena('Programada','phpdt_programada').'</td>');
@@ -493,7 +489,7 @@ function Inicial() {
         }
         if ($P1==3) ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         if ($w_embed!='WORD') {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td  class="remover" align="top" nowrap>');
           if ($P1!=3) {
             // Se não for acompanhamento
             if ($w_copia>'') {

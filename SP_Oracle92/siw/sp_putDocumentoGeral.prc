@@ -75,12 +75,12 @@ begin
          sq_siw_solicitacao, sq_menu,          sq_siw_tramite,      solicitante, 
          cadastrador,        descricao,        inicio,              fim,
          inclusao,           ultima_alteracao, data_hora,           sq_unidade,
-         sq_solic_pai,       sq_cidade_origem, protocolo_siw)
+         sq_cidade_origem,   protocolo_siw)
       (select 
          w_Chave,            p_menu,           a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_descricao,      p_inicio,            p_fim,
          sysdate,            sysdate,          1,                   p_unidade,
-         p_solic_pai,        w_cidade,         p_vinculo
+         w_cidade,           p_vinculo
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -88,11 +88,11 @@ begin
       
       -- Insere registro em pa_documento
       insert into pa_documento
-        (sq_siw_solicitacao,   cliente,          sq_documento_pai, processo,   circular,         numero_original,    interno,       sq_especie_documento, 
-         sq_natureza_documento, pessoa_origem,   copias,           volumes,    unidade_autuacao, data_recebimento,   data_autuacao, unidade_int_posse)
+        (sq_siw_solicitacao,   cliente,          processo,   circular,   numero_original,  interno,            sq_especie_documento, 
+         sq_natureza_documento, pessoa_origem,   copias,     volumes,    unidade_autuacao, data_recebimento,   data_autuacao, unidade_int_posse)
       values
-        (w_chave,               w_cliente,       p_solic_pai,      p_processo, p_circular,       p_doc_original,     p_interno,     p_especie_documento, 
-         p_natureza_documento,  p_pessoa_origem, p_copias,         p_volumes,  p_unid_autua,     p_data_recebimento, p_dt_autuacao, p_unid_autua);
+        (w_chave,               w_cliente,       p_processo, p_circular, p_doc_original,   p_interno,          p_especie_documento, 
+         p_natureza_documento,  p_pessoa_origem, p_copias,   p_volumes,  p_unid_autua,     p_data_recebimento, p_dt_autuacao, p_unid_autua);
       
       -- Insere o interessado da tela principal na tabela de interessados
       If p_pessoa_interes is not null Then
@@ -135,7 +135,6 @@ begin
       Update siw_solicitacao set
           solicitante      = p_solicitante,
           cadastrador      = p_cadastrador,
-          sq_solic_pai     = p_solic_pai,
           descricao        = coalesce(p_descricao,descricao),
           inicio           = p_inicio,
           fim              = p_fim,
@@ -150,7 +149,6 @@ begin
 
       -- Atualiza a tabela de documentos
       update pa_documento set
-          sq_documento_pai      = p_solic_pai,
           processo              = p_processo,
           circular              = p_circular,
           numero_original       = p_doc_original,

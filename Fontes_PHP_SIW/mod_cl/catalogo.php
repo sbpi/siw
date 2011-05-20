@@ -295,13 +295,10 @@ function Inicial() {
       else                       ShowHTML('        <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     }
     ShowHTML('    <td align="right">');
-    if ($w_tipo!='WORD') {
-      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    } 
-    ShowHTML('    <b>Registros: '.count($RS));        
+
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material').'</td>');
@@ -309,7 +306,7 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
       ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa mais recente</b></td>');
-      ShowHTML('          <td rowspan=2><b> Operações </td>');
+      ShowHTML('          <td class="remover" rowspan=2><b> Operações </td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr align="center">');
       ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>'.LinkOrdena('Validade','pesquisa_validade').'</b></td>');
@@ -353,7 +350,7 @@ function Inicial() {
           }
         }
         if ($w_tipo!='WORD') {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           if($P1==1) {
             ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Insere dados da pesquisa de preço.">Pesq. Preço</A>&nbsp');
           } else {
@@ -789,14 +786,14 @@ function PesquisaPreco() {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.'Inicial&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Voltar</a>');
     ShowHTML('    <td align="right">');
-    ShowHTML('    <b>Registros: '.count($RS));        
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fornecedor','nm_fornecedor').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fonte','nm_origem').'</td>');
     ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa</b></td>');
-    ShowHTML('          <td rowspan=2><b> Operações </td>');
+    ShowHTML('          <td class="remover" rowspan=2><b> Operações </td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr align="center">');
     ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>'.LinkOrdena('Validade','phpdt_fim').'</b></td>');
@@ -819,7 +816,7 @@ function PesquisaPreco() {
           ShowHTML('            <td align="center">'.nvl(formataDataEdicao(f($row,'phpdt_fim'),5),'---').'</td>');
           ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
         }
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exclui a pesquisa do banco de dados.">EX</A>&nbsp');
         //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');

@@ -926,6 +926,8 @@ Fontes_PHP_SIW/classes/sp/db_getLinkDataParents.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataUser.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getLocalList.php -text
+Fontes_PHP_SIW/classes/sp/db_getMTFinanceiro.php -text
+Fontes_PHP_SIW/classes/sp/db_getMTSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getMarcado.php -text
 Fontes_PHP_SIW/classes/sp/db_getMatImp.php -text
@@ -946,6 +948,8 @@ Fontes_PHP_SIW/classes/sp/db_getModData.php -text
 Fontes_PHP_SIW/classes/sp/db_getModList.php -text
 Fontes_PHP_SIW/classes/sp/db_getModMaster.php -text
 Fontes_PHP_SIW/classes/sp/db_getMoeda.php -text
+Fontes_PHP_SIW/classes/sp/db_getMtEntItem.php -text
+Fontes_PHP_SIW/classes/sp/db_getMtMovim.php -text
 Fontes_PHP_SIW/classes/sp/db_getMtSituacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getNaturezaDoc_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getNatureza_IS.php -text
@@ -1035,6 +1039,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicInter.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicList.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicList_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicLog.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicMT.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicMeta.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicMeta_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicObjetivo.php -text
@@ -1306,6 +1311,7 @@ Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoRubrica.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMTSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMatServ.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMeioTrans.php -text
@@ -1313,6 +1319,8 @@ Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtEntItem.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtEntrada.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtSituacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNaturezaDoc_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNatureza_IS.php -text
@@ -1588,6 +1596,7 @@ Fontes_PHP_SIW/funcoes/selecaoAcordo.php -text
 Fontes_PHP_SIW/funcoes/selecaoAcordoParcela.php -text
 Fontes_PHP_SIW/funcoes/selecaoAditivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoAgencia.php -text
+Fontes_PHP_SIW/funcoes/selecaoAlmoxarifado.php -text
 Fontes_PHP_SIW/funcoes/selecaoAno.php -text
 Fontes_PHP_SIW/funcoes/selecaoArquivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoArquivoLocalSubordination.php -text
@@ -1741,6 +1750,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoLancamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoLog.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoMatServSubord.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoMovimentacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoOutraParte.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPCD.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoParam.php -text
@@ -1924,7 +1934,10 @@ Fontes_PHP_SIW/mod_is/tarefas.php -text
 Fontes_PHP_SIW/mod_is/visualacao.php -text
 Fontes_PHP_SIW/mod_is/visualprograma.php -text
 Fontes_PHP_SIW/mod_is/visualtarefa.php -text
+Fontes_PHP_SIW/mod_mt/entrada.php -text
 Fontes_PHP_SIW/mod_mt/tabelas.php -text
+Fontes_PHP_SIW/mod_mt/validaentrada.php -text
+Fontes_PHP_SIW/mod_mt/visualentrada.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_demandaeventual.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_projeto.php -text
 Fontes_PHP_SIW/mod_or_pub/or_tabelas.php -text
@@ -3564,6 +3577,7 @@ SP_Oracle92/siw/SP_GetGPParametro.prc -text
 SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_GetGpAlteracaoSalario.prc -text
 SP_Oracle92/siw/SP_GetGpDesempenho.prc -text
+SP_Oracle92/siw/SP_GetMTFinanceiro.prc -text
 SP_Oracle92/siw/SP_GetMetaAnexo.prc -text
 SP_Oracle92/siw/SP_GetMtSituacao.prc -text
 SP_Oracle92/siw/SP_GetOpiniao.prc -text
@@ -3751,10 +3765,12 @@ SP_Oracle92/siw/sp_getGPFolhaPontoMensal.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
+SP_Oracle92/siw/sp_getMTMovim.prc -text
 SP_Oracle92/siw/sp_getMatImp.prc -text
 SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getMeioTransporte.prc -text
 SP_Oracle92/siw/sp_getMoeda.prc -text
+SP_Oracle92/siw/sp_getMtEntItem.prc -text
 SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
 SP_Oracle92/siw/sp_getPAElimItem.prc -text
 SP_Oracle92/siw/sp_getPAEmpItem.prc -text
@@ -3956,6 +3972,7 @@ SP_Oracle92/siw/sp_getsolicgri.prc -text
 SP_Oracle92/siw/sp_getsolicinter.prc -text
 SP_Oracle92/siw/sp_getsoliclist.prc -text
 SP_Oracle92/siw/sp_getsoliclog.prc -text
+SP_Oracle92/siw/sp_getsolicmt.prc -text
 SP_Oracle92/siw/sp_getsolicpa.prc -text
 SP_Oracle92/siw/sp_getsolicrecurso.prc -text
 SP_Oracle92/siw/sp_getsolicrelanexo.prc -text
@@ -4057,6 +4074,7 @@ SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
 SP_Oracle92/siw/sp_putLCJulgamento.prc -text
 SP_Oracle92/siw/sp_putMatServ.prc -text
 SP_Oracle92/siw/sp_putMaterial.prc -text
+SP_Oracle92/siw/sp_putMtEntrada.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putPessoa.prc -text
 SP_Oracle92/siw/sp_putPlanoEstrategico.prc -text
@@ -4193,6 +4211,7 @@ SP_Oracle92/siw/sp_putlcsituacao.prc -text
 SP_Oracle92/siw/sp_putlcunidade.prc -text
 SP_Oracle92/siw/sp_putlcunidadefornec.prc -text
 SP_Oracle92/siw/sp_putmenurelac.prc -text
+SP_Oracle92/siw/sp_putmtentitem.prc -text
 SP_Oracle92/siw/sp_putnatureza_pe.prc -text
 SP_Oracle92/siw/sp_putnaturezadoc_pa.prc -text
 SP_Oracle92/siw/sp_putobjetivo_pe.prc -text

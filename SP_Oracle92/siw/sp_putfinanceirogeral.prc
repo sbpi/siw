@@ -60,12 +60,12 @@ begin
          sq_siw_solicitacao, sq_menu,          sq_siw_tramite,   solicitante, 
          cadastrador,        descricao,        fim,              inclusao,
          ultima_alteracao,   valor,            data_hora,        sq_unidade,
-         sq_cc,              sq_cidade_origem, sq_solic_pai)
+         sq_cc,              sq_cidade_origem, sq_solic_pai,     codigo_interno)
       (select 
          w_Chave,            p_menu,           a.sq_siw_tramite, p_solicitante,
          p_cadastrador,      p_descricao,      p_vencimento,     sysdate,
          sysdate,            nvl(p_valor,0),   p_data_hora,      p_sq_unidade,
-         p_sqcc,             p_cidade,         p_projeto
+         p_sqcc,             p_cidade,         p_projeto,        p_codigo_interno
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -80,10 +80,10 @@ begin
       end if;
       -- Insere registro em FN_LANCAMENTO
       Insert into fn_lancamento 
-         ( sq_siw_solicitacao,   cliente,           sq_acordo_parcela,   sq_forma_pagamento,
-           sq_tipo_lancamento,   sq_tipo_pessoa,    emissao,             vencimento,
-           observacao,           aviso_prox_conc,   dias_aviso,          tipo,
-           processo,             referencia_inicio, referencia_fim,      condicoes_pagamento,
+         ( sq_siw_solicitacao,   cliente,            sq_acordo_parcela,   sq_forma_pagamento,
+           sq_tipo_lancamento,   sq_tipo_pessoa,     emissao,             vencimento,
+           observacao,           aviso_prox_conc,    dias_aviso,          tipo,
+           processo,             referencia_inicio,  referencia_fim,      condicoes_pagamento,
            sq_solic_vinculo,     sq_projeto_rubrica
          )
       values (
@@ -292,7 +292,7 @@ begin
          
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
 
-         -- Atualiza o código interno do acordo para o sequencial encontrato
+         -- Atualiza o código interno para o sequencial encontrado
          update siw_solicitacao a set
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;

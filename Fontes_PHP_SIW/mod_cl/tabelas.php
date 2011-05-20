@@ -746,7 +746,7 @@ function Enquadramento() {
     }
   }
   Cabecalho();
-  ShowHTML( '<HEAD>' );
+  head();
   If  (!(strpos('IAEP',$O)===false)) {
     ScriptOpen( 'JavaScript');
     ValidateOpen( 'Validacao');
@@ -795,12 +795,12 @@ function Enquadramento() {
     ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><font size="1"><b>Sigla</font></td>');
     ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
     ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td class="remover"><font size="1"><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
@@ -813,7 +813,7 @@ function Enquadramento() {
         ShowHTML('        <td><font size="1">'.f($row,'sigla').'</td>');
         ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td class="remover" align="top" nowrap><font size="1">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
