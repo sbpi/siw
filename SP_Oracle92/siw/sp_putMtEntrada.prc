@@ -24,6 +24,7 @@ create or replace procedure SP_PutMtEntrada
    w_solicitacao  siw_solicitacao.sq_siw_solicitacao%type  := p_solicitacao;
    w_documento    fn_lancamento_doc.sq_lancamento_doc%type := p_documento;
    w_existe       number(1);
+   w_arq          varchar2(4000) := ', ';
    
    w_cd_financ    varchar2(60) := null;
 
@@ -71,6 +72,13 @@ create or replace procedure SP_PutMtEntrada
          and w.sigla              = 'FNDEVENT'
          and x.sq_pessoa          = p_fornecedor
          and y.sq_pessoa          = p_usuario;
+
+   cursor c_arquivos is
+      select x.sq_siw_arquivo 
+        from fn_documento_arq      x 
+             inner join mt_entrada y on (x.sq_lancamento_doc = y.sq_lancamento_doc) 
+       where y.sq_mtentrada = p_chave;
+
 
 begin
    If p_solicitacao is null or p_documento is null Then
@@ -170,9 +178,11 @@ begin
          -- copia os dados complementares da entrada de material selecionada
          insert into mt_entrada_item (
                  sq_entrada_item,         sq_mtentrada, sq_material, sq_almoxarifado, sq_mtsituacao, quantidade,     valor_unitario, 
-                 fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item)
+                 fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item,
+                 ordem,                   valor_total,  marca,       modelo)
          (select sq_entrada_item.nextval, w_chave,      sq_material, sq_almoxarifado, sq_mtsituacao, quantidade,     valor_unitario, 
-                 fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item
+                 fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item,
+                 ordem,                   valor_total,  marca,       modelo
            from mt_entrada_item a
           where a.sq_mtentrada = p_copia
          );
@@ -193,6 +203,14 @@ begin
       where sq_mtentrada = p_chave;
        
    Elsif p_operacao = 'E' Then -- Exclusão
+      -- Monta string com a chave dos arquivos ligados à solicitação informada
+      for crec in c_arquivos loop
+         w_arq := w_arq || crec.sq_siw_arquivo;
+      end loop;
+      w_arq := substr(w_arq, 3, length(w_arq));
+
+      delete fn_documento_arq where sq_lancamento_doc  = (select sq_lancamento_doc from mt_entrada where sq_mtentrada = p_chave);
+      delete siw_arquivo      where sq_siw_arquivo    in (w_arq);
 
       delete mt_entrada_item where sq_mtentrada = p_chave;
       delete mt_entrada      where sq_mtentrada = p_chave;

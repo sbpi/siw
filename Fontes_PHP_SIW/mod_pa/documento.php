@@ -607,7 +607,6 @@ function Inicial() {
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1022,7 +1021,6 @@ function Geral() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -1078,7 +1076,7 @@ function Interessados() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -1116,7 +1114,6 @@ function Interessados() {
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1154,7 +1151,6 @@ function Interessados() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -1206,7 +1202,7 @@ function Assuntos() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -1253,7 +1249,6 @@ function Assuntos() {
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1322,7 +1317,6 @@ function Assuntos() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -1385,7 +1379,7 @@ function Anexos() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -1424,7 +1418,6 @@ function Anexos() {
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1479,7 +1472,6 @@ function Anexos() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -1595,7 +1587,7 @@ function Excluir() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML(VisualDocumento($w_chave, 'V', $w_usuario, $w_p1, $w_formato, 'S', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'));
@@ -1622,7 +1614,6 @@ function Excluir() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -1762,13 +1753,7 @@ function Encaminhamento() {
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align="center">');
-  ShowHTML('<table width="95%" border="0" cellspacing="3"><tr><td>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
-  ShowHTML(VisualDocumento($w_chave, 'V', $w_usuario, $w_p1, $w_formato, 'S', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'));
-  ShowHTML('<HR>');
-  ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
-  ShowHTML('  <table width="97%" border="0">');
-  ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%"><tr valign="top">');
   AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'PADENVIO', $w_pagina . $par, $O);
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1778,6 +1763,12 @@ function Encaminhamento() {
   ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="' . f($RS_Solic, 'pessoa_ext_posse') . '">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="' . f($RS_Solic, 'sq_siw_tramite') . '">');
   ShowHTML('<INPUT type="hidden" name="w_copia" value="' . (($w_copia) ? 'S' : 'N') . '">');
+  ShowHTML('<table width="95%" border="0" cellspacing="3"><tr><td>');
+  ShowHTML(VisualDocumento($w_chave, 'V', $w_usuario, $w_p1, $w_formato, 'S', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'));
+  ShowHTML('<HR>');
+  ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
+  ShowHTML('  <table width="97%" border="0">');
+  ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%"><tr valign="top">');
   if ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
     ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="S">');
   } else {
@@ -1846,14 +1837,14 @@ function Encaminhamento() {
     $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PADCAD');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&SG=' . f($RS, 'sigla') . '&P1=' . f($RS, 'p1') . '&P2=' . f($RS, 'p2') . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . MontaFiltro('GET')) . '\';" name="Botao" value="Cancelar">');
   }
+  ShowHTML('      </table>');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
   ShowHTML('  </table>');
   ShowHTML('  </TD>');
   ShowHTML('</tr>');
-  ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
+  ShowHTML('</FORM>');
   Rodape();
 }
 
@@ -1926,7 +1917,6 @@ function Anotar() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -2025,7 +2015,6 @@ function Concluir() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -2371,7 +2360,6 @@ function BuscaAssunto() {
           ShowHTML('            <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'codigo') . '\', \'' . f($row, 'descricao') . '\', ' . f($row, 'chave') . ');">Selecionar</a>');
         }
         ShowHTML('        </table></tr>');
-        ShowHTML('      </center>');
         ShowHTML('    </table>');
         ShowHTML('  </td>');
         ShowHTML('</tr>');
@@ -2434,7 +2422,6 @@ function BuscaAssunto() {
           ShowHTML('            <td align="center" title="' . f($row, 'ds_destinacao_final') . '">' . f($row, 'sg_destinacao_final') . '</td>');
       }
       ShowHTML('        </table></tr>');
-      ShowHTML('      </center>');
       ShowHTML('    </table>');
       ShowHTML('  </td>');
       ShowHTML('</tr>');
@@ -2445,7 +2432,6 @@ function BuscaAssunto() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Estrutura_Texto_Fecha();
   rodape();
 }
@@ -2741,7 +2727,7 @@ function Tramitacao() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
@@ -3005,7 +2991,6 @@ function Tramitacao() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -3155,7 +3140,7 @@ function TramitCentral() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
@@ -3241,7 +3226,6 @@ function TramitCentral() {
         ShowHTML('      </tr>');
         $i += 1;
       }
-      ShowHTML('      </center>');
       ShowHTML('    </table>');
       ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>ACONDICIONAMENTO</b></font></td></tr>');
@@ -3298,7 +3282,6 @@ function TramitCentral() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -3426,7 +3409,7 @@ function Classificacao() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
@@ -3500,7 +3483,6 @@ function Classificacao() {
         $i += 1;
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
     ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>ACONDICIONAMENTO</b></font></td></tr>');
@@ -3551,7 +3533,6 @@ function Classificacao() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -3679,7 +3660,7 @@ function Recebimento() {
   }
   ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td colspan=3 bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
@@ -3960,7 +3941,6 @@ function Recebimento() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -4214,7 +4194,6 @@ function BuscaProtocolo() {
           ShowHTML('        <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'protocolo_completo') . '\', \'' . f($row, 'protocolo_completo') . '\');">Selecionar</a>');
         }
         ShowHTML('        </table></tr>');
-        ShowHTML('      </center>');
         ShowHTML('    </table>');
         ShowHTML('</FORM>');
         ShowHTML('  </td>');
@@ -4280,7 +4259,6 @@ function BuscaProtocolo() {
       ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\'' . f($row, 'protocolo') . '\', \'' . f($row, 'protocolo') . '\');">Selecionar</a>');
     }
     ShowHTML('        </table></tr>');
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('</FORM>');
     ShowHTML('  </td>');
@@ -4293,7 +4271,6 @@ function BuscaProtocolo() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Estrutura_Texto_Fecha();
 }
 
@@ -4861,7 +4838,7 @@ function Main() {
       Estrutura_Menu();
       Estrutura_Corpo_Abre();
       Estrutura_Texto_Abre();
-      ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+      ShowHTML('<div align=center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></div>');
       Estrutura_Texto_Fecha();
       Estrutura_Fecha();
       Estrutura_Fecha();

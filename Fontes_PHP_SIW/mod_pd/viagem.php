@@ -7044,7 +7044,7 @@ function PrestarContas() {
   }
 
   if (strpos('IPC', nvl($w_cumprimento, 'nulo')) !== false) {
-    ShowHTML('<tr><td colspan="2"><br><br><b>Anexos do relatório (máximo de 15.123 KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&O=I&w_tipo_reg=' . $w_tipo_reg . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+    ShowHTML('<tr><td colspan="2"><br><br><b>Anexos do relatório (máximo de '.formatNumber((f($RS_Cliente, 'upload_maximo') / 1024), 0).' KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&O=I&w_tipo_reg=' . $w_tipo_reg . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
     $sql = new db_getPD_Deslocamento; //$RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
     $sql = new db_getSolicRelAnexo; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente, $w_tipo_reg);
     //exibeArray($RS);

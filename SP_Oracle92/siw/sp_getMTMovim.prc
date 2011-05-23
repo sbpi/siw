@@ -100,7 +100,7 @@ begin
                 b3.sq_pais,           b3.sq_regiao,                  b3.co_uf,
                 case when b.protocolo_siw is null 
                      then null
-                     else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),2)
+                     else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),3)
                 end as processo,
                 to_char(b5.prefixo)||'.'||substr(1000000+to_char(b5.numero_documento),2,6)||'/'||to_char(b5.ano)||'-'||substr(100+to_char(b5.digito),2,2) as protocolo_completo,
                 b6.sq_menu as sq_menu_pai,

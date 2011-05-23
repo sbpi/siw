@@ -1170,7 +1170,7 @@ function Geral() {
     
       // Beneficiário
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
-      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="boxClean SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></td></tr>');
+      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="boxClean SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
       ShowHTML('    <tr><td colspan="3"><table width="100%" border="0" bordercolor="#FFFFFF" bgcolor="#FFFFFF">');
       $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl($w_pessoa,0),null,null,null,null,Nvl($w_tipo_pessoa,0),null,null,null,null,null,null,null,null,null,null,null);

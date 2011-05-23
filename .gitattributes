@@ -845,6 +845,7 @@ Fontes_PHP_SIW/classes/sp/db_getDescontoAgencia.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop_Recurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop_TT.php -text
+Fontes_PHP_SIW/classes/sp/db_getDocumentoArquivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/db_getDocumentoInter.php -text
 Fontes_PHP_SIW/classes/sp/db_getEoAAtuac.php -text
@@ -1246,6 +1247,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAnexa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoArqCen.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoArqSet.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoCaixa.php -text
@@ -3568,6 +3570,7 @@ SP_Oracle92/siw/SP_GetCiaTrans.prc -text
 SP_Oracle92/siw/SP_GetCodigo.prc -text
 SP_Oracle92/siw/SP_GetDataEspecial.prc -text
 SP_Oracle92/siw/SP_GetDescontoAgencia.prc -text
+SP_Oracle92/siw/SP_GetDocumentoArquivo.prc -text
 SP_Oracle92/siw/SP_GetFNParametro.prc -text
 SP_Oracle92/siw/SP_GetGPColaborador.prc -text
 SP_Oracle92/siw/SP_GetGPContrato.prc -text
@@ -3617,6 +3620,7 @@ SP_Oracle92/siw/SP_PutConfPJ.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
 SP_Oracle92/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle92/siw/SP_PutDescontoAgencia.prc -text
+SP_Oracle92/siw/SP_PutDocumentoArquivo.prc -text
 SP_Oracle92/siw/SP_PutEsquemaInsert.prc -text
 SP_Oracle92/siw/SP_PutEtapaComentario.prc -text
 SP_Oracle92/siw/SP_PutFNParametro.prc -text

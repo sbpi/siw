@@ -74,6 +74,7 @@ begin
                 g.valor_unitario,                   g.fator_embalagem,                   g.validade, 
                 g.fabricacao,                       g.vida_util,                         g.lote_numero, 
                 g.lote_bloqueado,                   g.marca,                             g.modelo,
+                g.ordem,
                 g1.sq_almoxarifado,                 g1.nome as nm_almox,                 g1.ativo as at_almox,
                 g2.sq_mtsituacao as sq_sit_item,    g2.nome as nm_sit_item,              g2.sigla as sg_sit_item, 
                 g2.entrada as ent_sit_item,         g2.saida as sai_sit_item,            g2.estorno as est_sit_item, 

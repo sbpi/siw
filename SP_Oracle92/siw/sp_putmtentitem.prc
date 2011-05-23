@@ -4,6 +4,7 @@ create or replace procedure SP_PutMTEntItem
     p_chave_aux                in  number   default null,
     p_almoxarifado             in  number   default null,
     p_situacao                 in  number   default null,
+    p_ordem                    in  number   default null,
     p_material                 in  number   default null,
     p_quantidade               in  number   default null,
     p_valor                    in  number   default null,
@@ -29,11 +30,11 @@ begin
       insert into mt_entrada_item
         (sq_entrada_item, sq_mtentrada,   sq_material,     sq_almoxarifado, sq_mtsituacao, quantidade,
          valor_total,     valor_unitario, fator_embalagem, validade,        fabricacao,    vida_util,
-         lote_numero,     marca,          modelo)
+         lote_numero,     marca,          modelo,          ordem)
       values
         (w_chave,         p_chave,        p_material,      p_almoxarifado,  p_situacao,    p_quantidade,
          p_valor,         w_valor,        p_fator,         p_validade,      p_fabricacao,  p_vida_util,
-         p_lote,          p_marca,        p_modelo
+         p_lote,          p_marca,        p_modelo,        p_ordem
         );
       
    Elsif p_operacao = 'A' Then
@@ -42,6 +43,7 @@ begin
          set sq_material       = p_material,
              sq_almoxarifado   = p_almoxarifado,
              sq_mtsituacao     = p_situacao,
+             ordem             = p_ordem,
              quantidade        = p_quantidade,
              valor_total       = p_valor,
              valor_unitario    = w_valor,
