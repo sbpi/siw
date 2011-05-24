@@ -652,7 +652,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       if (count($RS)>0) {
         $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-     //   $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+     //   $l_html .=chr(13).'        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">'; 
         $l_html .=chr(13).'          <tr align="center">';
         $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nº</b></div></td>';

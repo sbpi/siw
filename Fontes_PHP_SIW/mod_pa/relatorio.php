@@ -140,7 +140,7 @@ function Tramitacao() {
   $p_ano = substr($p_protocolo, 13, 4);
   $p_unid_autua = $_REQUEST['p_unid_autua'];
   $p_unid_receb = $_REQUEST['p_unid_receb'];
-  if (nvl(montaFiltro('GET'),'')=='') $p_unid_receb = $_SESSION['LOTACAO'];
+  if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))===false) $p_unid_receb = $_SESSION['LOTACAO'];
   $p_nu_guia = $_REQUEST['p_nu_guia'];
   $p_ano_guia = $_REQUEST['p_ano_guia'];
   $p_ini = $_REQUEST['p_ini'];
@@ -202,7 +202,7 @@ function Tramitacao() {
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td nowrap>');
-    if (MontaFiltro('GET') > '') {
+    if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
@@ -302,7 +302,7 @@ function Transferencia() {
   $p_protocolo = $_REQUEST['p_protocolo'];
   $p_chave = $_REQUEST['p_chave'];
   $p_unid_autua = $_REQUEST['p_unid_autua'];
-  if (nvl(montaFiltro('GET'),'')=='') $p_unid_autua = $_SESSION['LOTACAO'];
+  if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))===false) $p_unid_autua = $_SESSION['LOTACAO'];
   $p_nu_guia = $_REQUEST['p_nu_guia'];
   $p_ano_guia = $_REQUEST['p_ano_guia'];
   $p_ini = $_REQUEST['p_ini'];
@@ -361,7 +361,7 @@ function Transferencia() {
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    if (MontaFiltro('GET') > '') {
+    if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
@@ -550,7 +550,7 @@ function Etiqueta() {
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    if (MontaFiltro('GET') > '') {
+    if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');

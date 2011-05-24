@@ -429,17 +429,9 @@ function Inicial() {
       } 
     } 
     if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
-      if ($w_copia > '') {
-        // Se for cópia
-        if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-        else                       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-      } else {
-        if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-        else                       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-      } 
+      ShowHTML('&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.(($w_copia!='') ? 'C' : 'P').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"></u>F</u>iltrar (Ativo)</font>' : '</u>F</u>iltrar (Inativo)').'</a>');
     } 
-    ShowHTML('    <td align="right">');
-    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -631,7 +623,6 @@ function Inicial() {
         } 
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1136,7 +1127,6 @@ function Geral() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -1258,7 +1248,6 @@ function Descritivo() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -1318,14 +1307,14 @@ function Anexos() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Título</td>');
     ShowHTML('          <td><b>Descrição</td>');
@@ -1352,7 +1341,6 @@ function Anexos() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1406,7 +1394,6 @@ function Anexos() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -1467,7 +1454,7 @@ function AnexosEtapas() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan=2 align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1491,7 +1478,7 @@ function AnexosEtapas() {
     ShowHTML('        <a accesskey="V" class="SS" href="'.$R.'&R='.$R.'&O=L&w_chave='.$w_chave.'&SG='.$w_sg_volta.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).MontaFiltro('GET').'"><u>V</u>oltar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Título</td>');
     ShowHTML('          <td><b>Descrição</td>');
@@ -1518,7 +1505,6 @@ function AnexosEtapas() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -1573,7 +1559,6 @@ function AnexosEtapas() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -1662,7 +1647,7 @@ function Rubrica() {
   else BodyOpen('onLoad=\'document.Form.w_sq_cc.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
@@ -1751,7 +1736,6 @@ function Rubrica() {
         ShowHTML('      </tr>');
       }
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('      <tr><td>Legenda: AF - Aplicação financeira.</td>');
     ShowHTML('  </td>');
@@ -1810,7 +1794,6 @@ function Rubrica() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -1888,7 +1871,7 @@ function AtualizaRubrica() {
   else BodyOpen('onLoad=\'document.Form.w_valor_real.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="3"><hr NOSHADE color=#000000 size=4></td></tr>');
   ShowHTML('<tr><td colspan="3"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
@@ -1906,7 +1889,7 @@ function AtualizaRubrica() {
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS).'</b></td>');
     ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</b></td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</b></td>');
@@ -1951,7 +1934,6 @@ function AtualizaRubrica() {
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_real).'</b></td>');
         ShowHTML('      </tr>');
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('      <tr><td>Legenda: AF - Aplicação financeira.</td>');
     ShowHTML('  </td>');
@@ -2022,7 +2004,6 @@ function AtualizaRubrica() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -2201,7 +2182,7 @@ function Etapas() {
   else BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
@@ -2219,7 +2200,7 @@ function Etapas() {
     ShowHTML('        <a accesskey="M" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'/mod_pr/project.php?par=Etapa&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Importação MS-Project').'&SG=IMPPROJ\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">I<u>m</u>portação MS-Project</a>&nbsp');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
     ShowHTML('          <td rowspan=2><b>Título</td>');
@@ -2330,7 +2311,6 @@ function Etapas() {
       ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo,1));
       ShowHTML('</FORM>');
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -2446,7 +2426,6 @@ function Etapas() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -2529,7 +2508,7 @@ function Cronograma() {
   else BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<tr><td colspan="2"><table border="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
   ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify>Projeto:<b> '.$w_projeto.'</b></div></td></tr>');
@@ -2600,7 +2579,6 @@ function Cronograma() {
       ShowHTML('        <td align="right"><b>'.formatNumber($w_realizado).'</b></td>');
       ShowHTML('      </tr>');
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -2652,7 +2630,6 @@ function Cronograma() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -2863,7 +2840,7 @@ function AtualizaEtapa() {
   }
   ShowHTML('<font color="#000000"><b>'.substr($w_TP,0,(strpos($w_TP,'-')-1)).'- Etapas'.'</b></font>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
   ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
@@ -2881,7 +2858,7 @@ function AtualizaEtapa() {
     AbreForm('Form',$w_pagina.$par.'#'.$w_ancora,'POST',null,null,$P1,$w_p2,$P3,null,$w_TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_ancora" id="w_ancora" value="'.$w_ancora.'">');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
     ShowHTML('          <td rowspan=2><b>'.colapsar($w_chave).'Título</td>');
@@ -3195,7 +3172,7 @@ function AtualizaEtapa() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center></div>');
+  ShowHTML('</div>');
   Rodape();
 } 
 
@@ -3233,7 +3210,7 @@ function InteressadoPacote() {
   }
   ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).' - Partes Interessadas'.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
   ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
@@ -3330,7 +3307,6 @@ function InteressadoPacote() {
   ShowHTML('      <tr><td align="center" colspan=4><hr/>');
   ShowHTML('            <input class="STB" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -3385,14 +3361,14 @@ function Recursos() {
   else BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Tipo</td>');
     ShowHTML('          <td><b>Nome</td>');
@@ -3416,7 +3392,6 @@ function Recursos() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -3458,7 +3433,6 @@ function Recursos() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -3484,7 +3458,7 @@ function EtapaRecursos() {
   BodyOpenClean('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -3507,7 +3481,7 @@ function EtapaRecursos() {
   ShowHTML('<INPUT type="hidden" name="w_recurso" value="">');
   ShowHTML('<tr><td><ul><b>Informações:</b><li>Indique abaixo quais recursos estarão alocados a esta etapa do projeto.<li>A princípio, uma etapa não tem nenhum recurso alocado.<li>Para remover um recurso, desmarque o quadrado ao seu lado.</ul>');
   ShowHTML('<tr><td align="center" colspan=3>');
-  ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
   ShowHTML('          <td><b>&nbsp;</td>');
   ShowHTML('          <td><b>Tipo</td>');
@@ -3528,7 +3502,6 @@ function EtapaRecursos() {
       ShowHTML('      </tr>');
     } 
   } 
-  ShowHTML('      </center>');
   ShowHTML('    </table>');
   ShowHTML('  </td>');
   ShowHTML('</tr>');
@@ -3540,7 +3513,6 @@ function EtapaRecursos() {
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   ShowHTML('</FORM>');
   Rodape();
 } 
@@ -3596,7 +3568,7 @@ function Interessados() {
   else                BodyOpenClean('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
@@ -3628,7 +3600,6 @@ function Interessados() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -3671,7 +3642,6 @@ function Interessados() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -3730,7 +3700,7 @@ function Areas() {
   else               BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
@@ -3765,7 +3735,6 @@ function Areas() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -3810,7 +3779,6 @@ function Areas() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -3856,7 +3824,7 @@ function Pacote() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($P1!=1) {
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
     ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="1"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
@@ -3922,7 +3890,7 @@ function Pacote() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
+  Rodape();
 } 
 
 // =========================================================================
@@ -3981,7 +3949,7 @@ function PrestacaoContas() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.removeTP($w_TP).'</FONT></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="'.$conTrBgColor.'">');
   if ($O=='P') {
     //Filtro para inclusão de um tabela no esquema
@@ -4137,7 +4105,6 @@ function PrestacaoContas() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -4221,7 +4188,7 @@ function Excluir() {
   else               BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
@@ -4245,7 +4212,6 @@ function Excluir() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -4429,7 +4395,7 @@ function Anotar() {
   else               BodyOpenClean('onLoad=\'document.Form.w_observacao.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
@@ -4468,7 +4434,6 @@ function Anotar() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -4531,7 +4496,7 @@ function Concluir() {
   else               BodyOpenClean('onLoad=\'document.Form.w_inicio_real.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<hr/>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
@@ -4582,7 +4547,6 @@ function Concluir() {
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -4639,7 +4603,7 @@ function EtapaLinha($l_chave, $l_chave_aux, $l_titulo, $l_resp, $l_setor, $l_ini
   if (nvl($l_chave_aux, '') != '') {
 
 
-    //$l_html .= chr(13) . '        <td width="1%" nowrap ' . $l_row . '>';
+    $l_html .= chr(13) . '        <td width="1%" nowrap ' . $l_row . '>';
 
 
 
@@ -6047,7 +6011,7 @@ function Main() {
       Estrutura_Menu();
       Estrutura_Corpo_Abre();
       Estrutura_Texto_Abre();
-      ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+      ShowHTML('<div align=center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></div>');
       Estrutura_Texto_Fecha();
       Estrutura_Fecha();
       Estrutura_Fecha();

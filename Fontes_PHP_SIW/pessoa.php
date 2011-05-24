@@ -365,7 +365,7 @@ function Benef() {
             if ($_REQUEST['w_nome']>"") {
                 $SQL = new db_getPersonList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,"PESSOA",$_REQUEST['w_nome'],null,null,null);
                 ShowHTML('<tr><td align="center" colspan=3>');
-                ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+                ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                 ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
                 ShowHTML('          <td><b>Nome</font></td>');
                 ShowHTML('          <td><b>Nome resumido</font></td>');
@@ -1054,7 +1054,7 @@ function BuscaPessoa() {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
-            ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+            ShowHTML('        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
             ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
             ShowHTML('            <td><b>CPF/CNPJ</font></td>');
             ShowHTML('            <td><b>Nome</font></td>');

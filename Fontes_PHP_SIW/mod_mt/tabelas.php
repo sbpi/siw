@@ -337,8 +337,6 @@ function Situacao() {
     $w_ativo            = f($RS,'ativo');
   }
 
-
-
   Cabecalho();
   head();
   if (strpos('IAE',$O)!==false) {
@@ -360,7 +358,6 @@ function Situacao() {
     ValidateClose();
     ScriptClose();
   }
-
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
@@ -377,7 +374,6 @@ function Situacao() {
   ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td nowrap><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right" colspan=2 nowrap>'.exportaOffice().'<b>Registros: '.count($RS));

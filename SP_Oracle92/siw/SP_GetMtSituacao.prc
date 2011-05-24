@@ -17,10 +17,14 @@ begin
            and (p_ativo       is null   or (p_ativo  is not null and a.ativo              = p_ativo))
            and (p_sigla       is null   or (p_sigla  is not null and acentos(a.sigla)     = acentos(p_sigla)))
            and (p_nome        is null   or (p_nome  is not null and acentos(a.nome)       = acentos(p_nome)))
-           and (p_restricao  not in ('ENTRADA','ENTMATPER','ENTMATCON') or
-                (p_restricao  = 'ENTRADA' and a.entrada = 'S' and substr(a.sigla,1,1)='N') or
-                (p_restricao  = 'ENTMATPER' and a.entrada = 'S' and substr(a.sigla,1,1)='N' and a.permanente = 'S') or
-                (p_restricao  = 'ENTMATCON' and a.entrada = 'S' and substr(a.sigla,1,1)='N' and a.consumo    = 'S')
+           and (p_restricao   is null   or
+                (p_restricao  is not null and
+                 (p_restricao  not in ('ENTRADA','ENTMATPER','ENTMATCON') or
+                  (p_restricao  = 'ENTRADA' and a.entrada = 'S' and substr(a.sigla,1,1)='N') or
+                  (p_restricao  = 'ENTMATPER' and a.entrada = 'S' and substr(a.sigla,1,1)='N' and a.permanente = 'S') or
+                  (p_restricao  = 'ENTMATCON' and a.entrada = 'S' and substr(a.sigla,1,1)='N' and a.consumo    = 'S')
+                 )
+                )
                );
    end if;
 end SP_GetMtSituacao;

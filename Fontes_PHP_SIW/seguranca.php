@@ -2112,7 +2112,7 @@ function Email() {
     if($P2!=1) ShowHTML('    <a class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
     ShowHTML('          <td><b>Módulo</td>');
     ShowHTML('          <td><b>Serviço</td>');
@@ -2147,7 +2147,6 @@ function Email() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </table>');
   } else {
@@ -2170,7 +2169,7 @@ function Email() {
     $SQL = new DB_GetUserMail; $RS = $SQL->getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, 'LISTA');
     $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Módulo</td>');
     ShowHTML('          <td NOWRAP><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
@@ -2194,55 +2193,56 @@ function Email() {
           $w_atual=f($row,'sq_modulo');
         } else {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td align="center"></td>');
+          ShowHTML('        <td align="center">&nbsp;</td>');
         }
         if(nvl(f($row,'alerta_diario'),'N')=='S'  ||nvl(f($row,'tramitacao'),'N')=='S'||
           nvl(f($row,'conclusao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_sq_menu[]" onClick="javascript:MarcaLinha('.$w_cont.');"value="'.f($row,'sq_menu').'" checked></td>');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_menu[]" onClick="javascript:MarcaLinha('.$w_cont.');"value="'.f($row,'sq_menu').'" checked></td>');
         } else {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_sq_menu[]" onClick="javascript:MarcaLinha('.$w_cont.');"value="'.f($row,'sq_menu').'"></td>');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_menu[]" onClick="javascript:MarcaLinha('.$w_cont.');"value="'.f($row,'sq_menu').'"></td>');
         }
-        ShowHTML('        <td bgcolor="'.$w_cor.'">'.f($row,'nm_servico').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_servico').'</td>');
         if(nvl(f($row,'alerta_diario'),'')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_alerta_'.f($row,'sq_menu').'" value="S" checked>');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_alerta_'.f($row,'sq_menu').'" value="S" checked></td>');
         } elseif(nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_alerta_'.f($row,'sq_menu').'" value="S">');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_alerta_'.f($row,'sq_menu').'" value="S"></td>');
         } else {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_alerta_'.f($row,'sq_menu').'" value="S">');
+          ShowHTML('        <td align="center"><input type="checkbox" disabled name="w_alerta_'.f($row,'sq_menu').'" value="S"></td>');
         }
         if(nvl(f($row,'tramitacao'),'')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_tramitacao_'.f($row,'sq_menu').'" value="S" checked>');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_tramitacao_'.f($row,'sq_menu').'" value="S" checked></td>');
         } elseif(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_tramitacao_'.f($row,'sq_menu').'" value="S">');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_tramitacao_'.f($row,'sq_menu').'" value="S"></td>');
         } else {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_tramitacao_'.f($row,'sq_menu').'" value="S">');
+          ShowHTML('        <td align="center"><input type="checkbox" disabled name="w_tramitacao_'.f($row,'sq_menu').'" value="S"></td>');
         }
         if(nvl(f($row,'conclusao'),'')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_conclusao_'.f($row,'sq_menu').'" value="S" checked>');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_conclusao_'.f($row,'sq_menu').'" value="S" checked></td>');
         } elseif(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_conclusao_'.f($row,'sq_menu').'" value="S">');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_conclusao_'.f($row,'sq_menu').'" value="S"></td>');
         } else {
-          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_conclusao_'.f($row,'sq_menu').'" value="S">');
+          ShowHTML('        <td align="center"><input type="checkbox" disabled name="w_conclusao_'.f($row,'sq_menu').'" value="S"></td>');
         }
         if(substr(f($row,'sg_servico'),0,2)=='PJ') {
           if(nvl(f($row,'responsabilidade'),'')=='S') {
-            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S" checked>');
+            ShowHTML('        <td align="center"><input type="checkbox" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S" checked></td>');
           } elseif(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S') {
-            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S">');
+            ShowHTML('        <td align="center"><input type="checkbox" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S"></td>');
           } else {
-            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S">');
+            ShowHTML('        <td align="center"><input type="checkbox" disabled name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S"></td>');
           }
         } else {
           if(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S') {
-            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" style="display:none;" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="N">');
+            ShowHTML('        <td align="center"><input type="checkbox" style="display:none;" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="N"></td>');
           } else {
-            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled style="display:none;" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="N">');
+            ShowHTML('        <td align="center"><input type="checkbox" disabled style="display:none;" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="N"></td>');
           }
         }
         ShowHTML('      </tr>');
         $w_cont += 1;
       } 
     } 
+    ShowHTML('    </table>');
     
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=7><b>Observações:</b><DL>');
     ShowHTML('  <DT>Alerta diário:<DD>Indica se os e-mails de alerta ou atraso, enviados diariamente, devem contemplar o serviço. Se esta coluna não tiver nenhum serviço marcado, os e-mails diários não serão enviados.');
@@ -2757,7 +2757,7 @@ function TelaUnidade() {
   ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
   ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
   ShowHTML('      <tr><td align="center" colspan=2>');
-  ShowHTML('          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('          <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr bgcolor="'.$conTrBgColor.'" align="center">');
   ShowHTML('              <td><b>Localização</td>');
   ShowHTML('              <td><b>Telefone</td>');

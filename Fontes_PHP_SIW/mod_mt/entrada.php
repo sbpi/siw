@@ -368,7 +368,7 @@ function Inicial() {
       ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;'); 
     }
     if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
-      if (strpos(MontaFiltro('GET'),'p_')!==false) {
+      if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))) {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.(($w_copia>'') ? 'C' : 'P').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
       } else {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.(($w_copia>'') ? 'C' : 'P').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
@@ -747,7 +747,7 @@ function Geral() {
         reset($RS);
         $colspan = 0;
         ShowHTML('      <tr><td align="center" colspan="2">');
-        ShowHTML('        <table width="100%" BORDER=1 bordercolor="#666666">');
+        ShowHTML('        <table id="tudo" width="100%" BORDER=1 bordercolor="#666666">');
         ShowHTML('        <tr align="center">');
         ShowHTML('          <td rowspan=2><b>Item</b></td>');
         ShowHTML('          <td rowspan=2><b>Nome</b></td>');
@@ -823,7 +823,7 @@ function Geral() {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Arquivos não anexados</b></td></tr>');
       } else {
         ShowHTML('      <tr><td align="center" colspan="2">');
-        ShowHTML('        <table width="100%" BORDER=1 bordercolor="#666666">');
+        ShowHTML('        <table id="tudo" width="100%" BORDER=1 bordercolor="#666666">');
         ShowHTML('        <tr align="center">');
         ShowHTML('          <td><b>Ordem</td>');
         ShowHTML('          <td><b>Título</td>');
@@ -1019,16 +1019,15 @@ function Itens() {
   ShowHTML('</table>');
 
   if ($w_filtro > '') ShowHTML($w_filtro);
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<table border="0" width="100%">');
 
   if ($O=='L') {
     ShowHTML('<tr><td>');
-    ShowHTML('                <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('      <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right">');
-    ShowHTML('    <b>Registros: '.count($RS));        
+    ShowHTML('    <td align="right"><b>'.exportaOffice().'Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Item','ordem').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
@@ -1037,7 +1036,7 @@ function Itens() {
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fator<br>Embal.','fator_embalagem').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Marca','marca').'</td>');
     ShowHTML('          <td colspan=2><b>Valores</td>');
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    ShowHTML('          <td rowspan=2 class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Unit.','valor_unitario').'</td>');
@@ -1060,7 +1059,7 @@ function Itens() {
         ShowHTML('        <td>'.f($row,'marca').'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td align="top" nowrap class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -1260,7 +1259,7 @@ function Anexos() {
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Ordem</td>');
     ShowHTML('          <td><b>Título</td>');
@@ -1748,7 +1747,7 @@ function Atender() {
   $RS1 = SortArray($RS1,'nm_tipo_material','asc','nome','asc'); 
   ShowHTML('<tr><td colspan=4><b>Informe para cada item a quantidade autorizada para compra:</b>');
   ShowHTML('<tr><td align="center" colspan=4>');  
-  ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
   ShowHTML('          <td rowspan=2><b>Tipo</td>');
   ShowHTML('          <td rowspan=2><b>Código</td>');

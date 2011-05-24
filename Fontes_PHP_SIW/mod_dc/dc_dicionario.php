@@ -2106,7 +2106,7 @@ function Evento() {
     ShowHTML('<INPUT type="hidden" name="w_evento[]" value="">');
     ShowHTML('<tr><td><ul><b>Informações:</b><li>Indique abaixo quais eventos farão o disparo da trigger.<li>A princípio, uma trigger não tem nenhum evento associado.<li>Para remover um evento, desmarque o quadrado ao seu lado.</ul>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>&nbsp;</td>');
     ShowHTML('          <td><b>Evento</td>');

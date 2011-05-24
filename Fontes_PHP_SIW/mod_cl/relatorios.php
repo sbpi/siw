@@ -119,7 +119,7 @@ function Rel_ItensAta() {
   $p_numero_ata         = $_REQUEST['p_numero_ata']; 
   $p_acrescimo          = $_REQUEST['p_acrescimo']; 
   if (strpos('L',$O)!==false) {
-    if (montaFiltro('GET')!='') {
+    if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
       $w_filtro='';
       if ($p_codigo>'')  $w_filtro.='<tr valign="top"><td align="right">Código <td>[<b>'.$p_codigo.'</b>] em qualquer parte';
       if ($p_nome>'')    $w_filtro.='<tr valign="top"><td align="right">Nome <td>[<b>'.$p_nome.'</b>] em qualquer parte';

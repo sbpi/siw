@@ -139,7 +139,7 @@ function Usuario() {
     }
     ShowHTML('        <B>('.count($RS).')</B></td>');
     ShowHTML('  <tr><td colspan=2>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="center">');
     ShowHTML('          <td rowspan=2><b>Usuário</b></td>');
     ShowHTML('          <td colspan=8><b>Objetos</b></td>');
@@ -241,7 +241,6 @@ function Usuario() {
     ShowHTML('  </tr>');
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -295,7 +294,6 @@ function Tabela() {
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
-        ShowHTML('      </center>');
       } 
     } 
     ShowHTML('    </table>');
@@ -313,14 +311,14 @@ function Tabela() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
-    ShowHTML('<td><B>Dados da Tabela</B></td>');
+    ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<tr><td><B>Dados da Tabela</B></td>');
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
     foreach ($RS as $row) {
       ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -334,7 +332,6 @@ function Tabela() {
       break;
     }
     ShowHTML('  </TABLE>');
-    ShowHTML('</TABLE>');
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML(ExibeColuna($w_sq_usuario,$w_sq_tabela,'ordem asc'));
@@ -348,7 +345,7 @@ function Tabela() {
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML('<tr><td><B>Relacionamentos ('.count($RS).')</B></td>');
-    ShowHTML('<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Relacionamento </b></td>');
     ShowHTML('          <td><b>Tabela        </b></td>');
@@ -389,7 +386,7 @@ function Tabela() {
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML('<tr><td><B>Stored Procedures ('.count($RS).')</B></td>');
-    ShowHTML('<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tipo </b></td>');
@@ -418,7 +415,7 @@ function Tabela() {
     ShowHTML('<tr><td><HR>');
     ShowHTML('<tr><td><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>');
     ShowHTML('<tr><td><B>Procedures ('.count($RS).')</B></td>');
-    ShowHTML('<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Descrição </b></td>');
@@ -443,7 +440,6 @@ function Tabela() {
     ShowHTML('</table>');
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // ==========================================================================
@@ -498,7 +494,6 @@ function Trigger() {
     }
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 // =========================================================================
@@ -547,7 +542,6 @@ function StoredProcedure() {
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><div align="center" colspan=3>');
@@ -563,12 +557,12 @@ function StoredProcedure() {
     cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Dados da Stored Procedure</B></td>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     foreach ($RS as $row) {
@@ -592,9 +586,9 @@ function StoredProcedure() {
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Parâmetros</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Parâmetro </b></td>');
     ShowHTML('          <td><b>Tipo      </b></td>');
@@ -617,16 +611,15 @@ function StoredProcedure() {
       } 
     } 
     ShowHTML('</table>');
-    ShowHTML('</center>');
     $w_cor='';
     $sql = new db_getSpTabs; $RS = $sql->getInstanceOf($dbms,$w_sq_sp,null);
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Tabelas</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Descrição </b></td>');
@@ -645,16 +638,15 @@ function StoredProcedure() {
       } 
     } 
     ShowHTML('</table>');
-    ShowHTML('</center>');
     $w_cor='';
     $sql = new db_getSpSP; $RS = $sql->getInstanceOf($dbms,$w_sq_sp,$w_chave_aux);
     $RS = SortArray($RS,'nm_usuario_pai','asc','nm_pai','asc','nm_usuario_filha','asc','nm_filha','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Relacionamentos</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>SP Pai             </b></td>');
     ShowHTML('          <td><b>SP Filha           </b></td>');
@@ -684,16 +676,15 @@ function StoredProcedure() {
       } 
     } 
     ShowHTML('</table>');
-    ShowHTML('</center>');
     $w_cor='';
     $sql = new db_getProcSp; $RS = $sql->getInstanceOf($dbms,null,$w_sq_sp);
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Procedures</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome             </b></td>');
     ShowHTML('          <td><b>Stored Procedure </b></td>');
@@ -714,11 +705,9 @@ function StoredProcedure() {
       } 
     } 
     ShowHTML('</table>');
-    ShowHTML('</center>');
     $w_cor='';
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -769,7 +758,6 @@ function Indice() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><div align="center" colspan=3>');
@@ -781,7 +769,6 @@ function Indice() {
     ShowHTML('</tr>');
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -844,7 +831,6 @@ function Coluna() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><div align="center" colspan=3>');
@@ -860,8 +846,8 @@ function Coluna() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -885,7 +871,7 @@ function Coluna() {
     ShowHTML('<HR>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
     ShowHTML('<tr><td><B>Índices ('.count($RS).')</B></td>');
-    ShowHTML('<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome</b></td>');
     ShowHTML('          <td><b>Tipo</b></td>');
@@ -965,7 +951,6 @@ function Arquivo() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><div align="center" colspan=3>');
@@ -981,12 +966,12 @@ function Arquivo() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Dados do Arquivo</B></td>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     foreach ($RS as $row) {
@@ -1007,11 +992,11 @@ function Arquivo() {
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
     ShowHTML('<td><B>Procedures ('.count($RS).')</B></td>');
     ShowHTML('<tr><td align="center" colspan=3></tr>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tipo      </b></td>');
@@ -1033,7 +1018,6 @@ function Arquivo() {
     } 
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -1060,7 +1044,7 @@ function Procedure() {
     ShowHTML('<td><B>Procedures ('.count($row).')</B></td>');
     ShowHTML('<tr><td align="center" colspan=3></tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tipo      </b></td>');
@@ -1085,7 +1069,6 @@ function Procedure() {
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><div align="center" colspan=3>');
@@ -1101,12 +1084,12 @@ function Procedure() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Dados da Procedure</B></td>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
@@ -1126,9 +1109,9 @@ function Procedure() {
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Procedures</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Descrição </b></td>');
@@ -1154,9 +1137,9 @@ function Procedure() {
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Tabelas</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Descrição </b></td>');
@@ -1181,9 +1164,9 @@ function Procedure() {
     $sql = new db_getProcedure; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Arquivos</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Descrição </b></td>');
@@ -1205,14 +1188,12 @@ function Procedure() {
         ShowHTML('      </tr>');
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><div align="center" colspan=3>');
     ShowHTML('</tr>');
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -1230,12 +1211,12 @@ function Relacionamento() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Dados do Relacionamento</B></td>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     foreach ($RS as $row) {
@@ -1247,16 +1228,15 @@ function Relacionamento() {
       ShowHTML('          <td>Tabela filha: <br><b>'.f($row,'nm_tabela_filha').'</td>');
       ShowHTML('          <td>Sistema:      <br><b>'.f($row,'sg_sistema').'</td>');
       ShowHTML('    </TABLE>');
-      ShowHTML('  </TABLE>');
     }
     ShowHTML('</TABLE>');
     $w_cor='';
     $sql = new db_getRelacCols; $RS = $sql->getInstanceOf($dbms,$w_sq_relacionamento,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
     ShowHTML('<HR>');
-    ShowHTML('<div align=center><center>');
+    ShowHTML('<div align=center>');
     ShowHTML('<td><B>Relacionamentos</B></td>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome      </b></td>');
     ShowHTML('          <td><b>Tabela Pai </b></td>');
@@ -1276,18 +1256,15 @@ function Relacionamento() {
         ShowHTML('        <td>'.f($row,'nm_coluna_pai').'</td>');
         ShowHTML('        <td>'.f($row,'nm_tabela_filha').'</td>');
         ShowHTML('        <td>'.f($row,'nm_coluna_filha').'</td>');
-        ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
     }
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
-    ShowHTML('<tr><div align="center" colspan=3>');
+    ShowHTML('<tr><td><div align="center" colspan=3>');
     ShowHTML('</tr>');
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 // =========================================================================
@@ -1299,28 +1276,29 @@ function ExibeTabela($l_sq_usuario,$l_sq_tabela,$l_ordena) {
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
-  $w_html.='<tr><td><B>Tabelas ('.count($RS).')</B></td>';
-  $w_html.='<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-  $w_html.='        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-  $w_html.='          <td><b>Nome</b></td>';
-  $w_html.='          <td><b>Tipo</b></td>';
-  $w_html.='          <td><b>Descrição</b></td>';
-  $w_html.='        </tr>';
+  $w_html.=$crlf.'<tr><td><B>Tabelas ('.count($RS).')</B></td>';
+  $w_html.=$crlf.'<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+  $w_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+  $w_html.=$crlf.'          <td><b>Nome</b></td>';
+  $w_html.=$crlf.'          <td><b>Tipo</b></td>';
+  $w_html.=$crlf.'          <td><b>Descrição</b></td>';
+  $w_html.=$crlf.'        </tr>';
   if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
-    $w_html.='      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+    $w_html.=$crlf.'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
   } else {
     $w_cor='';
     foreach ($RS as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-      $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-      $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp';
-      $w_html.='        <td nowrap>'.f($row,'nm_tipo').'</td>';
-      $w_html.='        <td>'.f($row,'descricao').'</td>';
-      $w_html.='        </td>';
-      $w_html.='      </tr>';
+      $w_html.=$crlf.'      <tr bgcolor="'.$w_cor.'" valign="top">';
+      $w_html.=$crlf.'       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp';
+      $w_html.=$crlf.'        <td nowrap>'.f($row,'nm_tipo').'</td>';
+      $w_html.=$crlf.'        <td>'.f($row,'descricao').'</td>';
+      $w_html.=$crlf.'      </tr>';
     } 
+    $w_html.=$crlf.'  </table>';
   } 
+  $w_html.=$crlf.'</table>';
   return $w_html;
 } 
 // =========================================================================
@@ -1332,52 +1310,47 @@ function ExibeColuna($l_sq_usuario,$l_sq_tabela,$l_ordena) {
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
-  $w_html.='<tr><td><B>Colunas ('.count($RS).')</B></td>';
+  $w_html.=$crlf.'<tr><td><B>Colunas ('.count($RS).')</B></td>';
   if (count($RS)<500) {
-    $w_html.='<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-    $w_html.='        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html.='          <td><b>Coluna</b></td>';
-    $w_html.='          <td><b>Tipo</b></td>';
+    $w_html.=$crlf.'<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $w_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+    $w_html.=$crlf.'          <td><b>Coluna</b></td>';
+    $w_html.=$crlf.'          <td><b>Tipo</b></td>';
     if (Nvl($l_sq_tabela,'nulo')=='nulo')
-      $w_html.='          <td><b>Tabela</b></td>';
-    $w_html.='          <td><b>Obrig.</b></td>';
-    $w_html.='          <td><b>Default</b></td>';
-    $w_html.='          <td><b>Descrição</b></td>';
-    $w_html.='        </tr>';
+      $w_html.=$crlf.'          <td><b>Tabela</b></td>';
+    $w_html.=$crlf.'          <td><b>Obrig.</b></td>';
+    $w_html.=$crlf.'          <td><b>Default</b></td>';
+    $w_html.=$crlf.'          <td><b>Descrição</b></td>';
+    $w_html.=$crlf.'        </tr>';
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.='      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=$crlf.'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       $w_cor='';
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $w_html.='        <td align="top" nowrap>';
-        $w_html.='          <A class="HL" HREF="'.$w_dir.$w_pagina.'COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_coluna'));
-        if (Nvl(f($row,'sq_relacionamento'),'nulo')!='nulo')
-          $w_html.='          (FK)';
-        $w_html.='          </A>&nbsp';
-        $w_html.='        <td nowrap>'.f($row,'nm_coluna_tipo').' (';
+        $w_html.=$crlf.'      <tr bgcolor="'.$w_cor.'" valign="top">';
+        $w_html.=$crlf.'        <td align="top" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_coluna'));
+        if (Nvl(f($row,'sq_relacionamento'),'nulo')!='nulo') $w_html.=' (FK)';
+        $w_html.='</A>&nbsp';
+        $w_html.=$crlf.'        <td nowrap>'.f($row,'nm_coluna_tipo').' (';
         if (upper(f($row,'nm_coluna_tipo'))=='NUMERIC')
           $w_html.=Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0);
         else
           $w_html.=f($row,'tamanho');
         $w_html.=')</td>';
         if (Nvl($l_sq_tabela,'nulo')=='nulo')
-          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
-        $w_html.='        <td align="center">'.f($row,'obrigatorio').'</td>';
-        if (f($row,'valor_padrao')!='')
-          $w_html.='      <td>'.f($row,'valor_padrao').'</td>';
-        else
-          $w_html.='      <td>---</td>';
-        $w_html.='        <td>'.f($row,'descricao').'</td>';
-        $w_html.='        </td>';
-        $w_html.='      </tr>';
+          $w_html.=$crlf.'       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
+        $w_html.=$crlf.'        <td align="center">'.f($row,'obrigatorio').'</td>';
+        if (f($row,'valor_padrao')!='') $w_html.=$crlf.'        <td>'.f($row,'valor_padrao').'</td>';
+        else                            $w_html.=$crlf.'        <td>---</td>';
+        $w_html.=$crlf.'        <td>'.f($row,'descricao').'</td>';
+        $w_html.=$crlf.'      </tr>';
       } 
     } 
+    $w_html.=$crlf.'  </table>';
   } 
-  $w_html.='</table>';
-  $w_html.='</center>';
+  $w_html.=$crlf.'</table>';
   return $w_html;
 } 
 // =========================================================================
@@ -1388,39 +1361,38 @@ function ExibeIndice($l_sq_usuario,$l_sq_tabela,$l_ordena) {
   $sql = new db_getIndiceTabs; $RS = $sql->getInstanceOf($dbms,null,$l_sq_usuario,null,$l_sq_tabela);
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
-  $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
-  $w_html.='<tr><td><B>Índices ('.count($RS).')</B></td>';
+  $w_html=$crlf.'<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
+  $w_html.=$crlf.'<tr><td><B>Índices ('.count($RS).')</B></td>';
   if (count($RS)<500) {
-    $w_html.='<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-    $w_html.='        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html.='          <td><b>Nome</b></td>';
-    $w_html.='          <td><b>Tipo</b></td>';
+    $w_html.=$crlf.'<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $w_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+    $w_html.=$crlf.'          <td><b>Nome</b></td>';
+    $w_html.=$crlf.'          <td><b>Tipo</b></td>';
     if (Nvl($l_sq_tabela,'nulo')=='nulo')
-      $w_html.='          <td><b>Tabela</b></td>';
-    $w_html.='          <td><b>Colunas</b></td>';
-    $w_html.='          <td><b>Descrição</b></td>';
-    $w_html.='        </tr>';
+      $w_html.=$crlf.'          <td><b>Tabela</b></td>';
+    $w_html.=$crlf.'          <td><b>Colunas</b></td>';
+    $w_html.=$crlf.'          <td><b>Descrição</b></td>';
+    $w_html.=$crlf.'        </tr>';
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.='      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=$crlf.'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       $w_cor='';
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $w_html.='        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_indice')).'</A></td>';
-        $w_html.='        <td nowrap>'.f($row,'nm_indice_tipo').'</td>';
+        $w_html.=$crlf.'      <tr bgcolor="'.$w_cor.'" valign="top">';
+        $w_html.=$crlf.'        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_indice')).'</A></td>';
+        $w_html.=$crlf.'        <td nowrap>'.f($row,'nm_indice_tipo').'</td>';
         if (Nvl($l_sq_tabela,'nulo')=='nulo')
-          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
-        $w_html.='        <td nowrap>'.f($row,'colunas').'</td>';
-        $w_html.='        <td>'.f($row,'ds_indice').'</td>';
-        $w_html.='        </td>';
-        $w_html.='      </tr>';
+          $w_html.=$crlf.'       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
+        $w_html.=$crlf.'        <td nowrap>'.f($row,'colunas').'</td>';
+        $w_html.=$crlf.'        <td>'.f($row,'ds_indice').'</td>';
+        $w_html.=$crlf.'      </tr>';
       } 
     } 
+    $w_html.=$crlf.'  </table>';
   } 
-  $w_html.='</table>';
-  $w_html.='</center>';
+  $w_html.=$crlf.'</table>';
   return $w_html;
 } 
 // =========================================================================
@@ -1432,38 +1404,37 @@ function ExibeTrigger($l_sistema,$l_sq_usuario,$l_sq_tabela,$l_ordena) {
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($RS,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
-  $w_html.='<tr><td><B>Triggers ('.count($row).')</B></td>';
+  $w_html.=$crlf.'<tr><td><B>Triggers ('.count($row).')</B></td>';
   if (count($RS)<500) {
-    $w_html.='<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-    $w_html.='        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html.='          <td><b>Nome</b></td>';
+    $w_html.=$crlf.'<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $w_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+    $w_html.=$crlf.'          <td><b>Nome</b></td>';
     if (Nvl($l_sq_tabela,'nulo')=='nulo')
-      $w_html.='          <td><b>Tabela</b></td>';
-    $w_html.='          <td><b>Eventos de disparo</b></td>';
-    $w_html.='          <td><b>Descrição</b></td>';
-    $w_html.='        </tr>';
+      $w_html.=$crlf.'          <td><b>Tabela</b></td>';
+    $w_html.=$crlf.'          <td><b>Eventos de disparo</b></td>';
+    $w_html.=$crlf.'          <td><b>Descrição</b></td>';
+    $w_html.=$crlf.'        </tr>';
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.='      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=$crlf.'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       $w_cor='';
       foreach ($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;$w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $w_html.='        <td align="top" nowrap>'.f($row,'nm_trigger').'</td>';
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;$w_html.=$crlf.'      <tr bgcolor="'.$w_cor.'" valign="top">';
+        $w_html.=$crlf.'        <td align="top" nowrap>'.f($row,'nm_trigger').'</td>';
         if (Nvl($l_sq_tabela,'nulo')=='nulo')
-          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
+          $w_html.=$crlf.'       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
         if (f($row,'eventos')!='')
-          $w_html.='        <td align="center">'.f($row,'eventos').'</td>';
+          $w_html.=$crlf.'        <td align="center">'.f($row,'eventos').'</td>';
         else
-          $w_html.='        <td align="center">---</td>';
-        $w_html.='        <td>'.f($row,'ds_trigger').'</td>';
-        $w_html.='        </td>';
-        $w_html.='      </tr>';
+          $w_html.=$crlf.'        <td align="center">---</td>';
+        $w_html.=$crlf.'        <td>'.f($row,'ds_trigger').'</td>';
+        $w_html.=$crlf.'      </tr>';
       } 
     }
+    $w_html.=$crlf.'  </table>';
   } 
-  $w_html.='</table>';
-  $w_html.='</center>';
+  $w_html.=$crlf.'</table>';
   return $w_html;
 } 
 // =========================================================================
@@ -1475,32 +1446,31 @@ function ExibeSP($l_sistema,$l_sq_usuario,$l_sq_sp,$l_ordena) {
   $lista = explode(',',str_replace(' ',',',$l_ordena));
   $RS = SortArray($row,$lista[0],$lista[1]);
   $w_html='<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">';
-  $w_html.='<tr><td><B>Stored Procedures ('.count($row).')</B></td>';
+  $w_html.=$crlf.'<tr><td><B>Stored Procedures ('.count($row).')</B></td>';
   if (count($RS)<500) {
-    $w_html.='<tr><td><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-    $w_html.='        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html.='          <td><b>Nome</b></td>';
-    $w_html.='          <td><b>Tipo</b></td>';
-    $w_html.='          <td><b>Descrição</b></td>';
-    $w_html.='        </tr>';
+    $w_html.=$crlf.'<tr><td><TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $w_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+    $w_html.=$crlf.'          <td><b>Nome</b></td>';
+    $w_html.=$crlf.'          <td><b>Tipo</b></td>';
+    $w_html.=$crlf.'          <td><b>Descrição</b></td>';
+    $w_html.=$crlf.'        </tr>';
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.='      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=$crlf.'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       $w_cor='';
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Stored procedure">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp';
-        $w_html.='        <td>'.f($row,'nm_sp_tipo').'</td>';
-        $w_html.='        <td>'.f($row,'ds_sp').'</td>';
-        $w_html.='        </td>';
-        $w_html.='      </tr>';
+        $w_html.=$crlf.'      <tr bgcolor="'.$w_cor.'" valign="top">';
+        $w_html.=$crlf.'       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Stored procedure">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp';
+        $w_html.=$crlf.'        <td>'.f($row,'nm_sp_tipo').'</td>';
+        $w_html.=$crlf.'        <td>'.f($row,'ds_sp').'</td>';
+        $w_html.=$crlf.'      </tr>';
       }
     }
+    $w_html.=$crlf.'  </table>';
   } 
-  $w_html.='</table>';
-  $w_html.='</center>';
+  $w_html.=$crlf.'</table>';
   return $w_html;
 } 
 // =========================================================================
@@ -1529,7 +1499,7 @@ function Main() {
       Estrutura_Menu();
       Estrutura_Corpo_Abre();
       Estrutura_Texto_Abre();
-      ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+      ShowHTML('<div align=center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></div>');
       Estrutura_Texto_Fecha();
       Estrutura_Fecha();
       Estrutura_Fecha();
