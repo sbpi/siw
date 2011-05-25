@@ -165,7 +165,7 @@ function AreaAtuacao(){
     } 
     ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Chave','sq_area_atuacao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
@@ -360,7 +360,7 @@ function TipoUnidade() {
     } 
     ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Chave','sq_tipo_unidade').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
@@ -547,7 +547,7 @@ function TipoPosto() {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Sigla','sigla').'</font></td>');

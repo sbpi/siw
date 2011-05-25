@@ -860,7 +860,7 @@ function ImprimeCabecalho() {
   extract($GLOBALS);
 
   ShowHTML('<tr><td align="center">');
-  ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
     case 'GRCLENQ':         ShowHTML('          <td><b>Enquadramento</td>');        break;

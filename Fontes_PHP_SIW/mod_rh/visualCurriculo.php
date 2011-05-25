@@ -394,7 +394,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
           if (!count($RS)<=0){
             $html.=chr(13).'      <tr><td valign="top">Cargos:<br></td></tr>';
             $html.=chr(13).'      <tr><td align="center" colspan="3">';
-            $html.=chr(13).'        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+            $html.=chr(13).'        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
             $html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
             $html.=chr(13).'            <td><b>Área</td>';
             $html.=chr(13).'            <td><b>Especialidades</td>';

@@ -356,7 +356,7 @@ function Inicial() {
     }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
@@ -1094,7 +1094,7 @@ function Itens() {
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Ata','numero_ata').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Item','ordem').'</td>');
@@ -1138,7 +1138,7 @@ function Itens() {
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
     ShowHTML('          <td NOWRAP><font size="2"><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
     ShowHTML('          <td><b>'.LinkOrdena('Ata','numero_ata').'</td>');
@@ -1608,7 +1608,7 @@ function PesquisaPreco() {
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
@@ -1875,12 +1875,12 @@ function PesquisaPreco() {
     if ($p_nome!='' || $p_cpf!='' || $p_cnpj!='') {
       ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
       ShowHTML('<tr><td>');
-      ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
+      ShowHTML('    <TABLE class="tudo" WIDTH="100%" border=0>');
       if (count($RS)==0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
-        ShowHTML('        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+        ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
         ShowHTML('            <td><b>CPF/CNPJ</font></td>');
         ShowHTML('            <td><b>Nome</font></td>');
@@ -2006,7 +2006,7 @@ function Anexos() {
     ShowHTML('<a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Título</td>');
     ShowHTML('          <td><b>Descrição</td>');
@@ -2995,7 +2995,7 @@ function AF() {
     ShowHTML('        <a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     if (f($RS_Solic,'interno')=='S') {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td rowspan="2"><b>Número</td>');
@@ -3113,7 +3113,7 @@ function AF() {
     $RS = SortArray($RS,'numero_ata','asc','ordem','asc'); 
     ShowHTML('      <tr><td colspan="4"><br><b>Itens da '.$w_label.':</b>');
     ShowHTML('      <tr><td colspan="4">');
-    ShowHTML('        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
     ShowHTML('            <td NOWRAP><font size="2"><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
     ShowHTML('            <td rowspan=2><b>'.LinkOrdena('Ata','numero_ata').'</td>');

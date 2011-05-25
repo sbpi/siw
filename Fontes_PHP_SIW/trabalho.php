@@ -209,7 +209,7 @@ function Mesa() {
   ShowHTML('<table border="0" width="100%">');
   if ($O=="L") {
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
     ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
     if ($_SESSION['INTERNO']=='S') {
       ShowHTML('          <td rowspan=2><b>Módulo</td>');

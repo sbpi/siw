@@ -53,7 +53,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="1">&nbsp;</td>';
     $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Telefones</td>';
     $html.=chr(13).'<tr><td align="center" colspan=3>';
-    $html.=chr(13).'    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $html.=chr(13).'    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $html.=chr(13).'          <td><font size="1"><b>Tipo</font></td>';
     $html.=chr(13).'          <td><font size="1"><b>DDD</font></td>';
@@ -86,7 +86,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="1">&nbsp;</td>';
     $html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Endereços de e-Mail e Internet</td>';
     $html.=chr(13).'      <tr><td align="center" colspan="2">';
-    $html.=chr(13).'        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $html.=chr(13).'        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $html.=chr(13).'            <td><font size="1"><b>Endereço</font></td>';
     $html.=chr(13).'            <td><font size="1"><b>Padrão</font></td>';
@@ -136,7 +136,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $RS = SortArray($RS,'ordem','desc','inicio','desc');
     $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Escolaridade</td>';
     $html.=chr(13).'<tr><td align="center" colspan=3>';
-    $html.=chr(13).'    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $html.=chr(13).'    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $html.=chr(13).'          <td><font size="1"><b>Nível</font></td>';
     $html.=chr(13).'          <td><font size="1"><b>Área</font></td>';
@@ -173,7 +173,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="1">&nbsp;</td>';
     $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Extensão acadêmica</td>';
     $html.=chr(13).'<tr><td align="center" colspan=3>';
-    $html.=chr(13).'    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $html.=chr(13).'    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $html.=chr(13).'          <td><font size="1"><b>Nível</font></td>';
     $html.=chr(13).'          <td><font size="1"><b>Área</font></td>';
@@ -210,7 +210,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="1">&nbsp;</td>';
     $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Produção técnica</td>';
     $html.=chr(13).'<tr><td align="center" colspan=3>';
-    $html.=chr(13).'    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $html.=chr(13).'    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $html.=chr(13).'          <td><font size="1"><b>Tipo</font></td>';
     $html.=chr(13).'          <td><font size="1"><b>Área</font></td>';
@@ -245,7 +245,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="1">&nbsp;</td>';
     $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Idiomas</td>';
     $html.=chr(13).'<tr><td align="center" colspan=3>';
-    $html.=chr(13).'    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $html.=chr(13).'    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $html.=chr(13).'          <td><font size="1"><b>Idioma</font></td>';
     $html.=chr(13).'          <td><font size="1"><b>Leitura</font></td>';
@@ -306,7 +306,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
         if (count($RS1)>0) {
           $html.=chr(13).'      <tr><td valign="top"><font size="1">Cargos:<br></td></tr>';
           $html.=chr(13).'      <tr><td align="center" colspan="3">';
-          $html.=chr(13).'        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+          $html.=chr(13).'        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
           $html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
           $html.=chr(13).'            <td><font size="1"><b>Área</font></td>';
           $html.=chr(13).'            <td><font size="1"><b>Especialidades</font></td>';

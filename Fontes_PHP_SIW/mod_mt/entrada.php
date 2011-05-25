@@ -376,7 +376,7 @@ function Inicial() {
     }
     ShowHTML('    <td colspan=2 nowrap align="right"><b>'.exportaOffice().'Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Fornecedor','nm_fornecedor_ind').'</b></td>');
@@ -747,7 +747,7 @@ function Geral() {
         reset($RS);
         $colspan = 0;
         ShowHTML('      <tr><td align="center" colspan="2">');
-        ShowHTML('        <table id="tudo" width="100%" BORDER=1 bordercolor="#666666">');
+        ShowHTML('        <table class="tudo" width="100%" BORDER=1 bordercolor="#666666">');
         ShowHTML('        <tr align="center">');
         ShowHTML('          <td rowspan=2><b>Item</b></td>');
         ShowHTML('          <td rowspan=2><b>Nome</b></td>');
@@ -823,7 +823,7 @@ function Geral() {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Arquivos não anexados</b></td></tr>');
       } else {
         ShowHTML('      <tr><td align="center" colspan="2">');
-        ShowHTML('        <table id="tudo" width="100%" BORDER=1 bordercolor="#666666">');
+        ShowHTML('        <table class="tudo" width="100%" BORDER=1 bordercolor="#666666">');
         ShowHTML('        <tr align="center">');
         ShowHTML('          <td><b>Ordem</td>');
         ShowHTML('          <td><b>Título</td>');
@@ -1027,7 +1027,7 @@ function Itens() {
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>'.exportaOffice().'Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Item','ordem').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
@@ -1259,7 +1259,7 @@ function Anexos() {
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Ordem</td>');
     ShowHTML('          <td><b>Título</td>');
@@ -1747,7 +1747,7 @@ function Atender() {
   $RS1 = SortArray($RS1,'nm_tipo_material','asc','nome','asc'); 
   ShowHTML('<tr><td colspan=4><b>Informe para cada item a quantidade autorizada para compra:</b>');
   ShowHTML('<tr><td align="center" colspan=4>');  
-  ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
   ShowHTML('          <td rowspan=2><b>Tipo</td>');
   ShowHTML('          <td rowspan=2><b>Código</td>');

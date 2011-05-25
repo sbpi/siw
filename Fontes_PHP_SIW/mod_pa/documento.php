@@ -473,7 +473,7 @@ function Inicial() {
 
     ShowHTML('    '.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . (($w_embed == 'WORD') ? 1 : $conTableBorder) . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . (($w_embed == 'WORD') ? 1 : $conTableBorder) . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     if ($w_embed != 'WORD') {
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . LinkOrdena('Protocolo', 'protocolo') . '</td>');
@@ -2326,7 +2326,7 @@ function BuscaAssunto() {
     if ($w_nome > '' || $w_codigo > '') {
       ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
       ShowHTML('<tr><td>');
-      ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
+      ShowHTML('    <TABLE class="tudo" WIDTH="100%" border=0>');
       if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
@@ -2749,7 +2749,7 @@ function Tramitacao() {
     }
     ShowHTML('    <td colspan=2 align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) {
       ShowHTML('          <td class="remover"></td>');
@@ -3677,7 +3677,7 @@ function Recebimento() {
     ShowHTML('    <td align="right">');
     ShowHTML('   '.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Destino', 'sg_unid_dest') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Última Procedência', 'sg_unid_origem') . '</td>');
@@ -4135,7 +4135,7 @@ function BuscaProtocolo() {
     if ($l_exibe > '') {
       ShowHTML('<tr><td align="right"><b>Registros: ' . count($RS1));
       ShowHTML('<tr><td>');
-      ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
+      ShowHTML('    <TABLE class="tudo" WIDTH="100%" border=0>');
       if (count($RS1) <= 0) {
         ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {

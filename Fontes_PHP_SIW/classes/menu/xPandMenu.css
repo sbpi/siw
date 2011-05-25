@@ -15,12 +15,12 @@
 
 }
 
-#tudo tr.highlight {
+.tudo tr.highlight {
   background-color: #B8DFF5;
 /*  color:#fff;*/
 }
 
-#tudo tr.highlight a{
+.tudo tr.highlight a{
   background-color: #B8DFF5;
 /*  color:#fff;*/
 }

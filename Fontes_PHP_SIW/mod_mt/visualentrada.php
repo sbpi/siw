@@ -57,7 +57,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       reset($RS1);
       $colspan = 0;
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
-      $l_html.=chr(13).'        <table id="tudo" width=100% border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'        <table class="tudo" width=100% border="1" bordercolor="#00000">';
       $l_html.=chr(13).'        <tr align="center">';
       $l_html.=chr(13).'          <td rowspan=2><b>Item</b></td>';
       $l_html.=chr(13).'          <td rowspan=2><b>Nome</b></td>';
@@ -130,7 +130,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
-      $l_html.=chr(13).'        <table id="tudo" width=100% border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'        <table class="tudo" width=100% border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Ordem</b></td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Título</b></td>';

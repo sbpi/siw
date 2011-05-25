@@ -166,7 +166,7 @@ function Help() {
               $SQL = new db_getTramiteList; $RS_Tramite = $SQL->getInstanceOf($dbms, f($row1,'sq_menu'),null, null, null);
               if (count($RS_Tramite) > 0) {
                 ShowHTML('    <DD><BR>Fases:');
-                ShowHTML('    <DD><TABLE id="tudo" width="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+                ShowHTML('    <DD><TABLE class="tudo" width="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                 ShowHTML('        <tr align="center" valign="top">');
                 ShowHTML('          <td width="5%"><b>Ordem</td>');
                 ShowHTML('          <td width="20%"><b>Nome</td>');
@@ -428,7 +428,7 @@ function Menu() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
     ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
     ShowHTML('          <td><b>Módulo</td>');
     ShowHTML('          <td><b>Objetivo geral</td>');

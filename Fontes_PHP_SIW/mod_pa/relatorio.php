@@ -209,7 +209,7 @@ function Tramitacao() {
     }
     ShowHTML('    <td align="right" nowrap>'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=2>');
-    ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td><b>' . linkOrdena('Guia', 'guia_tramite') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Destino', 'nm_destino') . '</td>');

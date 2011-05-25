@@ -365,7 +365,7 @@ function Benef() {
             if ($_REQUEST['w_nome']>"") {
                 $SQL = new db_getPersonList; $RS = $SQL->getInstanceOf($dbms,$w_cliente,null,"PESSOA",$_REQUEST['w_nome'],null,null,null);
                 ShowHTML('<tr><td align="center" colspan=3>');
-                ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+                ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                 ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
                 ShowHTML('          <td><b>Nome</font></td>');
                 ShowHTML('          <td><b>Nome resumido</font></td>');
@@ -925,12 +925,12 @@ function BuscaUsuario() {
     if ($w_nome>'' || $w_sg_unidade>'') {
         ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
         ShowHTML('<tr><td>');
-        ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
+        ShowHTML('    <TABLE class="tudo" WIDTH="100%" border=0>');
         if (count($RS)==0) {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
-            ShowHTML('        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+            ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
             ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
             ShowHTML('            <td><b>Nome resumido</font></td>');
             ShowHTML('            <td><b>Nome</font></td>');
@@ -1049,12 +1049,12 @@ function BuscaPessoa() {
     if ($p_nome!='' || $p_cpf!='' || $p_cnpj!='') {
         ShowHTML('<tr><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
         ShowHTML('<tr><td>');
-        ShowHTML('    <TABLE id="tudo" WIDTH="100%" border=0>');
+        ShowHTML('    <TABLE class="tudo" WIDTH="100%" border=0>');
         if (count($RS)==0) {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
             ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
-            ShowHTML('        <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+            ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
             ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
             ShowHTML('            <td><b>CPF/CNPJ</font></td>');
             ShowHTML('            <td><b>Nome</font></td>');

@@ -359,7 +359,7 @@ function destacaLinha(){
   //alert('oi');
   if (typeof jQuery != 'undefined') {  
     $(document).ready(function() {
-      $("#tudo tr").hover(
+      $(".tudo tr").hover(
         function(){
           $(this).addClass("highlight");
         },

@@ -890,7 +890,7 @@ function Gerencial() {
 function ImprimeCabecalho() {
   extract($GLOBALS);
   ShowHTML('<tr><td align="center">');
-  ShowHTML('    <TABLE id="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
     case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><b>Etapa</font></td>');              break;

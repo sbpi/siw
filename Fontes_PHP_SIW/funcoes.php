@@ -379,14 +379,16 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina, $l_lspan=null, $l_rspan=n
 // -------------------------------------------------------------------------
 function exportaOffice() {
   extract($GLOBALS);
-  return('<form style="vertical-align: bottom; float: right;" method="post" id="temp" action="'.$conRootSIW.'/funcoes/arquivoExcel.php">'.
-         '  <img id="botaoExcel" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.gif" style="float: left;" alt="img" />'.
-         '  <img id="botaoWord" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Word" SRC="images/word.gif" style="float: left;" alt="img" />'.
-         '  <input type="hidden" name="opcao" id="opcao" value="E">'.
-         '  <input type="hidden" name="caminho" id="caminho" value="'.$conRootSIW.'">'.
-         '  <input type="hidden" id="texto" name="texto"/>'.
-         '  <input type="hidden" id="conteudo" name="conteudo"/>'.
-         '</form>');
+  if ($P1 != '3') {
+    return('<form style="vertical-align: bottom; float: right;" method="post" id="temp" action="' . $conRootSIW . '/funcoes/arquivoExcel.php">' .
+    '  <img id="botaoExcel" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.gif" style="float: left;" alt="img" />' .
+    '  <img id="botaoWord" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Word" SRC="images/word.gif" style="float: left;" alt="img" />' .
+    '  <input type="hidden" name="opcao" id="opcao" value="E">' .
+    '  <input type="hidden" name="caminho" id="caminho" value="' . $conRootSIW . '">' .
+    '  <input type="hidden" id="texto" name="texto"/>' .
+    '  <input type="hidden" id="conteudo" name="conteudo"/>' .
+    '</form>');
+  }
 }
 
 // =========================================================================
