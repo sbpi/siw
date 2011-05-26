@@ -828,7 +828,7 @@ function Geral() {
 
     if (nvl($w_copia,'')=='') {
       // Recupera dados do comprovante
-      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
       $RS = SortArray($RS,'sq_tipo_documento','asc');
       foreach ($RS as $row) {$RS=$row; break;}
       $w_chave_doc           =  f($RS,'sq_lancamento_doc');
@@ -2176,7 +2176,7 @@ function Concluir() {
   // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
   if (strpos('REEMB',substr($SG,3))!==false) {
     // Recupera os documentos do lançamento
-    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     
     if (count($RS_Doc)>0) {
       foreach($RS_Doc as $row) {

@@ -85,7 +85,7 @@ $p_ordena       = lower($_REQUEST['p_ordena']);
 $w_SG           = upper($_REQUEST['w_SG']);
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -325,7 +325,7 @@ function Inicial() {
       } 
     } 
     ShowHTML('    <td align="right">');
-    ShowHTML('    <b>'.exportaOffice().'Registros: '.count($RS));
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

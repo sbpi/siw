@@ -98,7 +98,7 @@ $w_dir          = 'mod_dm/';
 $w_troca        = $_REQUEST['w_troca'];
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 
 // Declaração de variáveis
@@ -424,7 +424,7 @@ function Inicial() {
      // ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     //} 
      
-    ShowHTML('   '.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS));
+    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1533,7 +1533,7 @@ function Interessados() {
     ShowHTML('          <td><b>Pessoa</td>');
     ShowHTML('          <td><b>Visao</td>');
     ShowHTML('          <td><b>Envia e-mail</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1546,7 +1546,7 @@ function Interessados() {
         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>');
         ShowHTML('        <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>');
         ShowHTML('        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -1670,7 +1670,7 @@ function Areas() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Área/Instituição</td>');
     ShowHTML('          <td><b>Papel</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1682,7 +1682,7 @@ function Areas() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'papel').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -2431,6 +2431,7 @@ function Grava() {
   $w_tipo    = '';
   $w_nome    = '';
   Cabecalho();
+  head();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');

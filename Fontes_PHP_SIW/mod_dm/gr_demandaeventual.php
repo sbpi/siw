@@ -81,7 +81,7 @@ $w_dir          = 'mod_dm/';
 $w_troca        = upper($_REQUEST['w_troca']);
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 
 // Declaração de variáveis

@@ -803,7 +803,7 @@ function Geral() {
 
     if (nvl($w_copia,'')=='') {
       // Recupera dados do comprovante
-      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
       $RS = SortArray($RS,'sq_tipo_documento','asc');
       foreach ($RS as $row) {$RS=$row; break;}
       $w_chave_doc           =  f($RS,'sq_lancamento_doc');
@@ -869,7 +869,7 @@ function Geral() {
   } 
   
   // Recupera os documentos do lançamento financeiro
-  $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$w_chave_vinc,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$w_chave_vinc,null,null,null,null,null,null,'DOCS');
   $RS_Docs = SortArray($RS_Docs,'data','asc');
   if (count($RS_Docs)==1) {
     foreach($RS_Docs as $row) $w_sq_documento = f($row,'sq_lancamento_doc');
@@ -1670,11 +1670,11 @@ function Documentos() {
     $w_tipo                 = $_REQUEST['w_tipo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null);
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
     $w_numero               = f($RS,'numero');
@@ -1893,11 +1893,11 @@ function RubricaDoc() {
     $w_sq_rubrica_destino   = $_REQUEST['w_sq_rubrica_destino'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null);
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
     $w_numero               = f($RS,'numero');
@@ -2279,7 +2279,7 @@ function Itens() {
   ShowHTML('          <td>Forma de pagamento: <b>'.f($RS1,'nm_forma_pagamento').' </b></td>');
   ShowHTML('          <td>Vencimento: <b>'.FormataDataEdicao(f($RS1,'vencimento')).' </b></td>');
   ShowHTML('          <td>Valor do pagamento: <b>'.number_format(Nvl(f($RS1,'valor'),0),2,',','.').' </b></td>');
-  $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null);
+  $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null,null,null,null,null,null);
   foreach ($RS2 as $row2) {$RS2=$row2; break;}
   ShowHTML('      <tr valign="top">');
   ShowHTML('          <td>Documento: <b>'.f($RS2,'numero').' </b></td>');
@@ -2422,7 +2422,7 @@ function Notas() {
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
 
   // Recupera os dados do endereço informado
-  $sql = new db_getLancamentoDoc; $RS_Lanc = $sql->getInstanceOf($dbms,$w_chave,null,'NOTA');
+  $sql = new db_getLancamentoDoc; $RS_Lanc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'NOTA');
   $RS_Lanc = SortArray($RS_Lanc,'data','asc');
    
   Cabecalho();
@@ -3144,7 +3144,7 @@ function Concluir() {
     $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
 
     // Recupera os documentos do lançamento
-    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     
     if (count($RS_Doc)>0) {
       foreach($RS_Doc as $row) {

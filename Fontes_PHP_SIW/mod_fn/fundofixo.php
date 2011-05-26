@@ -902,7 +902,7 @@ function Geral() {
       $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null,null,null,null);
       if (count($RS)>0) {
         if (substr($SG,0,3)=='FNR') {
-          $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,nvl($w_chave,0),null,null);
+          $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,nvl($w_chave,0),null,null,null,null,null,null,null);
           if(count($RS2)>0) {
             ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
             ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
@@ -2013,7 +2013,7 @@ function Concluir() {
   $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
 
   // Recupera os documentos do lançamento
-  $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     
   if (count($RS_Doc)>0) {
     foreach($RS_Doc as $row) {

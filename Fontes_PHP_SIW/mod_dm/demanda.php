@@ -94,7 +94,7 @@ $w_dir          = 'mod_dm/';
 $w_troca        = $_REQUEST['w_troca'];
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -524,11 +524,11 @@ function Inicial() {
                 // Se for execução
                 if ($w_usuario==f($row,'executor')) {
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a demanda, sem enviá-la.">AN</A>&nbsp');
-                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da demanda.">CO</A>&nbsp');
                 } else {
                   if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
+                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
                   } else {
                     ShowHTML('          ---&nbsp;');
                   }
@@ -1642,11 +1642,14 @@ function Encaminhamento() {
 
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
+    
+    $w_tramite      = $_REQUEST['w_tramite'];
     $w_destinatario = $_REQUEST['w_destinatario'];
     $w_novo_tramite = $_REQUEST['w_novo_tramite'];
     $w_despacho     = $_REQUEST['w_despacho'];
   } else {
     $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'GDGERAL');
+    $w_tramite      = f($RS,'sq_siw_tramite');
     $w_novo_tramite = f($RS,'sq_siw_tramite');
   } 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
@@ -2147,6 +2150,7 @@ function Grava() {
   $w_tipo    = '';
   $w_nome    = '';
   Cabecalho();
+  head();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');

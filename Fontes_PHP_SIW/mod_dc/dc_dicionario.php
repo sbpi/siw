@@ -67,6 +67,7 @@ include_once($w_dir_volta.'funcoes/selecaoSP.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
+// Declaração de variáveis
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
@@ -85,7 +86,7 @@ $w_copia        = upper($_REQUEST['w_copia']);
 $p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);

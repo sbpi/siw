@@ -84,7 +84,7 @@ $w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -1162,9 +1162,8 @@ function TipoRestricao() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>'.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS).'</b>');
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('<div class="tudo">');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
@@ -1192,7 +1191,6 @@ function TipoRestricao() {
     } 
     ShowHTML('      </center>');
     ShowHTML('    </table>');
-    ShowHTML('    </div>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {

@@ -318,7 +318,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   }
     
   // Notas
-  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,'NOTA');
+  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'NOTA');
   $RS = SortArray($RS,'data','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -364,7 +364,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   } 
 
   // Documentos
-  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
   $RS = SortArray($RS,'data','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  

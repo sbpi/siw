@@ -853,7 +853,7 @@ function Geral() {
 
     if (count($RS_Rub)>0 && nvl($w_sq_projeto_rubrica,'')=='') {
       // Recupera os documentos do lançamento
-      $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
       if (count($RS_Doc)>0) {
         foreach($RS_Doc as $row) {
           $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
@@ -1113,7 +1113,7 @@ function Geral() {
           $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null,null,null,null);
           if (count($RS)>0) {
             if (substr($SG,0,3)=='FNR') {
-              $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,nvl($w_chave,0),null,null);
+              $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,nvl($w_chave,0),null,null,null,null,null,null,null);
               if(count($RS2)>0) {
                 ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
                 ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
@@ -1291,7 +1291,7 @@ function Geral() {
         ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Documentos</b>&nbsp;&nbsp;[<A class="box SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Ajustar</A>]&nbsp');
       }
       ShowHTML('    <tr><td colspan="3"><table width="100%" bgcolor="#FFFFFF">');
-      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
       $RS = SortArray($RS,'data','asc');
       if (count($RS)==0) {
         ShowHTML('      <tr><td colspan=2 align=center>Documentos não informados');
@@ -2046,11 +2046,11 @@ function Documentos() {
     $w_tipo                 = $_REQUEST['w_tipo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null);
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
     $w_numero               = f($RS,'numero');
@@ -2339,11 +2339,11 @@ function RubricaDoc() {
     $w_sq_rubrica_destino   = $_REQUEST['w_sq_rubrica_destino'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null);
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
     $w_numero               = f($RS,'numero');
@@ -2724,7 +2724,7 @@ function Itens() {
   ShowHTML('          <td>Forma de pagamento: <b>'.f($RS1,'nm_forma_pagamento').' </b></td>');
   ShowHTML('          <td>Vencimento: <b>'.FormataDataEdicao(f($RS1,'vencimento')).' </b></td>');
   ShowHTML('          <td>Valor do pagamento: <b>'.number_format(Nvl(f($RS1,'valor'),0),2,',','.').' </b></td>');
-  $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null);
+  $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null,null,null,null,null,null);
   foreach ($RS2 as $row2) {$RS2=$row2; break;}
   ShowHTML('      <tr valign="top">');
   ShowHTML('          <td>Documento: <b>'.f($RS2,'numero').' </b></td>');
@@ -2861,7 +2861,7 @@ function Notas() {
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
 
   // Recupera os dados do endereço informado
-  $sql = new db_getLancamentoDoc; $RS_Lanc = $sql->getInstanceOf($dbms,$w_chave,null,'NOTA');
+  $sql = new db_getLancamentoDoc; $RS_Lanc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'NOTA');
   $RS_Lanc = SortArray($RS_Lanc,'data','asc');
    
   Cabecalho();
@@ -3900,7 +3900,7 @@ function Concluir() {
     $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
 
     // Recupera os documentos do lançamento
-    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     
     if (count($RS_Doc)>0) {
       foreach($RS_Doc as $row) {

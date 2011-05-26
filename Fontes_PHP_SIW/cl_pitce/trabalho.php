@@ -861,6 +861,7 @@ function Main() {
   case 'ALERTA':        Alerta();       break;
   default:
     Cabecalho();
+    head();
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

@@ -41,6 +41,11 @@ if ($_POST['suporte']=='y') {
   $_SESSION['SQ_PESSOA'] = $_POST['sq_pessoa'];
 }
 
+
+//Inicializa objeto de conexão e executa a query
+if (nvl($_REQUEST['dataBank'],'')!='') {
+  $conObj = new abreSessao; $conObj = $conObj->getInstanceOf($_REQUEST['dataBank']);
+}
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -59,15 +64,10 @@ $w_dir          = 'mod_dc/';
 $w_troca        = $_REQUEST['w_troca'];
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
-//Inicializa objeto de conexão e executa a query
-if (nvl($_REQUEST['dataBank'],'')!='') {
-  $conObj = new abreSessao; $conObj = $conObj->getInstanceOf($_REQUEST['dataBank']);
-}
 
 // Se for acompanhamento, entra na filtragem  
 if (nvl($O,'')=='') {

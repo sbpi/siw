@@ -249,7 +249,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   }
     
   // Documentos
-  $sql = new db_getLancamentoDoc; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $RS1 = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
   $RS1 = SortArray($RS1,'data','asc');
   if (count($RS1)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -439,7 +439,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   foreach($RS1 as $row) {
     foreach($row as $k => $v) $row1[$k] = $v;
     // Recupera o comprovante ligado ao pagamento. Pagamentos de fundo fixo só podem ter um comprovante ligados a eles
-    $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null,'DOCS');
     foreach($RS2 as $row2) { $RS2 = $row2; break; }
     $row1['data_lancamento'] = f($RS2,'data');
     $row1['numero'] = f($RS2,'numero');

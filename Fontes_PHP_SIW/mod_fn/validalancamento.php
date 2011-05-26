@@ -49,7 +49,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
-  $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
+  $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,'DOCS');
   if (count($l_rs1)<=0) {
     $l_existe_rs1=0;
   } else {
@@ -96,7 +96,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   // 4 - Se o lançamento tem notas, verifica se o valor do lançamento é igual à soma dos valores das notas
-  $sql = new db_getLancamentoDoc; $l_rs3 = $sql->getInstanceOf($dbms,$l_chave,null,'NOTA');
+  $sql = new db_getLancamentoDoc; $l_rs3 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,'NOTA');
   if (count($l_rs3)<=0) {
     $l_existe_rs3=0;
   } else { 
@@ -160,7 +160,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     }
 
     // 4 - Recupera os documentos associados ao lançamento
-    $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,'DOCS');
     if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
     if ($l_existe_rs1==0) {
       // 5 - Verifica se foi informado pelo menos um documento

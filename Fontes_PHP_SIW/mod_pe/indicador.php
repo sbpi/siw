@@ -87,7 +87,7 @@ $w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
 
 // Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -226,7 +226,7 @@ function Inicial() {
     ShowHTML('          <td><b>'.linkOrdena('Vincula meta','nm_vincula_meta').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Exibe mesa','nm_exibe_mesa').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Ativo','nm_ativo').'</td>');
-    ShowHTML('          <td class="remover" ><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -547,7 +547,7 @@ function VisualDados() {
           // Se tiver mais de uma aferição, mostra gráfico de linha
           ShowHTML('<tr><td><table border=0 width="100%"><tr valign="top">');
           ShowHTML('<td width="50%"><table border=0 width="50%" align="center">');
-          ShowHTML('  <tr><td><td align="right"><b>Registros: '.count($RS));
+          ShowHTML('  <tr><td><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
           ShowHTML('  <tr><td align="center" colspan=3>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -617,7 +617,7 @@ function VisualDados() {
               );
       ShowHTML('</table>');
     } else {
-      ShowHTML('<tr><td><td align="right"><b>Registros: '.count($RS));
+      ShowHTML('<tr><td><td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
       ShowHTML('<tr><td align="center" colspan=3>');
       ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -982,7 +982,7 @@ function AferidorPerm() {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Você só pode registrar e alterar aferições de indicadores cujos períodos de permissão abranjam a data de hoje.<li>As aferiçoes que você inserir ou alterar devem ter período de referência contido em um dos períodos listados abaixo.</ul></b></font></td>');
     ShowHTML('<tr><td>');
     ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="middle">');
@@ -2034,14 +2034,14 @@ function CronMeta() {
       ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     } else {
       ShowHTML('<tr><td><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-      ShowHTML('        <td align="right"><b>Registros: '.count($RS));
+      ShowHTML('        <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     }
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td colspan=2><b>Período</td>');
     ShowHTML('          <td colspan=2><b>Resultado</td>'); 
-    if ($w_edita=='S') ShowHTML('          <td rowspan=2 valign="top" width="20%" class="remover"><b>Operações</td>');
+    if ($w_edita=='S') ShowHTML('          <td class="remover" rowspan=2 valign="top" width="20%" class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
