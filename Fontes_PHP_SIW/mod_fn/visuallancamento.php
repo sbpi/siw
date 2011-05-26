@@ -386,7 +386,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Número</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Data</b></td>';
     //$l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Série</b></td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</b></td>';
     //if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
     //  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Patrimônio</b></td>';
     //}
@@ -417,7 +417,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'          </tr>';
         if (count($RS3)>0)   {
           if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
-            $l_html.=chr(13).'              <tr align="center"><td colspan=3 align="center">';
+            $l_html.=chr(13).'              <tr align="center"><td colspan="3" align="center">';
             $l_html.=chr(13).documentorubrica($RS3,$w_tipo_rubrica);
           } else {
             $l_html.=chr(13).'              <tr align="center"><td colspan="'.((Nvl($w_tipo_rubrica,0)==4) ? '3' : '4').'" align="center">';
@@ -528,7 +528,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if (count($RS)>1) { 
       if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html.=chr(13).'      <tr valign="top">';
-      if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
+      if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
         $l_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
       } else {
         $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '3' : '4').'"><b>Total</b></td>';

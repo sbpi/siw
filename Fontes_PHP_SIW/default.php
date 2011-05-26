@@ -1,7 +1,7 @@
 <?php
 // Garante que a sessão será reinicializada.
 session_start();
-if (isset($_SESSION['LOGON1'])) {
+if (isset($_SESSION['LOGON'])) {
     echo '<SCRIPT LANGUAGE="JAVASCRIPT">';
     echo ' alert("O sistema já está em uso neste computador, usando este navegador!\nFeche todas as janelas deste navegador e tente novamente.\nUSE SEMPRE A OPÇÃO \"SAIR DO SISTEMA\" para encerrar o uso da aplicação.");';
     echo ' history.back();';

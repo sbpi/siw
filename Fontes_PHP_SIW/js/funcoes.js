@@ -375,7 +375,7 @@ destacaLinha();
 
 function exportarArquivo(id){
   $(document).ready(function() {
-    var elemento = "#"+id;
+    var elemento = "."+id;
     //$("#nada").remove();
     $("#botaoExcel").click(function() {
       var texto = $("<div>").append( $(elemento).eq(0).clone()).html();

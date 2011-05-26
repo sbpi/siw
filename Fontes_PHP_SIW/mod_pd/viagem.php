@@ -122,14 +122,6 @@ include_once('validaviagem.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON'] != 'Sim') {
-  EncerraSessao();
-}
-
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -147,6 +139,13 @@ $w_pagina = 'viagem.php?par=';
 $w_Disabled = 'ENABLED';
 $w_dir = 'mod_pd/';
 $w_troca = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if (strpos('PDANEXO,PDDIARIA,PDTRECHO,PDVINC', nvl($SG, 'nulo')) !== false) {
   if ($O != 'I' && $_REQUEST['w_chave_aux'] == '' && $_REQUEST['w_demanda'] == '' && $_REQUEST['w_trechos'] == '' && $_REQUEST['w_troca'] == '')
     $O = 'L';

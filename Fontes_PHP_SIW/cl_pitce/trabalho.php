@@ -48,11 +48,6 @@ include_once($w_dir_volta.'visualalerta.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
@@ -80,6 +75,12 @@ $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'trabalho.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_pitce/';
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 $w_cliente      = RetornaCliente();
 $w_usuario      = RetornaUsuario();

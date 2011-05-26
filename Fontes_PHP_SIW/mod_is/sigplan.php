@@ -92,10 +92,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoTabela.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -120,6 +117,13 @@ $p_dt_fim       = $_REQUEST['p_dt_fim'];
 $p_ref_ini      = $_REQUEST['p_ref_ini'];
 $p_ref_fim      = $_REQUEST['p_ref_fim'];
 $p_ordena       = lower($_REQUEST['p_ordena']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if ($O=='') {
   if ($par=='REL_PPA' || $par=='REL_INICIATIVA')    $O='P';
   else                                              $O='L';

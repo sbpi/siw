@@ -43,13 +43,6 @@ include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON'] != 'Sim') {
-  EncerraSessao();
-}
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = upper($_REQUEST['par']);
@@ -61,6 +54,12 @@ $TP = $_REQUEST['TP'];
 $SG = upper($_REQUEST['SG']);
 $R = $_REQUEST['R'];
 $O = upper($_REQUEST['O']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 $p_programa    = $_REQUEST['p_programa'];
 $p_projeto     = $_REQUEST['p_projeto'];

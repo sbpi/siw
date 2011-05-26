@@ -23,7 +23,7 @@ create or replace procedure SP_PutMtEntrada
    w_chave        mt_entrada.sq_mtentrada%type             := p_chave;
    w_solicitacao  siw_solicitacao.sq_siw_solicitacao%type  := p_solicitacao;
    w_documento    fn_lancamento_doc.sq_lancamento_doc%type := p_documento;
-   w_existe       number(1);
+   w_existe       number(4);
    w_arq          varchar2(4000) := ', ';
    
    w_cd_financ    varchar2(60) := null;
@@ -81,7 +81,7 @@ create or replace procedure SP_PutMtEntrada
 
 
 begin
-   If p_solicitacao is null or p_documento is null Then
+   If p_solicitacao is null or p_documento is null or p_copia is not null Then
       -- Recupera a chave da solicitação e do documento
       w_existe := 0;
       for crec in c_dados loop
@@ -93,11 +93,13 @@ begin
       end loop;
       
       If w_existe = 0 Then
+          
           -- Cria o lançamento financeiro
           for crec in c_financeiro_geral loop
-              w_cd_financ := crec.codigo_interno;
-              
-              sp_putfinanceirogeral(
+              If p_copia is null Then
+                 w_cd_financ := crec.codigo_interno;
+                  
+                 sp_putfinanceirogeral(
                                  p_operacao           => 'I',
                                  p_cliente            => crec.cliente,
                                  p_chave              => null,
@@ -125,6 +127,8 @@ begin
                                  p_codigo_interno     => w_cd_financ
                                 );
 
+              End If;
+              
               -- Atualiza os dados do beneficiário
               update fn_lancamento set pessoa = p_fornecedor where sq_siw_solicitacao = w_solicitacao;
 
@@ -151,7 +155,7 @@ begin
           End Loop;
          
       End If;
-   Else
+   Elsif p_copia is null Then
       -- Atualiza os dados do documento
       update fn_lancamento_doc
          set sq_tipo_documento = p_tipo_doc,

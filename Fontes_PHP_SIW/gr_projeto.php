@@ -50,13 +50,6 @@ include_once('funcoes/selecaoProjeto.php');
 //                   = V   : Geração de gráfico
 //                   = W   : Geração de documento no formato MS-Word (Office 2003)
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -74,6 +67,12 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = '';
 $w_dir_volta    = '';
 $w_troca        = upper($_REQUEST['w_troca']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') $O='P';
 

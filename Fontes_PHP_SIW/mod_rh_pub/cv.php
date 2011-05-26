@@ -58,16 +58,10 @@ if(nvl($_REQUEST['p_portal'],'nulo')!='nulo')  $_SESSION['PORTAL']  = $_REQUEST[
 if(nvl($_REQUEST['p_logon'],'nulo')!='nulo')   $_SESSION['LOGON']   = $_REQUEST['p_LogOn'];
 if(nvl($_REQUEST['p_dbms'],'nulo')!='nulo')    $_SESSION['DBMS']    = $_REQUEST['p_dbms'];
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($dbms,$_SESSION['DBMS']);
 $w_troca=$_REQUEST['w_troca'];
 $w_copia=$_REQUEST['w_copia'];
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-
 $par          = upper($_REQUEST['par']);
 $w_pagina     = 'cv.php?par=';
 $w_dir        = 'mod_rh_pub/';
@@ -85,6 +79,12 @@ $TP           = $_REQUEST['TP'];
 $R            = upper($_REQUEST['R']);
 $w_assinatura = upper($_REQUEST['w_assinatura']);
   
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if ($_SESSION['PORTAL'] >'') $_SESSION['SQ_PESSOA'] = $w_usuario;
 
 if (nvl($SG,'nulo')!='nulo' && nvl($SG,'nulo')!='CVCARGOS') $w_menu = RetornaMenu($w_cliente,$SG);

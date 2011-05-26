@@ -32,15 +32,6 @@ header('Expires: '.-1500);
 //                   = V   : Geração de gráfico
 //                   = W   : Geração de documento no formato MS-Word (Office 2003)
 
-// Verifica se o usuário está autenticado
-
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -57,6 +48,12 @@ $w_menu     = $_REQUEST['w_menu'];
 $w_Assinatura   = upper(${"w_Assinatura"});
 $w_pagina       = "help.php?par=";
 $w_Disabled     = "ENABLED";
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
@@ -432,7 +429,7 @@ function Menu() {
     ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
     ShowHTML('          <td><b>Módulo</td>');
     ShowHTML('          <td><b>Objetivo geral</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
@@ -443,7 +440,7 @@ function Menu() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'objetivo_geral').'</td>');
-        ShowHTML('        <td nowrap>');
+        ShowHTML('        <td nowrap class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Inicial&R='.$w_pagina.$par.'&O=L&w_sq_modulo='.f($row,'sq_modulo').'&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Detalhar</A> ');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');

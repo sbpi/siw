@@ -38,10 +38,7 @@ include_once($w_dir_volta.'classes/sp/dml_putAcaoPPA.php');
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -57,6 +54,13 @@ $w_pagina       = 'siafi.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_or_pub/';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Configura o caminho para gravação física de arquivos<u></u>
 $p_responsavel  = upper($_REQUEST['p_responsavel']);
 $p_dt_ini       = $_REQUEST['p_dt_ini'];

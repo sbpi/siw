@@ -68,12 +68,6 @@ include_once($w_dir_volta.'funcoes/selecaoTipoArquivoTab.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -91,6 +85,12 @@ $w_Disabled   = 'ENABLED';
 $w_dir        = 'cl_renapi/';
 $w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($SG=='METASOLIC') {
   if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';

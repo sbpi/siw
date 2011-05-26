@@ -35,10 +35,7 @@ include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 //                   = P   : Filtragem
 //                   = V   : Geração de gráfico
 //                   = W   : Geração de documento no formato MS-Word (Office 2003)
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -56,6 +53,13 @@ $w_dir          = 'mod_is/';
 $w_troca        = $_REQUEST['w_troca'];
 $p_ordena       = lower($_REQUEST['p_ordena']);
 $p_agrega       = upper($_REQUEST['p_agrega']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if ($O=='') $O='P';
 switch ($O) {
   case 'V': $w_TP=$TP.' - Gráfico';     break;

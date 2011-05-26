@@ -75,12 +75,6 @@ include_once('validageral.php');
 //                   = P   : Pesquisa
 
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -97,6 +91,12 @@ $w_pagina       = 'geral.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_sr/';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Se for acompanhamento, entra na filtragem  
 if (nvl($O,'')=='') {

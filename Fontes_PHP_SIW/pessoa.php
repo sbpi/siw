@@ -47,12 +47,6 @@ include_once('funcoes/selecaoTipoAutenticacao.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
@@ -67,6 +61,13 @@ $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'pessoa.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 if (($par=='DESPESA' || $par=='TRECHO' || $par=='VISUAL') && $O=='A' && $_REQUEST['w_Handle']=='') $O='L';
 elseif($par=='FORNECEDORES' && ($O=='' || $O=='I' || $O=='A')) $O='P';
 

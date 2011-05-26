@@ -37,12 +37,14 @@
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
   
-  // Verifica se o usuário está autenticado
-  if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-  //Declaração de variáveis
-  $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
   $w_pagina     = 'calendario.php';  
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
   $w_cliente    = RetornaCliente();
   $w_usuario    = RetornaUsuario();
   $w_form       = $_REQUEST['form'];

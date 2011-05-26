@@ -74,12 +74,6 @@ if (nvl($_REQUEST['p_logon'],'nulo')!='nulo')   $_SESSION['LOGON']      = $_REQU
 if (nvl($_REQUEST['p_dbms'],'nulo')!='nulo')    $_SESSION['DBMS']       = $_REQUEST['p_dbms'];
 if (nvl($_REQUEST['w_usuario'],'nulo')!='nulo') $w_sq_pessoa            = $_REQUEST['w_usuario'];
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
 $O              = upper($_REQUEST['O']);
@@ -95,6 +89,12 @@ $p_pais         = upper($_REQUEST['p_pais']);
 $p_nome         = upper($_REQUEST['p_nome']);
 $p_ativo        = upper($_REQUEST['p_ativo']);
 $p_ordena       = $_REQUEST['p_ordena'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.

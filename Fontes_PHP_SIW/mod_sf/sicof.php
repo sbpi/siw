@@ -32,12 +32,6 @@ include_once($w_dir_volta.'classes/sp/db_getSF.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
 $w_dir          = 'mod_sf/';
@@ -52,6 +46,12 @@ $TP         = $_REQUEST['TP'];
 $SG         = upper($_REQUEST['SG']);
 $R          = upper($_REQUEST['R']);
 $O          = upper($_REQUEST['O']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 $p_cliente  = $_SESSION['P_CLIENTE'];
 $sq_pessoa  = $_SESSION['SQ_PESSOA'];

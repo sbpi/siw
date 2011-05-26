@@ -120,10 +120,6 @@ include_once('visualprojeto.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -140,6 +136,13 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_renapi/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = upper($_REQUEST['w_copia']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();

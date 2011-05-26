@@ -72,18 +72,18 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_mt/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') {
   // Se for acompanhamento, entra na filtragem

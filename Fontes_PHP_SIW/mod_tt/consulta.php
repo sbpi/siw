@@ -39,18 +39,11 @@ include_once('visualresumoligacaoparticular.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') EncerraSessao(); 
-
 $w_troca         = $_REQUEST['w_troca'];
 $w_copia         = $_REQUEST['w_copia'];
 $O               = $_REQUEST['R'];
 
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-
 $par       = upper($_REQUEST['par']);
 $P1        = nvl($_REQUEST['P1'],0);
 $P2        = nvl($_REQUEST['P2'],0);
@@ -67,6 +60,12 @@ $w_dir           = 'mod_tt/';
 $w_Disabled      = 'ENABLED';
 
 $p_ordena  = lower($_REQUEST['p_ordena']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') {
   if ($par=='PARTICULAR') $O='R';

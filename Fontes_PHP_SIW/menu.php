@@ -43,16 +43,16 @@ $SG         = upper($_REQUEST['SG']);
 $R          = lower($_REQUEST['R']);
 $O          = upper($_REQUEST['O']);
 
+$p_cliente  = $_SESSION['P_CLIENTE'];
+$sq_pessoa  = $_SESSION['SQ_PESSOA'];
+$w_pagina   = 'menu.php?par=';
+$w_ImagemPadrao='images/Folder/SheetLittle.gif';
+
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
-$p_cliente  = $_SESSION['P_CLIENTE'];
-$sq_pessoa  = $_SESSION['SQ_PESSOA'];
-$w_pagina   = 'menu.php?par=';
-$w_ImagemPadrao='images/Folder/SheetLittle.gif';
 
 if ($O=='' && $par=='TROCASENHA') { $O='A'; }
 

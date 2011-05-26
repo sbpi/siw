@@ -709,7 +709,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan=4>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1888,215 +1888,6 @@ function Concluir() {
 } 
 
 // =========================================================================
-// Rotina de preparação para envio de e-mail relativo a PCDs
-// Finalidade: preparar os dados necessários ao envio automático de e-mail
-// Parâmetro: p_solic: número de identificação da solicitação. 
-//            p_tipo:  1 - Inclusão
-//                     2 - Tramitação
-//                     3 - Conclusão
-// -------------------------------------------------------------------------
-function SolicMail($p_solic,$p_tipo) {
-  extract($GLOBALS);
-  global $w_Disabled;
-  //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $sql = new db_getMtMovim; $RSM = $sql->getInstanceOf($dbms,$w_cliente,$_SESSION['SQ_PESSOA'],$SG,5,
-          null,null,null,null,null,null,null,null,null,null,
-          $p_solic,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
-  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
-    $l_solic          = $p_solic;
-    $w_destinatarios  = '';
-    $w_resultado      = '';
-    $w_anexos         = array();
-
-    // Recupera os dados da PCD
-    $w_sg_tramite = f($RSM,'sg_tramite');
-    $w_nome       = f($RSM,'codigo_interno');
-
-    // Se for o trâmite de prestação de contas, envia e-mail ao proposto com o relatório de viagem anexado
-    if ($w_sg_tramite=='EE') {
-      // Configura o nome dos arquivo recebido e do arquivo registro
-      $w_file = $conFilePhysical.$w_cliente.'/'.'relatorio_'.str_replace('/','-',$w_nome).'.doc';
-      if (!is_writable($conFilePhysical.$w_cliente)) {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("ATENÇÃO: não há permissão de escrita no diretório.\\n'.$conFilePhysical.$w_cliente.'");');
-        ScriptClose();
-      } else {
-        if (!$handle = fopen($w_file,'w')) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: não foi possível abrir o arquivo para escrita.\\n'.$w_file.'");');
-          ScriptClose();
-        } else {
-          if (!fwrite($handle, RelatorioViagem($p_solic))) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert("ATENÇÃO: não foi possível inserir o conteúdo do arquivo.\\n'.$w_file.'");');
-            ScriptClose();
-            fclose($handle);
-          } else {
-            fclose($handle);
-            $w_anexos[0] = array(
-              "FileName"=>$w_file,
-              "Content-Type"=>"automatic/name",
-              "Disposition"=>"attachment"
-            );
-          }
-        }
-      }
-    } 
-    $w_html='<HTML>'.$crlf;
-    $w_html .= BodyOpenMail(null).$crlf;
-    $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
-    $w_html .= '<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
-    $w_html .= '    <table width="97%" border="0">'.$crlf;
-    if ($p_tipo==1) {
-      $w_html .= '      <tr valign="top"><td align="center"><b>INCLUSÃO DE PCD</b><br><br><td></tr>'.$crlf;
-    } elseif ($w_sg_tramite=='EE') {
-      $w_html .= '      <tr valign="top"><td align="center"><b>PRESTAÇÃO DE CONTAS DE PCD</b><br><br><td></tr>'.$crlf;
-    } elseif ($p_tipo==2) {
-      $w_html .= '      <tr valign="top"><td align="center"><b>TRAMITAÇÃO DE PCD</b><br><br><td></tr>'.$crlf;
-    } elseif ($p_tipo==3) {
-      $w_html .= '      <tr valign="top"><td align="center"><b>CONCLUSÃO DE PCD</b><br><br><td></tr>'.$crlf;
-    } 
-    if ($w_sg_tramite=='EE') {
-      $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>Conforme Portaria Nº 47/MPO 29/04/2003 – DOU 30/04/2003, é necessário elaborar o relatório de viagem e entregar os bilhetes de embarque.<br><br>Use o arquivo anexo para elaborar seu relatório de viagem e entregue-o assinado ao setor competente, juntamente com os bilhetes.</font></b><br><br><td></tr>'.$crlf;
-    } else {
-      $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
-    } 
-    $w_html .= $crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
-    $w_html .= $crlf.'    <table width="99%" border="0">';
-    // Identificação da PCD
-    $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA PCD</td>';
-    $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html .= $crlf.'          <tr valign="top">';
-    $w_html .= $crlf.'            <td>Proposto:<br><b>'.f($RSM,'nm_prop').'</b></td>';
-    $w_html .= $crlf.'            <td>Unidade proponente:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
-    $w_html .= $crlf.'          <tr valign="top">';
-    $w_html .= $crlf.'            <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-    $w_html .= $crlf.'            <td>Último retorno:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-    $w_html .= $crlf.'          </table>';
-    // Informações adicionais
-    if (Nvl(f($RSM,'descricao'),'')>'') {
-      if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= $crlf.'      <tr><td valign="top">Descrição da PCD:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
-    } 
-    $w_html .= $crlf.'    </table>';
-    $w_html .= $crlf.'</tr>';
-
-    //Recupera o último log
-    $sql = new db_getSolicLog; $RS = $sql->getInstanceOf($dbms,$p_solic,null,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
-    foreach ($RS as $row) { $RS = $row; break; }
-    $w_data_encaminhamento = f($RS,'phpdt_data');
-    if ($p_tipo==2) {
-      if ($w_sg_tramite=='EE') {
-        // Recupera o número máximo de dias para entrega da prestação de contas
-        $sql = new db_getPDParametro; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null);
-        foreach($RS1 as $row) { $RS1 = $row; break; }
-        $w_dias_prest_contas = f($RS1,'dias_prestacao_contas');
-
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ORIENTAÇÕES PARA PRESTAÇÃO DE CONTAS</td>';
-        $w_html .= $crlf.'        <tr><td valign="top" colspan="2" bgcolor="'.$w_TrBgColor.'">';
-        $w_html .= $crlf.'          <p>Esta PCD foi autorizada. Você deve entregar os documentos abaixo na unidade proponente (<b>'.f($RSM,'nm_unidade_resp').')</b>';
-        $w_html .= $crlf.'          <ul>';
-        $w_html .= $crlf.'          <li>Relatório de viagem (anexo) preenchido;';
-        $w_html .= $crlf.'          <li>Bilhetes de embarque;';
-        $w_html .= $crlf.'          <li>Notas fiscais de taxi, restaurante e hotel.';
-        $w_html .= $crlf.'          </ul>';
-        $w_html .= $crlf.'          <p>A data limite para entrega é até o último dia útil antes de: <b>'.substr(FormataDataEdicao(addDays(f($RSM,'fim'),$w_dias_prest_contas),4),0,-10).' </b>; caso contrário, suas viagens serão automaticamente bloqueadas pelo sistema.';
-
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCESSÃO</td>';
-        // Benefícios servidor
-        $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$p_solic,'PDGERAL');
-        if (count($RS1)>0) {
-          $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Benefícios recebidos pelo proposto</td>';
-          $w_html .= $crlf.'        <tr><td align="center" colspan="2">';
-          $w_html .= $crlf.'          <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-          $w_html .= $crlf.'            <tr>';
-          if (Nvl(f($RS1,'valor_alimentacao'),0)>0) $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Não</b></td>';
-          $w_html .= $crlf.'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS1,'valor_alimentacao'),0)).'</b></td>';
-          $w_html .= $crlf.'            <tr>';
-          if (Nvl(f($RS1,'valor_transporte'),0)>0) $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Não</b></td>';
-          $w_html .= $crlf.'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS1,'valor_transporte'),0)).'</b></td>';
-          $w_html .= $crlf.'          </table></td></tr>';
-        }  
-
-      } else {
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-        $w_html .= $crlf.'          <tr><td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-        if (Nvl(f($RS,'despacho'),'')!='') {
-          $w_html.=$crlf.'          <tr><td>Despacho:<br><b>'.CRLF2BR(f($RS,'despacho')).' </b></td>';
-        }
-        $w_html .= $crlf.'          </table>';
-      }
-    } 
-    $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
-    $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-    $w_html .= '      <tr valign="top"><td>'.$crlf;
-    $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
-    $w_html .= '      </td></tr>'.$crlf;
-    $w_html .= '      <tr valign="top"><td>'.$crlf;
-    $w_html .= '         Dados da ocorrência:<br>'.$crlf;
-    $w_html .= '         <ul>'.$crlf;
-    $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
-    $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
-    $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
-    $w_html .= '         </ul>'.$crlf;
-    $w_html .= '      </td></tr>'.$crlf;
-    $w_html .= '    </table>'.$crlf;
-    $w_html .= '</td></tr>'.$crlf;
-    $w_html .= '</table>'.$crlf;
-    $w_html .= '</BODY>'.$crlf;
-    $w_html .= '</HTML>'.$crlf;
-    // Prepara os dados necessários ao envio
-    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-    if ($p_tipo==1 || $p_tipo==3) {
-      // Inclusão ou Conclusão
-      if ($p_tipo==1) $w_assunto='Inclusão - '.$w_nome; else $w_assunto='Encerramento - '.$w_nome;
-    } elseif ($w_sg_tramite=='EE') {
-      // Prestação de contas
-      $w_assunto='Prestação de Contas - '.$w_nome;
-    } elseif ($p_tipo==2) {
-      // Tramitação
-      $w_assunto='Tramitação - '.$w_nome;
-    } 
-    // Configura os destinatários da mensagem
-    $sql = new db_getTramiteResp; $RS = $sql->getInstanceOf($dbms,$p_solic,null,null);
-    if (!count($RS)==0) {
-      foreach($RS as $row) {
-        $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
-     } 
-    } 
-    if(f($RSM,'st_sol')=='S') {
-      // Recupera o e-mail do responsável
-      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
-    }
-    if(f($RSM,'st_prop')=='S') {
-      // Recupera o e-mail do proposto
-      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,f($RSM,'sq_prop'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
-    }
-    // Executa o envio do e-mail
-    if ($w_destinatarios>'') $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,$w_anexos);
-
-    if ($w_sg_tramite=='EE') {
-      // Remove o arquivo temporário
-      if (!unlink($w_file)) {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("ATENÇÃO: não foi possível remover o arquivo temporário.\\n'.$w_file.'");');
-        ScriptClose();
-      }
-    } 
-    // Se ocorreu algum erro, avisa da impossibilidade de envio
-    if ($w_resultado>'') {
-      ScriptOpen('JavaScript');
-      ShowHTML('  alert("ATENÇÃO: não foi possível proceder o envio do e-mail.\\n'.$w_resultado.'");');
-      ScriptClose();
-    } 
-  } 
-}
-// =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
@@ -2140,7 +1931,7 @@ function Grava() {
           $_REQUEST['w_prevista'],$_REQUEST['w_efetiva'],$_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],
           $_REQUEST['w_valor'],$_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],&$w_chave_nova);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href="'.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$w_chave_nova.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+          ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.$w_chave_nova.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
           ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2278,8 +2069,6 @@ function Grava() {
               CriaBaseLine($_REQUEST['w_chave'], $w_html, f($RS_Menu, 'nome'), $_REQUEST['w_tramite']);
             }
           }
-          // Envia e-mail comunicando o envio
-          SolicMail($_REQUEST['w_chave'], 2);
           // Se for envio da fase de cadastramento, remonta o menu principal
           ScriptOpen('JavaScript');
           ShowHTML('  location.href="' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '";');
@@ -2362,8 +2151,6 @@ function Grava() {
           // Conclui a solicitação
           $SQL = new dml_putSolicConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
               $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_fundo_fixo']);
-          // Envia e-mail comunicando a conclusão
-          SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href="'.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
           ScriptClose();

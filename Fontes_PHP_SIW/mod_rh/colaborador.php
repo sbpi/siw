@@ -66,12 +66,6 @@ include_once('validacolaborador.php');
 //                   = E   : Exclusão
 //                   = L   : Listagem
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par            = upper($_REQUEST['par']);
 $P1             = Nvl($_REQUEST['P1'],0);
@@ -89,6 +83,12 @@ $w_pagina       = 'colaborador.php?par=';
 $w_dir          = 'mod_rh/';
 $w_dir_volta    = '../';
 $w_Disabled     = 'ENABLED';
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') {
   if ($par=='INICIAL') {

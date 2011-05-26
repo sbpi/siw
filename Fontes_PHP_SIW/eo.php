@@ -49,12 +49,6 @@ include_once('funcoes/selecaoTipoArquivoTab.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -71,6 +65,12 @@ $w_pagina       = 'eo.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 $w_troca        = $_REQUEST['w_troca'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') $O='L';
 
@@ -558,7 +558,7 @@ function Localizacao() {
     ShowHTML('          <td><b>Telefone</td>');
     ShowHTML('          <td><b>Ramal</td>');
     ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -570,7 +570,7 @@ function Localizacao() {
         ShowHTML('        <td align="center">'.f($row,'telefone').'&nbsp;</td>');
         ShowHTML('        <td align="center">'.f($row,'ramal').'&nbsp;</td>');
         ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td align="top" nowrap class="remover">');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_localizacao='.f($row,'sq_localizacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_unidade='.$w_sq_unidade.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_localizacao='.f($row,'sq_localizacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_unidade='.$w_sq_unidade.'" title="Excluir">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -712,7 +712,7 @@ function Documentos() {
     ShowHTML('          <td><b>'.linkOrdena('Descrição','descricao').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Formato','tipo').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('KB','tamanho').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem 
@@ -728,7 +728,7 @@ function Documentos() {
         ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
         ShowHTML('        <td>'.f($row,'tipo').'</td>');
         ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td align="top" nowrap class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -909,7 +909,7 @@ function Responsavel() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Titular</td>');
     ShowHTML('          <td><b>Substituto</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=3 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -921,7 +921,7 @@ function Responsavel() {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('        <td align="left">'.f($row,'titular1').'</td>');
           ShowHTML('        <td align="left">'.f($row,'substituto1').'</td>');
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td align="top" nowrap class="remover">');
           ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.$w_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Alterar">AL</A>&nbsp');
           ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.$w_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Excluir">EX</A>&nbsp');
           ShowHTML('        </td>');
@@ -1068,7 +1068,7 @@ function BuscaUnidade() {
         ShowHTML('            <td><b>Nome</td>');
         ShowHTML('            <td><b>Endereço</td>');
         ShowHTML('            <td><b>Cidade</td>');
-        ShowHTML('            <td><b>Operações</td>');
+        ShowHTML('            <td class="remover"><b>Operações</td>');
         ShowHTML('          </tr>');
         foreach($RS as $row) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -1077,7 +1077,7 @@ function BuscaUnidade() {
           ShowHTML('            <td>'.f($row,'nome').'</td>');
           ShowHTML('            <td>'.f($row,'logradouro').'</td>');
           ShowHTML('            <td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td>');
-          ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'nome').'\', \''.f($row,'sigla').'\', '.f($row,'sq_unidade').');">Selecionar</a>');
+          ShowHTML('            <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'nome').'\', \''.f($row,'sigla').'\', '.f($row,'sq_unidade').');">Selecionar</a>');
         } 
         ShowHTML('        </table></tr>');
         ShowHTML('      </center>');
@@ -1100,7 +1100,7 @@ function BuscaUnidade() {
       ShowHTML('            <td><b>Nome</td>');
       ShowHTML('            <td><b>Endereço</td>');
       ShowHTML('            <td><b>Cidade</td>');
-      ShowHTML('            <td><b>Operações</td>');
+      ShowHTML('            <td class="remover"><b>Operações</td>');
       ShowHTML('          </tr>');
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -1109,7 +1109,7 @@ function BuscaUnidade() {
         ShowHTML('            <td>'.f($row,'nome').'</td>');
         ShowHTML('            <td>'.f($row,'logradouro').'</td>');
         ShowHTML('            <td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td>');
-        ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'nome').'\', \''.f($row,'sigla').'\', '.f($row,'sq_unidade').');">Selecionar</a>');
+        ShowHTML('            <td class="remover"><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'nome').'\', \''.f($row,'sigla').'\', '.f($row,'sq_unidade').');">Selecionar</a>');
       } 
       ShowHTML('        </table></tr>');
       ShowHTML('      </center>');
