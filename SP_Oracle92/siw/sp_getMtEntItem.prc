@@ -91,7 +91,10 @@ begin
                 case g31.classe when 1 then 'Medicamento' when 3 then 'Consumo' when 4 then 'Permanente' when 5 then 'Serviço' end as nm_classe,
                 montanometipomaterial(g31.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(g31.sq_tipo_material) as nm_tipo_material_completo,
-                g32.nome as nm_unidade_medida,      g32.sigla as sg_unidade_medida
+                g32.nome as nm_unidade_medida,      g32.sigla as sg_unidade_medida,
+                g4.sq_solicitacao_item,
+                g412.codigo_interno as cd_origem,
+                g41211.sigla as sg_modulo
            from mt_entrada                                      a 
                 inner             join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
                    inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
@@ -118,6 +121,12 @@ begin
                   inner           join cl_material              g3 on (g.sq_material              = g3.sq_material)
                      inner        join cl_tipo_material        g31 on (g3.sq_tipo_material        = g31.sq_tipo_material)
                      inner        join co_unidade_medida       g32 on (g3.sq_unidade_medida       = g32.sq_unidade_medida)
+                  left            join fn_documento_item        g4 on (g.sq_documento_item        = g4.sq_documento_item)
+                    left          join fn_lancamento_doc       g41 on (g4.sq_lancamento_doc       = g41.sq_lancamento_doc)
+                      left        join fn_lancamento          g411 on (g41.sq_siw_solicitacao     = g411.sq_siw_solicitacao)
+                        left      join siw_solicitacao        g412 on (g41.sq_siw_solicitacao     = g412.sq_siw_solicitacao)
+                          left    join siw_menu              g4121 on (g412.sq_menu               = g4121.sq_menu)
+                            left  join siw_modulo           g41211 on (g4121.sq_modulo            = g41211.sq_modulo)
           where a.cliente         = p_cliente
             and (p_entrada        is null or (p_entrada           is not null and a.sq_mtentrada         = p_entrada))
             and (p_item           is null or (p_item              is not null and g.sq_entrada_item      = p_item));

@@ -190,6 +190,33 @@ begin
            from mt_entrada_item a
           where a.sq_mtentrada = p_copia
          );
+      Else
+         -- copia os dados complementares da entrada de material selecionada
+         insert into mt_entrada_item (
+                 sq_entrada_item,         sq_mtentrada,     sq_material,        sq_almoxarifado,   sq_mtsituacao,
+                 quantidade,              valor_unitario,   fator_embalagem,    ordem,             
+                 valor_total,             marca,            modelo,             sq_documento_item)
+         (select sq_entrada_item.nextval, w_chave,          c.sq_material,      f.sq_almoxarifado, e.sq_mtsituacao, 
+                 b.quantidade,            a.valor_unitario, b1.fator_embalagem, case a.ordem when 0 then 1 else a.ordem end,
+                 a.valor_total,           b1.fabricante,    b1.marca_modelo,    a.sq_documento_item
+           from fn_documento_item                    a
+                inner       join cl_solicitacao_item b on (a.sq_solicitacao_item = b.sq_solicitacao_item)
+                  inner     join cl_item_fornecedor b1 on (b.sq_solicitacao_item = b1.sq_solicitacao_item and b1.vencedor = 'S' and b1.pesquisa = 'N')
+                  inner     join cl_material         c on (b.sq_material         = c.sq_material)
+                    inner   join cl_tipo_material    d on (c.sq_tipo_material    = d.sq_tipo_material)
+                      inner join mt_situacao         e on (e.cliente             = p_cliente and
+                                                           e.ativo               = 'S' and
+                                                           substr(e.sigla,1,1)   = 'N' and
+                                                           ((d.classe           <> 4 and e.consumo = 'S') or
+                                                            (d.classe            = 4 and e.permanente = 'S')
+                                                           )
+                                                          ),
+                (select sq_almoxarifado
+                   from (select sq_almoxarifado from mt_almoxarifado where cliente = p_cliente and ativo = 'S')
+                  where rownum = 1
+                )                                    f
+          where a.sq_lancamento_doc = w_documento
+         );
       End If;
       
    Elsif p_operacao = 'A' Then -- Alteração

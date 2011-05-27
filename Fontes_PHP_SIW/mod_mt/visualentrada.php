@@ -61,12 +61,12 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <tr align="center">';
       $l_html.=chr(13).'          <td rowspan=2><b>Item</b></td>';
       $l_html.=chr(13).'          <td rowspan=2><b>Nome</b></td>';
-      if (($w_classes[1] || $w_classes[3]) && !$w_classes[4]) {
+      if (!$w_classes[4]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Marca</b></td>';
-      } elseif (!($w_classes[1] || $w_classes[3]) && $w_classes[4]) {
-        $l_html.=chr(13).'          <td rowspan=2><b>Fabricante</b></td>';
-      } elseif (($w_classes[1] || $w_classes[3]) && $w_classes[4]) {
+      } elseif ($w_classes[1] || $w_classes[3] && $w_classes[4]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Fabricante / Marca</b></td>';
+      } elseif ($w_classes[4]) {
+        $l_html.=chr(13).'          <td rowspan=2><b>Fabricante</b></td>';
       }
       if ($w_classes[4]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Modelo</b></td>';
@@ -98,7 +98,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
         $l_html.=chr(13).'        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
-        $l_html.=chr(13).'        <td>'.f($row,'marca').'</td>';
+        $l_html.=chr(13).'        <td>'.nvl(f($row,'marca'),'&nbsp;').'</td>';
         if ($w_classes[4]) {
           $l_html.=chr(13).'        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>';
           $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>';
