@@ -67,7 +67,7 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
- if substr(p_restricao,1,2) = 'MT' Then
+   if substr(p_restricao,1,2) = 'MT' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_mtentrada,       a.recebimento_previsto,        a.recebimento_efetivo, 
@@ -177,6 +177,81 @@ begin
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and b1.sigla <> 'AT' and cast(b.fim as date)+1<cast(sysdate as date)))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade           = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante));
+   Elsif    p_restricao = 'VERIFENT' Then
+     -- Verificações relativas a entrada de material
+      open p_result for 
+         select v1.entrada_mes_seguinte, v2.saida_mes_seguinte, v3.mes_corrente_fechado, v4.mes_seguinte_fechado, v5.mes_anterior_fechado
+           from (select case count(*) when 0 then 'N' else 'S' end as entrada_mes_seguinte 
+                   from mt_entrada                                   a
+                        inner               join mt_entrada_item    a1 on (a.sq_mtentrada        = a1.sq_mtentrada)
+                          inner             join cl_material       a11 on (a1.sq_material        = a11.sq_material)
+                            inner           join cl_tipo_material a111 on (a111.cliente          = p_cliente and 
+                                                                           a11.sq_tipo_material  = a111.sq_tipo_material
+                                                                          )
+                              inner         join cl_tipo_material b111 on (b111.cliente          = p_cliente and 
+                                                                           a111.classe           = b111.classe
+                                                                          )
+                                inner       join cl_material       b11 on (b111.sq_tipo_material = b11.sq_tipo_material)
+                                  inner     join mt_entrada_item    b1 on (a1.sq_almoxarifado    = b1.sq_almoxarifado and
+                                                                           b1.sq_material        = b11.sq_material
+                                                                          )
+                                    inner   join mt_entrada          b on (b1.sq_mtentrada       = b.sq_mtentrada)
+                                      inner join mt_situacao         c on (b.sq_mtsituacao       = c.sq_mtsituacao and
+                                                                           c.sigla               in ('AR','ES') -- Armazenado ou estornado
+                                                                          )
+                   where a.cliente      = p_cliente
+                     and a.sq_mtentrada = p_chave
+                     and to_number(to_char(a.recebimento_efetivo,'yyyymm')) < to_number(to_char(b.recebimento_efetivo,'yyyymm'))
+                ) v1,
+                (select case count(*) when 0 then 'N' else 'S' end as saida_mes_seguinte 
+                   from mt_entrada                                   a
+                        inner               join mt_entrada_item    a1 on (a.sq_mtentrada        = a1.sq_mtentrada)
+                          inner             join cl_material       a11 on (a1.sq_material        = a11.sq_material)
+                            inner           join cl_tipo_material a111 on (a111.cliente          = p_cliente and 
+                                                                           a11.sq_tipo_material  = a111.sq_tipo_material
+                                                                          )
+                            inner           join mt_saida            b on (a1.sq_almoxarifado    = b.sq_almoxarifado)
+                              inner         join mt_saida_item      b1 on (b1.sq_mtsaida       = b.sq_mtsaida)
+                                inner       join cl_material       b11 on (b1.sq_material        = b11.sq_material)
+                                  inner     join cl_tipo_material b111 on (b11.sq_tipo_material  = b111.sq_tipo_material and
+                                                                           a111.classe           = b111.classe
+                                                                          )
+                   where a.cliente      = p_cliente
+                     and a.sq_mtentrada = p_chave
+                     and to_number(to_char(a.recebimento_efetivo,'yyyymm')) < to_number(to_char(b1.data_efetivacao,'yyyymm'))
+                ) v2,
+                (select case count(*) when 0 then 'N' else 'S' end as mes_corrente_fechado
+                   from mt_entrada                                   a
+                        inner               join mt_entrada_item    a1 on (a.sq_mtentrada        = a1.sq_mtentrada)
+                            inner           join mt_estoque_mensal   b on (a1.sq_almoxarifado    = b.sq_almoxarifado and
+                                                                           a1.sq_material        = b.sq_material
+                                                                          )
+                   where a.cliente      = p_cliente
+                     and a.sq_mtentrada = p_chave
+                     and to_number(to_char(a.recebimento_efetivo,'yyyymm')) = to_number(to_char(b.ano)||to_char('100'+b.mes,2))
+                ) v3,
+                (select case count(*) when 0 then 'N' else 'S' end as mes_seguinte_fechado
+                   from mt_entrada                                   a
+                        inner               join mt_entrada_item    a1 on (a.sq_mtentrada        = a1.sq_mtentrada)
+                            inner           join mt_estoque_mensal   b on (a1.sq_almoxarifado    = b.sq_almoxarifado and
+                                                                           a1.sq_material        = b.sq_material
+                                                                          )
+                   where a.cliente      = p_cliente
+                     and a.sq_mtentrada = p_chave
+                     and to_number(to_char(a.recebimento_efetivo,'yyyymm')) < to_number(to_char(b.ano)||to_char('100'+b.mes,2))
+                ) v4,
+                (select case count(*) when 0 then 'N' else 'S' end as mes_anterior_fechado
+                   from mt_entrada                                   a
+                        inner               join mt_entrada_item    a1 on (a.sq_mtentrada        = a1.sq_mtentrada)
+                            left            join mt_estoque_mensal   b on (a1.sq_almoxarifado    = b.sq_almoxarifado and
+                                                                           a1.sq_material        = b.sq_material
+                                                                          )
+                   where a.cliente      = p_cliente
+                     and a.sq_mtentrada = p_chave
+                     and (b.ano         is null or
+                          (b.ano        is not null and to_number(to_char(a.recebimento_efetivo,'yyyymm')) > to_number(to_char(b.ano)||to_char('100'+b.mes,2)))
+                         )
+                ) v5;
    End If;
 end SP_GetMTMovim;
 /

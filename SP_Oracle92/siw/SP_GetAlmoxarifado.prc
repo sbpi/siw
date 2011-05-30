@@ -24,6 +24,18 @@ begin
               and (p_nome         is null or (p_nome         is not null and upper(acentos(a.nome)) like upper(acentos(p_nome))))
               and (p_ativo        is null or (p_ativo        is not null and a.ativo  = p_ativo));   
 
+   Elsif upper(p_restricao) = 'ARMAZENA' Then
+     -- Recupera os tipos aos quais o atual pode ser subordinado
+      open p_result for
+         select a.sq_almoxarifado_local as chave, a.nome, a.sq_local_pai,
+                b.nome||' - '||montanomealmoxlocal(a.sq_almoxarifado_local) as nome_completo
+           from mt_almoxarifado_local            a
+                inner join mt_almoxarifado       b on (a.sq_almoxarifado       = b.sq_almoxarifado)
+                left  join mt_almoxarifado_local c on (a.sq_almoxarifado_local = c.sq_local_pai)
+          where b.cliente                = p_cliente
+            and a.sq_almoxarifado        = p_chave
+            and c.sq_almoxarifado_local is null;
+
    Elsif upper(p_restricao) = 'SUBTODOS' Then
      -- Recupera os tipos aos quais o atual pode ser subordinado
       open p_result for

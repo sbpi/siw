@@ -94,7 +94,8 @@ begin
                 g32.nome as nm_unidade_medida,      g32.sigla as sg_unidade_medida,
                 g4.sq_solicitacao_item,
                 g412.codigo_interno as cd_origem,
-                g41211.sigla as sg_modulo
+                g41211.sigla as sg_modulo,
+                g5.sq_estoque_item,                 g5.sq_almoxarifado_local,            g5.saldo_atual
            from mt_entrada                                      a 
                 inner             join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
                    inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
@@ -127,6 +128,7 @@ begin
                         left      join siw_solicitacao        g412 on (g41.sq_siw_solicitacao     = g412.sq_siw_solicitacao)
                           left    join siw_menu              g4121 on (g412.sq_menu               = g4121.sq_menu)
                             left  join siw_modulo           g41211 on (g4121.sq_modulo            = g41211.sq_modulo)
+                  left            join mt_estoque_item          g5 on (g.sq_entrada_item          = g5.sq_entrada_item)
           where a.cliente         = p_cliente
             and (p_entrada        is null or (p_entrada           is not null and a.sq_mtentrada         = p_entrada))
             and (p_item           is null or (p_item              is not null and g.sq_entrada_item      = p_item));

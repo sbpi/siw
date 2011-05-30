@@ -4216,6 +4216,7 @@ SP_Oracle92/siw/sp_putlcsituacao.prc -text
 SP_Oracle92/siw/sp_putlcunidade.prc -text
 SP_Oracle92/siw/sp_putlcunidadefornec.prc -text
 SP_Oracle92/siw/sp_putmenurelac.prc -text
+SP_Oracle92/siw/sp_putmtentarm.prc -text
 SP_Oracle92/siw/sp_putmtentitem.prc -text
 SP_Oracle92/siw/sp_putnatureza_pe.prc -text
 SP_Oracle92/siw/sp_putnaturezadoc_pa.prc -text
