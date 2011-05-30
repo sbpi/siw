@@ -115,13 +115,15 @@ function Required() {
   ShowHTML('function required(){');
   if (count($w_campo_obrigatorio)>0) {
     foreach($w_campo_obrigatorio as $k => $v) {
+      print '  for (i=0;i < document.forms.length;i++){ ';
       if (strpos($k,'[')===false) {
-        ShowHTML('  document.Form.'.$k.'.className='.$v.';');
+        ShowHTML('    if (document.forms[i].'.$k.'!=undefined) document.forms[i].'.$k.'.className='.$v.';');
       } else {
-        ShowHTML('  for (ind=1; ind < document.Form'.str_replace('[ind]','',$k).'.length; ind++) {');
-        ShowHTML('    document.Form'.$k.'.className='.$v.';');
-        ShowHTML('  }');
+        ShowHTML('    if (document.forms[i]'.str_replace('[ind]','',$k).'!=undefined) for (ind=1; ind < document.forms[i]'.str_replace('[ind]','',$k).'.length; ind++) {');
+        ShowHTML('      document.forms[i]'.$k.'.className='.$v.';');
+        ShowHTML('    }');
       }
+      ShowHTML('  }');
     }
   } else {
     ShowHTML('  return true;');

@@ -1321,6 +1321,7 @@ Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtEntArm.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntrada.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtSituacao.php -text

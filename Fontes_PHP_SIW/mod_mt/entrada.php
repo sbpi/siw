@@ -39,10 +39,12 @@ include_once($w_dir_volta.'classes/sp/dml_putMtEntrada.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoArquivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putMtEntItem.php');
+include_once($w_dir_volta.'classes/sp/dml_putMtEntArm.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'funcoes/selecaoAlmoxarifado.php');
 include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
+include_once($w_dir_volta.'funcoes/selecaoLocalSubordination.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -82,6 +84,7 @@ include_once('validaentrada.php');
 //                   = A   : Alteração
 //                   = C   : Cancelamento
 //                   = E   : Exclusão
+//                   = S   : Estorno
 //                   = L   : Listagem
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
@@ -121,6 +124,7 @@ switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';    break;
   case 'A': $w_TP=$TP.' - Alteração';   break;
   case 'E': $w_TP=$TP.' - Exclusão';    break;
+  case 'S': $w_TP=$TP.' - Estorno';     break;
   case 'P': $w_TP=$TP.' - Filtragem';   break;
   case 'C': $w_TP=$TP.' - Cópia';       break;
   case 'V': $w_TP=$TP.' - Envio';       break;
@@ -428,10 +432,14 @@ function Inicial() {
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'qt_itens'),0).'&nbsp;</td>');
         if ($w_tipo!='WORD') {
           ShowHTML('        <td class="remover" width="1%" nowrap>&nbsp;');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do pedido">AL</A>&nbsp');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_mtentrada').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do pedido.">EX</A>&nbsp');
+          if (strpos('NA,ES',f($row,'sg_sit'))!==false) {
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da entrada">AL</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_mtentrada').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da entrada.">EX</A>&nbsp');
+          } else {
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Estorno&R='.$w_pagina.$par.'&O=S&w_chave='.f($row,'sq_mtentrada').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Estorno da entrada.">Estornar</A>&nbsp');
+          }
           ShowHTML('          <a class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_copia='.f($row,'sq_mtentrada').MontaFiltro('GET').'" title="Gera um novo registro a partir das informações deste.">CO</a>&nbsp;');
-          ShowHTML('          <a class="HL" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe os dados da movimentação.">VS</a>&nbsp;');
+          ShowHTML('          <a class="HL" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe os dados da entrada.">VS</a>&nbsp;');
           //ShowHTML('          <A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Itens'.'&SG='.substr($SG,0,4).'ITEM').'" title="Escolhe os itens da compra.">Itens</A>&nbsp');
           //ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Anexos&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Anexos'.'&SG='.substr($SG,0,4).'ANEXO').'\',\'Anexos\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Vincula arquivos ao pedido de compra.">Anexos</A>&nbsp');
           //ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_mtentrada').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do pedido">EN</A>&nbsp');
@@ -549,6 +557,7 @@ function Geral() {
     $w_numero                   = $_REQUEST['w_numero'];
     $w_data                     = $_REQUEST['w_data'];
     $w_valor                    = $_REQUEST['w_valor'];
+    $w_situacao                 = $_REQUEST['w_situacao'];
   } elseif (strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados da entrada
     if ($w_copia>'') {
@@ -576,6 +585,7 @@ function Geral() {
       $w_numero                   = f($RS,'nr_doc');
       $w_data                     = formataDataEdicao(f($RS,'dt_doc'));
       $w_valor                    = formatNumber(f($RS,'vl_doc'));
+      $w_situacao                 = f($RS,'sq_mtsituacao');
     } 
   } 
 
@@ -666,9 +676,22 @@ function Geral() {
     ShowHTML('  document.Form.Botao[1].disabled = true;');
   } 
   ValidateClose();
+  ShowHTML('  function ajusta(inicial) {');
+  ShowHTML('    for (ind=inicial; ind < document.Form1["w_local[]"].length; ind++) {');
+  ShowHTML('      if (document.Form1["w_local[]"][ind].selectedIndex==0) {');
+  ShowHTML('        document.Form1["w_local[]"][ind].selectedIndex = document.Form1["w_local[]"][inicial].selectedIndex;');
+  ShowHTML('      }');
+  ShowHTML('    }');
+  ShowHTML('  }');
+  ValidateOpen('Validacao1');
+  ShowHTML('  for (ind=1; ind < theForm["w_local[]"].length; ind++) {');
+  Validate('["w_local[]"][ind]','local de armazenamento','','1',1,18,'','0123456789');
+  ShowHTML('  }');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif (strpos('EV',$O)!==false) {
@@ -881,6 +904,75 @@ function Geral() {
         ShowHTML('</table>');
       }
       ShowHTML('</table>');
+      
+      if ($O!='I' && nvl($w_erro,'')=='') {
+        // Armazenamento
+        $sql = new db_getMtEntItem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        $RS = SortArray($RS,'ordem','asc','nome','asc'); 
+        unset($w_classes);
+        foreach($RS as $row) $w_classes[f($row,'classe')] = 1;
+        reset($RS);
+        ShowHTML('    <tr><td colspan=3><br><b>'.((count($w_classes)>1) ? 'Armazenamento /' : (($w_classes[4]) ? 'Incorporação' : 'Armazenamento')).'</b></td></tr>');
+        ShowHTML('    <tr><td colspan="3"><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
+        ShowHTML('      <tr><td colspan=3 align="center"><font color="#BC3131"><b>ATENÇÃO: execute esta ação somente após informar e conferir os dados da entrada de material.</b></font></td></tr>');
+        if (count($RS)==0) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Itens não informados</b></td></tr>');
+          ShowHTML('      <tr><td colspan=2 align=center><hr /></td></tr>');
+        } else {
+          $colspan = 0;
+          ShowHTML('      <tr><td align="center" colspan="2">');
+          AbreForm('Form1',$w_dir.$w_pagina.'Grava','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,'MTENTARM',$w_pagina.$par,$O);
+          ShowHTML(MontaFiltro('POST'));
+          ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
+          ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+          ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
+          ShowHTML('<INPUT type="hidden" name="w_solicitacao" value="'.$w_solicitacao.'">');
+          ShowHTML('<INPUT type="hidden" name="w_documento" value="'.$w_documento.'">');
+          ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
+          if (count($w_classes>1) || !$w_classes[4]) {
+            ShowHTML('<INPUT type="hidden" name="w_local[]" value="">');
+            ShowHTML('<INPUT type="hidden" name="w_item[]" value="">');
+          }
+          ShowHTML('        <table class="tudo" width="100%" BORDER=1 bordercolor="#666666">');
+          ShowHTML('        <tr align="center">');
+          ShowHTML('          <td><b>Item</b></td>');
+          ShowHTML('          <td><b>Nome</b></td>');
+          ShowHTML('          <td><b>U.M.</b></td>');
+          ShowHTML('          <td><b>Qtd</b></td>');
+          ShowHTML('          <td><b>'.((count($w_classes)>1) ? 'Local de armazenamento /' : (($w_classes[4]) ? 'Ação' : 'Local de armazenamento')).'</b></td>');
+          ShowHTML('        </tr>');
+          // Lista os registros selecionados para listagem
+          $i = 1;
+          foreach($RS as $row){ 
+            ShowHTML('      <tr valign="top">');
+            ShowHTML('        <td align="center">'.f($row,'ordem'));
+            ShowHTML('          <INPUT type="hidden" name="w_item[]" value="'.f($row,'sq_entrada_item').'">');
+            ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
+            ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+            ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
+            if (f($row,'classe')==1 || f($row,'classe')==3) {
+              selecaoLocalSubordination(null,null,'Informe o local para armazenamento deste item.',f($row,'sq_almoxarifado_local'),f($row,'sq_almoxarifado'),'w_local[]','ARMAZENA','onChange="ajusta('.$i.');"',1,'');
+            } else {
+              ShowHTML('        <td align="right">Incorporar</td>');
+            }
+            ShowHTML('        </tr>');
+            $i++;
+          }
+          ShowHTML('    </table>');
+          if (count($w_classes>1) || !$w_classes[4]) {
+            ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+            ShowHTML('      <tr><td align="center" colspan=2 height="1" bgcolor="#000000"></TD></TR>');
+            ShowHTML('      <tr><td align="center" colspan=2>');
+            ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+            ShowHTML('          </td>');
+            ShowHTML('      </tr>');
+          }
+          ShowHTML('</form>');
+        }
+        ShowHTML('       </table>');
+      }
+
     }
   } else {
     ScriptOpen('JavaScript');
@@ -905,7 +997,15 @@ function Itens() {
           null,null,null,null,null,null,null,null,null,null,$w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
-
+  
+  // Se pelo menos um item está ligado a uma compra ou contrato, não permite incluir nem excluir.
+  // Também impede alteração dos dados importados da compra ou contrato
+  $sql = new db_getMtEntItem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $w_edita = true;
+  foreach($RS as $row) {
+    if (nvl(f($row,'sq_solicitacao_item'),'')!='') $w_edita = false;
+  }
+  
   if ($w_troca>'' && $O <> 'E') {
     $w_nome               = $_REQUEST['w_nome'];
     $w_material           = $_REQUEST['w_material'];
@@ -919,7 +1019,6 @@ function Itens() {
     $w_lote               = $_REQUEST['w_lote'];
     $w_fabricante         = $_REQUEST['w_fabricante'];
     $w_modelo             = $_REQUEST['w_modelo'];
-    $w_lancamento_item    = $_REQUEST['w_lancamento_item'];
     $w_material_nm        = $_REQUEST['w_material_nm'];
   } elseif (strpos('LI',$O)!==false) {
     $sql = new db_getMtEntItem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -942,7 +1041,6 @@ function Itens() {
     $w_lote               = f($RS,'lote_numero');
     $w_fabricante         = f($RS,'marca');
     $w_modelo             = f($RS,'modelo');
-    $w_lancamento_item    = f($RS,'sq_solicitacao_item');
   } 
 
   // Recupera informações sobre o tipo do material ou serviço
@@ -979,7 +1077,7 @@ function Itens() {
     FormataValor();
     FormataData();
     ValidateOpen('Validacao');
-    if (nvl($w_lancamento_item,'')=='') {
+    if ($w_edita) {
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
       CompValor('w_ordem','Ordem','>','0','1');  
       Validate('w_nome','Nome','1','','3','30','1','1');
@@ -989,7 +1087,7 @@ function Itens() {
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
     } else {
-      if (nvl($w_lancamento_item,'')=='') {
+      if ($w_edita) {
         Validate('w_quantidade','Quantidade','1','1','1','18','','1');
         CompValor('w_quantidade','Quantidade','>','0','1');  
         Validate('w_valor','Valor total','VALOR','1','4','18','','0123456789.,');
@@ -998,7 +1096,7 @@ function Itens() {
       if ($w_classe==1||$w_classe==3) {
         Validate('w_validade','Data de validade','DATA',1,10,10,'','0123456789/');
         CompData('w_validade','Data de validade','>=',formataDataEdicao(time()),'Data atual');
-        if (nvl($w_lancamento_item,'')=='') {
+        if ($w_edita) {
           Validate('w_fator','Embalagem','1','1',1,4,'','0123456789');
           CompValor('w_fator','Fator de embalagem','>','0','0');
         }
@@ -1029,7 +1127,7 @@ function Itens() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
-  } elseif ($O=='L' || nvl($w_lancamento_item,'')!='') {
+  } elseif ($O=='L' || !$w_edita) {
     BodyOpen('onLoad="this.focus();"');
   } elseif (strpos('IA',$O)!==false) {
     BodyOpen('onLoad="document.Form.w_ordem.focus();"');
@@ -1054,7 +1152,7 @@ function Itens() {
   ShowHTML('            <td>Data:<br><b>'.formataDataEdicao(f($RS_Solic,'dt_doc'),5).'</b></td>');
   ShowHTML('            <td>Valor:<br><b>'.formatNumber(f($RS_Solic,'vl_doc')).'</b></td>');
   ShowHTML('          </tr>');
-  if (nvl($w_lancamento_item,'')!='') {
+  if (!$w_edita && $O!='L') {
     ShowHTML('          <tr><td colspan=3><hr>Item: <b>'.$w_ordem.' - '.$w_material_nm.'</b></td></tr>');
     ShowHTML('          <tr valign="top">');
     ShowHTML('            <td>Quantidade:<br><b>'.$w_quantidade.'</b></td>');
@@ -1075,7 +1173,7 @@ function Itens() {
     reset($RS);
     $colspan = 0;
     ShowHTML('<tr><td>');
-    ShowHTML('      <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    if ($w_edita) ShowHTML('      <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>'.exportaOffice().'Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
@@ -1145,7 +1243,7 @@ function Itens() {
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>');
         ShowHTML('        <td align="top" nowrap class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+        if ($w_edita) ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('        </tr>');
         $w_total += f($row,'valor_total');
@@ -1161,10 +1259,9 @@ function Itens() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
-    ShowHTML('<INPUT type="hidden" name="w_lancamento_item" value="'.$w_lancamento_item.'">');
     ShowHTML('<INPUT type="hidden" name="w_material_nm" value="'.$w_material_nm.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    if (nvl($w_lancamento_item,'')!='') {
+    if (!$w_edita) {
       ShowHTML('<INPUT type="hidden" name="w_ordem" value="'.$w_ordem.'">');
       ShowHTML('<INPUT type="hidden" name="w_material" value="'.$w_material.'">');
       ShowHTML('<INPUT type="hidden" name="w_quantidade" value="'.$w_quantidade.'">');
@@ -1174,7 +1271,7 @@ function Itens() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    if (nvl($w_lancamento_item,'')=='') {
+    if ($w_edita) {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b><u>I</u>tem número:</b><br><input accesskey="I" type="text" name="w_ordem" class="STI" SIZE="5" MAXLENGTH="4" VALUE="'.nvl($w_ordem,$w_proximo).'" '.$w_Disabled.' style="text-align:center;"></td>');
       ShowHTML('          <td colspan=3><b><u>N</u>ome do material:</b><br><input '.$p_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="40" MAXLENGTH="100" VALUE="'.$w_nome.'">');
@@ -1205,26 +1302,26 @@ function Itens() {
       ShowHTML('      <tr><td colspan=4 align="center"><b>Classe do material: '.$w_classe.' - '.upper($w_nm_classe).'</b></td></tr>');
       ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr valign="top">');
-      if (nvl($w_lancamento_item,'')=='') {
+      if ($w_edita) {
       ShowHTML('        <td><b><u>Q</u>uantidade:</b><br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
       ShowHTML('        <td><b>$ <u>T</u>otal:</b><br><input type="text" '.$w_Disabled.' accesskey="T" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
       }
       if ($w_classe==1||$w_classe==3) {
         ShowHTML('        <td><b><u>V</u>alidade:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_validade" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_validade.'" onKeyDown="FormataData(this,event);" title="Data de validade do item."></td>');
-        if (nvl($w_lancamento_item,'')=='') ShowHTML('        <td><b><u>F</u>ator de embalagem:</b><br><input type="text" '.$w_Disabled.' accesskey="F" name="w_fator" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator,f($row,'fator_embalagem')).'" style="text-align:right;" title="Define o múltiplo da quantidade a ser solicitada."></td>');
+        if ($w_edita) ShowHTML('        <td><b><u>F</u>ator de embalagem:</b><br><input type="text" '.$w_Disabled.' accesskey="F" name="w_fator" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator,f($row,'fator_embalagem')).'" style="text-align:right;" title="Define o múltiplo da quantidade a ser solicitada."></td>');
       } else {
         if ($w_classe==4) {
           ShowHTML('        <td><b><u>V</u>ida útil (anos):</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_vida_util" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_vida_util,f($row,'vida_util')).'" style="text-align:right;" title="Vida útil do bem."></td>');
         }
-        if (nvl($w_lancamento_item,'')=='') ShowHTML('<INPUT type="hidden" name="w_fator" value="1">');
+        if ($w_edita) ShowHTML('<INPUT type="hidden" name="w_fator" value="1">');
       }
       if ($w_classe==1) {
-        if (nvl($w_lancamento_item,'')=='') { ShowHTML('      </tr>'); ShowHTML('      <tr valign="top">'); }
+        if ($w_edita) { ShowHTML('      </tr>'); ShowHTML('      <tr valign="top">'); }
         ShowHTML('        <td colspan=2><b><u>L</u>ote:</b><br><input '.$p_Disabled.' accesskey="L" type="text" name="w_lote" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_lote.'">');
         ShowHTML('        <td><b><u>F</u>abricação:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fabricacao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fabricacao.'" onKeyDown="FormataData(this,event);" title="Data de fabricação do item."></td>');
         ShowHTML('      </tr>');
       }
-      if (nvl($w_lancamento_item,'')=='') { ShowHTML('      </tr>'); ShowHTML('      <tr valign="top">'); }
+      if ($w_edita) { ShowHTML('      </tr>'); ShowHTML('      <tr valign="top">'); }
       if ($w_classe!=4) {
         ShowHTML('        <td colspan=2><b>M<u>a</u>rca:</b><br><input '.$p_Disabled.' accesskey="A" type="text" name="w_fabricante" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_fabricante.'">');
       } else {
@@ -1498,22 +1595,20 @@ function Excluir() {
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  if ($O=='E') {
-    ScriptOpen('JavaScript');
-    ValidateOpen('Validacao');
-    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    if ($P1!=1) {
-      // Se não for encaminhamento
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
-    } else {
-      ShowHTML('  theForm.Botao.disabled=true;');
-    } 
-    ValidateClose();
-    ScriptClose();
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  if ($P1!=1) {
+    // Se não for encaminhamento
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } else {
+    ShowHTML('  theForm.Botao.disabled=true;');
   } 
-  ShowHTML('</HEAD>');
+  ValidateClose();
+  ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } else {
@@ -1525,10 +1620,19 @@ function Excluir() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML(VisualEntrada($w_chave,'V',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'MTENTMAT',$w_pagina.$par,$O);
+  
+  $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,
+    null,null,null,null,null,null,null,null,null,null,
+    $w_chave,null,null,null,null,null,null,
+    null,null,null,null,null,null,null,null,null,null,null);
+  foreach($RS as $row){$RS=$row; break;}
+  $w_situacao                 = f($RS,'sq_mtsituacao');
+
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'MTENTARM',$w_pagina.$par,'E');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+  ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
   ShowHTML('<tr ><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1546,430 +1650,68 @@ function Excluir() {
 } 
 
 // =========================================================================
-// Rotina de tramitação
+// Rotina de estorno
 // -------------------------------------------------------------------------
-function Encaminhamento() {
+function Estorno() {
   extract($GLOBALS);
   global $w_Disabled;
 
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
-  $w_tipo       = Nvl($_REQUEST['w_tipo'],'');
-  $w_tramite    = $_REQUEST['w_tramite'];
 
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_inicio           = $_REQUEST['w_inicio'];
-    $w_fim              = $_REQUEST['w_fim'];
-    $w_sg_tramite       = $_REQUEST['w_sg_tramite'];
-    $w_sg_novo_tramite  = $_REQUEST['w_tramite'];
-    $w_destinatario     = $_REQUEST['w_destinatario'];
-    $w_envio            = $_REQUEST['w_envio'];
-    $w_despacho         = $_REQUEST['w_despacho'];
-    $w_justificativa    = $_REQUEST['w_justificativa'];
-  } else {
-    // Recupera os dados da solicitacao
-    $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,5,
-            null,null,null,null,null,null,null,null,null,null,
-            $w_chave,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null);
-    foreach($RS as $row){$RS=$row; break;}
-    $w_inicio        = f($RS,'inicio');
-    $w_fim           = f($RS,'fim');
-    $w_justificativa = f($RS,'justificativa');
+    $w_observacao = $_REQUEST['w_observacao'];
   } 
-
-  // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
-  $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_tramite);
-  $w_sg_tramite = f($RS,'sigla');
-  $w_ativo      = f($RS,'ativo');
-
-  if ($w_sg_tramite!='CI') {
-    //Verifica a fase anterior para a caixa de seleção da fase.
-    $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms,$w_tramite,null,'ANTERIOR',null);
-    foreach($RS as $row) { $RS = $row; break; }
-    $w_novo_tramite = f($RS,'sq_siw_tramite');
-  } 
-
-  // Se for envio, executa verificações nos dados da solicitação
-  if ($O=='V') $w_erro = ValidaPedido($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
 
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  if ($O=='V') {
-    ScriptOpen('JavaScript');
-    ValidateOpen('Validacao');
-    if ($w_sg_tramite!='CI') {
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EC' || $w_sg_tramite=='EE' || $w_ativo=='N') {
-        Validate('w_despacho','Despacho','1','1','1','2000','1','1');
-      } else {
-        Validate('w_despacho','Despacho','','','1','2000','1','1');
-        ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != "") {');
-        ShowHTML('     alert("Informe o despacho apenas se for devolução para a fase anterior!");');
-        ShowHTML('     theForm.w_despacho.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
-        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value=="") {');
-        ShowHTML('     alert("Informe um despacho descrevendo o motivo da devolução!");');
-        ShowHTML('     theForm.w_despacho.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
-      } 
-    } 
-    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
-      // Se não for encaminhamento e nem o sub-menu do cadastramento
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
-    } else {
-      ShowHTML('  theForm.Botao.disabled=true;');
-    } 
-    ValidateClose();
-    ScriptClose();
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  if ($P1!=1) {
+    // Se não for encaminhamento
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } else {
+    ShowHTML('  theForm.Botao.disabled=true;');
   } 
-  ShowHTML('</HEAD>');
+  ValidateClose();
+  ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
-  } elseif ($P1==1) {
-    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad="this.focus()";');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
-  ShowHTML(VisualEntrada($w_chave,'L',$w_usuario,$P1,$P4));
+  ShowHTML(VisualEntrada($w_chave,'V',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  //if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EC' || $w_sg_tramite=='EE' || $w_ativo=='N' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,substr($SG,0,4).'ENVIO',$w_pagina.$par,$O);
-    ShowHTML(MontaFiltro('POST'));
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-    ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    ShowHTML('  <table width="97%" border="0">');
-    ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
-    if ($w_sg_tramite=='CI') {
-      if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-        // Se cadastramento inicial
-        ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
-        ShowHTML('      </table>');
-        ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-        ShowHTML('    <tr><td align="center" colspan=4><hr>');
-        ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
-      }
-    } else {
-      ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EC' || $w_sg_tramite=='EE' || $w_ativo=='N') {
-        ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
-        ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
-      } else {
-        if (Nvl($w_envio,'N')=='N') {
-          ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N" checked> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S"> Devolver para a fase anterior');
-        } else {
-          ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
-        } 
-      } 
-      ShowHTML('    <tr>');
-      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','DEVFLUXO',null);
-      ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a PCD.">'.$w_despacho.'</TEXTAREA></td>');
-      if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EC' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
-        if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-          if (addDays($w_inicio,-$w_prazo)<addDays(time(),-1)) {
-            ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_prazo.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_prazo)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
-          } 
-        } 
-      } 
-      ShowHTML('      </table>');
-      ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-      ShowHTML('    <tr><td align="center" colspan=4><hr>');
-      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
-    } 
-    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-    ShowHTML('      </td>');
-    ShowHTML('    </tr>');
-    ShowHTML('  </table>');
-    ShowHTML('  </TD>');
-    ShowHTML('</tr>');
-    ShowHTML('</FORM>');
-  //}
-  ShowHTML('</table>');
-  Rodape();
-} 
-
-// =========================================================================
-// Rotina de conclusão
-// -------------------------------------------------------------------------
-function Atender() {
-  extract($GLOBALS);
-  global $w_Disabled;
-
-  $w_chave      = $_REQUEST['w_chave'];
-  $w_chave_aux  = $_REQUEST['w_chave_aux'];
-
-  //Recupera os dados da solicitacao de passagens e diárias
-  $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  
+  $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,
+    null,null,null,null,null,null,null,null,null,null,
+    $w_chave,null,null,null,null,null,null,
+    null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
-  $w_dados_pai      = explode('|@|',f($RS,'dados_pai'));
-  $w_sq_menu_relac  = $w_dados_pai[3];
-  if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
-  $w_solic_pai      = f($RS,'sq_solic_pai');
-  $w_chave_pai      = f($RS,'sq_solic_pai');
-  $w_fundo_fixo     = f($RS,'fundo_fixo');
-  $w_nota_conclusao = f($RS,'nota_conclusao');
-  $w_financeiro     = f($RS,'sq_financeiro');
-  $w_rubrica        = f($RS,'sq_projeto_rubrica');
-  $w_lancamento     = f($RS,'sq_tipo_lancamento');
-  if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
-  
-  if (nvl($w_troca,'')!='') {
-    // Se for recarga da página
-    $w_sq_menu_relac  = $_REQUEST['w_sq_menu_relac'];    
-    if($w_sq_menu_relac=='CLASSIF') {
-      $w_solic_pai    = '';
-    } else {
-      $w_solic_pai    = $_REQUEST['w_solic_pai'];
-    }
-    $w_chave_pai      = $_REQUEST['w_chave_pai'];    
-    $w_financeiro     = $_REQUEST['w_financeiro'];
-    $w_rubrica        = $_REQUEST['w_rubrica'];
-    $w_lancamento     = $_REQUEST['w_lancamento'];
-    $w_fundo_fixo     = $_REQUEST['w_fundo_fixo'];
-    $w_nota_conclusao = $_REQUEST['w_nota_conclusao'];
-  }
+  $w_situacao                 = f($RS,'sq_mtsituacao');
 
-  if ($w_solic_pai>'') {
-    // Recupera as possibilidades de vinculação financeira
-    $sql = new db_getMTFinanceiro; $RS_Financ = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,$w_solic_pai,null,null,null,null,null,null,null,null);
-  }
-  
-  Cabecalho();
-  head();
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  ScriptOpen('JavaScript');
-  modulo();
-  formatavalor();
-  ValidateOpen('Validacao');
-
-  if(nvl($w_sq_menu_relac,'')!='') {
-    Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-    if ($w_sq_menu_relac=='CLASSIF') {
-      Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-    } else {
-      Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
-    }
-  }
-  if (count($RS_Financ)>1) {
-    Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','0123456789');
-    Validate('w_lancamento','Tipo de lançamento','SELECT',1,1,18,'','0123456789');
-  }
-  
-  ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
-  Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
-  CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
-  ShowHTML('  }');
-  Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
-  ShowHTML('  if (theForm.w_fundo_fixo[1].checked && theForm.w_nota_conclusao.value.length>0) {');
-  ShowHTML('    alert("Nota de conclusão pode ser preenchida somente se o pagamento for por fundo fixo!");');
-  ShowHTML('    theForm.w_nota_conclusao.focus();');
-  ShowHTML('    return false;');
-  ShowHTML('  }');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
-  ShowHTML('<div align=center>');
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
-  ShowHTML(VisualEntrada($w_chave,'L',$w_usuario,$P1,$P4));
-  ShowHTML('<HR>');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,substr($SG,0,4).'ATEND',$w_pagina.$par,'T');
-  ShowHTML(MontaFiltro('POST'));
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'MTENTARM',$w_pagina.$par,'E');
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
-  ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao_item[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_quantidade[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_material[]" value="">');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-  ShowHTML('  <table width="100%" border="0">');
-
-  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Vinculação Orçamentária-Financeira</td></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr valign="top">');
-  selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
-  if(Nvl($w_sq_menu_relac,'')!='') {
-    ShowHTML('          <tr valign="top">');
-    if ($w_sq_menu_relac=='CLASSIF') {
-      SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null,null,'<BR />',2);
-    } else {
-      SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai,'<BR />',2);
-    }
-  }
-  if ($w_solic_pai>'') {
-    if (count($RS_Financ)>1) {
-      ShowHTML('      <tr valign="top">');
-      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_solic_pai,'T','w_rubrica','CLFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
-      SelecaoTipoLancamento('<u>T</u>ipo de lançamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','MTEN'.str_pad($w_solic_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'T',null);
-    } elseif (count($RS_Financ)==1) {
-      foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
-      ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
-    }
-  }
-  
-  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Quantidades Autorizadas</td></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  $sql = new db_getMtEntItem; $RS1 = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
-  $RS1 = SortArray($RS1,'nm_tipo_material','asc','nome','asc'); 
-  ShowHTML('<tr><td colspan=4><b>Informe para cada item a quantidade autorizada para compra:</b>');
-  ShowHTML('<tr><td align="center" colspan=4>');  
-  ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-  ShowHTML('          <td rowspan=2><b>Tipo</td>');
-  ShowHTML('          <td rowspan=2><b>Código</td>');
-  ShowHTML('          <td rowspan=2><b>Nome</td>');
-  ShowHTML('          <td rowspan=2><b>U.M.</td>');
-  ShowHTML('          <td colspan=2><b>Quantidade</td>');
-  ShowHTML('        </tr>');
-  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-  ShowHTML('          <td><b>Solicitada</td>');
-  ShowHTML('          <td><b>Autorizada</td>');
-  ShowHTML('        </tr>');
-  // Lista os registros selecionados para listagem
-  $i=1;
-  foreach($RS1 as $row){
-    $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-    ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
-    ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
-    ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
-    ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-    ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
-    ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao_item[]" value="'.f($row,'chave').'">');
-    ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="'.formatNumber(f($row,'quantidade'),0).'">');
-    ShowHTML('<INPUT type="hidden" name="w_material[]" value="'.f($row,'sq_material').'">');
-    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($_REQUEST['w_quantidade'][$i],Nvl(formatNumber(f($row,'quantidade'),0),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade autorizada para compra."></td>');
-    ShowHTML('        </tr>');
-    $i++;
-  }
-  ShowHTML('    </table>');
-  ShowHTML('      <tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Dados Gerais</td></td></tr>');
-  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  MontaRadioNS('<b>Pagamento por fundo fixo? <font color="#BC3131"></font></b>',$w_fundo_fixo,'w_fundo_fixo');
-  ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
-  ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
+  ShowHTML('<tr><td align="center">');
+  ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
+  ShowHTML('      <tr><td colspan=4><b>ATENÇÃO: Para efetirar o estorno da entrada de material, informe sua assinatura eletrônica e clique no botão <i>Estornar</i>. Se não desejar a efetivação do estorno, clique no botão <i>Abandonar</i> para voltar à listagem.</b></td></tr>');
+  ShowHTML('      <tr><td colspan=4 height=1 bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
-  ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-  ShowHTML('      </td>');
-  ShowHTML('    </tr>');
-  ShowHTML('  </table>');
-  ShowHTML('  </TD>');
-  ShowHTML('</tr>');
-  ShowHTML('</FORM>');
-  ShowHTML('</table>');
-  Rodape();
-} 
-
-// =========================================================================
-// Rotina de conclusão
-// -------------------------------------------------------------------------
-function Concluir() {
-  extract($GLOBALS);
-  global $w_Disabled;
-
-  $w_chave      = $_REQUEST['w_chave'];
-  $w_chave_aux  = $_REQUEST['w_chave_aux'];
-
-  //Recupera os dados da solicitacao de passagens e diárias
-  $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-  foreach($RS as $row){$RS=$row; break;}  
-  $w_nota_conclusao = nvl(f($RS,'nota_conclusao'),f($RS,'justificativa'));
-  $w_fundo_fixo     = f($RS,'fundo_fixo');
-  
-  if (nvl($w_troca,'')!='') {
-    $w_nota_conclusao = $_REQUEST['w_nota_conclusao'];
-  }
-
-  Cabecalho();
-  head();
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  ScriptOpen('JavaScript');
-  modulo();
-  formatavalor();
-  ValidateOpen('Validacao');
-  if ($w_fundo_fixo=='N') {
-    if ($w_pa == 'S') {
-      //Vincula a compra com o módulo de protocolo
-      Validate('w_nota_conclusao','Detalhamento do assunto','1','1','1','2000','1','1');
-    } else {
-      Validate('w_nota_conclusao','Nota de conclusão','1','','1','500','1','1');
-    }
-  }
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
-  ShowHTML('<div align=center>');
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
-  ShowHTML(VisualEntrada($w_chave,'L',$w_usuario,$P1,$P4));
-  ShowHTML('<HR>');
-  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG='.substr($SG,0,4).'CONC&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
-  ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
-  ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
-  ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
-  ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
-  ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
-  ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
-  ShowHTML(MontaFiltro('POST'));
-  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
-  ShowHTML('<INPUT type="hidden" name="w_fundo_fixo" value="'.$w_fundo_fixo.'">');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-  ShowHTML('  <table width="100%" border="0">');
-  if ($w_fundo_fixo=='N') {
-    if ($w_pa == 'S') {
-      //Se ABDI, vincula a viagem com o módulo de protocolo
-      ShowHTML('    <tr><td colspan=3><font size=2><b>DADOS PARA GERAÇÃO DO PROTOCOLO</b></font></td></tr>');
-      ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('    <tr valign="top"><td width="30%"><b>Detalhamento do assunto:</b><td title="Descreva de forma objetiva o conteúdo do documento."><textarea ' . $w_Disabled . ' accesskey="O" name="w_nota_conclusao" class="STI" ROWS=5 cols=75>' . $w_nota_conclusao . '</TEXTAREA></td>');
-    } else {
-      ShowHTML('    <tr><td colspan=4><b><u>N</u>ota de conclusão:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se desejar, registre observações a respeito desta solicitação.">'.$w_nota_conclusao.'</TEXTAREA></td>');
-    }
-  }
-  ShowHTML('    <tr><td width="30%"><b><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=4><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Gravar">');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Estornar">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
@@ -2170,91 +1912,51 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;      
-    case 'MTENENVIO':
+    case 'MTENTARM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $sql = new db_getMtMovim;
-        $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $SG, 3, null, null, null, null, null, null, null, null, null, null,
-                        $_REQUEST['w_chave'], null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        foreach ($RS as $row) {$RS = $row;break;}
-        if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite']) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
-          ScriptClose();
-          retornaFormulario('w_observacao');
-          exit();
-        } else {
-          if ($_REQUEST['w_envio'] == 'N') {
-            $SQL = new dml_putSolicEnvio;
-            $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'], null,
-                    $_REQUEST['w_envio'], $_REQUEST['w_despacho'], null, null, null, null);
-          } else {
-            $SQL = new dml_putSolicEnvio;
-            $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'], $_REQUEST['w_novo_tramite'],
-                    $_REQUEST['w_envio'], $_REQUEST['w_despacho'], null, null, null, null);
-          }
-          //Rotina para gravação da imagem da versão da solicitacão no log.
-          if ($_REQUEST['w_tramite'] != $_REQUEST['w_novo_tramite']) {
-            $sql = new db_getTramiteData;
-            $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite']);
-            $w_sg_tramite = f($RS, 'sigla');
-            if ($w_sg_tramite == 'CI') {
-              $w_html = VisualEntrada($_REQUEST['w_chave'], 'L', $w_usuario, null, '1');
-              CriaBaseLine($_REQUEST['w_chave'], $w_html, f($RS_Menu, 'nome'), $_REQUEST['w_tramite']);
-            }
-          }
-          // Se for envio da fase de cadastramento, remonta o menu principal
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href="' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '";');
-          ScriptClose();
-        }
-      } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
-      } 
-      break;
-    case 'MTENATEND':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+        $sql = new db_getMtMovim; $RS_Solic = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
                 $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        foreach($RS as $row){$RS=$row; break;}
-        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+        foreach($RS_Solic as $row){$RS_Solic=$row; break;}
+        if (f($RS_Solic,'sq_mtsituacao')!=$_REQUEST['w_situacao']) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!");');
+          ShowHTML('  alert("ATENÇÃO: A entrada de material já teve sua situação alterada!");');
+          ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
           ScriptClose();
           exit();
         } else {
-          // Grava as quantidades constantes do documento
-          $SQL = new dml_putMtEntItem; 
-          for ($i=0; $i<=count($_POST['w_sq_solicitacao_item'])-1; $i=$i+1) {
-            if ($_REQUEST['w_sq_solicitacao_item'][$i]>'') {
-              $SQL->getInstanceOf($dbms,'C',$_REQUEST['w_sq_solicitacao_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
-                  Nvl($_REQUEST['w_quantidade'][$i],0),Nvl($_REQUEST['w_qtd_ant'][$i],0),null,null,null);
+          $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'VERIFENT',3,null,null,null,null,null,null,null,null,null,null,
+                  $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+          foreach($RS as $row){$RS=$row; break;}
+          if (f($RS,'entrada_mes_seguinte')=='S'||f($RS,'saida_mes_seguinte')=='S'||f($RS,'mes_corrente_fechado')=='S'||f($RS,'mes_seguinte_fechado')=='S'||f($RS,'mes_anterior_fechado')=='N') {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("ATENÇÃO: Não será possível efetivar a ação! Motivo(s):'.
+                     ((f($RS,'entrada_mes_seguinte')=='S') ? '\n- Existe entrada em mês posterior' : '').
+                     ((f($RS,'saida_mes_seguinte')=='S') ? '\n- Existe saída em mês posterior' : '').
+                     ((f($RS,'mes_corrente_fechado')=='S') ? '\n- Mês de entrega efetiva já fechado' : '').
+                     ((f($RS,'mes_seguinte_fechado')=='S') ? '\n- Mês posterior ao de entrega efetiva já fechado' : '').
+                     ((f($RS,'mes_anterior_fechado')=='N') ? '\n- Mês anterior ao de entrega efetiva não fechado' : '').
+                    '");');
+            ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+            ScriptClose();
+            exit();
+          }
+          
+          $SQL = new dml_putMtEntArm; 
+          if ($O=='E') {
+            // Estorna a entrada
+            $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null,null);
+          } else {
+            // Armazena os itens da entrada
+            for ($i=0; $i<=count($_POST['w_item'])-1; $i=$i+1) {
+              if ($_REQUEST['w_item'][$i]>'') {
+                $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_item'][$i],$_REQUEST['w_local'][$i]);
+              }
             }
           }
 
-          // Grava vinculação orçamentária-financeira
-          $SQL = new dml_putMTGeral; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],$_REQUEST['w_menu'],null,
-            null,null,null,$_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
-            $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,null);
-            
-          // Grava tipo de pagamento e nota de conclusão
-          $SQL = new dml_putMTDados; $SQL->getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo']);
-          /*
-          if ($_REQUEST['w_fundo_fixo']=='S') {
-            // Conclui a solicitação
-            $SQL = new dml_putSolicConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
-                $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_fundo_fixo']);
-          }
-          */
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href="'.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+          ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
           ScriptClose();
         } 
       } else {
@@ -2262,38 +1964,7 @@ function Grava() {
         ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
-      } 
-      break;
-    case 'MTENCONC':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
-                $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        foreach($RS as $row){$RS=$row; break;}
-        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!");');
-          ScriptClose();
-          exit();
-        } else {
-          if ($_REQUEST['w_fundo_fixo']=='N') {
-            // Grava o protocolo somente se não for fundo fixo
-            $SQL = new dml_putMTDados; $SQL->getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,$_REQUEST['w_numero_processo'],null,null,null,null,null,
-              null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_protocolo'],null,null,null,null);
-          }
-            
-          // Conclui a solicitação
-          $SQL = new dml_putSolicConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
-              $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_fundo_fixo']);
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href="'.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
-          ScriptClose();
-        } 
-      } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
+        exit();
       } 
       break;
     default:
@@ -2318,9 +1989,7 @@ function Main() {
   case 'ANEXOS':            Anexos(); break;
   case 'VISUAL':            Visual(); break;
   case 'EXCLUIR':           Excluir(); break;
-  case 'ENVIO':             Encaminhamento(); break;
-  case 'ATENDER':           Atender(); break;
-  case 'CONCLUIR':          Concluir(); break;
+  case 'ESTORNO':           Estorno(); break;
   case 'GRAVA':             Grava(); break; 
   default:
     Cabecalho();

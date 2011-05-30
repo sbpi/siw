@@ -20,7 +20,10 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><font size="2"><b>'.f($RS,'nm_fornecedor').' - '.f($RS,'nm_tp_doc').' '.' '.f($RS,'nr_doc').' de '.formataDataEdicao(f($RS,'dt_doc'),5).' ('.$v_chave.')</b></td>';
+    $l_html.=chr(13).'      <tr valign="top">';
+    $l_html.=chr(13).'        <td bgcolor="#f0f0f0"><font size="2"><b>'.f($RS,'nm_fornecedor').' - '.f($RS,'nm_tp_doc').' '.' '.f($RS,'nr_doc').' de '.formataDataEdicao(f($RS,'dt_doc'),5).' ('.$v_chave.')</b></td>';
+    $l_html.=chr(13).'        <td bgcolor="#f0f0f0" width="1%" align="right" nowrap><font size="2"><b>'.f($RS,'nm_sit').'</b></td>';
+    $l_html.=chr(13).'      </tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
      
     // Dados da entrada
@@ -87,6 +90,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       $l_html.=chr(13).'          <td rowspan=2><b>Qtd</b></td>';
       $l_html.=chr(13).'          <td colspan=2><b>Valores</b></td>';
+      if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[3])) $l_html.=chr(13).'          <td rowspan=2><b>Saldo atual</b></td>';
       $l_html.=chr(13).'        </tr>';
       $l_html.=chr(13).'        <tr align="center">';
       $l_html.=chr(13).'          <td><b>Unit.</b></td>';
@@ -115,10 +119,11 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
+        if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
         $l_html.=chr(13).'        </tr>';
         $w_total += f($row,'valor_total');
       }
-      if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).'</tr>';
+      if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).((f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[3])) ? '<td>&nbsp;</td>' : '').'</tr>';
       $l_html.=chr(13).'    </table>';
     }
   }
