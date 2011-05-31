@@ -1321,9 +1321,11 @@ Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtConsumoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntArm.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntrada.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtSaidaItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtSituacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNaturezaDoc_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNatureza_IS.php -text
@@ -1938,9 +1940,16 @@ Fontes_PHP_SIW/mod_is/tarefas.php -text
 Fontes_PHP_SIW/mod_is/visualacao.php -text
 Fontes_PHP_SIW/mod_is/visualprograma.php -text
 Fontes_PHP_SIW/mod_is/visualtarefa.php -text
+Fontes_PHP_SIW/mod_mt/consumo.php -text
 Fontes_PHP_SIW/mod_mt/entrada.php -text
+Fontes_PHP_SIW/mod_mt/gestao.php -text
+Fontes_PHP_SIW/mod_mt/gr_consumo.php -text
+Fontes_PHP_SIW/mod_mt/relatorio.php -text
+Fontes_PHP_SIW/mod_mt/saida.php -text
 Fontes_PHP_SIW/mod_mt/tabelas.php -text
+Fontes_PHP_SIW/mod_mt/validaconsumo.php -text
 Fontes_PHP_SIW/mod_mt/validaentrada.php -text
+Fontes_PHP_SIW/mod_mt/visualconsumo.php -text
 Fontes_PHP_SIW/mod_mt/visualentrada.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_demandaeventual.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_projeto.php -text
@@ -4080,6 +4089,7 @@ SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
 SP_Oracle92/siw/sp_putLCJulgamento.prc -text
 SP_Oracle92/siw/sp_putMatServ.prc -text
 SP_Oracle92/siw/sp_putMaterial.prc -text
+SP_Oracle92/siw/sp_putMtConsumoGeral.prc -text
 SP_Oracle92/siw/sp_putMtEntrada.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putPessoa.prc -text
@@ -4219,6 +4229,7 @@ SP_Oracle92/siw/sp_putlcunidadefornec.prc -text
 SP_Oracle92/siw/sp_putmenurelac.prc -text
 SP_Oracle92/siw/sp_putmtentarm.prc -text
 SP_Oracle92/siw/sp_putmtentitem.prc -text
+SP_Oracle92/siw/sp_putmtsaidaitem.prc -text
 SP_Oracle92/siw/sp_putnatureza_pe.prc -text
 SP_Oracle92/siw/sp_putnaturezadoc_pa.prc -text
 SP_Oracle92/siw/sp_putobjetivo_pe.prc -text

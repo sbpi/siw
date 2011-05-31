@@ -224,6 +224,89 @@ begin
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
+   ElsIf p_restricao = 'PEDMAT' Then
+      -- Recupera itens passíveis de vinculação a um pedido de material
+      open p_result for 
+         select a.sq_saida_item as chave,   a.fator_embalagem,           a.quantidade_pedida,
+                a.quantidade_entregue,      a.valor_unitario,            a.data_efetivacao,
+                b.sq_material,              b.sq_tipo_material,          b.sq_unidade_medida, 
+                b.nome,                     b.descricao,                 b.detalhamento, 
+                b.apresentacao,             b.codigo_interno,            b.codigo_externo, 
+                b.ativo,
+                c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
+                case c.classe
+                     when 1 then 'Medicamento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
+                montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida
+           from mt_saida_item                      a
+                  inner   join mt_saida           a1 on (a.sq_mtsaida           = a1.sq_mtsaida)
+                    inner join siw_solicitacao    a2 on (a1.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
+                inner     join cl_material         b on (a.sq_material          = b.sq_material)
+                inner     join cl_tipo_material    c on (b.sq_tipo_material     = c.sq_tipo_material)
+                inner     join co_unidade_medida   d on (b.sq_unidade_medida    = d.sq_unidade_medida)
+          where (p_chave         is null or (p_chave         is not null and a.sq_saida_item       = p_chave))
+            and (p_solicitacao   is null or (p_solicitacao   is not null and a2.sq_siw_solicitacao = p_solicitacao))
+            and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
+            and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material    = p_tipo_material))
+            and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno      like '%'||p_codigo||'%'))
+            and (p_nome          is null or (p_nome          is not null and acentos(b.nome)       like '%'||acentos(p_nome)||'%'));
+   ElsIf p_restricao = 'PEDMATAUT' Then
+      -- Recupera itens passíveis de vinculação a um pedido de material
+      open p_result for 
+         select a.sq_saida_item as chave,    a.quantidade_pedida,         a.quantidade_entregue,
+                a.valor_unitario,            a.data_efetivacao,
+                b.sq_material,               b.sq_tipo_material,          b.sq_unidade_medida, 
+                b.nome,                      b.descricao,                 b.detalhamento, 
+                b.apresentacao,              b.codigo_interno,            b.codigo_externo, 
+                b.ativo,
+                c.nome as nm_tipo_material,  c.sigla as sg_tipo_material, c.classe,
+                case c.classe
+                     when 1 then 'Medicamento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
+                montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+                montaNomeAlmoxLocal(g.sq_almoxarifado_local) as nm_localizacao,
+                g.sq_estoque_item,           g.sq_almoxarifado_local,     g.saldo_atual,
+                h.valor_unitario,            h.validade,                  h.fabricacao, 
+                h.marca,                     h.lote_numero,               h.fator_embalagem,
+                h1.recebimento_efetivo,
+                i.quantidade,                case when i.sq_saida_item is not null then 'S' else 'N' end as marcado
+           from mt_saida_item                                  a
+                inner                 join mt_saida           a1 on (a.sq_mtsaida           = a1.sq_mtsaida)
+                  inner               join siw_solicitacao    a2 on (a1.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
+                    inner             join eo_unidade         a3 on (a2.sq_unidade          = a3.sq_unidade)
+                      inner           join eo_localizacao     a4 on (a3.sq_pessoa_endereco  = a4.sq_pessoa_endereco)
+                        inner         join mt_almoxarifado     e on (a4.sq_localizacao      = e.sq_localizacao)
+                          inner       join mt_estoque          f on (e.sq_almoxarifado      = f.sq_almoxarifado and
+                                                                     a.sq_material          = f.sq_material
+                                                                    )
+                            inner     join mt_estoque_item     g on (f.sq_estoque           = g.sq_estoque and
+                                                                     g.saldo_atual          > 0
+                                                                    )
+                              inner   join mt_entrada_item     h on (g.sq_entrada_item      = h.sq_entrada_item)
+                                inner join mt_entrada         h1 on (h.sq_mtentrada         = h1.sq_mtentrada)
+                              left    join mt_saida_estoque    i on (a.sq_saida_item        = i.sq_saida_item and
+                                                                     g.sq_estoque_item      = i.sq_estoque_item
+                                                                    )
+                inner                 join cl_material         b on (a.sq_material          = b.sq_material)
+                inner                 join cl_tipo_material    c on (b.sq_tipo_material     = c.sq_tipo_material)
+                inner                 join co_unidade_medida   d on (b.sq_unidade_medida    = d.sq_unidade_medida)
+                
+          where (p_chave         is null or (p_chave         is not null and a.sq_saida_item       = p_chave))
+            and (p_solicitacao   is null or (p_solicitacao   is not null and a2.sq_siw_solicitacao = p_solicitacao))
+            and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
+            and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material    = p_tipo_material))
+            and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno      like '%'||p_codigo||'%'))
+            and (p_nome          is null or (p_nome          is not null and acentos(b.nome)       like '%'||acentos(p_nome)||'%'));
    ElsIf p_restricao = 'ARP' Then
       -- Recupera itens de ata de registro de preço
       open p_result for 

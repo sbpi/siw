@@ -115,7 +115,27 @@ begin
             from siw_tramite a
            where a.sq_siw_tramite = p_novo_tramite;
            
-         If w_menu.sigla = 'PAELIM' Then
+         If w_menu.sigla = 'MTCONSUMO' Then
+            -- Atualiza o valor da solicitação
+            update siw_solicitacao a set valor = 0 where a.sq_siw_solicitacao = p_chave;
+            
+            -- Atualiza o saldo de estoque
+            update mt_estoque_item a
+               set saldo_atual = saldo_atual + (select sum(y.quantidade)
+                                                  from mt_saida                      w
+                                                       inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
+                                                         inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
+                                                where w.sq_siw_solicitacao = p_chave
+                                                  and y.sq_estoque_item    = a.sq_estoque_item
+                                               )
+            where sq_estoque_item in (select sq_estoque_item
+                                        from mt_saida                      w
+                                             inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
+                                               inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
+                                      where w.sq_siw_solicitacao = p_chave
+                                        and y.quantidade         > 0
+                                     );
+         Elsif w_menu.sigla = 'PAELIM' Then
             -- Atualiza os protocolos vinculados a uma lista de exclusão
             update siw_solicitacao a
                set a.sq_siw_tramite = (select sq_siw_tramite from siw_tramite x where x.sq_menu = a.sq_menu and x.sigla = 'AT')
@@ -165,7 +185,7 @@ begin
       sq_siw_tramite        = w_tramite,
       conclusao             = null,
       executor              = case coalesce(w_sg_tramite,'--') when 'CI' then null else executor end,
-      observacao            = case substr(w_menu.sigla,1,2) when 'FN' then observacao when 'PA' then observacao when 'CL' then observacao else null end,
+      observacao            = case substr(w_menu.sigla,1,2) when 'FN' then observacao when 'PA' then observacao when 'CL' then observacao when 'MT' then observacao else null end,
       valor                 = case substr(w_menu.sigla,1,2) when 'FN' then valor when 'CL' then valor when 'SR' then valor else null end,
       opiniao               = null
    Where sq_siw_solicitacao = p_chave;
@@ -221,8 +241,5 @@ begin
       -- Insere registro em SIW_SOLIC_LOG_ARQ
       insert into siw_solic_log_arq (sq_siw_solic_log, sq_siw_arquivo) values (w_chave, w_chave_arq);
    End If;
-
-   commit;
-      
 end SP_PutSolicEnvio;
 /

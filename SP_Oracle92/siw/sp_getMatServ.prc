@@ -210,6 +210,45 @@ begin
                                                      )
                  )
                 );
+   Elsif p_restricao = 'PEDMAT' Then
+      -- Recupera pesquisas de preço vinculadas a uma solicitação
+      open p_result for 
+         select a.sq_material, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
+                a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
+                a.exibe_catalogo, a.vida_util, a.ativo, 
+                a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
+                a.pesquisa_data, a.pesquisa_validade, 
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case a.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
+                c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
+                case c.classe
+                     when 1 then 'Medicamento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
+                montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+                e.fator_embalagem
+           from cl_material                          a
+                inner       join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
+                inner       join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
+                inner       join mt_entrada_item     e  on (a.sq_material         = e.sq_material)
+                  inner     join mt_estoque_item     f  on (e.sq_entrada_item     = f.sq_entrada_item and
+                                                            f.saldo_atual         > 0
+                                                           )
+                    inner   join mt_estoque          g  on (f.sq_estoque          = g.sq_estoque)
+                      inner join mt_saida            j  on (g.sq_almoxarifado     = j.sq_almoxarifado and
+                                                            j.sq_siw_solicitacao  = p_chave
+                                                           )
+                      left  join mt_saida_item       h  on (j.sq_mtsaida          = h.sq_mtsaida and
+                                                            a.sq_material         = h.sq_material
+                                                           )
+          where a.cliente            = p_cliente
+            and a.exibe_catalogo     = 'S'
+            and a.ativo              = 'S'
+            and h.sq_saida_item      is null;
    Elsif p_restricao = 'PESQUISA' Then
       -- Recupera pesquisas de preço de materiais e serviços
       open p_result for 

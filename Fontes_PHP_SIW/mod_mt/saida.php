@@ -68,7 +68,7 @@ include_once('visualentrada.php');
 include_once('validaentrada.php');
 
 // =========================================================================
-//  /entrada.php
+//  /saida.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
 // Descricao: Registra entradas de material
@@ -102,7 +102,7 @@ $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
 $w_assinatura   = upper($_REQUEST['w_assinatura']);
-$w_pagina       = 'entrada.php?par=';
+$w_pagina       = 'saida.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_mt/';
 $w_troca        = $_REQUEST['w_troca'];

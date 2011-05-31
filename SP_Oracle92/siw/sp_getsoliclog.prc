@@ -400,7 +400,7 @@ begin
                    )
                and b.sq_siw_solicitacao = p_chave;
       End If;      
-   Elsif w_modulo in ('GP','SR','CO') Then -- Se for o módulo de recursos logísticos ou de compras
+   Elsif w_modulo in ('GP','SR','CO','AL') Then -- Se for o módulo de pessoa, recursos logísticos, almoxarifado ou de compras
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
@@ -412,7 +412,7 @@ begin
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
-                   inner        join siw_tramite     a1 on (a.sq_siw_tramite     = a1.sq_siw_tramite)
+                   inner      join siw_tramite       a1 on (a.sq_siw_tramite     = a1.sq_siw_tramite)
                    inner      join co_pessoa         c  on (a.sq_pessoa          = c.sq_pessoa)
                    inner      join siw_tramite       e  on (a.sq_siw_tramite     = e.sq_siw_tramite)
                    inner      join siw_solicitacao   g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)

@@ -367,8 +367,35 @@ begin
       end loop;
    End If;
 
-   -- Se eliminação de protocolo, coloca os protocolos da solicitação no tramite correto
-   If w_menu.sigla = 'PAELIM' Then
+   If w_menu.sigla = 'MTCONSUMO' Then
+      -- Atualiza o valor da solicitação
+      update siw_solicitacao a
+         set valor = (select sum(x.valor_unitario)
+                        from mt_saida                 w
+                             inner join mt_saida_item x on (w.sq_mtsaida = x.sq_mtsaida)
+                       where w.sq_siw_solicitacao = a.sq_siw_solicitacao
+                         and x.quantidade_entregue > 0
+                     )
+      where a.sq_siw_solicitacao = p_chave;
+      
+      -- Atualiza o saldo de estoque
+      update mt_estoque_item a
+         set saldo_atual = saldo_atual - (select sum(y.quantidade)
+                                            from mt_saida                      w
+                                                 inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
+                                                   inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
+                                          where w.sq_siw_solicitacao = p_chave
+                                            and y.sq_estoque_item    = a.sq_estoque_item
+                                         )
+      where sq_estoque_item in (select sq_estoque_item
+                                  from mt_saida                      w
+                                       inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
+                                         inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
+                                where w.sq_siw_solicitacao = p_chave
+                                  and y.quantidade         > 0
+                               );
+   Elsif w_menu.sigla = 'PAELIM' Then
+      -- Se eliminação de protocolo, coloca os protocolos da solicitação no tramite correto
       for crec in c_protocolos loop
          update siw_solicitacao a
             set a.conclusao    = crec.eliminacao,

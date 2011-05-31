@@ -78,7 +78,7 @@ begin
                                             connect by prior x.sq_tipo_material = x.sq_tipo_pai
                                            )
          order by a.nome;
-   Elsif upper(p_restricao) = 'FOLHA' Then
+   Elsif upper(p_restricao) = 'FOLHA' or upper(p_restricao) = 'FOLHACON' Then
      -- Recupera apenas os registros sem filhos
       open p_result for
          select a.sq_tipo_material as chave, a.sq_tipo_pai, a.nome, a.sigla, a.codigo_externo, a.classe,
@@ -115,6 +115,9 @@ begin
                                                                        )
                                                                       )
                                          )
+                )
+            and (p_restricao  = 'FOLHA' or
+                 (p_restricao = 'FOLHACON' and a.classe in (1,3))
                 )
          order by 7;
    Elsif p_restricao = 'EXISTE' Then
