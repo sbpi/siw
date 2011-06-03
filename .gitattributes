@@ -686,8 +686,15 @@ Fontes_PHP_SIW/classes/jpgraph/jpgraph_regstat.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_scatter.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_stock.php -text
 Fontes_PHP_SIW/classes/ldap/ldap.php -text
+Fontes_PHP_SIW/classes/mail/basic_sasl_client.php -text
+Fontes_PHP_SIW/classes/mail/cram_md5_sasl_client.php -text
+Fontes_PHP_SIW/classes/mail/digest_sasl_client.php -text
 Fontes_PHP_SIW/classes/mail/email_message.php -text
 Fontes_PHP_SIW/classes/mail/inc_cPHPezMail.php -text
+Fontes_PHP_SIW/classes/mail/login_sasl_client.php -text
+Fontes_PHP_SIW/classes/mail/ntlm_sasl_client.php -text
+Fontes_PHP_SIW/classes/mail/plain_sasl_client.php -text
+Fontes_PHP_SIW/classes/mail/sasl.php -text
 Fontes_PHP_SIW/classes/mail/smtp.php -text
 Fontes_PHP_SIW/classes/mail/smtp_message.php -text
 Fontes_PHP_SIW/classes/mailAlternative/ChangeLog.txt -text

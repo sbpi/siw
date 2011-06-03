@@ -325,7 +325,7 @@ begin
       -- Recupera os parâmetros do cliente informado
       select * into w_reg from pa_parametro where cliente = w_cliente;
   
-      If to_char(p_data_recebimento,'yyyy') <=  2009 Then
+      If to_char(p_data_recebimento,'yyyy') < to_char(sysdate,'yyyy') Then
         
          -- Configura o ano do registro para o ano informado na data de início.
          w_ano := to_number(to_char(p_data_recebimento,'yyyy'));

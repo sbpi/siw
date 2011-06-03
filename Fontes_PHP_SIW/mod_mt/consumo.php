@@ -525,6 +525,7 @@ function Geral() {
         $w_cadastrador       = f($RS,'cadastrador');
         $w_justificativa     = f($RS,'justificativa');
         $w_observacao        = f($RS,'observacao');
+        $w_tramite           = f($RS,'sq_siw_tramite');
         if (nvl($w_copia,'')=='') $w_fim               = FormataDataEdicao(f($RS,'fim'));
       } 
     } 
@@ -608,7 +609,7 @@ function Geral() {
 
   if (strpos('IAEV',$O)!==false) {
     ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,f($RS,'sigla'),$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,f($RS_Menu,'sigla'),$R,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
@@ -1802,7 +1803,6 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
-  //exit($SG);
   switch ($SG) {
     case 'MTCONSUMO':
       // Verifica se a Assinatura Eletrônica é válida

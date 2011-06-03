@@ -26,7 +26,7 @@ begin
                             from siw_menu                        c
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
-                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                   inner join (select /*+ ordered*/ x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                  from siw_solicitacao        x
                                                       inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
                                                                                    y.sq_pessoa      = p_cliente and
@@ -49,7 +49,7 @@ begin
                             from siw_menu                        c
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
-                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                   inner join (select /*+ ordered*/ x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                  from siw_solicitacao        x
                                                       inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
                                                                                    y.sq_pessoa      = p_cliente and
@@ -85,7 +85,7 @@ begin
                             from siw_menu                        c
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
-                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
+                                   inner join (select /*+ ordered*/ x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
                                                  from siw_solicitacao        x
                                                       inner join siw_menu    y on (x.sq_menu        = y.sq_menu and 
                                                                                    y.sq_pessoa      = p_cliente and

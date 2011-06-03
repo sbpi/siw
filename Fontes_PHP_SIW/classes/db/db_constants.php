@@ -15,9 +15,9 @@ define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
 define("ORA9_SERVER_NAME", "XE");
-define("ORA9_DB_USERID", "siw");
-define("ORA9_DB_PASSWORD", "siw");
-define("ORA9_DATABASE_NAME", "siw");
+define("ORA9_DB_USERID", "ABDI_VENUS");
+define("ORA9_DB_PASSWORD", "ABDI_VENUS");
+define("ORA9_DATABASE_NAME", "ABDI_VENUS");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants

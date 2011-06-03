@@ -32,7 +32,7 @@ begin
      -- Atualiza a tabela de unidades
      Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = w_unid_pai;
 
-  Elsif to_char(p_data,'yyyy') <= 2009 Then
+  Elsif to_char(p_data,'yyyy') < to_char(sysdate,'YYYY') Then
      -- Configura o ano do acordo para o ano informado na data de início
      -- e usa um sequencial qualquer, que será ajustado depois
      w_ano        := to_number(to_char(p_data,'yyyy'));
