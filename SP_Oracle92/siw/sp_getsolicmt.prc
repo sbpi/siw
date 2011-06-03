@@ -86,7 +86,7 @@ begin
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,                b.titulo,                                   acentos(b.titulo) as ac_titulo,
                 b.sq_plano,                      b.sq_cc,                                    b.observacao,
-                b.protocolo_siw,                 b.recebedor,
+                b.protocolo_siw,                 b.recebedor,                                dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
                 to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_conclusao,
                 b1.nome as nm_tramite,           b1.ordem as or_tramite,                     b1.sigla as sg_tramite,

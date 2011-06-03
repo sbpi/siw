@@ -87,6 +87,7 @@ switch ($O) {
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
+$w_filtro   = '';
 
 $p_tipo          = upper($_REQUEST['p_tipo']);
 $p_graf          = upper($_REQUEST['p_graf']);
@@ -157,8 +158,7 @@ function Gerencial() {
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
   $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
-  if ($O=='L' || $O=='V' || $p_tipo=='WORD' || $p_tipo=='PDF' || $p_tipo=='EXCEL') {
-
+  if ($O!='P') {
     $w_filtro='';
     switch ($p_agrega) {
       case 'GRPRVINC':    $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Vinculação</b>]';        break;
@@ -316,27 +316,11 @@ function Gerencial() {
   } 
 
   $w_linha_filtro = $w_linha;
-  if ($p_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } elseif($p_tipo == 'PDF') {
-    $w_embed = 'WORD';
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } elseif ($p_tipo=='EXCEL') {
-    $w_embed = 'WORD';
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    HeaderExcel($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,6);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } else {
-    $w_embed = 'HTML';
-    Cabecalho();
-    head();
+  $w_linha_pag    = 0;
+  $w_embed        = '';
+  headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+
+  if ($w_embed!='WORD') {
     if ($O=='P') {
       ScriptOpen('Javascript');
       CheckBranco();

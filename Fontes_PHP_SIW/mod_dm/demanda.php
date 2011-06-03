@@ -186,10 +186,10 @@ function Inicial() {
 
   $w_tipo=$_REQUEST['w_tipo'];
   if ($O=='L') {
-    if ((!(strpos(upper($R),'GR_')===false)) || ($w_tipo=='WORD')) {
+    if (strpos(upper($R),'GR_')!==false || nvl($w_tipo,'HTML')!='HTML') {
       $w_filtro='';
       if (nvl($p_chave_pai,'')>'') {
-        if ($w_tipo=='WORD') {
+        if (nvl($w_tipo,'HTML')!='HTML') {
          $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S','S').']</td></tr>';
          } else {
           $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S').']</td></tr>';
@@ -271,15 +271,10 @@ function Inicial() {
     }
   }
 
-  if ($w_tipo=='WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    head();
-    ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
-    ShowHTML('</HEAD>');    
-  }else {
-    Cabecalho();
-    head();
+  $w_embed = '';
+  headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+  
+  if ($w_embed!='WORD') {
     Estrutura_CSS($w_cliente);
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
@@ -333,56 +328,49 @@ function Inicial() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-  }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
-    // Se for recarga da página
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  } elseif ($O=='I') {
-    BodyOpenClean('onLoad=\'document.Form.w_smtp_server.focus();\'');
-  } elseif ($O=='A') {
-    BodyOpenClean('onLoad=\'document.Form.w_nome.focus();\'');
-  } elseif ($O=='E') {
-    BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
-  } elseif (!(strpos('CP',$O)===false)) {
-    if ($P1!=1 || $O=='C') {
-      // Se for cadastramento
-      BodyOpenClean('onLoad=\'document.Form.p_chave_pai.focus()\';');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    if ($w_troca>'') {
+      // Se for recarga da página
+      BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+    } elseif ($O=='I') {
+      BodyOpenClean('onLoad=\'document.Form.w_smtp_server.focus();\'');
+    } elseif ($O=='A') {
+      BodyOpenClean('onLoad=\'document.Form.w_nome.focus();\'');
+    } elseif ($O=='E') {
+      BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
+    } elseif (!(strpos('CP',$O)===false)) {
+      if ($P1!=1 || $O=='C') {
+        // Se for cadastramento
+        BodyOpenClean('onLoad=\'document.Form.p_chave_pai.focus()\';');
+      } else {
+        BodyOpenClean('onLoad=\'document.Form.p_ordena.focus()\';');
+      } 
     } else {
-      BodyOpenClean('onLoad=\'document.Form.p_ordena.focus()\';');
+      BodyOpenClean('onLoad=this.focus();');
     } 
-  } else {
-    BodyOpenClean('onLoad=this.focus();');
-  } 
-  Estrutura_Topo_Limpo();
-  Estrutura_Menu();
-  Estrutura_Corpo_Abre();
-  if($w_tipo!='WORD') {
-    if ((strpos(upper($R),'GR_'))===false) {
-      Estrutura_Texto_Abre();
-    } else {
-      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
-    }
+    Estrutura_Topo_Limpo();
+    Estrutura_Menu();
+    Estrutura_Corpo_Abre();
+    if ($w_filtro>'') ShowHTML($w_filtro);
   }
-  if ($w_filtro>'') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td>');
-    if ($P1==1 && $w_copia=='') {
+    if ($P1==1 && $w_copia=='' && $w_embed!='WORD') {
       // Se for cadastramento e não for resultado de busca para cópia
       ShowHTML('<tr><td>');
       if ($w_submenu>'') {
         $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
         foreach($RS1 as $row) {
-          if ($w_tipo!='WORD') ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+          ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
           break;
         }
-        if ($w_tipo!='WORD') ShowHTML('        <a accesskey="C" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar&nbsp;</a>');
+        ShowHTML('        <a accesskey="C" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar&nbsp;</a>');
       } else {
-        if ($w_tipo!='WORD') ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
-    if ((strpos(upper($R),'GR_')===false) && $P1!=6 && $w_tipo!='WORD') {
+    if ((strpos(upper($R),'GR_')===false) && $P1!=6) {
       if ($w_copia>'') {
         // Se for cópia
         if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
@@ -398,12 +386,11 @@ function Inicial() {
         } 
       } 
     } 
-    ShowHTML('    <td align="right">');
-    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</td>');
@@ -440,7 +427,7 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
-      if($w_tipo!='WORD') {
+      if($w_embed!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       } else {
         $RS1=$RS;
@@ -449,7 +436,7 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        if ($w_tipo!='WORD') {
+        if ($w_embed!='WORD') {
           ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
           ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
           ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
@@ -479,7 +466,7 @@ function Inicial() {
         if ($_REQUEST['p_tamanho']=='N') {
           ShowHTML('        <td>'.Nvl(f($row,'assunto'),'-').'</td>');
         } else {
-          if ($w_tipo!='WORD' && strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
+          if ($w_embed!='WORD' && strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
           if (f($row,'sg_tramite')=='CA') {
             ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'"><strike>'.$w_titulo.'</strike></td>');
           } else {
@@ -500,7 +487,7 @@ function Inicial() {
           } 
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
-        if ($w_tipo!='WORD') {
+        if ($w_embed!='WORD') {
           if ($_SESSION['INTERNO']=='S' || $P1 == 1) {
             ShowHTML('        <td class="remover" align="top" nowrap>');
             if ($P1!=3) {
@@ -580,7 +567,7 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('<tr><td align="center" colspan=3>');
       if ($R>'') {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -698,7 +685,8 @@ function Inicial() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Estrutura_Fecha();
-  Rodape();
+  if ($w_tipo=='PDF') RodapePDF();
+  else                Rodape();
 } 
 
 // =========================================================================
@@ -1513,28 +1501,9 @@ function Visual() {
 
   $w_chave = $_REQUEST['w_chave'];
   $w_tipo  = upper(trim($_REQUEST['w_tipo']));
+  $w_embed = '';
 
-  if ($w_tipo=='WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-    head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpenClean('onLoad=\'this.focus()\'; ');
-    $w_embed = 'WORD';
-  }  elseif($w_tipo == 'PDF') {
-    headerPdf('Visualização de '.f($RS_Menu,'nome'),0);
-    $w_embed = 'WORD';
-  } else {
-    Cabecalho();
-    head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpenClean('onLoad=\'this.focus()\'; ');
-    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
-  } 
+  headerGeral('V', $w_tipo, $w_chave, 'Visualização de demanda', $w_embed, null, 4, null,$w_filtro);
   
   if ($w_embed!='WORD' && nvl($_REQUEST['w_volta'],'')!='') {
     if ($_REQUEST['w_volta']=='fecha') {
@@ -1553,7 +1522,7 @@ function Visual() {
     }
   }
   if ($w_tipo=='PDF') RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  else                Rodape();
 } 
 
 // =========================================================================

@@ -284,21 +284,11 @@ function Gerencial() {
   } 
 
   $w_linha_filtro = $w_linha;
-  if ($p_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome').$w_TP,$w_pag);
-    $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($p_tipo == 'PDF'){
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    $w_embed = 'WORD';
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } else {
-    $w_embed = 'HTML';
-    Cabecalho();
-    head();
+  $w_linha_pag    = 0;
+  $w_embed        = '';
+  headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+
+  if ($w_embed!='WORD') {
     if ($O=='P') {
       ScriptOpen('Javascript');
       CheckBranco();
@@ -320,6 +310,14 @@ function Gerencial() {
         ShowHTML('  }');
         CompData('p_ini_i','Início do período','<=','p_ini_f','Término do período');
       }
+      Validate('p_fim_i','Início do período','DATA','','10','10','','0123456789/');
+      Validate('p_fim_f','Término do período','DATA','','10','10','','0123456789/');
+      ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
+      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+      ShowHTML('     theForm.p_fim_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_fim_i','Início do período','<=','p_fim_f','Término do período');
       ValidateClose();
       ScriptClose();
     } else {
@@ -350,7 +348,7 @@ function Gerencial() {
     } 
   } 
 
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $w_embed == 'WORD') {
     if ($w_embed != 'WORD') {
@@ -412,7 +410,6 @@ function Gerencial() {
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
-        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
         $sql = new db_getMenuData; $RS2 = $sql->getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
@@ -680,7 +677,7 @@ function Gerencial() {
           $w_pag    += 1;
           CabecalhoWord($w_cliente,$w_TP,$w_pag);
           if ($w_filtro>'') ShowHTML($w_filtro);
-          ShowHTML('<div align=center><center>');
+          ShowHTML('<div align=center>');
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
@@ -728,15 +725,13 @@ function Gerencial() {
         $w_qt_quebra    += 1;
       } 
       ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-      if ($p_agrega!='GRMTCIAVIAGEM' && $p_agrega!='GRMTCIDADE') {
-        ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
-        ShowHTML('          <td><b>Totais</td>');
-        ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1,$p_agrega);
-      } 
+      ShowHTML('      <tr bgcolor="#DCDCDC" valign="top">');
+      ShowHTML('          <td align="right"><b>Totais</td>');
+      ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1,$p_agrega);
+      ShowHTML('</tr>');
     } 
-    ShowHTML('      </FORM>');
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
+    ShowHTML('    </FORM>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     if (count($RS1)>0 && $p_graf=='N') {
@@ -763,7 +758,7 @@ function Gerencial() {
       }
       */
     }    
-  } elseif ($O='P') {
+  } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
@@ -886,16 +881,15 @@ function ImprimeCabecalho() {
 // -------------------------------------------------------------------------
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave,$l_agrega) {
   extract($GLOBALS);
-  if($p_tipo == 'PDF'){
-    $w_embed = 'WORD';  
-  }
+
+  if (nvl($p_tipo,'HTML')!='HTML') $w_embed = 'WORD';
 
   if ($w_embed != 'WORD')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</td>');                else ShowHTML('          <td align="right">'.number_format($l_solic,0,',','.').'&nbsp;</td>');
   if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</td>');                   else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</td>');
   if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</td>');
   if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</td>');
   //if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
-  ShowHTML('          <td align="right">'.number_format($l_valor,2,',','.').'&nbsp;</td>');
+  ShowHTML('          <td align="right">'.formatNumber($l_valor).'&nbsp;</td>');
   //ShowHTML('          <td align="right">'.number_format($l_custo,2,',','.').'&nbsp;</td>');
   /*
   if ($l_aviso>0 && $O=='L') {
