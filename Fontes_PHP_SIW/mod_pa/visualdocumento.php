@@ -291,6 +291,70 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'</tr>';
   }
 
+  $sql = new db_getSolicList; $RS_Filhos = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PROTOCOLO',9,
+      $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+      $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+      $p_chave, $p_assunto, f($RS,'prefixo'), f($RS,'numero_documento'), $p_uf, f($RS,'ano'), $p_usu_resp,
+      $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+      null, null, $p_empenho, $p_numero_orig);
+  $RS_Filhos = SortArray($RS_Filhos,'sq_siw_solicitacao','asc');
+  
+  if (count($RS_Filhos)>0) {
+    if (count($RS_Filhos)>0) {
+      $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÕES</b><hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'       <tr valign="top" align="center">';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Tipo</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Código / Título</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Fase atual</b></td>';
+      $l_html.=chr(13).'       </tr>';
+      foreach ($RS_Filhos as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'S').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'nm_tramite').'</td>';
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'      </center>';
+      $l_html.=chr(13).'    </table>';
+      $l_html.=chr(13).'  </td>';
+      $l_html.=chr(13).'</tr>';
+    }
+
+    if (count($RS_Copias)>0) {
+      $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>CÓPIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'       <tr valign="top" align="center">';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Número</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Posse atual</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Recebido em</b></td>';
+      $l_html.=chr(13).'       </tr>';
+      foreach ($RS_Copias as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="center">'.f($row,'copias').'</td>';
+        if ($l_formato!='WORD') $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>';
+        if (nvl(f($row,'pessoa_ext_posse'),'')!='') {
+          $l_html.=chr(13).'        <td>'.f($row,'nm_pessoa_posse').'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>'.f($row,'nm_unidade_posse').'</td>';
+        }
+        if (nvl(f($row,'envio'),'')=='') {
+          $l_html.=chr(13).'        <td>NÃO ENVIADO</td>';
+        } else {
+          $l_html.=chr(13).'        <td'.((nvl(f($row,'recebimento'),'')=='') ? '>PENDENTE (enviado em '.formataDataEdicao(f($row,'phpdt_envio'),10).')' : ' align="center">'.formataDataEdicao(f($row,'phpdt_recebimento'),10)).'</td>';
+        }
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'      </center>';
+      $l_html.=chr(13).'    </table>';
+      $l_html.=chr(13).'  </td>';
+      $l_html.=chr(13).'</tr>';
+    }
+  }
+
   $sql = new db_getSolicList; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',9,
       $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
       $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
