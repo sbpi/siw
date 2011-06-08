@@ -377,7 +377,7 @@ begin
              )
          and (p_despacho   is null or (p_despacho    is not null and 
                                        ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and w_filtro = 'true'))) or 
-                                        (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null and p_ano is not null)
+                                        (b4.ativo = 'N' and (b4.sigla = 'AS' or b4.sigla = 'DE') and p_numero is not null and p_ano is not null)
                                        ) and
                                        ((p_despacho not in (a1.despacho_autuar,
                                                             a1.despacho_anexar,
