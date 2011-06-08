@@ -2024,7 +2024,7 @@ function PesquisaPreco() {
       ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=false; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
       ShowHTML('       theForm["w_dias[]"][p_indice].disabled=false; ');
-      ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
+      ShowHTML('       if(theForm["w_classe[]"][p_indice].value==4) {');
       ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=false; ');
       ShowHTML('         theForm["w_marca_modelo[]"][p_indice].disabled=false; ');
       ShowHTML('         theForm["w_embalagem[]"][p_indice].disabled=false; ');
@@ -2035,7 +2035,7 @@ function PesquisaPreco() {
       ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=true; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=true; ');
       ShowHTML('       theForm["w_dias[]"][p_indice].disabled=true; ');
-      ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
+      ShowHTML('       if(theForm["w_classe[]"][p_indice].value==4) {');
       ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=true; ');
       ShowHTML('         theForm["w_marca_modelo[]"][p_indice].disabled=true; ');
       ShowHTML('         theForm["w_embalagem[]"][p_indice].disabled=true; ');
@@ -2052,7 +2052,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_inicio[]"][i].disabled=false; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][i].disabled=false; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=false; ');
-      ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
+      ShowHTML('         if(theForm["w_classe[]"][i].value==4) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=false; ');
       ShowHTML('           theForm["w_marca_modelo[]"][i].disabled=false; ');
       ShowHTML('           theForm["w_embalagem[]"][i].disabled=false; ');
@@ -2066,7 +2066,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_inicio[]"][i].disabled=true; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][i].disabled=true; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=true; ');
-      ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
+      ShowHTML('         if(theForm["w_classe[]"][i].value==4) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=true; ');
       ShowHTML('           theForm["w_marca_modelo[]"][i].disabled=true; ');
       ShowHTML('           theForm["w_embalagem[]"][i].disabled=true; ');
@@ -2210,7 +2210,7 @@ function PesquisaPreco() {
       Validate('["w_dias[]"][ind]','Dias de Validade','',1,1,10,'','0123456789');
       Validate('["w_valor[]"][ind]','Valor','VALOR','1',6,18,'','0123456789.,');
       CompValor('["w_valor[]"][ind]','Valor','>','0','zero');
-      ShowHTML('      if(theForm["w_classe[]"][ind].value==3) {');
+      ShowHTML('      if(theForm["w_classe[]"][ind].value==4) {');
       if ($w_pesquisa=='S') {
         // Campos opcionais na cotação
         Validate('["w_fabricante[]"][ind]','Fabricante','1','',2,50,'1','1');

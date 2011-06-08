@@ -1816,7 +1816,13 @@ function Encaminhamento() {
         ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="' . $w_unidade_externa . '"></td>');
       } else {
         if ($w_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_anexar') || $w_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) {
-          SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', nvl($w_sq_unidade,f($RS_Solic,'unidade_int_posse')), $w_usuario, 'w_sq_unidade', 'CADPA', null);
+          if (nvl(f($RS_Solic, 'unidade_int_posse'), '') == '') {
+            SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', nvl($w_sq_unidade, f($RS_Solic, 'unidade_int_posse')), $w_usuario, 'w_sq_unidade', 'CADPA', null);
+          } else {
+            $sql = new db_getUorgData;
+            $RS = $sql->getInstanceOf($dbms, f($RS_Solic, 'unidade_int_posse'));
+            ShowHTML('    <tr><td align="left" colspan="2"><input type="hidden" name="w_sq_unidade" value="' . $p_unid_posse . '"/><big><b>' . f($RS, 'nome') . '</b></big><br></td></tr>');
+          }
         } else {
           SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
         }
@@ -2899,7 +2905,7 @@ function Tramitacao() {
       ShowHTML('   <tr><td align="center" colspan=3><hr>');
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Arquivar">');
     } else {
-      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
+      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO:</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
       if ($w_somente_interno) {
         ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
@@ -2911,7 +2917,13 @@ function Tramitacao() {
         ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" ' . $w_Disabled . ' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="' . $w_unidade_externa . '"></td>');
       } else {
         if ($p_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $p_tipo_despacho == f($RS_Parametro, 'despacho_anexar') || $p_tipo_despacho == f($RS_Parametro, 'despacho_desmembrar')) {
-          SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', nvl($w_sq_unidade,$p_unid_posse), $w_usuario, 'w_sq_unidade', 'CADPA', null, 3);
+          if(nvl($p_unid_posse,'')==''){
+            SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', nvl($w_sq_unidade,$p_unid_posse), $w_usuario, 'w_sq_unidade', 'CADPA', null, 3);
+          }else{
+            $sql = new db_getUorgData;
+            $RS = $sql->getInstanceOf($dbms, $p_unid_posse);
+            ShowHTML('    <tr><td align="left" colspan="2"><input type="hidden" name="w_sq_unidade" value="'.$p_unid_posse.'"/><big><b>' . f($RS, 'nome').'</b></big><br></td></tr>');
+          }
         } else {
           SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null, 3);
         }

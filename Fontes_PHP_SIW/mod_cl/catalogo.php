@@ -305,23 +305,23 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa mais recente</b></td>');
+      ShowHTML('          <td colspan=3><b>Pesquisa mais recente</b></td>');
       ShowHTML('          <td class="remover" rowspan=2><b> Operações </td>');
       ShowHTML('        </tr>');
-      ShowHTML('        <tr align="center">');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>'.LinkOrdena('Validade','pesquisa_validade').'</b></td>');
-      ShowHTML('          <td bgColor="#f0f0f0"><b>'.LinkOrdena('$ Médio','pesquisa_preco_medio').'</b></td>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td colspan=2><b>'.LinkOrdena('Validade','pesquisa_validade').'</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('$ Médio','pesquisa_preco_medio').'</b></td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>Tipo</td>');
       ShowHTML('          <td rowspan=2><b>Código</td>');
       ShowHTML('          <td rowspan=2><b>Nome</td>');
       ShowHTML('          <td rowspan=2><b>Un.</td>');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa mais recente</b></td>');
+      ShowHTML('          <td colspan=3><b>Pesquisa mais recente</b></td>');
       ShowHTML('        </tr>');
-      ShowHTML('        <tr align="center">');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>');
-      ShowHTML('          <td bgColor="#f0f0f0"><b>$ Médio</b></td>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td colspan=2><b>Validade</b></td>');
+      ShowHTML('          <td><b>$ Médio</b></td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {

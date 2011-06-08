@@ -66,7 +66,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <td rowspan=2><b>Nome</b></td>';
       if (!$w_classes[4]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Marca</b></td>';
-      } elseif ($w_classes[1] || $w_classes[3] && $w_classes[4]) {
+      } elseif ($w_classes[1] || $w_classes[2] || $w_classes[3] && $w_classes[4]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Fabricante / Marca</b></td>';
       } elseif ($w_classes[4]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Fabricante</b></td>';
@@ -82,7 +82,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'          <td rowspan=2><b>Fabricação</b></td>';
         $colspan += 2;
       }
-      if ($w_classes[1] || $w_classes[3]) {
+      if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Validade</b></td>';
         $l_html.=chr(13).'          <td rowspan=2><b>Fator<br>Embal.</b></td>';
         $l_html.=chr(13).'          <td rowspan=2><b>U.M.</b></td>';
@@ -90,7 +90,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       $l_html.=chr(13).'          <td rowspan=2><b>Qtd</b></td>';
       $l_html.=chr(13).'          <td colspan=2><b>Valores</b></td>';
-      if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[3])) $l_html.=chr(13).'          <td rowspan=2><b>Saldo atual</b></td>';
+      if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'          <td rowspan=2><b>Saldo atual</b></td>';
       $l_html.=chr(13).'        </tr>';
       $l_html.=chr(13).'        <tr align="center">';
       $l_html.=chr(13).'          <td><b>Unit.</b></td>';
@@ -111,7 +111,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>';
           $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>';
         }
-        if ($w_classes[1] || $w_classes[3]) {
+        if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
           $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>';
           $l_html.=chr(13).'        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>';
           $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
@@ -119,11 +119,11 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
-        if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
+        if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
         $l_html.=chr(13).'        </tr>';
         $w_total += f($row,'valor_total');
       }
-      if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).((f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[3])) ? '<td>&nbsp;</td>' : '').'</tr>';
+      if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).((f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) ? '<td>&nbsp;</td>' : '').'</tr>';
       $l_html.=chr(13).'    </table>';
     }
   }

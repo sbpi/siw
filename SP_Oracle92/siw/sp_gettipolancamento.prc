@@ -46,9 +46,10 @@ begin
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das etapas
       open p_result for 
-         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.ativo, a.sq_tipo_lancamento_pai,
-                case a.receita when 'S' Then 'Sim' Else 'Não' end as nm_receita,
-                case a.despesa when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
+         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.reembolso, a.ativo, a.sq_tipo_lancamento_pai,
+                case a.receita   when 'S' Then 'Sim' Else 'Não' end as nm_receita,
+                case a.despesa   when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
+                case a.reembolso when 'S' Then 'Sim' Else 'Não' end as nm_reembolso,
                 case a.ativo   when 'S' Then 'Sim' Else 'Não' end as nm_ativo,
                 coalesce(b.qtd,0) as qt_lancamentos, coalesce(c.qtd,0) as qt_filhos,
                 level
@@ -97,11 +98,12 @@ begin
       End If;
       -- Recupera os tipos de lançamento financeiro do cliente
       open p_result for 
-         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.ativo,
+         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.reembolso, a.ativo,
                 montanomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo,
                 a.sq_tipo_lancamento_pai,
-                case a.receita when 'S' Then 'Sim' Else 'Não' end as nm_receita,
-                case a.despesa when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
+                case a.receita   when 'S' Then 'Sim' Else 'Não' end as nm_receita,
+                case a.despesa   when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
+                case a.reembolso when 'S' Then 'Sim' Else 'Não' end as nm_reembolso,
                 case a.ativo   when 'S' Then 'Sim' Else 'Não' end as nm_ativo,
                 acentos(a.nome) as ordena
            from fn_tipo_lancamento   a
@@ -110,8 +112,9 @@ begin
             and (p_restricao is null or 
                  (p_restricao is not null and 
                   (instr(p_restricao,'VINC') = 0 or (instr(p_restricao,'VINC') > 0 and 0 = (select count(*) from fn_tipo_lancamento where sq_tipo_lancamento_pai = a.sq_tipo_lancamento))) and
-                  ((substr(p_restricao,3,1) = 'R' and a.receita = 'S') or 
-                   (substr(p_restricao,3,1) = 'D' and a.despesa = 'S') or
+                  ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
+                   (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
+                   (substr(p_restricao,3,1) = 'E' and a.reembolso = 'S') or
                    ((w_menu not in ('PDSV','CLPC','CLLC')) or
                     (w_menu = 'PDSV' and
                      0 < (select count(*) 

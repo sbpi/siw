@@ -372,7 +372,7 @@ function TipoMatServ() {
     SelecaoUnidade('<U>U</U>nidade gestora:','U','Indique a unidade responsável pela gestão deste tipo de material ou serviço',$w_gestora,null,'w_gestora',null,null);
     ShowHTML('            <td><b><u>C</u>ódigo externo:<br><INPUT ACCESSKEY="C" TYPE="TEXT" CLASS="sti" NAME="w_codigo_externo" SIZE=30 MAXLENGTH=30 VALUE="'.$w_codigo_externo.'" '.$w_Disabled.' title="Código do tipo em um sistema externo."></td>');
     ShowHTML('        </table>');
-    ShowHTML('      <tr><td><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="G" class="sti" name="w_descricao" rows=5 cols=80 title="Informe a descricao deste tipo." '.$w_Disabled.'>'.$w_descricao.'</textarea></td>');
+    ShowHTML('      <tr><td><b><U>D</U>escrição:<br><TEXTAREA ACCESSKEY="G" class="sti" name="w_descricao" rows=5 cols=80 title="Informe a descricao deste tipo." '.$w_Disabled.'>'.$w_descricao.'</textarea></td>');
     if ($O=='I' || $O=='C') {
       ShowHTML('      <tr align="left">');
       MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
@@ -386,7 +386,7 @@ function TipoMatServ() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -549,7 +549,7 @@ function Criterio() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen( 'JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -705,7 +705,7 @@ function Situacao() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen( 'JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -859,7 +859,7 @@ function Enquadramento() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen( 'JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1194,7 +1194,7 @@ function Unidade() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1303,7 +1303,7 @@ function Usuario() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1329,17 +1329,17 @@ function Grava() {
           $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_nome'],''),null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de material ou serviço com este nome!\');');
+            ShowHTML('  alert("Já existe tipo de material ou serviço com este nome!");');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;
           } 
 
           // Testa a existência do sigla
-          $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,Nvl($_REQUEST['w_sigla'],''),null,null,null,'EXISTE');
+          $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),null,Nvl($_REQUEST['w_sigla'],''),null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de material ou serviço com esta sigla!\');');
+            ShowHTML('  alert("Já existe tipo de material ou serviço com esta sigla!");');
             ScriptClose(); 
             retornaFormulario('w_sigla');
             break;
@@ -1348,7 +1348,7 @@ function Grava() {
           $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum material ou serviço!\');');
+            ShowHTML('  alert("Não é possível excluir este tipo. Ele está ligado a algum material ou serviço!");');
             ScriptClose();
             break;
             retornaFormulario('w_assinatura');
@@ -1361,7 +1361,7 @@ function Grava() {
         ScriptClose();
         } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -1388,7 +1388,7 @@ function Grava() {
         ScriptClose();        
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1415,7 +1415,7 @@ function Grava() {
         ScriptClose();        
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1441,7 +1441,7 @@ function Grava() {
         ScriptClose();        
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1459,7 +1459,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1489,7 +1489,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -1514,7 +1514,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ShowHTML('  history.back(1);');
         ScriptClose();
       }

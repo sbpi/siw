@@ -806,11 +806,11 @@ function Geral() {
         ShowHTML('        <tr align="center">');
         ShowHTML('          <td rowspan=2><b>Item</b></td>');
         ShowHTML('          <td rowspan=2><b>Nome</b></td>');
-        if (($w_classes[1] || $w_classes[3]) && !$w_classes[4]) {
+        if (($w_classes[1] || $w_classes[2] || $w_classes[3]) && !$w_classes[4]) {
           ShowHTML('          <td rowspan=2><b>Marca</b></td>');
-        } elseif (!($w_classes[1] || $w_classes[3]) && $w_classes[4]) {
+        } elseif (!($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
           ShowHTML('          <td rowspan=2><b>Fabricante</b></td>');
-        } elseif (($w_classes[1] || $w_classes[3]) && $w_classes[4]) {
+        } elseif (($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
           ShowHTML('          <td rowspan=2><b>Fabricante / Marca</b></td>');
         }
         if ($w_classes[4]) {
@@ -824,7 +824,7 @@ function Geral() {
           ShowHTML('          <td rowspan=2><b>Fabricação</b></td>');
           $colspan += 2;
         }
-        if ($w_classes[1] || $w_classes[3]) {
+        if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
           ShowHTML('          <td rowspan=2><b>Validade</b></td>');
           ShowHTML('          <td rowspan=2><b>Fator<br>Embal.</b></td>');
           ShowHTML('          <td rowspan=2><b>U.M.</b></td>');
@@ -852,7 +852,7 @@ function Geral() {
             ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>');
             ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>');
           }
-          if ($w_classes[1] || $w_classes[3]) {
+          if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
             ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>');
             ShowHTML('        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>');
             ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
@@ -1092,7 +1092,7 @@ function Itens() {
         Validate('w_valor','Valor total','VALOR','1','4','18','','0123456789.,');
         CompValor('w_valor','Valor total','>','0','zero');
       }
-      if ($w_classe==1||$w_classe==3) {
+      if ($w_classe==1||$w_classe==2||$w_classe==3) {
         Validate('w_validade','Data de validade','DATA',1,10,10,'','0123456789/');
         CompData('w_validade','Data de validade','>=',formataDataEdicao(time()),'Data atual');
         if ($w_edita) {
@@ -1182,9 +1182,9 @@ function Itens() {
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
     if (!$w_classes[4]) {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Marca','marca').'</td>');
-    } elseif (!$w_classes[1] && !$w_classes[3] && $w_classes[4]) {
+    } elseif (!$w_classes[1] && !$w_classes[2] && !$w_classes[3] && $w_classes[4]) {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fabricante','marca').'</td>');
-    } elseif (($w_classes[1] || $w_classes[3]) && $w_classes[4]) {
+    } elseif (($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fabricante / marca','marca').'</td>');
     }
     if ($w_classes[4]) {
@@ -1198,7 +1198,7 @@ function Itens() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fabricação','fabricacao').'</td>');
       $colspan += 2;
     }
-    if ($w_classes[1] || $w_classes[3]) {
+    if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Validade','validade').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fator<br>Embal.','fator_embalagem').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
@@ -1232,7 +1232,7 @@ function Itens() {
           ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>');
           ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>');
         }
-        if ($w_classes[1] || $w_classes[3]) {
+        if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
           ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>');
           ShowHTML('        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>');
           ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
@@ -1305,7 +1305,7 @@ function Itens() {
       ShowHTML('        <td><b><u>Q</u>uantidade:</b><br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
       ShowHTML('        <td><b>$ <u>T</u>otal:</b><br><input type="text" '.$w_Disabled.' accesskey="T" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
       }
-      if ($w_classe==1||$w_classe==3) {
+      if ($w_classe==1||$w_classe==2||$w_classe==3) {
         ShowHTML('        <td><b><u>V</u>alidade:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_validade" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_validade.'" onKeyDown="FormataData(this,event);" title="Data de validade do item."></td>');
         if ($w_edita) ShowHTML('        <td><b><u>F</u>ator de embalagem:</b><br><input type="text" '.$w_Disabled.' accesskey="F" name="w_fator" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator,f($row,'fator_embalagem')).'" style="text-align:right;" title="Define o múltiplo da quantidade a ser solicitada."></td>');
       } else {

@@ -31,6 +31,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -89,6 +90,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -169,6 +171,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -236,6 +239,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -267,6 +271,7 @@ begin
                 c.nome as nm_tipo_material,  c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -324,6 +329,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -403,6 +409,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -449,6 +456,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -497,6 +505,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -545,6 +554,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -609,6 +619,7 @@ begin
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
                 case c.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'

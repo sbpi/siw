@@ -323,6 +323,18 @@ function Gerencial() {
     head();
     if ($O=='P') {
       ScriptOpen('Javascript');
+//      ShowHTML(' var allInputs = $(":input");');
+//      ShowHTML(' var formChildren = $("form > *");');
+      ShowHTML(' $(document).ready(function(){');
+      ShowHTML('   var count = 0;');
+      ShowHTML('   $("[type=text],select").each(function(id) {');
+      ShowHTML('   //this points to the input DOM element');
+      ShowHTML('     if($(this).val() != ""){');
+      ShowHTML('       count = count + 1;');
+      ShowHTML('     }');
+      ShowHTML('   });');
+      ShowHTML('   alert(count);');
+      ShowHTML(' });');
       CheckBranco();
       FormataData();
       SaltaCampo();

@@ -5,12 +5,12 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 * class dml_putTipoLancamento
 *
 * { Description :- 
-*    Mantém a tabela de tipos de contrato
+*    Mantém a tabela de tipos de lançamentos financeiros
 * }
 */
 
 class dml_putTipoLancamento {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_pai, $p_cliente, $p_nome, $p_descricao, $p_receita, $p_despesa, $p_ativo) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_pai, $p_cliente, $p_nome, $p_descricao, $p_receita, $p_despesa, $p_reembolso, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putTipoLancamento';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -20,6 +20,7 @@ class dml_putTipoLancamento {
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,       200),
                    'p_receita'                   =>array(tvl($p_receita),                                  B_VARCHAR,         1),
                    'p_despesa'                   =>array(tvl($p_despesa),                                  B_VARCHAR,         1),
+                   'p_reembolso'                 =>array(tvl($p_reembolso),                                B_VARCHAR,         1),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -519,6 +519,7 @@ function Lancamento() {
     $w_descricao    = $_REQUEST['w_descricao'];
     $w_receita      = $_REQUEST['w_receita'];
     $w_despesa      = $_REQUEST['w_despesa'];
+    $w_reembolso    = $_REQUEST['w_reembolso'];
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $sql = new db_getTipoLancamento; $RS = $sql->getInstanceOf($dbms,null,null,$w_cliente,'ARVORE');
@@ -531,6 +532,7 @@ function Lancamento() {
     $w_descricao    = f($RS,'descricao');
     $w_receita      = f($RS,'receita');
     $w_despesa      = f($RS,'despesa');
+    $w_reembolso    = f($RS,'reembolso');
     $w_ativo        = f($RS,'ativo');
   } 
   if (!(strpos('IAE',$O)===false)) {
@@ -540,8 +542,8 @@ function Lancamento() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','5','200','1','1');
       Validate('w_descricao','descrição','1','1','5','200','1','1');
-      ShowHTML('  if (theForm.w_receita[1].checked == true && theForm.w_despesa[1].checked == true) {');
-      ShowHTML('     alert (\'Não pode existir tipo de lançamento com valores negativos para o campo receita e despesa ao mesmo tempo!\');');
+      ShowHTML('  if (theForm.w_receita[1].checked && theForm.w_despesa[1].checked) {');
+      ShowHTML('     alert ("Não pode existir tipo de lançamento com valores negativos para o campo receita e despesa ao mesmo tempo!");');
       ShowHTML('     return false;');
       ShowHTML('  }');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -556,8 +558,8 @@ function Lancamento() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
@@ -582,6 +584,7 @@ function Lancamento() {
     ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Reembolso','nm_reembolso').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td class="remover"><b> Operações </font></td>');
@@ -602,6 +605,7 @@ function Lancamento() {
         ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_receita').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_despesa').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_reembolso').'</td>');
         ShowHTML('        <td align="center">'.f($row,'qt_lancamentos').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
@@ -625,11 +629,13 @@ function Lancamento() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="75" MAXLENGTH="200" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>S</u>ubordinação:','S',null,$w_pai,$w_chave,$w_cliente,'w_pai',(($O=='A') ? 'SUBPARTE' : 'SUBTODOS'),null);
+    SelecaoTipoLancamento('<u>S</u>ubordinação:','S',null,$w_pai,$w_chave,$w_cliente,'w_pai',(($O=='A') ? 'SUBPARTE' : 'SUBTODOS'),null,3);
     ShowHTML('      <tr><td colspan=3><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Receita?</b>',$w_receita,'w_receita');
     MontaRadioNS('<b>Despesa?</b>',$w_despesa,'w_despesa');
+    MontaRadioNS('<b>Reembolso?</b>',$w_reembolso,'w_reembolso');
+    ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
@@ -811,7 +817,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -826,7 +832,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -835,13 +841,13 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $SQL = new dml_putTipoLancamento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_pai'],$_REQUEST['w_cliente'],
-          $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_receita'],$_REQUEST['w_despesa'],$_REQUEST['w_ativo']);
+          $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_receita'],$_REQUEST['w_despesa'],$_REQUEST['w_reembolso'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -858,7 +864,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 

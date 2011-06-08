@@ -18,6 +18,7 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 case a.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -41,6 +42,7 @@ begin
                 montanometipomaterial(a.sq_tipo_material) as nome_completo,
                 case a.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -60,6 +62,7 @@ begin
                 montanometipomaterial(a.sq_tipo_material) as nome_completo,
                 case a.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -85,6 +88,7 @@ begin
                 montanometipomaterial(a.sq_tipo_material, 'inverso') as nome_completo,
                 case a.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -128,6 +132,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 case b.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -137,11 +142,12 @@ begin
           where a.cliente            = p_cliente
             and a.sq_tipo_material   = coalesce(p_chave,0)
             and b.sq_tipo_material   <> coalesce(p_chave,0)
-            and (p_nome              is null or (p_nome    is not null and acentos(b.nome) = acentos(p_nome)))
-            and (p_gestora           is null or (p_gestora is not null and b.unidade_gestora = p_gestora))
-            and (p_classe            is null or (p_classe is not null and b.classe = p_classe))
-            and (p_sigla             is null or (p_sigla   is not null and acentos(b.sigla) = acentos(p_sigla)))
-            and (p_ativo             is null or (p_ativo   is not null and b.ativo = p_ativo))
+            and (p_chave_pai         is null or (p_chave_pai is not null and a.sq_tipo_pai = p_chave_pai))
+            and (p_nome              is null or (p_nome      is not null and acentos(b.nome) = acentos(p_nome)))
+            and (p_gestora           is null or (p_gestora   is not null and b.unidade_gestora = p_gestora))
+            and (p_classe            is null or (p_classe    is not null and b.classe = p_classe))
+            and (p_sigla             is null or (p_sigla     is not null and acentos(b.sigla) = acentos(p_sigla)))
+            and (p_ativo             is null or (p_ativo     is not null and b.ativo = p_ativo))
          order by a.nome;
    Elsif p_restricao = 'VINCULADO' Then
       -- Verifica se o registro está vinculado a um material ou serviço
@@ -151,6 +157,7 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 case a.classe
                      when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
@@ -168,6 +175,7 @@ begin
                    montanometipomaterial(a.sq_tipo_material) as nome_completo,
                    case a.classe
                         when 1 then 'Medicamento'
+                        when 2 then 'Alimento'
                         when 3 then 'Consumo'
                         when 4 then 'Permanente'
                         when 5 then 'Serviço'
@@ -198,6 +206,7 @@ begin
                    montanometipomaterial(a.sq_tipo_material) as nome_completo,
                    case a.classe
                         when 1 then 'Medicamento'
+                        when 2 then 'Alimento'
                         when 3 then 'Consumo'
                         when 4 then 'Permanente'
                         when 5 then 'Serviço'
