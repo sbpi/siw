@@ -1139,42 +1139,33 @@ function Grava() {
     case 'EOUORG':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if ($O=='E'){
-          $SQL = new db_getUorgResp; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_unidade']);
-          foreach ($RS as $row) {
-            if (f($row,'nm_titular')!=''){
-              ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Existe responsável cadastrado para a unidade!\');');
-              ScriptClose();
-              retornaFormulario('w_assinatura');
-              exit();
-            }
-          }
-          $SQL = new db_getaddressList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_cliente'],$_REQUEST['w_sq_unidade'],'LISTALOCALIZACAO',null);
-          if (count($RS)>0){
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Existe endereço cadastrado para a unidade!\');');
-            ScriptClose();
-            retornaFormulario('w_assinatura');
-            exit();
-          }
-        }  
+        if ($O=='E') {
+          // Monta lista de arquivos a serem removidos
+          $SQL = new db_getUorgAnexo; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_unidade'],null,null,null,$w_cliente);
+          $arq = array();
+          foreach ($RS as $row) array_push($arq,$conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+        }
         $SQL = new dml_EoUnidade; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_unidade'],$_REQUEST['w_sq_tipo_unidade'],$_REQUEST['w_sq_area_atuacao'],$_REQUEST['w_sq_unidade_gestora'],
             $_REQUEST['w_sq_unidade_pai'],$_REQUEST['w_sq_unidade_pagadora'],$_REQUEST['w_sq_pessoa_endereco'],
             $_REQUEST['w_ordem'],$_REQUEST['w_email'],$_REQUEST['w_codigo'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_informal'],$_REQUEST['w_vinculada'],$_REQUEST['w_adm_central'],
             $_REQUEST['w_unidade_gestora'],$_REQUEST['w_unidade_pagadora'],$_REQUEST['w_externo'],$_REQUEST['w_ativo']);
-            ScriptOpen('JavaScript');
-            ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
-            ScriptClose();
-          } else {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-            ScriptClose();
-            retornaFormulario('w_assinatura');
-          } 
-          break;
+
+          foreach($arq as $k => $v) {
+            // Remove os arquivos físicos, se existirem
+            if (file_exists($v)) unlink($v);
+          }
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+          ScriptClose();
+        } else {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+          ScriptClose();
+          retornaFormulario('w_assinatura');
+        } 
+        break;
     case 'LUORG':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {

@@ -21,6 +21,10 @@ create or replace procedure SP_PutEOUnidade
     p_externo                  in varchar2 default null,
     p_ativo                    in  varchar2 default null
    ) is
+   
+   w_arq       varchar2(4000) := '';
+cursor c_arquivos is
+     select sq_siw_arquivo from eo_unidade_arquivo where sq_unidade = p_chave;
 begin
    If p_operacao = 'I' Then
       -- Insere registro
@@ -75,7 +79,12 @@ begin
       where sq_unidade   = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
-      delete eo_unidade where sq_unidade = p_chave;
+      for crec in c_arquivos loop w_arq := w_arq||','||crec.sq_siw_arquivo; end loop;
+      If length(w_arq)>1 Then delete siw_arquivo where sq_siw_arquivo in (substr(w_arq,2)); End If;
+      delete eo_unidade_arquivo where sq_unidade = p_chave;
+      delete eo_unidade_resp    where sq_unidade = p_chave;
+      delete eo_localizacao     where sq_unidade = p_chave;
+      delete eo_unidade         where sq_unidade = p_chave;
    End If;
 end SP_PutEOUnidade;
 /
