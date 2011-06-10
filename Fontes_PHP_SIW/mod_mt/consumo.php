@@ -363,7 +363,7 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td width="1%" nowrap>');
         if ($w_embed!='WORD') ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        ShowHTML('          '.ExibeSolic($w_dir,$w_chave,f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');
+        ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
         if ($w_embed!='WORD') ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_solic'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         else                  ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'sg_unidade_solic').'&nbsp;</td>');

@@ -1629,6 +1629,7 @@ Fontes_PHP_SIW/funcoes/selecaoCentralFone.php -text
 Fontes_PHP_SIW/funcoes/selecaoCiaTrans.php -text
 Fontes_PHP_SIW/funcoes/selecaoCidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoCidadeCentral.php -text
+Fontes_PHP_SIW/funcoes/selecaoClasseCheck.php -text
 Fontes_PHP_SIW/funcoes/selecaoClasseMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoColaborador.php -text
 Fontes_PHP_SIW/funcoes/selecaoContaBanco.php -text

@@ -187,39 +187,92 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6 and b1.ativo = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
-   Elsif p_restricao = 'CONTRATO' Then
-      -- Recupera as solicitações que o usuário pode ver
+   Elsif p_restricao = 'ALINV' Then
+      -- Recupera o inventário de estoque
       open p_result for 
-         select distinct a.sq_siw_solicitacao, a.codigo_interno, a.titulo, 
-                b.numero_certame, b.processo,
-                coalesce(b.numero_certame,a.codigo_interno) as cd_certame,
-                c.ordem,
-                c1.codigo_interno as cd_material, c1.nome as nm_material,
-                e.sq_pessoa, e.sq_tipo_pessoa, e.nome as nm_fornecedor,
-                coalesce(e1.cpf, e2.cnpj) as cd_fornecedor
-           from siw_solicitacao                           a
-                inner       join siw_menu                 a1 on (a.sq_menu             = a1.sq_menu)
-                inner       join siw_tramite              a2 on (a.sq_siw_tramite      = a2.sq_siw_tramite and
-                                                                 a2.sigla              = 'AT'
-                                                                )
-                inner       join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-                  inner     join lc_modalidade            b1 on (b.sq_lcmodalidade     = b1.sq_lcmodalidade)
-                  inner     join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
-                    inner   join cl_material              c1 on (c.sq_material         = c1.sq_material)
-                    inner   join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
-                                                                 d.pesquisa            = 'N' and
-                                                                 d.vencedor            = 'S'
-                                                                )
-                      inner join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
-                      left  join co_pessoa_fisica         e1 on (e.sq_pessoa           = e1.sq_pessoa)
-                      left  join co_pessoa_juridica       e2 on (e.sq_pessoa           = e2.sq_pessoa)
-                  left      join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
-                    left    join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
-                      left  join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
-          where a1.sq_menu           = p_menu
-            and h.sq_siw_solicitacao is null
-            and b1.gera_contrato     = 'S'
-         order by b.numero_certame, e.nome, lpad(c.ordem,4);
+        select a.sq_almoxarifado,                   a.nome as nm_almoxarifado,
+               a1.sq_localizacao,                   a1.nome as nm_localizacao,
+               a11.sq_unidade,                      a11.nome as nm_unidade,
+               a12.sq_pessoa_endereco,              a12.logradouro,
+               b.ultima_saida,                      b.ultima_entrada,                                b.preco_medio,
+               b.ultimo_preco_compra,               b.consumo_medio_mensal,                          b.ponto_ressuprimento,
+               b.ciclo_compra,
+               b1.sq_material,                      b1.nome as nm_material,
+               b11.sq_unidade_medida,               b11.nome as nm_unidade_medida,
+               b12.sq_tipo_material,                b12.nome as nm_tipo_material,                    b12.classe,
+               case b12.classe when 1 then 'Medicamento' when 2 then 'Alimento' when 3 then 'Consumo' when 4 then 'Permanente' when 5 then 'Serviço' end as nm_classe,
+               c.sq_almoxarifado_local,             c.saldo_atual,                                   montaNomeAlmoxLocal(c.sq_almoxarifado_local) as nm_almoxarifado_local
+          from mt_almoxarifado                                a
+               inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
+                 inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
+                 inner           join co_pessoa_endereco    a12 on (a1.sq_pessoa_endereco    = a12.sq_pessoa_endereco)
+               inner             join mt_estoque              b on (a.sq_almoxarifado        = b.sq_almoxarifado)
+                 inner           join cl_material            b1 on (b.sq_material            = b1.sq_material)
+                   inner         join co_unidade_medida     b11 on (b1.sq_unidade_medida     = b11.sq_unidade_medida)
+                   inner         join cl_tipo_material      b12 on (b1.sq_tipo_material      = b12.sq_tipo_material)
+                 inner           join (select w.sq_estoque, w.sq_almoxarifado_local, sum(w.saldo_atual) as saldo_atual
+                                         from mt_estoque_item                  w
+                                              inner join mt_almoxarifado_local x on (w.sq_almoxarifado_local = x.sq_almoxarifado_local)
+                                              inner join mt_entrada_item       y on (w.sq_entrada_item       = y.sq_entrada_item)
+                                        where x.sq_almoxarifado = p_chave
+                                       group by w.sq_estoque, w.sq_almoxarifado_local
+                                      )                       c on (b.sq_estoque             = c.sq_estoque)
+         where a.cliente         = p_menu
+           and a.sq_almoxarifado = p_chave
+           and (p_pais           is null or (p_pais        is not null and b12.sq_tipo_material = p_pais))
+           and (p_proponente     is null or (p_proponente  is not null and acentos(b1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
+           and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b12.classe||'''') > 0))
+        order by a.nome, b1.nome, nm_almoxarifado_local;
+   Elsif p_restricao = 'ALENTRADA' Then
+      -- Recupera o inventário de estoque
+      open p_result for 
+        select a.sq_almoxarifado,                   a.nome as nm_almoxarifado,
+               a1.sq_localizacao,                   a1.nome as nm_localizacao,
+               a11.sq_unidade,                      a11.nome as nm_unidade,
+               a12.sq_pessoa_endereco,              a12.logradouro,
+               b.sq_almoxarifado_local,             montaNomeAlmoxLocal(b.sq_almoxarifado_local) as nm_almoxarifado_local,
+               c.sq_entrada_item,                   c.saldo_atual,
+          	   d.quantidade as qt_entrada,          d.valor_unitario as vl_entrada,                  d.valor_total as tot_entrada,
+               d.validade,
+               d1.sq_material,                      d1.nome as nm_material,
+               d12.sq_tipo_material,                d12.nome as nm_tipo_material,                    d12.classe,
+               case d12.classe when 1 then 'Medicamento' when 2 then 'Alimento' when 3 then 'Consumo' when 4 then 'Permanente' when 5 then 'Serviço' end as nm_classe,
+               d2.recebimento_previsto,             d2.recebimento_efetivo,                          d2.armazenamento,
+               d2.numero_empenho,                   d2.data_empenho,
+               d11.sq_unidade_medida,               d11.nome as nm_unidade_medida,                   d11.sigla as sg_unidade_medida,
+               d2.armazenamento,
+               d21.sq_pessoa as fornecedor,         d21.nome as nm_fornecedor,                       d21.nome_resumido as nm_res_fornecedor,
+               d22.sq_mtsituacao,                   d22.nome as nm_situacao,                         d22.sigla as sg_situacao,
+               d23.sq_tipo_movimentacao,            d23.nome as nm_tipo_movimentacao,
+               d24.numero as nr_doc,                d24.data as dt_doc,                              d24.valor as vl_doc,
+               d241.sq_tipo_documento,              d241.nome as nm_tip_doc,                         d241.sigla as sg_tip_doc,
+               g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
+               g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
+               g.ciclo_compra
+          from mt_almoxarifado                                a
+               inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
+                 inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
+                 inner           join co_pessoa_endereco    a12 on (a1.sq_pessoa_endereco    = a12.sq_pessoa_endereco)
+               inner             join mt_almoxarifado_local   b on (a.sq_almoxarifado        = b.sq_almoxarifado)
+                 inner           join mt_estoque_item         c on (b.sq_almoxarifado_local  = c.sq_almoxarifado_local)
+                   inner         join mt_entrada_item         d on (c.sq_entrada_item        = d.sq_entrada_item)
+                     inner       join cl_material            d1 on (d.sq_material            = d1.sq_material)
+                       inner     join co_unidade_medida     d11 on (d1.sq_unidade_medida     = d11.sq_unidade_medida)
+                       inner     join cl_tipo_material      d12 on (d1.sq_tipo_material      = d12.sq_tipo_material)
+                     inner       join mt_entrada             d2 on (d.sq_mtentrada           = d2.sq_mtentrada)
+                       inner     join co_pessoa             d21 on (d2.fornecedor            = d21.sq_pessoa)
+                       inner     join mt_situacao           d22 on (d2.sq_mtsituacao         = d22.sq_mtsituacao)
+                       inner     join mt_tipo_movimentacao  d23 on (d2.sq_tipo_movimentacao  = d23.sq_tipo_movimentacao)
+                       inner     join fn_lancamento_doc     d24 on (d2.sq_lancamento_doc     = d24.sq_lancamento_doc)
+                         inner   join fn_tipo_documento    d241 on (d24.sq_tipo_documento    = d241.sq_tipo_documento)
+                   inner         join mt_estoque              g on (c.sq_estoque             = g.sq_estoque)
+         where a.cliente         = p_menu
+           and a.sq_almoxarifado = p_chave
+           and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
+           and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material  = p_pais))
+           and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||d12.classe||'''') > 0))
+           and (p_ini_i          is null or (p_ini_i       is not null and d2.armazenamento      between p_ini_i and p_ini_f))
+        order by a.nome, d1.nome, d2.armazenamento, d.validade;
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for 

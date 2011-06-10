@@ -718,7 +718,6 @@ function Almoxarifado() {
   } elseif (strpos('AE',$O)!==false && $w_troca=='') {
     // Recupera os dados chave informada
     $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'OUTROS');
-    $sql = new db_getAlmoxarifado; //$RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'OUTROS');
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');

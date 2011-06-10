@@ -862,7 +862,7 @@ function Deficiencia() {
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
-  } elseif ($O='P') {
+  } elseif ($O=='P') {
     AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,1,null,$TP,$SG,$R,'L');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1595,7 +1595,7 @@ function Formacao() {
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
-  } elseif ($O='P') {
+  } elseif ($O=='P') {
     AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,1,null,$TP,$SG,$R,'L');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
