@@ -1549,7 +1549,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           $l_title  = 'Execução concluída na data prevista.';
         }
       }
-    } elseif (substr($l_tipo,0,2)=='SR') {
+    } elseif (substr($l_tipo,0,2)=='SR' || substr($l_tipo,0,2)=='MT') {
       // Tarefas
       if ($l_tramite!='AT') {
         if ($l_tramite=='CA') {

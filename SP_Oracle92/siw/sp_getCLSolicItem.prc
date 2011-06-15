@@ -419,6 +419,9 @@ begin
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 dados_solic(g.sq_siw_solicitacao) as dados_solic
            from cl_solicitacao_item                a
+                inner	    join cl_solicitacao      a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao and
+                                                          a1.fundo_fixo         = 'N'
+                                                         )
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)

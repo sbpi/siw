@@ -773,7 +773,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'          <td align="center">'.FormataDataEdicao(f($row,'autorizacao_data'),5).'</td>';
         $l_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($row,'justificativa')),'---');
         if (nvl(f($row,'sq_siw_arquivo'),'')!='') {
-          $l_html.='<br />'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nm_arquivo'),null).'</td>';
+          $l_html.='<br />'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o arquivo em outra janela.','Arquivo',null).'</td>';
         }
         $l_html.=chr(13).'        </tr>';
       } 

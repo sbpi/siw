@@ -44,7 +44,7 @@ begin
          set quantidade_entregue = (select sum(quantidade) from mt_saida_estoque where sq_saida_item = a.sq_saida_item),
              valor_unitario      = (select sum(y.quantidade * x.valor_unitario)
                                       from mt_estoque_item             w
-                                           inner join mt_entrada_item  x on (w.sq_entrada_item = w.sq_entrada_item)
+                                           inner join mt_entrada_item  x on (w.sq_entrada_item = x.sq_entrada_item)
                                            inner join mt_saida_estoque y on (y.sq_saida_item   = p_saida and
                                                                              w.sq_estoque_item = y.sq_estoque_item
                                                                             )

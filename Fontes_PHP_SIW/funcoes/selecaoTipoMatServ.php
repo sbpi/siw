@@ -10,11 +10,7 @@ function selecaoTipoMatServ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   ShowHTML('          <td colspan="'.$colspan.'"'.((Nvl($hint,'')>'') ? ' title="'.$hint.'"' : '').'>'.((Nvl($label,'')>'') ? '<b>'.$label.'</b><br>' : '').'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.substr(f($row,'nome_completo'),0,strpos(f($row,'nome_completo'),' ')).f($row,'nome'));
-    } else {
-      ShowHTML('          <option value="'.f($row,'chave').'">'.substr(f($row,'nome_completo'),0,strpos(f($row,'nome_completo'),' ')).f($row,'nome'));
-    } 
+    ShowHTML('          <option value="'.f($row,'chave').'"'.((nvl(f($row,'chave'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.substr(f($row,'nome_completo'),0,strpos(f($row,'nome_completo'),' ')).f($row,'nome'));
   } 
   ShowHTML('          </select>');
 } 

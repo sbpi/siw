@@ -14,8 +14,8 @@ begin
   
   -- Monta o nome varrendo do registro informado para cima
   If p_inverso is null 
-     Then for crec in c_ordem loop Result :=  crec.nome || ' - ' || Result; codigo := crec.sigla || '.' || codigo; end loop;
-     Else for crec in c_ordem loop Result :=  Result || ' - ' || crec.nome; codigo := crec.sigla || '.' || codigo; end loop;
+     Then for crec in c_ordem loop Result :=  case when p_retorno = 'CODCOMP' then coalesce(Result,crec.nome || ' - ')  else crec.nome || ' - ' || Result end; codigo := crec.sigla || '.' || codigo; end loop;
+     Else for crec in c_ordem loop Result :=  case when p_retorno = 'CODCOMP' then '' else Result end || ' - ' || crec.nome; codigo := crec.sigla || '.' || codigo; end loop;
   End If;
   
   -- Se retornar apenas o primeiro nível

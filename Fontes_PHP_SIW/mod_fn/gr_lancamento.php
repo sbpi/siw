@@ -290,7 +290,7 @@ function Gerencial() {
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($p_tipo == 'PDF'){
+  } elseif($p_tipo == 'PDF'){
     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
     $w_embed = 'WORD';
     HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);

@@ -2729,7 +2729,7 @@ function RegistroAlteracao() {
       $RS = $row;
       break;
     }
-    exibeArray($RS);
+
     $w_caminho = f($RS, 'sq_siw_arquivo');
     $w_atual = f($RS, 'sq_siw_arquivo');
     $w_moeda_dia = f($RS, 'diaria_moeda');

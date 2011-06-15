@@ -35,6 +35,30 @@ begin
             and (p_sigla             is null or (p_sigla   is not null and a.sigla = upper(p_sigla)))
             and (p_ativo             is null or (p_ativo   is not null and a.ativo = p_ativo))
          order by a.nome;
+   Elsif upper(p_restricao) = 'ALMOXARIFADO' Then
+     -- Recupera os tipos existentes em um almoxarifado
+      open p_result for
+         select distinct a.sq_tipo_material chave,a.nome, a.codigo_externo, a.classe,
+                montanometipomaterial(a.sq_tipo_material,'CODCOMP') as nome_completo,
+                case a.classe
+                     when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe
+           from cl_tipo_material  a
+          where a.cliente = p_cliente
+         connect by prior a.sq_tipo_pai = a.sq_tipo_material
+         start with a.sq_tipo_material in (select w.sq_tipo_material
+                                             from cl_tipo_material               w
+                                                  inner     join cl_material     k on (w.sq_tipo_material = k.sq_tipo_material)
+                                                    inner   join mt_estoque      x on (k.sq_material      = x.sq_material)
+                                                      inner join mt_almoxarifado y on (x.sq_almoxarifado  = y.sq_almoxarifado)
+                                             where w.cliente         = p_cliente
+                                               and y.sq_almoxarifado = p_chave
+                                          )
+         order by nome_completo;
    Elsif upper(p_restricao) = 'SUBTODOS' Then
      -- Recupera os tipos aos quais o atual pode ser subordinado
       open p_result for
@@ -121,7 +145,7 @@ begin
                                          )
                 )
             and (p_restricao  = 'FOLHA' or
-                 (p_restricao = 'FOLHACON' and a.classe in (1,3))
+                 (p_restricao = 'FOLHACON' and a.classe in (1,2,3))
                 )
          order by 7;
    Elsif p_restricao = 'EXISTE' Then

@@ -9,6 +9,20 @@ function selecaoClasseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   $l_classe[3]['nome'] = 'Consumo';     $l_classe[3]['marcado'] = false; 
   $l_classe[4]['nome'] = 'Permanente';  $l_classe[4]['marcado'] = false; 
   $l_classe[5]['nome'] = 'Serviço';     $l_classe[5]['marcado'] = false; 
+  if ($restricao=='CONSUMO') {
+    unset($l_classe[4]);
+    unset($l_classe[5]);
+  } elseif ($restricao=='PERMANENTE') {
+    unset($l_classe[1]);
+    unset($l_classe[2]);
+    unset($l_classe[3]);
+    unset($l_classe[5]);
+  } elseif ($restricao=='SERVICO') {
+    unset($l_classe[1]);
+    unset($l_classe[2]);
+    unset($l_classe[3]);
+    unset($l_classe[4]);
+  }
   ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b>');
   $l_chave   = $chave.',';
   while (strpos($l_chave,',')!==false) {
@@ -17,7 +31,7 @@ function selecaoClasseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
     if ($l_item > '') $l_classe[$l_item]['marcado'] = true;
   }
   foreach ($l_classe as $k => $v) {
-    ShowHTML('          <BR><input type="CHECKBOX" name="'.$campo.'" value="'.$k.'"'.(($v['marcado']) ? ' CHECKED': '').'>'.$v['nome']); 
+    ShowHTML('          <BR><input type="CHECKBOX" name="'.$campo.'" value="'.$k.'"'.(($v['marcado'] || count($l_classe)==1) ? ' CHECKED' : '').'>'.$v['nome']); 
   }
 }
 ?>
