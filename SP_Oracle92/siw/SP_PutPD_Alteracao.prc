@@ -78,7 +78,8 @@ begin
           (w_arquivo,      p_cliente, 'Justificativa', sysdate,  p_tamanho, p_tipo, p_caminho, p_nome_original, 'Justificativa para alteração de viagem');
           
          -- Atualiza os dados da viagem
-         update pd_alteracao set sq_siw_arquivo = w_arquivo where sq_siw_solicitacao = p_chave;
+         -- update pd_alteracao set sq_siw_arquivo = w_arquivo where sq_siw_solicitacao = p_chave;
+         update pd_alteracao set sq_siw_arquivo = w_arquivo where sq_pdalteracao = w_chave_aux;         
       Else -- Alteração
          -- Recupera o arquivo ligado ao registro
          select sq_siw_arquivo into w_arquivo from pd_alteracao where sq_pdalteracao = w_chave_aux;
