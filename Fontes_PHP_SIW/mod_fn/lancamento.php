@@ -299,19 +299,6 @@ function Inicial() {
   } else {
     $RS = SortArray($RS,'nm_pessoa','asc','vencimento','desc');
   } 
-  $w_vinc_proj = false;
-  if (substr($SG, 3) == 'CONT') {
-    $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'GCDCAD');
-    $sql = new db_getMenuRelac;
-    $RS_Vinc = $sql->getInstanceOf($dbms, f($RS1, 'sq_menu'), null, null, null, null);
-    foreach ($RS_Vinc as $row) {
-      if(f($row,'sg_modulo') == 'PR'){
-        $w_vinc_proj = true;
-      }
-    }
-  }
-
-  
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']); 
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
@@ -414,9 +401,7 @@ function Inicial() {
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
       if (substr($SG,3)=='CONT')  {
         $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
-        if($w_vinc_proj){
-          $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Projeto débito','cd_solic_vinculo').'</td>');
-        }
+        $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Projeto débito','cd_solic_vinculo').'</td>');
       } else {
         $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       }
@@ -437,9 +422,7 @@ function Inicial() {
       $colspan++; ShowHTML('          <td><b>Pessoa</td>');
       if (substr($SG,3)=='CONT')  {
         $colspan++; ShowHTML('          <td><b>Contrato (Parcela)</td>');
-        if($w_vinc_proj){
-          $colspan++; ShowHTML('          <td><b>Projeto débito</td>');
-        }
+        $colspan++; ShowHTML('          <td><b>Projeto débito</td>');
       } else {
         $colspan++; ShowHTML('          <td><b>Vinculação</td>');
       }
@@ -480,7 +463,7 @@ function Inicial() {
         } else {
           ShowHTML('        <td align="center">---</td>');
         }
-        if (substr($SG,3)=='CONT' && $w_vinc_proj) {
+        if (substr($SG,3)=='CONT') {
           if ($w_tipo!='WORD') {
             ShowHTML('        <td><A class="hl" HREF="'.'mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GC'.substr($SG,2,1).'CAD" title="Exibe as informações do acordo." target="_blank">'.f($row,'cd_acordo').' ('.f($row,'or_parcela').')</a></td>');
             if (Nvl(f($row,'sq_solic_vinculo'),'')!='') {
@@ -789,8 +772,7 @@ function Geral() {
     $w_per_fim              = $_REQUEST['w_per_fim'];
     $w_texto_pagamento      = $_REQUEST['w_texto_pagamento'];
     $w_solic_vinculo        = $_REQUEST['w_solic_vinculo']; 
-    $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];
-    $w_projeto              = $_REQUEST['w_projeto'];
+    $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];;
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
@@ -843,8 +825,6 @@ function Geral() {
       $w_per_fim              = FormataDataEdicao(f($RS,'referencia_fim'));
       $w_texto_pagamento      = f($RS,'condicoes_pagamento');
       $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
-      $w_dados_avo            = explode('|@|',f($RS,'dados_avo'));
-      $w_projeto              = $w_dados_avo[11];
       $w_sq_menu_relac        = $w_dados_pai[3];
       if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
       $w_solic_vinculo        = f($RS,'sq_solic_vinculo');
@@ -865,7 +845,6 @@ function Geral() {
     $w_padrao_pagamento = f($RS_Solic,'condicoes_pagamento');
   }
   
- 
   if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
   
   if (nvl($w_solic_vinculo,'')!='' || nvl($w_chave_pai,'')!='') {
@@ -931,7 +910,7 @@ function Geral() {
         }
       } 
       */
-    } elseif(nvl($w_projeto,'---') == 'PR') {
+    } else {
       Validate('w_solic_vinculo','Projeto para débito','SELECT',1,1,18,'','0123456789');
     }
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
@@ -1023,7 +1002,6 @@ function Geral() {
       ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
     } 
     ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
-    ShowHTML('<INPUT type="hidden" name="w_projeto" value="'.$w_projeto.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1045,7 +1023,7 @@ function Geral() {
         }
       }
       if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
-    } elseif(nvl($w_projeto,'---') == 'PR') {
+    } else {
       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
       ShowHTML('      <tr>');
       SelecaoSolic('Projeto para débito:',null,null,$w_cliente,$w_solic_vinculo,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
@@ -3481,8 +3459,9 @@ function Encaminhamento() {
     $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
     $w_sg_tramite_ant = f($RS,'sg_tramite');
     $w_novo_tramite   = f($RS,'sq_siw_tramite');
+    $w_tramite        = f($RS,'sq_siw_tramite');
   }
-   
+  
   // Recupera os dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
   
