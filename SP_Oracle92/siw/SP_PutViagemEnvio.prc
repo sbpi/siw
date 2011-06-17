@@ -28,6 +28,8 @@ create or replace procedure SP_PutViagemEnvio
    w_complemento   pd_missao.complemento_valor%type;
    w_conta         co_pessoa_conta%rowtype;
    w_beneficiario  number(18);
+   w_benef_contr   co_tipo_vinculo.contratado%type;
+   w_unidade_aprov eo_unidade.sq_unidade%type;
    w_especial      number(18);
    w_pendencia     number(18) := 0;
    
@@ -255,8 +257,15 @@ create or replace procedure SP_PutViagemEnvio
       group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
    
 begin
-   -- Recupera os dados da solicitação.
-   select reembolso,ressarcimento,complemento_valor, sq_pessoa into w_reembolso, w_ressarcimento, w_complemento, w_beneficiario from pd_missao where sq_siw_solicitacao = p_chave;
+   -- Recupera os dados da solicitação. Se for contratado, a unidade solicitante aprova trâmites de chefia imediata. Caso contrário, será a unidade proponente.
+   select a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,    c.contratado,  case c.contratado when 'S' then d.sq_unidade else e.sq_unidade_resp end
+     into w_reembolso, w_ressarcimento, w_complemento,       w_beneficiario, w_benef_contr, w_unidade_aprov
+     from pd_missao                    a
+          inner   join co_pessoa       b on (a.sq_pessoa          = b.sq_pessoa)
+            inner join co_tipo_vinculo c on (b.sq_tipo_vinculo    = c.sq_tipo_vinculo)
+          inner   join siw_solicitacao d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+          inner   join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+    where a.sq_siw_solicitacao = p_chave;
    
    -- Recupera a chave do cliente
    select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
@@ -282,43 +291,41 @@ begin
          and p_chave    <> a.sq_siw_solicitacao
          and a.sq_pessoa = w_beneficiario;
 
-      -- Se o trâmite for de chefia imediata e o beneficiário da viagem é também titular da unidade, pula para o próximo
+      -- Se o trâmite for de chefia imediata pula para o próximo se usuário logado:
+      -- a) é titular da unidade solicitante e o beneficiário é contratado pela organização
+      -- b) é titular da unidade proponente e o beneficiário não é contratado pela organização 
       select count(*) into w_existe
         from (select 1
-                from pd_missao                    a
-                     inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                       inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
-                       inner join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                       inner join eo_unidade      f on (e.sq_unidade_resp    = f.sq_unidade)
-                       inner join eo_unidade_resp c on (e.sq_unidade_resp    = c.sq_unidade and
-                                                        c.sq_pessoa          = p_pessoa and
-                                                        c.tipo_respons       = 'T' and
-                                                        c.fim                is null
-                                                       )
-               where a.sq_siw_solicitacao = p_chave
+                from siw_solicitacao        b
+                     inner join siw_tramite d on (b.sq_siw_tramite     = d.sq_siw_tramite),
+                     eo_unidade_resp        c
+               where b.sq_siw_solicitacao = p_chave
                  and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
+                 and c.sq_unidade         = w_unidade_aprov
+                 and c.sq_pessoa          = p_pessoa
+                 and c.tipo_respons       = 'T'
+                 and c.fim                is null
               UNION
               select 1
-                from pd_missao                        a
-                     inner       join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                       inner     join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
-                       inner     join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                       inner     join siw_solic_log   f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                         inner   join (select w.sq_siw_solic_log, max(w.data) as data
-                                         from siw_solic_log          w
-                                              inner join siw_tramite x on (w.sq_siw_tramite = x.sq_siw_tramite and x.sigla = 'CI')
-                                        where w.observacao like 'Envio%'
-                                          and w.devolucao  = 'N'
-                                       group by w.sq_siw_solic_log
-                                      )               g on (f.sq_siw_solic_log   = g.sq_siw_solic_log and
-                                                            f.data               = g.data
-                                                           )
-                       inner     join eo_unidade_resp c on (e.sq_unidade_resp    = c.sq_unidade and
-                                                            c.sq_pessoa          = f.sq_pessoa and
-                                                            c.tipo_respons       = 'T' and
-                                                            c.fim                is null
-                                                           )
-               where a.sq_siw_solicitacao = p_chave
+                from siw_solicitacao                b
+                     inner     join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
+                     inner     join siw_solic_log   f on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                       inner   join (select w.sq_siw_solic_log, max(w.data) as data
+                                       from siw_solic_log          w
+                                            inner join siw_tramite x on (w.sq_siw_tramite = x.sq_siw_tramite and x.sigla = 'CI')
+                                      where w.sq_siw_solicitacao = p_chave
+                                        and w.observacao         like 'Envio%'
+                                        and w.devolucao          = 'N'
+                                     group by w.sq_siw_solic_log
+                                    )               g on (f.sq_siw_solic_log   = g.sq_siw_solic_log and
+                                                          f.data               = g.data
+                                                         )
+                     inner     join eo_unidade_resp c on (c.sq_unidade         = w_unidade_aprov and
+                                                          c.sq_pessoa          = f.sq_pessoa and
+                                                          c.tipo_respons       = 'T' and
+                                                          c.fim                is null
+                                                         )
+               where b.sq_siw_solicitacao = p_chave
                  and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
                  and d.ordem              > 1
              ) k;
