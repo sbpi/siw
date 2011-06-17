@@ -323,7 +323,7 @@ function Gerencial() {
     head();
     if ($O=='P') {
       ScriptOpen('Javascript');
-      ShowHTML(' $(document).ready(function(){');
+/*      ShowHTML(' $(document).ready(function(){');
       ShowHTML('   var count = 0;');
       ShowHTML('   $(\'[name="Form"]\').submit(function() {');
       ShowHTML('     $("[type=text],select").each(function(id) {');
@@ -339,7 +339,7 @@ function Gerencial() {
       ShowHTML('       return true;');
       ShowHTML('     }');      
       ShowHTML('   });');      
-      ShowHTML(' });');
+      ShowHTML(' });');*/
       CheckBranco();
       FormataData();
       SaltaCampo();
