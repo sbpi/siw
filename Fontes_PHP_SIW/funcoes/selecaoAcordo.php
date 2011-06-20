@@ -8,12 +8,14 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // -------------------------------------------------------------------------
 function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
+  $l_exige_parcela = false;
   if (strpos('0123456789',substr($restricao,0,1))!==false) {
     $sql = new db_getMenuRelac; $RS1 = $sql->getInstanceOf($dbms, $restricao, null, null, null, null);
     if (count($RS1)>0) {
       $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,3,
               null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
               null,null,null,$l_fase,null,null,null,null,null);
+      $l_exige_parcela = true;
     }
   } else {
       $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,4,
@@ -24,7 +26,7 @@ function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,
   ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'TITLE="'.$hint.'"' : '').'><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (f($row,'sg_modulo')=='AC') {
+    if (f($row,'sg_modulo')=='AC' && ($l_exige_parcela===false || ($l_exige_parcela===true && f($row,'qtd_parcela')>0))) {
       ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" '.((nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? 'SELECTED' : '').'>'.f($row,'titulo').' ('.f($row,'codigo_interno').')');
     }
   } 

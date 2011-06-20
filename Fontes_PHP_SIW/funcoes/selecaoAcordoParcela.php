@@ -10,16 +10,10 @@ function selecaoAcordoParcela($label,$accesskey,$hint,$cliente,$chave,$chaveAux,
   $l_menu = f($RS1,'sq_menu');
   $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,$restricao,null,null,null,$w_usuario,"'EE','ER'",$l_menu,null);
   $RS = SortArray($RS,'ordem','asc');
-  if (!isset($hint))
-    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  else
-    ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  ShowHTML('          <td colspan="'.$colspan.'"'.((!isset($hint)) ? '' : ' TITLE="'.$hint.'"').'>'.((!isset($label)) ? '' : '<b>'.$label.'</b><br>').'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (nvl(f($row,'sq_acordo_parcela'),0)==nvl($chave,0))
-      ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'" SELECTED>'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
-    else
-     ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'">'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
+    ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'"'.((nvl(f($row,'sq_acordo_parcela'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
   } 
   ShowHTML('          </select>');
 }

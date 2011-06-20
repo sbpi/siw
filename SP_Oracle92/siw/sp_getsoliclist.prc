@@ -1930,7 +1930,8 @@ begin
                                     end
                           end
                 end as titulo,
-                coalesce(g.existe,0) as qtd_projeto
+                coalesce(g.existe,0) as qtd_projeto,
+                coalesce(g1.existe,0) as qtd_parcela
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
@@ -1963,6 +1964,13 @@ begin
                                                                         y1.sigla   = 'PJCAD')
                                group by x1.sq_solic_pai
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
+                left    join (select w1.sq_siw_solicitacao, count(*) as existe
+                                 from ac_acordo_parcela            w1
+                                      inner join ac_acordo         w2 on (w1.sq_siw_solicitacao = w2.sq_siw_solicitacao)
+                                where w2.financeiro_unico = 'N'
+                                   or (w2.financeiro_unico = 'S' and w1.quitacao is null)
+                               group by w1.sq_siw_solicitacao
+                              )             g1 on (b.sq_siw_solicitacao = g1.sq_siw_solicitacao)
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
           where a.sq_menu        = to_number(p_restricao)
@@ -2007,7 +2015,8 @@ begin
                                     end
                           end
                 end as titulo,
-                coalesce(g.existe,0) as qtd_projeto
+                coalesce(g.existe,0) as qtd_projeto,
+                coalesce(g1.existe,0) as qtd_parcela
            from siw_menu                     a
                 inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente)
@@ -2038,6 +2047,13 @@ begin
                                                                         y1.sigla   = 'PJCAD')
                                group by x1.sq_solic_pai
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
+                left    join (select w1.sq_siw_solicitacao, count(*) as existe
+                                 from ac_acordo_parcela            w1
+                                      inner join ac_acordo         w2 on (w1.sq_siw_solicitacao = w2.sq_siw_solicitacao)
+                                where w2.financeiro_unico = 'N'
+                                   or (w2.financeiro_unico = 'S' and w1.quitacao is null)
+                               group by w1.sq_siw_solicitacao
+                              )             g1 on (b.sq_siw_solicitacao = g1.sq_siw_solicitacao)
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
           where a.sq_menu        = case to_number(p_restricao) when 0 then a.sq_menu else to_number(p_restricao) end
