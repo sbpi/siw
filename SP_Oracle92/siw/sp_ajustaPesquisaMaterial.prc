@@ -8,16 +8,21 @@ create or replace procedure sp_ajustaPesquisaMaterial(p_cliente in number, p_mat
            case when b.sq_material is null then c.inicio else b.inicio      end as inicio, 
            case when b.sq_material is null then c.fim    else b.fim         end as fim
       from cl_material                   a
-           left  join (select sq_material, min(valor_unidade) as valor_menor, max(valor_unidade) as valor_maior, round(avg(valor_unidade),4) as valor_medio, max(inicio) as inicio, max(fim) as fim
-                         from cl_item_fornecedor 
-                        where pesquisa = 'S'
-                          and fim      >= trunc(sysdate)
-                       group by sq_material
+           left  join (select w.sq_material, min(w.valor_unidade) as valor_menor, max(w.valor_unidade) as valor_maior, 
+                              round(avg(w.valor_unidade),4) as valor_medio, max(w.inicio) as inicio, max(w.fim) as fim
+                         from cl_item_fornecedor   w
+                              inner join co_pessoa x on (w.fornecedor = x.sq_pessoa)
+                        where x.sq_pessoa_pai = coalesce(p_cliente,0)
+                          and w.pesquisa      = 'S'
+                          and w.fim          >= trunc(sysdate)
+                       group by w.sq_material
                       )                  b on (a.sq_material = b.sq_material)
-           left  join (select sq_material, min(valor_unidade) as valor_menor, max(valor_unidade) as valor_maior, round(avg(valor_unidade),4) as valor_medio, max(inicio) as inicio, max(fim) as fim
-                         from cl_item_fornecedor 
-                        where pesquisa = 'S'
-                       group by sq_material
+           left  join (select w.sq_material, min(w.valor_unidade) as valor_menor, max(w.valor_unidade) as valor_maior, round(avg(w.valor_unidade),4) as valor_medio, max(w.inicio) as inicio, max(w.fim) as fim
+                         from cl_item_fornecedor   w
+                              inner join co_pessoa x on (w.fornecedor = x.sq_pessoa)
+                        where x.sq_pessoa_pai = coalesce(p_cliente,0)
+                          and w.pesquisa      = 'S'
+                       group by w.sq_material
                       )                  c on (a.sq_material = c.sq_material)
      where a.cliente = coalesce(p_cliente,0)
        and (coalesce(p_todos,'-') = 'TODOS' or (coalesce(p_todos,'-') <> 'TODOS' and a.sq_material = coalesce(p_material,0)));
