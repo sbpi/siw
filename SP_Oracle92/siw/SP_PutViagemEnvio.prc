@@ -258,13 +258,18 @@ create or replace procedure SP_PutViagemEnvio
    
 begin
    -- Recupera os dados da solicitação. Se for contratado, a unidade solicitante aprova trâmites de chefia imediata. Caso contrário, será a unidade proponente.
-   select a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,    c.contratado,  case c.contratado when 'S' then d.sq_unidade else e.sq_unidade_resp end
+   select a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,    c.contratado,  case c.contratado 
+                                                                                                 when 'S' then coalesce(a2.sq_unidade_exercicio, a1.sq_unidade, d.sq_unidade)
+                                                                                                 else e.sq_unidade_resp 
+                                                                                            end
      into w_reembolso, w_ressarcimento, w_complemento,       w_beneficiario, w_benef_contr, w_unidade_aprov
-     from pd_missao                    a
-          inner   join co_pessoa       b on (a.sq_pessoa          = b.sq_pessoa)
-            inner join co_tipo_vinculo c on (b.sq_tipo_vinculo    = c.sq_tipo_vinculo)
-          inner   join siw_solicitacao d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
-          inner   join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+     from pd_missao                             a
+          left    join sg_autenticacao         a1 on (a.sq_pessoa          = a1.sq_pessoa)
+          left    join gp_contrato_colaborador a2 on (a.sq_pessoa          = a2.sq_pessoa and a2.fim is null)
+          inner   join co_pessoa                b on (a.sq_pessoa          = b.sq_pessoa)
+            inner join co_tipo_vinculo          c on (b.sq_tipo_vinculo    = c.sq_tipo_vinculo)
+          inner   join siw_solicitacao          d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+          inner   join gd_demanda               e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
     where a.sq_siw_solicitacao = p_chave;
    
    -- Recupera a chave do cliente
