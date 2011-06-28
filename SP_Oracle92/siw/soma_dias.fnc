@@ -15,7 +15,7 @@ create or replace function SOMA_DIAS
 *    contagem      : forma da contagem dos dias (C -> corridos, U -> úteis
 * Retorno: data inicial acrescida do número de dias (corridos/úteis) informado
 ***********************************************************************************/
-w_atual   date := to_date(to_char(data_inicio,'dd/mm/yyyy')||'000000','dd/mm/yyyyhh24miss');
+w_atual   date := to_date(to_char(coalesce(data_inicio,sysdate),'dd/mm/yyyy')||'000000','dd/mm/yyyyhh24miss');
 w_dias    number(10,1) := 1;
 begin
   If upper(contagem) = 'C' Then
