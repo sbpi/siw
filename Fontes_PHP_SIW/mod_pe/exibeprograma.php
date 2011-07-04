@@ -856,6 +856,8 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
            null,null,null,null,null,null,null,null,null,null,$l_chave,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 
+    $RS1 = SortArray($RS1,'codigo_interno','asc','nm_solic','asc');
+    
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ESTRUTURAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
