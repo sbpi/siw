@@ -4248,7 +4248,7 @@ function Diarias() {
       Validate('w_hos_out', 'Data de check out', 'DATA', '1', 10, 10, '', '0123456789/');
       CompData('w_hos_out', 'Data de check out', '>=', 'w_hos_in', 'Data de check in');
       CompData('w_hos_in', 'Data de check out', '<=', 'w_dt_saida', 'Saída da localidade');
-      Validate('w_hos_observ', 'Observações / Justificativa para não pagamento de hospedagem', '1', 1, 5, 255, '1', '1');
+      Validate('w_hos_observ', 'Observações / Justificativa para não pagamento de hospedagem', '1', 1, 5, 500, '1', '1');
       ShowHTML('  var w_data, w_data1, w_data2;');
       ShowHTML('  w_data = theForm.w_hos_in.value;');
       ShowHTML('  w_data = w_data.substr(3,2) + "/" + w_data.substr(0,2) + "/" + w_data.substr(6,4);');

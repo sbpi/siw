@@ -4,18 +4,21 @@
 // -------------------------------------------------------------------------
 function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
   extract($GLOBALS);
-  
+
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
   $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,'PASTA');
   $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
   
-  if ($l_formato!='WORD') {
-    $l_html = BodyOpenMail(null);
+  if (nvl($p_ordena, '') > '') {
+    $lista = explode(',', str_replace(' ', ',', $p_ordena));
+    $RS_Dados = SortArray($RS_Dados, $lista[0], $lista[1], 'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
   } else {
-    $l_html = BodyOpenWord(null);
+    $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
   }
+  
+
   $w_linha = 99;
   $w_pag   = 1;
   $w_pasta = '';
@@ -64,22 +67,40 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
       
       $l_html.=chr(13).'   <tr><td colspan=2><br><b>DOCUMENTOS/PROCESSOS ARQUIVADOS NESTA CAIXA</b></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan=2><table border=1 width="100%">';
-      $l_html.=chr(13).'     <tr align="center">';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Tipo</b></font></td>';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Protocolo</b></font></td>';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Assunto</b></font></td>';
-      $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Guarda</b></font></td>';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Destinação final</b></font></td>';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Detalhamento do assunto</b></font></td>';
-      $l_html.=chr(13).'     <tr valign="top" align="center">';
-      $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
-      $l_html.=chr(13).'       <td><font size=1><b>Nº</b></font></td>';
-      $l_html.=chr(13).'       <td><font size=1><b>Data</b></font></td>';
-      $l_html.=chr(13).'       <td><font size=1><b>Procedência</b></font></td>';
+      
+      if($l_formato != 'WORD'){
+        $l_html.=chr(13).'     <tr align="center">';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Tipo','nm_tipo').'</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Protocolo','protocolo').'</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Assunto','cd_assunto').'</b></font></td>';
+        $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Guarda','prazo_guarda').'</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Destinação final','ds_final').'</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Detalhamento do assunto','detalhamento_assunto').'</b></font></td>';
+        $l_html.=chr(13).'     <tr valign="top" align="center">';
+        $l_html.=chr(13).'       <td><font size=1><b>' . LinkOrdena('Espécie','nm_especie').'</b></font></td>';
+        $l_html.=chr(13).'       <td><font size=1><b>' . LinkOrdena('Nº','numero_original').'</b></font></td>';
+        $l_html.=chr(13).'       <td><font size=1><b>' . LinkOrdena('Data','inicio').'</b></font></td>';
+        $l_html.=chr(13).'       <td><font size=1><b>' . LinkOrdena('Procedência','nm_origem_resumido').'</b></font></td>';
+      }else{
+        $l_html.=chr(13).'     <tr align="center">';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Tipo</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Protocolo</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Assunto</b></font></td>';
+        $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Guarda</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Destinação final</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Detalhamento do assunto</b></font></td>';
+        $l_html.=chr(13).'     <tr valign="top" align="center">';
+        $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
+        $l_html.=chr(13).'       <td><font size=1><b>Nº</b></font></td>';
+        $l_html.=chr(13).'       <td><font size=1><b>Data</b></font></td>';
+        $l_html.=chr(13).'       <td><font size=1><b>Procedência</b></font></td>';        
+      }
       $l_html.=chr(13).'     </tr>';
       $w_pag   += 1;
       $w_linha = 6;
+
     } 
     if (nvl($w_pasta,'.')!=f($row,'pasta')) {
       $l_html.=chr(13).'      <tr><td colspan=10 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>PASTA '.f($row,'pasta').'</b></td></tr>';

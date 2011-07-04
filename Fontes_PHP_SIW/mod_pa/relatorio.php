@@ -457,15 +457,35 @@ function ConteudoCaixa() {
   $w_chave   = $_REQUEST['w_chave'];
   $w_formato = $_REQUEST['w_formato'];
   $w_espelho = nvl($_REQUEST['w_espelho'], 'N');
-
-  if ($w_formato == 'WORD') {
+  $w_tipo = upper(trim($_REQUEST['w_tipo']));
+  
+  if ($w_tipo == 'PDF') {
+    headerpdf('Visualização de ' . f($RS_Menu, 'nome'), $w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,7);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 0);
+    $w_embed = 'WORD';
   } else {
     Cabecalho();
+    head();
+    ShowHTML('<title>' . $conSgSistema . ' - Visualização de viagem</title>');
+    ShowHTML('</head>');
+    ShowHTML('<base HREF="' . $conRootSIW . '">');
+    BodyOpenClean('onLoad="this.focus();" ');
+    if ($w_tipo != 'WORD')
+      CabecalhoRelatorio($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 4, $w_chave);
+    $w_embed = 'HTML';
   }
-  ShowHTML(VisualCaixa($w_chave, $w_formato, $w_espelho));
+  ShowHTML(VisualCaixa($w_chave, $w_embed, $w_espelho));
   ShowHTML('</body>');
   ShowHTML('</html>');
+  if ($w_tipo=='PDF') RodapePDF();
+  else                Rodape();
 }
 
 // =========================================================================
