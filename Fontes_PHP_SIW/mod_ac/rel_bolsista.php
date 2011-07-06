@@ -967,6 +967,7 @@ function Rel_Bolsista() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Bolsista',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td align="center">');
     ShowHTML('    <table width="97%" border="0">');

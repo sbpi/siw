@@ -15,9 +15,9 @@ define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
 define("ORA9_SERVER_NAME", "XE");
-define("ORA9_DB_USERID", "ABDI_VENUS");
-define("ORA9_DB_PASSWORD", "ABDI_VENUS");
-define("ORA9_DATABASE_NAME", "ABDI_VENUS");
+define("ORA9_DB_USERID", "SIW");
+define("ORA9_DB_PASSWORD", "SIW");
+define("ORA9_DATABASE_NAME", "SIW");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
@@ -30,9 +30,9 @@ define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // OracleHM Database Constants
 define("ORAHM_SERVER_NAME", "XE");
-define("ORAHM_DB_USERID", "ANATEL");
-define("ORAHM_DB_PASSWORD", "ANATEL");
-define("ORAHM_DATABASE_NAME", "ANATEL");
+define("ORAHM_DB_USERID", "INTEGRA");
+define("ORAHM_DB_PASSWORD", "INTEGRA");
+define("ORAHM_DATABASE_NAME", "INTEGRA");
 define("ORAHM_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants

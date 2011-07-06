@@ -3959,6 +3959,7 @@ function PrestacaoContas() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'I');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_siw_solicitacao" value="'.$w_siw_solicitacao.'">');
     ShowHTML('  <tr bgcolor="'.$conTrBgColor.'"><td colspan=2><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Após informar a prestação de contas desejada, clique sobre o botão <i>Aplicar filtro</i>.<li>Quando os itens da prestação de contas forem listados, informe se há pendência. Se houver obrservação, informe-as.</ul><hr/><b>Filtro</b></div>');

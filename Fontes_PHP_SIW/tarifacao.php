@@ -488,6 +488,7 @@ function Informar(){
     }
   } elseif ($O=='P') {
     ShowHTML('<FORM action="'.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
     ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
     ShowHTML('<INPUT type="hidden" name="P3" value="1">');

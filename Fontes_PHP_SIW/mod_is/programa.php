@@ -1109,6 +1109,7 @@ function RecursoProgramado() {
     ShowHTML('</FORM>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'A');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<tr><td align="center">');
     ShowHTML('    <table width="97%" border="0">');

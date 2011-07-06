@@ -474,6 +474,7 @@ function Gerencial() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');    
@@ -1011,6 +1012,7 @@ function Rel_PPA() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');
@@ -1421,6 +1423,7 @@ function Rel_Projeto(){
     ShowHTML('</center></div>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Tabela Projetos',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');    
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1737,6 +1740,7 @@ function Rel_Programa() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Programa',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');
@@ -2055,6 +2059,7 @@ function Rel_Sintetico_PR() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Projeto',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -2418,6 +2423,7 @@ function Rel_Sintetico_PPA() {
     ShowHTML('</tr>'); 
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');    
@@ -2700,6 +2706,7 @@ function Rel_Sintetico_Prog() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Programa',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');
@@ -3411,6 +3418,7 @@ function Rel_Metas() {
     ShowHTML('</table></div></td></tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');    
@@ -3668,6 +3676,7 @@ function Rel_Det_Tarefa() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td align="center">');
@@ -3900,6 +3909,7 @@ function Rel_Det_Acao() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td align="center">');
@@ -4144,6 +4154,7 @@ function Rel_Det_Prog() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Programa',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td align="center">');
@@ -4501,6 +4512,7 @@ function Rel_Limite() {
     ShowHTML('</tr>');
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td align="center">');

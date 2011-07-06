@@ -1448,6 +1448,7 @@ function Vincular() {
     ShowHTML('  <li>Após verificar se o protocolo informado existe e que é um processo, o sistema permitirá a vinculação.');
     ShowHTML('  </b></font></td>');
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');

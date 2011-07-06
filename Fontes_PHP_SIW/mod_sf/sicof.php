@@ -379,6 +379,7 @@ function ConsultaDoc() {
   } elseif ($O=='P') {
 
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="left">Instruções:<ul>');
     ShowHTML('  <li>Informe um dos critérios apresentados abaixo e clique sobre o botão <i>Aplicar filtro</i>.');
     ShowHTML('  <li>A procura pelo nome do beneficiário é feita em duas partes. Primeiro, informe parte dele em <i>Procurar nome</i> e clique sobre o botão <i>Procura</i>. Em seguida, selecione o nome desejado na lista disponível em <i>Beneficiário</i> e clique no botão <i>Aplicar Filtro</i>;');

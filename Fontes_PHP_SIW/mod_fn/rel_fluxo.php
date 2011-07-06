@@ -248,6 +248,7 @@ function Inicial(){
     } 
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Fluxo',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>'); 
     ShowHTML('    <table border="0">');

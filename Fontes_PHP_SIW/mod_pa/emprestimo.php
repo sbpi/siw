@@ -911,6 +911,7 @@ function Itens() {
     ShowHTML('      <tr><td colspan=2><table border=0 bgcolor="'.$conTrBgColor.'" width="100%" cellspacing=0><tr valign="top">');
     ShowHTML('<tr><td align="center">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'I');
+    ShowHTML(montaFiltro('POST',true));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
