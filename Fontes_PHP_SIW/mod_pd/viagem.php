@@ -1379,9 +1379,9 @@ function OutraParte() {
     Validate('w_nome', 'Nome', '1', 1, 5, 60, '1', '1');
     Validate('w_nome_resumido', 'Nome resumido', '1', 1, 2, 21, '1', '1');
     Validate('w_sexo', 'Sexo', 'SELECT', 1, 1, 1, 'MF', '');
-    if (nvl($w_cpf,'') == '') {
-      Validate('w_cpf', 'CPF', 'CPF', '1', '14', '14', '', '0123456789-.');
-    }
+//    if (nvl($w_cpf,'') == '') {
+//      Validate('w_cpf', 'CPF', 'CPF', '1', '14', '14', '', '0123456789-.');
+//    }
     if ($w_sq_tipo_vinculo == '') {
       Validate('w_sq_tipo_vinculo', 'Tipo de vínculo', 'SELECT', 1, 1, 18, '', '1');
     }
@@ -1610,9 +1610,8 @@ function OutraParte() {
         ShowHTML('          <td>CPF:<br><b><font size=2>' . $w_cpf);
 
       //ShowHTML('              <INPUT type="hidden" name="w_cpf" value="' . $w_cpf . '">');
-      if (nvl($w_cpf, '') == '') {
-        ShowHTML('              <INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="' . $w_cpf . '" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
-      }else{
+
+      if (nvl($w_cpf, '') != '') {
         ShowHTML('              <INPUT type="hidden" name="w_cpf" value="' . $w_cpf . '">');
       }
       ShowHTML('          <tr valign="top">');
