@@ -1151,10 +1151,12 @@ function Grava() {
             $_REQUEST['w_ordem'],$_REQUEST['w_email'],$_REQUEST['w_codigo'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_informal'],$_REQUEST['w_vinculada'],$_REQUEST['w_adm_central'],
             $_REQUEST['w_unidade_gestora'],$_REQUEST['w_unidade_pagadora'],$_REQUEST['w_externo'],$_REQUEST['w_ativo']);
-
-          foreach($arq as $k => $v) {
-            // Remove os arquivos físicos, se existirem
-            if (file_exists($v)) unlink($v);
+          if (is_array($arq)) {
+            foreach ($arq as $k => $v) {
+              // Remove os arquivos físicos, se existirem
+              if (file_exists($v))
+                unlink($v);
+            }
           }
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
