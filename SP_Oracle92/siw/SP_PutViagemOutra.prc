@@ -54,42 +54,12 @@ begin
       select sigla into w_forma_pagamento from co_forma_pagamento where sq_forma_pagamento = p_sq_forma_pag;
    End If;
 
-   -- Verifica se é a pessoa já existe
-   If p_cpf is not null Then
-      select count(*) into w_existe from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
-      If w_existe > 0 Then
-         select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
-      Else
-         w_chave_pessoa := 0;
-      End If;
-   Elsif p_passaporte is not null and p_sq_pais_passaporte is not null Then
-      select count(*) into w_existe from co_pessoa_fisica where cliente = p_chave_aux and passaporte_numero = p_passaporte and sq_pais_passaporte = p_sq_pais_passaporte;
-      If w_existe > 0 Then
-         select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and passaporte_numero = p_passaporte and sq_pais_passaporte = p_sq_pais_passaporte;
-      Else
-         w_chave_pessoa := 0;
-      End If;
-   End If;
-
-   If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
-
-      -- recupera a próxima chave da pessoa
-      select sq_pessoa.nextval into w_chave_pessoa from dual;
-
-      -- insere os dados da pessoa
-      insert into co_pessoa
-             (sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,   sq_tipo_pessoa,   nome,   nome_resumido)
-      (select w_chave_pessoa, p_chave_aux,   p_vinculo,         sq_tipo_pessoa,   p_nome, p_nome_resumido
-         from co_tipo_pessoa a
-        where a.nome = 'Física'
-       );
-   Else -- Caso contrário, altera
-      update co_pessoa
-         set nome            = Nvl(p_nome, nome),
-             nome_resumido   = Nvl(p_nome_resumido, nome_resumido),
-             sq_tipo_vinculo = Nvl(p_vinculo, sq_tipo_vinculo)
-       where sq_pessoa = w_chave_pessoa;
-   End If;
+   -- Altera os dados do beneficiário da viagem
+   update co_pessoa
+      set nome            = Nvl(p_nome, nome),
+          nome_resumido   = Nvl(p_nome_resumido, nome_resumido),
+          sq_tipo_vinculo = Nvl(p_vinculo, sq_tipo_vinculo)
+   where  sq_pessoa = w_chave_pessoa;
    
    -- Recupera o tipo de pessoa (física nacional ou física estrangeira)
    select sq_tipo_pessoa into w_tipo_pessoa from co_pessoa where sq_pessoa = w_chave_pessoa;

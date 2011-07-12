@@ -39,6 +39,7 @@ create or replace procedure sp_putPessoa
    w_sq_tipo_vinculo number(18) := p_tipo_vinculo;
    w_fornecedor      varchar(1);
    w_cliente         varchar(1);
+   w_cpf             varchar2(25) := p_cpf;
 begin
     
    If p_operacao = 'I' Then
@@ -95,6 +96,12 @@ begin
    End If;
    
    If p_tipo_pessoa in (1,3) Then -- Se for pessoa física
+      
+      -- Se estrangeiro sem CPF, gera código especial.
+      If w_cpf is null and p_tipo_pessoa = 3 Then  
+         w_cpf := geracpfespecial(1);
+      End If;
+   
       -- Verifica se os dados de pessoa física já existem
       select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = w_chave_pessoa;
       
@@ -105,7 +112,7 @@ begin
            )
          values
            (w_chave_pessoa,    p_nascimento,      p_rg_numero,          p_rg_emissor, p_rg_emissao, 
-            p_cpf,             p_passaporte,      p_sq_pais_passaporte, p_sexo,       p_cliente
+            w_cpf,             p_passaporte,      p_sq_pais_passaporte, p_sexo,       p_cliente
            );
       Else -- Caso contrário, altera
          update co_pessoa_fisica
@@ -113,7 +120,7 @@ begin
                 rg_numero          = coalesce(p_rg_numero, rg_numero),
                 rg_emissor         = coalesce(p_rg_emissor, rg_emissor),
                 rg_emissao         = coalesce(p_rg_emissao, rg_emissao),
-                cpf                = coalesce(p_cpf, cpf),
+                cpf                = coalesce(w_cpf, cpf),
                 passaporte_numero  = coalesce(p_passaporte, passaporte_numero),
                 sq_pais_passaporte = coalesce(p_sq_pais_passaporte, sq_pais_passaporte),
                 sexo               = coalesce(p_sexo, sexo)

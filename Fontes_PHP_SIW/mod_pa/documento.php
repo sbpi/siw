@@ -4513,30 +4513,48 @@ function Grava() {
   } elseif (strpos($SG, 'ENVIO') !== false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
-      // Se o destino for pessoa jurídica, pede unidade da pessoa
-      if (nvl($_REQUEST['w_pessoa_destino'], '') != '') {
-        $sql = new db_getBenef;
-        $RS_Destino = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_pessoa_destino'], null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        foreach ($RS_Destino as $row) {
-          $RS_Destino = $row;
-          break;
-        }
-        if (upper(f($RS_Destino, 'nm_tipo_pessoa')) == 'JURÍDICA' && nvl($_REQUEST['w_unidade_externa'], '') == '') {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: Unidade externa é obrigatória quando o destino é uma pessoa jurídica!\');');
-          ScriptClose();
-          retornaFormulario('w_unidade_externa');
-          exit;
-        }
-      }
-
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS_Menu, 'sigla'));
       if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite'] || nvl(f($RS, 'unidade_int_posse'), '') != nvl($_REQUEST['w_unidade_posse'], '') || nvl(f($RS, 'pessoa_ext_posse'), '') != nvl($_REQUEST['w_pessoa_posse'], '')) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: Outro usuário já tramitou este documento!\');');
         ScriptClose();
         retornaFormulario('w_assinatura');
+        exit;
       } else {
+        if (nvl($_REQUEST['w_arq_setorial'], '') == 'S') {
+          $sql = new db_getSolicData;
+          $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PADCAD');
+          if (f($RS, 'sg_tramite') == 'CI') {
+            $w_html = VisualDocumento($_REQUEST['w_chave'], 'T', $_SESSION['SQ_PESSOA'], $P1, 'WORD', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'N');
+            CriaBaseLine($_REQUEST['w_chave'], $w_html, f($RS_Menu, 'nome'), f($RS, 'sq_siw_tramite'));
+          }
+
+          $SQL = new dml_putDocumentoArqSet; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_SESSION['SQ_PESSOA'], $_REQUEST['w_despacho']);
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Arquivamento setorial realizado com sucesso!\');');
+          if ($P1 == 1) {
+            // Se for envio da fase de cadastramento, remonta o menu principal
+            ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG='.f($RS_Menu, 'sigla').'&TP=' . RemoveTP(RemoveTP($TP))) . '\';');
+          }
+          ScriptClose();
+          exit;
+        } else if (nvl($_REQUEST['w_pessoa_destino'], '') != '') {
+          // Se o destino for pessoa jurídica, pede unidade da pessoa
+          $sql = new db_getBenef;
+          $RS_Destino = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_pessoa_destino'], null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+          foreach ($RS_Destino as $row) {
+            $RS_Destino = $row;
+            break;
+          }
+          if (upper(f($RS_Destino, 'nm_tipo_pessoa')) == 'JURÍDICA' && nvl($_REQUEST['w_unidade_externa'], '') == '') {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: Unidade externa é obrigatória quando o destino é uma pessoa jurídica!\');');
+            ScriptClose();
+            retornaFormulario('w_unidade_externa');
+            exit;
+          }
+        }
+
         // Se for informado um processo, verifica se ele existe
         if (nvl($_REQUEST['w_protocolo'], '') != '') {
           $w_prefixo  = substr($_REQUEST['w_protocolo'], 0, 5);

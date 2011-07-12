@@ -114,8 +114,12 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
       $l_erro .= '<li>O beneficiário não foi informado';
       $l_tipo = 0;
     } else {
+
       // Verifica se o beneficiário tem os dados mínimos cadastrados
-      if (nvl(f($l_rs1, 'cpf'), '') == '' || nvl(f($l_rs1, 'email'), '') == '' || nvl(f($l_rs1, 'sexo'), '') == '' || nvl(f($l_rs1, 'cpf'), '') == '' || nvl(f($l_rs1, 'rg_numero'), '') == '' || nvl(f($l_rs1, 'ddd'), '') == '') {
+      if (nvl(f ($l_rs1, 'cpf'), '') == '' || nvl(f($l_rs1, 'email'), '') == '' || nvl(f($l_rs1, 'sexo'), '') == '' || 
+          (nvl(f($l_rs1,'sq_tipo_pessoa'),'')== 1 && ( nvl(f($l_rs1, 'rg_numero'), '') == '' || nvl(f($l_rs1, 'ddd'), '') == '')) ||
+          (nvl(f($l_rs1,'sq_tipo_pessoa'),'')== 3 && ( nvl(f($l_rs1, 'passaporte_numero'), '') == '' || nvl(f($l_rs1, 'sq_pais_passaporte'), '') == ''))
+          ) {
         $l_erro .= '<li>Beneficiário da viagem com dados incompletos. Acesse a tela do beneficiário, informe os dados obrigatórios e clique no botão "Gravar"';
         $l_tipo = 0;
       }

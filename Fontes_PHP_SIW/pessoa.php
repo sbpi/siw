@@ -1102,6 +1102,7 @@ function Grava() {
     Cabecalho();
     ShowHTML('</HEAD>');
     BodyOpen('onLoad=this.focus();');
+    
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
         // Verifica se a Assinatura Eletrônica é válida
         if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
