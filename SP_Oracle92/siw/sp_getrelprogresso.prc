@@ -226,7 +226,7 @@ begin
                 inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
                 inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
                   inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite and f.sigla <> 'CA')
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
                 left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
@@ -275,7 +275,7 @@ begin
                 inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
                 inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
                   inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite and f.sigla <> 'CA')
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
                 left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
@@ -325,7 +325,7 @@ begin
                 inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
                 inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
                   inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite and f.sigla <> 'CA')
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
                 left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
@@ -375,7 +375,7 @@ begin
                 inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
                 inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
                   inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite and f.sigla <> 'CA')
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
                 left        join (select sq_siw_solicitacao, max(x.ultima_alteracao) as ultima_atualizacao

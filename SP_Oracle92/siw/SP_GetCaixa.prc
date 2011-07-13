@@ -79,6 +79,7 @@ begin
                 coalesce(b3.nome, b.nome) as nm_unid_dest,
                 coalesce(b3.sigla, b.sigla) as sg_unid_dest,
                 c.numero_original,    c.numero_documento,                c.interno,   c.pasta,
+                c.ano,
                 case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
                 case c.processo when 'S' then c.data_autuacao else d.inicio end as dt_limite,
                 to_char(c.numero_documento)||'/'||substr(to_char(c.ano),3) as protocolo,
