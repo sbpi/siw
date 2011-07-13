@@ -24,7 +24,7 @@ function selecaoPessoaOrigem($label, $accesskey, $hint, $chave, $chaveAux, $camp
   }
 
   ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador);
-  ShowHTML('          <input READONLY ACCESSKEY="' . $accesskey . '" CLASS="sti" type="text" name="'.((strpos($campo,'[]')!==false) ? substr($campo,0,strpos($campo,'[')) : $campo).'_nm'.((strpos($campo,'[]')!==false) ? '[]' : '').'" SIZE="40" VALUE="' . $l_pessoa . '" ' . $atributo . '>');
+  ShowHTML('          <input READONLY ACCESSKEY="' . $accesskey . '" CLASS="sti" type="text" name="'.((strpos($campo,'[]')!==false) ? substr($campo,0,strpos($campo,'[')) : $campo).'_nm'.((strpos($campo,'[]')!==false) ? '[]' : '').'" SIZE="40" VALUE="' . substr($l_pessoa,0,40) . '" ' . $atributo . '>');
   ShowHTML('          <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'pessoa.php?par=BuscaPessoa&TP=' . $TP . '&restricao=' . $restricao . '&mandatory=' . lower($mandatory) . '&p_tipo_pessoa=' . $tipo_pessoa . '&SG=' . $SG . '&campo=' . $campo . '\',\'Assunto\',\'top=10,left=10,width=780,height=550,toolbar=no,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o assunto."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
   if (strpos($campo,'[]')!==false) {
     ShowHTML('              <a class="ss" HREF="javascript:this.status.value;" onClick=\'document.Form["'.substr($campo,0,strpos($campo,'[')).'_nm'.'[]"].value=""; document.Form["'.$campo.'"].value=""; return false;\' title="Clique aqui para apagar o valor deste campo."><img src="images/Folder/Recyfull.gif" border=0 align=top height=15 width=15></a>');
