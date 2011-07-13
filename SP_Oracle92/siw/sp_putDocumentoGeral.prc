@@ -149,6 +149,7 @@ begin
 
       -- Atualiza a tabela de documentos
       update pa_documento set
+          unidade_int_posse     = coalesce(p_unid_autua, unidade_int_posse),
           processo              = p_processo,
           circular              = p_circular,
           numero_original       = p_doc_original,
