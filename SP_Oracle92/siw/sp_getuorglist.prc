@@ -62,7 +62,7 @@ begin
                                                     (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S') or
                                                     (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI')) or
                                                     (p_restricao = 'CL_RENAPI'    and a.unidade_gestora = 'S') or
-                                                    (p_restricao = 'CADPA'        and h.ativo = 'S' and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
+                                                    (p_restricao = 'CADPA'        and h.registra_documento = 'S' and h.ativo = 'S' and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
                                                                                                        UNION
                                                                                                        select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
                                                                                                        UNION

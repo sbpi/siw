@@ -118,7 +118,7 @@ begin
                   inner       join co_pessoa        c1 on (c.solicitante         = c1.sq_pessoa)
                     inner     join sg_autenticacao  m  on (c1.sq_pessoa          = m.sq_pessoa)
                       inner   join eo_unidade       m1 on (m.sq_unidade          = m1.sq_unidade) 
-                  inner       join siw_tramite      j  on (c.sq_siw_tramite      = j.sq_siw_tramite)
+                  inner       join siw_tramite      j  on (c.sq_siw_tramite      = j.sq_siw_tramite and j.sigla <> 'CA')
                   inner       join siw_menu         d  on (c.sq_menu             = d.sq_menu)
                   left        join pe_programa      c2 on (c.sq_solic_pai        = c2.sq_siw_solicitacao)
                     left      join siw_solicitacao  c3 on (c2.sq_siw_solicitacao = c3.sq_siw_solicitacao)

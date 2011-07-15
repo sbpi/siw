@@ -2381,6 +2381,8 @@ function AltSolic() {
     $w_complemento = nvl($_REQUEST['w_complemento'],'N');
   }
   
+  Cabecalho();
+  head();
   ScriptOpen('JavaScript');
   toMoney();
   if (floatVal($w_valor_comp) > 0) {
@@ -2425,6 +2427,7 @@ function AltSolic() {
   }
   ScriptClose();
   ShowHTML('<base HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpenClean('onLoad="document.Form.' . (($w_numero == 'S') ? $w_troca : 'Botao[0]') . '.focus();"');
   } else {
