@@ -1125,7 +1125,9 @@ function Grava() {
         if (nvl($_REQUEST['w_sq_banco'],'')!='' && nvl($_REQUEST['w_codigo'],'')!='') {
           if ($O=='I' || $O =='A') {
             $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_banco'],null,null,$_REQUEST['w_codigo']);
-            if (count($RS) > 0) {
+            foreach ($RS as $row) {$RS = $row; break;}
+          
+            if (count($RS) > 0 && ($O =='A' && $_REQUEST['w_codigo'] == f($RS,'codigo'))) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'O código da agência informada já existe!\');');
               ScriptClose();
@@ -1134,9 +1136,7 @@ function Grava() {
             }
           }
         }
-        $SQL = new dml_CoAgencia; $SQL->getInstanceOf($dbms,$O,
-            $_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_banco'],$_REQUEST['w_nome']
-            ,$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
+        $SQL = new dml_CoAgencia; $SQL->getInstanceOf($dbms,$O, $_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_banco'],$_REQUEST['w_nome'], $_REQUEST['w_codigo'], $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
