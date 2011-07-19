@@ -1714,9 +1714,7 @@ function Encaminhamento() {
           Validate('w_pessoa_destino', 'Pessoa de destino', 'HIDDEN', 1, 1, 18, '', '0123456789');
           Validate('w_unidade_externa', 'Unidade externa', '', '', 2, 60, '1', '1');
         } else {
-          if ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
-            Validate('w_sq_unidade', 'Unidade arquivadora', 'SELECT', 1, 1, 18, '', '0123456789');
-          } else {
+          if ($w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
             Validate('w_sq_unidade', 'Unidade de destino', 'SELECT', 1, 1, 18, '', '0123456789');
           }
         }
@@ -1799,10 +1797,11 @@ function Encaminhamento() {
     } elseif ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
       ShowHTML('    <tr><td colspan="3">&nbsp;</td></tr>');
       ShowHTML('    <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DADOS DO ARQUIVAMENTO</b></font></td></tr>');
-      ShowHTML('    <tr valign="top">');
+      ShowHTML('    <tr valign="top"><td>');
       ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
-      ShowHTML('    <tr><td>Usuário arquivador:<td colspan=2><b>' . $_SESSION['NOME'] . '</b></td></tr>');
-      SelecaoUnidade('Unidade ar<U>q</U>uivadora:', 'Q', 'Selecione o arquivo setorial.', nvl($w_sq_unidade,f($RS_Solic,'unidade_int_posse')), $w_usuario, 'w_sq_unidade', 'CADPA', null,1,'<td>');
+      ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="' . f($RS_Solic,'unidade_int_posse') . '">');
+      ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>' . $_SESSION['NOME'] . '</b></td></tr>');
+      ShowHTML('    <tr><td>Unidade arquivadora:<td colspan=2><b>' . f($RS_Solic,'nm_unidade_posse') . '</b></td></tr>');
     } else {
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
@@ -3177,6 +3176,8 @@ function TramitCentral() {
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Tipo', 'nm_tipo', 'Form') . '</td>');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . linkOrdena('Assunto', 'cd_assunto', 'Form') . '</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
+    ShowHTML('          <td colspan=2><b>Arq. setorial</td>');
+    ShowHTML('          <td rowspan=2><b>' . linkOrdena('Prazo Guarda', 'data_limite_doc', 'Form') . '</td>');
     ShowHTML('          <td colspan=2><b>Acondicionamento</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3184,6 +3185,8 @@ function TramitCentral() {
     ShowHTML('          <td><b>' . linkOrdena('Nº', 'numero_original', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Data', 'inicio', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Procedência', 'nm_origem_doc', 'Form') . '</td>');
+    ShowHTML('          <td><b>' . linkOrdena('Observação', 'observacao_setorial', 'Form') . '</td>');
+    ShowHTML('          <td><b>' . linkOrdena('Arquivamento', 'data_setorial', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Caixa', 'nr_caixa', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Pasta', 'pasta', 'Form') . '</td>');
     ShowHTML('        </tr>');
@@ -3223,12 +3226,20 @@ function TramitCentral() {
         ShowHTML('<input type="hidden" name="w_codigo[]" value="' . f($row, 'protocolo') . '">');
         ShowHTML('        </td>');
         ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
-        ShowHTML('        <td>' . f($row, 'nm_tipo') . '</td>');
+        ShowHTML('        <td width="10">&nbsp;' . f($row, 'nm_tipo') . '</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'cd_assunto') . '</td>');
-        ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
-        ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
-        ShowHTML('        <td>' . formataDataEdicao(f($row, 'inicio'), 5) . '&nbsp;</td>');
-        ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
+        ShowHTML('        <td>&nbsp;' . f($row, 'nm_especie') . '</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'numero_original') . '</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;' . formataDataEdicao(f($row, 'inicio'), 5) . '&nbsp;</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'nm_origem_doc') . '</td>');
+        if (strlen(Nvl(f($row, 'observacao_setorial'), '-')) > 50)
+          $w_titulo = substr(Nvl(f($row, 'observacao_setorial'), '-'), 0, 50) . '...'; 
+        else
+          $w_titulo=Nvl(f($row, 'observacao_setorial'), '-');
+        ShowHTML('        <td title="' . htmlspecialchars(f($row, 'observacao_setorial')) . '">' . $w_titulo . '</td>');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;' . formataDataEdicao(f($row, 'data_setorial'), 5) . '</td>');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;' . f($row, 'data_limite_doc') . '</td>');
+
         if (nvl(f($row, 'nr_caixa'), '') != '') {
           ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;<A HREF="' . montaURL_JS($w_dir, 'relatorio.php?par=ConteudoCaixa' . '&R=' . $w_pagina . 'IMPRIMIR' . '&O=L&w_chave=' . f($row, 'sq_caixa') . '&w_espelho=s&w_formato=WORD&orientacao=PORTRAIT&&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG) . '" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">' . f($row, 'nr_caixa') . '/' . f($row, 'sg_unid_caixa') . '</a>&nbsp;');
         } else {
@@ -4528,6 +4539,13 @@ function Grava() {
             $w_html = VisualDocumento($_REQUEST['w_chave'], 'T', $_SESSION['SQ_PESSOA'], $P1, 'WORD', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'N');
             CriaBaseLine($_REQUEST['w_chave'], $w_html, f($RS_Menu, 'nome'), f($RS, 'sq_siw_tramite'));
           }
+
+          $SQL = new dml_putDocumentoEnvio;
+          $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'],
+                  $_REQUEST['w_interno'], $_REQUEST['w_unidade_posse'], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
+                  $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
+                  $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'], $_REQUEST['w_unidade_externa'],
+                  &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
 
           $SQL = new dml_putDocumentoArqSet; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_SESSION['SQ_PESSOA'], $_REQUEST['w_despacho']);
           ScriptOpen('JavaScript');

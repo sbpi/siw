@@ -14,7 +14,7 @@ function selecaoAlmoxarifado($label, $accesskey, $hint, $chave, $campo, $restric
   ShowHTML('          <option value="">---');
   foreach ($l_rs as $row) {
     ShowHTML('          <option value="' . f($row, 'chave') . '" ' . ((count($l_rs)==1 || nvl(f($row, 'chave'), 0)==nvl($chave, 0)) ? 'SELECTED' : '') . '>' . f($row, 'nome'));
-    if (count($l_rs)==1 || nvl(f($row, 'chave'), 0)) $chave = f($row,'chave');
+    if (count($l_rs)==1 || nvl(f($row, 'chave'), 0)==$chave) $chave = f($row,'chave');
   }
   ShowHTML('          </select>');
 } 

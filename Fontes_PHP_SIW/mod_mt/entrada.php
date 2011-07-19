@@ -554,6 +554,7 @@ function Geral() {
     $w_tipo                     = $_REQUEST['w_tipo'];
     $w_prevista                 = $_REQUEST['w_prevista'];
     $w_efetiva                  = $_REQUEST['w_efetiva'];
+    $w_armazenamento            = $_REQUEST['w_armazenamento'];
     $w_sq_tipo_documento        = $_REQUEST['w_sq_tipo_documento'];
     $w_numero                   = $_REQUEST['w_numero'];
     $w_data                     = $_REQUEST['w_data'];
@@ -581,6 +582,7 @@ function Geral() {
       $w_tipo                     = f($RS,'sq_tipo_movimentacao');
       $w_prevista                 = formataDataEdicao(f($RS,'recebimento_previsto'));
       $w_efetiva                  = formataDataEdicao(f($RS,'recebimento_efetivo'));
+      $w_armazenamento            = formataDataEdicao(f($RS,'armazenamento'));
       $w_sq_tipo_documento        = f($RS,'sq_tipo_documento');
       $w_nm_tipo_documento        = f($RS, 'nm_tp_doc');
       $w_numero                   = f($RS,'nr_doc');
@@ -688,6 +690,9 @@ function Geral() {
   ShowHTML('  for (ind=1; ind < theForm["w_local[]"].length; ind++) {');
   Validate('["w_local[]"][ind]','local de armazenamento','','1',1,18,'','0123456789');
   ShowHTML('  }');
+  Validate('w_armazenamento','Data de armazenamento', 'DATA', '1', '10', '10', '', '0123456789/');
+  CompData('w_armazenamento','Data de armazenamento','<=',formataDataEdicao(time()),'data atual');
+  CompData('w_armazenamento','Data de armazenamento','>=','w_efetiva','Data efetiva de recebimento');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ValidateClose();
   ScriptClose();
@@ -730,6 +735,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
     ShowHTML('<INPUT type="hidden" name="w_solicitacao" value="'.$w_solicitacao.'">');
     ShowHTML('<INPUT type="hidden" name="w_documento" value="'.$w_documento.'">');
+    ShowHTML('<INPUT type="hidden" name="w_armazenamento" value="'.$w_armazenamento.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan=4 align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -930,6 +936,7 @@ function Geral() {
           ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
           ShowHTML('<INPUT type="hidden" name="w_solicitacao" value="'.$w_solicitacao.'">');
           ShowHTML('<INPUT type="hidden" name="w_documento" value="'.$w_documento.'">');
+          ShowHTML('<INPUT type="hidden" name="w_efetiva" value="'.$w_efetiva.'">');
           ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
           if (count($w_classes>1) || !$w_classes[4]) {
             ShowHTML('<INPUT type="hidden" name="w_local[]" value="">');
@@ -962,6 +969,7 @@ function Geral() {
           }
           ShowHTML('    </table>');
           if (count($w_classes>1) || !$w_classes[4]) {
+            ShowHTML('      <tr><td><b><u>D</u>ata de armazenamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_armazenamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_armazenamento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de armazenamento do material.">'.ExibeCalendario('Form','w_armazenamento').'</td>');
             ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
             ShowHTML('      <tr><td align="center" colspan=2 height="1" bgcolor="#000000"></TD></TR>');
             ShowHTML('      <tr><td align="center" colspan=2>');
@@ -1954,6 +1962,10 @@ function Grava() {
               }
             }
           }
+
+          // Registra o armazenamento
+          $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,'V',$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,
+            null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_armazenamento'],null,null,&$w_chave_nova);
 
           ScriptOpen('JavaScript');
           ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');

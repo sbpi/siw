@@ -22,7 +22,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     $l_html.=chr(13).'      <tr valign="top">';
     $l_html.=chr(13).'        <td bgcolor="#f0f0f0"><font size="2"><b>'.f($RS,'nm_fornecedor').' - '.f($RS,'nm_tp_doc').' '.' '.f($RS,'nr_doc').' de '.formataDataEdicao(f($RS,'dt_doc'),5).' ('.$v_chave.')</b></td>';
-    $l_html.=chr(13).'        <td bgcolor="#f0f0f0" width="1%" align="right" nowrap><font size="2"><b>'.f($RS,'nm_sit').'</b></td>';
+    $l_html.=chr(13).'        <td bgcolor="#f0f0f0" width="1%" align="right" nowrap><font size="2"><b>'.f($RS,'nm_sit').((nvl(f($RS,'armazenamento'),'')=='') ? '' : ' EM '.formataDataEdicao(f($RS,'armazenamento'),5)).'</b></td>';
     $l_html.=chr(13).'      </tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
      
@@ -84,9 +84,10 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
         $l_html.=chr(13).'          <td rowspan=2><b>Validade</b></td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Local de armazenamento</b></td>';
         $l_html.=chr(13).'          <td rowspan=2><b>Fator<br>Embal.</b></td>';
         $l_html.=chr(13).'          <td rowspan=2><b>U.M.</b></td>';
-        $colspan += 3;
+        $colspan += 4;
       }
       $l_html.=chr(13).'          <td rowspan=2><b>Qtd</b></td>';
       $l_html.=chr(13).'          <td colspan=2><b>Valores</b></td>';
@@ -113,6 +114,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
         if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
           $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>';
+          $l_html.=chr(13).'        <td>'.nvl(f($row,'local_armazenamento'),'&nbsp;').'</td>';
           $l_html.=chr(13).'        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>';
           $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
         }

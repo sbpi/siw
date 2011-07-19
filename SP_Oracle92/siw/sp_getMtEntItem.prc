@@ -95,7 +95,8 @@ begin
                 g4.sq_solicitacao_item,
                 g412.codigo_interno as cd_origem,
                 g41211.sigla as sg_modulo,
-                g5.sq_estoque_item,                 g5.sq_almoxarifado_local,            g5.saldo_atual
+                g5.sq_estoque_item,                 g5.sq_almoxarifado_local,            g5.saldo_atual,
+                g1.nome||' - '||montaNomeAlmoxLocal(g5.sq_almoxarifado_local) as local_armazenamento
            from mt_entrada                                      a 
                 inner             join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
                    inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)

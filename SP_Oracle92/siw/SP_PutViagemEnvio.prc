@@ -296,11 +296,12 @@ begin
          and p_chave    <> a.sq_siw_solicitacao
          and a.sq_pessoa = w_beneficiario;
 
-      -- Se o trâmite for de chefia imediata pula para o próximo se usuário logado:
-      -- a) é titular da unidade solicitante e o beneficiário é contratado pela organização
+      -- Se o trâmite for de chefia imediata pula para o próximo se:
+      -- a) é titular da unidade solicitante e beneficiário da viagem
       -- b) é titular da unidade proponente e o beneficiário não é contratado pela organização 
       select count(*) into w_existe
-        from (select 1
+        from (-- Usuário logado é chefe da unidade proponente ou da unidade solicitante
+              select 1
                 from siw_solicitacao        b
                      inner join siw_tramite d on (b.sq_siw_tramite     = d.sq_siw_tramite),
                      eo_unidade_resp        c
@@ -311,6 +312,21 @@ begin
                  and c.tipo_respons       = 'T'
                  and c.fim                is null
               UNION
+              /*
+              -- Beneficiário da viagem é chefe da unidade solicitante
+              select 1
+                from siw_solicitacao               b
+                     inner   join siw_tramite      d on (b.sq_siw_tramite     = d.sq_siw_tramite)
+                     inner   join pd_missao        e on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                       inner join eo_unidade_resp  c on (e.sq_pessoa          = c.sq_pessoa and
+                                                         c.tipo_respons       = 'T' and
+                                                         c.fim                is null
+                                                        )
+               where b.sq_siw_solicitacao = p_chave
+                 and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
+                 and c.sq_unidade         = w_unidade_aprov
+              UNION
+              */
               select 1
                 from siw_solicitacao                b
                      inner     join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)

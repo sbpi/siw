@@ -81,171 +81,177 @@ create or replace procedure SP_PutMtEntrada
 
 
 begin
-   If p_solicitacao is null or p_documento is null or p_copia is not null Then
-      -- Recupera a chave da solicitação e do documento
-      w_existe := 0;
-      for crec in c_dados loop
-          w_solicitacao := crec.sq_siw_solicitacao;
-          w_documento   := crec.sq_lancamento_doc;
+   If p_operacao = 'V' Then -- Armazenamento
+      update mt_entrada
+         set armazenamento        = p_armazenamento
+      where sq_mtentrada = p_chave;
+   Else
+      If p_solicitacao is null or p_documento is null or p_copia is not null Then
+         -- Recupera a chave da solicitação e do documento
+         w_existe := 0;
+         for crec in c_dados loop
+             w_solicitacao := crec.sq_siw_solicitacao;
+             w_documento   := crec.sq_lancamento_doc;
+             
+             w_existe := 1;
+             exit;
+         end loop;
+        
+         If w_existe = 0 Then
+            
+             -- Cria o lançamento financeiro
+             for crec in c_financeiro_geral loop
+                 If p_copia is null Then
+                    w_cd_financ := crec.codigo_interno;
+                     
+                    sp_putfinanceirogeral(
+                                    p_operacao           => 'I',
+                                    p_cliente            => crec.cliente,
+                                    p_chave              => null,
+                                    p_menu               => crec.sq_menu,
+                                    p_sq_unidade         => crec.sq_unidade,
+                                    p_solicitante        => p_usuario,
+                                    p_cadastrador        => p_usuario,
+                                    p_descricao          => crec.descricao,
+                                    p_vencimento         => crec.vencimento,
+                                    p_valor              => p_valor_doc,
+                                    p_data_hora          => 3,
+                                    p_aviso              => 'S',
+                                    p_dias               => '2',
+                                    p_cidade             => crec.sq_cidade,
+                                    p_projeto            => crec.sq_solic_pai,
+                                    p_observacao         => crec.observacao,
+                                    p_sq_tipo_lancamento => crec.sq_tipo_lancamento,
+                                    p_sq_forma_pagamento => crec.sq_forma_pagamento,
+                                    p_sq_tipo_pessoa     => crec.sq_tipo_pessoa,
+                                    p_tipo_rubrica       => 5, -- despesas
+                                    p_numero_processo    => crec.processo,
+                                    p_per_ini            => crec.inicio,
+                                    p_per_fim            => crec.fim,
+                                    p_chave_nova         => w_solicitacao,
+                                    p_codigo_interno     => w_cd_financ
+                                   );
+ 
+                 End If;
+                 
+                 -- Atualiza os dados do beneficiário
+                 update fn_lancamento set pessoa = p_fornecedor where sq_siw_solicitacao = w_solicitacao;
+ 
+                 -- Cria os documentos
+                 sp_putlancamentodoc(
+                                    p_operacao           => 'I',
+                                    p_chave              => w_solicitacao,
+                                    p_chave_aux          => null,
+                                    p_sq_tipo_documento  => crec.sq_tipo_documento,
+                                    p_numero             => p_numero_doc,
+                                    p_data               => p_previsto,
+                                    p_serie              => null,
+                                    p_valor              => p_valor_doc,
+                                    p_patrimonio         => 'N',
+                                    p_retencao           => 'N',
+                                    p_tributo            => 'N',
+                                    p_nota               => null,
+                                    p_inicial            => 0,
+                                    p_excedente          => 0,
+                                    p_reajuste           => 0,
+                                    p_chave_nova         => w_documento
+                                   );
+ 
+             End Loop;
+            
+         End If;
+      Elsif p_copia is null Then
+         -- Atualiza os dados do documento
+         update fn_lancamento_doc
+            set sq_tipo_documento = p_tipo_doc,
+                data              = p_data_doc,
+                numero            = p_numero_doc,
+                valor             = p_valor_doc
+         where sq_lancamento_doc = p_documento;
+      End If;
+     
+      If p_operacao = 'I' Then -- Inclusão
+         -- Recupera a próxima chave
+         select sq_mtentrada.nextval into w_chave from dual;
+ 
+         insert into mt_entrada
+           (sq_mtentrada,      cliente,              fornecedor,          sq_tipo_movimentacao, sq_mtsituacao,    sq_siw_solicitacao, 
+            sq_lancamento_doc, recebimento_previsto, recebimento_efetivo, armazenamento,        numero_empenho,   data_empenho
+           )
+         values
+           (w_chave,           p_cliente,            p_fornecedor,        p_tipo_movimentacao,  p_situacao,       w_solicitacao,
+            w_documento,       p_previsto,           p_efetivo,           p_armazenamento,      p_numero_empenho, p_data_empenho
+           );
+        
+         If p_copia is not null Then
+            -- copia os dados complementares da entrada de material selecionada
+            insert into mt_entrada_item (
+                    sq_entrada_item,         sq_mtentrada, sq_material, sq_almoxarifado, sq_mtsituacao, quantidade,     valor_unitario, 
+                    fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item,
+                    ordem,                   valor_total,  marca,       modelo)
+            (select sq_entrada_item.nextval, w_chave,      sq_material, sq_almoxarifado, sq_mtsituacao, quantidade,     valor_unitario, 
+                    fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item,
+                    ordem,                   valor_total,  marca,       modelo
+              from mt_entrada_item a
+             where a.sq_mtentrada = p_copia
+            );
+         Else
+            -- copia os dados complementares da entrada de material selecionada
+            insert into mt_entrada_item (
+                    sq_entrada_item,         sq_mtentrada,     sq_material,        sq_almoxarifado,   sq_mtsituacao,
+                    quantidade,              valor_unitario,   fator_embalagem,    ordem,             
+                    valor_total,             marca,            modelo,             sq_documento_item)
+           (select sq_entrada_item.nextval, w_chave,          c.sq_material,      f.sq_almoxarifado, e.sq_mtsituacao, 
+                    b.quantidade,            a.valor_unitario, b1.fator_embalagem, case a.ordem when 0 then 1 else a.ordem end,
+                    a.valor_total,           b1.fabricante,    b1.marca_modelo,    a.sq_documento_item
+              from fn_documento_item                    a
+                   inner       join cl_solicitacao_item b on (a.sq_solicitacao_item = b.sq_solicitacao_item)
+                     inner     join cl_item_fornecedor b1 on (b.sq_solicitacao_item = b1.sq_solicitacao_item and b1.vencedor = 'S' and b1.pesquisa = 'N')
+                     inner     join cl_material         c on (b.sq_material         = c.sq_material)
+                       inner   join cl_tipo_material    d on (c.sq_tipo_material    = d.sq_tipo_material)
+                         inner join mt_situacao         e on (e.cliente             = p_cliente and
+                                                              e.ativo               = 'S' and
+                                                              substr(e.sigla,1,1)   = 'N' and
+                                                              ((d.classe           <> 4 and e.consumo = 'S') or
+                                                               (d.classe            = 4 and e.permanente = 'S')
+                                                              )
+                                                             ),
+                   (select sq_almoxarifado
+                      from (select sq_almoxarifado from mt_almoxarifado where cliente = p_cliente and ativo = 'S')
+                     where rownum = 1
+                   )                                    f
+             where a.sq_lancamento_doc = w_documento
+            );
+         End If;
+         
+      Elsif p_operacao = 'A' Then -- Alteração
+         update mt_entrada
+            set fornecedor           = p_fornecedor,
+                sq_tipo_movimentacao = p_tipo_movimentacao,
+                sq_mtsituacao        = p_situacao,
+                sq_siw_solicitacao   = w_solicitacao,
+                sq_lancamento_doc    = w_documento,
+                recebimento_previsto = p_previsto,
+                recebimento_efetivo  = p_efetivo,
+                armazenamento        = p_armazenamento,
+                numero_empenho       = p_numero_empenho,
+                data_empenho         = p_data_empenho
+         where sq_mtentrada = p_chave;
           
-          w_existe := 1;
-          exit;
-      end loop;
-      
-      If w_existe = 0 Then
-          
-          -- Cria o lançamento financeiro
-          for crec in c_financeiro_geral loop
-              If p_copia is null Then
-                 w_cd_financ := crec.codigo_interno;
-                  
-                 sp_putfinanceirogeral(
-                                 p_operacao           => 'I',
-                                 p_cliente            => crec.cliente,
-                                 p_chave              => null,
-                                 p_menu               => crec.sq_menu,
-                                 p_sq_unidade         => crec.sq_unidade,
-                                 p_solicitante        => p_usuario,
-                                 p_cadastrador        => p_usuario,
-                                 p_descricao          => crec.descricao,
-                                 p_vencimento         => crec.vencimento,
-                                 p_valor              => p_valor_doc,
-                                 p_data_hora          => 3,
-                                 p_aviso              => 'S',
-                                 p_dias               => '2',
-                                 p_cidade             => crec.sq_cidade,
-                                 p_projeto            => crec.sq_solic_pai,
-                                 p_observacao         => crec.observacao,
-                                 p_sq_tipo_lancamento => crec.sq_tipo_lancamento,
-                                 p_sq_forma_pagamento => crec.sq_forma_pagamento,
-                                 p_sq_tipo_pessoa     => crec.sq_tipo_pessoa,
-                                 p_tipo_rubrica       => 5, -- despesas
-                                 p_numero_processo    => crec.processo,
-                                 p_per_ini            => crec.inicio,
-                                 p_per_fim            => crec.fim,
-                                 p_chave_nova         => w_solicitacao,
-                                 p_codigo_interno     => w_cd_financ
-                                );
-
-              End If;
-              
-              -- Atualiza os dados do beneficiário
-              update fn_lancamento set pessoa = p_fornecedor where sq_siw_solicitacao = w_solicitacao;
-
-              -- Cria os documentos
-              sp_putlancamentodoc(
-                                 p_operacao           => 'I',
-                                 p_chave              => w_solicitacao,
-                                 p_chave_aux          => null,
-                                 p_sq_tipo_documento  => crec.sq_tipo_documento,
-                                 p_numero             => p_numero_doc,
-                                 p_data               => p_previsto,
-                                 p_serie              => null,
-                                 p_valor              => p_valor_doc,
-                                 p_patrimonio         => 'N',
-                                 p_retencao           => 'N',
-                                 p_tributo            => 'N',
-                                 p_nota               => null,
-                                 p_inicial            => 0,
-                                 p_excedente          => 0,
-                                 p_reajuste           => 0,
-                                 p_chave_nova         => w_documento
-                                );
-
-          End Loop;
+      Elsif p_operacao = 'E' Then -- Exclusão
+         -- Monta string com a chave dos arquivos ligados à solicitação informada
+         for crec in c_arquivos loop
+            w_arq := w_arq || crec.sq_siw_arquivo;
+         end loop;
+         w_arq := substr(w_arq, 3, length(w_arq));
+ 
+         delete fn_documento_arq where sq_lancamento_doc  = (select sq_lancamento_doc from mt_entrada where sq_mtentrada = p_chave);
+         delete siw_arquivo      where sq_siw_arquivo    in (w_arq);
+ 
+         delete mt_entrada_item where sq_mtentrada = p_chave;
+         delete mt_entrada      where sq_mtentrada = p_chave;
          
       End If;
-   Elsif p_copia is null Then
-      -- Atualiza os dados do documento
-      update fn_lancamento_doc
-         set sq_tipo_documento = p_tipo_doc,
-             data              = p_data_doc,
-             numero            = p_numero_doc,
-             valor             = p_valor_doc
-      where sq_lancamento_doc = p_documento;
-   End If;
-   
-   If p_operacao = 'I' Then -- Inclusão
-      -- Recupera a próxima chave
-      select sq_mtentrada.nextval into w_chave from dual;
-
-      insert into mt_entrada
-        (sq_mtentrada,      cliente,              fornecedor,          sq_tipo_movimentacao, sq_mtsituacao,    sq_siw_solicitacao, 
-         sq_lancamento_doc, recebimento_previsto, recebimento_efetivo, armazenamento,        numero_empenho,   data_empenho
-        )
-      values
-        (w_chave,           p_cliente,            p_fornecedor,        p_tipo_movimentacao,  p_situacao,       w_solicitacao,
-         w_documento,       p_previsto,           p_efetivo,           p_armazenamento,      p_numero_empenho, p_data_empenho
-        );
-     
-      If p_copia is not null Then
-         -- copia os dados complementares da entrada de material selecionada
-         insert into mt_entrada_item (
-                 sq_entrada_item,         sq_mtentrada, sq_material, sq_almoxarifado, sq_mtsituacao, quantidade,     valor_unitario, 
-                 fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item,
-                 ordem,                   valor_total,  marca,       modelo)
-         (select sq_entrada_item.nextval, w_chave,      sq_material, sq_almoxarifado, sq_mtsituacao, quantidade,     valor_unitario, 
-                 fator_embalagem,         validade,     fabricacao,  vida_util,       lote_numero,   lote_bloqueado, sq_documento_item,
-                 ordem,                   valor_total,  marca,       modelo
-           from mt_entrada_item a
-          where a.sq_mtentrada = p_copia
-         );
-      Else
-         -- copia os dados complementares da entrada de material selecionada
-         insert into mt_entrada_item (
-                 sq_entrada_item,         sq_mtentrada,     sq_material,        sq_almoxarifado,   sq_mtsituacao,
-                 quantidade,              valor_unitario,   fator_embalagem,    ordem,             
-                 valor_total,             marca,            modelo,             sq_documento_item)
-         (select sq_entrada_item.nextval, w_chave,          c.sq_material,      f.sq_almoxarifado, e.sq_mtsituacao, 
-                 b.quantidade,            a.valor_unitario, b1.fator_embalagem, case a.ordem when 0 then 1 else a.ordem end,
-                 a.valor_total,           b1.fabricante,    b1.marca_modelo,    a.sq_documento_item
-           from fn_documento_item                    a
-                inner       join cl_solicitacao_item b on (a.sq_solicitacao_item = b.sq_solicitacao_item)
-                  inner     join cl_item_fornecedor b1 on (b.sq_solicitacao_item = b1.sq_solicitacao_item and b1.vencedor = 'S' and b1.pesquisa = 'N')
-                  inner     join cl_material         c on (b.sq_material         = c.sq_material)
-                    inner   join cl_tipo_material    d on (c.sq_tipo_material    = d.sq_tipo_material)
-                      inner join mt_situacao         e on (e.cliente             = p_cliente and
-                                                           e.ativo               = 'S' and
-                                                           substr(e.sigla,1,1)   = 'N' and
-                                                           ((d.classe           <> 4 and e.consumo = 'S') or
-                                                            (d.classe            = 4 and e.permanente = 'S')
-                                                           )
-                                                          ),
-                (select sq_almoxarifado
-                   from (select sq_almoxarifado from mt_almoxarifado where cliente = p_cliente and ativo = 'S')
-                  where rownum = 1
-                )                                    f
-          where a.sq_lancamento_doc = w_documento
-         );
-      End If;
-      
-   Elsif p_operacao = 'A' Then -- Alteração
-      update mt_entrada
-         set fornecedor           = p_fornecedor,
-             sq_tipo_movimentacao = p_tipo_movimentacao,
-             sq_mtsituacao        = p_situacao,
-             sq_siw_solicitacao   = w_solicitacao,
-             sq_lancamento_doc    = w_documento,
-             recebimento_previsto = p_previsto,
-             recebimento_efetivo  = p_efetivo,
-             armazenamento        = p_armazenamento,
-             numero_empenho       = p_numero_empenho,
-             data_empenho         = p_data_empenho
-      where sq_mtentrada = p_chave;
-       
-   Elsif p_operacao = 'E' Then -- Exclusão
-      -- Monta string com a chave dos arquivos ligados à solicitação informada
-      for crec in c_arquivos loop
-         w_arq := w_arq || crec.sq_siw_arquivo;
-      end loop;
-      w_arq := substr(w_arq, 3, length(w_arq));
-
-      delete fn_documento_arq where sq_lancamento_doc  = (select sq_lancamento_doc from mt_entrada where sq_mtentrada = p_chave);
-      delete siw_arquivo      where sq_siw_arquivo    in (w_arq);
-
-      delete mt_entrada_item where sq_mtentrada = p_chave;
-      delete mt_entrada      where sq_mtentrada = p_chave;
-      
    End If;
        
    -- Devolve a chave
