@@ -253,7 +253,10 @@ begin
           where a.cliente            = p_cliente
             and a.exibe_catalogo     = 'S'
             and a.ativo              = 'S'
-            and h.sq_saida_item      is null;
+            and h.sq_saida_item      is null
+            and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
+            and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
+            and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'));
    Elsif p_restricao = 'PESQUISA' Then
       -- Recupera pesquisas de preço de materiais e serviços
       open p_result for 

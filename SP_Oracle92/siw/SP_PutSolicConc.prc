@@ -42,6 +42,26 @@ create or replace procedure SP_PutSolicConc
    w_ano_guia       pa_documento_log.ano_guia%type;
    w_unidade_guia   number(18);
    
+   cursor c_consumo_medio is
+       select sq_estoque, avg(qtd) consumo_medio
+         from (select z.sq_estoque, to_char(x.data_efetivacao,'yyyymm') mes, sum(y.quantidade) qtd
+                  from mt_saida                        w
+                       inner     join mt_saida_item    x on (w.sq_mtsaida      = x.sq_mtsaida)
+                         inner   join mt_saida_estoque y on (x.sq_saida_item   = y.sq_saida_item)
+                           inner join mt_estoque_item  z on (y.sq_estoque_item = z.sq_estoque_item)
+                 where to_char(x.data_efetivacao,'yyyymm') < to_char(sysdate,'yyyymm')
+               group by z.sq_estoque, x.data_efetivacao
+              ) k
+        where k.sq_estoque in (select distinct z.sq_estoque
+                                 from mt_saida                        w
+                                      inner     join mt_saida_item    x on (w.sq_mtsaida      = x.sq_mtsaida)
+                                        inner   join mt_saida_estoque y on (x.sq_saida_item   = y.sq_saida_item)
+                                          inner join mt_estoque_item  z on (y.sq_estoque_item = z.sq_estoque_item)
+                               where w.sq_siw_solicitacao = p_chave
+                                 and y.quantidade         > 0
+                            )
+       group by sq_estoque;
+   
    cursor c_vencedor is
        select x.*
          from (select b.sq_solicitacao_item, b.sq_material, c.fornecedor, sum(c.valor_item) as valor
@@ -394,6 +414,31 @@ begin
                                 where w.sq_siw_solicitacao = p_chave
                                   and y.quantidade         > 0
                                );
+
+      -- Atualiza data de última saída do estoque
+      update mt_estoque a
+         set ultima_saida = (select x.data_efetivacao
+                               from mt_saida                        w
+                                    inner     join mt_saida_item    x on (w.sq_mtsaida      = x.sq_mtsaida)
+                                      inner   join mt_saida_estoque y on (x.sq_saida_item   = y.sq_saida_item)
+                                        inner join mt_estoque_item  z on (y.sq_estoque_item = z.sq_estoque_item)
+                             where w.sq_siw_solicitacao = p_chave
+                               and z.sq_estoque         = a.sq_estoque
+                            )
+      where sq_estoque in (select sq_estoque_item
+                             from mt_saida                        w
+                                  inner     join mt_saida_item    x on (w.sq_mtsaida      = x.sq_mtsaida)
+                                    inner   join mt_saida_estoque y on (x.sq_saida_item   = y.sq_saida_item)
+                                      inner join mt_estoque_item  z on (y.sq_estoque_item = z.sq_estoque_item)
+                           where w.sq_siw_solicitacao = p_chave
+                             and z.sq_estoque         = a.sq_estoque
+                             and y.quantidade         > 0
+                          );
+
+      -- Atualiza o consumo médio
+      for crec in c_consumo_medio loop
+         update mt_estoque set consumo_medio_mensal = crec.consumo_medio where sq_estoque = crec.sq_estoque;
+      end loop;
    Elsif w_menu.sigla = 'PAELIM' Then
       -- Se eliminação de protocolo, coloca os protocolos da solicitação no tramite correto
       for crec in c_protocolos loop
