@@ -18,6 +18,7 @@ include_once($w_dir_volta.'classes/sp/db_getMtSituacao.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getAlmoxarifado.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoMovimentacao.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicMT.php');
 
 include_once($w_dir_volta.'classes/sp/dml_putMtSituacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putPDParametro.php');
@@ -27,7 +28,11 @@ include_once($w_dir_volta.'classes/sp/dml_putPDUsuario.php');
 include_once($w_dir_volta.'classes/sp/dml_putAlmoxarifado.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoMovimentacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putAlmoxarifadoLocal.php');
+include_once($w_dir_volta.'classes/sp/dml_putMtAjuste.php');
 
+include_once($w_dir_volta.'funcoes/selecaoAlmoxarifado.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoMatServSubord.php');
+include_once($w_dir_volta.'funcoes/selecaoClasseCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoLocalizacao.php');
 include_once($w_dir_volta.'funcoes/selecaoLocalSubordination.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -37,8 +42,6 @@ include_once($w_dir_volta.'funcoes/selecaoContinente.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
-include_once($w_dir_volta.'funcoes/selecaoTipoDiaria.php');
-include_once($w_dir_volta.'funcoes/selecaoCategoriaDiaria.php');
 include_once($w_dir_volta.'funcoes/selecaoMoeda.php');
 
 
@@ -87,7 +90,7 @@ $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
 if ($O=='') {
   // Se for acompanhamento, entra na filtragem
-  if ($P1==3) $O='P'; else $O='L';  
+  if ($P1==3 || $par=='AJUSTE') $O='P'; else $O='L';  
 } 
 
 switch ($O) {
@@ -108,6 +111,38 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
 $p_ordena       = lower($_REQUEST['p_ordena']);
+$p_tipo         = upper($_REQUEST['w_tipo']);
+$p_projeto      = upper($_REQUEST['p_projeto']);
+$p_atividade    = upper($_REQUEST['p_atividade']);
+$p_graf         = upper($_REQUEST['p_graf']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
+$p_solicitante  = upper($_REQUEST['p_solicitante']);
+$p_prioridade   = upper($_REQUEST['p_prioridade']);
+$p_unidade      = upper($_REQUEST['p_unidade']);
+$p_proponente   = upper($_REQUEST['p_proponente']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$p_ini_i        = upper($_REQUEST['p_ini_i']);
+$p_ini_f        = upper($_REQUEST['p_ini_f']);
+$p_fim_i        = upper($_REQUEST['p_fim_i']);
+$p_fim_f        = upper($_REQUEST['p_fim_f']);
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
+$p_empenho      = upper($_REQUEST['p_empenho']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_palavra      = upper($_REQUEST['p_palavra']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
+$p_fase         = explodeArray($_REQUEST['p_fase']);
+$p_sqcc         = upper($_REQUEST['p_sqcc']);
+$p_agrega       = upper($_REQUEST['p_agrega']);
+$p_tamanho      = upper($_REQUEST['p_tamanho']);
+
 
 // Recupera os dados do cliente
 $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
@@ -843,6 +878,300 @@ function Almoxarifado() {
 }
 
 // =========================================================================
+// Ajuste de estoque
+// -------------------------------------------------------------------------
+function Ajuste() {
+  extract($GLOBALS);
+  
+  $w_pag   = 1;
+  $w_linha = 0;
+  
+  if ($O=='L') {
+    $w_filtro='';
+    if ($p_chave>'') {
+      $w_linha++;
+      $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_chave,null,null,null,null,'OUTROS');
+      foreach($RS as $row) { $RS = $row; break; }
+      $w_filtro .= '<tr valign="top"><td align="right">Almoxarifado<td>[<b>'.f($RS,'nome').'</b>]';
+    } 
+    if ($p_pais>'') {
+      $w_linha++;
+      $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_pais,null,null,null,null,null,null,'REGISTROS');
+      foreach($RS as $row) { $RS = $row; break; }
+      $w_filtro .= '<tr valign="top"><td align="right">Tipo de material/serviço<td>[<b>'.f($RS,'nome_completo').'</b>]';
+    } 
+    if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Material<td>[<b>'.$p_proponente.'</b>]'; }
+    /*
+    if ($p_projeto>'') {
+      $w_linha++;
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
+    } 
+    if ($p_atividade>'') {
+      $w_linha++;
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      foreach($RS as $row) { $RS = $row; break; }
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+    } 
+    if ($p_empenho>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código <td>[<b>'.$p_empenho.'</b>]'; }
+    if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]'; }
+    if ($p_solicitante>'') {
+      $w_linha++;
+      $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+      $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+    } 
+    if ($p_uf>'') {
+      $w_linha++;
+      $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, $p_uf, $w_cliente, null, null, null, null, null, null);
+      foreach ($RS as $row) {
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Situação do certame <td>[<b>'.f($row,'nome').'</b>]';
+        break;
+      }
+    } 
+    if ($p_unidade>'') {
+      $w_linha++;
+      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
+      $w_filtro .= '<tr valign="top"><td align="right">Unidade solicitante <td>[<b>'.f($RS,'nome').'</b>]';
+    } 
+    if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Número do certame <td>[<b>'.$p_palavra.'</b>]'; }
+    if ($p_regiao>'' || $p_cidade>'') {
+      $w_linha++;
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+    } 
+    */
+    if ($p_ativo=='S') {
+      $w_linha++;
+      $w_filtro .= '<tr valign="top"><td align="right">Restrição<td>[<b>Apenas materiais disponíveis para pedidos internos</b>]';
+    } 
+    /*
+    if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Abertura de propostas <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+    if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
+    */
+    if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
+
+    $sql = new db_getSolicMT; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'ALINV',3,
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+        $p_unidade,null,$p_ativo,$p_proponente,
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
+        $p_acao_ppa, null, $p_empenho, null);
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nm_material','asc');
+    } else {
+      $RS = SortArray($RS,'nm_material','asc');
+    }
+  }
+  $w_linha_filtro = $w_linha;
+
+  Cabecalho();
+  head();
+  ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
+  ScriptOpen('Javascript');
+  if ($O=='L' && count($RS)) {
+    ShowHTML('  function MarcaTodos() {');
+    ShowHTML('    for (i=1; i < document.Form["w_sq_estoque[]"].length; i++) {');
+    ShowHTML('      document.Form["w_sq_estoque[]"][i].checked=true;');
+    ShowHTML('      document.Form["w_minimo[]"][i].disabled=false;');
+    ShowHTML('      document.Form["w_minimo[]"][i].className="STIO";');
+    ShowHTML('      document.Form["w_consumo[]"][i].disabled=false;');
+    ShowHTML('      document.Form["w_consumo[]"][i].className="STIO";');
+    ShowHTML('      document.Form["w_ciclo[]"][i].disabled=false;');
+    ShowHTML('      document.Form["w_ciclo[]"][i].className="STIO";');
+    ShowHTML('      document.Form["w_ponto[]"][i].disabled=false;');
+    ShowHTML('      document.Form["w_ponto[]"][i].className="STIO";');
+    ShowHTML('      document.Form["w_disponivel[]"][i].disabled=false;');
+    ShowHTML('      document.Form["w_disponivel[]"][i].className="STIO";');
+    ShowHTML('    }');
+    ShowHTML('  }');
+    ShowHTML('  function DesmarcaTodos() {');
+    ShowHTML('    for (i=1; i < document.Form["w_sq_estoque[]"].length; i++) {');
+    ShowHTML('      document.Form["w_sq_estoque[]"][i].checked=false;');
+    ShowHTML('      document.Form["w_minimo[]"][i].disabled=true;');
+    ShowHTML('      document.Form["w_minimo[]"][i].className="STI";');
+    ShowHTML('      document.Form["w_consumo[]"][i].disabled=true;');
+    ShowHTML('      document.Form["w_consumo[]"][i].className="STI";');
+    ShowHTML('      document.Form["w_ciclo[]"][i].disabled=true;');
+    ShowHTML('      document.Form["w_ciclo[]"][i].className="STI";');
+    ShowHTML('      document.Form["w_ponto[]"][i].disabled=true;');
+    ShowHTML('      document.Form["w_ponto[]"][i].className="STI";');
+    ShowHTML('      document.Form["w_disponivel[]"][i].disabled=true;');
+    ShowHTML('      document.Form["w_disponivel[]"][i].className="STI";');
+    ShowHTML('    } ');
+    ShowHTML('  }');
+    ShowHTML('  function marca(i) {');
+    ShowHTML('    if (document.Form["w_sq_estoque[]"][i].checked) {');
+    ShowHTML('       document.Form["w_minimo[]"][i].disabled=false;');
+    ShowHTML('       document.Form["w_minimo[]"][i].className="STIO";');
+    ShowHTML('       document.Form["w_consumo[]"][i].disabled=false;');
+    ShowHTML('       document.Form["w_consumo[]"][i].className="STIO";');
+    ShowHTML('       document.Form["w_ciclo[]"][i].disabled=false;');
+    ShowHTML('       document.Form["w_ciclo[]"][i].className="STIO";');
+    ShowHTML('       document.Form["w_ponto[]"][i].disabled=false;');
+    ShowHTML('       document.Form["w_ponto[]"][i].className="STIO";');
+    ShowHTML('       document.Form["w_disponivel[]"][i].disabled=false;');
+    ShowHTML('       document.Form["w_disponivel[]"][i].className="STIO";');
+    ShowHTML('    } else {');
+    ShowHTML('       document.Form["w_minimo[]"][i].disabled=true;');
+    ShowHTML('       document.Form["w_minimo[]"][i].className="STI";');
+    ShowHTML('       document.Form["w_consumo[]"][i].disabled=true;');
+    ShowHTML('       document.Form["w_consumo[]"][i].className="STI";');
+    ShowHTML('       document.Form["w_ciclo[]"][i].disabled=true;');
+    ShowHTML('       document.Form["w_ciclo[]"][i].className="STI";');
+    ShowHTML('       document.Form["w_ponto[]"][i].disabled=true;');
+    ShowHTML('       document.Form["w_ponto[]"][i].className="STI";');
+    ShowHTML('       document.Form["w_disponivel[]"][i].disabled=true;');
+    ShowHTML('       document.Form["w_disponivel[]"][i].className="STI";');
+    ShowHTML('    }');
+    ShowHTML('  }');
+  }
+  CheckBranco();
+  FormataData();
+  FormataValor();
+  SaltaCampo();
+  ValidateOpen('Validacao');
+  if ($O=='P') {
+    Validate('p_chave','Almoxarifado','SELECT','1','1','18','','1');
+    Validate('p_proponente','Material','','','2','60','1','');
+  } else {
+    ShowHTML('  var i; ');
+    ShowHTML('  var w_erro=true; ');
+    ShowHTML('  for (i=1; i < theForm["w_sq_estoque[]"].length; i++) {');
+    ShowHTML('    if (theForm["w_sq_estoque[]"][i].checked) w_erro=false;');
+    ShowHTML('  }');
+    ShowHTML('  if (w_erro) {');
+    ShowHTML('    alert("Você deve informar pelo menos um item!"); ');
+    ShowHTML('    return false;');
+    ShowHTML('  }');
+    ShowHTML('  for (ind=1; ind < theForm["w_sq_estoque[]"].length; ind++) {');
+    ShowHTML('    if(theForm["w_sq_estoque[]"][ind].checked){');
+    Validate('["w_minimo[]"][ind]','Estoque mínimo','VALOR','1',1,18,'','0123456789.');
+    CompValor('["w_minimo[]"][ind]','Estoque mínimo','>','0','zero');
+    Validate('["w_consumo[]"][ind]','Consumo médio mensal','VALOR','1',1,18,'','0123456789.,');
+    CompValor('["w_consumo[]"][ind]','Consumo médio mensal','>','0','zero');
+    Validate('["w_ciclo[]"][ind]','Ciclo de compra','VALOR','1',1,4,'','0123456789.');
+    CompValor('["w_ciclo[]"][ind]','Ciclo de compra','>','0','zero');
+    Validate('["w_ponto[]"][ind]','Ponto de ressuprimento','VALOR','1',1,18,'','0123456789.');
+    CompValor('["w_ponto[]"][ind]','Ponto de ressuprimento','>','0','zero');
+    ShowHTML('    }');
+    ShowHTML('  }');
+  } 
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
+  if ($w_troca>'') {
+    // Se for recarga da página
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  } elseif ($O=='L' && count($RS)) {
+    BodyOpenClean('onLoad="this.focus(); DesmarcaTodos();"');
+  } else {
+    BodyOpenClean('onLoad="this.focus();"');
+  } 
+
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+
+  ShowHTML('<div align=center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"><u>F</u>iltrar (Ativo)</font>' : '<u>F</u>iltrar (Inativo)').'</a>');
+    $i    = 0;
+    if (count($RS)==0) {
+      ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
+    } else {
+      foreach ($RS as $row) {
+        if ($i==0) {
+          if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
+          ShowHTML('<tr><td align="center">');
+          ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+          ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
+          ShowHTML('            <td NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
+          ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+          ShowHTML('          <td><b>Material</b></td>');
+          ShowHTML('          <td><b>U.M.</b></td>');
+          ShowHTML('          <td><b>Qtd.</b></td>');
+          ShowHTML('          <td><b>Preço médio</b></td>');
+          ShowHTML('          <td><b>Estoque Mínimo</b></td>');
+          ShowHTML('          <td><b>C.M.M.</b></td>');
+          ShowHTML('          <td><b>Ciclo de compra</b></td>');
+          ShowHTML('          <td><b>Ponto de Ressuprimento</b></td>');
+          ShowHTML('          <td><b>Disponível</b></td>');
+          ShowHTML('        </tr>');
+          AbreForm('Form',$w_dir.$w_pagina.'grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$w_pagina.$par,'L');
+          ShowHTML('<INPUT type="hidden" name="w_sq_estoque[]" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_minimo[]" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_consumo[]" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_ciclo[]" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_ponto[]" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_disponivel[]" value="">');
+          ShowHTML(montaFiltro('POST'));
+        }
+        $i++;
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('          <td align="center" width="1%" nowrap><input type="checkbox" name="w_sq_estoque[]" value="'.f($row,'sq_estoque').'" onClick="marca('.$i.')">');
+        ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
+        ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+        ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
+        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),5).'</td>');
+        ShowHTML('          <td align="center"><input disabled type="text" name="w_minimo[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'estoque_minimo').'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe o estoque mínimo do material."></td>');
+        ShowHTML('          <td align="center"><input disabled type="text" name="w_consumo[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'consumo_medio_mensal').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o consumo médio mensal."></td>');
+        ShowHTML('          <td align="center"><input disabled type="text" name="w_ciclo[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.f($row,'ciclo_compra').'" style="text-align:right;" onKeyDown="FormataValor(this,4,0,event);" title="Informe o ciclo de compra do material."></td>');
+        ShowHTML('          <td align="center"><input disabled type="text" name="w_ponto[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'ponto_ressuprimento').'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe o ponto de ressuprimento do material."></td>');
+        ShowHTML('          <td align="center"><select disabled name="w_disponivel[]" class="sts"><option value="S" '.((f($row,'disponivel')=='S') ? 'SELECTED' : '').' />Sim<option value="N" '.((f($row,'disponivel')=='N') ? 'SELECTED' : '').' />Não</selected></td>');
+        ShowHTML('        </tr>');
+      }
+      ShowHTML('</table>');
+      ShowHTML('  </td>');
+      ShowHTML('<tr><td colspan="3"><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
+      ShowHTML('<tr><td align="center" colspan="3">');
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+      ShowHTML('</form>');
+    }
+  } elseif ($O=='P') {
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    // Exibe parâmetros de apresentação
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
+    ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('      <tr>');
+    SelecaoAlmoxarifado('Al<u>m</u>oxarifado:','M', 'Selecione o almoxarifado onde o material será armazenado.', &$p_chave,'p_chave',null,'onChange="document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_pais\'; document.Form.submit();"',2);
+    ShowHTML('      <tr>');
+    selecaoTipoMatServSubord('<u>T</u>ipo de material:','S','Selecione o grupo/subgrupo de material/serviço desejado.',$p_chave,$p_pais,'p_pais','ALMOXARIFADO',null,2);
+    ShowHTML('      </tr>');
+    ShowHTML('   <tr valign="top">');
+    ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
+    SelecaoClasseCheck('Recuperar classes:','S',null,$p_fase,$P2,'p_fase[]','CONSUMO',null);
+    ShowHTML('   <tr valign="top">');
+    MontaRadioNS('<b>Apenas disponíveis para pedidos internos?</b>',$p_ativo,'p_ativo');
+    ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('    <tr><td align="center" colspan="3">');
+    ShowHTML('          <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('          <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('        </td>');
+    ShowHTML('    </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+    ShowHTML('</table>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert("Opção não disponível");');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+
+  ShowHTML('</table>');
+  Rodape();
+}
+
+// =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
@@ -935,7 +1264,28 @@ function Grava() {
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
-    }          
+    }
+  } elseif (strpos($SG,'MTAJUSTE')!==false) {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      $SQL = new dml_putMtAjuste; 
+      //Grava os novos itens
+      for ($i=0; $i<=count($_POST['w_sq_estoque'])-1; $i=$i+1) {
+        if ($_REQUEST['w_sq_estoque'][$i]>'') {
+          $SQL->getInstanceOf($dbms,'A',$w_cliente,$w_usuario,$_REQUEST['w_sq_estoque'][$i],$_REQUEST['w_minimo'][$i],
+                $_REQUEST['w_consumo'][$i],$_REQUEST['w_ciclo'][$i],$_REQUEST['w_ponto'][$i],$_REQUEST['w_disponivel'][$i]);
+        }
+      } 
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    }     
   } elseif (strpos($SG,'MTALM')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1003,13 +1353,16 @@ function Main() {
 
   switch ($par) {
   case 'SITUACAO'      : Situacao();          break;
+  case 'AJUSTE'        : Ajuste();            break;
   case 'MTTIPMOV'      : TipoMovimentacao();  break;
   case 'ALMOX'         : Almoxarifado();      break;
   case 'LOCAIS'        : Locais();            break;
   case 'GRAVA'         : Grava();             break;
   default:
     Cabecalho();
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

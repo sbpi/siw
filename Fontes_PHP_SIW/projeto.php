@@ -4626,13 +4626,13 @@ function EtapaLinha($l_chave, $l_chave_aux, $l_titulo, $l_resp, $l_setor, $l_ini
       $l_html .= chr(13) . '        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">' . str_repeat('<td width="3%"></td>', ($l_nivel)) . $imagem . '<td>' . $l_destaque . $l_titulo . ' ' . '</b></td></tr></table></td>';
     }
     if ($P4 != 1)
-      $l_html .= chr(13) . '        <td width="1%" nowrap>' . ExibePessoa(null, $w_cliente, $l_sq_resp, $TP, $l_resp) . '</b></td>';
+      $l_html .= chr(13) . '        <td width="1%" nowrap>' . ExibePessoa(null, $w_cliente, $l_sq_resp, $TP, $l_resp) . '</b>1</td>';
     else
-      $l_html .= chr(13) . '        <td>' . $l_resp . '</b><td>';
+      $l_html .= chr(13) . '        <td>' . $l_resp . '</td>';
   } else {
     $l_html .= chr(13) . '        <td colspan=3 align="right"><b>Linha resumo </b></td>';
   }
-  $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . formataDataEdicao($l_inicio, 5) . '</td>';
+  $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . formataDataEdicao($l_inicio, 5) . '2</td>';
   $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . formataDataEdicao($l_fim, 5) . '</td>';
   if ($l_p1 != 1) {
     $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . nvl(formataDataEdicao($l_inicio_real, 5), '---') . '</td>';

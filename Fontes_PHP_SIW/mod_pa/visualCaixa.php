@@ -9,13 +9,12 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
 
   // Recupera os dados da guia
   $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,'PASTA');
-  $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
-  
+   
   if (nvl($p_ordena, '') > '') {
     $lista = explode(',', str_replace(' ', ',', $p_ordena));
-    $RS_Dados = SortArray($RS_Dados, $lista[0], $lista[1], 'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
+    $RS_Dados = SortArray($RS_Dados, $lista[0], $lista[1],'pasta' ,'asc', 'protocolo_completo' ,'asc');
   } else {
-    $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
+    $RS_Dados = SortArray($RS_Dados,'pasta' ,'asc','protocolo_completo' ,'asc');
   }
   
 
@@ -71,7 +70,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
       if($l_formato != 'WORD'){
         $l_html.=chr(13).'     <tr align="center">';
         $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Tipo','nm_tipo').'</b></font></td>';
-        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Protocolo','protocolo').'</b></font></td>';
+        $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Protocolo','protocolo_completo').'</b></font></td>';
         $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Assunto','cd_assunto').'</b></font></td>';
         $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
         $l_html.=chr(13).'       <td rowspan=2><font size=1><b>' . LinkOrdena('Guarda','prazo_guarda').'</b></font></td>';

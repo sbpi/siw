@@ -5351,7 +5351,7 @@ function Diarias_Solic() {
       ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
       ShowHTML('          <tr valign="top"><td>');
       ShowHTML('            <td><b>Desconto na diária (%):</b><br><input type="text" READONLY name="w_vl_diaria_veiculo" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_vl_diaria_veiculo . '" style="text-align:center;" title="Percentual de desconto da diária."></td>');
-      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_veiculo == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_veiculo_qtd" SIZE="5" MAXLENGTH="5" VALUE="' . $w_veiculo_qtd . '" style="text-align:right;" onBlur="calculaLocacao(this.value);" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
+      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_veiculo == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_veiculo_qtd" SIZE="5" MAXLENGTH="5" VALUE="' . nvl(formatNumber($w_calc_vei_qtd, 1),$w_veiculo_qtd) . '" style="text-align:right;" onBlur="calculaLocacao(this.value);" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
       ShowHTML('            <td><b>Valor a ser abatido (' . $w_sg_moeda_veiculo . '):</b><br><input type="text" READONLY name="w_veiculo_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_veiculo_valor . '" style="text-align:right;" title="Valor cheio da veiculo."></td>');
       ShowHTML('<INPUT type="hidden" name="w_vei_ret" value="' . formataDataEdicao($w_vei_ret) . '">');
       ShowHTML('<INPUT type="hidden" name="w_vei_dev" value="' . formataDataEdicao($w_vei_dev) . '">');

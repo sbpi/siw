@@ -1817,9 +1817,6 @@ function Grava() {
           // Remove o item indicado
           $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,null,null,null,null);
         } else {
-          // Remove os itens atuais
-          $SQL->getInstanceOf($dbms,'E',null,null,$_REQUEST['w_chave'],null,null,null,null,null);
-
           //Grava os novos itens
           for ($i=0; $i<=count($_POST['w_sq_material'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_material'][$i]>'') {
