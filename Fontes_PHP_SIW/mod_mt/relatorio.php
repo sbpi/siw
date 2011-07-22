@@ -30,6 +30,7 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoMovimentacao.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServSubord.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoClasseCheck.php');
@@ -817,7 +818,8 @@ function Entrada() {
     SelecaoAlmoxarifado('Al<u>m</u>oxarifado:','M', 'Selecione o almoxarifado onde o material será armazenado.', &$p_chave,'p_chave',null,'onChange="document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_pais\'; document.Form.submit();"',1);
     ShowHTML('     <td><b><u>P</u>eríodo de análise:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('      <tr>');
-    selecaoTipoMatServSubord('<u>T</u>ipo de material:','S','Selecione o grupo/subgrupo de material/serviço desejado.',$p_chave,$p_pais,'p_pais','ALMOXARIFADO',null,2);
+    selecaoTipoMatServSubord('<u>T</u>ipo de material:','S','Selecione o grupo/subgrupo de material/serviço desejado.',$p_chave,$p_pais,'p_pais','ALMOXARIFADO',null,1);
+    SelecaoTipoMovimentacao('Tipo da <u>m</u>ovimentação:','M', 'Selecione o tipo da movimentação.', $p_sccc,'S',null,'p_sccc','CONSUMO',null);
     ShowHTML('      </tr>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');

@@ -561,6 +561,7 @@ function Inicial() {
                 if (f($row,'sg_tramite')=='EA' || f($row,'sg_tramite')=='EE') {
                   ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o projeto, sem enviá-la.">AN</A>&nbsp');
                 } 
+                if ($P1==2) ShowHTML('          <A class="HL" HREF="mod_pr/situacao.php?par=Situacao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Situação atual&SG=SITSOLIC'.MontaFiltro('GET').'" title="Situação atual." target="Situacao">SA</A>&nbsp');
                 ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
                 if (f($row,'sg_tramite')=='EE') {
                   $sql = new db_getContasCronograma; $RS2 = $sql->getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null);
@@ -609,7 +610,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan=7 align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
-          ShowHTML('          <td>&nbsp;</td>');
+          ShowHTML('          <td'.(($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ? ' colspan="2"' : '').'>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -621,7 +622,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan=7 align="right"><b>Total da listagem&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
-          ShowHTML('          <td>&nbsp;</td>');
+          ShowHTML('          <td'.(($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ? ' colspan="2"' : '').'>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 
@@ -4632,7 +4633,7 @@ function EtapaLinha($l_chave, $l_chave_aux, $l_titulo, $l_resp, $l_setor, $l_ini
   } else {
     $l_html .= chr(13) . '        <td colspan=3 align="right"><b>Linha resumo </b></td>';
   }
-  $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . formataDataEdicao($l_inicio, 5) . '2</td>';
+  $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . formataDataEdicao($l_inicio, 5) . '</td>';
   $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . formataDataEdicao($l_fim, 5) . '</td>';
   if ($l_p1 != 1) {
     $l_html .= chr(13) . '        <td align="center" width="1%" nowrap>' . nvl(formataDataEdicao($l_inicio_real, 5), '---') . '</td>';
@@ -4724,23 +4725,27 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   } 
   // Recupera os contratos que o usuário pode ver
   $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, 'GCBCAD');
-  $SQL = new db_getSolicList; $RS_Contr = $SQL->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
+  if (count($l_rs)) {
+    $SQL = new db_getSolicList; $RS_Contr = $SQL->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,
               null,null,null,null,null,$l_chave,$l_chave_aux,null,null);
-  $l_row += count($RS_Contr);
+    $l_row += count($RS_Contr);
+  }
 
   // Recupera as tarefas que o usuário pode ver
   $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, 'GDPCAD');
-  $SQL = new db_getSolicList; $RS_Ativ = $SQL->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
+  if (count($l_rs)) {
+    $SQL = new db_getSolicList; $RS_Ativ = $SQL->getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,
               null,null,null,null,null,$l_chave,$l_chave_aux,null,null);
 
-  if ($l_recurso > '') $l_row += 1;
-  if ($l_ativ1 > '') $l_row += count($RS_Ativ);
+    if ($l_recurso > '') $l_row += 1;
+    if ($l_ativ1 > '') $l_row += count($RS_Ativ);
+  }
 
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
 

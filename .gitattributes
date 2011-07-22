@@ -1062,6 +1062,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicRestricao.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResultado.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRubrica.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicSR.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicSituacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicViagem.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolic_Vinculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateData.php -text
@@ -1329,6 +1330,7 @@ Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtAjuste.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtConsumoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntArm.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtEntItem.php -text
@@ -1438,6 +1440,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicRecAlocacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRelAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRestricao.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicSituacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolic_Vinculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure.php -text
@@ -1588,6 +1591,7 @@ Fontes_PHP_SIW/funcoes/csshover.htc -text
 Fontes_PHP_SIW/funcoes/envio.php -text
 Fontes_PHP_SIW/funcoes/exibeColaborador.php -text
 Fontes_PHP_SIW/funcoes/exibeLog.php -text
+Fontes_PHP_SIW/funcoes/exibeSituacao.php -text
 Fontes_PHP_SIW/funcoes/exibeTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/formataDataXML.php -text
 Fontes_PHP_SIW/funcoes/geragraficoflash.php -text
@@ -2011,6 +2015,7 @@ Fontes_PHP_SIW/mod_pr/graficos.php -text
 Fontes_PHP_SIW/mod_pr/project.php -text
 Fontes_PHP_SIW/mod_pr/relatorios.php -text
 Fontes_PHP_SIW/mod_pr/restricao.php -text
+Fontes_PHP_SIW/mod_pr/situacao.php -text
 Fontes_PHP_SIW/mod_pr/tabelas.php -text
 Fontes_PHP_SIW/mod_rh/afastamento.php -text
 Fontes_PHP_SIW/mod_rh/colaborador.php -text
