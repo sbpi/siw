@@ -251,8 +251,7 @@ begin
                                                             a.sq_material         = h.sq_material
                                                            )
           where a.cliente            = p_cliente
-            and a.exibe_catalogo     = 'S'
-            and a.ativo              = 'S'
+            and g.disponivel         = 'S'
             and h.sq_saida_item      is null
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))

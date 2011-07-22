@@ -3818,6 +3818,7 @@ SP_Oracle92/siw/sp_getSolicObjetivo.prc -text
 SP_Oracle92/siw/sp_getSolicRecursos.prc -text
 SP_Oracle92/siw/sp_getSolicRestricao.prc -text
 SP_Oracle92/siw/sp_getSolicSR.prc -text
+SP_Oracle92/siw/sp_getSolicSituacao.prc -text
 SP_Oracle92/siw/sp_getSolic_Vinculo.prc -text
 SP_Oracle92/siw/sp_getTipoArquivo.prc -text
 SP_Oracle92/siw/sp_getTipoEvento.prc -text
@@ -4103,6 +4104,7 @@ SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
 SP_Oracle92/siw/sp_putLCJulgamento.prc -text
 SP_Oracle92/siw/sp_putMatServ.prc -text
 SP_Oracle92/siw/sp_putMaterial.prc -text
+SP_Oracle92/siw/sp_putMtAjuste.prc -text
 SP_Oracle92/siw/sp_putMtConsumoGeral.prc -text
 SP_Oracle92/siw/sp_putMtEntrada.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
@@ -4126,6 +4128,7 @@ SP_Oracle92/siw/sp_putSolicIndicador.prc -text
 SP_Oracle92/siw/sp_putSolicRecAlocacao.prc -text
 SP_Oracle92/siw/sp_putSolicRecurso.prc -text
 SP_Oracle92/siw/sp_putSolicRestricao.prc -text
+SP_Oracle92/siw/sp_putSolicSituacao.prc -text
 SP_Oracle92/siw/sp_putSolic_Vinculo.prc -text
 SP_Oracle92/siw/sp_putTipoArquivo.prc -text
 SP_Oracle92/siw/sp_putTipoEvento.prc -text

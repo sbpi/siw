@@ -83,8 +83,8 @@ create or replace procedure SP_PutMtEntrada
 begin
    If p_operacao = 'V' Then -- Armazenamento
       update mt_entrada
-         set armazenamento        = p_armazenamento
-      where sq_mtentrada = p_chave;
+         set armazenamento = p_armazenamento
+      where sq_mtentrada   = p_chave;
    Else
       If p_solicitacao is null or p_documento is null or p_copia is not null Then
          -- Recupera a chave da solicitação e do documento

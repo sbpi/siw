@@ -194,11 +194,12 @@ begin
                a1.sq_localizacao,                   a1.nome as nm_localizacao,
                a11.sq_unidade,                      a11.nome as nm_unidade,
                a12.sq_pessoa_endereco,              a12.logradouro,
-               b.ultima_saida,                      b.ultima_entrada,                                b.preco_medio,
+               b.sq_estoque,                        b.ultima_saida,                                  b.ultima_entrada,
                b.ultimo_preco_compra,               b.consumo_medio_mensal,                          b.ponto_ressuprimento,
-               b.ciclo_compra,
+               b.ciclo_compra,                      b.disponivel,                                    b.preco_medio,
+               b.estoque_minimo,
                b1.sq_material,                      b1.nome as nm_material,                          montanometipomaterial(b1.sq_tipo_material,'CODCOMP') as nm_tipo_completo,
-               b11.sq_unidade_medida,               b11.nome as nm_unidade_medida,
+               b11.sq_unidade_medida,               b11.nome as nm_unidade_medida,                   b11.sigla as sg_unidade_medida,
                b12.sq_tipo_material,                b12.nome as nm_tipo_material,                    b12.classe,
                case b12.classe when 1 then 'Medicamento' when 2 then 'Alimento' when 3 then 'Consumo' when 4 then 'Permanente' when 5 then 'Serviço' end as nm_classe,
                c.sq_almoxarifado_local,             c.saldo_atual,                                   montaNomeAlmoxLocal(c.sq_almoxarifado_local) as nm_almoxarifado_local
@@ -219,6 +220,7 @@ begin
                                       )                       c on (b.sq_estoque             = c.sq_estoque)
          where a.cliente         = p_menu
            and a.sq_almoxarifado = p_chave
+           and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and b.disponivel = p_ativo))
            and (p_pais           is null or (p_pais        is not null and b12.sq_tipo_material in (select sq_tipo_material
                                                                                                       from cl_tipo_material
                                                                                                     connect by prior sq_tipo_material = sq_tipo_pai
@@ -256,7 +258,7 @@ begin
                d241.sq_tipo_documento,              d241.nome as nm_tip_doc,                         d241.sigla as sg_tip_doc,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra
+               g.ciclo_compra,                      g.disponivel
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
@@ -279,6 +281,8 @@ begin
                    inner         join mt_estoque              g on (c.sq_estoque             = g.sq_estoque)
          where a.cliente         = p_menu
            and a.sq_almoxarifado = p_chave
+           and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and g.disponivel = p_ativo))
+           and (p_sqcc           is null or (p_sqcc        is not null and d2.sq_tipo_movimentacao = p_sqcc))
            and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
            and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material in (select sq_tipo_material
                                                                                                       from cl_tipo_material
@@ -323,7 +327,7 @@ begin
                f2.sq_menu,                          f2.nome as nm_menu,                              f2.sigla as sg_menu,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra
+               g.ciclo_compra,                      g.disponivel
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
@@ -352,6 +356,8 @@ begin
                    inner         join mt_estoque              g on (c.sq_estoque             = g.sq_estoque)
          where a.cliente         = p_menu
            and a.sq_almoxarifado = p_chave
+           and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and g.disponivel = p_ativo))
+           and (p_sqcc           is null or (p_sqcc        is not null and e11.sq_tipo_movimentacao = p_sqcc))
            and (f1.sigla         is null or (f1.sigla      is not null and f1.sigla <> 'CA'))
            and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
            and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material in (select sq_tipo_material
@@ -403,7 +409,7 @@ begin
                a2.p4,                               substr(a2.link,1,instr(a2.link,'par=')+3) as link_menu,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra
+               g.ciclo_compra,                      g.disponivel
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
@@ -426,6 +432,7 @@ begin
                    inner         join mt_estoque              g on (c.sq_estoque             = g.sq_estoque)
          where a.cliente         = p_menu
            and a.sq_almoxarifado = p_chave
+           and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and g.disponivel = p_ativo))
            and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
            and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material in (select sq_tipo_material
                                                                                                       from cl_tipo_material
@@ -471,7 +478,7 @@ begin
                null as p4,                          null as link_menu,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra
+               g.ciclo_compra,                      g.disponivel
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
