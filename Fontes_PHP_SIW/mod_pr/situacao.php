@@ -109,7 +109,14 @@ function Situacao() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho   = f($RS,'titulo').' ('.$w_chave.')';  
+  if (count($RS)) {
+    $w_cabecalho   = 'PROJETO: '.f($RS,'titulo').' ('.$w_chave.')';
+    $w_tipo        = 'PR';
+  } else {
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PEPROCAD');
+    $w_cabecalho   = 'PROGRAMA: '.f($RS,'titulo').' ('.$w_chave.')';
+    $w_tipo        = 'PE';
+  }
   
   if ($P1==1 || $P1==2) {
     $w_edita = true;
@@ -181,7 +188,7 @@ function Situacao() {
   ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
-  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.$w_cabecalho.'</b></font></div></td></tr>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
 
   if ($O=='L') {
@@ -310,8 +317,16 @@ function VisualSituacao() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
+
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
+  if (count($RS)) {
+    $w_cabecalho   = 'PROJETO: '.f($RS,'titulo').' ('.$w_chave.')';
+    $w_tipo        = 'PR';
+  } else {
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PEPROCAD');
+    $w_cabecalho   = 'PROGRAMA: '.f($RS,'titulo').' ('.$w_chave.')';
+    $w_tipo        = 'PE';
+  }
 
   $sql = new db_getSolicSituacao; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null);
 
@@ -345,7 +360,7 @@ function VisualSituacao() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
-  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.$w_cabecalho.'</b></font></div></td></tr>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
 
   ShowHTML('<tr><td align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
