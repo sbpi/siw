@@ -2054,7 +2054,7 @@ function MailRecusa($l_o, $l_unid, $l_numero, $l_ano, $l_observacao) {
     $w_html.=$crlf . '      <tr><td>';
 
     // Chama a rotina de visualização dos protocolos da guia
-    $w_html.=$crlf . VisualGR($l_unid, $l_numero, $l_ano, f($RS_Menu, 'sq_menu'), 'TELA');
+    $w_html.=$crlf . VisualGR(null, $l_numero, $l_ano, f($RS_Menu, 'sq_menu'), 'RECUSA');
 
     // Configura o remetente da tramitação como destinatário da mensagem
     $sql = new db_getProtocolo;
@@ -2088,7 +2088,7 @@ function MailRecusa($l_o, $l_unid, $l_numero, $l_ano, $l_observacao) {
     $w_html.='</table>' . $crlf;
     $w_html.='</BODY>' . $crlf;
     $w_html.='</HTML>' . $crlf;
-
+  
     if ($w_destinatarios > '') {
       // Executa o envio do e-mail
       $w_resultado = EnviaMail($w_assunto, $w_html, $w_destinatarios, null);

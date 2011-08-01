@@ -8,9 +8,14 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
-  $sql = new db_getProtocolo; $RS_Dados = $sql->getInstanceOf($dbms, nvl($l_menu,$w_menu), $w_usuario, $SG, null, null, 
-      null, null, null, null, $l_unidade, $l_nu_guia, $l_ano_guia, null, null, 1, null, null, null, null, null, null, null, null);
-
+  if($l_formato == 'RECUSA'){
+    $sql = new db_getProtocolo; $RS_Dados = $sql->getInstanceOf($dbms, nvl($l_menu,$w_menu), $w_usuario, 'RELPATRAM', null, null, 
+        null, null, null, null, null, $l_nu_guia, $l_ano_guia, null, null, 1, null, null, null, null, null, null, null, null);
+  }else{
+    $sql = new db_getProtocolo; $RS_Dados = $sql->getInstanceOf($dbms, nvl($l_menu,$w_menu), $w_usuario, $SG, null, null, 
+        null, null, null, null, $l_unidade, $l_nu_guia, $l_ano_guia, null, null, 1, null, null, null, null, null, null, null, null);  
+  }
+  
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';
   $w_linha = 99;
   $w_pag   = 1;

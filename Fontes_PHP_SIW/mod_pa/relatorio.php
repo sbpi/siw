@@ -235,7 +235,7 @@ function Tramitacao() {
           ShowHTML('        <td align="center"><A class="HL" HREF="' . $w_dir . 'documento.php?par=Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
           ShowHTML('        <td align="center">' . substr(formataDataEdicao(f($row, 'phpdt_envio'),6),0,-3) . '</td>');
           ShowHTML('        <td align="top" nowrap class="remover">');
-          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGR&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="GR">Emitir</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGR&R=' . $w_pagina . $par . '&O=L&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="GR">Emitir</A>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
           $w_atual = f($row, 'guia_tramite');
