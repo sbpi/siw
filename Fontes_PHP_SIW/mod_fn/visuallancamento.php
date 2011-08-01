@@ -364,9 +364,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   } 
 
   // Documentos
-  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
-  $RS = SortArray($RS,'data','asc');
-  if (count($RS)>0) {
+  $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
+  $RS_Docs = SortArray($RS_Docs,'data','asc');
+  if (count($RS_Docs)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     if ($w_vl_retencao!=0 || $w_vl_normal!=0) {
       $l_html.=chr(13).'          <tr valign="top"><td align="center" colspan="2" style="border: 1px solid rgb(0,0,0);">';
@@ -393,7 +393,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     $w_total=0;
-    foreach ($RS as $row) {
+    foreach ($RS_Docs as $row) {
       $sql = new db_getImpostoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'sq_lancamento_doc','asc','phpdt_inclusao','asc','calculo','asc','esfera','asc','nm_imposto','asc');
       if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
@@ -458,19 +458,25 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             $l_html.=chr(13).'          <td>'.f($row2,'nm_imposto').'</td>';
             $l_html.=chr(13).'          <td align="center">'.formataDataEdicao(f($row2,'quitacao_imposto'),5).'</td>';
             $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
-            $w_vl_total+=f($row2,'vl_total');
+            if (f($row2,'calculo')!=0) {
+              // Quando é retenção, abate o valor do total a ser pago ao beneficiário
+              $w_vl_total+=f($row2,'vl_total');
+            }
           } 
           if (Nvl(f($row,'valor'),0)==0) {
             $w_valor=1;
           } else {
             $w_valor=Nvl(f($row,'valor'),0);
           }
-          $l_html.=chr(13).'          <tr valign="top">';
-          $l_html.=chr(13).'          <td colspan=3 align="right"><b>Subtotal</td>';
-          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
-          $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
-          $l_html.=chr(13).'          <td colspan=3 align="right"><b>Líquido</td>';
-          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+          if ($w_vl_total!=0) {
+            $l_html.=chr(13).'          <tr valign="top">';
+            $l_html.=chr(13).'          <td colspan=3 align="right"><b>Subtotal</td>';
+            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
+            $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
+            $l_html.=chr(13).'          <td colspan=3 align="right"><b>Líquido</td>';
+            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+            $l_html.=chr(13).'          </tr>';
+          }
         } else {
           $l_html.=chr(13).'            <td rowspan=2><b>Tributo</td>';
           $l_html.=chr(13).'            <td colspan=2><b>Retenção</td>';
@@ -525,7 +531,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } 
       $w_total=$w_total+f($row,'valor');
     }
-    if (count($RS)>1) { 
+    if (count($RS_Docs)>1) { 
       if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html.=chr(13).'      <tr valign="top">';
       if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {

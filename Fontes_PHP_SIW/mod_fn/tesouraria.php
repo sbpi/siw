@@ -567,17 +567,17 @@ function Inicial() {
                   if (f($row,'valor_doc')==0)       ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                 } 
               }
-              ShowHTML('          <A class="boxClean hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET')).'" title="Envia o lançamento para outro responsável ou fase.">EN</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Registro do pagamento.">'.(($P2==2) ? 'Ajustar' : $w_acao).'</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET')).'" title="Envia o lançamento para outro responsável ou fase.">EN</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'"'.(($P2==2) ? ' title="Ajuste nos dados do pagamento.">AL' : '>'.$w_acao).'</A>&nbsp');
             } else {
-              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Registro do pagamento.">'.(($P2>=2) ? 'Ajustar' : $w_acao).'</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'"'.(($P2>=2) ? ' title="Ajuste nos dados do pagamento.">AL' : '>'.$w_acao).'</A>&nbsp');
             }
           } else {
-            ShowHTML('          <A class="boxClean hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_menu='.f($row,'sq_menu').'&SG='.f($row,'sigla').MontaFiltro('GET')).'" title="Envia o lançamento para outro responsável ou fase.">EN</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_menu='.f($row,'sq_menu').'&SG='.f($row,'sigla').MontaFiltro('GET')).'" title="Envia o lançamento para outro responsável ou fase.">EN</A>&nbsp');
             if (f($row,'sigla')=='FNDFUNDO') {
-              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Ajustes nos dados do pagamento.">Ajustar</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Ajustes nos dados do pagamento.">AL</A>&nbsp');
             } else {
-              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Ajuste nos dados do pagamento.">Ajustar</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Ajuste nos dados do pagamento.">AL</A>&nbsp');
             }
           }
           ShowHTML('        </td>');
@@ -948,7 +948,7 @@ function Geral() {
       }
     }
     Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
-    Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
+    Validate('w_descricao','Detalhamento','1',1,5,2000,'1','1');
     Validate('w_tipo_pessoa','Lançamento para pessoa','SELECT',1,1,18,'','0123456789');   
     Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
@@ -1028,7 +1028,12 @@ function Geral() {
     ShowHTML('      <tr><td colspan=3>Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
   
-    SelecaoImposto('<u>F</u>inalidade:','T', 'Selecione a finalidade do lançamento.', $w_imposto,$w_cliente,'w_imposto',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_imposto\'; document.Form.submit();"');
+    if ($O=='I') {
+      SelecaoImposto('<u>F</u>inalidade:','T', 'Selecione a finalidade do lançamento.', $w_imposto,$w_cliente,'w_imposto',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_imposto\'; document.Form.submit();"');
+    } else {
+      SelecaoImposto('<u>F</u>inalidade:','T', 'Selecione a finalidade do lançamento.', $w_imposto,$w_cliente,'w_imposto',null,' disabled ');
+      ShowHTML('<INPUT type="hidden" name="w_imposto" value="'.$w_imposto.'">');
+    }
     
     if (count($RS_Docs)==1) {
       ShowHTML('<INPUT type="hidden" name="w_sq_documento" value="'.$w_sq_documento.'">');
@@ -1057,7 +1062,7 @@ function Geral() {
     ShowHTML('      <tr>');
     SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',$SG,null,2);
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td colspan=3><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan=3><b><u>D</u>etalhamento:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Detalhamento do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="3"><table border=0 width="100%">');
     ShowHTML('        <tr valign="top">');
     SelecaoTipoPessoa('Lançamento para pessoa:','T','Selecione na lista o tipo de pessoa associada a este lançamento.',$w_tipo_pessoa,$w_cliente,'w_tipo_pessoa',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_forma_pagamento\'; document.Form.submit();"',null);
@@ -1086,7 +1091,7 @@ function Geral() {
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
     SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
-    ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
+    ShowHTML('          <td><b><u>N</u>úmero do documento:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
     //if (Nvl($w_tipo,'-')=='NF') ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     //ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_doc" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_doc.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');

@@ -44,15 +44,15 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
   //-----------------------------------------------------------------------------
   // 1 - Verifica se o valor do lançamento é maior que zero
   if (f($l_rs_solic,'valor')==0) {
-    $l_erro=$l_erro.'<li>O lançamento não pode ter valor zero.';
+    $l_erro.='<li>O lançamento não pode ter valor zero.';
     $l_tipo=0;
   }
   if (f($l_rs_solic,'ativo')=='S') {
     if (substr(f($l_rs_solic,'sigla'),0,3)=='FNR' && f($l_rs_solic,'receita')=='N') {
-      $l_erro=$l_erro.'<li>Para lançamentos de receita, o tipo de lançamento deve ser de receita.';
+      $l_erro.='<li>Lançamento financeiro (recebimento) incompatível com o tipo (pagamento).';
       $l_tipo=0;
     } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='FND' && f($l_rs_solic,'despesa')=='N') {
-      $l_erro=$l_erro.'<li>Para lançamentos de despesa, o tipo de lançamento deve ser de despesa.';
+      $l_erro.='<li>Lançamento financeiro (pagamento) incompatível com o tipo (recebimento).';
       $l_tipo=0;
     }
   }
@@ -65,7 +65,7 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
       foreach($l_rs_tipo as $l_row){$l_rs_tipo=$l_row; break;}
       if (count($l_rs_tipo)>0) {
         if (f($l_rs_tipo,'sg_tramite')<>'AT') {
-          $l_erro=$l_erro.'<li>Para a execução de novos lançamentos para o projeto <b>'.f($l_rs_solic,'nm_projeto').'</b>, o lançamento de dotação inicial deve estar liquidado.';
+          $l_erro.='<li>Para a execução de novos lançamentos para o projeto <b>'.f($l_rs_solic,'nm_projeto').'</b>, o lançamento de dotação inicial deve estar liquidado.';
           $l_tipo=0;        
         }
       }
@@ -78,12 +78,12 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
     foreach ($l_rs1 as $row){$l_rs1 = $row; break;}
     if ($l_existe_rs1==0) {
       // Verifica se foi indicada a pessoa
-      $l_erro=$l_erro.'<li>A pessoa não foi informada';
+      $l_erro.='<li>A pessoa não foi informada';
       $l_tipo=0;
     } else {
       if (!(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==Nvl(f($l_rs1,'sq_tipo_pessoa'),0))) {
         // Verifica se a pessoa informada é do tipo indicada no cadastro do lançamento 
-        $l_erro=$l_erro.'<li>A pessoa não é do tipo informado na tela de dados gerais.';
+        $l_erro.='<li>A pessoa não é do tipo informado na tela de dados gerais.';
         $l_tipo=0;
       } 
     } 
@@ -105,7 +105,7 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
      }
     } 
     if ($l_erro_banco==1) {
-      $l_erro=$l_erro.'<li>Dados bancários incompletos. Acesse a operação "Pessoa", confira os dados e grave a tela.';
+      $l_erro.='<li>Dados bancários incompletos. Acesse a operação "Pessoa", confira os dados e grave a tela.';
       $l_tipo=0;
     }
 

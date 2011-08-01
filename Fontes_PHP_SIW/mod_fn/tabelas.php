@@ -543,7 +543,7 @@ function Lancamento() {
       Validate('w_nome','Nome','1','1','5','200','1','1');
       Validate('w_descricao','descrição','1','1','5','200','1','1');
       ShowHTML('  if (theForm.w_receita[1].checked && theForm.w_despesa[1].checked) {');
-      ShowHTML('     alert ("Não pode existir tipo de lançamento com valores negativos para o campo receita e despesa ao mesmo tempo!");');
+      ShowHTML('     alert ("Não pode existir tipo de lançamento com valores negativos para os campos recebimento e pagamento ao mesmo tempo!");');
       ShowHTML('     return false;');
       ShowHTML('  }');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -582,8 +582,8 @@ function Lancamento() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Recebimento','nm_receita').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Pagamento','nm_despesa').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Reembolso','nm_reembolso').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
@@ -632,8 +632,8 @@ function Lancamento() {
     SelecaoTipoLancamento('<u>S</u>ubordinação:','S',null,$w_pai,$w_chave,$w_cliente,'w_pai',(($O=='A') ? 'SUBPARTE' : 'SUBTODOS'),null,3);
     ShowHTML('      <tr><td colspan=3><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr>');
-    MontaRadioNS('<b>Receita?</b>',$w_receita,'w_receita');
-    MontaRadioNS('<b>Despesa?</b>',$w_despesa,'w_despesa');
+    MontaRadioNS('<b>Recebimento?</b>',$w_receita,'w_receita');
+    MontaRadioNS('<b>Pagamento?</b>',$w_despesa,'w_despesa');
     MontaRadioNS('<b>Reembolso?</b>',$w_reembolso,'w_reembolso');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');

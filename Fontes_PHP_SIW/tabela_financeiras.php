@@ -348,18 +348,8 @@ function CentroCusto() {
     ShowHTML('      <tr><td valign="top" colspan=3><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="C" class="sti" name="w_descricao" rows=5 cols=80 title="Descreva sucintamente o centro de custo." '.$w_Disabled.'>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr><td valign="top"><table width="100%" border=0><tr valign="top">');
     ShowHTML('          <td valign="top"><b>S<u>i</u>gla:<br><INPUT ACCESSKEY="S" TYPE="TEXT" CLASS="sti" NAME="w_sigla" SIZE=20 MAXLENGTH=20 VALUE="'.$w_sigla.'" '.$w_Disabled.' title="Informe a sigla desejada para o centro de custo."></td>');
-    ShowHTML('          <td valign="top" title="Informe "Sim" se este centro de custo for regular, e "Não" se ele for extra-orçamentário."><b>Regular?</b><br>');
-    if ($w_regular=='S' || $w_regular=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_regular" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_regular" value="N"> Não');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_regular" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_regular" value="N" checked> Não');
-    } 
-    ShowHTML('          <td valign="top" title="Informe "Sim" se este centro de custo for relativo a receitas, e "Não" se ele for relativo a despesas."><b>Receita?</b><br>');
-    if ($w_receita=='S' || $w_receita=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_receita" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_receita" value="N"> Não');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_receita" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_receita" value="N" checked> Não');
-    } 
+    MontaRadioSN('<b>Regular?</b>',$w_regular,'w_regular','Informe "Sim" se este centro de custo for regular, e "Não" se ele for extra-orçamentário.');
+    MontaRadioSN('<b>Recebimento?</b>',$w_receita,'w_receita','Informe "Sim" se este centro de custo for relativo a recebimentos, e "Não" se ele for relativo a pagamentos.');
     ShowHTML('          </table>');
     if ($O=='I') {
       ShowHTML('      <tr align="left">');

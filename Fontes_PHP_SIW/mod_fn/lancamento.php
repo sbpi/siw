@@ -3461,7 +3461,7 @@ function Excluir() {
 function Encaminhamento() {
   extract($GLOBALS);
   // Se envio de reembolso, chama a rotina de envio sem indicação de destinatário
-  if ($SG=='FNDREEMB') {
+  if (1==1||$SG=='FNDREEMB') {
     EncAutomatico();
     exit();
   }
@@ -3911,7 +3911,7 @@ function Concluir() {
   $w_observacao         = f($RS_Solic,'observacao');
   $w_tramite            = f($RS_Solic,'sq_siw_tramite');
   $w_conta_debito       = f($RS_Solic,'sq_pessoa_conta');
-  $w_valor_real         = formatNumber(f($RS_Solic,'valor'));
+  $w_valor_real         = formatNumber(f($RS_Solic,'valor')-f($RS_Solic,'vl_abatimento'));
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
   $w_sq_tipo_lancamento = nvl($w_sq_tipo_lancamento,f($RS_Solic,'sq_tipo_lancamento'));
   $w_inicio             = FormataDataEdicao(time());
@@ -4084,13 +4084,15 @@ function Concluir() {
           ShowHTML('          <td>');
           ShowHTML('            <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=A&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&w_chave='.f($row,'solic_imposto').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Altera as informações cadastrais do lançamento">AL</A>&nbsp');
           ShowHTML('            <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=excluir&R='.$w_pagina.$par.'&O=E&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&w_chave='.f($row,'solic_imposto').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Exclusão do lançamento">EX</A>&nbsp');
-          $w_vl_total+=f($row,'vl_total');
+          if (f($row,'calculo')!=0) $w_vl_total+=f($row,'vl_total');
         } 
-        ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-        ShowHTML('        <td align="right" colspan=5><b>Total dos lançamentos</b></td>');
-        ShowHTML('        <td align="right"><b>'.formatNumber($w_vl_total).'</b></td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('      </tr>');
+        if (count($RS1)>1) {
+          ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'">');
+          ShowHTML('        <td align="right" colspan=5><b>Total dos lançamentos</b></td>');
+          ShowHTML('        <td align="right"><b>'.formatNumber($w_vl_total).'</b></td>');
+          ShowHTML('        <td>&nbsp;</td>');
+          ShowHTML('      </tr>');
+        }
       } 
       ShowHTML('      </table></td></tr>');
     }

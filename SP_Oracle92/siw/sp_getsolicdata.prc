@@ -521,6 +521,7 @@ begin
                 de.exige_operacao as exige_oper_org,
                 df.sq_imposto, df.solic_origem,
                 case coalesce(df.sq_siw_solicitacao,0) when 0 then 'N' else 'S' end as lancamento_vinculado,
+                coalesce(dg.valor,0) as vl_abatimento,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
@@ -604,6 +605,19 @@ begin
                                                                                    z.sigla          = 'FNDEVENT'
                                                                                   )
                                        )                    df on (d.sq_siw_solicitacao       = df.sq_siw_solicitacao)
+                     left         join (select d.sq_siw_solicitacao, sum(a.valor_total) as valor
+                                          from fn_imposto_doc                    a
+                                               inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                                                 inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                                               inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
+                                               inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
+                                                 inner   join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                                                 inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
+                                                 inner   join siw_menu           k on (h.sq_menu            = k.sq_menu)
+                                         where g.calculo > 0
+                                           and (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
+                                        group by d.sq_siw_solicitacao
+                                       )                    dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
