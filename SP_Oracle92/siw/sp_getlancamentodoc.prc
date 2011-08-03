@@ -28,7 +28,9 @@ begin
                 d.numero numero_nota, d.valor valor_nota, d.abrange_inicial, d.abrange_acrescimo,
                 d.abrange_reajuste, d.data data_nota, d.valor_cancelamento, d.data_cancelamento,
                 e.sigla sg_nota,
-                f.valor_inicial as parcela_ini, f.valor_excedente as parcela_exc, f.valor_reajuste as parcela_rea
+                f.valor_inicial as parcela_ini, f.valor_excedente as parcela_exc, f.valor_reajuste as parcela_rea,
+                coalesce(g.acrescimo,0) as acrescimo, 
+                coalesce(h.deducao,0) as deducao
            from fn_lancamento_doc                a
                 inner    join fn_lancamento      a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao)
                 inner    join siw_solicitacao    a2 on (a.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
@@ -50,6 +52,24 @@ begin
                               )                  f on (d.sq_acordo_nota     = f.sq_acordo_nota and
                                                        f.sq_acordo_parcela  = a1.sq_acordo_parcela
                                                       )
+                left     join (select x.sq_lancamento_doc, sum(x.valor) acrescimo
+                                 from fn_documento_valores         x
+                                      inner join fn_lancamento_doc y on (x.sq_lancamento_doc = y.sq_lancamento_doc)
+                                      inner join fn_valores        z on (x.sq_valores        = z.sq_valores)
+                                where z.tipo = 'A' -- Acréscimos
+                                  and (p_chave     is null or (p_chave     is not null and y.sq_siw_solicitacao = p_chave))
+                                  and (p_chave_aux is null or (p_chave_aux is not null and y.sq_lancamento_doc  = p_chave_aux))
+                              group by x.sq_lancamento_doc
+                             )                   g on (a.sq_lancamento_doc  = g.sq_lancamento_doc)
+                left     join (select x.sq_lancamento_doc, sum(x.valor) deducao
+                                 from fn_documento_valores         x
+                                      inner join fn_lancamento_doc y on (x.sq_lancamento_doc = y.sq_lancamento_doc)
+                                      inner join fn_valores        z on (x.sq_valores        = z.sq_valores)
+                                where z.tipo = 'S' -- Deduções
+                                  and (p_chave     is null or (p_chave     is not null and y.sq_siw_solicitacao = p_chave))
+                                  and (p_chave_aux is null or (p_chave_aux is not null and y.sq_lancamento_doc  = p_chave_aux))
+                              group by x.sq_lancamento_doc
+                             )                   h on (a.sq_lancamento_doc  = h.sq_lancamento_doc)
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_lancamento_doc  = p_chave_aux))
             and (p_benef     is null or (p_benef     is not null and a1.pessoa            = p_benef))

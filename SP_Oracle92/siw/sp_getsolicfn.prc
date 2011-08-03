@@ -135,7 +135,8 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,              b.sq_plano,                    coalesce(b.protocolo_siw, b4.protocolo_siw) as protocolo_siw,
+                b.sq_plano,           b.valor+coalesce(dh.valor,0)-coalesce(dg.valor,0) as valor,
+                coalesce(b.protocolo_siw, b4.protocolo_siw) as protocolo_siw,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
@@ -301,6 +302,27 @@ begin
                                               and z.sq_menu        = coalesce(p_menu, z.sq_menu)
                                            group by x.sq_siw_solicitacao
                                           )                    d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
+                        left        join (select d.sq_siw_solicitacao, sum(a.valor_total) as valor
+                                            from fn_imposto_doc                    a
+                                                 inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                                                   inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                                                 inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
+                                                 inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
+                                                   inner   join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                                                   inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
+                                                   inner   join siw_menu           k on (h.sq_menu            = k.sq_menu)
+                                           where g.calculo > 0
+                                             and (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
+                                          group by d.sq_siw_solicitacao
+                                         )                     dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
+                        left        join (select d.sq_siw_solicitacao, sum(case g.tipo when 'A' then a.valor else -1*a.valor end) as valor
+                                            from fn_documento_valores              a
+                                                 inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                                                   inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                                                 inner     join fn_valores         g on (a.sq_valores         = g.sq_valores)
+                                           where (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
+                                          group by d.sq_siw_solicitacao
+                                         )                     dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null
