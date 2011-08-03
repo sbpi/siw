@@ -24,15 +24,12 @@ begin
          select a.sq_valores, a.nome as nome, a.tipo as tp_valor, a.ativo, acentos(a.nome) as ordenacao,
                 b.sq_lancamento_doc, b.valor
            from fn_valores                        a
-                left    join fn_documento_valores b on (a.sq_valores          = b.sq_valores)
-                  left  join fn_lancamento_doc    c on (b.sq_lancamento_doc   = c.sq_lancamento_doc and 
-                                                        (p_chave             is null or 
-                                                         (p_chave            is not null and c.sq_siw_solicitacao = p_chave)
-                                                        ) and 
-                                                        (p_sq_lancamento_doc is null or 
-                                                        (p_sq_lancamento_doc is not null and c.sq_lancamento_doc  = p_sq_lancamento_doc)
-                                                        )
-                                                       )
+                left    join (select w.sq_valores, w.sq_lancamento_doc, w.valor
+                                from fn_documento_valores         w
+                                     inner join fn_lancamento_doc x on (w.sq_lancamento_doc = x.sq_lancamento_doc)
+                               where (p_chave             is null or (p_chave             is not null and x.sq_siw_solicitacao = p_chave))
+                                 and (p_sq_lancamento_doc is null or (p_sq_lancamento_doc is not null and x.sq_lancamento_doc  = p_sq_lancamento_doc))
+                             )                    b on (a.sq_valores          = b.sq_valores)
                 left    join fn_valores_vinc      d on (a.sq_valores          = d.sq_valores)
           where a.cliente             = p_cliente
             and a.ativo               = 'S'

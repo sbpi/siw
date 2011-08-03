@@ -185,6 +185,7 @@ begin
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
                 coalesce(d3.valor,0) as valor_doc,
+                d31.sigla||' '||d3.numero as nr_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero as nr_conta,
                 d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
@@ -277,14 +278,8 @@ begin
                         left         join pa_documento         b8 on (b.protocolo_siw            = b8.sq_siw_solicitacao)
                         left         join siw_solicitacao      b7 on (b4.sq_solic_pai            = b7.sq_siw_solicitacao)
                         left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
-                        left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
-                                             from fn_lancamento_doc x
-                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                  inner join siw_menu        z on (y.sq_menu            = z.sq_menu)
-                                            where x.sq_acordo_nota is null
-                                              and z.sq_menu        = coalesce(p_menu, z.sq_menu)
-                                           group by x.sq_siw_solicitacao
-                                          )                    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao)
+                        left         join fn_lancamento_doc    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao) 
+                          left       join fn_tipo_documento   d31 on (d3.sq_tipo_documento       = d31.sq_tipo_documento)
                         left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
                                                                       d4.ativo                   = 'S' and
                                                                       d4.padrao                  = 'S'
