@@ -598,7 +598,7 @@ function FormaPagamento(){
         ShowHTML('        <td class="remover">');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
+        ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 

@@ -464,7 +464,7 @@ function Valor(){
         ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=VALOR&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VALOR'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
+        ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=VALOR&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VALOR'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -537,7 +537,6 @@ function Valor(){
     ShowHTML('<tr><td colspan=3 bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('      <tr><td>Nome:<br><b>' . $w_nome . '</b></td>');
-    ShowHTML('          <td>Sigla:<br><b>' . $w_sigla . '</b></td>');
     ShowHTML('    </TABLE>');
     ShowHTML('</TABLE>');
     ShowHTML('  <tr><td>&nbsp;');
@@ -708,7 +707,7 @@ function Documento(){
         ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=DOCUMENTO&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DOCUMENTO'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
+        ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=DOCUMENTO&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DOCUMENTO'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -962,7 +961,7 @@ function Lancamento() {
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
         if (f($row, 'qt_filhos') == 0) {
-          ShowHTML('          <A class="hl" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&TP=' . $TP . '&SG=' . $SG . '" onClick="window.open(\'' . montaURL_JS($w_dir, 'tabelas.php?par=LANCAMENTO&R=' . $w_pagina . $par . '&O=T&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=LANCAMENTO' . MontaFiltro('GET') . '\',\'Vinculacoes') . '\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\'' . montaURL_JS($w_dir, 'tabelas.php?par=LANCAMENTO&R=' . $w_pagina . $par . '&O=T&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=LANCAMENTO' . MontaFiltro('GET') . '\',\'Vinculacoes') . '\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
