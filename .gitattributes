@@ -928,6 +928,7 @@ Fontes_PHP_SIW/classes/sp/db_getLancamentoItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoLog.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoProjeto.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoRubrica.php -text
+Fontes_PHP_SIW/classes/sp/db_getLancamentoValor.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkData.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataHelp.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataParent.php -text
@@ -944,13 +945,16 @@ Fontes_PHP_SIW/classes/sp/db_getMatServ.php -text
 Fontes_PHP_SIW/classes/sp/db_getMeioTransporte.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuData.php -text
+Fontes_PHP_SIW/classes/sp/db_getMenuDocumento.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuFormaPag.php -text
+Fontes_PHP_SIW/classes/sp/db_getMenuLancamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuLink.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuList.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuOrder.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuUpper.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuUser.php -text
+Fontes_PHP_SIW/classes/sp/db_getMenuValores.php -text
 Fontes_PHP_SIW/classes/sp/db_getMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getMetaMensal_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getModData.php -text
@@ -1127,6 +1131,7 @@ Fontes_PHP_SIW/classes/sp/db_getUsuario.php -text
 Fontes_PHP_SIW/classes/sp/db_getUsuarioTabs.php -text
 Fontes_PHP_SIW/classes/sp/db_getUsuarioTemp.php -text
 Fontes_PHP_SIW/classes/sp/db_getValorDiaria.php -text
+Fontes_PHP_SIW/classes/sp/db_getValores.php -text
 Fontes_PHP_SIW/classes/sp/db_getVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getViagemBenef.php -text
 Fontes_PHP_SIW/classes/sp/db_getVincKindData.php -text
@@ -1266,6 +1271,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoJunta.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoReceb.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoVincula.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoAAtuac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoPosto.php -text
@@ -1322,6 +1328,8 @@ Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoRubrica.php -text
+Fontes_PHP_SIW/classes/sp/dml_putLancamentoValor.php -text
+Fontes_PHP_SIW/classes/sp/dml_putLancamentoVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMTSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMatServ.php -text
@@ -1482,6 +1490,8 @@ Fontes_PHP_SIW/classes/sp/dml_putUorgArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUsuarioTemp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putValorDiaria.php -text
+Fontes_PHP_SIW/classes/sp/dml_putValores.php -text
+Fontes_PHP_SIW/classes/sp/dml_putValoresVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putViagemEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putViagemGeral.php -text
@@ -3606,6 +3616,9 @@ SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_GetGpAlteracaoSalario.prc -text
 SP_Oracle92/siw/SP_GetGpDesempenho.prc -text
 SP_Oracle92/siw/SP_GetMTFinanceiro.prc -text
+SP_Oracle92/siw/SP_GetMenuDocumento.prc -text
+SP_Oracle92/siw/SP_GetMenuLancamento.prc -text
+SP_Oracle92/siw/SP_GetMenuValores.prc -text
 SP_Oracle92/siw/SP_GetMetaAnexo.prc -text
 SP_Oracle92/siw/SP_GetMtSituacao.prc -text
 SP_Oracle92/siw/SP_GetOpiniao.prc -text
@@ -3694,6 +3707,7 @@ SP_Oracle92/siw/SP_PutSolicRelAnexo.prc -text
 SP_Oracle92/siw/SP_PutSolicTransp.prc -text
 SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutValorDiaria.prc -text
+SP_Oracle92/siw/SP_PutValores.prc -text
 SP_Oracle92/siw/SP_PutViagemEnvio.prc -text
 SP_Oracle92/siw/SP_PutViagemGeral.prc -text
 SP_Oracle92/siw/SP_PutViagemOutra.prc -text
@@ -4088,6 +4102,7 @@ SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text
 SP_Oracle92/siw/sp_putDocumentoJunta.prc -text
 SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
+SP_Oracle92/siw/sp_putDocumentoVinc.prc -text
 SP_Oracle92/siw/sp_putDocumentoVincula.prc -text
 SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
@@ -4104,6 +4119,7 @@ SP_Oracle92/siw/sp_putIndicador_Afericao.prc -text
 SP_Oracle92/siw/sp_putIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
 SP_Oracle92/siw/sp_putLCJulgamento.prc -text
+SP_Oracle92/siw/sp_putLancamentoVinc.prc -text
 SP_Oracle92/siw/sp_putMatServ.prc -text
 SP_Oracle92/siw/sp_putMaterial.prc -text
 SP_Oracle92/siw/sp_putMtAjuste.prc -text
@@ -4142,6 +4158,7 @@ SP_Oracle92/siw/sp_putTipoRestricao.prc -text
 SP_Oracle92/siw/sp_putUnidadeMedida.prc -text
 SP_Oracle92/siw/sp_putUnidade_PE.prc -text
 SP_Oracle92/siw/sp_putUorgArquivo.prc -text
+SP_Oracle92/siw/sp_putValoresVinc.prc -text
 SP_Oracle92/siw/sp_putabastecimento.prc -text
 SP_Oracle92/siw/sp_putacaoppa.prc -text
 SP_Oracle92/siw/sp_putacordoaditivo.prc -text

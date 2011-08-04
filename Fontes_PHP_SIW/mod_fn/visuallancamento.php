@@ -40,7 +40,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
      
     // Identificação do lançamento
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';      // Identificação do lançamento
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     
     // Verifica o segmento do cliente    
@@ -48,12 +48,12 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $w_segmento = f($RS1,'segmento');
     if ($w_mod_pa=='S' && nvl(f($RS,'processo'),'')!='') {
       if ((!($l_P1==4 || $l_tipo=='WORD')) && nvl(f($RS,'protocolo_siw'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td><td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
+        $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td><td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
       } else {
-        $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td><td>'.f($RS,'processo');
+        $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td><td>'.f($RS,'processo');
       }
     } elseif ($w_segmento=='Público') { 
-      $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
+      $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
       $l_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
     }   
     
@@ -178,7 +178,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <tr><td><b>Data prevista:</b></td>';
     $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td>';
-    $l_html.=chr(13).'            <td>'.formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    $l_html.=chr(13).'            <td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
     if (f($RS_Menu,'sigla')!='FNDREEMB') {
       if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td>';
@@ -186,8 +186,162 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
     }
     
+    // Documentos
+    $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
+    $RS_Docs = SortArray($RS_Docs,'data','asc');
+    if (count($RS_Docs)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+      $l_html.=chr(13).'          <td><b>Tipo</b></td>';
+      $l_html.=chr(13).'          <td><b>Número</b></td>';
+      $l_html.=chr(13).'          <td><b>Data</b></td>';
+      $l_html.=chr(13).'          <td><b>Valor</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      $w_total=0;
+      foreach ($RS_Docs as $row) {
+        // Recupera acréscimos e deduções do documento
+        $sql = new db_getLancamentoValor; $RS4 = $sql->getInstanceOf($dbms,$w_cliente,null,$v_chave,f($row,'sq_lancamento_doc'),null,null);
+        $RS4 = SortArray($RS4,'tp_valor','desc','ordenacao','asc');
+        $l_html.=chr(13).'          <tr align="center" valign="top">';
+        $l_html.=chr(13).'            <td'.((count($RS3)>0) ? ' rowspan=2' : '').'>'.f($row,'nm_tipo_documento').'</td>';
+        $l_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
+        $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
+        if (count($RS4)==0) { // Se não tiver acréscimos nem deduções
+          $l_html.=chr(13).'            <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
+        } else {
+          $l_html.=chr(13).'            <td align="right"><table border=0 cellpadding=0 cellspacing=0>';
+          $l_html.=chr(13).'            <tr align="right"><td>Valor nominal:&nbsp;<td>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;';
+          foreach($RS4 as $row4) {
+            $l_html.=chr(13).'            <tr align="right"><td nowrap>'.((f($row4,'tp_valor')=='A') ? '(+) ' : '(-) ').f($row4,'nome').':&nbsp;<td>'.formatNumber(f($row4,'valor')).'&nbsp;&nbsp;';
+          }
+          $l_html.=chr(13).'            <tr align="right"><td>(=) Valor cobrado:&nbsp;<td>'.formatNumber(f($row,'valor')-f($row,'deducao')+f($row,'acrescimo')).'&nbsp;&nbsp;';
+          $row['valor'] = f($row,'valor')-f($row,'deducao')+f($row,'acrescimo');
+          $l_html.=chr(13).'            </table></td>';
+        }
+        $l_html.=chr(13).'          </tr>';
+        $l_html.=chr(13).'         </table></td></tr>';
+        
+        // Verifica se há lançamentos vinculados
+        $sql = new db_getImpostoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
+        $RS2 = SortArray($RS2,'sq_lancamento_doc','asc','calculo','desc','nm_imposto','asc');
+        if (count($RS2)>0) {
+          $w_vinculado = false;
+          foreach($RS2 as $row2) {
+            if (nvl(f($row2,'solic_imposto'),'')!='' || nvl(f($row2,'solic_retencao'),'')!='') {
+              $w_vinculado = true;
+              break;
+            }
+          }
+          if ($w_vinculado) {
+            $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>LANÇAMENTOS VINCULADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+            $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+            $l_html.=chr(13).'        <table width=100% border="1" bordercolor="#00000">';
+            $l_html.=chr(13).'          <tr align="center"  bgColor="#f0f0f0">';
+            $l_html.=chr(13).'            <td><b>Tipo</td>';
+            $l_html.=chr(13).'            <td><b>Código</td>';
+            $l_html.=chr(13).'            <td><b>Finalidade</td>';
+            $l_html.=chr(13).'            <td><b>Pagamento</td>';
+            $l_html.=chr(13).'            <td><b>Valor</td>';
+            $w_vl_total = 0;
+            foreach ($RS2 as $row2) {
+              $l_html.=chr(13).'          <tr valign="top">';
+              if (f($row2,'calculo')==0) {
+                $l_html.=chr(13).'          <td>Acréscimo</td>';
+              } else {
+                $l_html.=chr(13).'          <td>Retenção</td>';
+              }
+              $l_html.=chr(13).'          <td>';
+              $l_html.=chr(13).ExibeImagemSolic(f($row2,'imp_sigla'),f($row2,'imp_inicio'),f($row2,'imp_vencimento'),f($row2,'imp_inicio'),f($row2,'imp_quitacao'),f($row2,'imp_aviso'),f($row2,'aviso'),f($row2,'imp_sg_tramite'), null);
+              if (nvl(f($row2,'solic_imposto'),'')!='') {
+                $l_html.=chr(13).'        '.exibeSolic($w_dir,f($row2,'solic_imposto'),f($row2,'imp_codigo'),'N',$l_tipo).'</td>';
+              }
+              $l_html.=chr(13).'          <td>'.f($row2,'nm_imposto').'</td>';
+              $l_html.=chr(13).'          <td align="center">'.formataDataEdicao(f($row2,'quitacao_imposto'),5).'</td>';
+              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+              if (f($row2,'calculo')!=0) {
+                // Quando é retenção, abate o valor do total a ser pago ao beneficiário
+                $w_vl_total+=f($row2,'vl_total');
+              }
+            } 
+            if (Nvl(f($row,'valor'),0)==0) {
+              $w_valor=1;
+            } else {
+              $w_valor=Nvl(f($row,'valor'),0);
+            }
+            if ($w_vl_total!=0) {
+              $l_html.=chr(13).'          <tr valign="top">';
+              $l_html.=chr(13).'          <td colspan=4 align="right"><b>Total das retenções</td>';
+              $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
+              $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
+              $l_html.=chr(13).'          <td colspan=4 align="right"><b>Líquido a ser pago à outra parte</td>';
+              $row['valor'] = $w_valor-$w_vl_total;
+              $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+              $l_html.=chr(13).'          </tr>';
+            }
+          } else {
+            $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Impostos</td>';
+            $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+            $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+            $l_html.=chr(13).'          <tr align="center">';
+            $l_html.=chr(13).'            <td rowspan=2><b>Tributo</td>';
+            $l_html.=chr(13).'            <td colspan=2><b>Retenção</td>';
+            $l_html.=chr(13).'            <td colspan=2><b>Normal</td>';
+            $l_html.=chr(13).'            <td colspan=2><b>Total</td>';
+            $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" align="center">';
+            $l_html.=chr(13).'            <td><b>Valor</td>';
+            $l_html.=chr(13).'            <td><b>Alíquota</td>';
+            $l_html.=chr(13).'            <td><b>Valor</td>';
+            $l_html.=chr(13).'            <td><b>Alíquota</td>';
+            $l_html.=chr(13).'            <td><b>Valor</td>';
+            $l_html.=chr(13).'            <td><b>Alíquota</td>';
+            $w_al_total=0;
+            $w_al_retencao=0;
+            $w_al_normal=0;
+            $w_vl_total=0;
+            $w_vl_retencao=0;
+            $w_vl_normal=0;
+            foreach ($RS2 as $row2) {
+              $l_html.=chr(13).'          <tr valign="top">';
+              $l_html.=chr(13).'          <td nowrap align="right">'.f($row2,'nm_imposto').'</td>';
+              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_retencao')).'</td>';
+              $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_retencao')).'%</td>';
+              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_normal')).'</td>';
+              $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_normal')).'%</td>';
+              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+              $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_total')).'%</td>';
+              $w_vl_total=$w_vl_total+f($row2,'vl_total');
+              $w_vl_retencao=$w_vl_retencao+f($row2,'vl_retencao');
+              $w_vl_normal=$w_vl_normal+f($row2,'vl_normal');
+            } 
+            if (Nvl(f($row,'valor'),0)==0) {
+              $w_valor=1;
+            } else {
+              $w_valor=Nvl(f($row,'valor'),0);
+            }
+            $w_al_total=100-(($w_valor-($w_vl_normal+$w_vl_retencao))*100/$w_valor);
+            $w_al_retencao=100-(($w_valor-$w_vl_retencao)*100/$w_valor);
+            $w_al_normal=100-(($w_valor-$w_vl_normal)*100/$w_valor);
+            $l_html.=chr(13).'          <tr valign="top">';
+            $l_html.=chr(13).'          <td align="center"><b>Totais</td>';
+            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
+            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
+            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
+            $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
+            $l_html.=chr(13).'          <td align="center"><b>Líquido</td>';
+            $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao);
+            $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
+            $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+          }
+          $l_html.=chr(13).'          </table>';
+        }
+        $w_total=$w_total+f($row,'valor');
+      }
+    }
     
-    // Dados da conclusão do projeto, se ela estiver nessa situação
+    // Dados da conclusão do pagamento, se estiver nessa situação
     if (Nvl(f($RS,'conclusao'),'')>'' && Nvl(f($RS,'quitacao'),'')>'') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO PAGAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Data:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).' </td></tr>';
@@ -362,7 +516,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      </tr>';
     $l_html.=chr(13).'      </table></td></tr>';
   } 
-
+  /*
   // Documentos
   $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
   $RS_Docs = SortArray($RS_Docs,'data','asc');
@@ -385,15 +539,15 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Número</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Data</b></td>';
-    //$l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Série</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</b></td>';
-    //if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
-    //  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Patrimônio</b></td>';
-    //}
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     $w_total=0;
     foreach ($RS_Docs as $row) {
+      // Recupera acréscimos e deduções do documento
+      $sql = new db_getLancamentoValor; $RS4 = $sql->getInstanceOf($dbms,$w_cliente,null,$v_chave,f($row,'sq_lancamento_doc'),null,null);
+      $RS4 = SortArray($RS4,'tp_valor','desc','ordenacao','asc');
+
       $sql = new db_getImpostoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'sq_lancamento_doc','asc','phpdt_inclusao','asc','calculo','asc','esfera','asc','nm_imposto','asc');
       if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
@@ -405,15 +559,21 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
       if (count($RS2)==0) {
         $l_html.=chr(13).'          <tr align="center" valign="top">';
-        if (count($RS3)>0)  $l_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
-        else                $l_html.=chr(13).'            <td>'.f($row,'nm_tipo_documento').'</td>';
+        $l_html.=chr(13).'            <td'.((count($RS3)>0) ? ' rowspan=2' : '').'>'.f($row,'nm_tipo_documento').'</td>';
         $l_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
         $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
-        //$l_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
-        $l_html.=chr(13).'            <td align="right" colspan=2>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
-        //if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
-        //  $l_html.=chr(13).'            <td>'.f($row,'nm_patrimonio').'</td>';
-        //}
+        if (count($RS4)==0) { // Se não tiver acréscimos nem deduções
+          $l_html.=chr(13).'            <td align="right" colspan=2>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
+        } else {
+          $l_html.=chr(13).'            <td align="right" colspan=2><table border=0 cellpadding=0 cellspacing=0>';
+          $l_html.=chr(13).'            <tr align="right"><td>Valor nominal:&nbsp;<td>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;';
+          foreach($RS4 as $row4) {
+            $l_html.=chr(13).'            <tr align="right"><td nowrap>'.((f($row4,'tp_valor')=='A') ? '(+) ' : '(-) ').f($row4,'nome').':&nbsp;<td>'.formatNumber(f($row4,'valor')).'&nbsp;&nbsp;';
+          }
+          $l_html.=chr(13).'            <tr align="right"><td>(=) Valor cobrado:&nbsp;<td>'.formatNumber(f($row,'valor')-f($row,'deducao')+f($row,'acrescimo')).'&nbsp;&nbsp;';
+          $row['valor'] = f($row,'valor')-f($row,'deducao')+f($row,'acrescimo');
+          $l_html.=chr(13).'            </table></td>';
+        }
         $l_html.=chr(13).'          </tr>';
         if (count($RS3)>0)   {
           if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
@@ -426,14 +586,23 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         }
       } else {
         $l_html.=chr(13).'          <tr align="center" valign="top">';
-        $l_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
+        $l_html.=chr(13).'            <td rowspan=2 nowrap>'.f($row,'nm_tipo_documento').'</td>';
         $l_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
         $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
-        //$l_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
-        $l_html.=chr(13).'            <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
-        //$l_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_patrimonio').'</td>';
+        if (count($RS4)==0) { // Se não tiver acréscimos nem deduções
+          $l_html.=chr(13).'            <td align="right" colspan=2>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
+        } else {
+          $l_html.=chr(13).'            <td align="right" colspan=2><table border=0 cellpadding=0 cellspacing=0>';
+          $l_html.=chr(13).'            <tr align="right"><td>Valor nominal:&nbsp;<td>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;';
+          foreach($RS4 as $row4) {
+            $l_html.=chr(13).'            <tr align="right"><td nowrap>'.((f($row4,'tp_valor')=='A') ? '(+) ' : '(-) ').f($row4,'nome').':&nbsp;<td>'.formatNumber(f($row4,'valor')).'&nbsp;&nbsp;';
+          }
+          $l_html.=chr(13).'            <tr align="right"><td>(=) Valor cobrado:&nbsp;<td>'.formatNumber(f($row,'valor')-f($row,'deducao')+f($row,'acrescimo')).'&nbsp;&nbsp;';
+          $row['valor'] = f($row,'valor')-f($row,'deducao')+f($row,'acrescimo');
+          $l_html.=chr(13).'            </table></td>';
+        }
         $l_html.=chr(13).'          </tr>';
-        $l_html.=chr(13).'      <tr align="center"><td colspan=3 align="center">';
+        $l_html.=chr(13).'      <tr align="center"><td colspan=4 width="100%">';
         $l_html.=chr(13).'        <table border=1 width="100%">';
         $l_html.=chr(13).'          <tr valign="top" align="center">';
         $w_vinculado = false;
@@ -474,6 +643,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
             $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
             $l_html.=chr(13).'          <td colspan=3 align="right"><b>Líquido</td>';
+            $row['valor'] = $w_valor-$w_vl_total;
             $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
             $l_html.=chr(13).'          </tr>';
           }
@@ -531,7 +701,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } 
       $w_total=$w_total+f($row,'valor');
     }
-    if (count($RS_Docs)>1) { 
+    if (count($RS_Docs)>1||count($RS4)>0) { 
       if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html.=chr(13).'      <tr valign="top">';
       if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
@@ -545,7 +715,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'         </table></td></tr>';
   } 
-
+  */
   // Rubricas
   if($w_qtd_rubrica>0) {
     $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');

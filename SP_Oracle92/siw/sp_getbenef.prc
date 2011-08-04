@@ -24,7 +24,7 @@ begin
    open p_result for 
      select distinct a.sq_pessoa, a.nome as nm_pessoa, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
             a.sq_pessoa_pai, 
-            a.cliente, a.fornecedor, 
+            a.cliente, a.fornecedor, a.codigo_externo,
             c.sq_tipo_pessoa, c.nome as nm_tipo_pessoa,
             d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.contratado, d.ativo as vinculo_ativo,
             e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero as nr_conta,

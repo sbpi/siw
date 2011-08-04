@@ -27,6 +27,7 @@ create or replace procedure sp_putPessoa
      p_nr_fax              in varchar2  default null,
      p_nr_celular          in varchar2  default null,
      p_email               in varchar2  default null,
+     p_codigo_externo      in varchar2  default null,
      p_chave_nova          out number
    ) is
    
@@ -84,14 +85,15 @@ begin
       
       -- insere os dados da pessoa
       insert into co_pessoa
-        (sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,   sq_tipo_pessoa,   nome,   nome_resumido, fornecedor, cliente)
+        (sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,   sq_tipo_pessoa,   nome,   nome_resumido,   fornecedor,  cliente,    codigo_externo)
       values
-        (w_chave_pessoa, p_cliente,     w_sq_tipo_vinculo, p_tipo_pessoa,    p_nome, p_nome_resumido, w_fornecedor, w_cliente);
+        (w_chave_pessoa, p_cliente,     w_sq_tipo_vinculo, p_tipo_pessoa,    p_nome, p_nome_resumido, w_fornecedor, w_cliente, p_codigo_externo);
    Else -- Caso contrário, altera
       update co_pessoa
          set nome            = coalesce(p_nome, nome),
              nome_resumido   = coalesce(p_nome_resumido, nome_resumido),
-             sq_tipo_vinculo = w_sq_tipo_vinculo
+             sq_tipo_vinculo = w_sq_tipo_vinculo,
+             codigo_externo  = p_codigo_externo
        where sq_pessoa = p_sq_pessoa;
    End If;
    

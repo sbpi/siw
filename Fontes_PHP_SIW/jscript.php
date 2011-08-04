@@ -61,6 +61,12 @@ function ScriptClose() { print "--></script>"."\r\n"; }
 
 // Abre a função de validação de formulários
 function ValidateOpen($FunctionName) { 
+  ShowHTML('function disAll() {');
+  ShowHTML(' $(":submit").attr("disabled",true);');
+  ShowHTML(' $(":button").attr("disabled",true);');
+  ShowHTML(' $("a").removeAttr("onclick");');
+  ShowHTML(' $("a").click(function() { return false; });');
+  ShowHTML('}');
   ShowHTML('function Trim(s){ ');
   ShowHTML("  return (s ? '' + s : '').replace(/^\s*|\s*$/g, '');");
   ShowHTML('}');

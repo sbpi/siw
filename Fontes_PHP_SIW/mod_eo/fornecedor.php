@@ -203,6 +203,7 @@ function Inicial() {
     ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
     ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS_Benef)<=0) {
@@ -218,6 +219,7 @@ function Inicial() {
         else                               ShowHTML('        <td>---</td>');
         ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'identificador_primario'),'---').'</td>');
+        ShowHTML('        <td align="center">'.Nvl(f($row,'codigo_externo'),'&nbsp;').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
         if ($w_submenu>'') {
           ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
@@ -366,6 +368,7 @@ function Geral() {
     $w_rg_emissao           = $_REQUEST['w_rg_emissao'];
     $w_passaporte_numero    = $_REQUEST['w_passaporte_numero'];
     $w_sq_pais_passaporte   = $_REQUEST['w_sq_pais_passaporte'];
+    $w_codigo_externo       = $_REQUEST['w_codigo_externo'];
     $w_sexo                 = $_REQUEST['w_sexo'];
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];    
   } elseif ($O=='A' || $w_sq_pessoa>'') {
@@ -391,6 +394,7 @@ function Geral() {
         $w_sq_pais_passaporte   = f($row,'sq_pais_passaporte');
         $w_sexo                 = f($row,'sexo');
         $w_cnpj                 = f($row,'cnpj');
+        $w_codigo_externo       = f($row,'codigo_externo');
         $w_inscricao_estadual   = f($row,'inscricao_estadual');
         $w_tipo_pessoa          = f($row,'sq_tipo_pessoa');
         $w_tipo_vinculo         = f($row,'sq_tipo_vinculo');
@@ -427,6 +431,7 @@ function Geral() {
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } elseif ($O=='A' || $O=='I') {
     Validate('w_nome','Nome','1',1,5,60,'1','1');
+    Validate('w_codigo_externo','Código externo','1','','1','30','1','1');
     if ($w_tipo_pessoa==1) {
       Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
     } else {
@@ -519,7 +524,8 @@ function Geral() {
       ShowHTML('          <td><b><u>I</u>nscrição estadual:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inscricao_estadual" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_inscricao_estadual.'"></td>');
     } 
     ShowHTML('        <tr valign="top">');
-    selecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_tipo_vinculo,null,'w_tipo_vinculo','S',$w_nm_tipo_pessoa,'N',null,null,3);
+    selecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_tipo_vinculo,null,'w_tipo_vinculo','S',$w_nm_tipo_pessoa,'N',null,null,1);
+    ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_externo" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_codigo_externo.'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -667,6 +673,7 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
+
   switch ($SG) {
     case 'CLGERAL':
       // Verifica se a Assinatura Eletrônica é válida
@@ -737,7 +744,7 @@ function Grava() {
             $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
             $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
+            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],$_REQUEST['w_codigo_externo'],&$w_chave_nova);
 
       ScriptOpen('JavaScript');
       if ($O=='I') {

@@ -17,6 +17,11 @@ function visualfornecedor($l_sq_pessoa,$O) {
   $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   $w_html.=chr(13).'      <tr><td valign="top" width="20%"><b>Nome:</b></td>';
   $w_html.=chr(13).'          <td>'.f($l_RS,'nm_pessoa').'</td></tr>';
+  if(nvl(f($l_RS,'codigo_externo'),'')!=''){
+    $w_html.=chr(13).'      <tr><td valign="top" width="20%"><b>Código externo:</b></td>';
+    $w_html.=chr(13).'          <td>'.f($l_RS,'codigo_externo').'</td></tr>';
+  }
+  
   if(f($l_RS,'sq_tipo_pessoa')=='2') {
     $w_html.=chr(13).'      <tr><td valign="top"><b>CNPJ:</b></td>';
     $w_html.=chr(13).'          <td>'.Nvl(f($l_RS,'cnpj'),'---').'</td></tr>';

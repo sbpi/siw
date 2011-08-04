@@ -46,7 +46,7 @@ begin
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das etapas
       open p_result for 
-         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.reembolso, a.ativo, a.sq_tipo_lancamento_pai,
+         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.reembolso, a.codigo_externo, a.ativo, a.sq_tipo_lancamento_pai,
                 case a.receita   when 'S' Then 'Sim' Else 'Não' end as nm_receita,
                 case a.despesa   when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
                 case a.reembolso when 'S' Then 'Sim' Else 'Não' end as nm_reembolso,
@@ -98,7 +98,7 @@ begin
       End If;
       -- Recupera os tipos de lançamento financeiro do cliente
       open p_result for 
-         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.reembolso, a.ativo,
+         select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.codigo_externo, a.receita, a.despesa, a.reembolso, a.ativo,
                 montanomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo,
                 a.sq_tipo_lancamento_pai,
                 case a.receita   when 'S' Then 'Sim' Else 'Não' end as nm_receita,
