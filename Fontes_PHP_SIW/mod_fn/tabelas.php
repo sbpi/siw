@@ -93,6 +93,12 @@ switch ($O) {
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
+
+if(nvl($w_menu,'')!=''){
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
+  $w_libera_edicao = f($RS_Menu,'libera_edicao');
+}
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -221,7 +227,10 @@ function Imposto() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('    <td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -236,7 +245,9 @@ function Imposto() {
     ShowHTML('          <td><b>'.LinkOrdena('Cálculo','nm_calculo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -260,8 +271,10 @@ function Imposto() {
         ShowHTML('        <td align="center">'.nvl(f($row,'codigo_externo'),'&nbsp;').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+        }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -437,7 +450,10 @@ function Valor(){
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr>'); 
+    if ($w_libera_edicao=='S') {
+      ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -446,7 +462,9 @@ function Valor(){
     ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -461,11 +479,13 @@ function Valor(){
         ShowHTML('        <td align="center">'.f($row,'nm_tipo').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'codigo_externo'),'&nbsp;').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=VALOR&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VALOR'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
-        ShowHTML('        </td>');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('        <td class="remover" align="top" nowrap>');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=VALOR&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VALOR'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
+          ShowHTML('        </td>');
+        }
         ShowHTML('      </tr>');
       } 
     } 
@@ -678,7 +698,10 @@ function Documento(){
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -688,7 +711,9 @@ function Documento(){
     ShowHTML('          <td><b>'.LinkOrdena('Detalha itens','detalha_item').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -704,11 +729,13 @@ function Documento(){
         ShowHTML('        <td align="center">'.f($row,'nm_detalha_item').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'codigo_externo'),'&nbsp;').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=DOCUMENTO&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DOCUMENTO'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
-        ShowHTML('        </td>');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('        <td class="remover" align="top" nowrap>');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=DOCUMENTO&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DOCUMENTO'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
+          ShowHTML('        </td>');
+        }
         ShowHTML('      </tr>');
       } 
     } 
@@ -922,7 +949,10 @@ function Lancamento() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -935,7 +965,9 @@ function Lancamento() {
     ShowHTML('          <td><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('          <td class="remover"><b> Operações </font></td>');
+    }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -957,13 +989,15 @@ function Lancamento() {
         ShowHTML('        <td align="center">'.f($row,'qt_lancamentos').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'codigo_externo'),'&nbsp;').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td class="remover" align="left" valign="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
-        if (f($row, 'qt_filhos') == 0) {
-          ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\'' . montaURL_JS($w_dir, 'tabelas.php?par=LANCAMENTO&R=' . $w_pagina . $par . '&O=T&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=LANCAMENTO' . MontaFiltro('GET') . '\',\'Vinculacoes') . '\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('        <td class="remover" align="left" valign="top" nowrap>');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+          if (f($row, 'qt_filhos') == 0) {
+            ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\'' . montaURL_JS($w_dir, 'tabelas.php?par=LANCAMENTO&R=' . $w_pagina . $par . '&O=T&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=LANCAMENTO' . MontaFiltro('GET') . '\',\'Vinculacoes') . '\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp');
+          }
+          ShowHTML('        </td>');
         }
-        ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
     } 
@@ -972,46 +1006,45 @@ function Lancamento() {
     ShowHTML('  </td>');
     //Aqui começa a manipulação de registros
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    if (!(strpos('EV', $O) === false)) $w_Disabled = ' DISABLED ';
+    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="' . $w_cliente . '">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
-    ShowHTML('      <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="75" MAXLENGTH="200" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td colspan=3><b><u>N</u>ome:</b><br><input ' . $w_Disabled . ' accesskey="N" type="text" name="w_nome" class="sti" SIZE="75" MAXLENGTH="200" VALUE="' . $w_nome . '"></td>');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>S</u>ubordinação:','S',null,$w_pai,$w_chave,$w_cliente,'w_pai',(($O=='A') ? 'SUBPARTE' : 'SUBTODOS'),null,3);
-    ShowHTML('      <tr><td colspan="3"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
+    SelecaoTipoLancamento('<u>S</u>ubordinação:', 'S', null, $w_pai, $w_chave, $w_cliente, 'w_pai', (($O == 'A') ? 'SUBPARTE' : 'SUBTODOS'), null, 3);
+    ShowHTML('      <tr><td colspan="3"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" ' . $w_Disabled . ' class="sti" name="w_descricao" rows="5" cols=75>' . $w_descricao . '</textarea></td>');
     ShowHTML('      <tr>');
-    ShowHTML('          <td colspan="3"><b>Códi<u>g</u>o externo:</b><br><input '.$w_Disabled.' accesskey="G" type="text" name="w_codigo_externo" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_codigo_externo.'"></td>');
+    ShowHTML('          <td colspan="3"><b>Códi<u>g</u>o externo:</b><br><input ' . $w_Disabled . ' accesskey="G" type="text" name="w_codigo_externo" class="sti" SIZE="30" MAXLENGTH="50" VALUE="' . $w_codigo_externo . '"></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
-    MontaRadioNS('<b>Recebimento?</b>',$w_receita,'w_receita');
-    MontaRadioNS('<b>Pagamento?</b>',$w_despesa,'w_despesa');
-    MontaRadioNS('<b>Reembolso?</b>',$w_reembolso,'w_reembolso');
+    MontaRadioNS('<b>Recebimento?</b>', $w_receita, 'w_receita');
+    MontaRadioNS('<b>Pagamento?</b>', $w_despesa, 'w_despesa');
+    MontaRadioNS('<b>Reembolso?</b>', $w_reembolso, 'w_reembolso');
     ShowHTML('      <tr>');
-    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    MontaRadioSN('<b>Ativo?</b>', $w_ativo, 'w_ativo');
     ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
-    if ($O=='E') {
+    if ($O == 'E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
     } else {
-      if ($O=='I') {
+      if ($O == 'I') {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
       } else {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
-      } 
-    } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+      }
+    }
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $R . '&O=L&w_cliente=' . $w_cliente . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET')) . '\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
-    
-    } elseif (!(strpos('T', $O) === false)) {
+  } elseif (!(strpos('T', $O) === false)) {
     $sql = new DB_GetMenuLancamento;
     $RS = $sql->getInstanceOf($dbms, $w_chave, null);
     $i = 0;

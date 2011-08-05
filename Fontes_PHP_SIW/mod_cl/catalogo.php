@@ -108,6 +108,12 @@ switch ($O) {
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
+
+if(nvl($w_menu,'')!=''){
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
+  $w_libera_edicao = f($RS_Menu,'libera_edicao');
+}
+
 $w_ano      = RetornaAno();
 
 // Recupera as informações do cliente
@@ -289,8 +295,11 @@ function Inicial() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     if ($w_tipo!='WORD') {
-      ShowHTML('<tr><td>');
-      if($P1!=1) ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('<tr>');
+      ShowHTML('  <td>');
+      if ($w_libera_edicao=='S') {
+        if($P1!=1) ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      }  
       if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ShowHTML('        <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
       else                       ShowHTML('        <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     }
@@ -306,7 +315,9 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
       ShowHTML('          <td colspan=3><b>Pesquisa mais recente</b></td>');
-      ShowHTML('          <td class="remover" rowspan=2><b> Operações </td>');
+      if ($w_libera_edicao=='S') {
+        ShowHTML('          <td class="remover" rowspan=2><b> Operações </td>');
+      }
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td colspan=2><b>'.LinkOrdena('Validade','pesquisa_validade').'</b></td>');
@@ -350,13 +361,15 @@ function Inicial() {
           }
         }
         if ($w_tipo!='WORD') {
-          ShowHTML('        <td class="remover" align="top" nowrap>');
-          if($P1==1) {
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Insere dados da pesquisa de preço.">Pesq. Preço</A>&nbsp');
-          } else {
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL</A>&nbsp');
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exclui deste registro.">EX</A>&nbsp');
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Inclui um novo item a partir dos dados deste registro.">CO</A>&nbsp');
+          if ($w_libera_edicao == 'S') {
+            ShowHTML('        <td class="remover" align="top" nowrap>');
+            if ($P1 == 1) {
+              ShowHTML('          <A class="hl" HREF="' . $w_dir . $w_pagina . 'PesquisaPreco&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' &SG=' . $SG . MontaFiltro('GET') . '" Title="Insere dados da pesquisa de preço.">Pesq. Preço</A>&nbsp');
+            } else {
+              ShowHTML('          <A class="hl" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' &SG=' . $SG . MontaFiltro('GET') . '" Title="Altera os dados deste registro.">AL</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=E&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' &SG=' . $SG . MontaFiltro('GET') . '" Title="Exclui deste registro.">EX</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=C&w_chave=' . f($row, 'chave') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' &SG=' . $SG . MontaFiltro('GET') . '" Title="Inclui um novo item a partir dos dados deste registro.">CO</A>&nbsp');
+            }
           }
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
