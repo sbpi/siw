@@ -168,10 +168,14 @@ begin
             --and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and d.decisao_judicial = p_ativo))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b1.sigla <> 'AT' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and b.inicio    between p_ini_i and p_ini_f))
-            and (p_fim_i          is null or (p_fim_i       is not null and b.ultima_alteracao between p_fim_i and p_fim_f))
+            and (p_ini_i          is null or (p_ini_i       is not null and trunc(b.inclusao)  between p_ini_i and p_ini_f))
+            and (p_fim_i          is null or (p_fim_i       is not null and ((b1.sigla  = 'EE' and b.fim between p_fim_i and p_fim_f) or 
+                                                                             (b1.sigla <> 'EE' and 0 < (select count(*) from mt_saida_item where sq_mtsaida = d.sq_mtsaida and data_efetivacao between p_fim_i and p_fim_f))
+                                                                            )
+                                             )
+                )
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and b1.sigla <> 'AT' and cast(b.fim as date)+1<cast(sysdate as date)))
-            and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade           = p_unidade))
+            and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_destino   = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
             and ((instr(p_restricao,'AUTORIZ') = 0
                  ) or 
@@ -355,25 +359,27 @@ begin
                            inner join siw_menu               f2 on (f.sq_menu                = f2.sq_menu)
                    inner         join mt_estoque              g on (c.sq_estoque             = g.sq_estoque)
          where a.cliente         = p_menu
-           and a.sq_almoxarifado = p_chave
-           and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and g.disponivel = p_ativo))
+           and (p_chave          is null or (p_chave       is not null and a.sq_almoxarifado        = p_chave))
+           and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and g.disponivel                      = p_ativo))
            and (p_sqcc           is null or (p_sqcc        is not null and e11.sq_tipo_movimentacao = p_sqcc))
-           and (f1.sigla         is null or (f1.sigla      is not null and f1.sigla <> 'CA'))
-           and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
-           and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material in (select sq_tipo_material
-                                                                                                      from cl_tipo_material
-                                                                                                    connect by prior sq_tipo_material = sq_tipo_pai
-                                                                                                    start with sq_tipo_material = p_pais
-                                                                                                   )
+           and (f1.sigla         is null or (f1.sigla      is not null and f1.sigla                 <> 'CA'))
+           and (p_palavra        is null or (p_palavra     is not null and f.codigo_interno       like '%'||p_palavra||'%'))
+           and (p_unidade        is null or (p_unidade     is not null and e11.sq_unidade_destino    = p_unidade))
+           and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null)  like '%'||acentos(p_proponente,null)||'%'))
+           and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material     in (select sq_tipo_material
+                                                                                                          from cl_tipo_material
+                                                                                                        connect by prior sq_tipo_material = sq_tipo_pai
+                                                                                                        start with sq_tipo_material = p_pais
+                                                                                                       )
                                             )
                )
            and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||d12.classe||'''') > 0))
-           and (p_ini_i          is null or (p_ini_i       is not null and ((f1.sigla is not null and f1.sigla = 'EE' and f.fim between p_ini_i and p_ini_f) or 
-                                                                            (e1.data_efetivacao between p_ini_i and p_ini_f)
+           and (p_ini_i          is null or (p_ini_i       is not null and trunc(f.inclusao) between p_ini_i and p_ini_f))
+           and (p_fim_i          is null or (p_fim_i       is not null and ((f1.sigla  = 'EE' and f.fim between p_fim_i and p_fim_f) or 
+                                                                            (f1.sigla <> 'EE' and e1.data_efetivacao between p_fim_i and p_fim_f)
                                                                            )
                                             )
-               )
-        order by a.nome, d1.nome, e1.data_efetivacao;
+               );
    Elsif p_restricao = 'ALMAPA' Then
       -- Recupera dados para exibição do mapa de entradas e saídas de material 
       open p_result for 

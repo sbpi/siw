@@ -866,7 +866,8 @@ function Saida() {
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Almoxarifado<td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Período <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+    if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Período da solicitação <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+    if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Período de entrega <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
     if ($p_pais>'') {
       $w_linha++;
       $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_pais,null,null,null,null,null,null,'REGISTROS');
@@ -916,9 +917,6 @@ function Saida() {
       $w_linha++;
       $w_filtro .= '<tr valign="top"><td align="right">Restrição<td>[<b>Apenas materiais disponíveis para pedidos internos</b>]';
     } 
-    /*
-    if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
-    */
     if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     $sql = new db_getSolicMT; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'ALSAIDA',3,
@@ -927,6 +925,12 @@ function Saida() {
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
         $p_acao_ppa, null, $p_empenho, null);
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS1 = SortArray($RS1,$lista[0],$lista[1], 'nm_almoxarifado', 'asc','nm_material','asc', 'data_efetivacao', 'asc');
+    } else {
+      $RS1 = SortArray($RS1, 'nm_almoxarifado', 'asc','nm_material','asc', 'data_efetivacao', 'asc');
+    }
   }
   $w_linha_filtro = $w_linha;
 
@@ -958,9 +962,28 @@ function Saida() {
       SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_chave','Almoxarifado','SELECT','1','1','18','','1');
-      Validate('p_ini_i','Início','DATA','1','10','10','','0123456789/');
-      Validate('p_ini_f','Fim','DATA','1','10','10','','0123456789/');
-      CompData('p_ini_i','Início','<=','p_ini_f','Fim');
+      Validate('p_ini_i','Início solicitação','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f','Fim solicitação','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_ini_i.value.length!=theForm.p_ini_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_ini_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_ini_i','Início solicitação','<=','p_ini_f','Fim solicitação');
+      Validate('p_fim_i','Início entrega','DATA','','10','10','','0123456789/');
+      Validate('p_fim_f','Fim entrega','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_fim_i.value.length!=theForm.p_fim_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_fim_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_fim_i','Início entrega','<=','p_fim_f','Fim entrega');
+      ShowHTML('  if (theForm.p_ini_i.value.length==0 && theForm.p_fim_i.value.length==0) {');
+      ShowHTML('     alert("É obrigatório informar pelo menos um dos períodos!")');
+      ShowHTML('     theForm.p_fim_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      Validate('p_palavra','Código da solicitação','','','2','30','1','');
       Validate('p_proponente','Material','','','2','60','1','');
       ValidateClose();
       ScriptClose();
@@ -997,48 +1020,51 @@ function Saida() {
       ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
     } else {
       $w_total = 0;
-      $colspan = 8;
+      $colspan = 9;
       foreach ($RS1 as $row) {
         if ($i==0) {
           if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
+          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Solicitação' : LinkOrdena('Solicitação','sq_siw_solicitacao')).'</b></td>');
+          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Unidade' : LinkOrdena('Unidade','nm_destino')).'</b></td>');
           if ($tipo) {
             $colspan++;
-            ShowHTML('          <td rowspan=2><b>Tipo de material</b></td>');
+            ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Tipo de material' : LinkOrdena('Tipo de material','nm_tipo_completo')).'</b></td>');
           }
-          ShowHTML('          <td rowspan=2><b>Material</b></td>');
-          ShowHTML('          <td rowspan=2><b>U.M.</b></td>');
-          ShowHTML('          <td rowspan=2><b>Fator Embalag.</b></td>');
-          ShowHTML('          <td rowspan=2><b>Destino</b></td>');
-          ShowHTML('          <td rowspan=2><b>Documento</b></td>');
+          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Material' : LinkOrdena('Material','nm_material')).'</b></td>');
+          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'U.M.' : LinkOrdena('U.M.','sg_unidade_medida')).'</b></td>');
+          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'F.E.' : LinkOrdena('F.E.','fator_embalagem')).'</b></td>');
           ShowHTML('          <td colspan=2><b>Entrega</b></td>');
-          ShowHTML('          <td rowspan=2><b>Qtd.</b></td>');
-          ShowHTML('          <td rowspan=2><b>Valor</b></td>');
+          ShowHTML('          <td colspan=2><b>Quantidade</b></td>');
+          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Valor' : LinkOrdena('Valor','vl_saida')).'</b></td>');
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          ShowHTML('          <td><b>Agendada</b></td>');
-          ShowHTML('          <td><b>Efetiva</b></td>');
+          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Agendada' : LinkOrdena('Agendada','fim')).'</b></td>');
+          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Efetiva' : LinkOrdena('Efetiva','data_efetivacao')).'</b></td>');
+          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Solicitada' : LinkOrdena('Solicitada','quantidade_solicitada')).'</b></td>');
+          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Entregue' : LinkOrdena('Entregue','quantidade_entregue')).'</b></td>');
           ShowHTML('        </tr>');
           $i++;
         }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
-        if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
-        ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
-        ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-        ShowHTML('          <td align="center">'.formatNumber(f($row,'fator_embalagem'),0).'</td>');
+        ShowHTML('          <td width="1%" nowrap>');
+        if ($w_embed!='WORD') ShowHTML(ExibeImagemSolic(f($row,'sg_menu'),f($row,'inicio'),f($row,'fim'),null,null,'S','1',f($row,'sg_tramite'), null));
+        ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');
         if (f($row,'tp_destino')=='I') {
           ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibeUnidade('../',$w_cliente,f($row,'nm_destino'),f($row,'sq_destino'),$TP)).'</td>');
         } else {
           ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibePessoa('../',$w_cliente,f($row,'sq_destino'),$TP,f($row,'nm_destino'))).'</td>');
         }
-        ShowHTML('          <td width="1%" nowrap>');
-        if ($w_embed!='WORD') ShowHTML(ExibeImagemSolic(f($row,'sg_menu'),f($row,'inicio'),f($row,'fim'),null,null,'S','1',f($row,'sg_tramite'), null));
-        ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');
+        if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
+        ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
+        ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+        ShowHTML('          <td align="center">'.formatNumber(f($row,'fator_embalagem'),0).'</td>');
         ShowHTML('          <td align="center" title="Data agendada para entrega">'.formataDataEdicao(f($row,'fim'),5).'</td>');
         ShowHTML('          <td align="center" title="Data efetiva de entrega">'.formataDataEdicao(f($row,'data_efetivacao'),5).'</td>');
+        ShowHTML('          <td align="center">'.formatNumber(f($row,'quantidade_pedida'),0).'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'quantidade_entregue'),0).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'vl_saida')).'</td>');
         ShowHTML('        </tr>');
@@ -1049,6 +1075,11 @@ function Saida() {
         ShowHTML('          <td colspan='.$colspan.'><b>Total</b>&nbsp;</td>');
         ShowHTML('          <td><b>'.formatNumber($w_total).'</b></td>');
       }
+      ShowHTML('</table>');
+      ShowHTML('<tr><td><b>Legenda:</b><table>');
+      ShowHTML('<tr><td><li><b>U.M.</b><td colspan="9">Unidade de medida');
+      ShowHTML('<tr><td><li><b>F.E.</b><td colspan="9">Fator de embalagem do material. A quantidade solicitada deve ser múltipla desse fator.');
+      ShowHTML('</table></tr>');
     }
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
@@ -1061,14 +1092,18 @@ function Saida() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr>');
     SelecaoAlmoxarifado('Al<u>m</u>oxarifado:','M', 'Selecione o almoxarifado onde o material será armazenado.', &$p_chave,'p_chave',null,'onChange="document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_pais\'; document.Form.submit();"',1);
-    ShowHTML('     <td><b><u>P</u>eríodo de análise:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('      <tr>');
+    ShowHTML('     <td><b><u>P</u>eríodo da solicitação:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+    ShowHTML('     <td><b><u>P</u>eríodo de entrega:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+    ShowHTML('   <tr valign="top">');
+    ShowHTML('     <td><b><U>C</U>ódigo da solicitação:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="30" value="'.$p_palavra.'"></td>');
+    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','ATIVO',null);
+    ShowHTML('      <tr>');
+    ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     selecaoTipoMatServSubord('<u>T</u>ipo de material:','S','Selecione o grupo/subgrupo de material/serviço desejado.',$p_chave,$p_pais,'p_pais','ALMOXARIFADO',null,2);
     ShowHTML('      </tr>');
     ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     SelecaoClasseCheck('Recuperar classes:','S',null,$p_fase,$P2,'p_fase[]','CONSUMO',null);
-    ShowHTML('   <tr valign="top">');
     MontaRadioNS('<b>Apenas disponíveis para pedidos internos?</b>',$p_ativo,'p_ativo');
     ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('    <tr><td align="center" colspan="3">');
@@ -1081,14 +1116,13 @@ function Saida() {
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
     ShowHTML('</table>');
+    ShowHTML('</table>');
   } else {
     ScriptOpen('JavaScript');
     ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
-
-  ShowHTML('</table>');
   if($p_tipo == 'PDF')  RodapePdf();
   else                  Rodape();
 }

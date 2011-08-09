@@ -157,6 +157,8 @@ function Gerencial() {
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
       $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
     } 
+    if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Período da solicitação <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+    if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Período de entrega <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
     if ($p_atividade>'') {
       $w_linha++;
       $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
@@ -205,8 +207,6 @@ function Gerencial() {
       $w_linha++;
       $w_filtro .= '<tr valign="top"><td align="right">Restrição<td>[<b>Apenas compras por decisão judicial</b>]';
     } 
-    if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Abertura de propostas <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-    if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
     if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     switch ($p_agrega) {
@@ -295,6 +295,27 @@ function Gerencial() {
       FormataData();
       SaltaCampo();
       ValidateOpen('Validacao');
+      Validate('p_ini_i','Início solicitação','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f','Fim solicitação','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_ini_i.value.length!=theForm.p_ini_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_ini_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_ini_i','Início solicitação','<=','p_ini_f','Fim solicitação');
+      Validate('p_fim_i','Início entrega','DATA','','10','10','','0123456789/');
+      Validate('p_fim_f','Fim entrega','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_fim_i.value.length!=theForm.p_fim_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_fim_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_fim_i','Início entrega','<=','p_fim_f','Fim entrega');
+      ShowHTML('  if (theForm.p_ini_i.value.length==0 && theForm.p_fim_i.value.length==0) {');
+      ShowHTML('     alert("É obrigatório informar pelo menos um dos períodos!")');
+      ShowHTML('     theForm.p_fim_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
       Validate('p_empenho','Código','','','2','60','1','1');
       Validate('p_proponente','Material','','','2','60','1','');
       if ($SG=='GRMTLIC') {
@@ -784,26 +805,27 @@ function Gerencial() {
     ShowHTML(' <option value="GRMTUNIDADE"'.(($p_agrega=='' || $p_agrega=='GRMTUNIDADE') ? ' SELECTED': '').'>Unidade solicitante');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
+    /*
     MontaRadioSN('<b>Limita tamanho do detalhamento?</b>',$p_tamanho,'p_tamanho');
+     */
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
     ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0>');
-    ShowHTML('      <tr>');
-    selecaoTipoMatServSubord('<u>T</u>ipo de material/serviço:','S','Selecione o grupo/subgrupo de material/serviço desejado.',null,$p_pais,'p_pais','SUBTODOS',null);
-    ShowHTML('      </tr>');
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td><b><U>C</U>ódigo '.(($SG=='GRMTLIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
+    ShowHTML('   <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('     <tr valign="top">');
+    ShowHTML('       <td><b><u>P</u>eríodo da solicitação:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+    ShowHTML('       <td><b><u>P</u>eríodo de entrega:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+    ShowHTML('     <tr valign="top">');
+    ShowHTML('       <td><b><U>C</U>ódigo '.(($SG=='GRMTLIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
+    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','ATIVO',null);
     if ($SG=='GRMTLIC') ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     //ShowHTML('     <td><b><U>D</U>escrição:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
+    selecaoTipoMatServSubord('<u>T</u>ipo de material/serviço:','S','Selecione o grupo/subgrupo de material/serviço desejado.',null,$p_pais,'p_pais','SUBTODOS',null);
     //SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
-    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','VIAGEM',null);
     ShowHTML('   <tr valign="top">');
     if ($SG=='GRMTLIC') {
       ShowHTML('     <td><b>Número d<u>o</u> certame:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14">');
@@ -813,13 +835,6 @@ function Gerencial() {
       //MontaRadioNS('<b>Apenas decisão judicial?</b>',$p_ativo,'p_ativo');
     }
     ShowHTML('   <tr valign="top">');
-    if ($SG=='GRMTLIC') {
-      ShowHTML('     <td>');
-      ShowHTML('       <b>A<u>b</u>ertura de propostas entre:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
-      ShowHTML('       <br><b>A<u>u</u>torização entre:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
-    } else {
-      ShowHTML('     <td><b>A<u>u</u>torização entre:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
-    }
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('    </table>');
     ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -861,7 +876,7 @@ function ImprimeCabecalho() {
     case 'GRMTUNIDADE':     ShowHTML('          <td><b>Unidade solicitante</td>');  break;
     case 'GRMTPROJ':        ShowHTML('          <td><b>Projeto</td>');              break;
     case 'GRMTABERTURA':    ShowHTML('          <td><b>Mês de abertura</td>');      break;
-    case 'GRMTAUTORIZ':     ShowHTML('          <td><b>Mês de autorizacao</td>');   break;
+    case 'GRMTAUTORIZ':     ShowHTML('          <td><b>Mês de autorização</td>');   break;
     case 'GRMTMODAL':       ShowHTML('          <td><b>Modalidade</td>');           break;
     case 'GRMTSITUACAO':    ShowHTML('          <td><b>Situação do certame</td>');  break;
   } 

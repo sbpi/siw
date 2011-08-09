@@ -82,6 +82,8 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
+if ($O=='') $O='L';
+
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';    break;
   case 'A': $w_TP=$TP.' - Alteração';   break;
@@ -94,9 +96,22 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
+
 if(nvl($w_menu,'')!=''){
   $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS_Menu,'libera_edicao');
+  
+  if ($w_libera_edicao=='N' && strpos('LP',$O)===false) {
+    Cabecalho();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
+    BodyOpen('onLoad=this.focus();');
+    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+    ShowHTML('<HR>');
+    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><b>Operação não permitida!</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+    Rodape();
+    exit();
+  }
 }
 
 Main();
@@ -109,7 +124,6 @@ function Imposto() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
-  if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome           = $_REQUEST['w_nome'];
@@ -385,7 +399,6 @@ function Valor(){
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de acréscimos/supressões</TITLE>');
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome              = $_REQUEST['w_nome'];
@@ -632,7 +645,6 @@ function Documento(){
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de documentos</TITLE>');
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome              = $_REQUEST['w_nome'];
@@ -880,7 +892,7 @@ function Lancamento() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de lançamento</TITLE>');
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+  
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_pai            = $_REQUEST['w_pai'];

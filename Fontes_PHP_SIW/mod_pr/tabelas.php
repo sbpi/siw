@@ -116,6 +116,24 @@ switch ($O) {
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
+
+if(nvl($w_menu,'')!=''){
+  $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
+  $w_libera_edicao = f($RS_Menu,'libera_edicao');
+  
+  if ($w_libera_edicao=='N' && strpos('LP',$O)===false) {
+    Cabecalho();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
+    BodyOpen('onLoad=this.focus();');
+    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+    ShowHTML('<HR>');
+    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><b>Operação não permitida!</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+    Rodape();
+    exit();
+  }
+}
+
 $w_ano      = RetornaAno();
 
 $p_projeto      = upper($_REQUEST['p_projeto']);
@@ -361,7 +379,9 @@ function Vinculacao() {
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Projeto','titulo').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
     ShowHTML('          <td colspan=2><b>Responsável</td>');
-    ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
+    if ($w_libera_edicao=='S') {    
+      ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
+    }
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_solic').'</td>');
@@ -385,9 +405,12 @@ function Vinculacao() {
         else                                 ShowHTML('        <td>---</td>');
         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         ShowHTML('        <td>'.ExibeUnidade(null,$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade_resp'),$TP).'</td>');
-        ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto">AL</A>&nbsp');
-        ShowHTML('      </td></tr>');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('        <td class="remover" align="top" nowrap>');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto">AL</A>&nbsp');
+          ShowHTML('        </td>');
+        }
+        ShowHTML('</tr>');
       } 
     } 
     ShowHTML('      </center>');
@@ -1161,7 +1184,10 @@ function TipoRestricao() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('<td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1169,7 +1195,9 @@ function TipoRestricao() {
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
-    ShowHTML('          <td class="remover"><b>Operações</td>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('          <td class="remover"><b>Operações</td>');
+    }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1182,10 +1210,12 @@ function TipoRestricao() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.nvl(f($row,'codigo_externo'),'---').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
-        ShowHTML('        </td>');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('        <td class="remover" align="top" nowrap>');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
+          ShowHTML('        </td>');
+        }
         ShowHTML('      </tr>');
       } 
     } 

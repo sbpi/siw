@@ -426,7 +426,7 @@ function Inicial() {
       ShowHTML('        </tr>');
     }
     if (count($RS)==0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=13 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -779,7 +779,7 @@ function Geral() {
       ShowHTML('<INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
     }
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoMovimentacao('Tipo da <u>m</u>ovimentação:','M', 'Selecione o tipo da movimentação.', $w_tipo,'S',null,'w_tipo',null,null);
+    SelecaoTipoMovimentacao('Tipo da <u>m</u>ovimentação:','M', 'Selecione o tipo da movimentação.', $w_tipo,'S',null,'w_tipo','CONSUMO',null);
     ShowHTML('          <td><b>Data <u>p</u>revista para recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_prevista" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prevista.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data prevista para recebimento do material ou serviço.">'.ExibeCalendario('Form','w_prevista').'</td>');
     ShowHTML('          <td><b>Data <u>e</u>fetiva de recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_efetiva" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_efetiva.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de entrega do material ou conclusão do serviço.">'.ExibeCalendario('Form','w_efetiva').'</td>');
     ShowHTML('      <tr><td align="center" colspan=4 height="1" bgcolor="#000000"></TD></TR>');
@@ -1951,11 +1951,11 @@ function Grava() {
           $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'VERIFENT',3,null,null,null,null,null,null,null,null,null,null,
                   $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
           foreach($RS as $row){$RS=$row; break;}
-          if (f($RS,'entrada_mes_seguinte')=='S'||f($RS,'saida_mes_seguinte')=='S'||f($RS,'mes_corrente_fechado')=='S'||f($RS,'mes_seguinte_fechado')=='S'||f($RS,'mes_anterior_fechado')=='N') {
+          if (/*f($RS,'entrada_mes_seguinte')=='S'||f($RS,'saida_mes_seguinte')=='S'||*/f($RS,'mes_corrente_fechado')=='S'||f($RS,'mes_seguinte_fechado')=='S'||f($RS,'mes_anterior_fechado')=='N') {
             ScriptOpen('JavaScript');
             ShowHTML('  alert("ATENÇÃO: Não será possível efetivar a ação! Motivo(s):'.
-                     ((f($RS,'entrada_mes_seguinte')=='S') ? '\n- Existe entrada em mês posterior' : '').
-                     ((f($RS,'saida_mes_seguinte')=='S') ? '\n- Existe saída em mês posterior' : '').
+                     //((f($RS,'entrada_mes_seguinte')=='S') ? '\n- Existe entrada em mês posterior' : '').
+                     //((f($RS,'saida_mes_seguinte')=='S') ? '\n- Existe saída em mês posterior' : '').
                      ((f($RS,'mes_corrente_fechado')=='S') ? '\n- Mês de entrega efetiva já fechado' : '').
                      ((f($RS,'mes_seguinte_fechado')=='S') ? '\n- Mês posterior ao de entrega efetiva já fechado' : '').
                      ((f($RS,'mes_anterior_fechado')=='N') ? '\n- Mês anterior ao de entrega efetiva não fechado' : '').

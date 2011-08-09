@@ -110,6 +110,18 @@ if (nvl($w_menu, '') != '') {
   $sql = new db_getMenuData;
   $RS_Menu = $sql->getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS_Menu, 'libera_edicao');
+  
+  if ($w_libera_edicao=='N' && strpos('LP',$O)===false) {
+    Cabecalho();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
+    BodyOpen('onLoad=this.focus();');
+    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+    ShowHTML('<HR>');
+    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><b>Operação não permitida!</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+    Rodape();
+    exit();
+  }
 }
 
 $p_ordena       = lower($_REQUEST['p_ordena']);
