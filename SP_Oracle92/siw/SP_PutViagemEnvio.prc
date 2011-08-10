@@ -308,7 +308,7 @@ begin
                where b.sq_siw_solicitacao = p_chave
                  and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
                  and c.sq_unidade         = w_unidade_aprov
-                 and c.sq_pessoa          = p_pessoa
+                 and c.sq_pessoa          = case w_benef_contr when 'S' then w_beneficiario else p_pessoa end
                  and c.tipo_respons       = 'T'
                  and c.fim                is null
               UNION
