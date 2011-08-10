@@ -73,7 +73,7 @@ begin
         Update siw_solicitacao set sq_siw_tramite = w_tramite Where sq_siw_solicitacao = crec.chave;
 
         -- Atualiza a tabela de documentos
-        update pa_documento set observacao_setorial = null, data_setorial = null where sq_siw_solicitacao = crec.chave;
+        update pa_documento set observacao_setorial = null, data_setorial = null, sq_caixa = null, pasta = null where sq_siw_solicitacao = crec.chave;
 
          -- Registra os dados do desarquivamento
          Insert Into siw_solic_log 
@@ -120,7 +120,7 @@ begin
      End If;
   
      -- Atualiza os dados do documento
-     If p_interno = 'S' Then
+     If p_interno = 'S' or (p_interno is null and p_unidade_destino is not null) Then
         -- Se tramitação interna, atualiza a unidade de posse e mantém a pessoa externa
         update pa_documento a set a.unidade_int_posse = p_unidade_destino where a.sq_siw_solicitacao = crec.chave;
      Else
