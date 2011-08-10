@@ -101,7 +101,8 @@ begin
                                when 'AS' then 'ARQ.SETORIAL'
                                when 'AT' then 'ARQ.CENTRAL'
                           end
-                end as localizacao
+                end as localizacao,
+                d2.ativo
            from pa_caixa                                  a
                 inner       join eo_unidade               b  on (a.sq_unidade                = b.sq_unidade)
                   inner     join pa_unidade               b1 on (b.sq_unidade                = b1.sq_unidade)
@@ -121,7 +122,7 @@ begin
                   inner     join siw_solicitacao          d on (c.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                     left    join eo_unidade               d1 on (d.sq_unidade               = d1.sq_unidade)
                     -- inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite) LINHA ALTERADA EM 14/02/2011 PARA A NÃO EXIBIÇÃO DE REGISTROS CANCELADOS
-                    inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite and d2.sigla <> 'CA')
+                    inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite and d2.sigla <> 'CA' and d2.ativo = 'N')
           where a.cliente     = p_cliente
             and d.sq_solic_pai is null
             and (p_chave      is null or (p_chave      is not null and a.sq_caixa            = p_chave  ))

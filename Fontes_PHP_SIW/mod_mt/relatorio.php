@@ -1276,7 +1276,7 @@ function Mapa() {
     } else {
       $w_tot_ent  = 0;
       $w_tot_sai  = 0;
-      $colspan    = 8;
+      $colspan    = 6;
       $w_atual    = '';
       $w_atual_qe = 0;
       $w_atual_qs = 0;
@@ -1285,7 +1285,7 @@ function Mapa() {
       foreach ($RS1 as $row) {
         if ($i==0) {
           $w_cor = $conTableBgColor;
-          if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
+          //if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
@@ -1295,8 +1295,8 @@ function Mapa() {
           }
           ShowHTML('          <td><b>Material</b></td>');
           ShowHTML('          <td><b>U.M.</b></td>');
-          ShowHTML('          <td><b>Movimentação</b></td>');
-          ShowHTML('          <td><b>Fornecedor / Solicitante</b></td>');
+          //ShowHTML('          <td><b>Movimentação</b></td>');
+          //ShowHTML('          <td><b>Fornecedor / Solicitante</b></td>');
           ShowHTML('          <td><b>Documento / Pedido</b></td>');
           ShowHTML('          <td><b>Armazen. / Agendam.</b></td>');
           ShowHTML('          <td><b>Valid. / Entrega</b></td>');
@@ -1338,9 +1338,9 @@ function Mapa() {
         } else {
           ShowHTML('        <tr bgcolor="'.$w_cor.'"><td colspan='.(($tipo) ? '3' : '2').'>&nbsp;</td>');
         }
-        ShowHTML('          <td>'.f($row,'nm_tipo_movimentacao').'</td>');
+        //ShowHTML('          <td>'.f($row,'nm_tipo_movimentacao').'</td>');
         if (nvl(f($row,'quantidade_pedida'),0)==0) {
-          ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_fornecedor') : ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor'))).'</td>');
+          //ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_fornecedor') : ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor'))).'</td>');
           ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'sg_tip_doc').' '.f($row,'nr_doc') : '<a class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,f($row,'link_menu').'visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sg_menu').'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_menu')).'\',\'TelaEntrada\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Exibe os dados da entrada.">'.f($row,'sg_tip_doc').' '.f($row,'nr_doc').'</a>').'</td>');
           ShowHTML('          <td align="center" title="Data de armazenamento">'.formataDataEdicao(f($row,'armazenamento'),5).'</td>');
           ShowHTML('          <td align="center" title="Data de término da validade">'.formataDataEdicao(f($row,'validade'),5).'</td>');
@@ -1351,11 +1351,11 @@ function Mapa() {
           $w_atual_qe += f($row,'qt_entrada');
           $w_atual_ve += f($row,'tot_entrada');
         } else {
-          if (f($row,'tp_destino')=='I') {
-            ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibeUnidade('../',$w_cliente,f($row,'nm_destino'),f($row,'sq_destino'),$TP)).'</td>');
-          } else {
-            ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibePessoa('../',$w_cliente,f($row,'sq_destino'),$TP,f($row,'nm_destino'))).'</td>');
-          }
+          //if (f($row,'tp_destino')=='I') {
+          //  ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibeUnidade('../',$w_cliente,f($row,'nm_destino'),f($row,'sq_destino'),$TP)).'</td>');
+          //} else {
+          //  ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibePessoa('../',$w_cliente,f($row,'sq_destino'),$TP,f($row,'nm_destino'))).'</td>');
+          //}
           ShowHTML('          <td width="1%" nowrap>');
           if ($w_embed!='WORD') ShowHTML(ExibeImagemSolic(f($row,'sg_menu'),f($row,'inicio'),f($row,'fim'),null,null,'S','1',f($row,'sg_tramite'), null));
           ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');

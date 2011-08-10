@@ -12,6 +12,9 @@ create or replace procedure sp_putDocumentoArqCen
       select a.sq_siw_solicitacao as chave, b.sq_siw_tramite
         from pa_documento               a
              inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+             inner join siw_tramite     c on (b.sq_siw_tramite     = c.sq_siw_tramite and 
+                                              c.sigla              <> 'CA'
+                                             )
        where a.sq_caixa = p_chave;
 begin
   for crec in c_dados loop

@@ -78,6 +78,8 @@ if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
+if ($O=='') $O='L';
+
 switch ($O) {
   case 'I':     $w_TP=$TP.' - Inclusão';        break;
   case 'A':     $w_TP=$TP.' - Alteração';       break;
@@ -126,7 +128,7 @@ function ModalidadeCont() {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');   
   }
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+
   if ($w_troca>'' && $O!='E') { 
     $w_nome         = $_REQUEST['w_nome'];
     $w_descricao    = $_REQUEST['w_descricao'];
@@ -375,7 +377,7 @@ function DireitoFerias() {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">'); 
   }  
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+
   if ($w_troca>'' && $O!='E') { 
     $w_faixa_inicio      = $_REQUEST['w_faixa_inicio'];
     $w_faixa_fim         = $_REQUEST['w_faixa_fim'];    
@@ -547,7 +549,7 @@ function Tipoafast() {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">'); 
   }  
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+  
   if ($w_troca>'' && $O!='E') { 
     $w_nome              = $_REQUEST['w_nome'];
     $w_sigla             = $_REQUEST['w_sigla'];
@@ -807,7 +809,7 @@ function DataEspecial() {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+  
   if ($w_troca>'' && $O!='E') { 
     $w_sq_pais        = $_REQUEST['w_sq_pais'];
     $w_co_uf          = $_REQUEST['w_co_uf'];
@@ -1248,7 +1250,7 @@ function Cargo() {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+  
   if ($w_troca>'' && $O!='E') {  
     $w_sq_tipo        = $_REQUEST['w_sq_tipo'];
     $w_sq_formacao    = $_REQUEST['w_sq_formacao'];

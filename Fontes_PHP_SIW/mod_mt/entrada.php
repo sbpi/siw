@@ -390,40 +390,40 @@ function Inicial() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Fornecedor','nm_fornecedor_ind').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Documento','nm_tipo_doc').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Número','nr_doc').'</b></td>');
-      ShowHTML ('         <td rowspan="2"><b>'.LinkOrdena('Data','dt_doc').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo','nm_tipo_mov').'</b></td>');
-      ShowHTML('          <td colspan="2"><b>Recebimento</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Armazenamento','armazenamento').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lançamento','sq_siw_solicitacao').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Valor','valor_doc').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Situação','nm_sit').'</b></td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Itens','qt_itens').'</b></td>');
-      ShowHTML('          <td rowspan="2" class="remover"><b>Operações</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Fornecedor','nm_fornecedor_ind').'</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Documento','nm_tipo_doc').'</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Número','nr_doc').'</b></td>');
+      ShowHTML ('         <td><b>'.LinkOrdena('Data','dt_doc').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_mov').'</b></td>');
+      //ShowHTML('          <td colspan="2"><b>Recebimento</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Armazenamento','armazenamento').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('Lançamento','sq_siw_solicitacao').'</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Valor','valor_doc').'</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_sit').'</b></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Itens','qt_itens').'</b></td>');
+      ShowHTML('          <td class="remover"><b>Operações</b></td>');
       ShowHTML('        </tr>');
-      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>'.LinkOrdena('Previsto','recebimento_previsto').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Efetivo','recebimento_efetivo').'</b></td>');
-      ShowHTML('        </tr>');
+      //ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      //ShowHTML('          <td><b>'.LinkOrdena('Previsto','recebimento_previsto').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('Efetivo','recebimento_efetivo').'</b></td>');
+      //ShowHTML('        </tr>');
       
     } else {
-      ShowHTML('          <td rowspan="2"><b>Fornecedor</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Documento</b></td>');
-      ShowHTML ('         <td rowspan="2"><b>Data</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Tipo</b></td>');
-      ShowHTML('          <td colspan="2"><b>Recebimento</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Armazenamento</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Lançamento</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Valor</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Situação</b></td>');
-      ShowHTML('          <td rowspan="2"><b>Itens</b></td>');
+      ShowHTML('          <td><b>Fornecedor</b></td>');
+      ShowHTML('          <td><b>Documento</b></td>');
+      ShowHTML ('         <td><b>Data</b></td>');
+      //ShowHTML('          <td><b>Tipo</b></td>');
+      //ShowHTML('          <td colspan="2"><b>Recebimento</b></td>');
+      ShowHTML('          <td><b>Armazenamento</b></td>');
+      //ShowHTML('          <td><b>Lançamento</b></td>');
+      ShowHTML('          <td><b>Valor</b></td>');
+      ShowHTML('          <td><b>Situação</b></td>');
+      ShowHTML('          <td><b>Itens</b></td>');
       ShowHTML('        </tr>');
-      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>Previsto</b></td>');
-      ShowHTML('          <td><b>Efetivo</b></td>');
-      ShowHTML('        </tr>');
+      //ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      //ShowHTML('          <td><b>Previsto</b></td>');
+      //ShowHTML('          <td><b>Efetivo</b></td>');
+      //ShowHTML('        </tr>');
     }
     if (count($RS)==0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=13 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -437,11 +437,11 @@ function Inicial() {
         ShowHTML('        <td>'.f($row,'nm_tp_doc').'</td>');
         ShowHTML('        <td>'.f($row,'nr_doc').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'dt_doc'),5).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_tp_mov').'</td>');
-        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'recebimento_previsto'),5).'</td>');
-        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'recebimento_efetivo'),5).'</td>');
+        //ShowHTML('        <td>'.f($row,'nm_tp_mov').'</td>');
+        //ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'recebimento_previsto'),5).'</td>');
+        //ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'recebimento_efetivo'),5).'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'armazenamento'),5).'</td>');
-        ShowHTML('        <td width="1%" nowrap>'.(($w_tipo=='WORD') ? f($row,'codigo_interno') : exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'))).'</td>');
+        //ShowHTML('        <td width="1%" nowrap>'.(($w_tipo=='WORD') ? f($row,'codigo_interno') : exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'))).'</td>');
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'vl_doc'),2).'&nbsp;</td>');
         ShowHTML('        <td>'.f($row,'nm_sit').'</td>');
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'qt_itens'),0).'&nbsp;</td>');
@@ -463,7 +463,7 @@ function Inicial() {
         ShowHTML('      </tr>');
         $w_parcial += f($row,'valor');
       } 
-      $w_colspan=9;
+      $w_colspan=5;
       if (ceil(count($RS)/$P4)>1) { 
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
         ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total desta página&nbsp;</td>');
