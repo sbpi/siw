@@ -106,6 +106,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td>---</td>';
         }
         $exibe = false;
+      }elseif($exibe){
+        $l_html.=chr(13).'      <tr><td width="30%"><b>'.$pai[4].': </b></td>';
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
       }
     } 
     if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT' || nvl(f($RS,'dados_avo'),'')!='') {
@@ -221,8 +224,10 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $row['valor'] = f($row,'valor')-f($row,'deducao')+f($row,'acrescimo');
           $l_html.=chr(13).'            </table></td>';
         }
-        $l_html.=chr(13).'          </tr>';
-        $l_html.=chr(13).'         </table></td></tr>';
+        if (count($RS_Docs)==1) {
+          $l_html.=chr(13).'          </tr>';
+          $l_html.=chr(13).'         </table></td></tr>';
+        }
         
         // Verifica se há lançamentos vinculados
         $sql = new db_getImpostoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
@@ -339,6 +344,10 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         }
         $w_total=$w_total+f($row,'valor');
       }
+    }
+    if (count($RS_Docs)!=1) {
+      $l_html.=chr(13).'          </tr>';
+      $l_html.=chr(13).'         </table></td></tr>';
     }
     
     // Dados da conclusão do pagamento, se estiver nessa situação
