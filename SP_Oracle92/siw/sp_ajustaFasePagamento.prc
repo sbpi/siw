@@ -11,7 +11,7 @@ create or replace procedure sp_ajustaFasePagamento(p_cliente in number, p_pessoa
      select w.sq_siw_solicitacao, w5.inclusao, trunc(w5.fim) as fim, w7.dias_prestacao_contas, 
             w1.cadastrador, w2.sq_menu, g.sq_siw_tramite as pp, h.sq_siw_tramite as ee, w5.codigo_interno
        from fn_lancamento                      w
-            inner     join siw_solicitacao     w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
+            inner     join siw_solicitacao     w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao and w1.descricao like 'Adiantamento%')
               inner   join siw_menu            w2 on (w1.sq_menu            = w2.sq_menu and 
                                                       w2.sigla              = 'FNDVIA'
                                                      )
