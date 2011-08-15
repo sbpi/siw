@@ -2003,6 +2003,7 @@ begin
                  (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
                  (a1.sigla = 'FN' and b3.sigla = 'AC') or
+                 (a1.sigla = 'FN' and b3.sigla = 'PD') or
                  (a1.sigla = 'FN' and b3.sigla = 'PR') or
                  (a1.sigla = 'DM' and b3.sigla = 'PR') or
                  (a1.sigla = 'CO' and b3.sigla = 'PR') or
