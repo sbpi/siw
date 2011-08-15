@@ -858,9 +858,9 @@ function Geral() {
           $w_sq_menu_relac = 'CLASSIF';
           $w_sqcc = f($RS_Vinc,'sq_cc'); 
         } else {
-          $w_dados_vinc     = explode('|@|',f($RS_Vinc,'dados_solic'));
+          $w_dados_vinc     = explode('|@|',f($RS_Vinc,'dados_pai'));
           $w_sq_menu_relac  = $w_dados_vinc[3];
-          $w_chave_pai      = $w_chave_vinc;
+          $w_chave_pai      = f($RS_Vinc,'sq_solic_pai');
         }
       } elseif (f($RS_Imposto,'tipo_vinculo')==1) {
         // Padrão vinculado à finalidade
@@ -952,12 +952,14 @@ function Geral() {
     if (count($RS_Docs)>1) {
       Validate('w_sq_documento','Documento','SELECT',1,1,18,'','0123456789');
     }
-    if ($w_exige_relac) Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-    if(nvl($w_sq_menu_relac,'')!='') {
-      if ($w_sq_menu_relac=='CLASSIF') {
-        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-      } else {
-        Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
+    if (f($RS_Imposto,'tipo_vinculo')==2) {
+      if ($w_exige_relac) Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if(nvl($w_sq_menu_relac,'')!='') {
+        if ($w_sq_menu_relac=='CLASSIF') {
+          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+        } else {
+          Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
+        }
       }
     }
     Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
@@ -1059,16 +1061,20 @@ function Geral() {
       ShowHTML('      </td></tr>');
     }
 
-    ShowHTML('          <tr valign="top">');
-    if ($w_exige_relac) selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
-
-    if(Nvl($w_sq_menu_relac,'')!='') {
+    if (nvl(f($RS_Imposto,'tipo_vinculo'),-1)==2) {
       ShowHTML('          <tr valign="top">');
-      if ($w_sq_menu_relac=='CLASSIF') {
-        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null,null,'<BR />',2);
-      } else {
-        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai,'<BR />',2);
+      if ($w_exige_relac) selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+
+      if(Nvl($w_sq_menu_relac,'')!='') {
+        ShowHTML('          <tr valign="top">');
+        if ($w_sq_menu_relac=='CLASSIF') {
+          SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null,null,'<BR />',2);
+        } else {
+          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai,'<BR />',2);
+        }
       }
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
     }
     ShowHTML('      <tr>');
     SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',$SG,null,2);
