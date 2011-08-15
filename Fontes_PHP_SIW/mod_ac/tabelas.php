@@ -585,7 +585,7 @@ function FormaPagamento(){
     ScriptOpen('JavaScript');
     modulo();
     ValidateOpen('Validacao');  
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -595,7 +595,6 @@ function FormaPagamento(){
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     }
-    if ($O=='T') Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1'); 
     ValidateClose();
     ScriptClose();
   } 
@@ -642,7 +641,6 @@ function FormaPagamento(){
           ShowHTML('        <td class="remover">');
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX </A>&nbsp');
-          ShowHTML('          <A class="hl" HREF="javascript:this.status.value" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');
@@ -656,18 +654,52 @@ function FormaPagamento(){
     else       MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
-    ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('        <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
+
+    $sql = new DB_GetMenuFormaPag; $RS = $sql->getInstanceOf($dbms, $w_chave, null);
+    $i=0;
+    foreach($RS as $row) {
+      if ($i==0) $w_vinculo = f($row,'sq_menu');
+      else       $w_vinculo .= ','.f($row,'sq_menu');
+      $i=1;
+    }
+    ShowHTML('      <tr><td><b>Vinculações:</b><br>');
+    $sql = new db_getMenuList; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, 'X', $chaveAux, null);
+    $RS1 = SortArray($RS1, 'nome', 'asc');
+    ShowHTML('        <tr>');
+    if (count($RS1) > 0) {
+      $i = 2;
+      foreach ($RS1 as $row) {
+        if (strpos('DM,PR,SR',f($row,'sg_modulo'))===false) {
+          if (!($i % 2)) ShowHTML('        <tr>');
+          $l_marcado = 'N';
+          $l_chave = $w_vinculo . ',';
+          while (!(strpos($l_chave, ',') === false)) {
+            $l_item = trim(substr($l_chave, 0, strpos($l_chave, ',')));
+            $l_chave = trim(substr($l_chave, (strpos($l_chave, ',') + 1), 100));
+            if ($l_item > '') {
+              if (f($row, 'sq_menu') == $l_item) $l_marcado = 'S';
+            }
+          }
+          ShowHTML('          <td><input '.$w_Disabled.' type="checkbox" name="w_vinculo[]" value="' . f($row, 'sq_menu') . '"'.(($l_marcado == 'S') ? ' checked' : '').'>' . f($row, 'nome') . '<br>');
+          $i += 1;
+        }
+      }
+    }
+
     ShowHTML('      <tr><td align="LEFT" colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>'); 
     if ($O=='E') {
@@ -680,57 +712,6 @@ function FormaPagamento(){
       } 
     } 
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-    ShowHTML('          </td>');
-    ShowHTML('      </tr>');
-    ShowHTML('    </table>');
-    ShowHTML('    </TD>');
-    ShowHTML('</tr>');
-    ShowHTML('</FORM>'); 
-  } elseif (!(strpos('T',$O)===false)){
-    $sql = new DB_GetMenuFormaPag; $RS = $sql->getInstanceOf($dbms, $w_chave, null);
-    $i=0;
-    foreach($RS as $row) {
-      if ($i==0) $w_vinculo = f($row,'sq_menu');
-      else       $w_vinculo .= ','.f($row,'sq_menu');
-      $i=1;
-    }
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-    ShowHTML('<tr><td colspan=3 bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
-    ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('      <tr><td>Nome:<br><b>'.$w_nome.'</b></td>');
-    ShowHTML('          <td>Sigla:<br><b>'.$w_sigla.'</b></td>');    
-    ShowHTML('    </TABLE>');
-    ShowHTML('</TABLE>');
-    ShowHTML('  <tr><td>&nbsp;');
-    ShowHTML('      <tr><td><b>Vincular:</b><br>');
-    $sql = new db_getMenuList; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, 'X', $chaveAux,null);
-    $RS1 = SortArray($RS1,'nome','asc');
-    ShowHTML('      <tr><td><table width="100%" border="0">');
-    ShowHTML('        <tr>');
-    if (count($RS1)>0) {
-      $i = 2;
-      foreach ($RS1 as $row) {
-        if (!($i%2)) ShowHTML('        <tr>');
-        $l_marcado = 'N';
-        $l_chave   = $w_vinculo.',';
-        while (!(strpos($l_chave,',')===false)) {
-          $l_item  = trim(substr($l_chave,0,strpos($l_chave,',')));
-          $l_chave = trim(substr($l_chave,(strpos($l_chave,',')+1),100));
-          if ($l_item > '') {if (f($row,'sq_menu')==$l_item) $l_marcado = 'S'; }
-        }
-        if ($l_marcado=='S')  ShowHTML('          <td><input type="checkbox" name="w_vinculo[]" value="'.f($row,'sq_menu').'" checked>'.f($row,'nome').'<br>');
-        else                  ShowHTML('          <td><input type="checkbox" name="w_vinculo[]" value="'.f($row,'sq_menu').'">'.f($row,'nome').'<br>');
-        $i += 1;
-      } 
-    }
-    ShowHTML('      <tr><td align="LEFT" colspan=2><br><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('      <tr><td align="center" colspan=2><hr>');
-    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="window.close();" name="Botao" value="Fechar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -922,7 +903,7 @@ function Modalidades() {
     ScriptOpen( 'JavaScript');
     FormataValor();
     ValidateOpen( 'Validacao');
-     if (!(strpos('IA',$O)===false)) {    
+     if (strpos('IA',$O)!==false) {    
         Validate('w_nome','Nome','1','1','2','80','1','1');
         Validate('w_sigla','Sigla','1','1','2','3','1','1');
         Validate('w_descricao','Descrição', '1', '', '5', '1000', '1', '1');
@@ -1023,8 +1004,8 @@ function Modalidades() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   //Aqui começa a manipulação de registros
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -1117,7 +1098,7 @@ function FonteRecurso() {
   If  (!(strpos('IAEP',$O)===false)) {
     ScriptOpen( 'JavaScript');
     ValidateOpen( 'Validacao');
-     if (!(strpos('IA',$O)===false)) {    
+     if (strpos('IA',$O)!==false) {    
        Validate('w_codigo','Código','1','1','1','10','1','1');
        Validate('w_nome','Nome','1','1','2','60','1','1');
        Validate('w_descricao','Descrição', '1', '', '5', '1000', '1', '1');
@@ -1189,8 +1170,8 @@ function FonteRecurso() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   //Aqui começa a manipulação de registros
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -1898,23 +1879,21 @@ function Grava() {
     case 'FORMAPAG':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
-        if (!(strpos('IAE',$O)===false))  {
-          $SQL = new dml_putFormaPagamento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
-               $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
-          ScriptClose();
-        } else {                  
+        $SQL = new dml_putFormaPagamento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
+             $_REQUEST['w_sigla'],$_REQUEST['w_ativo'],&$w_chave_nova);
+
+        if ($O!='E') { 
            // Elimina todas as permissões existentes para depois incluir
            $SQL = new dml_PutFormaPagamentoVinc; 
-           $SQL->getInstanceOf($dbms, 'E',$_REQUEST['w_chave'],null);
+           $SQL->getInstanceOf($dbms, 'E',$w_chave_nova,null);
            for ($i=0; $i<=count($_POST['w_vinculo'])-1; $i=$i+1)   {
-             $SQL->getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], $_POST['w_vinculo'][$i]);
+             if (nvl($_POST['w_vinculo'][$i],'')!='') $SQL->getInstanceOf($dbms, 'I', $w_chave_nova, $_POST['w_vinculo'][$i]);
            }
-           ScriptOpen('JavaScript');
-           ShowHTML('  window.close() ;'); 
-           ScriptClose();
         }
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
+        ScriptClose();
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

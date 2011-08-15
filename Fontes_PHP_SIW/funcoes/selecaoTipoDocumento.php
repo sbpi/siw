@@ -3,20 +3,15 @@ include_once($w_dir_volta.'classes/sp/db_getTipoDocumento.php');
 // =========================================================================
 // Montagem da seleção de tipos de documento
 // -------------------------------------------------------------------------
-function selecaoTipoDocumento($label,$accesskey,$hint,$chave,$cliente,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoTipoDocumento($label,$accesskey,$hint,$chave,$cliente,$menu,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$cliente);
+  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$cliente,$menu);
   $RS = SortArray($RS,'nome','asc');
-  if (!isset($hint))
-    ShowHTML(' <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  else
-    ShowHTML(' <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+
+  ShowHTML('          <td colspan="'.$colspan.'" '.((!isset($hint)) ? '' : 'TITLE="'.$hint.'"').'>'.((!isset($label)) ? '' : '<b>'.$label.'</b><br>').'<SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (nvl(f($row,'chave'),0)==nvl($chave,0))
-      ShowHTML(' <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome'));
-    else
-      ShowHTML(' <option value="'.f($row,'chave').'">'.f($row,'nome')); 
+    ShowHTML(' <option value="'.f($row,'chave').'"'.((nvl(f($row,'chave'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.f($row,'nome'));
   }
   ShowHTML('          </select>');
 } 

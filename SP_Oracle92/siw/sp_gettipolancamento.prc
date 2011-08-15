@@ -96,6 +96,12 @@ begin
          w_rubrica := substr(p_restricao,15,10);
          w_tipo    := coalesce(substr(p_restricao,25,1),'T');
       End If;
+      
+      -- Se p_chave_aux foi passado, recupera a sigla do serviço
+      If w_menu is null and p_chave_aux is not null Then
+         select substr(sigla, 1, 4) into w_menu from siw_menu where sq_menu = p_chave_aux;
+      End If;
+      
       -- Recupera os tipos de lançamento financeiro do cliente
       open p_result for 
          select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.codigo_externo, a.receita, a.despesa, a.reembolso, a.ativo,
@@ -105,13 +111,27 @@ begin
                 case a.despesa   when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
                 case a.reembolso when 'S' Then 'Sim' Else 'Não' end as nm_reembolso,
                 case a.ativo   when 'S' Then 'Sim' Else 'Não' end as nm_ativo,
-                acentos(a.nome) as ordena
+                acentos(a.nome) as ordena,
+                coalesce(c.qtd,0) as qt_filhos
            from fn_tipo_lancamento   a
+                left  join (select x.cliente, count(*) vinculo
+                              from fn_tipo_lanc_vinc             w
+                                   inner join fn_tipo_lancamento x on (w.sq_tipo_lancamento = x.sq_tipo_lancamento)
+                             where w.sq_menu = coalesce(p_chave_aux, 0)
+                               and x.cliente = p_cliente
+                            group by x.cliente
+                           )         b on (a.cliente            = b.cliente)
+                left  join (select x.sq_tipo_lancamento_pai, count(x.sq_tipo_lancamento) qtd 
+                              from fn_tipo_lancamento x
+                             where x.sq_tipo_lancamento_pai is not null
+                            group by x.sq_tipo_lancamento_pai
+                           )         c on (a.sq_tipo_lancamento = c.sq_tipo_lancamento_pai)
           where a.cliente     = p_cliente
             and ((p_chave     is null) or (p_chave     is not null and a.sq_tipo_lancamento = p_chave))
             and (p_restricao is null or 
                  (p_restricao is not null and 
                   (instr(p_restricao,'VINC') = 0 or (instr(p_restricao,'VINC') > 0 and 0 = (select count(*) from fn_tipo_lancamento where sq_tipo_lancamento_pai = a.sq_tipo_lancamento))) and
+                  (coalesce(b.vinculo,0)     = 0 or 0 < (select count(*) from fn_tipo_lanc_vinc where sq_tipo_lancamento = a.sq_tipo_lancamento and sq_menu = p_chave_aux)) and
                   ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
                    (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
                    (substr(p_restricao,3,1) = 'E' and a.reembolso = 'S') or
