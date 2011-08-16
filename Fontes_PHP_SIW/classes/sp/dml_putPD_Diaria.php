@@ -50,7 +50,7 @@ class dml_putPD_Diaria {
                    'p_fin_vei'                =>array(tvl($p_fin_vei),                      B_INTEGER,        32),
                    'p_hos_in'                 =>array(tvl($p_hos_in),                       B_DATE,           32),
                    'p_hos_out'                =>array(tvl($p_hos_out),                      B_DATE,           32),
-                   'p_hos_observ'             =>array(tvl($p_hos_observ),                   B_VARCHAR,       255),
+                   'p_hos_observ'             =>array(tvl($p_hos_observ),                   B_VARCHAR,       500),
                    'p_vei_ret'                =>array(tvl($p_vei_ret),                      B_DATE,           32),
                    'p_vei_dev'                =>array(tvl($p_vei_dev),                      B_DATE,           32),
                    'p_tipo'                   =>array(nvl($p_tipo,'S'),                     B_VARCHAR,         1),
