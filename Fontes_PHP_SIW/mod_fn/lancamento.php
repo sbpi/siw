@@ -936,8 +936,8 @@ function Geral() {
       Validate('w_solic_vinculo','Projeto para débito','SELECT',1,1,18,'','0123456789');
     }
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
+    Validate('w_sq_tipo_lancamento','Tipo do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'','SELECT',1,1,18,'','0123456789');
     if (substr($SG,3)!='REEMB') {
-      Validate('w_sq_tipo_lancamento','Tipo do lançamento','HIDDEN',1,1,18,'','0123456789');
       Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
       if (substr($SG,3)!='EVENT') {
         if ($w_mod_pa=='S') {
@@ -947,7 +947,7 @@ function Geral() {
         }
       }
       Validate('w_vencimento','Vencimento','DATA',1,10,10,'','0123456789/');
-      Validate('w_tipo_pessoa','Lançamento para pessoa','SELECT',1,1,18,'','0123456789');   
+      Validate('w_tipo_pessoa',''.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Recebimento': 'Pagamento').' para pessoa','SELECT',1,1,18,'','0123456789');   
     } else {
       Validate('w_descricao','Justificativa','1',1,5,2000,'1','1');
     }
@@ -981,7 +981,7 @@ function Geral() {
   if (nvl($w_qtd_nota,0)>0) {
     ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
     ShowHTML('        ATENÇÃO:<ul>');
-    ShowHTML('        <li>O valor do lançamento será recalculado em função das notas a ele vinculadas. Use a operação "NE" da listagem para alterar os valores das notas.');
+    ShowHTML('        <li>O valor do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' será recalculado em função das notas a ele vinculadas. Use a operação "NE" da listagem para alterar os valores das notas.');
     ShowHTML('        </ul></b></font></td>');
     ShowHTML('      </tr>');
     ShowHTML('<tr><td>&nbsp;');
@@ -1032,7 +1032,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').', bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
 
     if (substr($SG,3)!='CONT') {
@@ -1059,15 +1059,11 @@ function Geral() {
       ShowHTML('      </tr>');
     }
     
-    $sql = new db_getTipoLancamento; $l_RS = $sql->getInstanceOf($dbms,null,$chaveAux,$w_cliente,'REEMBOLSO');
-    $l_RS = SortArray($l_RS,'nm_tipo','asc');
-    foreach($l_RS as $row) {
-      ShowHTML('<INPUT type="hidden" name="w_sq_tipo_lancamento" value="'.nvl($w_sq_tipo_lancamento,f($row,'chave')).'">');
-      break;
-    }
+    ShowHTML('      <tr>');
+    SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
     if (substr($SG,3)=='CONT')      ShowHTML('      <tr><td colspan=2>Finalidade:<br><b>'.$w_descricao.'</b></td>');
-    elseif (substr($SG,3)=='REEMB') ShowHTML('      <tr><td colspan=2><b>Justi<u>f</u>icativa:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
-    else                            ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
+    elseif (substr($SG,3)=='REEMB') ShowHTML('      <tr><td colspan=2><b>Justi<u>f</u>icativa:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.">'.$w_descricao.'</TEXTAREA></td>');
+    else                            ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.">'.$w_descricao.'</TEXTAREA></td>');
     if (substr($SG,3)!='REEMB') {
       if (f($RS_Pai,'sigla')=='FNDFIXO') {
         ShowHTML('       <tr><td colspan="2"><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Pai,'processo').'"></td>');
@@ -1077,12 +1073,12 @@ function Geral() {
         ShowHTML('       <tr>');
         SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo de pagamento.',$w_protocolo,null,'w_protocolo',$SG,null);
       } elseif($w_segmento=='Público') {
-        ShowHTML('       <tr><td colspan="2"><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'" title="OPCIONAL. Informe o número do processo ao qual este lançamento está ligado."></td>');
+        ShowHTML('       <tr><td colspan="2"><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'" title="OPCIONAL. Informe o número do processo ao qual este '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' está ligado."></td>');
       }
       ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('        <tr valign="top">');
       if (substr($SG,3)!='CONT') {
-        SelecaoTipoPessoa('Lançamento '.((substr($SG,0,3)=='FNR') ? 'de' : 'para').' pessoa:','T','Selecione na lista o tipo de pessoa associada a este lançamento.',$w_tipo_pessoa,$w_cliente,'w_tipo_pessoa',null,null);
+        SelecaoTipoPessoa(''.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Recebimento': 'Pagamento').' '.((substr($SG,0,3)=='FNR') ? 'de' : 'para').' pessoa:','T','Selecione na lista o tipo de pessoa associada a este '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.',$w_tipo_pessoa,$w_cliente,'w_tipo_pessoa',null,null);
       }
     } else {
       ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -1094,7 +1090,7 @@ function Geral() {
         }
       }
     }
-    SelecaoFormaPagamento('<u>F</u>orma de '.((substr($SG,0,3)=='FNR') ? 'recebimento' : 'pagamento').':','F','Selecione na lista a forma desejada para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
+    SelecaoFormaPagamento('<u>F</u>orma de '.((substr($SG,0,3)=='FNR') ? 'recebimento' : 'pagamento').':','F','Selecione na lista a forma desejada para este '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     if ($w_qtd_nota==0) {
       ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     } else {
@@ -1194,7 +1190,7 @@ function Geral() {
     
       // Beneficiário
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
-      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="boxClean SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao lançamento.">Ajustar</A>]</td></tr>');
+      ShowHTML('    <tr><td colspan=3 bgcolor="'.$conTrAlternateBgColor.'"><b>Beneficiário</b>&nbsp;&nbsp;[<A class="boxClean SS" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'" title="Informa dados da pessoa associada ao '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.">Ajustar</A>]</td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
       ShowHTML('    <tr><td colspan="3"><table width="100%" border="0" bordercolor="#FFFFFF" bgcolor="#FFFFFF">');
       $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl($w_pessoa,0),null,null,null,null,Nvl($w_tipo_pessoa,0),null,null,null,null,null,null,null,null,null,null,null);
@@ -2230,7 +2226,7 @@ function Documentos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
     /*
@@ -2601,7 +2597,7 @@ function RubricaDoc() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');    
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento."></td>');
     /*

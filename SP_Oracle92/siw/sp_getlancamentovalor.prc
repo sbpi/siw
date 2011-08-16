@@ -27,7 +27,7 @@ begin
                 left    join (select w.sq_valores, w.sq_lancamento_doc, w.valor
                                 from fn_documento_valores         w
                                      inner join fn_lancamento_doc x on (w.sq_lancamento_doc = x.sq_lancamento_doc)
-                               where (p_chave             is null or (p_chave             is not null and x.sq_siw_solicitacao = p_chave))
+                               where x.sq_siw_solicitacao = coalesce(p_chave,0)
                                  and (p_sq_lancamento_doc is null or (p_sq_lancamento_doc is not null and x.sq_lancamento_doc  = p_sq_lancamento_doc))
                              )                    b on (a.sq_valores          = b.sq_valores)
                 left    join fn_valores_vinc      d on (a.sq_valores          = d.sq_valores)
