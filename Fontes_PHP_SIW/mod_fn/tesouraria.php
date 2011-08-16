@@ -194,6 +194,8 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_sq_orprior   = $_REQUEST['p_sq_orprior'];
+$p_sq_acao_ppa  = $_REQUEST['p_sq_acao_ppa'];
+$p_empenho      = $_REQUEST['p_empenho'];
 
 if (nvl($SG,'')!='') {
   // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
@@ -226,13 +228,13 @@ function Inicial() {
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
             $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, null, $p_sq_orprior);
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
     } else {
       $sql = new db_getSolicFN; $RS = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P2,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
             $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, null, $p_sq_orprior);
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
     }
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -256,9 +258,14 @@ function Inicial() {
     ScriptOpen('Javascript');
     CheckBranco();
     FormataData();
+    FormataCPF();
+    FormataCNPJ();
+    Modulo();
     SaltaCampo();
     openBox('reload');
     ValidateOpen('Validacao');
+    Validate('p_sq_acao_ppa','CPF','CPF','','14','14','','0123456789-.');
+    Validate('p_empenho','CNPJ','CNPJ','','18','18','','0123456789/-.');
     Validate('p_atraso','Vinculação','','','2','90','1','1');
     Validate('p_uf','Projeto','','','2','90','1','1');
     Validate('p_proponente','Beneficiário','','','2','90','1','');
@@ -351,6 +358,9 @@ function Inicial() {
       SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC',null,3);
     } 
     ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_sq_acao_ppa" VALUE="'.$p_sq_acao_ppa.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+    ShowHTML('          <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_empenho" VALUE="'.$p_empenho.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
+    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>V</U>inculação:<br><INPUT ACCESSKEY="V" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
     ShowHTML('          <td><b><U>P</U>rojeto:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="p_uf" size="18" maxlength="18" value="'.$p_uf.'"></td>');
     ShowHTML('          <td><b><U>B</U>eneficiário:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
@@ -371,7 +381,6 @@ function Inicial() {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>Chave do lançament<U>o</U>:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
       if($w_segmento=='Público') {
-        if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') ShowHTML('          <td><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
         ShowHTML('          <td><b><U>N</U>úmero do processo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_processo" size="18" maxlength="18" value="'.$p_processo.'"></td>');
       }
       ShowHTML('      <tr valign="top">');

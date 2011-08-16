@@ -468,7 +468,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,              b.protocolo_siw,
+                b.valor,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -487,6 +487,20 @@ begin
                           end
                      else dados_solic(b4.sq_solic_pai) 
                 end as dados_avo,
+                case when b.protocolo_siw is null 
+                     then case when b4.protocolo_siw is null
+                               then null
+                               else b9.sq_siw_solicitacao
+                          end
+                     else b8.sq_siw_solicitacao 
+                end as protocolo_siw,
+                case when b.protocolo_siw is null 
+                     then case when b4.protocolo_siw is null
+                               then d.processo
+                               else to_char(b9.prefixo)||'.'||substr(1000000+to_char(b9.numero_documento),2,6)||'/'||to_char(b9.ano)||'-'||substr(100+to_char(b9.digito),2,2)
+                          end
+                     else to_char(b8.prefixo)||'.'||substr(1000000+to_char(b8.numero_documento),2,6)||'/'||to_char(b8.ano)||'-'||substr(100+to_char(b8.digito),2,2)
+                end as processo,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
@@ -500,7 +514,7 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.informacoes,        d.codigo_deposito,             d.condicoes_pagamento,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
-                d.tipo as tipo_rubrica,  d.processo,                 d.referencia_inicio,
+                d.tipo as tipo_rubrica,                              d.referencia_inicio,
                 d.referencia_fim,     d.sq_pessoa_conta,             d.sq_solic_vinculo,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome as nm_tipo_lancamento,
@@ -554,6 +568,8 @@ begin
                    left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
                      left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
                      left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
+                     left         join pa_documento         b9 on (b4.protocolo_siw           = b9.sq_siw_solicitacao)
+                     left         join pa_documento         b8 on (b.protocolo_siw            = b8.sq_siw_solicitacao)
                    inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)

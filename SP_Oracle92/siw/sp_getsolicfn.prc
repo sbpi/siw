@@ -164,7 +164,7 @@ begin
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 case when b.protocolo_siw is null 
                      then case when b4.protocolo_siw is null
-                               then null
+                               then d.processo
                                else to_char(b9.numero_documento)||'/'||substr(to_char(b9.ano),3,2)
                           end
                      else to_char(b8.numero_documento)||'/'||substr(to_char(b8.ano),3,2) 
@@ -184,6 +184,7 @@ begin
                 case d.tipo when 1 then 'Dotação inicial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
+                d21.cpf,              d22.cnpj,
                 coalesce(d3.valor,0) as valor_doc,
                 d31.sigla||' '||d3.numero as nr_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero as nr_conta,
@@ -278,6 +279,8 @@ begin
                         left         join pa_documento         b8 on (b.protocolo_siw            = b8.sq_siw_solicitacao)
                         left         join siw_solicitacao      b7 on (b4.sq_solic_pai            = b7.sq_siw_solicitacao)
                         left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
+                          left       join co_pessoa_fisica    d21 on (d2.sq_pessoa               = d21.sq_pessoa)
+                          left       join co_pessoa_juridica  d22 on (d2.sq_pessoa               = d22.sq_pessoa)
                         left         join fn_lancamento_doc    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao) 
                           left       join fn_tipo_documento   d31 on (d3.sq_tipo_documento       = d31.sq_tipo_documento)
                         left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
@@ -382,6 +385,8 @@ begin
             and (p_fim_i          is null or (p_fim_i       is not null and d.vencimento         between p_ini_i and p_ini_f or d.quitacao between p_fim_i and p_fim_f or trunc(b.inclusao) between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d21.cpf  is not null and d21.cpf  = p_sq_acao_ppa))
+            and (p_empenho        is null or (p_empenho     is not null and d22.cnpj is not null and d22.cnpj = p_empenho))
             and (p_palavra        is null or (p_palavra     is not null and b.codigo_interno     like '%'||p_palavra||'%'))
             and (p_atraso         is null or (p_atraso      is not null and (b4.codigo_interno   like '%'||p_atraso ||'%' or b7.codigo_interno like '%'||p_atraso ||'%' or acentos(b4.titulo) like '%'||acentos(p_atraso)||'%' or acentos(b7.titulo) like '%'||acentos(p_atraso)||'%')))
             and (p_uf             is null or (p_uf          is not null and (b4.codigo_interno   like '%'||p_uf ||'%' or b7.codigo_interno like '%'||p_uf ||'%' or acentos(b4.titulo) like '%'||acentos(p_uf)||'%' or acentos(b7.titulo) like '%'||acentos(p_uf) ||'%')))

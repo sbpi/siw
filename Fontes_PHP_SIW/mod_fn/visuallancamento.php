@@ -46,7 +46,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     // Verifica o segmento do cliente    
     $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente); 
     $w_segmento = f($RS1,'segmento');
-    if ($w_mod_pa=='S' && nvl(f($RS,'processo'),'')!='') {
+    if ($w_mod_pa=='S' && (nvl(f($RS,'processo'),'')!='' || nvl(f($RS,'protocolo_siw'),'')!='')) {
       if ((!($l_P1==4 || $l_tipo=='WORD')) && nvl(f($RS,'protocolo_siw'),'')!='') {
         $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td><td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
       } else {
