@@ -422,51 +422,64 @@ function Inicial() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    $colspan = 0;
     if ($w_tipo!='WORD') {    
-      ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
-        ShowHTML('          <td><b>'.LinkOrdena('Protocolo','protocolo').'</font></td>');
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Protocolo','protocolo').'</font></td>');
       }
+      $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dt. Pagamento','dt_pagamento').'</td>');
       if ($w_visao_completa) {
-        ShowHTML('          <td><b>'.LinkOrdena('Data','dt_pagamento').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Beneficiário','nm_pessoa_resumido').'</td>');
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Beneficiário','nm_pessoa_resumido').'</td>');
       } else {
-        ShowHTML('          <td><b>'.LinkOrdena('Data','phpdt_inclusao').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Beneficiário','nm_pessoa').'</td>');
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Beneficiário','nm_pessoa').'</td>');
       }
-      ShowHTML('          <td><b>'.LinkOrdena('Documento','nr_doc').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
+      ShowHTML('          <td colspan="4"><b>Documento</td>');
       if ($w_visao_completa) {
-        ShowHTML('          <td width="1%">&nbsp;</td>');
-        ShowHTML ('         <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Forma pagamento','nm_forma_pagamento').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Banco','cd_banco').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Agência','cd_agencia').'</td>');
-        ShowHTML('          <td><b>'.LinkOrdena('Conta','numero_conta').'</td>');
+        ShowHTML('          <td rowspan="2" width="1%">&nbsp;</td>');
+        ShowHTML ('         <td rowspan="2"><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Forma pagamento','nm_forma_pagamento').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Banco','cd_banco').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Agência','cd_agencia').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Conta','numero_conta').'</td>');
       }
-      if ($P2>1) ShowHTML('          <td><b>'.LinkOrdena('Conta Débito','conta_debito').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
+      if ($P2>1) ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Conta Débito','conta_debito').'</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan="2"><b>Operações</td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Tipo','sg_doc').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Número','nr_doc').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Emissão','dt_doc').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td><b>Data</td>');
-      ShowHTML('          <td><b>Valor</td>');
-      if ($w_visao_completa) ShowHTML('          <td width="1%">&nbsp;</td>');
-      ShowHTML('          <td><b>Código</td>');
-      ShowHTML('          <td><b>Beneficiário</td>');
+      $colspan++; ShowHTML('          <td rowspan="2"><b>Dt> Pagamento</td>');
       if ($w_visao_completa) {
-        ShowHTML('          <td><b>Vinculação</td>');
-        ShowHTML('          <td><b>Projeto</td>');
-        ShowHTML('          <td><b>Forma de pagamento</td>');
-        ShowHTML('          <td><b>Banco</td>');
-        ShowHTML('          <td><b>Agência</td>');
-        ShowHTML('          <td><b>Conta</td>');
+        $colspan++; ShowHTML('          <td rowspan="2" width="1%">&nbsp;</td>');
       }
-      if ($P2>1) ShowHTML('          <td><b>Conta Débito</td>');
+      $colspan++; ShowHTML('          <td rowspan="2"><b>Código</td>');
+      $colspan++; ShowHTML('          <td rowspan="2"><b>Beneficiário</td>');
+      ShowHTML('          <td colspan="4"><b>Documento</td>');
+      if ($w_visao_completa) {
+        ShowHTML('          <td rowspan="2"><b>Vinculação</td>');
+        ShowHTML('          <td rowspan="2"><b>Projeto</td>');
+        ShowHTML('          <td rowspan="2"><b>Forma de pagamento</td>');
+        ShowHTML('          <td rowspan="2"><b>Banco</td>');
+        ShowHTML('          <td rowspan="2"><b>Agência</td>');
+        ShowHTML('          <td rowspan="2"><b>Conta</td>');
+      }
+      if ($P2>1) ShowHTML('          <td rowspan="2"><b>Conta Débito</td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      $colspan++; ShowHTML('          <td><b>Tipo</td>');
+      $colspan++; ShowHTML('          <td><b>Número</td>');
+      $colspan++; ShowHTML('          <td><b>Emissão</td>');
+      ShowHTML('          <td><b>Valor</td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=13 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=15 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
       if($w_tipo!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -501,13 +514,17 @@ function Inicial() {
         } else {
           ShowHTML('        <td align="center">---</td>');
         }
+        ShowHTML('        <td>'.f($row,'sg_doc').'</td>');
         ShowHTML('        <td>'.f($row,'nr_doc').'</td>');
+        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'dt_doc'),5).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;</td>');
         $w_valor = nvl(((f($row,'sg_tramite')=='AT') ? f($row,'valor_atual') : f($row,'valor')),0);
+        if     (substr(f($row,'sigla'),2,1)=='R') $w_parcial += Nvl($w_valor,0);
+        elseif (substr(f($row,'sigla'),2,1)=='D') $w_parcial -= Nvl($w_valor,0);
         if ($w_visao_completa) {
           if ($w_valor==0)                          { ShowHTML('          <td>&nbsp;</td>'); }
-          elseif (substr(f($row,'sigla'),2,1)=='R') { ShowHTML('          <td align="center"><b>+</b></td>'); $w_parcial += Nvl($w_valor,0); }
-          elseif (substr(f($row,'sigla'),2,1)=='D') { ShowHTML('          <td align="center"><b>-</b></td>'); $w_parcial -= Nvl($w_valor,0); }
+          elseif (substr(f($row,'sigla'),2,1)=='R') { ShowHTML('          <td align="center"><b>+</b></td>'); }
+          elseif (substr(f($row,'sigla'),2,1)=='D') { ShowHTML('          <td align="center"><b>-</b></td>'); }
         }
         
         if ($w_visao_completa) {
@@ -608,7 +625,7 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td align="right" colspan="5"><b>Subtotal</td>');
+          ShowHTML('          <td align="right" colspan="'.$colspan.'"><b>Subtotal</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber(abs($w_parcial),2).'&nbsp;</td>');
           if ($w_visao_completa) {
             if ($w_parcial>0)     ShowHTML('          <td align="center"><b>+</b></td>');
@@ -626,7 +643,7 @@ function Inicial() {
             elseif (substr(f($row,'sigla'),2,1)=='D') $w_total -= Nvl($w_valor,0);
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td align="right" colspan="5"><b>Total</td>');
+          ShowHTML('          <td align="right" colspan="'.$colspan.'"><b>Total</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber(abs($w_total),2).'&nbsp;</td>');
           if ($w_visao_completa) {
             if ($w_total>0)     ShowHTML('          <td align="center"><b>+</b></td>');
@@ -984,7 +1001,7 @@ function Geral() {
     if ($w_tipo_pessoa==1) Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
-    Validate('w_data','Data do documento', 'DATA', '1', '10', '10', '', '0123456789/');
+    Validate('w_data','Data de emissão', 'DATA', '1', '10', '10', '', '0123456789/');
     //if (Nvl($w_tipo,'-')=='NF') Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
     //Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
     ShowHTML('  disAll();');
@@ -1120,7 +1137,7 @@ function Geral() {
     ShowHTML('      <tr valign="top">');
     SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
-    ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
+    ShowHTML('          <td><b><u>D</u>ata de emissão:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
     //if (Nvl($w_tipo,'-')=='NF') ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     //ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_doc" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_doc.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('<INPUT type="hidden" name="w_valor_doc" value="'.$w_valor_doc.'">');
@@ -1784,7 +1801,7 @@ function Documentos() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    if (strpos(f($RS_Menu,'sigla'),'VIA')===false) ShowHTML('      <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;'); 
+    if (count($RS)==0 && strpos(f($RS_Menu,'sigla'),'VIA')===false) ShowHTML('      <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;'); 
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
@@ -1792,7 +1809,7 @@ function Documentos() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Tipo</td>');
     ShowHTML('          <td><b>Número</td>');
-    ShowHTML('          <td><b>Data</td>');
+    ShowHTML('          <td><b>Emissão</td>');
     //ShowHTML('          <td><b>Série</td>');
     ShowHTML('          <td><b>Valor</td>');
     //ShowHTML('          <td><b>Patrimônio</td>');
@@ -2074,7 +2091,7 @@ function RubricaDoc() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Tipo</td>');
     ShowHTML('          <td><b>Número</td>');
-    ShowHTML('          <td><b>Data</td>');
+    ShowHTML('          <td><b>Emissão</td>');
     // ShowHTML('          <td><b>Série</td>');
     ShowHTML('          <td><b>Valor</td>');
     ShowHTML('          <td><b>Operações</td>');

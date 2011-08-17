@@ -3985,7 +3985,7 @@ function Grava() {
         $SQL = new dml_putCLGeral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],
           $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_plano'],
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],$_REQUEST['w_solic_pai'],
-          $_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],
+          $_REQUEST['w_justificativa'],null,$_REQUEST['w_observacao'],
           nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],
           $_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',null,null,
           $_REQUEST['w_arp'],'N',null,$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],

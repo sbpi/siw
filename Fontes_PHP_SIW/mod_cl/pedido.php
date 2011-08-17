@@ -383,7 +383,7 @@ function Inicial() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Objeto','objeto').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('$ Estimado','valor').'</td>');
@@ -411,7 +411,7 @@ function Inicial() {
         ShowHTML('        <td width="1%" nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
-        ShowHTML('        <td>'.f($row,'justificativa').'</td>');
+        ShowHTML('        <td>'.f($row,'objeto').'</td>');
         if ($_SESSION['INTERNO']=='S') {
            if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
           else                                 ShowHTML('        <td>---</td>');
@@ -628,6 +628,7 @@ function Geral() {
     $w_financeiro               = $_REQUEST['w_financeiro'];
     $w_rubrica                  = $_REQUEST['w_rubrica'];
     $w_lancamento               = $_REQUEST['w_lancamento'];
+    $w_objeto                   = $_REQUEST['w_objeto'];
   } else {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
@@ -681,6 +682,7 @@ function Geral() {
         $w_financeiro        = f($RS,'sq_financeiro');
         $w_rubrica           = f($RS,'sq_projeto_rubrica');
         $w_lancamento        = f($RS,'sq_tipo_lancamento');
+        $w_objeto            = f($RS,'objeto');
         if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
       } 
     } 
@@ -790,6 +792,7 @@ function Geral() {
       Validate('w_data_recebimento','Data de recebimento','DATA',1,10,10,'','0123456789/');
       Validate('w_especie_documento','Espécie documental','SELECT',1,1,18,'','0123456789');
     }
+    Validate('w_objeto','Objeto','','1',3,2000,'1','1');
     Validate('w_justificativa','Justificativa','','1',3,2000,'1','1');
     Validate('w_observacao','Observação','','',3,2000,'1','1');
     if (count($RS_Financ)>1) {
@@ -907,6 +910,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_prioridade" value="'.$w_prioridade.'">');
     //ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
     if ($w_pede_valor_pedido=='S') ShowHTML('            <td colspan="3"><b><u>V</u>alor estimado:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado para a solicitação."></td>');
+    ShowHTML('      <tr><td colspan=3><b>O<u>b</u>jeto:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_objeto" class="STI" ROWS=5 cols=75 title="É obrigatório informar o objeto.">'.$w_objeto.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan=3><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservações:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     if ($w_solic_pai>'') {
@@ -2344,7 +2348,7 @@ function Grava() {
         $SQL = new dml_putCLGeral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],
           $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_plano'],
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
-          $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
+          $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_objeto'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
           $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
           $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N','N',
           $_REQUEST['w_especie_documento'],$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
@@ -2588,7 +2592,7 @@ function Grava() {
           // Grava vinculação orçamentária-financeira
           $SQL = new dml_putCLGeral; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],$_REQUEST['w_menu'],null,
             null,null,null,$_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
-            $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
             $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,null);
             
           // Grava tipo de pagamento e nota de conclusão

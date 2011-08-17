@@ -80,6 +80,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td><td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
 
     }
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Objeto:</b></td><td>'.crlf2br(f($RS,'objeto')).' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Pagamento por fundo fixo?<b></td><td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';

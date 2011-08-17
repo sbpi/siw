@@ -309,10 +309,11 @@ begin
                                        inner join siw_tramite     y on (x.sq_siw_tramite     = y.sq_siw_tramite and
                                                                         y.sigla             <> 'CA'
                                                                        )
+                                       inner join siw_menu        z on (x.sq_menu            = z.sq_menu and z.sigla = 'FNDFUNDO')
                                where w.sq_solic_vinculo is not null
                              )              e  on (b.sq_siw_solicitacao = e.sq_solic_vinculo)
           where b.sq_menu             = p_menu
-            and (p_chave is null or e.sq_siw_solicitacao is null or (p_chave is not null and e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_chave));
+            and ((p_chave is null and e.sq_siw_solicitacao is null) or (p_chave is not null and (e.sq_siw_solicitacao is null or b.sq_siw_solicitacao = p_chave)));
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 

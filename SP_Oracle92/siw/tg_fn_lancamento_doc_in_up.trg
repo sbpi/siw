@@ -60,7 +60,7 @@ declare
      where a.sq_tipo_documento = :new.sq_tipo_documento;
 begin
   -- Remove os impostos existentes para o documento
-  delete fn_imposto_doc where sq_lancamento_doc = :new.sq_lancamento_doc;
+  delete fn_imposto_doc where solic_imposto is null and sq_lancamento_doc = :new.sq_lancamento_doc;
   
   -- Insere a nova relação de impostos calculados com base no valor total do documento
   for crec in c_imposto_total loop

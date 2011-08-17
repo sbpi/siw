@@ -926,6 +926,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,                b.sq_cidade_origem,
                 b.palavra_chave,      b.sq_plano,                    b.sq_unidade,
+                b.protocolo_siw,
                 b.valor+coalesce(dh.valor,0)-coalesce(dg.valor,0) as valor,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
@@ -954,6 +955,8 @@ begin
                 case b4.sg_menu when 'PJCAD' then b4.sq_siw_solicitacao else case b41.sg_menu when 'PJCAD' then b41.sq_siw_solicitacao else q.sq_siw_solicitacao end end as sq_projeto,
                 case b4.sg_menu when 'PJCAD' then b4.titulo             else case b41.sg_menu when 'PJCAD' then b41.titulo             else q.titulo             end end as nm_projeto,
                 case b4.sg_menu when 'PJCAD' then b4.codigo_interno     else case b41.sg_menu when 'PJCAD' then b41.codigo_interno     else q.codigo_interno     end end as cd_projeto,
+                case when b6.sq_siw_solicitacao is null then null else to_char(b6.numero_documento)||'/'||substr(to_char(b6.ano),3) end as protocolo,
+                case when b6.sq_siw_solicitacao is null then null else to_char(b6.prefixo)||'.'||substr(1000000+to_char(b6.numero_documento),2,6)||'/'||to_char(b6.ano)||'-'||substr(100+to_char(b6.digito),2,2) end as protocolo_completo,
                 q.rubrica, 	
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -964,11 +967,13 @@ begin
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
                 d.referencia_inicio,  d.referencia_fim,              d.sq_solic_vinculo,
+                d.processo,
                 d1.nome as nm_tipo_lancamento,                       coalesce(d.quitacao, d.vencimento) as pagamento,
                 case d.tipo when 1 then 'Dotação inicial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
-                coalesce(d3.valor,0) as valor_doc,
+                coalesce(d3.valor,0) as valor_doc,                   d3.numero as nr_doc,
+                d31.sigla as sg_doc,                                 d3.data as dt_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.nr_conta,
                 d4.devolucao_valor,   d4.sq_agencia,                 d4.cd_agencia,       d4.nm_agencia,
                 d4.sq_banco,          d4.cd_banco,                   d4.nm_banco,
@@ -1058,6 +1063,7 @@ begin
                                      from pj_projeto                 w
                                           inner join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
                                   )                         b5  on (d.sq_solic_vinculo        = b5.sq_siw_solicitacao)
+                   left      join pa_documento              b6  on (b.protocolo_siw           = b6.sq_siw_solicitacao)
                    left      join (select w.sq_siw_solicitacao, x.titulo, x.codigo_interno,
                                           case when y.sq_siw_solicitacao is null then 'N' else 'S' end as rubrica
                                      from pj_projeto                 w
@@ -1068,14 +1074,8 @@ begin
                                                       )              y on (w.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                   )                         q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                      left    join co_pessoa                 d2 on (d.pessoa                   = d2.sq_pessoa)
-                     left    join (select x.sq_siw_solicitacao, sum(x.valor) as valor
-                                          from fn_lancamento_doc x
-                                               inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                               inner join siw_menu        z on (y.sq_menu            = z.sq_menu)
-                                         where x.sq_acordo_nota is null
-                                           and z.sq_menu        = p_menu
-                                        group by x.sq_siw_solicitacao
-                                  )                         d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao)
+                     left    join fn_lancamento_doc         d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao) 
+                       left  join fn_tipo_documento        d31 on (d3.sq_tipo_documento       = d31.sq_tipo_documento)
                      left    join (select w.sq_pessoa,          w.sq_pessoa_conta,      w.operacao,
                                           w.numero as nr_conta, w.devolucao_valor,
                                           x.sq_agencia,         x.codigo as cd_agencia, x.nome as nm_agencia,

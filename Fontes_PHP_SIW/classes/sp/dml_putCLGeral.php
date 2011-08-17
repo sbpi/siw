@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putCLGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante,$p_cadastrador, $p_executor, 
-        $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_observacao,$p_inicio, $p_fim, $p_valor, 
+        $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_objeto, $p_observacao,$p_inicio, $p_fim, $p_valor, 
         $p_codigo,$p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_decisao_judicial, $p_numero_original, 
         $p_data_recebimento, $p_arp, $p_interno, $p_especie_documento,$p_financeiro, $p_rubrica, $p_lancamento, 
         $p_observacao_log, $p_chave_nova, $p_copia) {
@@ -28,6 +28,7 @@ class dml_putCLGeral {
                    'p_sqcc'                 =>array(tvl($p_sqcc),                 B_INTEGER,        32),
                    'p_solic_pai'            =>array(tvl($p_solic_pai),            B_INTEGER,        32),
                    'p_justificativa'        =>array(tvl($p_justificativa),        B_VARCHAR,      2000),
+                   'p_objeto'               =>array(tvl($p_objeto),               B_VARCHAR,      2000),
                    'p_observacao'           =>array(tvl($p_observacao),           B_VARCHAR,      2000),
                    'p_inicio'               =>array(tvl($p_inicio),               B_DATE,           32),
                    'p_fim'                  =>array(tvl($p_fim),                  B_DATE,           32),

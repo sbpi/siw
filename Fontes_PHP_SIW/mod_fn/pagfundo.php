@@ -364,7 +364,7 @@ function Inicial() {
       ShowHTML('<tr>');
       if ($w_tipo!='WORD') {
         ShowHTML('    <td>');
-        if (!(strpos($SG,'CONT')===false)) ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Buscaparcela&R='.$w_pagina.$par.'&O=P&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        if (strpos($SG,'CONT')!==false) ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Buscaparcela&R='.$w_pagina.$par.'&O=P&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         else                               ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       }
     } 
@@ -390,7 +390,7 @@ function Inicial() {
     if ($w_tipo!='WORD') {    
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
-      if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
+      if (strpos($SG,'CONT')!==false)  ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
       else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       if (strpos('CONT',substr($SG,3))!==false) {
         ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
@@ -405,8 +405,8 @@ function Inicial() {
     } else {
       ShowHTML('          <td><b>Código</td>');
       ShowHTML('          <td><b>Pessoa</td>');
-      if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>Contrato (Parcela)</td>');
-      else                                ShowHTML('          <td><b>Vinculação</td>');
+      if (strpos($SG,'CONT')!==false)  ShowHTML('          <td><b>Contrato (Parcela)</td>');
+      else                             ShowHTML('          <td><b>Vinculação</td>');
       if (strpos('CONT',substr($SG,3))!==false) {
         ShowHTML('          <td><b>Referência</td>');
       }
@@ -900,7 +900,14 @@ function Geral() {
         null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo, null, null, null, null, null, null,
         null, null, null, null, null, null, null,null, null, null, null);
     foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
-    $w_descricao = nvl($w_descricao,nvl($_REQUEST['w_descricao'],f($RS_Vinculo,'justificativa')));
+    $w_justificativa = f($RS_Vinculo,'justificativa');
+    $w_objeto        = f($RS_Vinculo,'descricao');
+    if (nvl($_REQUEST['w_descricao'],'')!='') {
+      if     ($_REQUEST['w_descricao']==$w_descricao)     $w_descricao = nvl($w_objeto,$w_justificativa);
+      elseif ($_REQUEST['w_descricao']==$w_justificativa) $w_descricao = nvl($w_objeto,$w_justificativa);
+    } else {
+      $w_descricao = nvl($w_objeto,$w_justificativa);
+    }
   }
 
   if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
@@ -946,9 +953,7 @@ function Geral() {
         Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
       }
     }
-    if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') {
-      Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
-    } elseif($w_segmento=='Público') {
+    if($w_segmento=='Público') {
       Validate('w_numero_processo','Número do processo','1','',1,30,'1','1');
     }
     Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
@@ -1041,24 +1046,47 @@ function Geral() {
       if ($w_sq_menu_relac=='CLASSIF') {
         SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
       } else {
-        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai);
+        if ($w_mod_pa=='S') {
+          $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'FNDFIXO');
+          $sql = new db_getSolicList; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),6,
+                null,null,null,null,null,null, null,null,null,null,$w_chave_pai, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null);
+
+          ShowHTML('          <td colspan="4"><b><u>V</u>inculação</b><br /><SELECT ACCESSKEY="V" CLASS="sts" NAME="w_chave_pai" '.$w_Disabled.' onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();">');
+          if (count($RS)==0) {
+            ShowHTML('          <option value="">Nenhum registro encontrado!');
+          } else {
+            ShowHTML('          <option value="">---');
+            foreach($RS as $row) {
+              ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'"'.((f($row,'sq_siw_solicitacao')==nvl($w_chave_pai,0) || count($RS)==1) ? ' SELECTED' : '').'>'.f($row,'protocolo'));
+            }
+          }
+          ShowHTML('          </select>');
+        } else {
+          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai);
+          if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
+
+          if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') ShowHTML('         <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Pai,'processo').'"></td>');
+        }
       }
     }
-    if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
-      
-    if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') ShowHTML('         <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Pai,'processo').'"></td>');
-    
+
     if ($w_mod_co=='S') { 
       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
       ShowHTML('      <tr>');
       SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null,'<BR />',3);
       if (nvl($w_solic_vinculo,'')!='') {
-        $sql = new db_getSolicCL; $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
+        $sql = new db_getSolicCL; 
+        $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
                             $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
         ShowHTML('      <tr valign="top">');
         ShowHTML('        <td><b>Valor da compra:</b><br>'.formatNumber(f($RS_Compra,'valor')).'</td>');
-        ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(f($RS_Compra,'justificativa')).'</td>');
+        if (nvl(f($RS_Compra,'descricao'),'')!='') {
+          ShowHTML('        <td><b>Objeto:</b><br>'.crlf2br(f($RS_Compra,'descricao')).'</td>');
+        } else {
+          ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(f($RS_Compra,'justificativa')).'</td>');
+        }
         ShowHTML('      </tr>');
       }
     }
@@ -2700,10 +2728,7 @@ function Grava() {
           'N','N','N',null,null,null,null,&$w_chave_doc);
 
         // Grava acréscimos e supressões
-        $SQL = new dml_putLancamentoValor; 
-
-        // Remove os registros existentes
-        $SQL->getInstanceOf($dbms,'E',$w_chave_doc,null,null);
+        $SQL = new dml_putLancamentoValor;  $SQL->getInstanceOf($dbms,'E',$w_chave_doc,null,null);
 
         // Insere os registros com valor maior que zero
         for ($i=0; $i<=count($_POST['w_valores'])-1; $i=$i+1) {

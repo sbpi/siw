@@ -71,7 +71,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'      <tr><td><b>Contrato: </b></td><td>'.f($RS,'cd_acordo').' ('.f($RS,'sq_solic_pai').') </td></tr>';
       }
-    } elseif (f($RS_Menu,'sigla')=='FNDFUNDO') {
+    } elseif (f($RS_Menu,'sigla')=='FNDFUNDO' && nvl(f($RS,'processo'),'')=='' && nvl(f($RS,'protocolo_siw'),'')=='') {
       // Recupera dados do fundo fixo
       $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'FNDFIXO');
 
@@ -178,16 +178,17 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <tr><td><b>Período de referência:</b></td>';
       $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'referencia_inicio')).' a '.FormataDataEdicao(f($RS,'referencia_fim')).'</td></tr>';
     }
-    $l_html.=chr(13).'          <tr><td><b>Data prevista:</b></td>';
-    $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
-    $l_html.=chr(13).'          <tr><td><b>Valor:</b></td>';
-    $l_html.=chr(13).'            <td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
-    if (f($RS_Menu,'sigla')!='FNDREEMB') {
-      if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td>';
-        $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
-      }
+    if (f($RS_Menu,'sigla')!='FNDREEMB' && Nvl(f($RS,'condicoes_pagamento'),'')!='') {
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td><td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
     }
+    $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
+    $l_html.=chr(13).'          <tr><td><b>Data de vencimento:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento')).'</td></tr>';
+    // Dados da conclusão do pagamento, se estiver nessa situação
+    if (Nvl(f($RS,'conclusao'),'')>'' && Nvl(f($RS,'quitacao'),'')>'') {
+      $l_html.=chr(13).'      <tr><td><b>Data de '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).' </td></tr>';
+      if (Nvl(f($RS,'codigo_deposito'),'')>'') $l_html.=chr(13).'    <tr><td><b>Código do depósito:</b></td><td>'.f($RS,'codigo_deposito').' </td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Nota de conclusão:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
+    } 
     
     // Documentos
     $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
@@ -199,7 +200,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <tr align="center" bgColor="#f0f0f0">';
       $l_html.=chr(13).'          <td><b>Tipo</b></td>';
       $l_html.=chr(13).'          <td><b>Número</b></td>';
-      $l_html.=chr(13).'          <td><b>Data</b></td>';
+      $l_html.=chr(13).'          <td><b>Emissão</b></td>';
       $l_html.=chr(13).'          <td><b>Valor</b></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$w_TrBgColor;
@@ -350,17 +351,6 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'         </table></td></tr>';
     }
     
-    // Dados da conclusão do pagamento, se estiver nessa situação
-    if (Nvl(f($RS,'conclusao'),'')>'' && Nvl(f($RS,'quitacao'),'')>'') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO PAGAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Data:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).' </td></tr>';
-      if (Nvl(f($RS,'codigo_deposito'),'')>''){
-        $l_html.=chr(13).'    <tr><td><b>Código do depósito:</b></td><td>'.f($RS,'codigo_deposito').' </td></tr>';
-      }
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td>';
-      $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
-    } 
-
     // Outra parte
     $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS_Query as $row) {$RS_Query = $row; break;}
@@ -547,7 +537,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <tr align="center">';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Número</b></td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Data</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Emissão</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</b></td>';
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
