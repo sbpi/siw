@@ -315,10 +315,21 @@ function Inicial() {
         ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
         ShowHTML('        <td align="center">' . ((nvl(f($row, 'fim'), '') != '') ? date(d . '/' . m . '/' . y, f($row, 'fim')) : '&nbsp;') . '</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">' . $w_nm_operacao . '</A>&nbsp');
-        if ($SG == 'PADALTREG')
-          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=E&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">Excluir</A>&nbsp');
-        ShowHTML('        </td>');
+        if ($SG == 'PADALTREG') {
+          if (nvl(f($row,'copias'),0)==0) {
+            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">' . $w_nm_operacao . '</A>&nbsp');
+          } else {
+            ShowHTML('          <A class="HL" HREF="" onClick="alert(\'Não é possível alterar cópia. Altere o protocolo original!\'); return false;" title="Não é possível alterar cópia. Altere o protocolo original.">' . $w_nm_operacao . '</a>&nbsp;');
+          }
+          if (nvl(f($row,'qtd_vinculado'),0)==0) {
+            ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=E&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">Excluir</A>&nbsp');
+          } else {
+            ShowHTML('          <A class="HL" HREF="" onClick="alert(\'Não é possível excluir protocolo com cópias. Exclua primeiro as cópias!\'); return false;" title="Exclua primeiro as cópias deste protocolo.">Excluir</a>&nbsp;');
+          }
+      } else {
+          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $w_rotina . '&R=' . $w_pagina . $par . '&O=A&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '">' . $w_nm_operacao . '</A>&nbsp');
+    }
+    ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
     }
@@ -587,8 +598,9 @@ function Alterar() {
     ShowHTML('<INPUT type="hidden" name="w_protocolo" value="' . $w_protocolo . '">');
     ShowHTML('<INPUT type="hidden" name="w_processo" value="' . $w_processo . '">');
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="' . $w_tipo . '">');
-    if ($w_interno == 'S' and $w_processo == 'S')
+    if ($w_interno == 'S' and $w_processo == 'S') {
       ShowHTML('<INPUT type="hidden" name="w_un_autuacao" value="' . f($RS_Menu, 'sq_unid_executora') . '">');
+    }
     ShowHTML('<INPUT type="hidden" name="w_circular" value="' . $w_circular . '">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
@@ -2254,7 +2266,7 @@ function Grava() {
       // Grava as alterações
       $SQL = new dml_putDocumentoGeral;
       $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $w_copia, $_REQUEST['w_menu'],
-              nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'], $_SESSION['LOTACAO']),
+              nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), null,
               nvl($_REQUEST['w_pessoa_origem'], $_SESSION['SQ_PESSOA']), $_SESSION['SQ_PESSOA'], $_REQUEST['w_solic_pai'],
               $_REQUEST['w_vinculo'], nvl($_REQUEST['w_tipo'], $_REQUEST['w_processo']), $_REQUEST['w_circular'],
               $_REQUEST['w_especie_documento'], $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'],

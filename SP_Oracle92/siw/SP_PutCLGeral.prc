@@ -12,6 +12,7 @@ create or replace procedure SP_PutCLGeral
     p_sqcc                in number    default null,
     p_solic_pai           in number    default null,
     p_justificativa       in varchar2  default null,
+    p_objeto              in varchar2  default null,
     p_observacao          in varchar2  default null,
     p_inicio              in date      default null,
     p_fim                 in date      default null,
@@ -96,14 +97,15 @@ begin
 
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
-         sq_siw_solicitacao, sq_menu,       sq_siw_tramite,      solicitante,
-         cadastrador,        executor,      justificativa,       inicio,
-         fim,                inclusao,      ultima_alteracao,    sq_unidade,
-         sq_cc,              sq_solic_pai,  sq_cidade_origem,    sq_plano,
-         codigo_interno,     observacao,    valor)
+         sq_siw_solicitacao, sq_menu,            sq_siw_tramite,      solicitante,
+         cadastrador,        executor,           justificativa,       descricao,
+         inicio,             fim,                inclusao,            ultima_alteracao,    
+         sq_unidade,         sq_cc,              sq_solic_pai,        sq_cidade_origem,    
+         sq_plano,           codigo_interno,     observacao,          valor)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
-         p_cadastrador,      p_executor,    p_justificativa,     case p_decisao_judicial when 'S' then p_inicio else w_data end,
+         p_cadastrador,      p_executor,    p_justificativa,     p_objeto,
+         case p_decisao_judicial when 'S' then p_inicio else w_data end,
          p_fim,              w_data,        w_data,              p_unidade,
          p_sqcc,             p_solic_pai,   p_cidade,            p_plano,
          p_codigo,           p_observacao,  coalesce(p_valor,0)
@@ -220,6 +222,7 @@ begin
           sq_unidade       = p_unidade,
           solicitante      = p_solicitante,
           justificativa    = p_justificativa,
+          descricao        = p_objeto,
           observacao       = p_observacao,
           executor         = p_executor,
           inicio           = p_inicio,

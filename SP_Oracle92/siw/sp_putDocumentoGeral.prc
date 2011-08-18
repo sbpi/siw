@@ -160,7 +160,7 @@ begin
           pessoa_origem         = p_pessoa_origem,
           volumes               = p_volumes,
           data_autuacao         = case p_processo when 'S' then data_autuacao else p_dt_autuacao end,
-          unidade_autuacao      = case p_processo when 'S' then unidade_autuacao else p_unid_autua end
+          unidade_autuacao      = case p_processo when 'S' then unidade_autuacao else coalesce(p_unid_autua, unidade_autuacao) end
        where sq_siw_solicitacao = p_chave
           or sq_siw_solicitacao in (select x.sq_siw_solicitacao from siw_solicitacao x inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.copias is not null) where protocolo_siw = p_chave);
 

@@ -111,11 +111,12 @@ begin
       -- Recupera guias de tramitação
       open p_result for
       select a.sigla as sg_menu,
-             b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao,
+             b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao, b.protocolo_siw,
              b2.nome, b2.sigla,
              b3.sigla as sg_tramite,
+             coalesce(bb.qtd,0) as qtd_vinculado,
              c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
-             c.sq_documento_pai, c.processo,
+             c.sq_documento_pai, c.processo, c.copias, 
              c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
@@ -141,6 +142,14 @@ begin
              inner         join siw_solicitacao      b  on (a.sq_menu               = b.sq_menu)
                inner       join eo_unidade           b2 on (b.sq_unidade            = b2.sq_unidade)
                inner       join siw_tramite          b3 on (b.sq_siw_tramite        = b3.sq_siw_tramite)
+               left        join (select x.protocolo_siw, count(*) as qtd
+                                     from siw_solicitacao         x
+                                          inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                          inner join siw_tramite  z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
+                                    where x.sq_menu       = p_menu
+                                      and x.protocolo_siw is not null
+                                   group by protocolo_siw
+                                )                    bb on (b.sq_siw_solicitacao    = bb.protocolo_siw)
                inner       join pa_documento         c  on (b.sq_siw_solicitacao    = c.sq_siw_solicitacao)
                  inner     join eo_unidade           c1 on (c.unidade_autuacao      = c1.sq_unidade)
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento  = c2.sq_especie_documento)
@@ -241,7 +250,6 @@ begin
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null) or
               (p_restricao = 'PADALTREG'  and b3.sigla <> 'CA' and
-                                              c.copias is null and
                                               (-- Se for gestor do sistema e um parâmetro de busca tiver sido informado
                                                (w_filtro = 'true' and (w1.sq_modulo is not null or w.gestor_sistema ='S')
                                               ) or

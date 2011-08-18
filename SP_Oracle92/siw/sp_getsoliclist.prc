@@ -1658,7 +1658,8 @@ begin
                                                                          )
                       inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite and
                                                                           (p_fase                    is null or (p_fase is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0)) and 
-                                                                          (p_tipo                    <> 1 or (p_tipo    = 1         and b1.sigla = 'CI'))	
+                                                                          (p_tipo                    <> 1 or (p_tipo    = 1         and b1.sigla = 'CI')) and	
+                                                                          (p_tipo                    <> 9 or (p_tipo    = 9         and b1.sigla <> 'CA')) -- Linha que adicionei (César) em 18/08/2011
                                                                          )
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao and 
@@ -1737,6 +1738,7 @@ begin
                       left           join (select x.protocolo_siw, count(*) as qtd
                                              from siw_solicitacao         x
                                                   inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  inner join siw_tramite  z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
                                             where x.sq_menu       = p_menu
                                               and x.protocolo_siw is not null
                                            group by protocolo_siw
