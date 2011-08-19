@@ -82,7 +82,7 @@ begin
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
-                b.cadastrador,        b.executor,                    b.descricao,
+                b.cadastrador,        b.executor,                    b.descricao as objeto,
                 b.justificativa,      b.inicio,                      coalesce(b.fim, trunc(sysdate)) as fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,                     b.palavra_chave,
@@ -90,7 +90,7 @@ begin
                 coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,           b.sq_cc,                       b.observacao,
-                b.protocolo_siw,      b.recebedor,                   b.descricao as objeto,
+                b.protocolo_siw,      b.recebedor,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
                 to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_conclusao,
                 case when b.sq_solic_pai is null
