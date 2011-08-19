@@ -2605,6 +2605,7 @@ function MascaraBeneficiario($cgccpf) {
 // Rotina de envio de e-mail
 // -------------------------------------------------------------------------
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
+  if (nvl($w_recipients,'')=='') return null;
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/mail/email_message.php');
   include_once($w_dir_volta.'classes/mail/smtp_message.php');
@@ -2614,12 +2615,6 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
   $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   
-  if( trim(f($RS_Cliente,'siw_email_conta')) == 'false' ){
-    $from = f($RS_Cliente,'siw_email_nome');
-    EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments);
-    return null;
-  }
-
   $subject                  = $w_subject;
   $from_name                = f($RS_Cliente,'siw_email_nome');
   $from_address             = f($RS_Cliente,'siw_email_conta');
@@ -2638,17 +2633,19 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   $email_message->smtp_ssl=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? 0 : 1); /* Use SSL to connect to the SMTP server. Gmail requires SSL */
   $email_message->smtp_direct_delivery=0; /* Deliver directly to the recipients destination SMTP server */
   $email_message->smtp_user=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_conta')); /* authentication user name */
+  $email_message->smtp_password=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_senha')); /* authentication password */
   $email_message->smtp_realm='';  /* authentication realm or Windows domain when using NTLM authentication */
   $email_message->smtp_workstation=''; /* authentication workstation name when using NTLM authentication */
-  $email_message->smtp_password=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_senha')); /* authentication password */
   $email_message->smtp_debug=0; /* Output dialog with SMTP server */
   $email_message->smtp_html_debug=0; /* set this to 1 to make the debug output appear in HTML */
 
   /* if you need POP3 authetntication before SMTP delivery,
   * specify the host name here. The smtp_user and smtp_password above
   * should set to the POP3 user and password*/
-  $email_message->smtp_pop3_auth_host=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? '' : $email_message->smtp_host);
-  $email_message->pop3_auth_port=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? 110: 995);
+  if (strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) {
+    $email_message->smtp_pop3_auth_host='';
+    $email_message->pop3_auth_port=110;
+  }
 
   /* In directly deliver mode, the DNS may return the IP of a sub-domain of
    * the default domain for domains that do not exist. If that is your
@@ -2757,128 +2754,6 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
     }
   }
 }
-
-function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments=null){
-  extract($GLOBALS);
-  include_once($w_dir_volta.'classes/mailAlternative/class.phpmailer.php');
-
-  $mail             = new PHPMailer();
-  $body             = $w_mensagem;
-
-  $mail->IsSMTP();
-  $mail->SMTPAuth   = true;                  // enable SMTP authentication
-  $mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
-  $mail->Host       = "smtp.gmail.com";      // sets GMAIL as the SMTP server
-  $mail->Port       = 465;                   // set the SMTP port for the GMAIL server
-
-  $mail->Username   = "suporte@siw.com.br";      // GMAIL username
-  $mail->Password   = base64_decode("NDQ0QjE2"); // GMAIL password
-
-  $mail->From       = "suporte@siw.com.br";
-  $mail->FromName   = $from;
-  $mail->Subject    = $w_subject;
-
-
-  //$mail->Body       = "Hi,<br />This is the HTML BODY<br />";                      //HTML Body
-  //$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!"; // optional, comment out and test
-  //$mail->WordWrap   = 50; // set word wrap
-  $mail->MsgHTML($body);
-
-  //Varios destinatarios separados por ';'
-  if (strpos($w_recipients,';')===false) $w_recipients .= ';';
-  $l_recipients = explode(';',$w_recipients);
-  $l_cont = 0;
-  foreach($l_recipients as $k => $v) {
-    if (nvl($v,'')!='' && strpos($v,'@')!==false) {
-    if (strpos($v,'|')!==false) {
-      $rec = explode('|',$v);
-      $rec_address = trim($rec[0]);
-      $rec_name    = trim($rec[1]);
-    } else {
-      $rec_address = trim($v);
-      $rec_name    = trim($v);
-    }
-    // Evita a repetição de nomes
-    if (count($l_dest[$rec_address])==0) {
-      $l_dest[$rec_address] = $rec_name;
-      $l_cont++;
-    }
-  }
-  }
-
-  $i = 0;
-  if (is_array($l_dest)) {
-    foreach($l_dest as $k => $v) {
-      if (nvl($k,'')!='' && nvl($v,'')!='') {
-        if ($i==0) {
-          // O primeiro destinatário será colocado como "To"
-          $mail->AddAddress($k, $v);
-          //unset($l_dest[$k]);
-        } elseif ($i==1 && $l_cont==2) {
-          // Se só tiver mais um destinatário, coloca header único
-          $mail->AddCC($k, $v);
-          //unset($l_dest[$k]);
-        }
-      }
-      //$i++;
-    }
-  }
-
-  //Array de Anexos
-  if(!is_null($w_attachments)){
-    if(is_array($w_attachments)){
-      foreach($w_attachments as $row){
-        if (nvl($row,'')!='') $mail->AddAttachment($row);                           // attachment quando array
-      }
-    }else{
-      if (nvl($w_attachments,'')!='') $mail->AddAttachment($w_attachments);                    // attachment quando string
-    }
-  }
-  //Varios anexos separados por ';'
-  if (strpos($w_attachments,';')===false) $w_attachments .= ';';
-  $l_attachments = explode(';',$w_attachments);
-  $l_cont = 0;
-  foreach($l_attachments as $k => $v) {
-    if (nvl($v,'')!='') {
-    if (strpos($v,'|')!==false) {
-      $file = explode('|',$v);
-      $file_address = trim($file[0]);
-      $file_name    = trim($file[1]);
-    } else {
-      $file_address = trim($v);
-      $file_name    = trim($v);
-    }
-    $l_anexo[$file_address] = $file_name;
-    $l_cont++;
-  }
-  }
-
-  if (is_array($l_anexo)) {
-    foreach($l_anexo as $k => $v) {
-      if (nvl($k,'')!='' && nvl($v,'')!='') {
-        $mail->AddAttachment($v, $k);
-      }
-    }
-  }
-  
-  $mail->IsHTML(true); // send as HTML
-  //send your e-mail
-  if ($conEnviaMail) {
-    if (!$mail->Send()) {
-      // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
-      if (upper(PHP_OS)!='SUNOS') {
-        enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.$mail->smtp_host.'] Porta ['.$mail->smtp_port.'] Conta ['.$mail->smtp_user.'/'.$mail->smtp_password.']');
-        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.$mail->Host.']\nPorta ['.$mail->Port.']\nConta ['.$mail->Username.'/'.$mail->Password.']\n'.$mail->ErrorInfo;
-      } else {
-        return null;
-      }
-    } else {
-       return null;
-    }
-  }
-die();
-}
-
 
 // =========================================================================
 // Rotina de registro de mensagem em servidor syslog

@@ -185,12 +185,28 @@ begin
           ) lista where 0 < lista.acesso;
    Elsif p_restricao = 'HORAS' Then
       open p_result for
-         select a.sq_pessoa_pai as cliente, a.sq_pessoa as sq_usuario,
+         select a.sq_pessoa_pai as cliente, a.sq_pessoa as sq_usuario, a.sq_pessoa as usuario, a.nome as nm_usuario, c.logradouro as email,
                 retornaBancoHoras(b.sq_contrato_colaborador, 1, null, null, 'TOTAL') as horas
-           from co_pessoa                          a
-                inner join gp_contrato_colaborador b on (a.sq_pessoa = b.sq_pessoa and
-                                                         b.fim       is null
-                                                        )
+           from co_pessoa                            a
+                inner join sg_autenticacao           e on (a.sq_pessoa          = e.sq_pessoa and
+                                                           e.ativo              = 'S' and
+                                                           e.sq_pessoa         <> (p_cliente+1)
+                                                          )
+                inner   join co_tipo_vinculo         f on (a.sq_tipo_vinculo    = f.sq_tipo_vinculo and
+                                                           (p_mail              = 'N' or
+                                                            (p_mail             = 'S' and f.envia_mail_alerta = p_mail)
+                                                           )
+                                                          )
+                inner   join co_pessoa_endereco      c on (a.sq_pessoa          = c.sq_pessoa and
+                                                           c.padrao             = 'S'
+                                                          )
+                  inner join co_tipo_endereco        d on (c.sq_tipo_endereco   = d.sq_tipo_endereco and
+                                                           d.email              = 'S' and
+                                                           d.ativo              = 'S'
+                                                          )
+                inner   join gp_contrato_colaborador b on (a.sq_pessoa          = b.sq_pessoa and
+                                                           b.fim                is null
+                                                          )
           where a.sq_pessoa_pai = p_cliente
             and (p_usuario   is null or (p_usuario is not null and a.sq_pessoa = p_usuario))
             and 0 < (select count(*)
