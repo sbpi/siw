@@ -32,13 +32,13 @@ create or replace procedure SP_GetSolicCL
     p_empenho      in varchar2 default null,
     p_processo     in varchar2 default null,
     p_result       out sys_refcursor) is
-    
+
     l_item       varchar2(18);
     l_fase       varchar2(200) := p_fase ||',';
     x_fase       varchar2(200) := '';
-    
+
     l_resp_unid  varchar2(10000) :='';
-    
+
     -- cursor que recupera as unidades nas quais o usuário informado é titular ou substituto
     cursor c_unidades_resp is
       select distinct sq_unidade
@@ -48,7 +48,7 @@ create or replace procedure SP_GetSolicCL
                                  where b.sq_pessoa = p_pessoa
                                    and b.fim       is null)
       connect by prior sq_unidade = sq_unidade_pai;
-      
+
 begin
    If p_fase is not null Then
       Loop
@@ -61,21 +61,21 @@ begin
       End Loop;
       x_fase := substr(x_fase,2,200);
    End If;
-   
+
    -- Monta uma string com todas as unidades subordinadas à que o usuário é responsável
    for crec in c_unidades_resp loop
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
-   
- if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' or 
+
+ if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' or
     substr(p_restricao,1,2) = 'GC'   or substr(p_restricao,1,4) = 'GRCL' Then
       -- Recupera as demandas que o usuário pode ver
-      open p_result for 
+      open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -90,18 +90,18 @@ begin
                 coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,           b.sq_cc,                       b.observacao,
-                b.protocolo_siw,      b.recebedor,
+                b.protocolo_siw,      b.recebedor,                   b.descricao as objeto,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
                 to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_conclusao,
-                case when b.sq_solic_pai is null 
+                case when b.sq_solic_pai is null
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
-                                         else 'Classif: '||n.nome 
+                                         else 'Classif: '||n.nome
                                     end
                                else 'Plano: '||b3.titulo
                           end
-                     else dados_solic(b.sq_solic_pai) 
+                     else dados_solic(b.sq_solic_pai)
                 end as dados_pai,
                 b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
@@ -125,7 +125,7 @@ begin
                 d.fundo_fixo,         d.sq_modalidade_artigo,        coalesce(d.data_homologacao, b.conclusao) as data_autorizacao,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
-                case when b.protocolo_siw is null 
+                case when b.protocolo_siw is null
                      then d.processo
                      else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),2)
                 end as processo,
@@ -158,7 +158,7 @@ begin
                 o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind,
                 p.nome_resumido as nm_exec,  p.nome_resumido_ind as nm_exec_ind,
                 q.nome_resumido as nm_recebedor,  p.nome_resumido_ind as nm_recebedor_ind
-           from siw_menu                                        a 
+           from siw_menu                                        a
                 inner             join siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)
                 inner             join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
                 inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)
@@ -234,13 +234,13 @@ begin
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and b1.sigla <> 'AT' and cast(b.fim as date)+1<cast(sysdate as date)))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade           = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
-            and ((instr(p_restricao,'SITUACAO') = 0 and 
-                  instr(p_restricao,'PROJ') = 0 and 
-                  instr(p_restricao,'MODAL') = 0  and 
-                  instr(p_restricao,'ENQ') = 0  and 
-                  instr(p_restricao,'ABERTURA') = 0 and 
+            and ((instr(p_restricao,'SITUACAO') = 0 and
+                  instr(p_restricao,'PROJ') = 0 and
+                  instr(p_restricao,'MODAL') = 0  and
+                  instr(p_restricao,'ENQ') = 0  and
+                  instr(p_restricao,'ABERTURA') = 0 and
                   instr(p_restricao,'AUTORIZ') = 0
-                 ) or 
+                 ) or
                  ((instr(p_restricao,'SITUACAO') > 0 and d6.sq_lcsituacao      is not null) or
                   (instr(p_restricao,'PROJ')     > 0 and b4.sq_siw_solicitacao is not null) or
                   (instr(p_restricao,'MODAL')    > 0 and d4.sq_lcmodalidade    is not null) or
@@ -260,8 +260,8 @@ begin
                 );
    Elsif p_restricao = 'CONTRATO' Then
       -- Recupera as solicitações que o usuário pode ver
-      open p_result for 
-         select distinct a.sq_siw_solicitacao, a.codigo_interno, a.titulo, 
+      open p_result for
+         select distinct a.sq_siw_solicitacao, a.codigo_interno, a.titulo,
                 b.numero_certame, b.processo,
                 coalesce(b.numero_certame,a.codigo_interno) as cd_certame,
                 c.ordem,
@@ -293,8 +293,8 @@ begin
          order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
-      open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo, 
+      open p_result for
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao
            from siw_solicitacao             b
                 inner   join siw_tramite    b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and
@@ -309,16 +309,15 @@ begin
                                        inner join siw_tramite     y on (x.sq_siw_tramite     = y.sq_siw_tramite and
                                                                         y.sigla             <> 'CA'
                                                                        )
-                                       inner join siw_menu        z on (x.sq_menu            = z.sq_menu and z.sigla = 'FNDFUNDO')
                                where w.sq_solic_vinculo is not null
                              )              e  on (b.sq_siw_solicitacao = e.sq_solic_vinculo)
           where b.sq_menu             = p_menu
-            and ((p_chave is null and e.sq_siw_solicitacao is null) or (p_chave is not null and (e.sq_siw_solicitacao is null or b.sq_siw_solicitacao = p_chave)));
+            and (p_chave is null or e.sq_siw_solicitacao is null or (p_chave is not null and e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_chave));
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
-      open p_result for 
+      open p_result for
          select b.sq_siw_solicitacao, b.codigo_interno,
-                case when d.sq_siw_solicitacao is not null 
+                case when d.sq_siw_solicitacao is not null
                      then b.titulo
                      else case when e.sq_siw_solicitacao is not null
                                then e.titulo
@@ -340,7 +339,7 @@ begin
                 inner   join siw_menu        b2 on (b.sq_menu            = b2.sq_menu)
                   inner join siw_modulo      b3 on (b2.sq_modulo         = b3.sq_modulo)
                 left    join cl_solicitacao  d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                left    join (select x.sq_siw_solicitacao, y.codigo_interno, 
+                left    join (select x.sq_siw_solicitacao, y.codigo_interno,
                                      case when y.titulo is not null
                                           then y.titulo
                                           else w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k1.titulo end||' ('||to_char(y.inicio,'dd/mm/yyyy')||'-'||to_char(y.fim,'dd/mm/yyyy')||')' end as titulo
