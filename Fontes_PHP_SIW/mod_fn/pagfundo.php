@@ -763,6 +763,7 @@ function Geral() {
     $w_valor_doc            = $_REQUEST['w_valor_doc'];
     $w_patrimonio           = $_REQUEST['w_patrimonio'];
     $w_tipo                 = $_REQUEST['w_tipo'];
+    
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
@@ -901,7 +902,7 @@ function Geral() {
         null, null, null, null, null, null, null,null, null, null, null);
     foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
     $w_justificativa = f($RS_Vinculo,'justificativa');
-    $w_objeto        = f($RS_Vinculo,'descricao');
+    $w_objeto        = f($RS_Vinculo,'objeto');
     if (nvl($_REQUEST['w_descricao'],'')!='') {
       if     ($_REQUEST['w_descricao']==$w_descricao)     $w_descricao = nvl($w_objeto,$w_justificativa);
       elseif ($_REQUEST['w_descricao']==$w_justificativa) $w_descricao = nvl($w_objeto,$w_justificativa);
@@ -1083,9 +1084,11 @@ function Geral() {
         ShowHTML('      <tr valign="top">');
         ShowHTML('        <td><b>Valor da compra:</b><br>'.formatNumber(f($RS_Compra,'valor')).'</td>');
         if (nvl(f($RS_Compra,'descricao'),'')!='') {
-          ShowHTML('        <td><b>Objeto:</b><br>'.crlf2br(f($RS_Compra,'descricao')).'</td>');
+          ShowHTML('      <tr valign="top">');
+          ShowHTML('        <td><b>Objeto:</b><br>'.crlf2br(wordwrap(f($RS_Compra,'objeto'),100)).'</td>');
         } else {
-          ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(f($RS_Compra,'justificativa')).'</td>');
+          ShowHTML('      <tr valign="top">');
+          ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(wordwrap(f($RS_Compra,'justificativa'),100)).'</td>');
         }
         ShowHTML('      </tr>');
       }
