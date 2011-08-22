@@ -789,7 +789,7 @@ function Itens() {
     $sql = new db_getCLSolicItem; $RS = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PEDMAT');
     $RS = SortArray($RS,'nm_tipo_material','asc','nome','asc'); 
   } elseif (strpos('AEV',$O)!==false) {
-    $sql = new db_getCLSolicItem; $RS = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PEDMAT');
+    $sql = new db_getCLSolicItem; $RS = $sql->getInstanceOf($dbms,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null,null,'PEDMAT');
     $RS = SortArray($RS,'nm_tipo_material','asc','nome','asc'); 
   } 
 
@@ -807,7 +807,7 @@ function Itens() {
   Estrutura_CSS($w_cliente);
   if (strpos('PLIA',$O)!==false) {
     ScriptOpen('JavaScript');
-    if ($O=='I'||$O=='A') {
+    if ($O=='I') {
       ShowHTML('  function valor(p_indice) {');
       ShowHTML('    if (document.Form["w_sq_material[]"][p_indice].checked) { ');
       ShowHTML('       document.Form["w_quantidade[]"][p_indice].disabled=false; ');
@@ -856,7 +856,7 @@ function Itens() {
       ShowHTML(' theForm.p_nome.focus();');
       ShowHTML(' return false;');
       ShowHTML('}');
-    } elseif($O=='I'||$O=='A') {
+    } elseif($O=='I') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  if (theForm["w_sq_material[]"].value==undefined) {');
@@ -873,8 +873,8 @@ function Itens() {
       ShowHTML('  }');
       ShowHTML('  for (ind=1; ind < theForm["w_sq_material[]"].length; ind++) {');
       ShowHTML('    if(theForm["w_sq_material[]"][ind].checked){');
-      Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','',1,18,'','0123456789.');
-      CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','>','0','zero');
+      Validate('["w_quantidade[]"][ind]','Quantidade solicitada','VALOR','',1,18,'','0123456789.');
+      CompValor('["w_quantidade[]"][ind]','Quantidade solicitada','>','0','zero');
       ShowHTML('      var w_valor = theForm["w_quantidade[]"][ind].value.replace(/$|\./g,""); ');
       ShowHTML('      w_valor = w_valor.replace(",","."); ');
       ShowHTML('      w_div = parseInt(parseFloat(w_valor)/parseInt(theForm["w_fator[]"][ind].value)); ');
@@ -886,6 +886,18 @@ function Itens() {
       ShowHTML('        break;');
       ShowHTML('      }');
       ShowHTML('    }');
+      ShowHTML('  }');
+    } elseif($O=='A') {
+      Validate('w_quantidade','Quantidade solicitada','VALOR','1',1,18,'','0123456789.');
+      CompValor('w_quantidade','Quantidade solicitada','>','0','zero');
+      ShowHTML('  var w_valor = theForm.w_quantidade.value.replace(/$|\./g,""); ');
+      ShowHTML('  w_valor = w_valor.replace(",","."); ');
+      ShowHTML('  w_div = parseInt(parseFloat(w_valor)/parseInt(theForm.w_fator.value)); ');
+      ShowHTML('  w_mult = w_div * parseInt(theForm.w_fator.value); ');
+      ShowHTML('  if(parseFloat(w_valor)!=w_mult){');
+      ShowHTML('     alert("A quantidade solicitada deve ser múltipla do fator de embalagem!"); ');
+      ShowHTML('     theForm.w_quantidade.focus();');
+      ShowHTML('     return false;');
       ShowHTML('  }');
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -902,7 +914,9 @@ function Itens() {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='P'){
     BodyOpen('onLoad="document.Form.p_nome.focus();"');
-  } elseif (strpos('LIA',$O)!==false) {
+  } elseif ($O=='A') {
+    BodyOpen('onLoad="document.Form.w_quantidade.focus();"');
+  } elseif (strpos('LI',$O)!==false) {
     BodyOpen('onLoad="this.focus();"');
   } else {
     BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
@@ -957,6 +971,7 @@ function Itens() {
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('        <td align="center">'.formatNumber(f($row,'fator_embalagem'),0).'</td>');
         ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('        </tr>');
@@ -964,16 +979,15 @@ function Itens() {
     } 
     ShowHTML('    </table>');
     ShowHTML('  </td>');
-  } elseif (strpos('IAEV',$O)!==false) {
+  } elseif ($O=='I') {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_material[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_fator[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_quantidade[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-    //ShowHTML('      <tr><td colspan="2" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: se o item desejado não existir, entre em contato com '.ExibeUnidade('../',$w_cliente,f($RS_Menu,'sg_unidade'),f($RS_Menu,'sq_unid_executora'),$TP).'.</font></td>');
     ShowHTML('<tr><td>');
-    if ($O=='I') ShowHTML('    <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<u><font color="#BC5100">F</u>iltrar (Ativo)</font>' : '<u>F</u>iltrar (Inativo)</a>').'</a>');
+    ShowHTML('    <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<u><font color="#BC5100">F</u>iltrar (Ativo)</font>' : '<u>F</u>iltrar (Inativo)</a>').'</a>');
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -996,7 +1010,6 @@ function Itens() {
         $w_cont+= 1;
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        if ($O=='A') ShowHTML('        <INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'chave').'">');
         ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_material[]" value="'.f($row,'sq_material').'" onClick="valor('.$w_cont.')">');
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
@@ -1011,6 +1024,37 @@ function Itens() {
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('  </td>');    
+    ShowHTML('</FORM>');
+  } elseif ($O=='A') {
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_sq_material" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $w_cont=0;
+      foreach($RS as $row){ 
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+        ShowHTML('        <td><b>Nome:</b><br>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
+        ShowHTML('        <td title="'.f($row,'nm_unidade_medida').'"><b>U.M.:</b><br>'.f($row,'sg_unidade_medida').'</td>');
+        ShowHTML('        <td><b>Fator de embalagem:</b><br>'.f($row,'fator_embalagem').'</td>');
+        ShowHTML('        <INPUT type="hidden" name="w_fator" value="'.f($row,'fator_embalagem').'">');
+        ShowHTML('        <td><b>Quantidade:</b><br><input type="text" name="w_quantidade" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'quantidade_pedida').'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a quantidade desejada."></td>');
+      }
+    } 
+    ShowHTML('  </td>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="4" height="1" bgcolor="#000000"></TD></TR>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="4">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('  </td>');    
+    ShowHTML('    </table>');
     ShowHTML('</FORM>');
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center"><table border=0 width="97%" cellspacing=0>');
@@ -1788,8 +1832,8 @@ function Grava() {
   $w_tipo       = '';
   $w_nome       = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'MTCONSUMO':
@@ -1815,7 +1859,11 @@ function Grava() {
         $SQL = new dml_putMtSaidaItem; 
         if ($O=='E') {
           // Remove o item indicado
-          $SQL->getInstanceOf($dbms,'E',null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,null,null,null,null);
+          $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,null,null,null,null);
+        } elseif ($O=='A') {
+          // Ajusta a quantidade do item
+          $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'],
+              $_REQUEST['w_fator'],Nvl($_REQUEST['w_quantidade'],0),null,null);
         } else {
           //Grava os novos itens
           for ($i=0; $i<=count($_POST['w_sq_material'])-1; $i=$i+1) {

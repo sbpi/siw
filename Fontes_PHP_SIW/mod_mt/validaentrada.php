@@ -80,10 +80,12 @@ function ValidaEntrada($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
           $l_tipo  = 0;
         }
       } else {
+        /*
         if (nvl(f($row,'validade'),'')=='') {
           $l_erro .= '<li>Item '.f($row,'ordem').' deve ter data de validade informada.';
           $l_tipo  = 0;
         }
+        */
         if (f($row,'classe')==1) {
           // Validações para medicamentos
           if (nvl(f($row,'lote_numero'),'')=='') {

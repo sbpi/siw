@@ -982,6 +982,8 @@ function Ajuste() {
     ShowHTML('      document.Form["w_ponto[]"][i].className="STIO";');
     ShowHTML('      document.Form["w_disponivel[]"][i].disabled=false;');
     ShowHTML('      document.Form["w_disponivel[]"][i].className="STIO";');
+    ShowHTML('      document.Form["w_chefe_autoriza[]"][i].disabled=false;');
+    ShowHTML('      document.Form["w_chefe_autoriza[]"][i].className="STIO";');
     ShowHTML('    }');
     ShowHTML('  }');
     ShowHTML('  function DesmarcaTodos() {');
@@ -997,6 +999,8 @@ function Ajuste() {
     ShowHTML('      document.Form["w_ponto[]"][i].className="STI";');
     ShowHTML('      document.Form["w_disponivel[]"][i].disabled=true;');
     ShowHTML('      document.Form["w_disponivel[]"][i].className="STI";');
+    ShowHTML('      document.Form["w_chefe_autoriza[]"][i].disabled=true;');
+    ShowHTML('      document.Form["w_chefe_autoriza[]"][i].className="STI";');
     ShowHTML('    } ');
     ShowHTML('  }');
     ShowHTML('  function marca(i) {');
@@ -1011,6 +1015,8 @@ function Ajuste() {
     ShowHTML('       document.Form["w_ponto[]"][i].className="STIO";');
     ShowHTML('       document.Form["w_disponivel[]"][i].disabled=false;');
     ShowHTML('       document.Form["w_disponivel[]"][i].className="STIO";');
+    ShowHTML('       document.Form["w_chefe_autoriza[]"][i].disabled=false;');
+    ShowHTML('       document.Form["w_chefe_autoriza[]"][i].className="STIO";');
     ShowHTML('    } else {');
     ShowHTML('       document.Form["w_minimo[]"][i].disabled=true;');
     ShowHTML('       document.Form["w_minimo[]"][i].className="STI";');
@@ -1022,6 +1028,8 @@ function Ajuste() {
     ShowHTML('       document.Form["w_ponto[]"][i].className="STI";');
     ShowHTML('       document.Form["w_disponivel[]"][i].disabled=true;');
     ShowHTML('       document.Form["w_disponivel[]"][i].className="STI";');
+    ShowHTML('       document.Form["w_chefe_autoriza[]"][i].disabled=true;');
+    ShowHTML('       document.Form["w_chefe_autoriza[]"][i].className="STI";');
     ShowHTML('    }');
     ShowHTML('  }');
   }
@@ -1097,6 +1105,7 @@ function Ajuste() {
           ShowHTML('          <td><b>Ciclo de compra</b></td>');
           ShowHTML('          <td><b>Ponto de Ressuprimento</b></td>');
           ShowHTML('          <td><b>Disponível</b></td>');
+          ShowHTML('          <td><b>Autorização Chefia</b></td>');
           ShowHTML('        </tr>');
           AbreForm('Form',$w_dir.$w_pagina.'grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$w_pagina.$par,'L');
           ShowHTML('<INPUT type="hidden" name="w_sq_estoque[]" value="">');
@@ -1105,6 +1114,7 @@ function Ajuste() {
           ShowHTML('<INPUT type="hidden" name="w_ciclo[]" value="">');
           ShowHTML('<INPUT type="hidden" name="w_ponto[]" value="">');
           ShowHTML('<INPUT type="hidden" name="w_disponivel[]" value="">');
+          ShowHTML('<INPUT type="hidden" name="w_chefe_autoriza[]" value="">');
           ShowHTML(montaFiltro('POST'));
         }
         $i++;
@@ -1120,6 +1130,7 @@ function Ajuste() {
         ShowHTML('          <td align="center"><input disabled type="text" name="w_ciclo[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.f($row,'ciclo_compra').'" style="text-align:right;" onKeyDown="FormataValor(this,4,0,event);" title="Informe o ciclo de compra do material."></td>');
         ShowHTML('          <td align="center"><input disabled type="text" name="w_ponto[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'ponto_ressuprimento').'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe o ponto de ressuprimento do material."></td>');
         ShowHTML('          <td align="center"><select disabled name="w_disponivel[]" class="sts"><option value="S" '.((f($row,'disponivel')=='S') ? 'SELECTED' : '').' />Sim<option value="N" '.((f($row,'disponivel')=='N') ? 'SELECTED' : '').' />Não</selected></td>');
+        ShowHTML('          <td align="center"><select disabled name="w_chefe_autoriza[]" class="sts"><option value="S" '.((f($row,'chefe_autoriza')=='S') ? 'SELECTED' : '').' />Sim<option value="N" '.((f($row,'chefe_autoriza')=='N') ? 'SELECTED' : '').' />Não</selected></td>');
         ShowHTML('        </tr>');
       }
       ShowHTML('</table>');
@@ -1127,6 +1138,12 @@ function Ajuste() {
       ShowHTML('<tr><td colspan="3"><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
       ShowHTML('<tr><td align="center" colspan="3">');
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+      ShowHTML('<tr><td colspan="3"><dl>');
+      ShowHTML('<dt>U.M.<dd>Unidade de medida');
+      ShowHTML('<dt>Qtd.<dd>Quantidade disponível em estoque');
+      ShowHTML('<dt>C.M.M.<dd>Consumo médio mensal');
+      ShowHTML('<dt>Autorização chefia<dd>A solicitação que contiver o item deve ser autorizada pela chefia imediata da unidade solicitante antes de ser encaminhada ao almoxarifado');
+      ShowHTML('</dl></td></tr>');
       ShowHTML('</form>');
     }
   } elseif ($O=='P') {
@@ -1273,7 +1290,8 @@ function Grava() {
       for ($i=0; $i<=count($_POST['w_sq_estoque'])-1; $i=$i+1) {
         if ($_REQUEST['w_sq_estoque'][$i]>'') {
           $SQL->getInstanceOf($dbms,'A',$w_cliente,$w_usuario,$_REQUEST['w_sq_estoque'][$i],$_REQUEST['w_minimo'][$i],
-                $_REQUEST['w_consumo'][$i],$_REQUEST['w_ciclo'][$i],$_REQUEST['w_ponto'][$i],$_REQUEST['w_disponivel'][$i]);
+                $_REQUEST['w_consumo'][$i],$_REQUEST['w_ciclo'][$i],$_REQUEST['w_ponto'][$i],$_REQUEST['w_disponivel'][$i],
+                $_REQUEST['w_chefe_autoriza'][$i]);
         }
       } 
 

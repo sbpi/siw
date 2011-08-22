@@ -7,7 +7,8 @@ create or replace procedure sp_putMtAjuste
     p_consumo               in number   default null,    
     p_ciclo                 in number   default null,
     p_ponto                 in number   default null,
-    p_disponivel            in varchar2 default null
+    p_disponivel            in varchar2 default null,
+    p_chefe_autoriza        in varchar2 default null
    ) is
 begin
    If p_operacao = 'A' Then -- Alteração
@@ -16,7 +17,8 @@ begin
             consumo_medio_mensal = p_consumo,
             ciclo_compra         = p_ciclo,
             ponto_ressuprimento  = p_ponto,
-            disponivel           = p_disponivel
+            disponivel           = p_disponivel,
+            chefe_autoriza       = p_chefe_autoriza
      where sq_estoque = p_chave;
    End If;
 end sp_putMtAjuste;

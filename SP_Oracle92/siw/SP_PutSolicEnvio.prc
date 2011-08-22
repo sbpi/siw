@@ -109,15 +109,35 @@ begin
                  where a.sq_menu = p_menu
                    and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
             End If;
+         Elsif w_sg_tramite = 'CH' and w_menu.sigla = 'MTCONSUMO' Then
+            -- Se o trâmite for de chefia imediata e os itens do pedido não exigirem autorização pelo chefe imediato, pula para o próximo.
+            select count(*) into w_cont
+              from siw_solicitacao              k
+                   inner     join mt_saida      l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao)
+                     inner   join mt_saida_item m on (l.sq_mtsaida         = m.sq_mtsaida)
+                       inner join mt_estoque    n on (m.sq_material        = n.sq_material)
+             where n.chefe_autoriza     = 'S'
+               and k.sq_siw_solicitacao = p_chave;
+            
+            If w_cont = 0 Then
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
+            End If;
          End If;
       Else
+         -- Recupera dados do novo trâmite
          select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
             from siw_tramite a
            where a.sq_siw_tramite = p_novo_tramite;
            
          If w_menu.sigla = 'MTCONSUMO' Then
             -- Atualiza o valor da solicitação
-            update siw_solicitacao a set valor = 0 where a.sq_siw_solicitacao = p_chave;
+            update siw_solicitacao a 
+               set a.valor     = 0,
+                   a.conclusao = null
+             where a.sq_siw_solicitacao = p_chave;
             
             -- Atualiza o saldo de estoque
             update mt_estoque_item a

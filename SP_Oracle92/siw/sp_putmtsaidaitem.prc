@@ -23,6 +23,11 @@ begin
       values
         (sq_saida_item.nextval, w_saida,             p_material,     null,          p_fator,
          p_solicitada,          0,                   0,              null);
+   Elsif p_operacao = 'A' Then
+      -- Altera a quantidade do item
+      update mt_saida_item 
+         set quantidade_pedida = p_solicitada
+      where sq_saida_item = p_item;
    Elsif p_operacao = 'E' Then
       -- Remove todos os itens da solicitacao
       delete mt_saida_item 

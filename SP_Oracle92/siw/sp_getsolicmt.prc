@@ -201,7 +201,7 @@ begin
                b.sq_estoque,                        b.ultima_saida,                                  b.ultima_entrada,
                b.ultimo_preco_compra,               b.consumo_medio_mensal,                          b.ponto_ressuprimento,
                b.ciclo_compra,                      b.disponivel,                                    b.preco_medio,
-               b.estoque_minimo,
+               b.estoque_minimo,                    b.chefe_autoriza,
                b1.sq_material,                      b1.nome as nm_material,                          montanometipomaterial(b1.sq_tipo_material,'CODCOMP') as nm_tipo_completo,
                b11.sq_unidade_medida,               b11.nome as nm_unidade_medida,                   b11.sigla as sg_unidade_medida,
                b12.sq_tipo_material,                b12.nome as nm_tipo_material,                    b12.classe,
@@ -262,7 +262,7 @@ begin
                d241.sq_tipo_documento,              d241.nome as nm_tip_doc,                         d241.sigla as sg_tip_doc,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra,                      g.disponivel
+               g.ciclo_compra,                      g.disponivel,                                    g.chefe_autoriza
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
@@ -331,7 +331,7 @@ begin
                f2.sq_menu,                          f2.nome as nm_menu,                              f2.sigla as sg_menu,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra,                      g.disponivel
+               g.ciclo_compra,                      g.disponivel,                                    g.chefe_autoriza
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
@@ -415,7 +415,7 @@ begin
                a2.p4,                               substr(a2.link,1,instr(a2.link,'par=')+3) as link_menu,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra,                      g.disponivel
+               g.ciclo_compra,                      g.disponivel,                                    g.chefe_autoriza
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
@@ -484,7 +484,7 @@ begin
                null as p4,                          null as link_menu,
                g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
                g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
-               g.ciclo_compra,                      g.disponivel
+               g.ciclo_compra,                      g.disponivel,                                    g.chefe_autoriza
           from mt_almoxarifado                                a
                inner             join eo_localizacao         a1 on (a.sq_localizacao         = a1.sq_localizacao)
                  inner           join eo_unidade            a11 on (a1.sq_unidade            = a11.sq_unidade)
