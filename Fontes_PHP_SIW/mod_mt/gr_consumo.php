@@ -311,11 +311,6 @@ function Gerencial() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_fim_i','Início entrega','<=','p_fim_f','Fim entrega');
-      ShowHTML('  if (theForm.p_ini_i.value.length==0 && theForm.p_fim_i.value.length==0) {');
-      ShowHTML('     alert("É obrigatório informar pelo menos um dos períodos!")');
-      ShowHTML('     theForm.p_fim_i.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
       Validate('p_empenho','Código','','','2','60','1','1');
       Validate('p_proponente','Material','','','2','60','1','');
       if ($SG=='GRMTLIC') {

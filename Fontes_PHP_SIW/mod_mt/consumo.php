@@ -266,7 +266,7 @@ function Inicial() {
   
   $w_embed = '';
   headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
-  
+
   if ($w_embed!='WORD') {
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
@@ -286,7 +286,7 @@ function Inicial() {
         ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
         ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
         ShowHTML('     theForm.p_ini_i.focus();');
-          ShowHTML('     return false;');
+        ShowHTML('     return false;');
         ShowHTML('  }');
         CompData('p_ini_i','Início','<=','p_ini_f','Fim');
       } 
@@ -335,26 +335,29 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    $colspan = 0;
     if ($w_embed!='WORD') {
-      ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Agendamento desejado','fim').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Itens','qt_itens').'</b></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</b></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Agendamento desejado','fim').'</b></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</b></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</b></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Itens','qt_itens').'</b></td>');
+      if ($P1>2)  ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</b></td>');
       if ($P1!=1) ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</b></td>');
       ShowHTML('          <td class="remover"><b>Operações</b></td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td><b>Código</b></td>');
-      ShowHTML('          <td><b>Agendamento desejado</b></td>');
-      ShowHTML('          <td><b>Solicitante</b></td>');
-      ShowHTML('          <td><b>Justificativa</b></td>');
-      ShowHTML('          <td><b>Itens</b></td>');
+      $colspan++; ShowHTML('          <td><b>Código</b></td>');
+      $colspan++; ShowHTML('          <td><b>Agendamento desejado</b></td>');
+      $colspan++; ShowHTML('          <td><b>Solicitante</b></td>');
+      $colspan++; ShowHTML('          <td><b>Justificativa</b></td>');
+      $colspan++; ShowHTML('          <td><b>Itens</b></td>');
+      if ($P1>2)  ShowHTML('          <td><b>Valor</b></td>');
       if ($P1!=1) ShowHTML('          <td><b>Fase atual</b></td>');
       ShowHTML('        </tr>');
     }
-    if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.(($P1==1) ? '6' : '7').' align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    if (count($RS)==0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="'.($colspan+2).'" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -362,13 +365,14 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td width="1%" nowrap>');
-        if ($w_embed!='WORD') ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
         if ($w_embed!='WORD') ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_solic'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         else                  ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'sg_unidade_solic').'&nbsp;</td>');
         ShowHTML('        <td>'.f($row,'justificativa').'</td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.formatNumber(f($row,'qt_itens'),0).'&nbsp;</td>');
+        if ($P1>2)  ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'</td>');
         if ($P1!=1) ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
         if ($w_embed!='WORD') {
           ShowHTML('        <td class="remover" width="1%" nowrap>');
@@ -403,8 +407,27 @@ function Inicial() {
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');
-      } 
-      $w_colspan=4;
+        $w_parcial += f($row,'valor');
+      }
+      if ($P1>2) {
+        if (ceil(count($RS)/$P4)>1) { 
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
+          ShowHTML('          <td colspan='.$colspan.' align="right"><b>Total desta página&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
+          ShowHTML('          <td colspan=4>&nbsp;</td>');
+          ShowHTML('        </tr>');
+        } 
+        // Se for a última página da listagem, soma e exibe o valor total
+        if ($P3==ceil(count($RS)/$P4)) {
+          reset($RS);
+          foreach($RS as $row) $w_total += f($row,'valor');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
+          ShowHTML('          <td colspan='.$colspan.' align="right"><b>Total da listagem&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
+          ShowHTML('          <td>&nbsp;</td>');
+          ShowHTML('        </tr>');
+        } 
+      }
     } 
     ShowHTML('    </table>');
     ShowHTML('  </td>');

@@ -369,7 +369,7 @@ function Inicial() {
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($w_tipo == 'PDF'){
+  } elseif($w_tipo == 'PDF') {
     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
     $w_embed = 'WORD';
     HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
@@ -1056,7 +1056,7 @@ function Geral() {
         $w_solicitante          = ((nvl($w_herda,'')!='') ? '' : f($RS,'solicitante'));
         $w_cadastrador          = f($RS,'cadastrador');
         $w_executor             = f($RS,'executor');
-        $w_descricao            = ((nvl($w_herda,'')!='') ? f($RS,'justificativa') : f($RS,'descricao'));
+        $w_descricao            = f($RS,'descricao');
         $w_justificativa        = ((nvl($w_herda,'')!='') ? '' : f($RS,'justificativa'));
         $w_inicio               = ((nvl($w_herda,'')!='') ? '' : FormataDataEdicao(f($RS,'inicio')));
         if (strpos('AEV',$O)!==false) {

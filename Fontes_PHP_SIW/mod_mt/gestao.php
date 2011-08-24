@@ -1139,10 +1139,14 @@ function Ajuste() {
       ShowHTML('<tr><td align="center" colspan="3">');
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
       ShowHTML('<tr><td colspan="3"><dl>');
-      ShowHTML('<dt>U.M.<dd>Unidade de medida');
-      ShowHTML('<dt>Qtd.<dd>Quantidade disponível em estoque');
-      ShowHTML('<dt>C.M.M.<dd>Consumo médio mensal');
-      ShowHTML('<dt>Autorização chefia<dd>A solicitação que contiver o item deve ser autorizada pela chefia imediata da unidade solicitante antes de ser encaminhada ao almoxarifado');
+      ShowHTML('<dt><b>U.M.</b><dd>Unidade de medida');
+      ShowHTML('<dt><b>Qtd.</b><dd>Quantidade disponível em estoque');
+      ShowHTML('<dt><b>Estoque mínimo</b><dd>Quantidade mínima do item para que o trabalho da organização não seja prejudicado');
+      ShowHTML('<dt><b>C.M.M.</b><dd>Consumo médio mensal');
+      ShowHTML('<dt><b>Ciclo de compra</b><dd>Número de dias corridos desde a autorização da compra até a chegada para armazenamento');
+      ShowHTML('<dt><b>Ponto de ressuprimento</b><dd>Quantidade de unidades existentes em estoque que, quando atingida, é feito um novo pedido de compra ou fornecimento');
+      ShowHTML('<dt><b>Disponível</b><dd>Indica se o item está disponível para ser solicitado');
+      ShowHTML('<dt><b>Autorização chefia</b><dd>A solicitação que contiver o item deve ser autorizada pela chefia imediata da unidade solicitante antes de ser encaminhada ao almoxarifado');
       ShowHTML('</dl></td></tr>');
       ShowHTML('</form>');
     }

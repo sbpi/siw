@@ -722,8 +722,13 @@ function Entrada() {
       SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_chave','Almoxarifado','SELECT','1','1','18','','1');
-      Validate('p_ini_i','Início','DATA','1','10','10','','0123456789/');
-      Validate('p_ini_f','Fim','DATA','1','10','10','','0123456789/');
+      Validate('p_ini_i','Início','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f','Fim','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_ini_i.value.length!=theForm.p_ini_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_ini_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
       CompData('p_ini_i','Início','<=','p_ini_f','Fim');
       Validate('p_proponente','Material','','','2','60','1','');
       ValidateClose();
@@ -978,11 +983,6 @@ function Saida() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_fim_i','Início entrega','<=','p_fim_f','Fim entrega');
-      ShowHTML('  if (theForm.p_ini_i.value.length==0 && theForm.p_fim_i.value.length==0) {');
-      ShowHTML('     alert("É obrigatório informar pelo menos um dos períodos!")');
-      ShowHTML('     theForm.p_fim_i.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
       Validate('p_palavra','Código da solicitação','','','2','30','1','');
       Validate('p_proponente','Material','','','2','60','1','');
       ValidateClose();
@@ -1020,31 +1020,30 @@ function Saida() {
       ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
     } else {
       $w_total = 0;
-      $colspan = 9;
       foreach ($RS1 as $row) {
         if ($i==0) {
           if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Solicitação' : LinkOrdena('Solicitação','sq_siw_solicitacao')).'</b></td>');
-          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Unidade' : LinkOrdena('Unidade','nm_destino')).'</b></td>');
+          $colspan++; ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Solicitação' : LinkOrdena('Solicitação','sq_siw_solicitacao')).'</b></td>');
+          $colspan++; ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Unidade' : LinkOrdena('Unidade','nm_destino')).'</b></td>');
           if ($tipo) {
-            $colspan++;
-            ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Tipo de material' : LinkOrdena('Tipo de material','nm_tipo_completo')).'</b></td>');
+            $colspan++; ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Tipo de material' : LinkOrdena('Tipo de material','nm_tipo_completo')).'</b></td>');
           }
-          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Material' : LinkOrdena('Material','nm_material')).'</b></td>');
-          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'U.M.' : LinkOrdena('U.M.','sg_unidade_medida')).'</b></td>');
-          ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'F.E.' : LinkOrdena('F.E.','fator_embalagem')).'</b></td>');
-          ShowHTML('          <td colspan=2><b>Entrega</b></td>');
+          $colspan++; ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Material' : LinkOrdena('Material','nm_material')).'</b></td>');
+          $colspan++; ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'U.M.' : LinkOrdena('U.M.','sg_unidade_medida')).'</b></td>');
+          $colspan++; ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'F.E.' : LinkOrdena('F.E.','fator_embalagem')).'</b></td>');
+          ShowHTML('          <td colspan=3><b>Datas</b></td>');
           ShowHTML('          <td colspan=2><b>Quantidade</b></td>');
           ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Valor' : LinkOrdena('Valor','vl_saida')).'</b></td>');
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Agendada' : LinkOrdena('Agendada','fim')).'</b></td>');
-          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Efetiva' : LinkOrdena('Efetiva','data_efetivacao')).'</b></td>');
-          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Solicitada' : LinkOrdena('Solicitada','quantidade_solicitada')).'</b></td>');
-          ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Entregue' : LinkOrdena('Entregue','quantidade_entregue')).'</b></td>');
+          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Solicitação' : LinkOrdena('Solicitação','ultima_alteracao')).'</b></td>');
+          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Agendamento' : LinkOrdena('Agendamento','fim')).'</b></td>');
+          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Entrega' : LinkOrdena('Entrega','data_efetivacao')).'</b></td>');
+          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Solicitada' : LinkOrdena('Solicitada','quantidade_solicitada')).'</b></td>');
+          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Entregue' : LinkOrdena('Autorizada','quantidade_entregue')).'</b></td>');
           ShowHTML('        </tr>');
           $i++;
         }
@@ -1062,6 +1061,7 @@ function Saida() {
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'fator_embalagem'),0).'</td>');
+        ShowHTML('          <td align="center" title="Data da solicitação">'.formataDataEdicao(f($row,'ultima_alteracao'),5).'</td>');
         ShowHTML('          <td align="center" title="Data agendada para entrega">'.formataDataEdicao(f($row,'fim'),5).'</td>');
         ShowHTML('          <td align="center" title="Data efetiva de entrega">'.formataDataEdicao(f($row,'data_efetivacao'),5).'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'quantidade_pedida'),0).'</td>');
@@ -1236,8 +1236,13 @@ function Mapa() {
       SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_chave','Almoxarifado','SELECT','1','1','18','','1');
-      Validate('p_ini_i','Início','DATA','1','10','10','','0123456789/');
-      Validate('p_ini_f','Fim','DATA','1','10','10','','0123456789/');
+      Validate('p_ini_i','Início','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f','Fim','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_ini_i.value.length!=theForm.p_ini_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_ini_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
       CompData('p_ini_i','Início','<=','p_ini_f','Fim');
       Validate('p_proponente','Material','','','2','60','1','');
       ValidateClose();
@@ -1274,6 +1279,7 @@ function Mapa() {
     if (count($RS1)==0) {
       ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
     } else {
+      $w_tot_ant  = 0;
       $w_tot_ent  = 0;
       $w_tot_sai  = 0;
       $colspan    = 6;
@@ -1310,6 +1316,11 @@ function Mapa() {
           if ($w_atual_qe || $w_atual_qs) {
             ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.(($tipo) ? '3' : '2').'></td><td height="1" colspan=7><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
             ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+            ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo anterior</b>&nbsp;</td>');
+            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
+            ShowHTML('          <td><b>'.formatNumber($w_atual_va).'</b></td>');
+            ShowHTML('        </tr>');
+            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
             ShowHTML('          <td colspan='.($colspan-1).'><b>Total entradas</b>&nbsp;</td>');
             ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe,0).'</b></td>');
             ShowHTML('          <td><b>'.formatNumber($w_atual_ve).'</b></td>');
@@ -1321,13 +1332,14 @@ function Mapa() {
             ShowHTML('        </tr>');
             ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
             ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo no período</b>&nbsp;</td>');
-            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe-$w_atual_qs,0).'</b></td>');
-            ShowHTML('          <td><b>'.formatNumber($w_atual_ve-$w_atual_vs).'</b></td>');
+            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
+            ShowHTML('          <td><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
             ShowHTML('        </tr>');
             $w_atual_qe = 0;
             $w_atual_qs = 0;
             $w_atual_ve = 0;
             $w_atual_vs = 0;
+            if (nvl($p_ini_i,'')!='') $w_tot_ant += $w_atual_va;
           }
           ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.($colspan+1).'><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
           ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -1368,12 +1380,22 @@ function Mapa() {
           $w_atual_qs += f($row,'quantidade_entregue');
           $w_atual_vs += f($row,'vl_saida');
         }
+        if (nvl($p_ini_i,'')!='') {
+          $saldo = explode('|',f($row,'saldo'));
+          $w_atual_va = toNumber($saldo[0]);
+          $w_atual_qa = toNumber($saldo[1]);
+        }
         ShowHTML('        </tr>');
       }
       if (count($RS1)>1) {
         if ($w_atual_qe || $w_atual_qs) {
           // Trata o último registro
           ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.(($tipo) ? '3' : '2').'></td><td height="1" colspan=7><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
+          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+          ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo anterior</b>&nbsp;</td>');
+          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
+          ShowHTML('          <td><b>'.formatNumber($w_atual_va).'</b></td>');
+          ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
           ShowHTML('          <td colspan='.($colspan-1).'><b>Total entradas</b>&nbsp;</td>');
           ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe,0).'</b></td>');
@@ -1386,13 +1408,18 @@ function Mapa() {
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
           ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo no período</b>&nbsp;</td>');
-          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe-$w_atual_qs,0).'</b></td>');
-          ShowHTML('          <td><b>'.formatNumber($w_atual_ve-$w_atual_vs).'</b></td>');
+          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
+          ShowHTML('          <td><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
           ShowHTML('        </tr>');
+          if (nvl($p_ini_i,'')!='') $w_tot_ant += $w_atual_va;
         }
         ShowHTML('        <tr bgcolor="#DCDCDC" align="right"><td height="1" colspan='.($colspan+1).'><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
         ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
-        ShowHTML('          <td rowspan=3 colspan='.($colspan-1).' align="center"><b>TOTAIS NO PERÍODO DE '.$p_ini_i.' a '.$p_ini_f.'</b>&nbsp;</td>');
+        ShowHTML('          <td rowspan=4 colspan='.($colspan-1).' align="center"><b>TOTAIS'.((nvl($p_ini_i,'')!='') ? ' NO PERÍODO DE '.$p_ini_i.' a '.$p_ini_f: '').'</b>&nbsp;</td>');
+        ShowHTML('          <td><b>SALDO ANTERIOR</b>&nbsp;</td>');
+        ShowHTML('          <td><b>'.formatNumber($w_tot_ant).'</b></td>');
+        ShowHTML('        </tr>');
+        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
         ShowHTML('          <td><b>ENTRADAS</b>&nbsp;</td>');
         ShowHTML('          <td><b>'.formatNumber($w_tot_ent).'</b></td>');
         ShowHTML('        </tr>');
@@ -1402,7 +1429,7 @@ function Mapa() {
         ShowHTML('        </tr>');
         ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
         ShowHTML('          <td><b>SALDO</b>&nbsp;</td>');
-        ShowHTML('          <td><b>'.formatNumber($w_tot_ent - $w_tot_sai).'</b></td>');
+        ShowHTML('          <td><b>'.formatNumber($w_tot_ant + $w_tot_ent - $w_tot_sai).'</b></td>');
         ShowHTML('        </tr>');
       }
     }
@@ -1558,8 +1585,13 @@ function MapaSint() {
       SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_chave','Almoxarifado','SELECT','1','1','18','','1');
-      Validate('p_ini_i','Início','DATA','1','10','10','','0123456789/');
-      Validate('p_ini_f','Fim','DATA','1','10','10','','0123456789/');
+      Validate('p_ini_i','Início','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f','Fim','DATA','','10','10','','0123456789/');
+      ShowHTML('  if (theForm.p_ini_i.value.length!=theForm.p_ini_f.value.length) {');
+      ShowHTML('     alert("Informe as datas de início e fim do período ou nenhuma delas!")');
+      ShowHTML('     theForm.p_ini_i.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
       CompData('p_ini_i','Início','<=','p_ini_f','Fim');
       Validate('p_proponente','Material','','','2','60','1','');
       ValidateClose();
@@ -1596,9 +1628,10 @@ function MapaSint() {
     if (count($RS1)==0) {
       ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
     } else {
+      $w_tot_ant  = 0;
       $w_tot_ent  = 0;
       $w_tot_sai  = 0;
-      $colspan    = 6;
+      $colspan    = 7;
       $w_atual    = '';
       $w_atual_qe = 0;
       $w_atual_qs = 0;
@@ -1617,13 +1650,15 @@ function MapaSint() {
           }
           ShowHTML('          <td rowspan="2"><b>Material</b></td>');
           ShowHTML('          <td rowspan="2"><b>U.M.</b></td>');
-          ShowHTML('          <td colspan="3"><b>Quantitativo</b></td>');
-          ShowHTML('          <td colspan="3"><b>Financeiro</b></td>');
+          ShowHTML('          <td colspan="4"><b>Quantitativo</b></td>');
+          ShowHTML('          <td colspan="4"><b>Financeiro</b></td>');
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
+          ShowHTML('          <td><b>Anterior</b></td>');
           ShowHTML('          <td><b>Entradas</b></td>');
           ShowHTML('          <td><b>Saídas</b></td>');
           ShowHTML('          <td><b>Saldo</b></td>');
+          ShowHTML('          <td><b>Anterior</b></td>');
           ShowHTML('          <td><b>Entradas</b></td>');
           ShowHTML('          <td><b>Saídas</b></td>');
           ShowHTML('          <td><b>Saldo</b></td>');
@@ -1632,17 +1667,20 @@ function MapaSint() {
         }
         if ($w_atual<>f($row,'nm_material')) {
           if ($w_atual_qe || $w_atual_qs) {
+            ShowHTML('          <td align="center">'.formatNumber($w_atual_qa,0).'</td>');
             ShowHTML('          <td align="center">'.formatNumber($w_atual_qe,0).'</td>');
             ShowHTML('          <td align="center">'.formatNumber($w_atual_qs,0).'</td>');
-            ShowHTML('          <td align="center">'.formatNumber($w_atual_qe-$w_atual_qs,0).'</td>');
+            ShowHTML('          <td align="center">'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</td>');
+            ShowHTML('          <td align="right">'.formatNumber($w_atual_va).'</td>');
             ShowHTML('          <td align="right">'.formatNumber($w_atual_ve).'</td>');
             ShowHTML('          <td align="right">'.formatNumber($w_atual_vs).'</td>');
-            ShowHTML('          <td align="right">'.formatNumber($w_atual_ve-$w_atual_vs).'</td>');
+            ShowHTML('          <td align="right">'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</td>');
             ShowHTML('        </tr>');
             $w_atual_qe = 0;
             $w_atual_qs = 0;
             $w_atual_ve = 0;
             $w_atual_vs = 0;
+            $w_tot_ant += $w_atual_va;
           }
           ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
           if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
@@ -1659,23 +1697,32 @@ function MapaSint() {
           $w_atual_qs += f($row,'quantidade_entregue');
           $w_atual_vs += f($row,'vl_saida');
         }
+        if (nvl($p_ini_i,'')!='') {
+          $saldo = explode('|',f($row,'saldo'));
+          $w_atual_va = toNumber($saldo[0]);
+          $w_atual_qa = toNumber($saldo[1]);
+        }
       }
       if (count($RS1)>1) {
         if ($w_atual_qe || $w_atual_qs) {
           // Trata o último registro
+          ShowHTML('          <td align="center">'.formatNumber($w_atual_qa,0).'</td>');
           ShowHTML('          <td align="center">'.formatNumber($w_atual_qe,0).'</td>');
           ShowHTML('          <td align="center">'.formatNumber($w_atual_qs,0).'</td>');
-          ShowHTML('          <td align="center">'.formatNumber($w_atual_qe-$w_atual_qs,0).'</td>');
-          ShowHTML('          <td align="right">'.formatNumber($w_atual_ve,0).'</td>');
+          ShowHTML('          <td align="center">'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</td>');
+          ShowHTML('          <td align="right">'.formatNumber($w_atual_va).'</td>');
+          ShowHTML('          <td align="right">'.formatNumber($w_atual_ve).'</td>');
           ShowHTML('          <td align="right">'.formatNumber($w_atual_vs).'</td>');
-          ShowHTML('          <td align="right">'.formatNumber($w_atual_ve-$w_atual_vs).'</td>');
+          ShowHTML('          <td align="right">'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</td>');
           ShowHTML('        </tr>');
+          $w_tot_ant += $w_atual_va;
         }
         ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
-        ShowHTML('          <td colspan='.($colspan-1).' align="center"><b>TOTAIS NO PERÍODO DE '.$p_ini_i.' a '.$p_ini_f.'</b>&nbsp;</td>');
+        ShowHTML('          <td colspan='.($colspan-1).' align="center"><b>TOTAIS'.((nvl($p_ini_i,'')!='') ? ' NO PERÍODO DE '.$p_ini_i.' a '.$p_ini_f : '').'</b>&nbsp;</td>');
+        ShowHTML('          <td><b>'.formatNumber($w_tot_ant).'</b></td>');
         ShowHTML('          <td><b>'.formatNumber($w_tot_ent).'</b></td>');
         ShowHTML('          <td><b>'.formatNumber($w_tot_sai).'</b></td>');
-        ShowHTML('          <td><b>'.formatNumber($w_tot_ent - $w_tot_sai).'</b></td>');
+        ShowHTML('          <td><b>'.formatNumber($w_tot_ant + $w_tot_ent - $w_tot_sai).'</b></td>');
         ShowHTML('        </tr>');
       }
     }
