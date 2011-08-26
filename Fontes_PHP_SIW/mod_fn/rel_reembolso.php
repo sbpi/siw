@@ -895,7 +895,7 @@ function Inicial() {
     ShowHTML('          <td><b><u>V</u>alor entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_valor_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_valor_i.'" onKeyDown="FormataValor(this,18,2,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_valor_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_valor_f.'" onKeyDown="FormataValor(this,18,2,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
 
     ShowHTML('      <tr valign="top">');
-    SelecaoFaseCheck('Recuperar fases:','S',null,$P2,$p_sq_menu,'p_fase[]',null,null);
+    SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\';">');

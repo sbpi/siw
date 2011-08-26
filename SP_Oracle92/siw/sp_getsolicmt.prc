@@ -441,6 +441,7 @@ begin
                  where a.cliente         = p_menu
                    and a.sq_almoxarifado = p_chave
                    and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and g.disponivel = p_ativo))
+                   and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and g.sq_material = p_sq_acao_ppa))
                    and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
                    and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material in (select sq_tipo_material
                                                                                                               from cl_tipo_material
@@ -514,6 +515,7 @@ begin
                            inner         join mt_estoque              g on (c.sq_estoque             = g.sq_estoque)
                  where a.cliente         = p_menu
                    and a.sq_almoxarifado = p_chave
+                   and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and g.sq_material = p_sq_acao_ppa))
                    and (p_proponente     is null or (p_proponente  is not null and acentos(d1.nome,null) like '%'||acentos(p_proponente,null)||'%'))
                    and (p_pais           is null or (p_pais        is not null and d12.sq_tipo_material in (select sq_tipo_material
                                                                                                               from cl_tipo_material
