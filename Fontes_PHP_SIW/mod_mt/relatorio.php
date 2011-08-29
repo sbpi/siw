@@ -301,9 +301,10 @@ function Inventario() {
           ShowHTML('          <td><b>Material</b></td>');
           ShowHTML('          <td><b>U.M.</b></td>');
           ShowHTML('          <td><b>Qtd.</b></td>');
-          ShowHTML('          <td><b>Preço médio</b></td>');
-          ShowHTML('          <td><b>Valor em Estoque</b></td>');
+          ShowHTML('          <td><b>P.M.</b></td>');
+          ShowHTML('          <td><b>V.E.</b></td>');
           ShowHTML('          <td><b>Disponível</b></td>');
+          ShowHTML('          <td><b>Chefe Autoriza</b></td>');
           ShowHTML('        </tr>');
           $i++;
         }
@@ -314,12 +315,22 @@ function Inventario() {
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         ShowHTML('          <td align="center">'.f($row,'nm_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
-        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),5).'</td>');
+        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),10).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'saldo_atual')*f($row,'preco_medio'),2).'</td>');
         ShowHTML('          <td align="center">'.retornaSimNao(f($row,'disponivel')).'</td>');
+        ShowHTML('          <td align="center">'.retornaSimNao(f($row,'chefe_autoriza')).'</td>');
         ShowHTML('        </tr>');
       }
     }
+    ShowHTML('</table></tr>');
+    ShowHTML('<tr><td><b>Legenda:</b><table>');
+    ShowHTML('<tr><td><li><b>U.M.</b><td colspan="12">Unidade de medida');
+    ShowHTML('<tr><td><li><b>Qtd</b><td colspan="12">Quantidade atual em estoque no almoxarifado');
+    ShowHTML('<tr><td><li><b>P.M.</b><td colspan="12">Preço médio do material no almoxarifado');
+    ShowHTML('<tr><td><li><b>V.E.</b><td colspan="12">Valor do material no almoxarifado');
+    ShowHTML('<tr><td><li><b>Disponível</b><td colspan="12">Indica a disponibilidade do material para pedidos internos de material');
+    ShowHTML('<tr><td><li><b>Chefe Autoriza</b><td colspan="12">Indica a necessidade de autorização de pedidos do material pelo titular da unidade solicitante');
+    ShowHTML('</table></tr>');
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -521,6 +532,7 @@ function Analise() {
           ShowHTML('          <td colspan="3"><b>Última Ocorrência</b></td>');
           ShowHTML('          <td colspan="4"><b>Gestão</b></td>');
           ShowHTML('          <td rowspan="2"><b>Disponível</b></td>');
+          ShowHTML('          <td rowspan="2"><b>Chefe Autoriza</b></td>');
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
           ShowHTML('          <td><b>Qtd.</b></td>');
@@ -542,7 +554,7 @@ function Analise() {
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         ShowHTML('          <td align="center">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
-        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),5).'</td>');
+        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),10).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'saldo_atual')*f($row,'preco_medio'),2).'</td>');
         ShowHTML('          <td align="center">'.formataDataEdicao(f($row,'ultima_entrada'),5).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'ultimo_preco_compra')).'</td>');
@@ -552,6 +564,7 @@ function Analise() {
         ShowHTML('          <td align="center">'.formatNumber(f($row,'ponto_ressuprimento'),0).'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'ciclo_compra'),0).'</td>');
         ShowHTML('          <td align="center">'.retornaSimNao(f($row,'disponivel')).'</td>');
+        ShowHTML('          <td align="center">'.retornaSimNao(f($row,'chefe_autoriza')).'</td>');
         ShowHTML('        </tr>');
       }
     }
@@ -569,6 +582,7 @@ function Analise() {
     ShowHTML('<tr><td><li><b>P.R.</b><td colspan="12">Ponto de ressuprimento. Quantidade que, quando atingida, deve ser iniciada nova compra');
     ShowHTML('<tr><td><li><b>Ciclo</b><td colspan="12">Ciclo de compra. Quantidade de dias corridos entre a emissão da solicitação de compra e a chegada do material no almoxarifado');
     ShowHTML('<tr><td><li><b>Disponível</b><td colspan="12">Indica a disponibilidade do material para pedidos internos de material');
+    ShowHTML('<tr><td><li><b>Chefe Autoriza</b><td colspan="12">Indica a necessidade de autorização de pedidos do material pelo titular da unidade solicitante');
     ShowHTML('</table></tr>');
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');

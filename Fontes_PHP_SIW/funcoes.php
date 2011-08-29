@@ -2985,8 +2985,22 @@ function head() {
   ShowHTML('<meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />');
   ShowHTML('<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.fancybox-1.3.4.pack.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/tooltip.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="' . $conRootSIW . 'js/jquery.fancybox-1.3.4.pack.js"></script>');
+//  ShowHTML('<script language="javascript" type="text/javascript" src="' . $conRootSIW . 'js/jquery.blockUI.js"></script>');
+//  ShowHTML('<script type="text/javascript">');
+//  ShowHTML('$(document).ready(function() {');
+//  ShowHTML('  $.blockUI({ message: \'A tela vai desbloquear já já.\', ');
+////  ShowHTML('              timeout: 1000, });');
+//  ShowHTML('  });');
+//  //ShowHTML('$.growlUI(\'Titulo\', \'mensagem!\');');
+//  ShowHTML('});');
+//  ShowHTML('</script>');
+//  ShowHTML('<script type="text/javascript">');
+//  ShowHTML('$(document).ready(function() {');
+//  ShowHTML('$(window).load(function() { $.unblockUI(); });');
+//  ShowHTML('});');
+//  ShowHTML('</script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="' . $conRootSIW . 'js/tooltip.js"></script>');
 }
 
 // =========================================================================

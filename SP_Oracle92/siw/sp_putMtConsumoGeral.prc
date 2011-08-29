@@ -34,7 +34,7 @@ begin
    If p_menu is not null and p_unidade is not null Then
       -- Recupera o almoxarifado padrão
       select sq_almoxarifado into w_almoxarifado
-        from (select a.sq_almoxarifado
+        from (select 1 as ordem, a.sq_almoxarifado, a.nome
                 from mt_almoxarifado                     a
                      inner       join siw_menu           b on (a.cliente            = b.sq_pessoa and b.sq_menu = p_menu)
                      inner       join eo_localizacao     c on (a.sq_localizacao     = c.sq_localizacao)
@@ -44,7 +44,16 @@ begin
                                                                f.sq_unidade         = p_unidade
                                                               )
                where a.ativo = 'S'
-              order by a.nome
+              UNION
+              select 2 as ordem, a.sq_almoxarifado, a.nome
+                from mt_almoxarifado                     a
+                     inner       join siw_menu           b on (a.cliente            = b.sq_pessoa and b.sq_menu = p_menu)
+                       inner     join eo_unidade         d on (b.sq_unid_executora  = d.sq_unidade)
+                         inner   join eo_localizacao     c on (d.sq_pessoa_endereco = c.sq_pessoa_endereco and
+                                                               a.sq_localizacao     = c.sq_localizacao
+                                                              )
+               where a.ativo = 'S'
+              order by ordem, nome
              )
        where rownum = 1;
 

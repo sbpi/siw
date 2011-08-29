@@ -285,27 +285,26 @@ begin
                 h.marca,                     h.lote_numero,               h.fator_embalagem,
                 h1.recebimento_efetivo,
                 i.quantidade,                case when i.sq_saida_item is not null then 'S' else 'N' end as marcado
-           from mt_saida_item                                  a
-                inner                 join mt_saida           a1 on (a.sq_mtsaida           = a1.sq_mtsaida)
-                  inner               join siw_solicitacao    a2 on (a1.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
-                    inner             join eo_unidade         a3 on (a2.sq_unidade          = a3.sq_unidade)
-                      inner           join eo_localizacao     a4 on (a3.sq_pessoa_endereco  = a4.sq_pessoa_endereco)
-                        inner         join mt_almoxarifado     e on (a4.sq_localizacao      = e.sq_localizacao)
-                          inner       join mt_estoque          f on (e.sq_almoxarifado      = f.sq_almoxarifado and
-                                                                     a.sq_material          = f.sq_material
-                                                                    )
-                            inner     join mt_estoque_item     g on (f.sq_estoque           = g.sq_estoque and
-                                                                     g.saldo_atual          > 0
-                                                                    )
-                              inner   join mt_entrada_item     h on (g.sq_entrada_item      = h.sq_entrada_item)
-                                inner join mt_entrada         h1 on (h.sq_mtentrada         = h1.sq_mtentrada)
-                              left    join mt_saida_estoque    i on (a.sq_saida_item        = i.sq_saida_item and
-                                                                     g.sq_estoque_item      = i.sq_estoque_item
-                                                                    )
-                inner                 join cl_material         b on (a.sq_material          = b.sq_material)
-                inner                 join cl_tipo_material    c on (b.sq_tipo_material     = c.sq_tipo_material)
-                inner                 join co_unidade_medida   d on (b.sq_unidade_medida    = d.sq_unidade_medida)
-                
+           from mt_saida_item                                a
+                inner               join mt_saida           a1 on (a.sq_mtsaida           = a1.sq_mtsaida)
+                  inner             join siw_solicitacao    a2 on (a1.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
+                  inner             join eo_unidade         a3 on (a1.sq_unidade_origem   = a3.sq_unidade)
+                    inner           join eo_localizacao     a4 on (a3.sq_pessoa_endereco  = a4.sq_pessoa_endereco)
+                      inner         join mt_almoxarifado     e on (a4.sq_localizacao      = e.sq_localizacao)
+                        inner       join mt_estoque          f on (e.sq_almoxarifado      = f.sq_almoxarifado and
+                                                                   a.sq_material          = f.sq_material
+                                                                  )
+                          inner     join mt_estoque_item     g on (f.sq_estoque           = g.sq_estoque and
+                                                                   g.saldo_atual          > 0
+                                                                  )
+                            inner   join mt_entrada_item     h on (g.sq_entrada_item      = h.sq_entrada_item)
+                              inner join mt_entrada         h1 on (h.sq_mtentrada         = h1.sq_mtentrada)
+                            left    join mt_saida_estoque    i on (a.sq_saida_item        = i.sq_saida_item and
+                                                                   g.sq_estoque_item      = i.sq_estoque_item
+                                                                  )
+                inner               join cl_material         b on (a.sq_material          = b.sq_material)
+                inner               join cl_tipo_material    c on (b.sq_tipo_material     = c.sq_tipo_material)
+                inner               join co_unidade_medida   d on (b.sq_unidade_medida    = d.sq_unidade_medida)
           where (p_chave         is null or (p_chave         is not null and a.sq_saida_item       = p_chave))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a2.sq_siw_solicitacao = p_solicitacao))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))

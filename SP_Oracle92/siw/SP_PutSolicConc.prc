@@ -425,7 +425,7 @@ begin
                              where w.sq_siw_solicitacao = p_chave
                                and z.sq_estoque         = a.sq_estoque
                             )
-      where sq_estoque in (select sq_estoque_item
+      where sq_estoque in (select sq_estoque
                              from mt_saida                        w
                                   inner     join mt_saida_item    x on (w.sq_mtsaida      = x.sq_mtsaida)
                                     inner   join mt_saida_estoque y on (x.sq_saida_item   = y.sq_saida_item)

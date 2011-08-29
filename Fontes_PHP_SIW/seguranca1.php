@@ -1049,6 +1049,7 @@ function Grava() {
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   AbreSessao();
+  
   switch ($SG) {
     case 'ACESSOTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida

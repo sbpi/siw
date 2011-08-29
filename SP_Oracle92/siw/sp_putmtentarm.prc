@@ -51,22 +51,13 @@ begin
            (sq_estoque_item.nextval, w_estoque,  p_local,               p_item,          w_item.quantidade);
       Else
          -- Recupera o saldo atual
-         select case sign(a.saldo) 
-                     when 0 then w_item.valor_unitario
-                     when -1 then w_item.valor_unitario
-                     else ((b.preco_medio * a.saldo) + (w_item.valor_total)) / (w_item.quantidade + a.saldo)
-                end as medio
-           into w_medio
-           from (select sum(saldo_atual) as saldo 
-                   from mt_estoque_item       x 
-                        inner join mt_estoque y on (x.sq_estoque = y.sq_estoque) 
-                  where y.sq_material     = w_item.sq_material
-                    and y.sq_almoxarifado = w_item.sq_almoxarifado
-                ) a,
-                (select preco_medio from mt_estoque where sq_material = w_item.sq_material and sq_almoxarifado = w_item.sq_almoxarifado) b;
-
-         -- Recupera a chave do estoque
-         select sq_estoque into w_estoque from mt_estoque where sq_almoxarifado = w_item.sq_almoxarifado and sq_material = w_item.sq_material;
+         select y.sq_estoque, sum(z.valor_total)/sum(z.quantidade) 
+           into w_estoque, w_medio
+           from mt_estoque                 y 
+                inner join mt_entrada_item z on (y.sq_almoxarifado = z.sq_almoxarifado and y.sq_material = z.sq_material)
+          where y.sq_material     = w_item.sq_material
+            and y.sq_almoxarifado = w_item.sq_almoxarifado
+         group by y.sq_estoque;
 
          -- Insere o novo item de estoque
          insert into mt_estoque_item

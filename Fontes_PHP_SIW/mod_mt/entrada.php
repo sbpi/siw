@@ -986,7 +986,7 @@ function Geral() {
             ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
             ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
             ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
-            if (f($row,'classe')==1 || f($row,'classe')==3) {
+            if (f($row,'classe')<=3) {
               selecaoLocalSubordination(null,null,'Informe o local para armazenamento deste item.',f($row,'sq_almoxarifado_local'),f($row,'sq_almoxarifado'),'w_local[]','ARMAZENA','onChange="ajusta('.$i.');"',1,'');
             } else {
               ShowHTML('        <td align="right">Incorporar</td>');
@@ -1115,7 +1115,7 @@ function Itens() {
     if ($w_edita) {
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
       CompValor('w_ordem','Ordem','>','0','1');  
-      Validate('w_nome','Nome','1','','3','30','1','1');
+      Validate('w_nome','Nome','1','','2','30','1','1');
       Validate('w_material','Material/Serviço','SELECT','1','1','18','','1');
     }
     if (nvl($w_material,'')=='') {

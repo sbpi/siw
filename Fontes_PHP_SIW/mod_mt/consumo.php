@@ -871,7 +871,7 @@ function Itens() {
     FormataValor();
     ValidateOpen('Validacao');
     if ($O=='P') {
-      Validate('p_nome','Nome','1','','3','30','1','1');
+      Validate('p_nome','Nome','1','','2','30','1','1');
       Validate('p_codigo','Código interno','1','','2','30','1','1');
       Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
       ShowHTML('if (theForm.p_nome.value=="" && theForm.p_codigo.value=="" && theForm.p_tipo_material.value=="") {');
