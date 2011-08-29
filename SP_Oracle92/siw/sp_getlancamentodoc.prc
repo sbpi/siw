@@ -15,7 +15,7 @@ begin
       open p_result for 
          select a.sq_lancamento_doc, a.sq_siw_solicitacao, a.sq_tipo_documento, a.numero, 
                 a.data,              a.serie,              a.valor,             a.patrimonio,
-                a.calcula_tributo,   a.calcula_retencao,
+                a.calcula_tributo,   a.calcula_retencao,   a1.sq_tipo_lancamento,
                 a2.codigo_interno,
                 a23.ordem as or_tramite,                   a23.sigla as sg_tramite,
                 case d.abrange_inicial   when 'S' then a.valor_inicial else 0 end as valor_inicial, 

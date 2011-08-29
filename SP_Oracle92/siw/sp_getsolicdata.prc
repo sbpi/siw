@@ -547,7 +547,7 @@ begin
                 coalesce(m4.existe,0) as notas_acordo,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic,                         o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
-                p.nome_resumido as nm_exec,
+                p.nome_resumido as nm_exec,                          da1.sq_lancamento_doc,
                 case coalesce(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end as nm_projeto,
                 case coalesce(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end as sq_projeto,
                 case coalesce(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end as qtd_rubrica
@@ -571,6 +571,7 @@ begin
                      left         join pa_documento         b9 on (b4.protocolo_siw           = b9.sq_siw_solicitacao)
                      left         join pa_documento         b8 on (b.protocolo_siw            = b8.sq_siw_solicitacao)
                    inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                   left          join fn_lancamento_doc    da1  on (b.sq_siw_solicitacao      = da1.sq_siw_solicitacao)
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
                      inner        join co_tipo_pessoa       d8 on (d.sq_tipo_pessoa           = d8.sq_tipo_pessoa)
