@@ -16,6 +16,8 @@ include_once($w_dir_volta.'classes/sp/db_getUnidade_PE.php');
 include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
+include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicMT.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServ.php');
@@ -137,6 +139,10 @@ $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
   $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+// Verifica se o cliente tem o módulo de materiais
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'AL');
+if (count($RS)>0) $w_al='S'; else $w_al='N'; 
 
 // Recupera os parâmetros do módulo de compras e licitações
 $sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'CL',null);
@@ -1115,8 +1121,8 @@ function TelaMaterial() {
   head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Materiais e serviços</TITLE>');
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad="this.focus();"');
   $w_TP = 'Materiais e serviços - Visualização de dados';
   Estrutura_Texto_Abre();
@@ -1151,7 +1157,6 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr valign="top"><td><b>Descrição:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'descricao'),'---')).' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td><b>Apresentação:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'apresentacao'),'---')).' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
-  if (f($l_rs,'classe')==1) $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
 
   if (f($RS_Cliente,'ata_registro_preco')=='S') {
     // Exibe atas de registro de preço onde o item esteja disponível
@@ -1205,7 +1210,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   }
 
   $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
-  $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+  $l_html.=chr(13).'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';    
   $l_html.=chr(13).'          <tr align="center">';
   $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>PESQUISA MAIS RECENTE</b></td>';
   $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>PREÇOS</b></td>';
@@ -1244,7 +1249,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
     $l_html.=chr(13).'      <tr><td colspan="2" align="center">Nenhuma pesquisa válida encontrada</td></tr>';
   } else {
     $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+    $l_html.=chr(13).'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';    
     $l_html.=chr(13).'          <tr align="center">';
     $l_html.=chr(13).'            <td></td>';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Fornecedor</b></td>';
@@ -1268,6 +1273,72 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
     } 
     $l_html.=chr(13).'         </table></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan=2><table border=0><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>';
+  }
+
+  if ($w_al=='S') {
+    // Exibe histórico de compras
+    $sql = new db_getSolicMT; $l_rs1 = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'ALMAPA',3,
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+        $p_unidade,null,$p_ativo,$p_proponente,null, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
+        $l_chave, null, $p_empenho, null);
+
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>CONTROLE DE ESTOQUE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
+    $l_html.=chr(13).'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';    
+    $l_html.=chr(13).'        <tr align="center">';
+    $l_html.=chr(13).'          <td rowspan="2" bgColor="#f0f0f0"><b>DATA</b></td>';
+    $l_html.=chr(13).'          <td colspan="3" bgColor="#f0f0f0"><b>ENTRADA</b></td>';
+    $l_html.=chr(13).'          <td colspan="3" bgColor="#f0f0f0"><b>SAÍDA</b></td>';
+    $l_html.=chr(13).'          <td colspan="3" bgColor="#f0f0f0"><b>ESTOQUE</b></td>';
+    $l_html.=chr(13).'        </tr>';
+    $l_html.=chr(13).'        <tr align="center">';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>QTD.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.U.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.T.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>QTD.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.U.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.T.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>QTD.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.U.</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.T.</b></td>';
+    $l_html.=chr(13).'        </tr>';
+    if (count($l_rs1)<0) {
+      // Se não foram selecionados registros, exibe mensagem
+      $l_html.=chr(13).'      <tr><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+    } else {
+      // Lista os registros selecionados para listagem
+      $w_qtd = 0;
+      $w_vu  = 0;
+      $w_vt  = 0;
+      foreach($l_rs1 as $row){
+        $l_html.=chr(13).'        <tr valign="top">';
+        if (nvl(f($row,'quantidade_pedida'),0)==0) {
+          $l_html.=chr(13).'          <td align="center" title="Data de armazenamento">'.formataDataEdicao(f($row,'armazenamento'),5).'</td>';
+          $l_html.=chr(13).'          <td align="center">+'.formatNumber(f($row,'qt_entrada'),0).'</td>';
+          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'vl_entrada'),5).'</td>';
+          $l_html.=chr(13).'          <td align="right">+'.formatNumber(f($row,'tot_entrada'),2).'</td>';
+          $l_html.=chr(13).'          <td colspan="3">&nbsp;</td>';
+          $w_vu   = f($row,'vl_entrada');
+          $w_qtd += f($row,'qt_entrada');
+          $w_vt  += f($row,'tot_entrada');
+        } else {
+          $l_html.=chr(13).'          <td align="center" title="Data efetiva de entrega">'.formataDataEdicao(f($row,'data_efetivacao'),5).'</td>';
+          $l_html.=chr(13).'          <td colspan="3">&nbsp;</td>';
+          $l_html.=chr(13).'          <td align="center">-'.formatNumber(f($row,'quantidade_entregue'),0).'</td>';
+          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'preco_medio')).'</td>';
+          $l_html.=chr(13).'          <td align="right">-'.formatNumber(f($row,'vl_saida')).'</td>';
+          $w_vu   = f($row,'preco_medio');
+          $w_qtd -= f($row,'quantidade_entregue');
+          $w_vt  -= f($row,'vl_saida');
+        }
+        $l_html.=chr(13).'          <td align="center">'.formatNumber($w_qtd,0).'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber($w_vu,5).'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber($w_vt,2).'</td>';
+        $l_html.=chr(13).'        </tr>';
+      }
+    } 
+    $l_html.=chr(13).'    </table>';
   }
 
   $l_html.=chr(13).'    </table>';
