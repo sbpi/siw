@@ -47,30 +47,7 @@ function ValidaTransferencia($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_
     $l_erro.='<li>O lançamento não pode ter valor zero.';
     $l_tipo=0;
   }
-  if (f($l_rs_solic,'ativo')=='S') {
-    if (substr(f($l_rs_solic,'sigla'),0,3)=='FNR' && f($l_rs_solic,'receita')=='N') {
-      $l_erro.='<li>Lançamento financeiro (recebimento) incompatível com o tipo (pagamento).';
-      $l_tipo=0;
-    } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='FND' && f($l_rs_solic,'despesa')=='N') {
-      $l_erro.='<li>Lançamento financeiro (pagamento) incompatível com o tipo (recebimento).';
-      $l_tipo=0;
-    }
-  }
 
-  if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
-    $sql = new db_getSolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
-    if (count($l_rs_rubrica)>0) {
-      $sql = new db_getLinkData; $l_rs_menu = $sql->getInstanceOf($dbms,$w_cliente,'FNREVENT');
-      $sql = new db_getLancamentoProjeto; $l_rs_tipo = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);
-      foreach($l_rs_tipo as $l_row){$l_rs_tipo=$l_row; break;}
-      if (count($l_rs_tipo)>0) {
-        if (f($l_rs_tipo,'sg_tramite')<>'AT') {
-          $l_erro.='<li>Para a execução de novos lançamentos para o projeto <b>'.f($l_rs_solic,'nm_projeto').'</b>, o lançamento de dotação inicial deve estar liquidado.';
-          $l_tipo=0;        
-        }
-      }
-    }
-  }  
   if (count($l_rs_tramite)>0) {
     // Recupera os dados da pessoa
     $sql = new db_getBenef; $l_rs1 = $sql->getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -87,27 +64,6 @@ function ValidaTransferencia($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_
         $l_tipo=0;
       } 
     } 
-
-    // Verifica os dados bancários
-    $l_erro_banco = 0;
-    if (substr(f($l_rs_solic,'sigla'),0,3)=='FND') {
-      if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
-        if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
-      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
-        if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
-      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
-        if (nvl(f($l_rs_solic,'banco_estrang'),'')=='' || 
-            nvl(f($l_rs_solic,'agencia_estrang'),'')=='' ||
-            nvl(f($l_rs_solic,'numero_conta'),'')=='' ||
-            nvl(f($l_rs_solic,'cidade_estrang'),'')=='' ||
-            nvl(f($l_rs_solic,'sq_pais_estrang'),'')==''
-           ) $l_erro_banco = 1;
-     }
-    } 
-    if ($l_erro_banco==1) {
-      $l_erro.='<li>Dados bancários incompletos. Acesse a operação "Pessoa", confira os dados e grave a tela.';
-      $l_tipo=0;
-    }
 
   }
   $l_erro=$l_tipo.$l_erro;

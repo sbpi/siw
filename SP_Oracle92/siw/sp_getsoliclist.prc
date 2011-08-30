@@ -977,6 +977,8 @@ begin
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.nr_conta,
                 d4.devolucao_valor,   d4.sq_agencia,                 d4.cd_agencia,       d4.nm_agencia,
                 d4.sq_banco,          d4.cd_banco,                   d4.nm_banco,
+                d4.nm_banco||' AG. '||d4.cd_agencia||' C/C '||d4.nr_conta as ds_conta_credito,
+                di.nm_banco||' AG. '||di.cd_agencia||' C/C '||di.nr_conta as ds_conta_debito,
                 d7.sq_forma_pagamento,d7.nome as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
                 coalesce(d9.valor,0) as valor_nota,
@@ -1090,6 +1092,17 @@ begin
                                     where w.ativo  = 'S'
                                       and w.padrao = 'S'
                                   )                         d4 on (d.pessoa                   = d4.sq_pessoa)
+                     left    join (select w.sq_pessoa,          w.sq_pessoa_conta,      w.operacao,
+                                          w.numero as nr_conta, w.devolucao_valor,
+                                          x.sq_agencia,         x.codigo as cd_agencia, x.nome as nm_agencia,
+                                          y.sq_banco,           y.codigo as cd_banco,   y.nome as nm_banco
+                                     from co_pessoa_conta         w
+                                          inner   join co_agencia x on (w.sq_agencia    = x.sq_agencia)
+                                            inner join co_banco   y on (x.sq_banco      = y.sq_banco)
+                                            inner join siw_menu   s on (w.sq_pessoa     = s.sq_pessoa and
+                                                                        s.sq_menu       = p_menu
+                                                                       )
+                                  )                         di on (d.sq_pessoa_conta    = di.sq_pessoa_conta)
                        left  join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                             from fn_lancamento_doc          x
                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)

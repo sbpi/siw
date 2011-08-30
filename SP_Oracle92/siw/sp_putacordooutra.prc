@@ -75,7 +75,10 @@ begin
     End If;
 
    -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
-   If p_cpf is not null Then 
+   If p_sq_pessoa is not null Then
+      select sq_tipo_pessoa into w_sq_tipo_pessoa from co_pessoa where sq_pessoa = p_sq_pessoa;
+      w_chave_pessoa := p_sq_pessoa;
+   Elsif p_cpf is not null Then 
       select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where nome = 'Física';
       select count(*)       into w_existe         from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
       If w_existe > 0 Then
@@ -521,7 +524,7 @@ begin
             codigo_deposito  = null
       where sq_siw_solicitacao = p_chave;
       
-      If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
+      If w_forma_pagamento in ('CREDITO','DEPOSITO','DEBITO') Then
          update fn_lancamento 
             set sq_agencia     = p_sq_agencia,
                 operacao_conta = p_op_conta,

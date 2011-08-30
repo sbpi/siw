@@ -1303,7 +1303,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.U.</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>V.T.</b></td>';
     $l_html.=chr(13).'        </tr>';
-    if (count($l_rs1)<0) {
+    if (count($l_rs1)==0) {
       // Se não foram selecionados registros, exibe mensagem
       $l_html.=chr(13).'      <tr><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {

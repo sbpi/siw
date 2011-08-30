@@ -521,6 +521,7 @@ begin
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 coalesce(d3.valor,0) as valor_doc,
                 d4.nome as nm_forma_pagamento, d4.sigla as sg_forma_pagamento, d4.ativo as st_forma_pagamento,
+                di.sq_pessoa_conta as conta_credito,
                 d5.codigo as cd_agencia, d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,            d6.nome as nm_banco,
                 d6.exige_operacao,
@@ -613,6 +614,13 @@ begin
                      left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
                        left       join co_agencia           dd on (dc.sq_agencia              = dd.sq_agencia)
                          left     join co_banco             de on (dd.sq_banco                = de.sq_banco)
+                     left         join co_pessoa_conta      di on (d.pessoa                   = di.sq_pessoa and
+                                                                   d.sq_agencia               = di.sq_agencia and
+                                                                   coalesce(d.operacao_conta,'-') = coalesce(di.operacao,'-') and
+                                                                   d.numero_conta             = di.numero
+                                                                  )
+                       left       join co_agencia          di1 on (di.sq_agencia              = di1.sq_agencia)
+                         left     join co_banco           di11 on (di1.sq_banco               = di11.sq_banco)
                      left         join (select y.sq_siw_solicitacao, x1.sq_siw_solicitacao as solic_origem, x.sq_imposto
                                           from fn_imposto_doc                x
                                                inner join fn_lancamento_doc x1 on (x.sq_lancamento_doc = x1.sq_lancamento_doc)

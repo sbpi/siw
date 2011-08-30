@@ -821,12 +821,26 @@ function Geral() {
     $w_solic_vinculo        = $_REQUEST['w_solic_vinculo']; 
     $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];
     $w_projeto              = $_REQUEST['w_projeto'];
+    $w_chave_doc            = $_REQUEST['w_chave_doc'];
+    
+    
+    // Recarrega dados do comprovante
+    $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
+    $w_numero               = $_REQUEST['w_numero'];
+    $w_data                 = $_REQUEST['w_data'];
+    $w_serie                = $_REQUEST['w_serie'];
+    $w_valor_doc            = $_REQUEST['w_valor_doc'];
+    $w_patrimonio           = $_REQUEST['w_patrimonio'];
+    $w_tipo                 = $_REQUEST['w_tipo'];
+    
+    
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
     if ($w_copia>'') { $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG); }
     else             { $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG); }
     if (count($RS)>0) {
+
       $RS_Lancamento          = $RS;
       $w_sq_unidade           = f($RS,'sq_unidade');
       $w_observacao           = f($RS,'observacao');
@@ -834,6 +848,7 @@ function Geral() {
       $w_dias                 = f($RS,'dias_aviso');
       $w_sq_acordo_parcela    = f($RS,'sq_acordo_parcela');
       $w_sq_tipo_lancamento   = f($RS,'sq_tipo_lancamento');
+      $w_chave_doc           =  f($RS,'sq_lancamento_doc');
       $w_pessoa               = f($RS,'pessoa');
       $w_tipo_pessoa          = f($RS,'sq_tipo_pessoa');
       $w_nm_tipo_pessoa       = f($RS,'nm_tipo_pessoa');
@@ -931,6 +946,16 @@ function Geral() {
     $w_patrimonio           = f($RS,'patrimonio');
     $w_tributo              = f($RS,'calcula_tributo');
     $w_retencao             = f($RS,'calcula_retencao');
+  }
+  
+// Recupera a sigla do tipo do documento para tratar a Nota Fiscal
+  if ($w_sq_tipo_documento > '') {
+    $sql = new db_getTipoDocumento;
+    $RS2 = $sql->getInstanceOf($dbms, $w_sq_tipo_documento, $w_cliente, null);
+    foreach ($RS2 as $row) {
+      $w_tipo = f($row, 'sigla');
+      break;
+    }
   }
 
   // Recupera acréscimos e supressões possíveis para o lançamento financeiro
@@ -4531,6 +4556,8 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
+  
+  
   
   if (strpos($SG,'EVENT')!==false || strpos($SG,'REEMB')!==false || $SG=='FNDVIA') {
     // Verifica se a Assinatura Eletrônica é válida

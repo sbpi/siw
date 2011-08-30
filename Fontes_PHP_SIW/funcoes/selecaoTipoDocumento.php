@@ -11,7 +11,7 @@ function selecaoTipoDocumento($label,$accesskey,$hint,$chave,$cliente,$menu,$cam
   ShowHTML('          <td colspan="'.$colspan.'" '.((!isset($hint)) ? '' : 'TITLE="'.$hint.'"').'>'.((!isset($label)) ? '' : '<b>'.$label.'</b><br>').'<SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    ShowHTML(' <option value="'.f($row,'chave').'"'.((nvl(f($row,'chave'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.f($row,'nome'));
+    ShowHTML(' <option value="'.f($row,'chave').'"'.((nvl(f($row,'chave'),0)==nvl($chave,0) || count($RS)==1) ? ' SELECTED' : '').'>'.f($row,'nome'));
   }
   ShowHTML('          </select>');
 } 
