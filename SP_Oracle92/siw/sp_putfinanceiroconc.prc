@@ -20,7 +20,11 @@ create or replace procedure SP_PutFinanceiroConc
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
    w_cont          number(18);
+   w_cliente       number(18);
 begin
+   -- Recupera o cliente
+   select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
+   
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
    
@@ -104,6 +108,9 @@ begin
          End Loop;
       End If;
    End If;
+   
+   -- Executa a rotina de criação e envio de protocolo do lançamento para a contabilidade
+   sp_enviaProtocoloFinanceiro(w_cliente, p_chave, null);
     
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then

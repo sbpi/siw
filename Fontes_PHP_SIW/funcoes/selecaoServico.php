@@ -4,7 +4,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção de opções do menu que são vinculadas a serviço
 // -------------------------------------------------------------------------
-function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,$restricao,$atributo,$acordo,$acao,$viagem) {
+function selecaoServico($label,$accesskey,$hint,&$chave,$chaveAux,$modulo,$campo,$restricao,$atributo,$acordo,$acao,$viagem) {
   extract($GLOBALS);
   if(Nvl($restricao,'')=='MENURELAC') {
     $sql = new db_getMenuRelac; $RS = $sql->getInstanceOf($dbms, $chaveAux, $acordo, $acao, $viagem, 'SERVICO');
@@ -30,13 +30,19 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
   ShowHTML('          <td'.((isset($hint)) ? ' title="'.$hint.'"' : '').'>'.((isset($label)) ? '<b>'.$label.'</b><br>' : '').'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   if (f($RS_Menu,'solicita_cc')=='S') {
-    ShowHTML('          <option value="CLASSIF" '.((nvl($chave,'')=='CLASSIF') ? 'SELECTED' : '').'/>Classificação');
+    $w_selected = '';
+    if (nvl($chave,'')=='CLASSIF') { $w_selected = ' SELECTED '; $chave = 'CLASSIF'; }
+    ShowHTML('          <option value="CLASSIF"'.$w_selected.'/>Classificação');
   }
   if ($l_mod_pe=='S') {
-    ShowHTML('          <option value="PLANOEST" '.((nvl($chave,'')=='PLANOEST') ? 'SELECTED' : '').'/>Plano Estratégico');
+    $w_selected = '';
+    if (nvl($chave,'')=='PLANOEST') { $w_selected = ' SELECTED '; $chave = 'PLANOEST'; }
+    ShowHTML('          <option value="PLANOEST"'.$w_selected.'/>Plano Estratégico');
   }
   foreach($RS as $row) {
-    ShowHTML('          <option value="'.f($row,'sq_menu').'" '.((nvl(f($row,'sq_menu'),0)==nvl($chave,0)) ? 'SELECTED' : '').'/>'.f($row,'nome'));
+    $w_selected = '';
+    if (nvl(f($row,'sq_menu'),0)==nvl($chave,0) || count($RS)==1) { $w_selected = ' SELECTED '; $chave = f($row,'sq_menu'); }
+    ShowHTML('          <option value="'.f($row,'sq_menu').'"'.$w_selected.'/>'.f($row,'nome'));
   }
   ShowHTML('          </select>');
 }

@@ -7,6 +7,7 @@ create or replace procedure FN_CriaParametro
    w_sequencial number(18) := 0;
    w_existe     number(4);
    w_reg        fn_parametro%rowtype;
+   w_codigo     varchar(60);
 begin
   -- Verifica se existe um registro criado para o cliente.
   select count(*) into w_existe from fn_parametro where cliente = p_cliente;

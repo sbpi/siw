@@ -1846,6 +1846,7 @@ Fontes_PHP_SIW/mod_fn/gr_fundofixo.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/pagfundo.php -text
+Fontes_PHP_SIW/mod_fn/reembolso.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text
 Fontes_PHP_SIW/mod_fn/rel_financeiro.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
@@ -1858,11 +1859,13 @@ Fontes_PHP_SIW/mod_fn/transferencia.php -text
 Fontes_PHP_SIW/mod_fn/validaaplicacao.php -text
 Fontes_PHP_SIW/mod_fn/validafundofixo.php -text
 Fontes_PHP_SIW/mod_fn/validalancamento.php -text
+Fontes_PHP_SIW/mod_fn/validareembolso.php -text
 Fontes_PHP_SIW/mod_fn/validatarifa.php -text
 Fontes_PHP_SIW/mod_fn/validatransferencia.php -text
 Fontes_PHP_SIW/mod_fn/visualaplicacao.php -text
 Fontes_PHP_SIW/mod_fn/visualfundofixo.php -text
 Fontes_PHP_SIW/mod_fn/visuallancamento.php -text
+Fontes_PHP_SIW/mod_fn/visualreembolso.php -text
 Fontes_PHP_SIW/mod_fn/visualtarifa.php -text
 Fontes_PHP_SIW/mod_fn/visualtransferencia.php -text
 Fontes_PHP_SIW/mod_fp/dao/DAOGeneric.class.php -text
@@ -3746,6 +3749,7 @@ SP_Oracle92/siw/sp_ajustaPesoEtapa.prc -text
 SP_Oracle92/siw/sp_ajustaPesquisaMaterial.prc -text
 SP_Oracle92/siw/sp_calculaDiarias.prc -text
 SP_Oracle92/siw/sp_calculaPercEtapa.prc -text
+SP_Oracle92/siw/sp_enviaProtocoloFinanceiro.prc -text
 SP_Oracle92/siw/sp_geraContrato.prc -text
 SP_Oracle92/siw/sp_get10percentdays.prc -text
 SP_Oracle92/siw/sp_getAbastecimento.prc -text

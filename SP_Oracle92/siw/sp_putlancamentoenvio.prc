@@ -31,8 +31,7 @@ begin
       (Select 
           w_chave,                   p_chave,            p_pessoa,
           p_tramite,                 sysdate,            p_devolucao,
-          'Envio da fase "'||a.nome||'" '||
-          ' para a fase "'||b.nome||'".'
+          'Envio da fase "'||a.nome||'" '||' para a fase "'||b.nome||'".'
          from siw_tramite a,
               siw_tramite b
         where a.sq_siw_tramite = p_tramite

@@ -85,6 +85,20 @@ begin
                from siw_tramite a
               where a.sq_menu = p_menu
                 and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
+         Elsif w_menu.sq_pessoa = 10135 and w_menu.sigla='FNDREEMB' and w_sg_tramite = 'EE' Then
+            -- Regra da ABDI: 
+            --   Quando reembolso é autorizado para pagamento, vencimento deve ser dois dias úteis após o dia atual
+            Update siw_solicitacao set
+               fim            = soma_dias(w_menu.sq_pessoa, trunc(sysdate), 2, 'U'),
+               conclusao      = null
+            Where sq_siw_solicitacao = p_chave;
+
+            -- Atualiza a situação do lançamento financeiro
+            Update fn_lancamento 
+               set quitacao        = null,
+                   vencimento      = soma_dias(w_menu.sq_pessoa, trunc(sysdate), 2, 'U'),
+                   sq_pessoa_conta = null
+            Where sq_siw_solicitacao = p_chave;
          Elsif w_sg_tramite = 'PP' and substr(w_menu.sigla,1,4)='CLRP' Then
             -- Se o trâmite for de pesquisa de preços de pedido de ARP e tiver o número necessário de pesquisas, pula para o próximo.
             select count(*)
