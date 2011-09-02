@@ -40,6 +40,19 @@ begin
          -- Atualiza pagamentos de diárias pendentes de prestação de contas
          sp_ajustaFasePagamento(p_cliente, null, 'TODOS');
       End If;
+
+      -- Verifica se deve ser executado o envio de pagamentos para a contabilidade
+      select count(a.sq_pessoa) into w_reg
+        from siw_cliente_modulo a
+             inner join siw_modulo b on (a.sq_modulo = b.sq_modulo and sigla in ('PA','FN'))
+       where a.sq_pessoa = p_cliente;
+       
+      -- Se o cliente contratou os módulos financeiro e de protocolo, envia os lançamentos.
+      If w_reg = 2 Then
+         -- Envia protocolos dos pagamentos já efetuados para o setor de contabilidade
+         sp_enviaProtocoloFinanceiro(p_cliente, null, 'TODOS');
+      End If;
+
    End If;
 end SP_VerificaSenha;
 /

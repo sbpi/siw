@@ -46,6 +46,11 @@ create or replace procedure SP_PutViagemGeral
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
    
 begin
+   If p_menu is not null Then
+      -- Recupera os dados do menu
+      select * into w_menu from siw_menu where sq_menu = p_menu;
+   End If;
+   
    -- Verifica se precisa gravar o tipo de vínculo financeiro
    If instr('IA','I')>0 and p_financeiro is null and p_lancamento is not null Then
       -- Verifica se há um vínculo único para as opções enviadas
@@ -164,6 +169,15 @@ begin
                fim    = (select max(chegada) from pd_deslocamento where sq_siw_solicitacao = w_chave)
          where sq_siw_solicitacao = w_chave;
       End If;
+
+      -- Recupera o código interno  do acordo, gerado por trigger
+      select codigo_interno into p_codigo_interno from siw_solicitacao where sq_siw_solicitacao = w_chave;
+      
+      If p_codigo_interno is null and w_menu.numeracao_automatica > 0 Then
+         -- Gera código a partir da configuração do menu      
+         geraCodigoInterno(w_chave, to_number(to_char(sysdate,'yyyy')), p_codigo_interno);
+      End If;
+
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
@@ -261,43 +275,48 @@ begin
        to_char(p_inicio,'yyyy') <> to_char(Nvl(p_inicio_atual, p_inicio),'yyyy')
       ) Then
       
-      -- Recupera os parâmetros do cliente informado
-      select * into w_reg from pd_parametro where cliente = p_cliente;
-
-      If to_char(p_inicio,'yyyy') <  w_reg.ano_corrente and p_copia is null Then
-    
-         -- Configura o ano do acordo para o ano informado na data de início.
-         w_ano := to_number(to_char(p_inicio,'yyyy'));
-         
-         -- Verifica se já há alguma missão no ano informado na data de início.
-         -- Se tiver, verifica o próximo sequencial. Caso contrário, usa 1.
-         select count(*) into w_existe 
-           from siw_solicitacao      a
-                  inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-          where to_char(a.inicio,'yyyy') = w_ano
-            and a.sq_siw_solicitacao     <> w_chave
-            and b.cliente                = p_cliente;
+      If w_menu.numeracao_automatica = 0 Then
+         -- Recupera os parâmetros do cliente informado
+         select * into w_reg from pd_parametro where cliente = p_cliente;
+ 
+         If to_char(p_inicio,'yyyy') <  w_reg.ano_corrente and p_copia is null Then
+       
+            -- Configura o ano do acordo para o ano informado na data de início.
+            w_ano := to_number(to_char(p_inicio,'yyyy'));
             
-         If w_existe = 0 Then
-            w_sequencial := 1;
-         Else
-            select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
-              into w_sequencial
-              from siw_solicitacao        a
-                   inner join pd_missao   b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-             where to_char(a.inicio,'yyyy') = to_char(p_inicio,'yyyy')
-               and b.cliente                = p_cliente
-               and a.codigo_interno         like w_reg.prefixo||'%';
+            -- Verifica se já há alguma missão no ano informado na data de início.
+            -- Se tiver, verifica o próximo sequencial. Caso contrário, usa 1.
+            select count(*) into w_existe 
+              from siw_solicitacao      a
+                     inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+             where to_char(a.inicio,'yyyy') = w_ano
+               and a.sq_siw_solicitacao     <> w_chave
+               and b.cliente                = p_cliente;
+               
+            If w_existe = 0 Then
+               w_sequencial := 1;
+            Else
+               select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
+                 into w_sequencial
+                 from siw_solicitacao        a
+                      inner join pd_missao   b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                where to_char(a.inicio,'yyyy') = to_char(p_inicio,'yyyy')
+                  and b.cliente                = p_cliente
+                  and a.codigo_interno         like w_reg.prefixo||'%';
+            End If;
+            
+            p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
+ 
          End If;
-         
-         p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
-
-         -- Atualiza o código interno do acordo para o sequencial encontrato
-         update siw_solicitacao a set
-            codigo_interno = p_codigo_interno
-         where a.sq_siw_solicitacao = w_chave;
-         
+      Else
+         -- Gera código a partir da configuração do menu      
+         geraCodigoInterno(w_chave, to_number(to_char(p_inicio,'yyyy')), p_codigo_interno);
       End If;
+
+      -- Atualiza o código interno para o sequencial encontrado
+      update siw_solicitacao a 
+         set codigo_interno = p_codigo_interno
+      where a.sq_siw_solicitacao = w_chave;
    End If;
 
    -- Devolve a chave

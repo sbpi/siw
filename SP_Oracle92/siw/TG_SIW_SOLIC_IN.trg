@@ -14,7 +14,7 @@ begin
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo) 
          where a.sq_menu = :new.sq_menu;
         
-        If w_numeracao = 0 Then
+        If w_numeracao = 0 and w_modulo <> 'AC' Then
            If    w_modulo = 'AC' Then AC_CriaParametro(w_cliente, :new.inicio, w_chave);
            Elsif w_modulo = 'FN' Then FN_CriaParametro(w_cliente, :new.fim,    w_chave);
            Elsif w_modulo = 'PD' Then PD_CriaParametro(w_cliente, :new.inicio, w_chave);
