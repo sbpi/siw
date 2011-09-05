@@ -1160,7 +1160,7 @@ function Geral() {
       Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
     }
     if($w_sq_menu_relac!='CLASSIF') { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
-    if(f($RS_Relac,'sg_modulo')=='PR') {
+    if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135') {
        if (substr($SG,0,3)=='GCB') {
          Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
        } else {
@@ -1225,7 +1225,7 @@ function Geral() {
     Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
     Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
     Validate('w_cidade','Cidade','SELECT',1,1,18,'','0123456789');
-    if (f($RS_Menu,'descricao')=='S') {
+    if (f($RS_Menu,'descricao')=='S' && $w_cliente!='10135') {
       Validate('w_descricao','Resultados esperados','1',1,5,2000,'1','1');
     } 
     if (f($RS_Menu,'justificativa')=='S') {
@@ -1304,7 +1304,7 @@ function Geral() {
       else                        ShowHTML('          <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>');
     }
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o contrato."></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informar o nome reduzido do fornecedor."></td>');
     ShowHTML('      <tr>');
     SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$w_sq_tipo_acordo,null,$w_cliente,'w_sq_tipo_acordo',$SG,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_objeto\'; document.Form.submit();"');
     ShowHTML('      </tr>');
@@ -1394,11 +1394,17 @@ function Geral() {
         SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
       } else {
         if(f($RS_Relac,'sg_modulo')=='PR') {
-          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
-          ShowHTML('      <tr>');
-          if (substr(f($RS_Menu,'sigla'),2)=='B') SelecaoEtapa('<u>T</u>ema e modalidade:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_chave_pai,null,'w_etapa','CONTRATO',null);
-          else SelecaoEtapa('E<u>t</u>apa:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_chave_pai,null,'w_etapa','CONTRATO',null);
-          ShowHTML('      </tr>');
+          if ($w_cliente != '10135') {
+            SelecaoSolic('Vinculação:', null, null, $w_cliente, $w_chave_pai, $w_sq_menu_relac, f($RS_Menu, 'sq_menu'), 'w_chave_pai', f($RS_Relac, 'sigla'), 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
+            ShowHTML('      <tr>');
+            if (substr(f($RS_Menu, 'sigla'), 2) == 'B')
+              SelecaoEtapa('<u>T</u>ema e modalidade:', 'T', 'Se necessário, indique a etapa desejada para a vinculação.', $w_etapa, $w_chave_pai, null, 'w_etapa', 'CONTRATO', null);
+            else
+              SelecaoEtapa('E<u>t</u>apa:', 'T', 'Se necessário, indique a etapa desejada para a vinculação.', $w_etapa, $w_chave_pai, null, 'w_etapa', 'CONTRATO', null);
+            ShowHTML('      </tr>');
+          }else{
+            SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.submit();"');
+          }
         } else {
           SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),null);
         }
@@ -1458,7 +1464,7 @@ function Geral() {
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td>Os dados deste bloco visam orientar os responsáveis pelo monitoramento.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      if (f($RS_Menu,'descricao')=='S') {
+      if (f($RS_Menu,'descricao')=='S' && $w_cliente!='10135') {
         ShowHTML('      <tr><td><b>Res<u>u</u>ltados esperados:</b><br><textarea '.$w_Disabled.' accesskey="U" name="w_descricao" class="sti" ROWS=5 cols=75 title="Descreva os resultados esperados com a contratação.">'.$w_descricao.'</TEXTAREA></td>');
       } 
       if (f($RS_Menu,'justificativa')=='S') {
@@ -2180,8 +2186,8 @@ function OutraParte() {
             if (f($row,'sq_tipo_pessoa')==1) {
               //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
             } else {
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_tipo=PREPOSTO&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Preposto').'&SG=GCCPREP\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Prep</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_tipo=REPRESENTANTE&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Representante').'&SG=GCCREPRES\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Repr</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_tipo=PREPOSTO&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Representante legal').'&SG=GCCPREP\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Rep. Legal</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_tipo=REPRESENTANTE&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Contato').'&SG=GCCREPRES\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Contato</A>&nbsp');
             }
             ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'outra_parte').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
             ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'outra_parte').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
@@ -2464,53 +2470,72 @@ function Representante() {
     $w_sq_acordo_outra_parte   = $_REQUEST['w_sq_acordo_outra_parte'];
     $w_cargo                   = $_REQUEST['w_cargo'];
   } else {
-    if ($O=='L') {
-      if($w_tipo=='PREPOSTO') {
-        // Recupera os prepostos pela outra parte
-        $sql = new db_getConvPreposto; $RS1 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_acordo_outra_parte,null);
-        $RS1 = SortArray($RS1,'sq_pessoa','asc');
-      } elseif($w_tipo=='REPRESENTANTE') {
-        // Recupera os representantes pela outra parte
-        $sql = new db_getConvOutroRep; $RS1 = $sql->getInstanceOf($dbms,$w_chave,null,$w_sq_acordo_outra_parte);
-        $RS1 = SortArray($RS1,'sq_pessoa','asc');
+    if ($O == 'L') {
+      if ($w_tipo == 'PREPOSTO') {
+// Recupera os prepostos pela outra parte
+        $sql = new db_getConvPreposto;
+        $RS1 = $sql->getInstanceOf($dbms, $w_chave, $w_sq_acordo_outra_parte, null);
+        $RS1 = SortArray($RS1, 'sq_pessoa', 'asc');
+      } elseif ($w_tipo == 'REPRESENTANTE') {
+// Recupera os representantes pela outra parte
+        $sql = new db_getConvOutroRep;
+        $RS1 = $sql->getInstanceOf($dbms, $w_chave, null, $w_sq_acordo_outra_parte);
+        $RS1 = SortArray($RS1, 'sq_pessoa', 'asc');
       }
-    } elseif ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'')) {
-      // Recupera os dados do beneficiário em co_pessoa
-      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
-      if (!count($RS)<=0) {
-        foreach($RS as $row) {
-          $w_sq_pessoa            = f($row,'sq_pessoa');
-          $w_nome                 = f($row,'nm_pessoa');
-          $w_nome_resumido        = f($row,'nome_resumido');
-          $w_sexo                 = f($row,'sexo');
-          $w_sq_pessoa_pai        = f($row,'sq_pessoa_pai');
-          $w_nm_tipo_pessoa       = f($row,'nm_tipo_pessoa');
-          $w_sq_tipo_vinculo      = f($row,'sq_tipo_vinculo');
-          $w_nm_tipo_vinculo      = f($row,'nm_tipo_vinculo');
-          $w_interno              = f($row,'interno');
-          $w_vinculo_ativo        = f($row,'vinculo_ativo');
-          $w_cpf                  = f($row,'cpf');
-          $w_rg_numero            = f($row,'rg_numero');
-          $w_rg_emissor           = f($row,'rg_emissor');
-          $w_rg_emissao           = FormataDataEdicao(f($row,'rg_emissao'));
-          $w_sq_pessoa_telefone   = f($row,'sq_pessoa_telefone');
-          $w_ddd                  = f($row,'ddd');
-          $w_nr_telefone          = f($row,'nr_telefone');
-          $w_sq_pessoa_celular    = f($row,'sq_pessoa_celular');
-          $w_nr_celular           = f($row,'nr_celular');
-          $w_sq_pessoa_fax        = f($row,'sq_pessoa_fax');
-          $w_nr_fax               = f($row,'nr_fax');
-          $w_email                = f($row,'email');
-          $sql = new db_getConvPreposto;
-          if($w_tipo=='PREPOSTO')          $RS1 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_acordo_outra_parte,$w_sq_pessoa);
-          elseif($w_tipo=='REPRESENTANTE') $RS1 = $sql->getInstanceOf($dbms,$w_chave,$w_sq_pessoa,$w_sq_acordo_outra_parte);
-          foreach($RS1 as $row1){$RS1=$row1; break;}
-          $w_cargo                = f($row1,'cargo');
+    } elseif ((strpos($_REQUEST['Botao'], 'Alterar') === false) && (strpos($_REQUEST['Botao'], 'Procurar') === false) && ($O == 'A' || $w_sq_pessoa > '' || $w_cpf > '')) {
+// Recupera os dados do beneficiário em co_pessoa
+      $sql = new db_getBenef;
+      $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_outra_parte, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+      if (!count($RS) <= 0) {
+        foreach ($RS as $row1) {
+          $RS = $row1;
           break;
         }
-      } 
-    } 
+      }
+      var_dump(f($row1,'email'));
+      $sql = new db_getBenef;
+      $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+      if (!count($RS) <= 0) {
+        foreach ($RS as $row) {
+          $w_sq_pessoa = f($row, 'sq_pessoa');
+          $w_nome = f($row, 'nm_pessoa');
+          $w_nome_resumido = f($row, 'nome_resumido');
+          $w_sexo = f($row, 'sexo');
+          $w_sq_pessoa_pai = f($row, 'sq_pessoa_pai');
+          $w_nm_tipo_pessoa = f($row, 'nm_tipo_pessoa');
+          $w_sq_tipo_vinculo = f($row, 'sq_tipo_vinculo');
+          $w_nm_tipo_vinculo = f($row, 'nm_tipo_vinculo');
+          $w_interno = f($row, 'interno');
+          $w_vinculo_ativo = f($row, 'vinculo_ativo');
+          $w_cpf = f($row, 'cpf');
+          $w_rg_numero = f($row, 'rg_numero');
+          $w_rg_emissor = f($row, 'rg_emissor');
+          $w_rg_emissao = FormataDataEdicao(f($row, 'rg_emissao'));
+          $w_sq_pessoa_telefone = f($row, 'sq_pessoa_telefone');
+          $w_ddd = f($row, 'ddd');
+          $w_nr_telefone = f($row, 'nr_telefone');
+          $w_sq_pessoa_celular = f($row, 'sq_pessoa_celular');
+          $w_nr_celular = f($row, 'nr_celular');
+          $w_sq_pessoa_fax = f($row, 'sq_pessoa_fax');
+          $w_nr_fax = f($row, 'nr_fax');
+          $w_email = f($row, 'email');
+          $sql = new db_getConvPreposto;
+          if ($w_tipo == 'PREPOSTO')
+            $RS1 = $sql->getInstanceOf($dbms, $w_chave, $w_sq_acordo_outra_parte, $w_sq_pessoa);
+          elseif ($w_tipo == 'REPRESENTANTE')
+            $RS1 = $sql->getInstanceOf($dbms, $w_chave, $w_sq_pessoa, $w_sq_acordo_outra_parte);
+          foreach ($RS1 as $row1) {
+            $RS1 = $row1;
+            break;
+          }
+          $w_cargo = f($row1, 'cargo');
+          break;
+        }
+      }
+    }
   } 
+
   Cabecalho();
   head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -2612,8 +2637,8 @@ function Representante() {
         ShowHTML('        <td>'.nvl(f($row,'nr_celular'),'---').'</td>');
         ShowHTML('        <td>'.nvl(f($row,'email'),'---').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_outra_parte='.$w_outra_parte.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_outra_parte='.$w_outra_parte.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -5199,7 +5224,7 @@ function Grava() {
       }
       $SQL = new dml_putAcordoGeral; $SQL->getInstanceOf($dbms,$O, $w_cliente, 
           $_REQUEST['w_chave'], $_REQUEST['w_menu'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_solicitante'], 
-          $_SESSION['SQ_PESSOA'], $_REQUEST['w_sqcc'], $_REQUEST['w_descricao'], $_REQUEST['w_justificativa'], 
+          $_SESSION['SQ_PESSOA'], $_REQUEST['w_sqcc'], nvl($_REQUEST['w_descricao'],'.'), $_REQUEST['w_justificativa'], 
           $_REQUEST['w_inicio'], $_REQUEST['w_fim'], nvl($_REQUEST['w_valor'],0), $_REQUEST['w_data_hora'], 
           $_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_cidade'],  $_REQUEST['w_chave_pai'], 
           $_REQUEST['w_sq_tipo_acordo'], $_REQUEST['w_objeto'], $_REQUEST['w_sq_tipo_pessoa'], 

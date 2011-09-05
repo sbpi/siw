@@ -209,9 +209,9 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $l_html.=chr(13).'         <br>Tipo:<b> '.f($row,'nm_tipo');
         // Preposto
         $sql = new db_getConvPreposto; $RSQuery1 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
-        $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Preposto</td>';
+        $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Representante legal</td>';
         if (count($RSQuery1)==0) {
-          $l_html.=chr(13).'      <tr><td colspan=7><font size=1>Preposto não informado';
+          $l_html.=chr(13).'      <tr><td colspan=7><font size=1>Representante legal não informado';
         } else {
           $l_html.=chr(13).'      <tr><td align="center" colspan="6">';
           $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" align="center"><b>Nome</b></td>';
@@ -236,9 +236,9 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $sql = new db_getAcordoRep; //$RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
         $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
         $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
-        $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Representantes</td>';
+        $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Contatos</td>';
         if (count($RSQuery)==0) {
-          $l_html.=chr(13).'      <tr><td colspan=7><font size=1>Representantes não informados';
+          $l_html.=chr(13).'      <tr><td colspan=7><font size=1>Contatos não informados';
         } else {
           $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
           $l_html.=chr(13).'          <tr><td bgColor="#f0f0f0" align="center"><b><b>Nome</b></td>';         

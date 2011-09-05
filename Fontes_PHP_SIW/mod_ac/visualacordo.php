@@ -99,7 +99,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       else                $l_html.=chr(13).'        <td>'.f($RS,'cd_compra').'</td></tr>';
     }
 
-    if (nvl(f($RS,'nm_etapa'),'')>'') {
+    if (nvl(f($RS,'nm_etapa'),'')>'' && $w_cliente != '10135') {
       if (substr($w_sigla,0,3)=='GCB') {   
         $l_html.=chr(13).'      <tr valign="top"><td><b>Modalidade: </b></td>';
         $l_html.=chr(13).'          <td>      '.f($RS,'nm_etapa').'</td></tr>';
@@ -161,7 +161,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Informações adicionais
       if (Nvl(f($RS,'descricao'),'')>'' || Nvl(f($RS,'justificativa'),'')>'') {
-        if (Nvl(f($RS,'descricao'),'')>''){
+        if (Nvl(f($RS,'descricao'),'')>'' && $w_cliente!='10135'){
            $l_html.=chr(13).'      <tr><td valign="top"><b>Resultados esperados:</b></td>';
            $l_html.=chr(13).'          <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
         }
@@ -601,9 +601,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==2 && $l_P1==4) {
           if ($w_tipo_visao!=2) {
             $sql = new db_getConvPreposto; $RSQuery1 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
-            $l_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Prepostos</td>';
+            $l_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Representantes legais</td>';
             if (count($RSQuery1)==0) {
-              $l_html.=chr(13).'      <tr><td colspan=2><font size=1><b>Prepostos não informados</b></font></td></tr>';
+              $l_html.=chr(13).'      <tr><td colspan=2><font size=1><b>Representantes legais não informados</b></font></td></tr>';
             } else {
               $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
               $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';              
@@ -640,9 +640,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $sql = new db_getAcordoRep; //$RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
           $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
           $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
-          $l_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Representantes</td>';
+          $l_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Contatos</td>';
           if (count($RSQuery)==0) {
-            $l_html.=chr(13).'      <tr><td colspan=2><font size=1><b>Representantes não informados</b></font></td></tr>';
+            $l_html.=chr(13).'      <tr><td colspan=2><font size=1><b>Contatos não informados</b></font></td></tr>';
           } else {
             $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
             $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';              
