@@ -618,7 +618,7 @@ begin
                                     p_chave         => w_sq_financ,
                                     p_pessoa        => p_pessoa,
                                     p_tramite       => w_ci,
-                                    p_novo_tramite  => case when w_pendencia = 0 and w_sg_tramite <> 'EE' then w_ee else w_pp end,
+                                    p_novo_tramite  => case when w_pendencia > 0 and crec.descricao like 'Adiantamento%' then w_pp else w_ee end,
                                     p_devolucao     => 'N',
                                     p_despacho      => case w_sg_tramite 
                                                             when 'EE' 
