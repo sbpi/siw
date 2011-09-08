@@ -39,6 +39,7 @@ include_once($w_dir_volta.'classes/sp/db_getVincKindList.php');
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/db_getAcordoNota.php');
+include_once($w_dir_volta.'classes/sp/db_getFNParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoOutra.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoDoc.php');
@@ -145,13 +146,20 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
-// Verifica se o cliente tem o módulo de protocolo contratado
-$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
-if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
+// Verifica se o cliente tem os módulos de compras e de protocolo contratados
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
+$w_mod_pa='N';
+$w_mod_co='N';
+foreach($RS as $row) {
+  switch (f($row,'sigla')) {
+  case 'PA': $w_mod_pa = 'S'; break;
+  case 'CO': $w_mod_co = 'S'; break;
+  }
+}
 
-// Verifica se o cliente tem o módulo de compras contratado
-$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'CO');
-if (count($RS)>0) $w_mod_co='S'; else $w_mod_co='N';
+// Recupera os parâmetros de funcionamento do módulo
+$sql = new db_getFNParametro; $RS_FN = $sql->getInstanceOf($dbms,$w_cliente,null,null);
+foreach($RS_FN as $row) { $RS_FN = $row; break; }
 
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
@@ -926,6 +934,18 @@ function Geral() {
     $w_valores[$i]['valor'] = formatNumber(nvl(f($row,'valor'),0));
   }
 
+  if (nvl($w_solic_vinculo,'')!='') {
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+    $sql = new db_getSolicCL; 
+    $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
+                        $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
+    $w_texto = '';
+    if (f($RS_FN,'valor_fundo_fixo')<f($RS_Compra,'valor')) {
+      $w_texto = ' <b><font color="#BC3131">ATENÇÃO: VALOR DA COMPRA ('.formatNumber(f($RS_Compra,'valor')).') SUPERA LIMITE DO FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font></b>';
+    }
+  }
+  
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -977,6 +997,10 @@ function Geral() {
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
     Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
+    CompValor('w_valor','Valor total do documento','>','0,00','zero');
+    if (count($RS_FN)>0) {
+      CompValor('w_valor','Valor total do documento','<=',formatNumber(f($RS_FN,'fundo_fixo_valor')),formatNumber(f($RS_FN,'fundo_fixo_valor')));
+    }
     //if (Nvl($w_tipo,'-')=='NF') Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
     //Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
     if (is_array($w_valores)) {
@@ -1077,12 +1101,8 @@ function Geral() {
       ShowHTML('      <tr>');
       SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null,'<BR />',3);
       if (nvl($w_solic_vinculo,'')!='') {
-        $sql = new db_getSolicCL; 
-        $RS_Compra = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,null,null,null,null,null,null,null,null,null,null,
-                            $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
         ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td><b>Valor da compra:</b><br>'.formatNumber(f($RS_Compra,'valor')).'</td>');
+        ShowHTML('        <td><b>Valor da compra:</b><br>'.formatNumber(f($RS_Compra,'valor')).$w_texto.'</td>');
         if (nvl(f($RS_Compra,'descricao'),'')!='') {
           ShowHTML('      <tr valign="top">');
           ShowHTML('        <td><b>Objeto:</b><br>'.crlf2br(wordwrap(f($RS_Compra,'objeto'),100)).'</td>');
@@ -1091,6 +1111,7 @@ function Geral() {
           ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br(wordwrap(f($RS_Compra,'justificativa'),100)).'</td>');
         }
         ShowHTML('      </tr>');
+
       }
     }
     ShowHTML('      <tr>');
@@ -2670,6 +2691,7 @@ function SolicMail($p_solic,$p_tipo) {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
+  exibevariaveis();
   $w_file       = '';
   $w_tamanho    = '';
   $w_tipo       = '';

@@ -2605,6 +2605,8 @@ function MascaraBeneficiario($cgccpf) {
 // Rotina de envio de e-mail
 // -------------------------------------------------------------------------
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
+  var_dump($w_recipients);
+  exit();
   if (nvl($w_recipients,'')=='') return null;
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/mail/email_message.php');

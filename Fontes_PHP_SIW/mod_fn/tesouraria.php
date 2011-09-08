@@ -322,7 +322,7 @@ function Inicial() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td>');
-    if ($w_tipo!='WORD' && $P2==1) {
+    if ($w_tipo!='WORD') {
       ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'TipoLancamento&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'">[<u>I</u>ncluir novo lançamento]</a>&nbsp;&nbsp;&nbsp;');
     }
     ShowHTML('                         <a class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2=1&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.(($P2==1) ? '<font color="#BC5100">' : '').'[Movimento]</font></a>');

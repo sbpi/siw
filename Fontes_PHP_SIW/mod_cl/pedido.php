@@ -31,6 +31,7 @@ include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 include_once($w_dir_volta.'classes/sp/db_getCLSolicItem.php');
 include_once($w_dir_volta.'classes/sp/db_getCLFinanceiro.php');
 include_once($w_dir_volta.'classes/sp/db_getCcData.php');
+include_once($w_dir_volta.'classes/sp/db_getFNParametro.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLDados.php');
@@ -189,9 +190,21 @@ if (f($RS_Menu,'ultimo_nivel')=='S') {
 } 
 
 // Verifica se o cliente tem o módulo de protocolo e arquivo
-$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
-if (count($RS)>0) $w_pa='S'; else $w_pa='N';
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null);
+$w_pa='N';
+$w_fn='N';
+foreach($RS as $row) {
+  switch (f($row,'sigla')) {
+  case 'PA': $w_pa = 'S'; break;
+  case 'FN': $w_fn = 'S'; break;
+  }
+}
 
+if ($w_fn=='S') {
+  // Recupera os parâmetros de funcionamento do módulo
+  $sql = new db_getFNParametro; $RS_FN = $sql->getInstanceOf($dbms,$w_cliente,null,null);
+  foreach($RS_FN as $row) { $RS_FN = $row; break; }
+}
 // Recupera os parâmetros de funcionamento do módulo de compras
 $sql = new db_getParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,'CL',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
@@ -1860,6 +1873,7 @@ function Atender() {
   $w_financeiro     = f($RS,'sq_financeiro');
   $w_rubrica        = f($RS,'sq_projeto_rubrica');
   $w_lancamento     = f($RS,'sq_tipo_lancamento');
+  $w_valor          = f($RS,'valor');
   if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
   
   if (nvl($w_troca,'')!='') {
@@ -2010,7 +2024,13 @@ function Atender() {
   ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Dados Gerais</td></td></tr>');
   ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-  MontaRadioNS('<b>Pagamento por fundo fixo? <font color="#BC3131"></font></b>',$w_fundo_fixo,'w_fundo_fixo');
+  $w_texto = '';
+  if ($w_fn=='S') {
+    if (f($RS_FN,'valor_fundo_fixo')<$w_valor) {
+      $w_texto = ' <font color="#BC3131">ATENÇÃO: VALOR ESTIMADO DA COMPRA ('.formatNumber($w_valor).') SUPERA LIMITE DO FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font>';
+    }
+  }
+  MontaRadioNS('<b>Pagamento por fundo fixo?'.$w_texto.'</b>',$w_fundo_fixo,'w_fundo_fixo');
   ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
@@ -2068,8 +2088,8 @@ function Concluir() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -2696,4 +2716,3 @@ function Main() {
   } 
 } 
 ?>
-

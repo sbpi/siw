@@ -1295,7 +1295,7 @@ function Geral() {
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr valign="top">');
     if($w_numeracao_automatica=='N') {
-      ShowHTML('          <td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
+      ShowHTML('          <td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" title="Informar sigla e número do contrato (CTR) ou Ata de Registro de Preços (ATA)" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
     }
     if ($w_mod_pa=='S') {
       SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo da compra/licitação.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
@@ -2221,6 +2221,7 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="3">');
     ShowHTML('<INPUT type="hidden" name="w_sq_acordo_outra_parte" value="'.$w_sq_acordo_outra_parte.'">');
+
     if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
       $w_nome=$_REQUEST['w_nome'];
       if (strpos($_REQUEST['Botao'],'Alterar')!==false) {
@@ -2440,6 +2441,7 @@ function Representante() {
   $w_sq_acordo_outra_parte   = $_REQUEST['w_sq_acordo_outra_parte'];
   $w_outra_parte             = $_REQUEST['w_outra_parte'];
   $w_tipo                    = $_REQUEST['w_tipo'];
+  
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -2493,7 +2495,7 @@ function Representante() {
           break;
         }
       }
-      var_dump(f($row1,'email'));
+//      exibeArray($row1);
       $sql = new db_getBenef;
       $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, $w_cpf, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
       if (!count($RS) <= 0) {
@@ -2513,13 +2515,13 @@ function Representante() {
           $w_rg_emissor = f($row, 'rg_emissor');
           $w_rg_emissao = FormataDataEdicao(f($row, 'rg_emissao'));
           $w_sq_pessoa_telefone = f($row, 'sq_pessoa_telefone');
-          $w_ddd = f($row, 'ddd');
-          $w_nr_telefone = f($row, 'nr_telefone');
-          $w_sq_pessoa_celular = f($row, 'sq_pessoa_celular');
-          $w_nr_celular = f($row, 'nr_celular');
-          $w_sq_pessoa_fax = f($row, 'sq_pessoa_fax');
-          $w_nr_fax = f($row, 'nr_fax');
-          $w_email = f($row, 'email');
+          $w_ddd = nvl(f($row, 'ddd'),f($row1, 'ddd'));
+          $w_nr_telefone = nvl(f($row, 'nr_telefone'),f($row1, 'nr_telefone'));
+          $w_sq_pessoa_celular = nvl(f($row, 'sq_pessoa_celular'),f($row1, 'sq_pessoa_celular'));
+          $w_nr_celular = nvl(f($row, 'nr_celular'),f($row1, 'nr_celular'));
+          $w_sq_pessoa_fax = nvl(f($row, 'sq_pessoa_fax'),f($row1, 'sq_pessoa_fax'));
+          $w_nr_fax = nvl(f($row, 'nr_fax'),f($row1, 'nr_fax'));
+          $w_email = nvl(f($row, 'email'),f($row1, 'email'));
           $sql = new db_getConvPreposto;
           if ($w_tipo == 'PREPOSTO')
             $RS1 = $sql->getInstanceOf($dbms, $w_chave, $w_sq_acordo_outra_parte, $w_sq_pessoa);
@@ -2606,7 +2608,7 @@ function Representante() {
       ShowHTML(' <tr><td>Outra parte: <b>'.f($row,'nm_pessoa').' </b><br><br>');
     }
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_outra_parte='.$w_outra_parte.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('                         <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS1));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -2667,6 +2669,7 @@ function Representante() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_acordo_outra_parte" value="'.$w_sq_acordo_outra_parte.'">');
+    ShowHTML('<INPUT type="hidden" name="w_outra_parte" value="'.$w_outra_parte.'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.$w_tipo.'">');
     
     if ($w_cpf=='' || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
@@ -2679,7 +2682,7 @@ function Representante() {
       ShowHTML('    <table border="0">');
       ShowHTML('        <tr><td colspan=4>Informe os dados abaixo e clique no botão "Selecionar" para continuar.</TD>');
       ShowHTML('        <tr><td colspan=4><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
-      ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'\'">');
+      ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_outra_parte='.$w_outra_parte.'\'">');
       ShowHTML('        <tr><td colspan=4><p>&nbsp</p>');
       ShowHTML('        <tr><td colspan=4 heigth=1 bgcolor="#000000">');
       ShowHTML('        <tr><td colspan=4>');
@@ -2706,7 +2709,7 @@ function Representante() {
             ShowHTML('        <td>'.f($row,'nome_resumido').'</td>');
             ShowHTML('        <td align="center">'.nvl(f($row,'cpf'),'---').'</td>');
             ShowHTML('        <td nowrap>');
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&R='.$R.'&O=I&w_cpf='.f($row,'cpf').'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Selecionar</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&w_tipo='.$w_tipo.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'&w_outra_parte='.$w_outra_parte.'&R='.$R.'&O=I&w_cpf='.f($row,'cpf').'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Selecionar</A>&nbsp');
             ShowHTML('        </td>');
             ShowHTML('      </tr>');
           } 
