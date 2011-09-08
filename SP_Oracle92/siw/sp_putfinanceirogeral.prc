@@ -236,21 +236,22 @@ begin
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
          
          -- Remove os registros vinculados à demanda
-         delete fn_imposto_doc    where solic_imposto  = p_chave;
-         delete fn_imposto_doc    where solic_retencao = p_chave;
-         delete fn_documento_item where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+         delete fn_documento_valores  where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+         delete fn_imposto_doc        where solic_imposto  = p_chave;
+         delete fn_imposto_doc        where solic_retencao = p_chave;
+         delete fn_documento_item     where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
          delete fn_lancamento_rubrica where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
-         delete fn_lancamento_log where sq_siw_solicitacao = p_chave;
-         delete fn_lancamento_doc where sq_siw_solicitacao = p_chave;
+         delete fn_lancamento_log     where sq_siw_solicitacao = p_chave;
+         delete fn_lancamento_doc     where sq_siw_solicitacao = p_chave;
          
          -- Remove o registro na tabela de demandas
-         delete fn_lancamento     where sq_siw_solicitacao = p_chave;
+         delete fn_lancamento         where sq_siw_solicitacao = p_chave;
             
          -- Remove o log da solicitação
-         delete siw_solic_log where sq_siw_solicitacao = p_chave;
+         delete siw_solic_log         where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de solicitações
-         delete siw_solicitacao where sq_siw_solicitacao = p_chave;
+         delete siw_solicitacao       where sq_siw_solicitacao = p_chave;
       End If;
    End If;
    
