@@ -2067,8 +2067,6 @@ function MailRecusa($l_o, $l_unid, $l_numero, $l_ano, $l_observacao) {
     $l_pessoa = f($RS, 'cadastrador');
     $sql = new db_getPersonData;
     $RS = $sql->getInstanceOf($dbms, $w_cliente, nvl($l_pessoa, 0), null, null);
-    exibeArray($RS);
-    exit();
     $w_destinatarios = f($RS, 'email') . '|' . f($RS, 'nome') . '; ';
     $w_html.=$crlf . '      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
     $sql = new db_getCustomerSite;

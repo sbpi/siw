@@ -2691,7 +2691,6 @@ function SolicMail($p_solic,$p_tipo) {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-  exibevariaveis();
   $w_file       = '';
   $w_tamanho    = '';
   $w_tipo       = '';
