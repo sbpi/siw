@@ -186,7 +186,7 @@ begin
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
                 d21.cpf,              d22.cnpj,
                 coalesce(d3.valor,0) as valor_doc,                   d3.numero as nr_doc,
-                d31.sigla as sg_doc,                                 d3.data as dt_doc,
+                d31.sigla as sg_doc,  d31.nome as nm_doc,            d3.data as dt_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero as nr_conta,
                 d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,

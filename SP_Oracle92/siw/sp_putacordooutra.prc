@@ -44,7 +44,7 @@ create or replace procedure SP_PutAcordoOutra
    
    w_sg_modulo       varchar2(10);
    w_existe          number(4);
-   w_chave_pessoa    number(18) := Nvl(p_sq_pessoa,0);
+   w_chave_pessoa    number(18) := coalesce(p_sq_pessoa,0);
    w_tipo_fone       number(18);
    w_chave_fone      number(18);
    w_tipo_endereco   number(18);
@@ -79,18 +79,18 @@ begin
       select sq_tipo_pessoa into w_sq_tipo_pessoa from co_pessoa where sq_pessoa = p_sq_pessoa;
       w_chave_pessoa := p_sq_pessoa;
    Elsif p_cpf is not null Then 
-      select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where nome = 'Física';
+      select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where substr(nome,1,1) = 'F';
       select count(*)       into w_existe         from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
       If w_existe > 0 Then
-         select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+         select min(sq_pessoa) into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
       Else
          w_chave_pessoa := 0;
       End If;
    Else 
-      select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa     where nome = 'Jurídica';
+      select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa     where substr(nome,1,1) = 'J';
       select count(*)       into w_existe         from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
       If w_existe > 0 Then
-         select sq_pessoa into w_chave_pessoa from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
+         select min(sq_pessoa) into w_chave_pessoa from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
       Else
          w_chave_pessoa := 0;
       End If;
@@ -126,8 +126,8 @@ begin
       End If;
    Else -- Caso contrário, altera
       update co_pessoa
-         set nome          = Nvl(p_nome, nome),
-             nome_resumido = Nvl(p_nome_resumido, nome_resumido)
+         set nome          = coalesce(p_nome, nome),
+             nome_resumido = coalesce(p_nome_resumido, nome_resumido)
        where sq_pessoa = w_chave_pessoa;
 
       -- Grava dados complementares, dependendo do tipo de acordo
@@ -155,14 +155,14 @@ begin
            );
       Else -- Caso contrário, altera
          update co_pessoa_fisica
-            set nascimento         = Nvl(p_nascimento, nascimento),
-                rg_numero          = Nvl(p_rg_numero, rg_numero),
-                rg_emissor         = Nvl(p_rg_emissor, rg_emissor),
-                rg_emissao         = Nvl(p_rg_emissao, rg_emissao),
-                cpf                = Nvl(p_cpf, cpf),
-                passaporte_numero  = Nvl(p_passaporte, passaporte_numero),
-                sq_pais_passaporte = Nvl(p_sq_pais_passaporte, sq_pais_passaporte),
-                sexo               = Nvl(p_sexo, sexo)
+            set nascimento         = coalesce(p_nascimento, nascimento),
+                rg_numero          = coalesce(p_rg_numero, rg_numero),
+                rg_emissor         = coalesce(p_rg_emissor, rg_emissor),
+                rg_emissao         = coalesce(p_rg_emissao, rg_emissao),
+                cpf                = coalesce(p_cpf, cpf),
+                passaporte_numero  = coalesce(p_passaporte, passaporte_numero),
+                sq_pais_passaporte = coalesce(p_sq_pais_passaporte, sq_pais_passaporte),
+                sexo               = coalesce(p_sexo, sexo)
           where sq_pessoa = w_chave_pessoa;
       End If;
    Else
@@ -177,7 +177,7 @@ begin
       Else -- Caso contrário, altera
          update co_pessoa_juridica
             set cnpj               = p_cnpj,
-                inscricao_estadual = Nvl(p_inscricao_estadual, inscricao_estadual)
+                inscricao_estadual = coalesce(p_inscricao_estadual, inscricao_estadual)
           where sq_pessoa = w_chave_pessoa;
       End If;
    End If;
@@ -479,7 +479,7 @@ begin
             codigo_deposito  = null
       where sq_siw_solicitacao = p_chave;
       
-      If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
+      If coalesce(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
          update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
          delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
       End If;
@@ -526,9 +526,12 @@ begin
       
       If w_forma_pagamento in ('CREDITO','DEPOSITO','DEBITO') Then
          update fn_lancamento 
-            set sq_agencia     = p_sq_agencia,
-                operacao_conta = p_op_conta,
-                numero_conta   = p_nr_conta
+            set sq_tipo_pessoa  = sq_tipo_pessoa,
+                sq_agencia      = p_sq_agencia,
+                operacao_conta  = p_op_conta,
+                numero_conta    = p_nr_conta,
+                sq_pessoa_conta = coalesce(p_conta,sq_pessoa_conta),
+                codigo_deposito = coalesce(p_codigo_deposito,codigo_deposito)
          where sq_siw_solicitacao = p_chave;
       Elsif w_forma_pagamento = 'CHEQUE' Then
          update fn_lancamento 
@@ -555,7 +558,7 @@ begin
       End If;
    Elsif w_sg_modulo = 'PR' Then
       update pj_projeto set outra_parte = w_chave_pessoa where sq_siw_solicitacao = p_chave;
-      If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
+      If coalesce(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
          update pj_projeto set preposto = null where sq_siw_solicitacao = p_chave;
          delete pj_projeto_representante where sq_siw_solicitacao = p_chave;
       End If;

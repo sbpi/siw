@@ -160,21 +160,23 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     }
 
     // 4 - Recupera os documentos associados ao lançamento
-    $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,'DOCS');
-    if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
-    if ($l_existe_rs1==0) {
-      // 5 - Verifica se foi informado pelo menos um documento
-      $l_erro.='<li>Não foram informados documentos para o lançamento. Acesse a operação "'.(($P2==1) ? 'Ajustar documentos' : 'Docs').'" e informe pelo menos um.';
-      $l_tipo=0;
-    
-    /*
-    } else {
-      if ($l_item && $l_existe_rs2==0 && (nvl(f($l_rs_solic,'sq_projeto_rubrica'),0)!=0 || nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')) {
-        // 7 - Verifica se foi informado pelo menos um item no documento
-        $l_erro.='<li>Não foram informados itens para o documento. Acesse a operação "'.(($P2==1) ? 'Ajustar documentos' : 'Itens do documento').'" e informe pelo menos um.';
+    if (substr(f($l_rs_solic,'sigla'),0,3)=='FND') {
+      $sql = new db_getLancamentoDoc; $l_rs1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,'DOCS');
+      if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
+      if ($l_existe_rs1==0) {
+        // 5 - Verifica se foi informado pelo menos um documento
+        $l_erro.='<li>Não foram informados documentos para o lançamento. Acesse a operação "'.(($P2==1) ? 'Ajustar documentos' : 'Docs').'" e informe pelo menos um.';
         $l_tipo=0;
-      } 
-     */
+
+      /*
+      } else {
+        if ($l_item && $l_existe_rs2==0 && (nvl(f($l_rs_solic,'sq_projeto_rubrica'),0)!=0 || nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')) {
+          // 7 - Verifica se foi informado pelo menos um item no documento
+          $l_erro.='<li>Não foram informados itens para o documento. Acesse a operação "'.(($P2==1) ? 'Ajustar documentos' : 'Itens do documento').'" e informe pelo menos um.';
+          $l_tipo=0;
+        } 
+       */
+      }
     }
     
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao

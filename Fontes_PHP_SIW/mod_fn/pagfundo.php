@@ -72,6 +72,7 @@ include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAgencia.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
+include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRubrica.php');
@@ -303,7 +304,6 @@ function Inicial() {
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
-    ShowHTML('</HEAD>');
   } else {
     Cabecalho();
     head();
@@ -344,9 +344,9 @@ function Inicial() {
     } 
     ValidateClose();
     ScriptClose();
-    ShowHTML('</HEAD>');
   }
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   elseif ($O=='I') BodyOpen('onLoad=\'document.Form.w_smtp_server.focus();\'');
   elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
@@ -484,10 +484,10 @@ function Inicial() {
                   /*
                   if (!(strpos($SG,'FNR')===false)) {
                     $sql = new db_getsolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
-                    if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
-                    else              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                    if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
+                    else              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                   } else {
-                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                   }
                   if(nvl(f($row,'qtd_nota'),0)!=0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Notas'.'&SG=NOTA').'\',\'Nota\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa os valores específicos para cada nota de empenho ligado a parcela.">NE</A>&nbsp');
                   */
@@ -504,10 +504,10 @@ function Inicial() {
                     /*
                     if (!(strpos($SG,'FNR')===false)) {
                       $sql = new db_getsolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
-                      if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
-                      else              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                      if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
+                      else              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                     } else {
-                      ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                      ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                     }
                     */
                   }
@@ -720,6 +720,7 @@ function Geral() {
       $w_chave_pai          = $_REQUEST['w_chave_pai'];
     }
     $w_pessoa               = $_REQUEST['w_pessoa'];
+    $w_pessoa_nm            = $_REQUEST['w_pessoa_nm'];
     $w_tipo_pessoa          = $_REQUEST['w_tipo_pessoa'];
     $w_nm_tipo_pessoa       = $_REQUEST['w_nm_tipo_pessoa'];
     $w_sq_acordo_parcela    = $_REQUEST['w_sq_acordo_parcela'];
@@ -786,6 +787,7 @@ function Geral() {
       $w_sq_acordo_parcela    = f($RS,'sq_acordo_parcela');
       $w_sq_tipo_lancamento   = f($RS,'sq_tipo_lancamento');
       $w_pessoa               = f($RS,'pessoa');
+      $w_pessoa_nm            = f($RS,'nm_pessoa');
       $w_tipo_pessoa          = f($RS,'sq_tipo_pessoa');
       $w_nm_tipo_pessoa       = f($RS,'nm_tipo_pessoa');
       $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
@@ -860,22 +862,19 @@ function Geral() {
     foreach ($RS2 as $row) { $w_tipo = f($row,'sigla'); break; }
   } 
   
-  // Default: pagamento para pessoa jurídica
-  $w_tipo_pessoa = nvl($w_tipo_pessoa,2);
-  
-  // Tenta recuperar os dados do beneficiário
-  if (Nvl($w_tipo_pessoa,'')!='' && (Nvl($w_pessoa,'')!='' || Nvl($_REQUEST['w_cpf'],'')!='' || Nvl($_REQUEST['w_cnpj'],'')!='')) {
-    // Recupera os dados do proponente
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],$_REQUEST['w_cnpj'],null,$w_tipo_pessoa,null,null,null,null,null,null,null, null, null, null, null);
-    if (count($RS)>0) {
-      foreach($RS as $row) { $RS = $row; break; }
-      $w_cpf           = f($RS,'cpf');
-      $w_cnpj          = f($RS,'cnpj');
-      $w_sq_prop       = f($RS,'sq_pessoa');
-      $w_nome          = f($RS,'nm_pessoa');
-      $w_nome_resumido = f($RS,'nome_resumido');
-      $w_sexo          = f($RS,'sexo');
-      $w_vinculo       = f($RS,'sq_tipo_vinculo');
+  // Recupera os dados do beneficiário
+  if (Nvl($w_pessoa,'')!='') {
+    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
+    if (count($RS_Benef)>0) {
+      foreach($RS_Benef as $row) { $RS_Benef = $row; break; }
+      $w_cpf           = f($RS_Benef,'cpf');
+      $w_cnpj          = f($RS_Benef,'cnpj');
+      $w_sq_prop       = f($RS_Benef,'sq_pessoa');
+      $w_nome          = f($RS_Benef,'nm_pessoa');
+      $w_nome_resumido = f($RS_Benef,'nome_resumido');
+      $w_sexo          = f($RS_Benef,'sexo');
+      $w_vinculo       = f($RS_Benef,'sq_tipo_vinculo');
+      $w_tipo_pessoa   = f($RS_Benef,'sq_tipo_pessoa');
     }
   }
   
@@ -941,7 +940,7 @@ function Geral() {
                         $w_solic_vinculo,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach($RS_Compra as $row) {$RS_Compra = $row; break; }
     $w_texto = '';
-    if (f($RS_FN,'valor_fundo_fixo')<f($RS_Compra,'valor')) {
+    if (f($RS_FN,'fundo_fixo_valor')<f($RS_Compra,'valor')) {
       $w_texto = ' <b><font color="#BC3131">ATENÇÃO: VALOR DA COMPRA ('.formatNumber(f($RS_Compra,'valor')).') SUPERA LIMITE DO FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font></b>';
     }
   }
@@ -957,9 +956,9 @@ function Geral() {
   SaltaCampo();
   FormataDataHora();
   FormataValor();
-  FormataCPF();
-  FormataCNPJ();
-  Modulo();
+//  FormataCPF();
+//  FormataCNPJ();
+//  Modulo();
   ShowHTML('function botoes() {');
   ShowHTML('  document.Form.Botao[0].disabled = true;');
   ShowHTML('  document.Form.Botao[1].disabled = true;');
@@ -979,20 +978,21 @@ function Geral() {
     }
     Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
     Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
-    if ($w_cliente!=10135) Validate('w_tipo_pessoa','Lançamento para pessoa','SELECT',1,1,18,'','0123456789');   
     Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
     Validate('w_vencimento','Data de pagamento','DATA',1,10,10,'','0123456789/');
-    if ($w_tipo_pessoa==1) Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
-    else                   Validate('w_cnpj','CNPJ','CNPJ','1','18','18','','0123456789/-.');
-    Validate('w_nome','Nome','1',1,5,60,'1','1');
-    if ($w_cliente!=10135) {
-      Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
-    } else {
-     ShowHTML('  if (theForm.w_nome_resumido.value=="") {');
-     ShowHTML('    theForm.w_nome_resumido.value=theForm.w_nome.value.substr(0,20);');
-     ShowHTML('}');
-    }
-    if ($w_tipo_pessoa==1) Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
+
+    Validate('w_pessoa_nm', 'Beneficiário', 'HIDDEN', 1, 5, 100, '1', '1');
+//    if ($w_tipo_pessoa==1) Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
+//    else                   Validate('w_cnpj','CNPJ','CNPJ','1','18','18','','0123456789/-.');
+//    Validate('w_nome','Nome','1',1,5,60,'1','1');
+//    if ($w_cliente!=10135) {
+//      Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
+//    } else {
+//     ShowHTML('  if (theForm.w_nome_resumido.value=="") {');
+//     ShowHTML('    theForm.w_nome_resumido.value=theForm.w_nome.value.substr(0,20);');
+//     ShowHTML('}');
+//    }
+//    if ($w_tipo_pessoa==1) Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
     Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
@@ -1054,6 +1054,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_codigo_interno" value="'.$w_codigo_interno.'">');
     ShowHTML('<INPUT type="hidden" name="w_qtd_nota" value="'.$w_qtd_nota.'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.$w_tipo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="'.$w_tipo_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_doc" value="'.$w_chave_doc.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
@@ -1120,11 +1121,6 @@ function Geral() {
     ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%">');
     ShowHTML('        <tr valign="top">');
-    if ($w_cliente!=10135) {
-      SelecaoTipoPessoa('Lançamento para pessoa:','T','Selecione na lista o tipo de pessoa associada a este lançamento.',$w_tipo_pessoa,$w_cliente,'w_tipo_pessoa',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_forma_pagamento\'; document.Form.submit();"',null);
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="'.$w_tipo_pessoa.'">');
-    }
     SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     ShowHTML('              <td><b><u>D</u>ata de pagamento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
 
@@ -1132,22 +1128,16 @@ function Geral() {
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Dados do Beneficiário</td></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr valign="top">');
-    if ($w_tipo_pessoa==1) ShowHTML('        <tr><td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);" onBlur="botoes(); document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();">');
-    else                   ShowHTML('        <tr><td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);" onBlur="botoes(); document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();">');
-    if ($w_cliente!=10135) {
-      ShowHTML('            <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-      ShowHTML('            <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
-    } else {
-      ShowHTML('            <td colspan="2"><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-      ShowHTML('<INPUT type="hidden" name="w_nome_resumido" value="'.$w_nome_resumido.'">');
-    }
-    if ($w_tipo_pessoa==1) SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
-
-    // Recupera o tipo de vínculo
-    $sql = new db_getVincKindList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'S', (($w_tipo_pessoa==1) ? 'Física' : 'Jurídica'), 'Fornecedor', null);
-    foreach($RS as $row) { ShowHTML('<INPUT type="hidden" name="w_vinculo" value="'.f($row,'sq_tipo_vinculo').'">'); break; }
     
+    ShowHTML('      <tr valign="top">');
+    SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', $w_pessoa, null, 'w_pessoa', 'NF,NJ', null, 'onFocus="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_documento\'; document.Form.submit();"', 1, 'w_identificador');
+    if (count($RS_Benef)) {
+      if ($w_tipo_pessoa==1) {
+        ShowHTML('        <td><b>CPF:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cpf" VALUE="'.f($RS_Benef,'cpf').'" SIZE="16">');
+      } else {
+        ShowHTML('        <td><b>CNPJ:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cnpj" VALUE="'.f($RS_Benef,'cnpj').'" SIZE="20">');
+      }
+    }
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Documento de despesa</td></td></tr>');
@@ -1476,8 +1466,8 @@ function OutraParte() {
   } 
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
@@ -1750,8 +1740,8 @@ function Visual() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpenClean(null); 
   if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
   $w_embed = 'HTML';
@@ -1798,8 +1788,8 @@ function Excluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1908,8 +1898,8 @@ function Encaminhamento() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2072,8 +2062,8 @@ function EncAutomatico() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2183,8 +2173,8 @@ function Anotar() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else
@@ -2325,8 +2315,8 @@ function Concluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
@@ -2448,8 +2438,8 @@ function FichaRubrica() {
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen(null);
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -2696,8 +2686,8 @@ function Grava() {
   $w_tipo       = '';
   $w_nome       = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
   if (strpos($SG,'FUNDO')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
@@ -3069,7 +3059,8 @@ function Main() {
     case 'GRAVA':           Grava();            break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('</head>');
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

@@ -324,10 +324,10 @@ function Inicial() {
                   if (f($row,'sg_tramite')=='EE') {
                     ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                     if (substr($SG,0,3)=='FNR') {
-                      if (f($row,'rubrica')=='S') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
-                      else                        ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                      if (f($row,'rubrica')=='S') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
+                      else                        ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                     } else {
-                      ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                      ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                     }
                   }
                   if(nvl(f($row,'qtd_nota'),'')!='') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Notas'.'&SG=NOTA').'\',\'Nota\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa os valores específicos para cada nota de empenho ligado a parcela.">NE</A>&nbsp');
@@ -531,6 +531,36 @@ function Geral() {
     }
   }   
   
+  // Verifica as formas de pagamento possíveis. Se apenas uma, atribui direto
+  $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $SG, null,'S',null);
+  $w_exibe_fp = true;
+  if (count($RS)==1 || nvl($w_sq_forma_pagamento,'')!='') {
+    foreach($RS as $row) { 
+      if (nvl($w_sq_forma_pagamento,f($row,'sq_forma_pagamento'))==f($row,'sq_forma_pagamento')) {
+        $w_sq_forma_pagamento = f($row,'sq_forma_pagamento'); 
+        $w_forma_pagamento    = f($row,'sigla'); 
+        $w_nm_forma_pagamento = f($row,'nome'); 
+        break; 
+      }
+    }
+    if (count($RS)==1) $w_exibe_fp = false;
+  }
+  
+  // Verifica os tipos de documento possíveis. Se apenas um, atribui direto
+  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_menu);
+  $w_exibe_dc = true;
+  if (count($RS)==1 || nvl($w_sq_tipo_documento,'')!='') {
+    foreach($RS as $row) { 
+      if (nvl($w_sq_tipo_documento,f($row,'chave'))==f($row,'chave')) {
+        $w_sq_tipo_documento = f($row,'chave'); 
+        $w_tipo_documento    = f($row,'sigla'); 
+        $w_nm_tipo_documento = f($row,'nome'); 
+        break; 
+      }
+    }
+    if (count($RS)==1) $w_exibe_dc = false;
+  }
+
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -549,12 +579,13 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
-    Validate('w_sq_forma_pagamento','Forma de pagamento','SELECT',1,1,18,'','0123456789');
+    if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de pagamento','SELECT',1,1,18,'','0123456789');
     Validate('w_conta_debito','Conta origem', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_conta_credito','Conta destino', 'SELECT', 1, 1, 18, '', '0123456789');
-    Validate('w_sq_tipo_documento','Tipo de documento','SELECT',1,1,18,'','0123456789');
+    if ($w_exibe_dc) Validate('w_sq_tipo_documento','Tipo de documento','SELECT',1,1,18,'','0123456789');
     Validate('w_fim','Data da operação', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
+    CompValor('w_valor','Valor total do documento','>','0,00','zero');
     Validate('w_descricao','Observação','1','',5,2000,'1','1');
   } 
   Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -564,8 +595,7 @@ function Geral() {
   ShowHTML('</HEAD>');
   if ($w_troca>'')                               BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('EV',$O)===false))            BodyOpen('onLoad=\'this.focus()\';');
-  elseif ($w_exige_relac)                        BodyOpen('onLoad=\'document.Form.w_sq_menu_relac.focus()\';');
-  else                                           BodyOpen('onLoad=\'document.Form.w_chave_pai.focus()\';');
+  else                                           BodyOpen('onLoad=\'document.Form.w_sq_tipo_lancamento.focus()\';');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -611,12 +641,20 @@ function Geral() {
     ShowHTML('          <tr valign="top">');
     selecaoTipoLancamento('Tipo de lançamento:',null,null,$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',$SG,null,3);
     ShowHTML('      <tr valign="top">');
-    SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para esta aplicação.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
+    if ($w_exibe_fp) {
+      SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para esta aplicação.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento" value="'.$w_sq_forma_pagamento.'">');
+    }
     SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,null);
     SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    if ($w_exibe_dc) {
+      SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_sq_tipo_documento" value="'.$w_sq_tipo_documento.'">');
+    }
     ShowHTML('        <td><b><u>D</u>ata da operação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('        <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="sti" ROWS=3 cols=75 title="Observação sobre a aplicação.">'.$w_descricao.'</TEXTAREA></td>');

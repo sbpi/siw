@@ -563,8 +563,9 @@ function CadastraPessoa() {
     $p_nome           = $_REQUEST['p_nome'];
     $p_tipo_pessoa    = $_REQUEST['p_tipo_pessoa'];
     $p_mandatory      = $_REQUEST['p_mandatory'];
-    if(strpos($p_mandatory,'w_nascimento')!==false) $w_exige_nascimento = true; else $w_exige_nascimento = false;
-    if(strpos($p_mandatory,'w_email')!==false)      $w_exige_email = true;      else $w_exige_email = false;
+    if(strpos($p_mandatory,'w_nascimento')!==false)    $w_exige_nascimento = true;    else $w_exige_nascimento = false;
+    if(strpos($p_mandatory,'w_email')!==false)         $w_exige_email = true;         else $w_exige_email = false;
+    if(strpos($p_mandatory,'w_identificador')!==false) $w_exige_identificador = true; else $w_exige_identificador = false;
     
     // Verifica se há necessidade de recarregar os dados da tela a partir
     // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -669,13 +670,9 @@ function CadastraPessoa() {
     ValidateOpen('Validacao');
     Validate('w_nome','Nome','1',1,5,60,'1','1');
     if ($w_tipo_pessoa==1) {
-        if(substr($_REQUEST['p_objeto'],0,2)=='PD' ){
-          Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
-        }else{
-          Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
-        }
+      Validate('w_cpf','CPF','CPF',((substr($_REQUEST['p_objeto'],0,2)=='PD' || $w_exige_identificador) ? '1' : ''),'14','14','','0123456789-.');
     } elseif ($w_tipo_pessoa==2) {
-        Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
+        Validate('w_cnpj','CNPJ','CNPJ',(($w_exige_identificador) ? '1' : ''),'18','18','','0123456789/-.');
     }
     Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     if ($w_tipo_pessoa==1 or $w_tipo_pessoa==3) {

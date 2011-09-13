@@ -428,13 +428,17 @@ function Inicial() {
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Protocolo','protocolo').'</font></td>');
       }
-      $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dt. Pagamento','dt_pagamento').'</td>');
+      if ($w_visao_completa) {
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena((($P1==0) ? 'Vencimento' : 'Pagamento'),'dt_pagamento').'</td>');
+      } elseif ($P2>1) {
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dt. Pagamento','dt_pagamento').'</td>');
+      }
       if ($w_visao_completa) {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Beneficiário','nm_pessoa_resumido').'</td>');
       } else {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Beneficiário','nm_pessoa').'</td>');
       }
-      ShowHTML('          <td colspan="4"><b>Documento</td>');
+      ShowHTML('          <td colspan="3"><b>Documento</td>');
       if ($w_visao_completa) {
         ShowHTML('          <td rowspan="2" width="1%">&nbsp;</td>');
         ShowHTML ('         <td rowspan="2"><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
@@ -450,7 +454,6 @@ function Inicial() {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Tipo','sg_doc').'</td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Número','nr_doc').'</td>');
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Emissão','dt_doc').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
       ShowHTML('        </tr>');
     } else {
@@ -460,7 +463,7 @@ function Inicial() {
       }
       $colspan++; ShowHTML('          <td rowspan="2"><b>Código</td>');
       $colspan++; ShowHTML('          <td rowspan="2"><b>Beneficiário</td>');
-      ShowHTML('          <td colspan="4"><b>Documento</td>');
+      ShowHTML('          <td colspan="3"><b>Documento</td>');
       if ($w_visao_completa) {
         ShowHTML('          <td rowspan="2"><b>Vinculação</td>');
         ShowHTML('          <td rowspan="2"><b>Projeto</td>');
@@ -474,7 +477,6 @@ function Inicial() {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       $colspan++; ShowHTML('          <td><b>Tipo</td>');
       $colspan++; ShowHTML('          <td><b>Número</td>');
-      $colspan++; ShowHTML('          <td><b>Emissão</td>');
       ShowHTML('          <td><b>Valor</td>');
       ShowHTML('        </tr>');
     }  
@@ -505,11 +507,11 @@ function Inicial() {
         }
         if ($w_visao_completa) {
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'dt_pagamento'),5),'-').'</td>');
-        } else {
-          ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'phpdt_inclusao'),5),'-').'</td>');
+        } elseif ($P2>1) {
+          ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'dt_pagamento'),5),'-').'</td>');
         }
         if (substr(f($row,'sigla'),0,3)=='FNA' || f($row,'sigla')=='FNDTARIFA') {
-          ShowHTML('        <td colspan="4">'.f($row,'nome').'</td>');
+          ShowHTML('        <td colspan="3">'.f($row,'nome').'</td>');
         } else {
           if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
             if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,(($w_visao_completa) ? f($row,'nm_pessoa_resumido') : f($row,'nm_pessoa'))).'</td>');
@@ -517,9 +519,8 @@ function Inicial() {
           } else {
             ShowHTML('        <td align="center">---</td>');
           }
-          ShowHTML('        <td>'.f($row,'sg_doc').'</td>');
+          ShowHTML('        <td title="'.f($row,'nm_doc').'">'.f($row,'sg_doc').'</td>');
           ShowHTML('        <td>'.f($row,'nr_doc').'</td>');
-          ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'dt_doc'),5).'</td>');
         }
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;</td>');
         $w_valor = nvl(((f($row,'sg_tramite')=='AT') ? f($row,'valor_atual') : f($row,'valor')),0);
@@ -611,18 +612,18 @@ function Inicial() {
                 if ($w_visao_completa) {
                   ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                   if (strpos(f($row,'sigla'),'FNR')!==false) {
-                    if (f($row,'rubrica')=='S') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
-                    else                        ShowHTML('          <A class="boxClean hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                    if (f($row,'rubrica')=='S') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
+                    else                        ShowHTML('          <A class="boxClean hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                   } elseif (f($row,'sigla')!='FNDFIXO') {
-                    ShowHTML('          <A class="boxClean hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                    ShowHTML('          <A class="boxClean hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                   } 
                   if(nvl(f($row,'qtd_nota'),'')!='') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Notas&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Notas'.'&SG=NOTA').'\',\'Nota\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa os valores específicos para cada nota de empenho ligado a parcela.">NE</A>&nbsp');
                 } else {
                   if (nvl(f($row,'pessoa'),'')=='' || substr(f($row,'sigla'),3)=='REEMB') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                   if (strpos(f($row,'sigla'),'FNR')!==false) {
-                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                   } elseif (f($row,'sigla')!='FNDFIXO') {
-                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
+                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Documento&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Doc'.'&SG=DOCUMENTO').'\',\'Doc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Doc</A>&nbsp');
                   } 
                 }
               }

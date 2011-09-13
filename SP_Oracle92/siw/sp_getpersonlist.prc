@@ -18,14 +18,17 @@ begin
          select a.sq_pessoa, coalesce(b.cpf, c.username) as cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
                 c.username,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                             a
-                 left outer    join co_pessoa_fisica  b on (a.sq_pessoa      = b.sq_pessoa)
-                 left outer    join sg_autenticacao   c on (a.sq_pessoa      = c.sq_pessoa) 
-                    left outer join eo_unidade        d on (c.sq_unidade     = d.sq_unidade)
-                    left outer join eo_localizacao    e on (c.sq_localizacao = e.sq_localizacao)
+           from co_pessoa                       a
+                 left    join co_pessoa_fisica  b on (a.sq_pessoa      = b.sq_pessoa)
+                 left    join sg_autenticacao   c on (a.sq_pessoa      = c.sq_pessoa) 
+                    left join eo_unidade        d on (c.sq_unidade     = d.sq_unidade)
+                    left join eo_localizacao    e on (c.sq_localizacao = e.sq_localizacao)
           where a.sq_pessoa_pai = p_cliente
-            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
-                                                                   or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+            and (p_nome       is null or (p_nome       is not null and (a.nome_indice like '%'||upper(acentos(p_nome))||'%' or 
+                                                                        a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                       )
+                                         )
+                )
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
             and (p_restricao  <> 'NOVOUSO' or (p_restricao = 'NOVOUSO' and c.username is null))
          order by a.nome_indice;
@@ -36,22 +39,22 @@ begin
                 b.codigo,
                 c.username, c.ativo usuario,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                              a
-                left outer join (select x.sq_pessoa, 
-                                        case when y.sq_pessoa is not null 
-                                             then y.cpf
-                                             else case when z.sq_pessoa is not null
-                                                       then z.cnpj
-                                                       else null
-                                                  end
-                                        end codigo
-                                   from co_pessoa                          x
-                                        left outer join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
-                                        left outer join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
-                                )                      b on (a.sq_pessoa      = b.sq_pessoa)
-                 left outer    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
-                    left outer join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
-                    left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
+           from co_pessoa                        a
+                left join (select x.sq_pessoa, 
+                                  case when y.sq_pessoa is not null 
+                                       then y.cpf
+                                       else case when z.sq_pessoa is not null
+                                                 then z.cnpj
+                                                 else null
+                                            end
+                                  end codigo
+                             from co_pessoa                          x
+                                  left join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
+                                  left join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
+                          )                      b on (a.sq_pessoa      = b.sq_pessoa)
+                 left    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
+                    left join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
+                    left join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
           where (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
             and (p_chave      is null or (p_chave      is not null and a.sq_pessoa = p_chave))
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
@@ -66,22 +69,22 @@ begin
                 b.codigo,
                 c.username, c.ativo usuario,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                              a
-                left outer join (select x.sq_pessoa, 
-                                        case when y.sq_pessoa is not null 
-                                             then y.cpf
-                                             else case when z.sq_pessoa is not null
-                                                       then z.cnpj
-                                                       else null
-                                                  end
-                                        end codigo
-                                   from co_pessoa                          x
-                                        left outer join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
-                                        left outer join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
-                                )                      b on (a.sq_pessoa      = b.sq_pessoa)
-                 left outer    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
-                    left outer join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
-                    left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
+           from co_pessoa                        a
+                left join (select x.sq_pessoa, 
+                                  case when y.sq_pessoa is not null 
+                                       then y.cpf
+                                       else case when z.sq_pessoa is not null
+                                                 then z.cnpj
+                                                 else null
+                                            end
+                                  end codigo
+                             from co_pessoa                          x
+                                  left join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
+                                  left join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
+                          )                      b on (a.sq_pessoa      = b.sq_pessoa)
+                 left    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
+                    left join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
+                    left join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
           where (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -89,24 +92,46 @@ begin
             and (p_codigo     is null or (p_codigo     is not null and b.codigo = p_codigo))
             and (p_filhos     is null or (p_filhos     is not null and a.sq_tipo_pessoa = p_filhos))
          order by a.nome_indice;         
+   Elsif p_restricao = 'CONTRATADOS' Then
+      -- Recupera as pessoas internas à organização
+      open p_result for 
+        select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+               c.username, f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa                         a
+                left     join  co_pessoa_fisica  b on (a.sq_pessoa      = b.sq_pessoa)
+                left     join  sg_autenticacao   c on (a.sq_pessoa      = c.sq_pessoa)
+                    left join eo_unidade         f on (c.sq_unidade     = f.sq_unidade)
+                    left join eo_localizacao     g on (c.sq_localizacao = g.sq_localizacao),
+               co_tipo_vinculo                   d,
+               co_tipo_pessoa                    e
+         where a.sq_tipo_vinculo = d.sq_tipo_vinculo
+           and d.interno         = 'S'
+           and d.contratado      = 'S'
+           and a.sq_tipo_pessoa  = e.sq_tipo_pessoa
+           and e.ativo           = 'S'
+           and 'F'               = substr(e.nome,1,1)
+           and a.sq_pessoa_pai   = p_cliente 
+           and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
+                                                                   or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+           and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))           
+      order by a.nome_indice;
    Elsif p_restricao = 'INTERNOS' Then
       -- Recupera as pessoas internas à organização
       open p_result for 
         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
-               c.username,
-               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
-          from co_pessoa                               a
-                left outer     join  co_pessoa_fisica  b on (a.sq_pessoa      = b.sq_pessoa)
-                left outer     join  sg_autenticacao   c on (a.sq_pessoa      = c.sq_pessoa)
-                    left outer join eo_unidade         f on (c.sq_unidade     = f.sq_unidade)
-                    left outer join eo_localizacao     g on (c.sq_localizacao = g.sq_localizacao),
-               co_tipo_vinculo  d,
-               co_tipo_pessoa   e
+               c.username, f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa                         a
+                left     join  co_pessoa_fisica  b on (a.sq_pessoa      = b.sq_pessoa)
+                left     join  sg_autenticacao   c on (a.sq_pessoa      = c.sq_pessoa)
+                    left join eo_unidade         f on (c.sq_unidade     = f.sq_unidade)
+                    left join eo_localizacao     g on (c.sq_localizacao = g.sq_localizacao),
+               co_tipo_vinculo                   d,
+               co_tipo_pessoa                    e
          where a.sq_tipo_vinculo = d.sq_tipo_vinculo
            and d.interno         = 'S'
            and a.sq_tipo_pessoa  = e.sq_tipo_pessoa
            and e.ativo           = 'S'
-           and e.nome            = 'Física'
+           and 'F'               = substr(e.nome,1,1)
            and a.sq_pessoa_pai   = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -116,10 +141,9 @@ begin
       -- Recupera os usuários do sistema
       open p_result for 
         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
-               c.username,
-               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+               c.username, f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
           from co_pessoa                           a
-                left outer join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
+                left join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
                 inner      join  sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa)
                   inner    join  eo_unidade        f on (c.sq_unidade      = f.sq_unidade)
                   inner    join  eo_localizacao    g on (c.sq_localizacao  = g.sq_localizacao)
@@ -128,7 +152,7 @@ begin
          where c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and e.nome           = 'Física'
+           and 'F'               = substr(e.nome,1,1)
            and a.sq_pessoa_pai  = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -138,10 +162,9 @@ begin
       -- Recupera os usuários do sistema
       open p_result for 
         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
-               c.username,
-               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+               c.username, f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
           from co_pessoa                          a
-               left outer join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
+               left join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
                inner      join  sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa)
                  inner    join  eo_unidade        f on (c.sq_unidade      = f.sq_unidade)
                  inner    join  eo_localizacao    g on (c.sq_localizacao  = g.sq_localizacao)
@@ -152,7 +175,7 @@ begin
            and c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and e.nome           = 'Física'
+           and 'F'               = substr(e.nome,1,1)
            and a.sq_pessoa_pai  = p_cliente 
            and c.sq_unidade     = w.sq_unid_executora
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
@@ -166,7 +189,7 @@ begin
                c.username,
                f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
           from co_pessoa                          a
-               left outer join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
+               left       join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
                inner      join  sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa)
                  inner    join  eo_unidade        f on (c.sq_unidade      = f.sq_unidade)
                  inner    join  eo_localizacao    g on (c.sq_localizacao  = g.sq_localizacao)
@@ -178,7 +201,7 @@ begin
            and c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and e.nome           = 'Física'
+           and 'F'               = substr(e.nome,1,1)
            and a.sq_pessoa_pai  = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -191,8 +214,8 @@ begin
                 b.codigo,
                 c.username, c.ativo usuario,
                 b.codigo sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                              a
-                left outer join (select x.sq_pessoa, 
+           from co_pessoa                        a
+                left join (select x.sq_pessoa, 
                                         case when y.sq_pessoa is not null 
                                              then y.cpf
                                              else case when z.sq_pessoa is not null
@@ -201,17 +224,17 @@ begin
                                                   end
                                         end codigo
                                    from co_pessoa                          x
-                                        left outer join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
-                                        left outer join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
+                                        left join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
+                                        left join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
                                 )                      b on (a.sq_pessoa      = b.sq_pessoa)
-                 left outer    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
-                    left outer join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
-                    left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
-                 inner         join co_tipo_pessoa     f on (a.sq_tipo_pessoa = f.sq_tipo_pessoa)
+                 left    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
+                    left join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
+                    left join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
+                 inner   join co_tipo_pessoa     f on (a.sq_tipo_pessoa = f.sq_tipo_pessoa)
           where a.fornecedor = 'S'
             and (p_restricao  not in ('FORNECPF','FORNECPJ','FORNECPD') or
-                 (p_restricao = 'FORNECPF' and f.nome = 'Física') or 
-                 (p_restricao = 'FORNECPJ' and f.nome = 'Jurídica') or
+                 (p_restricao = 'FORNECPF' and 'F' = substr(f.nome,1,1)) or 
+                 (p_restricao = 'FORNECPJ' and 'J' = substr(f.nome,1,1)) or
                  (p_restricao = 'FORNECPD' and 0 < (select count(*) from pd_desconto_agencia k where k.ativo='S' and k.agencia_viagem = a.sq_pessoa))
                 )
             and (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
@@ -227,7 +250,7 @@ begin
                c.username,
                f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
           from co_pessoa                                    a
-                left outer join co_pessoa_fisica            b on (a.sq_pessoa          = b.sq_pessoa)
+                left       join co_pessoa_fisica            b on (a.sq_pessoa          = b.sq_pessoa)
                 inner      join sg_autenticacao             c on (a.sq_pessoa          = c.sq_pessoa)
                   inner    join eo_unidade                  f on (c.sq_unidade         = f.sq_unidade)
                   inner    join eo_localizacao              g on (c.sq_localizacao     = g.sq_localizacao)
@@ -245,7 +268,7 @@ begin
          where c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and e.nome           = 'Física'
+           and 'F'              = substr(e.nome,1,1)
            and h.sq_pessoa      is null
            and i.sq_pessoa      is null
            and j.sq_pessoa      is null
@@ -262,13 +285,14 @@ begin
       open p_result for 
          select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                             a
-                 left outer    join sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa) 
-                    left outer join eo_unidade        d on (c.sq_unidade      = d.sq_unidade)
-                    left outer join eo_localizacao    e on (c.sq_localizacao  = e.sq_localizacao)
-                 inner         join tt_usuario        b on (a.sq_pessoa       = b.usuario)
-                    inner      join tt_central        f on (b.sq_central_fone = f.sq_central_fone and
-                                                            f.sq_central_fone = p_chave)
+           from co_pessoa                        a
+                 left     join sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa) 
+                    left  join eo_unidade        d on (c.sq_unidade      = d.sq_unidade)
+                    left  join eo_localizacao    e on (c.sq_localizacao  = e.sq_localizacao)
+                 inner    join tt_usuario        b on (a.sq_pessoa       = b.usuario)
+                    inner join tt_central        f on (b.sq_central_fone = f.sq_central_fone and
+                                                       f.sq_central_fone = p_chave
+                                                      )
           where a.sq_pessoa_pai   = p_cliente
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -303,22 +327,29 @@ begin
                     inner      join eo_unidade        d on (c.sq_unidade      = d.sq_unidade)
                     inner      join eo_localizacao    e on (c.sq_localizacao  = e.sq_localizacao)
           where a.sq_pessoa_pai   = p_cliente
-            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
-                                                                   or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+            and (p_nome      is null or (p_nome       is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or
+                                                                       a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                      )
+                                        )
+               )
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
          MINUS
          select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                             a
-                 left outer    join sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa) 
-                    left outer join eo_unidade        d on (c.sq_unidade      = d.sq_unidade)
-                    left outer join eo_localizacao    e on (c.sq_localizacao  = e.sq_localizacao)
-                 inner         join tt_usuario        b on (a.sq_pessoa       = b.usuario)
-                    inner      join tt_central        f on (b.sq_central_fone = f.sq_central_fone and
-                                                            f.sq_central_fone = p_chave)
+           from co_pessoa                        a
+                 left     join sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa) 
+                    left  join eo_unidade        d on (c.sq_unidade      = d.sq_unidade)
+                    left  join eo_localizacao    e on (c.sq_localizacao  = e.sq_localizacao)
+                 inner    join tt_usuario        b on (a.sq_pessoa       = b.usuario)
+                    inner join tt_central        f on (b.sq_central_fone = f.sq_central_fone and
+                                                       f.sq_central_fone = p_chave
+                                                      )
           where a.sq_pessoa_pai   = p_cliente
-            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
-                                                                   or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+           and (p_nome       is null or (p_nome       is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or
+                                                                       a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                      )
+                                        )
+               )
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
          order by nome_resumido_ind;
    Elsif p_restricao = 'TTUSURAMAL' Then
@@ -341,17 +372,21 @@ begin
          select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
                 c.ativo,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                             a
-                 left outer    join sg_autenticacao   c on (a.sq_pessoa          = c.sq_pessoa) 
-                    left outer join eo_unidade        d on (c.sq_unidade         = d.sq_unidade)
-                    left outer join eo_localizacao    e on (c.sq_localizacao     = e.sq_localizacao)
-                 inner         join tt_usuario        b on (a.sq_pessoa          = b.usuario)
-                    inner      join tt_ramal_usuario  f on (b.sq_usuario_central = f.sq_usuario_central and
-                                                            f.sq_ramal           = p_chave and
-                                                            f.fim                is null)
+           from co_pessoa                        a
+                 left     join sg_autenticacao   c on (a.sq_pessoa          = c.sq_pessoa) 
+                    left  join eo_unidade        d on (c.sq_unidade         = d.sq_unidade)
+                    left  join eo_localizacao    e on (c.sq_localizacao     = e.sq_localizacao)
+                 inner    join tt_usuario        b on (a.sq_pessoa          = b.usuario)
+                    inner join tt_ramal_usuario  f on (b.sq_usuario_central = f.sq_usuario_central and
+                                                       f.sq_ramal           = p_chave and
+                                                       f.fim                is null
+                                                      )
           where a.sq_pessoa_pai   = p_cliente
-            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
-                                                                   or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+            and (p_nome      is null or (p_nome       is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or
+                                                                       a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                      )
+                                        )
+                )
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
          order by nome_resumido_ind;
    ElsIf p_restricao = 'PDUSUARIO' Then
@@ -398,24 +433,27 @@ begin
         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
                c.username,
                f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
-          from co_pessoa                           a
-                left outer join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
-                inner      join  sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa and
-                                                         c.ativo           = 'S'
-                                                        )
-                  inner    join  eo_unidade        f on (c.sq_unidade      = f.sq_unidade)
-                  inner    join  eo_localizacao    g on (c.sq_localizacao  = g.sq_localizacao)
-                inner      join co_tipo_vinculo    d on (a.sq_tipo_vinculo = d.sq_tipo_vinculo and
-                                                         d.interno         = 'S' and
-                                                         0                 < InStr(x_tipo,''''||upper(d.nome)||'''')
-                                                        )
-                inner      join co_tipo_pessoa     e on (a.sq_tipo_pessoa  = e.sq_tipo_pessoa and
-                                                         e.ativo           = 'S' and
-                                                         e.nome            = 'Física'
-                                                        )
+          from co_pessoa                      a
+               left    join co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
+               inner   join sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa and
+                                                    c.ativo           = 'S'
+                                                   )
+                 inner join eo_unidade        f on (c.sq_unidade      = f.sq_unidade)
+                 inner join eo_localizacao    g on (c.sq_localizacao  = g.sq_localizacao)
+               inner   join co_tipo_vinculo   d on (a.sq_tipo_vinculo = d.sq_tipo_vinculo and
+                                                    d.interno         = 'S' and
+                                                    0                 < InStr(x_tipo,''''||upper(d.nome)||'''')
+                                                   )
+               inner   join co_tipo_pessoa    e on (a.sq_tipo_pessoa  = e.sq_tipo_pessoa and
+                                                    e.ativo           = 'S' and
+                                                    'F'               = substr(e.nome,1,1)
+                                                   )
          where a.sq_pessoa_pai  = p_cliente 
-           and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
-                                                                   or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+           and (p_nome       is null or (p_nome       is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or
+                                                                       a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                      )
+                                        )
+               )
            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))         
       order by a.nome_indice;
    End If;
