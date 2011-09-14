@@ -21,6 +21,7 @@ begin
                 b.sq_siw_solicitacao as sq_lancamento, b.codigo_interno as cd_lancamento, b.quitacao,
                 b.vencimento as dt_lancamento, b.valor as vl_lancamento, b.sg_tramite as fn_tramite,
                 b.referencia_inicio, b.referencia_fim,
+                coalesce(b1.qtd,0) as qt_financeiro,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao
            from ac_acordo_parcela                  a
                 left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, x.quitacao, y.valor,
@@ -32,6 +33,14 @@ begin
                                                                          nvl(z.sigla,'-')     <> 'CA'
                                                                         )
                               )                    b on (a.sq_acordo_parcela = b.sq_acordo_parcela)
+                left     join (select x.sq_acordo_parcela, count(*) as qtd
+                                 from fn_lancamento                x
+                                      inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                        inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                         nvl(z.sigla,'-')     <> 'CA'
+                                                                        )
+                               group by x.sq_acordo_parcela
+                              )                   b1 on (a.sq_acordo_parcela = b1.sq_acordo_parcela)
                 left     join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
                                                         )
