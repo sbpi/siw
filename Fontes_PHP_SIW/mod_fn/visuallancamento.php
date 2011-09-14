@@ -8,6 +8,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $l_html='';
   // Recupera os dados do lançamento
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$v_chave,substr($SG,0,3).'GERAL');
+
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_tramite_ativo = f($RS,'ativo');
   $w_SG            = f($RS,'sigla');
@@ -74,7 +75,6 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
       $l_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
     }   
-    
     if (nvl(f($RS,'solic_origem'),'')!='') {
       // Recupera dados da solicitação de compra
       $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'solic_origem'),null);
@@ -154,36 +154,22 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação: </b></td><td>'.f($RS,'nm_cc').' </td></tr>';
     }
 */
-    if (f($RS_Menu,'sigla')!='FNDREEMB' || (f($RS_Menu,'sigla')=='FNDREEMB' && f($RS,'or_tramite')>2)) {
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
+    if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
+      $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
+      $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
     }
-    if (f($RS_Menu,'sigla')!='FNDREEMB') {
-      if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
-      }
-      $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
-      $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
-      if (f($RS_Menu,'sigla')!='FNDFUNDO') {
-        if (!($l_P1==4 || $l_tipo=='WORD')){
-          $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
-          $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
-        } else {
-          $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
-          $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
-        }
-      }
-    } else {
-      $l_html.=chr(13).'      <tr><td><b>Justificativa: </b></td>';
-      $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
+    $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
+    if (f($RS_Menu,'sigla')!='FNDFUNDO') {
       if (!($l_P1==4 || $l_tipo=='WORD')){
-        $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
+        $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
         $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
       } else {
-        $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
+        $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
         $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       }
     }
+
     if (substr($w_SG,0,3)=='FNR') {
       if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
       $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
@@ -198,12 +184,12 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <tr><td><b>Período de referência:</b></td>';
       $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'referencia_inicio')).' a '.FormataDataEdicao(f($RS,'referencia_fim')).'</td></tr>';
     }
-    if (f($RS_Menu,'sigla')!='FNDREEMB' && Nvl(f($RS,'condicoes_pagamento'),'')!='') {
+    if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
       $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td><td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
     }
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
 
-    if (f($RS_Menu,'sigla')!='FNDREEMB' && f($RS_Menu,'sigla')!='FNDFUNDO' ) {
+    if (f($RS_Menu,'sigla')!='FNDFUNDO' ) {
       $l_html.=chr(13).'          <tr><td><b>Data de vencimento:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento')).'</td></tr>';
       // Dados da conclusão do pagamento, se estiver nessa situação
       if (Nvl(f($RS,'conclusao'),'')>'' && Nvl(f($RS,'quitacao'),'')>'') {
@@ -366,7 +352,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
               $l_html.=chr(13).'          <td colspan=4 align="right"><b>Total das retenções</td>';
               $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
               $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
-              $l_html.=chr(13).'          <td colspan=4 align="right"><b>Líquido a ser pago à outra parte</td>';
+              $l_html.=chr(13).'          <td colspan=4 align="right"><b>Valor líquido</td>';
               $row['valor'] = $w_valor-$w_vl_total;
               $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
               $l_html.=chr(13).'          </tr>';
