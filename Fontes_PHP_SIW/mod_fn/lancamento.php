@@ -155,11 +155,10 @@ if (count($RS_Conta)>1) {
 } else {
   $w_exige_conta = false;
   if (count($RS_Conta)==1) {
-    foreach($RS_Conta as $row) $RS_Conta = $row;
-    $w_conta_debito = f($RS_Conta,'sq_pessoa_conta');
+    foreach($RS_Conta as $row) { $RS_Conta = $row; break; }
+    $w_conta_padrao = f($RS_Conta,'sq_pessoa_conta');
   }
 }
-  
 
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
@@ -1313,7 +1312,7 @@ function Geral() {
             ShowHTML('      <tr valign="top">');
             SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
           } else {
-            ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_debito.'">');
+            ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_padrao.'">');
           }
         } else {
           ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
@@ -1332,7 +1331,7 @@ function Geral() {
           if ($w_exige_conta) {
             SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
           } else {
-            ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_debito.'">');
+            ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_padrao.'">');
           }
         } else {
           ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
@@ -3880,7 +3879,6 @@ function Concluir() {
     // Se for recarga da página
     $w_valor_real         = $_REQUEST['w_valor_real'];
     $w_codigo_deposito    = $_REQUEST['w_codigo_deposito'];
-    $w_conta_debito       = $_REQUEST['w_conta_debito'];
     $w_sq_tipo_lancamento = $_REQUEST['$w_sq_tipo_lancamento'];
   } 
 
@@ -4015,7 +4013,7 @@ function Concluir() {
     if ($w_exige_conta) {
       SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
     } else {
-      ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_debito.'">');
+      ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_padrao.'">');
     }
 
     if (f($RS_Solic,'lancamento_vinculado')=='N') {

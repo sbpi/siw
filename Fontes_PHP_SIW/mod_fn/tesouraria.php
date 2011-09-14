@@ -443,10 +443,10 @@ function Inicial() {
         ShowHTML('          <td rowspan="2" width="1%">&nbsp;</td>');
         ShowHTML ('         <td rowspan="2"><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
         ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Forma pagamento','nm_forma_pagamento').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Banco','cd_banco').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Agência','cd_agencia').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Conta','numero_conta').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Forma','sg_forma_pagamento').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('BCO','cd_banco').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AGE','cd_agencia').'</td>');
+        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('C/C','numero_conta').'</td>');
       }
       if ($P2>1) ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Conta Débito','conta_debito').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan="2"><b>Operações</td>');
@@ -467,10 +467,10 @@ function Inicial() {
       if ($w_visao_completa) {
         ShowHTML('          <td rowspan="2"><b>Vinculação</td>');
         ShowHTML('          <td rowspan="2"><b>Projeto</td>');
-        ShowHTML('          <td rowspan="2"><b>Forma de pagamento</td>');
-        ShowHTML('          <td rowspan="2"><b>Banco</td>');
-        ShowHTML('          <td rowspan="2"><b>Agência</td>');
-        ShowHTML('          <td rowspan="2"><b>Conta</td>');
+        ShowHTML('          <td rowspan="2"><b>Forma</td>');
+        ShowHTML('          <td rowspan="2"><b>BCO</td>');
+        ShowHTML('          <td rowspan="2"><b>AGE</td>');
+        ShowHTML('          <td rowspan="2"><b>C/C</td>');
       }
       if ($P2>1) ShowHTML('          <td rowspan="2"><b>Conta Débito</td>');
       ShowHTML('        </tr>');
@@ -557,16 +557,14 @@ function Inicial() {
           if (substr(f($row,'sigla'),2,1)=='R') {
             ShowHTML('        <td colspan=4>&nbsp;</td>');
           } else {
-            ShowHTML('        <td>'.Nvl(f($row,'nm_forma_pagamento'),'&nbsp;').'</td>');
+            ShowHTML('        <td'.((Nvl(f($row,'sg_forma_pagamento'),'')!='') ? ' title="'.f($row,'nm_forma_pagamento').'"' : '').'>'.Nvl(f($row,'sg_forma_pagamento'),'&nbsp;').'</td>');
             ShowHTML('        <td align="center"'.((nvl(f($row,'cd_banco'),'')!='') ? ' title="'.f($row,'nm_banco').'"' : '').'>'.Nvl(f($row,'cd_banco'),'&nbsp;').'</td>');
             ShowHTML('        <td align="center"'.((nvl(f($row,'cd_agencia'),'')!='') ? ' title="'.f($row,'nm_agencia').'"' : '').'>'.Nvl(f($row,'cd_agencia'),'&nbsp;').'</td>');
             ShowHTML('        <td>'.Nvl(f($row,'numero_conta'),'&nbsp;').'</td>');
           }
         }
         if ($P2>1) {
-          if ($w_visao_completa) {
-            ShowHTML('        <td>'.Nvl(f($row,'conta_debito'),'&nbsp;').'</td>');
-          } elseif (nvl(f($row,'conta_debito'),'')!='') {
+          if (nvl(f($row,'conta_debito'),'')!='') {
             ShowHTML('        <td>'.f($row,'nm_banco_debito').' '.f($row,'conta_debito').'</td>');
           } else {
             ShowHTML('        <td>&nbsp;</td>');
