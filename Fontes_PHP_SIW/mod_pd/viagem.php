@@ -748,7 +748,7 @@ function Geral() {
     $w_aviso = $_REQUEST['w_aviso'];
     $w_dias = $_REQUEST['w_dias'];
     $w_inicio_real = $_REQUEST['w_inicio_real'];
-    $w_inicio_atual = $_REQUEST['w_inicio_real'];
+    $w_inicio_atual = $_REQUEST['w_inicio_atual'];
     $w_fim_real = $_REQUEST['w_fim_real'];
     $w_concluida = $_REQUEST['w_concluida'];
     $w_data_conclusao = $_REQUEST['w_data_conclusao'];
@@ -7782,8 +7782,8 @@ function Grava() {
   $w_tipo = '';
   $w_nome = '';
   Cabecalho();
-  ShowHTML('</head>');
   ShowHTML('<base HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PDIDENT':
