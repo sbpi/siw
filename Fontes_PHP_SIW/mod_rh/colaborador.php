@@ -466,7 +466,7 @@ function Inicial() {
     if ($w_erro>'') {
       ShowHTML('<tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan="3">');
-      ShowHTML('<font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação.</font>');
+      ShowHTML('<font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível a conclusão da operação.</font>');
       ShowHTML('<UL>'.$w_erro.'</UL>');
       ShowHTML('</td></tr>');
     } if ($w_erro=='') {
@@ -2572,7 +2572,7 @@ function Grava() {
               ShowHTML('<HR>');
               ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
               ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-              ShowHTML('<font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação.</font>');
+              ShowHTML('<font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível a conclusão da operação.</font>');
               ShowHTML('<UL>'.$w_erro.'</UL>');
               ShowHTML('</td></tr></table>');
               ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');

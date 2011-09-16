@@ -338,6 +338,7 @@ function Inicial() {
     $colspan = 0;
     if ($w_embed!='WORD') {
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</b></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Inclusão','fim').'</b></td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Agendamento desejado','fim').'</b></td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</b></td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</b></td>');
@@ -367,6 +368,7 @@ function Inicial() {
         ShowHTML('        <td width="1%" nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.FormataDataEdicao(f($row,'ultima_alteracao'),5).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
         if ($w_embed!='WORD') ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_solic'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         else                  ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'sg_unidade_solic').'&nbsp;</td>');
@@ -392,8 +394,9 @@ function Inicial() {
             } elseif ($P1==2) {
               //ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o pedido para outra fase.">EN</A>&nbsp');
-              if (f($row,'sg_tramite')=='EE') {
+              if (f($row,'sg_tramite')=='EA') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Atender&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Dados do atendimento.">AT</A>&nbsp');
+              } elseif (f($row,'sg_tramite')=='EE') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclusão do pedido.">CO</A>&nbsp');
               } 
             } 
@@ -682,23 +685,23 @@ function Geral() {
     if ($O!='I') {
       if ($w_erro>'') {
         if (substr($w_erro,0,1)=='0') {
-          $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.');
         } elseif (substr($w_erro,0,1)=='1') {
-          $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou deste módulo.');
         } else {
-          $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.');
         } 
         ShowHTML('  <ul>'.substr($w_erro,1,1000));
         ShowHTML('<tr><td colspan=2><HR>');
       } 
     
       // Itens
-      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
-      ShowHTML('    <tr><td colspan=3><b>Itens</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Itens'.'&SG=MTPMITEM').'" title="Informa os itens do documento.">Ajustar</A>]</td></tr>');
-      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
-      ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
       $sql = new db_getCLSolicItem; $RS = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PEDMAT');
       $RS = SortArray($RS,'nome','asc'); 
+      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
+      ShowHTML('    <tr><td colspan=3><b>Itens</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Itens'.'&SG=MTPMITEM').'" title="Informa os itens do pedido.">'.((count($RS)>0) ? 'Ajustar' : 'Incluir').'</A>]</td></tr>');
+      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
+      ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
       if (count($RS)==0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Itens não informados</b></td></tr>');
         ShowHTML('      <tr><td colspan=2 align=center><hr /></td></tr>');

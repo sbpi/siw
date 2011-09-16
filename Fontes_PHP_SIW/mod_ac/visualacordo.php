@@ -61,47 +61,19 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=$crlf . '</style>';
     $l_html.=$crlf . '<script>';
     $l_html.=$crlf . '$(document).ready(function(){';
-    $l_html.=$crlf . '  $(\'a[id^="link"]\').click(function() {';
-    $l_html.=$crlf . '    sinal = $(this).html();';
+    //Fecha toda a visualização
+    $l_html.=$crlf . '  $(\'a[id^="link"]\').each(function() {';
     $l_html.=$crlf . '    id = $(this).attr("value");';
     $l_html.=$crlf . '    quantidade = parseInt($(this).attr("quantidade"))+1;';
-    $l_html.=$crlf .  '   content = $(".rodape-"+id+":last").html();';
+    $l_html.=$crlf . '   content = $(".rodape-"+id+":last").html();';
     $l_html.=$crlf . '    header = $(".cabecalho-"+id+":first").html();';
     $l_html.=$crlf . '    rowspan = $(".cabecalho-"+id+" td").attr("rowspan");';
-
-    
-    //Fechado
-    $l_html.=$crlf . '    if(sinal == "[+]"){';
-    $l_html.=$crlf . '      sinal = "[-]";';        
-
-    $l_html.=$crlf . '      $(".rodape-" + id).show();';
-    $l_html.=$crlf . '      $(".remover-" + id).show();';  
-    
-    //Atualiza o cabeçalho
-
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
-    $l_html.=$crlf . '        $(this).attr("rowspan",quantidade)';
-    $l_html.=$crlf . '      })';
-    $l_html.=$crlf . '      $(".remover-" + id).show();';   
-    
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      count = 0;';
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
-    $l_html.=$crlf . '        count++';
-    $l_html.=$crlf . '        if(count > 10){';    
-    $l_html.=$crlf . '          $(this).remove();';
-    $l_html.=$crlf . '        }';
-    $l_html.=$crlf . '      })';
-
-    //Aberto
-    $l_html.=$crlf . '    } else {';
-    $l_html.=$crlf . '      sinal = "[+]";';        
+    $l_html.=$crlf . '      sinal = "[+]";';
 
     $l_html.=$crlf . '      $(".rodape-" + id).hide();';
     $l_html.=$crlf . '      $(".remover-" + id).hide();';
     $l_html.=$crlf . '      $(".cabecalho-" + id).append($(".rodape-" + id +":last").html());';
-    
+
     //Verifica o tamanho do rowspan
     $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
     $l_html.=$crlf . '        $(this).attr("rowspan","1")';
@@ -111,15 +83,72 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=$crlf . '      count = 0;';
     $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
     $l_html.=$crlf . '        count++';
-    $l_html.=$crlf . '        if(count > 13){';    
+    $l_html.=$crlf . '        if(count > 13){';
+    $l_html.=$crlf . '          $(this).remove();';
+    $l_html.=$crlf . '        }';
+    $l_html.=$crlf . '      })';
+    $l_html.=$crlf . '    $(this).html(sinal);';
+    $l_html.=$crlf . '  });';
+    
+    
+    $l_html.=$crlf . '  $(\'a[id^="link"]\').click(function() {';
+    $l_html.=$crlf . '    sinal = $(this).html();';
+    $l_html.=$crlf . '    id = $(this).attr("value");';
+    $l_html.=$crlf . '    quantidade = parseInt($(this).attr("quantidade"))+1;';
+    $l_html.=$crlf . '   content = $(".rodape-"+id+":last").html();';
+    $l_html.=$crlf . '    header = $(".cabecalho-"+id+":first").html();';
+    $l_html.=$crlf . '    rowspan = $(".cabecalho-"+id+" td").attr("rowspan");';
+
+
+    //Fechado
+    $l_html.=$crlf . '    if(sinal == "[+]"){';
+    $l_html.=$crlf . '      sinal = "[-]";';
+
+    $l_html.=$crlf . '      $(".rodape-" + id).show();';
+    $l_html.=$crlf . '      $(".remover-" + id).show();';
+
+    //Atualiza o cabeçalho
+    //Verifica o tamanho do rowspan
+    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
+    $l_html.=$crlf . '        $(this).attr("rowspan",quantidade)';
+    $l_html.=$crlf . '      })';
+    $l_html.=$crlf . '      $(".remover-" + id).show();';
+
+    //Verifica o tamanho do rowspan
+    $l_html.=$crlf . '      count = 0;';
+    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
+    $l_html.=$crlf . '        count++';
+    $l_html.=$crlf . '        if(count > 10){';
+    $l_html.=$crlf . '          $(this).remove();';
+    $l_html.=$crlf . '        }';
+    $l_html.=$crlf . '      })';
+
+    //Aberto
+    $l_html.=$crlf . '    } else {';
+    $l_html.=$crlf . '      sinal = "[+]";';
+
+    $l_html.=$crlf . '      $(".rodape-" + id).hide();';
+    $l_html.=$crlf . '      $(".remover-" + id).hide();';
+    $l_html.=$crlf . '      $(".cabecalho-" + id).append($(".rodape-" + id +":last").html());';
+
+    //Verifica o tamanho do rowspan
+    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
+    $l_html.=$crlf . '        $(this).attr("rowspan","1")';
+    $l_html.=$crlf . '      })';
+
+    //Verifica o tamanho do rowspan
+    $l_html.=$crlf . '      count = 0;';
+    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
+    $l_html.=$crlf . '        count++';
+    $l_html.=$crlf . '        if(count > 13){';
     $l_html.=$crlf . '          $(this).remove();';
     $l_html.=$crlf . '        }';
     $l_html.=$crlf . '      })';
     $l_html.=$crlf . '    }';
-    
-    $l_html.=$crlf . '    $(this).html(sinal);';    
-    $l_html.=$crlf.'   });';
-    $l_html.=$crlf.'});';
+
+    $l_html.=$crlf . '    $(this).html(sinal);';
+    $l_html.=$crlf . '   });';
+    $l_html.=$crlf . '});';
     $l_html.=$crlf.'</script>';
     $l_html.=$crlf.'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
     $l_html.=$crlf.'<tr><td>';
@@ -1071,6 +1100,15 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         } 
         $l_html.=$crlf.'      </tr>';
       }
+      
+      if ($w_cont > 1) {
+        $l_html.=$crlf . '      <tr class="rodape-' . $w_id . '" valign="top">';
+        $l_html.=$crlf . '          <td class="total-' . $w_id . '" colspan=3 align="right">';
+        $l_html.=$crlf . '            <b>Total dos ' . $w_cont . ' lançamentos: </b></td>';
+        $l_html.=$crlf . '          <td class="total-' . $w_id . '" align="right"><b>' . formatNumber($w_tot_parc) . '</b></td>';
+        $l_html.=$crlf . '          <td class="total-' . $w_id . '" ></td>';
+        $l_html.=$crlf . '        </tr>';
+      }
       if ($w_total>0 || $w_real>0) {
         if ($w_bloco!='') {
           $l_html.=$crlf.'        <tr valign="top" bgColor="'.$conTrBgColor.'">';
@@ -1226,9 +1264,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=$crlf.'<tr><td colspan=2><font size=2>';
     $l_html.=$crlf.'<HR>';
     if (substr($w_erro,0,1)=='0') {
-      $l_html.=$crlf.'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
+      $l_html.=$crlf.'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
     } elseif (substr($w_erro,0,1)=='1') {
-      $l_html.=$crlf.'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
+      $l_html.=$crlf.'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou deste módulo.';
     } else {
       $l_html.=$crlf.'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
     } 

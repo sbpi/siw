@@ -94,22 +94,22 @@ function VisualConsumo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
         }
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_pedida'),0).'</td>';
-        if($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+        if(nvl(f($row,'quantidade_entregue'),'')!='' && ($w_sg_tramite=='EA' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT')) {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_entregue'),0).'</td>';
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
         }
         $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
         $l_html.=chr(13).'        <td align="center ">'.f($row,'fator_embalagem').'</td>';
-        if($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+        if ($w_sg_tramite=='AT') {
           $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'data_efetivacao'),5),'---').'</td>';
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario')).'</td>';
+          $w_total += f($row,'valor_unitario');
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
           $l_html.=chr(13).'        <td align="right">---</td>';
         }
         $l_html.=chr(13).'        </tr>';
-        $w_total += f($row,'valor_unitario');
       }
       if (count($RS1>1) && $w_total>0) {
         $l_html.=chr(13).'      <tr valign="top"><td colspan="6" align="right"><b>Total<b>&nbsp;<td align="right">'.formatNumber($w_total).'</td></tr>';
@@ -124,9 +124,9 @@ function VisualConsumo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'<tr><td colspan=2><font size=2>';
       $l_html.=chr(13).'<HR>';
       if (substr($w_erro,0,1)=='0') {
-        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
+        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
       } elseif (substr($w_erro,0,1)=='1') {
-        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
+        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou deste módulo.';
       } else {
         $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
       } 

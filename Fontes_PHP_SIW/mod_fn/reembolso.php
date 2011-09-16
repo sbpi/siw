@@ -1067,9 +1067,9 @@ function Geral() {
       if ($w_erro>'') {
         ShowHTML('<tr><td colspan=2><font size=2><HR>');
         if (substr($w_erro,0,1)=='0') {
-          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual, nem seu pagamento.');
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível seu encaminhamento para fases posteriores à atual, nem seu pagamento.');
         }elseif (substr($w_erro,0,1)=='1') {
-          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.');
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou deste módulo.');
         } else {
           ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.');
         } 

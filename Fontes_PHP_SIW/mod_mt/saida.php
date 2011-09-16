@@ -777,9 +777,9 @@ function Geral() {
     if ($O!='I') {
       if ($w_erro>'') {
         if (substr($w_erro,0,1)=='0') {
-          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível armazenar/incorporar seus itens.');
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível armazenar/incorporar seus itens.');
         }elseif (substr($w_erro,0,1)=='1') {
-          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. O armazenamento/incorporação dos itens só pode ser feito por um gestor do sistema ou do módulo de projetos.');
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo. O armazenamento/incorporação dos itens só pode ser feito por um gestor do sistema ou deste módulo.');
         } else {
           ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o armazenamento/incorporação dos itens, mas convém sua verificação.');
         } 

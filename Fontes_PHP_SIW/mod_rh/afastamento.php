@@ -554,7 +554,7 @@ function Grava() {
             ShowHTML('<HR>');
             ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
             ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2>');
-            ShowHTML('<font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação.');
+            ShowHTML('<font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificadas as pendências listadas abaixo, não sendo possível a conclusão da operação.');
             ShowHTML('<UL>'.$w_erro.'</UL>');
             ShowHTML('</font></td></tr></table>');
             ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');

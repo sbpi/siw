@@ -290,21 +290,24 @@ function Inventario() {
     if (count($RS1)==0) {
       ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
     } else {
+      $w_colspan  = 0; 
+      $w_colspan1 = 0; 
+      $w_total    = 0;
       foreach ($RS1 as $row) {
         if ($i==0) {
           if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          if ($tipo) ShowHTML('          <td><b>Tipo de material</b></td>');
-          ShowHTML('          <td><b>End. Estoque</b></td>');
-          ShowHTML('          <td><b>Material</b></td>');
-          ShowHTML('          <td><b>U.M.</b></td>');
-          ShowHTML('          <td><b>Qtd.</b></td>');
-          ShowHTML('          <td><b>P.M.</b></td>');
+          if ($tipo) { $w_colspan++; ShowHTML('          <td><b>Tipo de material</b></td>'); }
+          $w_colspan++; ShowHTML('          <td><b>End. Estoque</b></td>');
+          $w_colspan++; ShowHTML('          <td><b>Material</b></td>');
+          $w_colspan++; ShowHTML('          <td><b>U.M.</b></td>');
+          $w_colspan++; ShowHTML('          <td><b>Qtd.</b></td>');
+          $w_colspan++; ShowHTML('          <td><b>P.M.</b></td>');
           ShowHTML('          <td><b>V.E.</b></td>');
-          ShowHTML('          <td><b>Disponível</b></td>');
-          ShowHTML('          <td><b>Chefe Autoriza</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Disponível</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Chefe Autoriza</b></td>');
           ShowHTML('        </tr>');
           $i++;
         }
@@ -315,13 +318,18 @@ function Inventario() {
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         ShowHTML('          <td align="center">'.f($row,'nm_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
-        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),10).'</td>');
-        ShowHTML('          <td align="right">'.formatNumber(f($row,'saldo_atual')*f($row,'preco_medio'),2).'</td>');
+        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio')).'</td>');
+        $w_valor_estoque = toNumber(formatNumber(f($row,'saldo_atual')*f($row,'preco_medio')));
+        ShowHTML('          <td align="right">'.formatNumber($w_valor_estoque).'</td>');
         ShowHTML('          <td align="center">'.retornaSimNao(f($row,'disponivel')).'</td>');
         ShowHTML('          <td align="center">'.retornaSimNao(f($row,'chefe_autoriza')).'</td>');
         ShowHTML('        </tr>');
+        $w_total+=$w_valor_estoque;
       }
     }
+    ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
+    ShowHTML('          <td colspan="'.$w_colspan.'" align="right"><b>Total</b><td align="right"><b>'.formatNumber($w_total).'<b></td><td colspan="'.$w_colspan1.'">&nbsp;</td>');
+    ShowHTML('        </tr>');
     ShowHTML('</table></tr>');
     ShowHTML('<tr><td><b>Legenda:</b><table>');
     ShowHTML('<tr><td><li><b>U.M.</b><td colspan="12">Unidade de medida');
@@ -519,32 +527,35 @@ function Analise() {
     if (count($RS1)==0) {
       ShowHTML('<tr><td align="center"><hr/><b>Não foram encontrados registros</b></td></tr>');
     } else {
+      $w_colspan  = 0; 
+      $w_colspan1 = 0; 
+      $w_total    = 0;
       foreach ($RS1 as $row) {
         if ($i==0) {
           if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          if ($tipo) ShowHTML('          <td rowspan="2"><b>Tipo de material</b></td>');
-          ShowHTML('          <td rowspan="2"><b>Material</b></td>');
-          ShowHTML('          <td rowspan="2"><b>U.M.</b></td>');
+          if ($tipo) { $w_colspan++; ShowHTML('          <td rowspan="2"><b>Tipo de material</b></td>'); }
+          $w_colspan++; ShowHTML('          <td rowspan="2"><b>Material</b></td>');
+          $w_colspan++; ShowHTML('          <td rowspan="2"><b>U.M.</b></td>');
           ShowHTML('          <td colspan="3"><b>Posição de Estoque</b></td>');
           ShowHTML('          <td colspan="3"><b>Última Ocorrência</b></td>');
           ShowHTML('          <td colspan="4"><b>Gestão</b></td>');
-          ShowHTML('          <td rowspan="2"><b>Disponível</b></td>');
-          ShowHTML('          <td rowspan="2"><b>Chefe Autoriza</b></td>');
+          $w_colspan1++; ShowHTML('          <td rowspan="2"><b>Disponível</b></td>');
+          $w_colspan1++; ShowHTML('          <td rowspan="2"><b>Chefe Autoriza</b></td>');
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          ShowHTML('          <td><b>Qtd.</b></td>');
-          ShowHTML('          <td><b>P.M.</b></td>');
+          $w_colspan++; ShowHTML('          <td><b>Qtd.</b></td>');
+          $w_colspan++; ShowHTML('          <td><b>P.M.</b></td>');
           ShowHTML('          <td><b>V.E.</b></td>');
-          ShowHTML('          <td><b>Entrada</b></td>');
-          ShowHTML('          <td><b>Preço</b></td>');
-          ShowHTML('          <td><b>Saída</b></td>');
-          ShowHTML('          <td><b>Est.Min.</b></td>');
-          ShowHTML('          <td><b>C.M.M.</b></td>');
-          ShowHTML('          <td><b>P.R.</b></td>');
-          ShowHTML('          <td><b>Ciclo</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Entrada</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Preço</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Saída</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Est.Min.</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>C.M.M.</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>P.R.</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>Ciclo</b></td>');
           ShowHTML('        </tr>');
           $i++;
         }
@@ -554,8 +565,9 @@ function Analise() {
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         ShowHTML('          <td align="center">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
-        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio'),10).'</td>');
-        ShowHTML('          <td align="right">'.formatNumber(f($row,'saldo_atual')*f($row,'preco_medio'),2).'</td>');
+        ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio')).'</td>');
+        $w_valor_estoque = toNumber(formatNumber(f($row,'saldo_atual')*f($row,'preco_medio')));
+        ShowHTML('          <td align="right">'.formatNumber($w_valor_estoque).'</td>');
         ShowHTML('          <td align="center">'.formataDataEdicao(f($row,'ultima_entrada'),5).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'ultimo_preco_compra')).'</td>');
         ShowHTML('          <td align="center">'.formataDataEdicao(f($row,'ultima_saida'),5).'</td>');
@@ -566,8 +578,12 @@ function Analise() {
         ShowHTML('          <td align="center">'.retornaSimNao(f($row,'disponivel')).'</td>');
         ShowHTML('          <td align="center">'.retornaSimNao(f($row,'chefe_autoriza')).'</td>');
         ShowHTML('        </tr>');
+        $w_total+=$w_valor_estoque;
       }
     }
+    ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
+    ShowHTML('          <td colspan="'.$w_colspan.'" align="right"><b>Total</b><td align="right"><b>'.formatNumber($w_total).'<b></td><td colspan="'.$w_colspan1.'">&nbsp;</td>');
+    ShowHTML('        </tr>');
     ShowHTML('</table>');
     ShowHTML('<tr><td><b>Legenda:</b><table>');
     ShowHTML('<tr><td><li><b>U.M.</b><td colspan="12">Unidade de medida');
@@ -799,7 +815,7 @@ function Entrada() {
           ShowHTML('          <td><b>Valid.</b></td>');
           ShowHTML('          <td><b>Qtd.</b></td>');
           ShowHTML('          <td><b>$ Unitário</b></td>');
-          ShowHTML('          <td><b>$ Entrada</b></td>');
+          ShowHTML('          <td><b>$ Total</b></td>');
           ShowHTML('        </tr>');
           $i++;
         }
@@ -1053,7 +1069,7 @@ function Saida() {
           ShowHTML('          <td rowspan=2><b>'.(($w_embed=='WORD') ? 'Valor' : LinkOrdena('Valor','vl_saida')).'</b></td>');
           ShowHTML('        </tr>');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Solicitação' : LinkOrdena('Solicitação','ultima_alteracao')).'</b></td>');
+          $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Inclusão' : LinkOrdena('Inclusão','ultima_alteracao')).'</b></td>');
           $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Agendamento' : LinkOrdena('Agendamento','fim')).'</b></td>');
           $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Entrega' : LinkOrdena('Entrega','data_efetivacao')).'</b></td>');
           $colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Solicitada' : LinkOrdena('Solicitada','quantidade_solicitada')).'</b></td>');
@@ -1296,7 +1312,7 @@ function Mapa() {
       $w_tot_ant  = 0;
       $w_tot_ent  = 0;
       $w_tot_sai  = 0;
-      $colspan    = 6;
+      $w_colspan  = 13;
       $w_atual    = '';
       $w_atual_qe = 0;
       $w_atual_qs = 0;
@@ -1305,146 +1321,165 @@ function Mapa() {
       foreach ($RS1 as $row) {
         if ($i==0) {
           $w_cor = $conTableBgColor;
-          //if (nvl($p_pais,0)!=f($row,'sq_tipo_material')) $tipo = true;
           ShowHTML('<tr><td align="center">');
-          ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-          ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          if ($tipo) {
-            $colspan++;
-            ShowHTML('          <td><b>Tipo de material</b></td>');
-          }
-          ShowHTML('          <td><b>Material</b></td>');
-          ShowHTML('          <td><b>U.M.</b></td>');
-          //ShowHTML('          <td><b>Movimentação</b></td>');
-          //ShowHTML('          <td><b>Fornecedor / Solicitante</b></td>');
-          ShowHTML('          <td><b>Documento / Pedido</b></td>');
-          ShowHTML('          <td><b>Armazen. / Agendam.</b></td>');
-          ShowHTML('          <td><b>Valid. / Entrega</b></td>');
-          ShowHTML('          <td><b>Qtd.</b></td>');
-          //ShowHTML('          <td><b>$ Unitário</b></td>');
-          ShowHTML('          <td><b>$ Movimentação</b></td>');
-          ShowHTML('        </tr>');
+          ShowHTML('    <TABLE class="tudo" WIDTH="100%" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           $i++;
         }
         if ($w_atual<>f($row,'nm_material')) {
+          if (nvl($p_ini_i,'')!='') {
+            $saldo = explode('|',f($row,'saldo'));
+            $w_atual_va = floatVal(str_replace(',','.',str_replace('.','',$saldo[0])));
+            $w_atual_qa = intVal(toNumber($saldo[1]));
+          }
           if ($w_atual_qe || $w_atual_qs) {
-            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.(($tipo) ? '3' : '2').'></td><td height="1" colspan=7><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
-            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-            ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo anterior</b>&nbsp;</td>');
-            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
-            ShowHTML('          <td><b>'.formatNumber($w_atual_va).'</b></td>');
-            ShowHTML('        </tr>');
-            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-            ShowHTML('          <td colspan='.($colspan-1).'><b>Total entradas</b>&nbsp;</td>');
-            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe,0).'</b></td>');
-            ShowHTML('          <td><b>'.formatNumber($w_atual_ve).'</b></td>');
-            ShowHTML('        </tr>');
-            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-            ShowHTML('          <td colspan='.($colspan-1).'><b>Total saídas</b>&nbsp;</td>');
-            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qs,0).'</b></td>');
-            ShowHTML('          <td><b>'.formatNumber($w_atual_vs).'</b></td>');
-            ShowHTML('        </tr>');
-            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-            ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo no período</b>&nbsp;</td>');
-            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
-            ShowHTML('          <td><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
-            ShowHTML('        </tr>');
+//            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.($w_colspan).'><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
+//            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//            ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo anterior</b>&nbsp;</td>');
+//            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
+//            ShowHTML('          <td><b>'.formatNumber($w_atual_va).'</b></td>');
+//            ShowHTML('        </tr>');
+//            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//            ShowHTML('          <td colspan='.($colspan-1).'><b>Total entradas</b>&nbsp;</td>');
+//            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe,0).'</b></td>');
+//            ShowHTML('          <td><b>'.formatNumber($w_atual_ve).'</b></td>');
+//            ShowHTML('        </tr>');
+//            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//            ShowHTML('          <td colspan='.($colspan-1).'><b>Total saídas</b>&nbsp;</td>');
+//            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qs,0).'</b></td>');
+//            ShowHTML('          <td><b>'.formatNumber($w_atual_vs).'</b></td>');
+//            ShowHTML('        </tr>');
+//            ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//            ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo no período</b>&nbsp;</td>');
+//            ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
+//            ShowHTML('          <td><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
+//            ShowHTML('        </tr>');
             $w_atual_qe = 0;
             $w_atual_qs = 0;
             $w_atual_ve = 0;
             $w_atual_vs = 0;
             if (nvl($p_ini_i,'')!='') $w_tot_ant += $w_atual_va;
           }
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.($colspan+1).'><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
-          if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
-          ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
-          ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+          ShowHTML('        <tr><td colspan='.($w_colspan).'>&nbsp;</td></tr>');
+          ShowHTML('        <tr bgcolor="'.$w_cor.'">');
+          ShowHTML('         <td style="border-top: 1px solid rgb(0,0,0);border-left: 1px solid rgb(0,0,0);border-right: 1px solid rgb(0,0,0);" colspan='.($w_colspan).'><b>');
+          if ($tipo) ShowHTML(f($row,'nm_tipo_completo').' - ');
+          ShowHTML('         '.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
+          ShowHTML('        </tr>');
+          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="center">');
+          ShowHTML('          <td rowspan="2" style="border: 1px solid rgb(0,0,0);"><b>Data</b></td>');
+          ShowHTML('          <td colspan="5" style="border: 1px solid rgb(0,0,0);"><b>Entradas</b></td>');
+          ShowHTML('          <td colspan="4" style="border: 1px solid rgb(0,0,0);"><b>Saídas</b></td>');
+          ShowHTML('          <td colspan="3" style="border: 1px solid rgb(0,0,0);"><b>Estoque</b></td>');
+          ShowHTML('        </tr>');
+          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="center">');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>Documento</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>Valid.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>QTD.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>V.U.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>V.T.</b></td>');
+
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>Pedido</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>QTD.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>V.U.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>V.T.</b></td>');
+
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>Qtd.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>V.U.</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);"><b>V.T.</b></td>');
+          ShowHTML('        </tr>');
+          ShowHTML('        <tr bgcolor="'.$w_cor.'">');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center">'.formataDataEdicao(addDays(nvl(f($row,'armazenamento'),f($row,'data_efetivacao')),-1),5).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" colspan="9">&nbsp;</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
+          $w_vu = 0;
+          if (nvl($w_atual_va,0)>0) $w_vu = $w_atual_va / $w_atual_qa;
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right"><b>'.formatNumber($w_vu).'</b></td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right"><b>'.formatNumber($w_atual_va).'</b></td>');
+          ShowHTML('        </tr>');
           $w_atual = f($row,'nm_material');
-        } else {
-          ShowHTML('        <tr bgcolor="'.$w_cor.'"><td colspan='.(($tipo) ? '3' : '2').'>&nbsp;</td>');
         }
-        //ShowHTML('          <td>'.f($row,'nm_tipo_movimentacao').'</td>');
+        ShowHTML('        <tr bgcolor="'.$w_cor.'">');
         if (nvl(f($row,'quantidade_pedida'),0)==0) {
-          //ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_fornecedor') : ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor'))).'</td>');
-          ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'sg_tip_doc').' '.f($row,'nr_doc') : '<a class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,f($row,'link_menu').'visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sg_menu').'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_menu')).'\',\'TelaEntrada\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Exibe os dados da entrada.">'.f($row,'sg_tip_doc').' '.f($row,'nr_doc').'</a>').'</td>');
-          ShowHTML('          <td align="center" title="Data de armazenamento">'.formataDataEdicao(f($row,'armazenamento'),5).'</td>');
-          ShowHTML('          <td align="center" title="Data de término da validade">'.formataDataEdicao(f($row,'validade'),5).'</td>');
-          ShowHTML('          <td align="center">+'.formatNumber(f($row,'qt_entrada'),0).'</td>');
-          //ShowHTML('          <td align="right">'.formatNumber(f($row,'vl_entrada'),5).'</td>');
-          ShowHTML('          <td align="right">+'.formatNumber(f($row,'tot_entrada'),2).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center" title="Data de armazenamento">'.formataDataEdicao(f($row,'armazenamento'),5).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" style="border: 1px solid rgb(0,0,0);">'.(($w_embed=='WORD') ? f($row,'sg_tip_doc').' '.f($row,'nr_doc') : '<a class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,f($row,'link_menu').'visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sg_menu').'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_menu')).'\',\'TelaEntrada\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Exibe os dados da entrada.">'.f($row,'sg_tip_doc').' '.f($row,'nr_doc').'</a>').'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center" title="Data de término da validade">'.formataDataEdicao(f($row,'validade'),5).'&nbsp;</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center">'.formatNumber(f($row,'qt_entrada'),0).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right">'.formatNumber(f($row,'vl_entrada')).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right">'.formatNumber(f($row,'tot_entrada')).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);">&nbsp;</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);">&nbsp;</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);">&nbsp;</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);">&nbsp;</td>');
           $w_tot_ent += f($row,'tot_entrada');
           $w_atual_qe += f($row,'qt_entrada');
           $w_atual_ve += f($row,'tot_entrada');
         } else {
-          //if (f($row,'tp_destino')=='I') {
-          //  ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibeUnidade('../',$w_cliente,f($row,'nm_destino'),f($row,'sq_destino'),$TP)).'</td>');
-          //} else {
-          //  ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_destino') : ExibePessoa('../',$w_cliente,f($row,'sq_destino'),$TP,f($row,'nm_destino'))).'</td>');
-          //}
-          ShowHTML('          <td width="1%" nowrap>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center" title="Data efetiva de entrega">'.formataDataEdicao(f($row,'data_efetivacao'),5).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" colspan="5">&nbsp;</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" width="1%" nowrap>');
           if ($w_embed!='WORD') ShowHTML(ExibeImagemSolic(f($row,'sg_menu'),f($row,'inicio'),f($row,'fim'),null,null,'S','1',f($row,'sg_tramite'), null));
           ShowHTML('          '.ExibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N',$w_embed).'&nbsp;</a>');
-          ShowHTML('          <td align="center" title="Data agendada para entrega">'.formataDataEdicao(f($row,'fim'),5).'</td>');
-          ShowHTML('          <td align="center" title="Data efetiva de entrega">'.formataDataEdicao(f($row,'data_efetivacao'),5).'</td>');
-          ShowHTML('          <td align="center">-'.formatNumber(f($row,'quantidade_entregue'),0).'</td>');
-          //ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio')).'</td>');
-          ShowHTML('          <td align="right">-'.formatNumber(f($row,'vl_saida')).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center">'.formatNumber(f($row,'quantidade_entregue'),0).'</td>');
+          
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right">'.formatNumber(f($row,'vl_saida') / f($row,'quantidade_entregue')).'</td>');
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right">'.formatNumber(f($row,'vl_saida')).'</td>');
           $w_tot_sai += f($row,'vl_saida');
           $w_atual_qs += f($row,'quantidade_entregue');
           $w_atual_vs += f($row,'vl_saida');
         }
-        if (nvl($p_ini_i,'')!='') {
-          $saldo = explode('|',f($row,'saldo'));
-          $w_atual_va = toNumber($saldo[0]);
-          $w_atual_qa = toNumber($saldo[1]);
+        ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
+        if (nvl(f($row,'quantidade_pedida'),0)==0) {
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right"><b>'.formatNumber(f($row,'vl_entrada')).'</b></td>');
+        } else {
+          ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right"><b>'.formatNumber(f($row,'preco_medio')).'</b></td>');
         }
+        ShowHTML('          <td style="border: 1px solid rgb(0,0,0);" align="right"><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
         ShowHTML('        </tr>');
       }
       if (count($RS1)>1) {
-        if ($w_atual_qe || $w_atual_qs) {
-          // Trata o último registro
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.(($tipo) ? '3' : '2').'></td><td height="1" colspan=7><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-          ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo anterior</b>&nbsp;</td>');
-          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
-          ShowHTML('          <td><b>'.formatNumber($w_atual_va).'</b></td>');
-          ShowHTML('        </tr>');
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-          ShowHTML('          <td colspan='.($colspan-1).'><b>Total entradas</b>&nbsp;</td>');
-          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe,0).'</b></td>');
-          ShowHTML('          <td><b>'.formatNumber($w_atual_ve,0).'</b></td>');
-          ShowHTML('        </tr>');
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-          ShowHTML('          <td colspan='.($colspan-1).'><b>Total saídas</b>&nbsp;</td>');
-          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qs,0).'</b></td>');
-          ShowHTML('          <td><b>'.formatNumber($w_atual_vs).'</b></td>');
-          ShowHTML('        </tr>');
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
-          ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo no período</b>&nbsp;</td>');
-          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
-          ShowHTML('          <td><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
-          ShowHTML('        </tr>');
-          if (nvl($p_ini_i,'')!='') $w_tot_ant += $w_atual_va;
-        }
-        ShowHTML('        <tr bgcolor="#DCDCDC" align="right"><td height="1" colspan='.($colspan+1).'><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
-        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
-        ShowHTML('          <td rowspan=4 colspan='.($colspan-1).' align="center"><b>TOTAIS'.((nvl($p_ini_i,'')!='') ? ' NO PERÍODO DE '.$p_ini_i.' a '.$p_ini_f: '').'</b>&nbsp;</td>');
-        ShowHTML('          <td><b>SALDO ANTERIOR</b>&nbsp;</td>');
-        ShowHTML('          <td><b>'.formatNumber($w_tot_ant).'</b></td>');
-        ShowHTML('        </tr>');
-        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
-        ShowHTML('          <td><b>ENTRADAS</b>&nbsp;</td>');
-        ShowHTML('          <td><b>'.formatNumber($w_tot_ent).'</b></td>');
-        ShowHTML('        </tr>');
-        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
-        ShowHTML('          <td><b>SAÍDAS</b>&nbsp;</td>');
-        ShowHTML('          <td><b>'.formatNumber($w_tot_sai).'</b></td>');
-        ShowHTML('        </tr>');
-        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
-        ShowHTML('          <td><b>SALDO</b>&nbsp;</td>');
-        ShowHTML('          <td><b>'.formatNumber($w_tot_ant + $w_tot_ent - $w_tot_sai).'</b></td>');
-        ShowHTML('        </tr>');
+//        if ($w_atual_qe || $w_atual_qs) {
+//          // Trata o último registro
+//          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right"><td height="1" colspan='.(($tipo) ? '3' : '2').'></td><td height="1" colspan=7><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
+//          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//          ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo anterior</b>&nbsp;</td>');
+//          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa,0).'</b></td>');
+//          ShowHTML('          <td><b>'.formatNumber($w_atual_va).'</b></td>');
+//          ShowHTML('        </tr>');
+//          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//          ShowHTML('          <td colspan='.($colspan-1).'><b>Total entradas</b>&nbsp;</td>');
+//          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qe,0).'</b></td>');
+//          ShowHTML('          <td><b>'.formatNumber($w_atual_ve,0).'</b></td>');
+//          ShowHTML('        </tr>');
+//          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//          ShowHTML('          <td colspan='.($colspan-1).'><b>Total saídas</b>&nbsp;</td>');
+//          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qs,0).'</b></td>');
+//          ShowHTML('          <td><b>'.formatNumber($w_atual_vs).'</b></td>');
+//          ShowHTML('        </tr>');
+//          ShowHTML('        <tr bgcolor="'.$w_cor.'" align="right">');
+//          ShowHTML('          <td colspan='.($colspan-1).'><b>Saldo no período</b>&nbsp;</td>');
+//          ShowHTML('          <td align="center"><b>'.formatNumber($w_atual_qa+$w_atual_qe-$w_atual_qs,0).'</b></td>');
+//          ShowHTML('          <td><b>'.formatNumber($w_atual_va+$w_atual_ve-$w_atual_vs).'</b></td>');
+//          ShowHTML('        </tr>');
+//          if (nvl($p_ini_i,'')!='') $w_tot_ant += $w_atual_va;
+//        }
+//        ShowHTML('        <tr bgcolor="#DCDCDC" align="right"><td height="1" colspan='.($colspan+1).'><hr style="margin:0px;" NOSHADE color=#000000 size=1 /></td></tr>');
+//        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
+//        ShowHTML('          <td rowspan=4 colspan='.($colspan-1).' align="center"><b>TOTAIS'.((nvl($p_ini_i,'')!='') ? ' NO PERÍODO DE '.$p_ini_i.' a '.$p_ini_f: '').'</b>&nbsp;</td>');
+//        ShowHTML('          <td><b>SALDO ANTERIOR</b>&nbsp;</td>');
+//        ShowHTML('          <td><b>'.formatNumber($w_tot_ant).'</b></td>');
+//        ShowHTML('        </tr>');
+//        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
+//        ShowHTML('          <td><b>ENTRADAS</b>&nbsp;</td>');
+//        ShowHTML('          <td><b>'.formatNumber($w_tot_ent).'</b></td>');
+//        ShowHTML('        </tr>');
+//        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
+//        ShowHTML('          <td><b>SAÍDAS</b>&nbsp;</td>');
+//        ShowHTML('          <td><b>'.formatNumber($w_tot_sai).'</b></td>');
+//        ShowHTML('        </tr>');
+//        ShowHTML('        <tr bgcolor="#DCDCDC" align="right">');
+//        ShowHTML('          <td><b>SALDO</b>&nbsp;</td>');
+//        ShowHTML('          <td><b>'.formatNumber($w_tot_ant + $w_tot_ent - $w_tot_sai).'</b></td>');
+//        ShowHTML('        </tr>');
       }
     }
   } elseif ($O=='P') {

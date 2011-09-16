@@ -321,7 +321,8 @@ function inicial() {
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
   } else {
     Cabecalho();
     head();
@@ -352,9 +353,9 @@ function inicial() {
     } 
     ValidateClose();
     ScriptClose();
-    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
   }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_Troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad="document.Form.'.$w_Troca.'.focus();"');
@@ -440,7 +441,7 @@ function inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.(($w_tipo=='WORD') ? f($row,'nm_res_fornecedor') : ExibePessoa('../',$w_cliente,f($row,'sq_fornecedor'),$TP,f($row,'nm_res_fornecedor'))).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_tp_doc').'</td>');
+        ShowHTML('        <td title="'.f($row,'nm_tp_doc').'">'.f($row,'sg_tp_doc').'</td>');
         ShowHTML('        <td>'.f($row,'nr_doc').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'dt_doc'),5).'</td>');
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'vl_doc'),2).'&nbsp;</td>');
@@ -695,7 +696,7 @@ function Geral() {
       Validate('w_valor','Valor do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
     }
     Validate('w_tipo','Tipo da movimentação', 'SELECT', '1', '1', '18', '', '0123456789');
-    Validate('w_prevista','Data prevista para recebimento','DATA',1,10,10,'','0123456789/');
+    //Validate('w_prevista','Data prevista para recebimento','DATA',1,10,10,'','0123456789/');
     Validate('w_efetiva','Data efetiva de recebimento','DATA',1,10,10,'','0123456789/');
     ShowHTML('  document.Form.Botao[0].disabled = true;');
     ShowHTML('  document.Form.Botao[1].disabled = true;');
@@ -719,7 +720,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif (strpos('EV',$O)!==false) {
@@ -792,8 +793,8 @@ function Geral() {
     }
     ShowHTML('      <tr valign="top">');
     SelecaoTipoMovimentacao('Tipo da <u>m</u>ovimentação:','M', 'Selecione o tipo da movimentação.', $w_tipo,'S',null,'w_tipo','CONSUMO',null);
-    ShowHTML('          <td><b>Data <u>p</u>revista para recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_prevista" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prevista.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data prevista para recebimento do material ou serviço.">'.ExibeCalendario('Form','w_prevista').'</td>');
-    ShowHTML('          <td><b>Data <u>e</u>fetiva de recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_efetiva" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_efetiva.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de entrega do material ou conclusão do serviço.">'.ExibeCalendario('Form','w_efetiva').'</td>');
+    //ShowHTML('          <td><b>Data <u>p</u>revista para recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_prevista" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prevista.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data prevista para recebimento do material.">'.ExibeCalendario('Form','w_prevista').'</td>');
+    ShowHTML('          <td><b>Data de <u>e</u>ntrega:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_efetiva" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_efetiva.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de entrega do material.">'.ExibeCalendario('Form','w_efetiva').'</td>');
     ShowHTML('      <tr><td align="center" colspan=4 height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan=4>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -810,9 +811,9 @@ function Geral() {
     if ($O!='I') {
       if ($w_erro>'') {
         if (substr($w_erro,0,1)=='0') {
-          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível armazenar/incorporar seus itens.');
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível armazenar/incorporar seus itens.');
         }elseif (substr($w_erro,0,1)=='1') {
-          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. O armazenamento/incorporação dos itens só pode ser feito por um gestor do sistema ou do módulo de projetos.');
+          ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo. O armazenamento/incorporação dos itens só pode ser feito por um gestor do sistema ou deste módulo.');
         } else {
           ShowHTML('  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o armazenamento/incorporação dos itens, mas convém sua verificação.');
         } 
@@ -821,12 +822,12 @@ function Geral() {
       } 
     
       // Itens
-      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
-      ShowHTML('    <tr><td colspan=3><b>Itens</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Itens'.'&SG='.substr($SG,0,4).'ITEM').'" title="Informa os itens do documento.">Ajustar</A>]</td></tr>');
-      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
-      ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
       $sql = new db_getMtEntItem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
       $RS = SortArray($RS,'ordem','asc','nome','asc'); 
+      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
+      ShowHTML('    <tr><td colspan=3><b>Itens</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Itens'.'&SG='.substr($SG,0,4).'ITEM').'" title="Informa os itens do documento.">'.((count($RS)>0) ? 'Ajustar' : 'Incluir').'</A>]</td></tr>');
+      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
+      ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
       if (count($RS)==0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Itens não informados</b></td></tr>');
         ShowHTML('      <tr><td colspan=2 align=center><hr /></td></tr>');
@@ -902,12 +903,12 @@ function Geral() {
       }
       ShowHTML('       </table>');
 
-      ShowHTML('    <tr><td colspan=3><br><b>Arquivos</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Anexos&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Anexos'.'&SG='.substr($SG,0,4).'ANEXO').'" title="Registra os anexos do documento.">Ajustar</A>]</td></tr>');
-      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
-      ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
       // Recupera todos os registros para a listagem 
       $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
       $RS = SortArray($RS,'ordem','asc','nome','asc');
+      ShowHTML('    <tr><td colspan=3><br><b>Arquivos</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Anexos&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Anexos'.'&SG='.substr($SG,0,4).'ANEXO').'" title="Registra os anexos do documento.">'.((count($RS)>0) ? 'Ajustar' : 'Incluir').'</A>]</td></tr>');
+      ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
+      ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
       if (count($RS)==0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Arquivos não anexados</b></td></tr>');
       } else {
@@ -996,7 +997,7 @@ function Geral() {
           }
           ShowHTML('    </table>');
           if (count($w_classes>1) || !$w_classes[4]) {
-            ShowHTML('      <tr><td><b><u>D</u>ata de armazenamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_armazenamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_armazenamento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de armazenamento do material.">'.ExibeCalendario('Form','w_armazenamento').'</td>');
+            ShowHTML('      <tr><td><b><u>D</u>ata de armazenamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_armazenamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_armazenamento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de armazenamento do material.">'.ExibeCalendario('Form1','w_armazenamento').'</td>');
             ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
             ShowHTML('      <tr><td align="center" colspan=2 height="1" bgcolor="#000000"></TD></TR>');
             ShowHTML('      <tr><td align="center" colspan=2>');
@@ -1158,8 +1159,8 @@ function Itens() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='L' || !$w_edita) {
@@ -1446,8 +1447,8 @@ function Anexos() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpenClean('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
@@ -1593,8 +1594,8 @@ function Visual() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpenClean('onLoad="this.focus()"; ');
     CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
     $w_embed = 'HTML';
@@ -1643,7 +1644,7 @@ function Excluir() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } else {
@@ -1715,7 +1716,7 @@ function Estorno() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } else {
@@ -1771,7 +1772,7 @@ function Grava() {
   Cabecalho();
   head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'MTENTMAT':
@@ -1835,8 +1836,9 @@ function Grava() {
         } 
         $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_copia'],
                 $_REQUEST['w_fornecedor'],$_REQUEST['w_tipo'],$w_situacao,$_REQUEST['w_solicitacao'],$_REQUEST['w_documento'],
-                $_REQUEST['w_prevista'],$_REQUEST['w_efetiva'],$_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],
-                $_REQUEST['w_valor'],$_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],&$w_chave_nova);
+                nvl($_REQUEST['w_prevista'],$_REQUEST['w_efetiva']),$_REQUEST['w_efetiva'],
+                $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
+                $_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],&$w_chave_nova);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.(($O=='E') ? 'inicial&O=L' : 'geral&O=A&w_chave='.$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
         ScriptClose();

@@ -4,7 +4,7 @@
 // -------------------------------------------------------------------------
 function selecaoClasseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $l_classe[1]['nome'] = 'Medicamento'; $l_classe[1]['marcado'] = false; 
+  if ($_SESSION['P_CLIENTE']!=10135) { $l_classe[1]['nome'] = 'Medicamento'; $l_classe[1]['marcado'] = false; }
   $l_classe[2]['nome'] = 'Alimento';    $l_classe[2]['marcado'] = false; 
   $l_classe[3]['nome'] = 'Consumo';     $l_classe[3]['marcado'] = false; 
   $l_classe[4]['nome'] = 'Permanente';  $l_classe[4]['marcado'] = false; 
