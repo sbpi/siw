@@ -1607,7 +1607,7 @@ function OutraParte() {
       ShowHTML('      <tr><td colspan="2"><table border="0" width="100%">');
       ShowHTML('          <tr valign="top">');
       if ($w_tipo_pessoa == 1)
-        ShowHTML('          <td>CPF:<br><b><font size=2>' . $w_cpf);
+        ShowHTML('          <td>CPF:<br><b><font size=2>' . nvl($w_cpf,'<font color="#BC3131">CPF não informado</font>'));
 
       //ShowHTML('              <INPUT type="hidden" name="w_cpf" value="' . $w_cpf . '">');
 

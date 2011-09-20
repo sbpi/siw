@@ -6,45 +6,45 @@
 function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_tramite) {
   extract($GLOBALS);
 
-  // Se não encontrar erro, esta função retorna cadeia fazia.
-  // Se o retorno for diferente de cadeia vazia, o primeiro byte indica o tipo de erro
-  // 0 - Erro de integridade. A solicitação só pode ser devolvida
-  // 1 - Erro de regra de negócio. Apenas gestores podem encaminhar a solicitação
-  // 2 - Alerta. O sistema indica uma situação não desejável mas permite que o usuário
-  //     encaminhe o projeto
-  //-----------------------------------------------------------------------------------
-  // Cria recordsets e variáveis de trabalho.
-  // l_rs1 até l_rs4 são recordsets que podem ser usados para armazenar dados de blocos
-  // de dados específicos da solicitação que está sendo validada.
-  //-----------------------------------------------------------------------------------
-  //-----------------------------------------------------------------------------------
-  // Esta primeira parte carrega recordsets com os diferentes blocos de dados que
-  // compõem a solicitação
-  //-----------------------------------------------------------------------------------
-  // Recupera os dados da solicitação
+// Se não encontrar erro, esta função retorna cadeia fazia.
+// Se o retorno for diferente de cadeia vazia, o primeiro byte indica o tipo de erro
+// 0 - Erro de integridade. A solicitação só pode ser devolvida
+// 1 - Erro de regra de negócio. Apenas gestores podem encaminhar a solicitação
+// 2 - Alerta. O sistema indica uma situação não desejável mas permite que o usuário
+//     encaminhe o projeto
+//-----------------------------------------------------------------------------------
+// Cria recordsets e variáveis de trabalho.
+// l_rs1 até l_rs4 são recordsets que podem ser usados para armazenar dados de blocos
+// de dados específicos da solicitação que está sendo validada.
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+// Esta primeira parte carrega recordsets com os diferentes blocos de dados que
+// compõem a solicitação
+//-----------------------------------------------------------------------------------
+// Recupera os dados da solicitação
   $sql = new db_getSolicData;
   $l_rs_solic = $sql->getInstanceOf($dbms, $v_chave, $v_sg1);
 
-  // Se a solicitação informada não existir, abandona a execução
+// Se a solicitação informada não existir, abandona a execução
   if (($l_rs_solic == 0)) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
   }
 
-  // Verifica se o cliente tem o módulo de viagens contratado
+// Verifica se o cliente tem o módulo de viagens contratado
   $sql = new db_getSiwCliModLis;
   $l_rs_modulo = $sql->getInstanceOf($dbms, $v_cliente, null, 'PD');
   if (!($l_rs_modulo == 0))
     $l_viagem = 'S'; else
-    $l_viagem='N';
+    $l_viagem = 'N';
 
   $l_erro = '';
   $l_tipo = '';
 
-  // Recupera o trâmite atual da solicitação
+// Recupera o trâmite atual da solicitação
   $sql = new db_getTramiteData;
   $l_rs_tramite = $sql->getInstanceOf($dbms, f($l_rs_solic, 'sq_siw_tramite'));
 
-  // Recupera os dados do beneficiário
+// Recupera os dados do beneficiário
   $sql = new db_getBenef;
   $l_rs1 = $sql->getInstanceOf($dbms, $v_cliente, Nvl(f($l_rs_solic, 'sq_prop'), 0), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   $l_existe_rs1 = count($l_rs1);
@@ -55,23 +55,23 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
     }
   }
 
-  // Recupera os parâmetros do módulo de viagem
+// Recupera os parâmetros do módulo de viagem
   $sql = new db_getPDParametro;
   $l_rs2 = $sql->getInstanceOf($dbms, $v_cliente, null, null);
   $l_existe_rs2 = count($l_rs2);
 
-  // Recupera os deslocamentos da viagem
+// Recupera os deslocamentos da viagem
   $sql = new db_getPD_Deslocamento;
   $l_rs3 = $sql->getInstanceOf($dbms, $v_chave, null, 'S', $v_sg2);
   $l_rs3 = SortArray($l_rs3, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
   $l_existe_rs3 = count($l_rs3);
 
-  // Recupera as vinculações da viagem
+// Recupera as vinculações da viagem
   $sql = new db_getPD_Vinculacao;
   $l_rs4 = $sql->getInstanceOf($dbms, $v_chave, null, null);
   $l_existe_rs4 = count($l_rs4);
 
-  // Recupera as diárias da solicitação de viagem
+// Recupera as diárias da solicitação de viagem
   $sql = new db_getPD_Deslocamento;
   $l_rs5 = $sql->getInstanceOf($dbms, $v_chave, null, 'S', 'PDDIARIA');
   $l_existe_rs5 = count($l_rs5);
@@ -85,7 +85,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
   }
   reset($l_rs5);
 
-  // Recupera as diárias da prestação de contas de viagem
+// Recupera as diárias da prestação de contas de viagem
   $sql = new db_getPD_Deslocamento;
   $l_rs6 = $sql->getInstanceOf($dbms, $v_chave, null, 'P', 'PDDIARIA');
   $l_existe_rs6 = count($l_rs6);
@@ -99,27 +99,36 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
   }
   reset($l_rs6);
 
-  //-----------------------------------------------------------------------------------
-  // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
-  // através do JavaScript por envolver mais de uma tela
-  //-----------------------------------------------------------------------------------
-  //-----------------------------------------------------------------------------
-  // Verificações de integridade de dados da solicitação, feitas sempre que houver
-  // um encaminhamento.
-  //-----------------------------------------------------------------------------
-  // Verifica se foi indicado o beneficiário e se seus dados estão completos
+//-----------------------------------------------------------------------------------
+// O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
+// através do JavaScript por envolver mais de uma tela
+//-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// Verificações de integridade de dados da solicitação, feitas sempre que houver
+// um encaminhamento.
+//-----------------------------------------------------------------------------
+// Verifica se foi indicado o beneficiário e se seus dados estão completos
   if (Nvl(f($l_rs_tramite, 'ordem'), '---') == '1') {
-    // Verifica se foi indicado o beneficiário
+// Verifica se foi indicado o beneficiário
     if ($l_existe_rs1 == 0) {
       $l_erro .= '<li>O beneficiário não foi informado';
       $l_tipo = 0;
     } else {
 
-      // Verifica se o beneficiário tem os dados mínimos cadastrados
-      if (nvl(f ($l_rs1, 'cpf'), '') == '' || nvl(f($l_rs1, 'email'), '') == '' || nvl(f($l_rs1, 'sexo'), '') == '' || 
-          (nvl(f($l_rs1,'sq_tipo_pessoa'),'')== 1 && ( nvl(f($l_rs1, 'rg_numero'), '') == '' || nvl(f($l_rs1, 'ddd'), '') == '')) ||
-          (nvl(f($l_rs1,'sq_tipo_pessoa'),'')== 3 && ( nvl(f($l_rs1, 'passaporte_numero'), '') == '' || nvl(f($l_rs1, 'sq_pais_passaporte'), '') == ''))
-          ) {
+// Verifica se o beneficiário tem os dados mínimos cadastrados
+      
+      if(nvl(f($l_rs1, 'sq_tipo_pessoa'), '') == 1 && nvl(f($l_rs1, 'cpf'), '') == ''){
+        $l_erro .= '<li>CPF do beneficiário da viagem não informado. Entre em contato com os gestores.';
+        $l_tipo = 0;          
+      }elseif(nvl(f($l_rs1, 'sq_tipo_pessoa'), '') == 1 && nvl(f($l_rs1, 'cpf'), '') == ''){
+        $l_erro .= '<li>Código do beneficiário estrangeiro não informado. Entre em contato com os gestores.';
+        $l_tipo = 0;                  
+      }
+      
+      if (nvl(f($l_rs1, 'email'), '') == '' || nvl(f($l_rs1, 'sexo'), '') == '' ||
+              (nvl(f($l_rs1, 'sq_tipo_pessoa'), '') == 1 && ( nvl(f($l_rs1, 'rg_numero'), '') == '' || nvl(f($l_rs1, 'ddd'), '') == '')) ||
+              (nvl(f($l_rs1, 'sq_tipo_pessoa'), '') == 3 && ( nvl(f($l_rs1, 'passaporte_numero'), '') == '' || nvl(f($l_rs1, 'sq_pais_passaporte'), '') == ''))
+      ) {
         $l_erro .= '<li>Beneficiário da viagem com dados incompletos. Acesse a tela do beneficiário, informe os dados obrigatórios e clique no botão "Gravar"';
         $l_tipo = 0;
       }
@@ -148,7 +157,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
    *       }
    */
   if (f($l_rs_tramite, 'sigla') == 'CI') {
-    // Cadastramento inicial
+// Cadastramento inicial
 
     if (f($l_rs_solic, 'passagem') == 'N') {
       $l_erro1 = 0;
@@ -168,7 +177,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         }
       }
     }
-    // Verifica se foram cadastrados pelo menos 2 deslocamentos
+// Verifica se foram cadastrados pelo menos 2 deslocamentos
     if ($l_erro1 == 1) {
       $l_erro .= '<li>Na tela de dados gerais foi informada a necessidade de passagens, mas nenhum deslocamento confirma essa necessidade.';
       $l_tipo = 0;
@@ -178,7 +187,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
     }
 
     if (nvl(f($l_rs_solic, 'diaria'), '') != '' || f($l_rs_solic, 'hospedagem') == 'S' || f($l_rs_solic, 'veiculo') == 'S') {
-      // Se foi informado que há diária/hospedagem/locação de veículo, pelo menos um deslocamento deve informar a quantidade de diárias
+// Se foi informado que há diária/hospedagem/locação de veículo, pelo menos um deslocamento deve informar a quantidade de diárias
       if (f($l_rs_solic, 'diaria') != '')
         $w_erro_diaria = true;
       if (f($l_rs_solic, 'hospedagem') == 'S')
@@ -191,7 +200,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
       $l_i = 1;
       foreach ($l_rs5 as $row) {
         if ($l_i < count($l_rs5)) {
-          // descarta o último registro
+// descarta o último registro
           if (nvl(f($row, 'diaria'), '') == '' && f($row, 'saida_internacional') == 0 && f($row, 'chegada_internacional') == 0 && (f($row, 'origem_nacional') == 'S' || toDate(FormataDataEdicao(f($row, 'phpdt_chegada'))) != $w_fim_s)) {
             $w_cont++;
           }
@@ -226,12 +235,12 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
   }
 
 
-  // Verifica se foram cadastrados pelo menos 2 deslocamentos
+// Verifica se foram cadastrados pelo menos 2 deslocamentos
   if ($l_existe_rs3 < 2) {
     $l_erro .= '<li>É obrigatório informar pelo menos 2 deslocamentos.';
     $l_tipo = 0;
   } else {
-    // Verifica o sequenciamento dos deslocamentos
+// Verifica o sequenciamento dos deslocamentos
     $i = 0;
     foreach ($l_rs3 as $row) {
       if ($i == 0) {
@@ -255,12 +264,12 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
     }
   }
 
-  // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
+// Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
   if (Nvl(f($l_rs_tramite, 'ordem'), '---') > '1') {
-    // Verifica se o início da missão atende ao número de dias de antecedência regulamentares.
-    // Se não atender, deve ser informada justificativa.
+// Verifica se o início da missão atende ao número de dias de antecedência regulamentares.
+// Se não atender, deve ser informada justificativa.
     if (!(strpos('CH,DF,EA', Nvl(f($l_rs_tramite, 'sigla'), 'CH')) === false)) {
-
+      
     }
 
     if (f($l_rs_tramite, 'sigla') == 'DF') {
@@ -280,11 +289,11 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         }
 
         if (f($l_rs_tramite, 'sigla') == 'AE' || (f($l_rs_tramite, 'sigla') == 'VP' && f($l_rs_solic, 'cumprimento') != 'C')) {
-          // Pelo menos um bilhete deve ter trechos vinculados
+// Pelo menos um bilhete deve ter trechos vinculados
           $sql = new db_getPD_Deslocamento;
           $RS_Trecho = $sql->getInstanceOf($dbms, $v_chave, null, ((f($l_rs_tramite, 'sigla') == 'AE') ? 'S' : 'P'), null);
 
-          // Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
+// Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
           $w_trecho = false;
           foreach ($RS_Trecho as $row) {
             if (nvl(f($row, 'sq_bilhete'), '') != '')
@@ -299,7 +308,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
 
       if (f($l_rs_tramite, 'sigla') == 'VP') {
         if (f($l_rs_solic, 'reembolso') == 'S') {
-          // Valores a serem reembolsados
+// Valores a serem reembolsados
           $sql = new db_getPD_Reembolso;
           $RS_Reembolso = $sql->getInstanceOf($dbms, $v_chave, null, null, null);
 
@@ -334,7 +343,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         $l_i = 1;
         foreach ($l_rs6 as $row) {
           if ($l_i < count($l_rs6)) {
-            // descarta o último registro
+// descarta o último registro
             if (nvl(f($row, 'diaria'), '') == '' && f($row, 'saida_internacional') == 0 && f($row, 'chegada_internacional') == 0 && (f($row, 'origem_nacional') == 'S' || toDate(FormataDataEdicao(f($row, 'phpdt_chegada'))) != $w_fim_p)) {
               $w_cont++;
             }
@@ -348,7 +357,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
       }
 
       if (f($l_rs_solic, 'reembolso') == 'S') {
-        // Valores a serem reembolsados
+// Valores a serem reembolsados
         $sql = new db_getPD_Reembolso;
         $RS_Reembolso = $sql->getInstanceOf($dbms, $v_chave, null, null, null);
         if (count($RS_Reembolso) == 0) {
@@ -361,10 +370,10 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
     $l_erro = $l_erro;
   }
   $l_erro = $l_tipo . $l_erro;
-  //-----------------------------------------------------------------------------------
-  // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string
-  // para ser usada com a tag <UL>.
-  //-----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------
+// Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string
+// para ser usada com a tag <UL>.
+//-----------------------------------------------------------------------------------
 
   return $l_erro;
 }
