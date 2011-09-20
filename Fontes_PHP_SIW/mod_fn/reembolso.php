@@ -847,7 +847,7 @@ function Geral() {
       } 
     }
   }
-
+  
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -860,6 +860,15 @@ function Geral() {
   FormataDataMA();
   FormataValor();
   openBox('reload');
+  ShowHTML('  function texto() {');
+  ShowHTML('    obj = document.Form;');
+  ShowHTML('    var tipo_lancamento = obj.w_sq_tipo_lancamento[obj.w_sq_tipo_lancamento.selectedIndex].text;');
+  ShowHTML('    tipo_lancamento = tipo_lancamento.substr(tipo_lancamento.indexOf(". ")+2);');
+  ShowHTML('    var valor = obj.w_valor.value;');
+  ShowHTML('    var beneficiario = obj.w_pessoa[obj.w_pessoa.selectedIndex].text;');
+  ShowHTML('    var mes = obj.w_per_ini.value;');
+  ShowHTML('    obj.w_descricao.value = "Pagamento de reembolso de despesas referente a " + tipo_lancamento + " no valor de R$ " + valor + " para " + beneficiario + " referente ao mês " + mes + ".";');
+  ShowHTML('  }');
   ValidateOpen('Validacao');
   Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
   if(nvl($w_sq_menu_relac,'')!='') {
@@ -993,21 +1002,21 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),null,$w_chave_pai);
       }
     }
-    if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
+    if (nvl(f($RS_Relac,'sigla'),'')!='') { $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla')); }
     
     ShowHTML('      <tr>');
-    SelecaoPessoa('<u>B</u>eneficiário:','B','Selecione o beneficiário deste lançamento.',$w_pessoa,null,'w_pessoa','CONTRATADOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_pessoa\'; document.Form.submit();"');
+    SelecaoPessoa('<u>B</u>eneficiário:','B','Selecione o beneficiário deste lançamento.',$w_pessoa,null,'w_pessoa','CONTRATADOS','onChange="texto(); document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_pessoa\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
+    SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC', 'onChange="texto();"',2);
     if ($w_exibe_fp) {
       ShowHTML('      <tr>');
       SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para este '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento" value="'.$w_sq_forma_pagamento.'">');
     }
-    ShowHTML('      <tr><td><b><u>V</u>alor do reembolso:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
-    ShowHTML('      <tr><td><b><u>M</u>ês de referência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time(),9)).'" onKeyDown="FormataDataMA(this,event);"></td>');
-    ShowHTML('      <tr><td colspan=2><b><u>D</u>iscriminação das despesas:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="sti" ROWS=3 cols=75 title="Discrimine as despesas para as quais deseja ser reembolsado.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>V</u>alor do reembolso:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento." onBlur="texto();"></td>');
+    ShowHTML('      <tr><td><b><u>M</u>ês de referência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time(),9)).'" onKeyDown="FormataDataMA(this,event);" onBlur="texto();"></td>');
+    ShowHTML('      <tr><td colspan=2><b><u>D</u>iscriminação das despesas:</b><br><textarea READONLY accesskey="D" name="w_descricao" class="sti" ROWS=3 cols=75 title="Discrimine as despesas para as quais deseja ser reembolsado.">'.$w_descricao.'</TEXTAREA></td>');
     
     if (nvl($w_forma_pagamento,'')!='') {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');

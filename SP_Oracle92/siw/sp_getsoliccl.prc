@@ -294,8 +294,7 @@ begin
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo,
-                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao
+         select b.codigo_interno, to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao, e.qtd_ite, coalesce(f.qtd_fin,0) qtd_fin
            from siw_solicitacao             b
                 inner   join siw_tramite    b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and
                                                    b1.sigla             = 'AT'
@@ -303,16 +302,25 @@ begin
                 inner   join cl_solicitacao d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao and
                                                    d.fundo_fixo         = 'S'
                                                   )
-                left    join (select w.sq_siw_solicitacao, w.sq_solic_vinculo
+                inner   join (select d1.sq_siw_solicitacao, count(*) qtd_ite
+                               from cl_solicitacao_item            d1
+                                    inner join cl_material         d2 on (d1.sq_material       = d2.sq_material)
+                                    inner join cl_tipo_material    d3 on (d2.sq_tipo_material  = d3.sq_tipo_material and d3.classe < 5)
+                              group by d1.sq_siw_solicitacao
+                             )              e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                left    join (select w.sq_solic_vinculo, count(*) qtd_fin
                                 from fn_lancamento                w
                                      inner   join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
                                        inner join siw_tramite     y on (x.sq_siw_tramite     = y.sq_siw_tramite and
                                                                         y.sigla             <> 'CA'
                                                                        )
                                where w.sq_solic_vinculo is not null
-                             )              e  on (b.sq_siw_solicitacao = e.sq_solic_vinculo)
+                              group by w.sq_solic_vinculo
+                             )              f  on (d.sq_siw_solicitacao = f.sq_solic_vinculo)
           where b.sq_menu             = p_menu
-            and (p_chave is null or e.sq_siw_solicitacao is null or (p_chave is not null and e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_chave));
+            and ((p_chave is null and coalesce(f.qtd_fin,0) < e.qtd_ite) or 
+                 (p_chave is not null and f.sq_solic_vinculo is not null)
+                );
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for

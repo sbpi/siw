@@ -6,7 +6,6 @@ include_once($w_dir_volta . 'classes/sp/db_getPersonList.php');
 // -------------------------------------------------------------------------
 function selecaoPessoaOrigem($label, $accesskey, $hint, $chave, $chaveAux, $campo, $tipo_pessoa, $restricao, $atributo, $colspan=1, $mandatory=null, $obj_solic=null, $separador='<br />') {
   extract($GLOBALS);
-  //echo nvl($mandatory, 'nulo');
   include_once($w_dir_volta . 'classes/sp/db_getBenef.php');
   ShowHTML('<INPUT type="hidden" name="' . $campo . '" value="' . $chave . '">');
   if (strpos($campo,'[]')!==false) {
@@ -15,12 +14,9 @@ function selecaoPessoaOrigem($label, $accesskey, $hint, $chave, $chaveAux, $camp
     ShowHTML('<INPUT type="hidden" name="obj_origem" value="' . $chave . '">');
   }
   if ($chave > '') {
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    foreach ($RS as $row) {
-      $RS = $row;
-      break;
-    }
-    $l_pessoa = f($row, 'nm_pessoa');
+    $sql = new db_getBenef; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    foreach ($l_rs as $row) { $l_rs = $row; break; }
+    $l_pessoa = f($l_rs, 'nm_pessoa');
   }
 
   ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador);

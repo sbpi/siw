@@ -118,11 +118,6 @@ begin
       -- Recupera o código interno  do acordo, gerado por trigger
       select codigo_interno into p_codigo_interno from siw_solicitacao where sq_siw_solicitacao = w_chave;
       
-      If p_codigo_interno is null and w_menu.numeracao_automatica > 0 Then
-         -- Gera código a partir da configuração do menu      
-         geraCodigoInterno(w_chave, to_number(to_char(p_vencimento,'yyyy')), p_codigo_interno);
-      End If;
-
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
 

@@ -922,7 +922,7 @@ if (nvl($w_imposto,'')!='') {
           $w_chave_pai = f($RS_Vinc, 'sq_solic_pai');
         }
       } elseif (f($RS_Imposto, 'tipo_vinculo') == 1) {
-// Padrão vinculado à finalidade
+        // Padrão vinculado à finalidade
         if (nvl(f($RS_Imposto, 'sq_cc_vinculo'), '') != '') {
           $w_sq_menu_relac = 'CLASSIF';
           $w_sqcc = f($RS_Imposto, 'sq_cc_vinculo');
@@ -1036,14 +1036,12 @@ if (nvl($w_imposto,'')!='') {
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
     Validate('w_data','Data de emissão', 'DATA', '1', '10', '10', '', '0123456789/');
-    //if (Nvl($w_tipo,'-')=='NF') Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
-    //Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
     ShowHTML('  disAll();');
   } 
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'')                               BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('AEV',$O)===false))           BodyOpen('onLoad=\'this.focus()\';');
   else                                           BodyOpen('onLoad=\'document.Form.w_imposto.focus()\';');
@@ -1144,7 +1142,6 @@ if (nvl($w_imposto,'')!='') {
     if (nvl($w_descricao,'')==''||$w_descricao==f($RS_Imposto,'descricao')) {
       $w_descricao = f($RS_Imposto,'nome').' referente a '.lower(f($RS_Documento,'nm_tipo_documento')).' '.f($RS_Documento,'numero').', emitido por '.f($RS_Vinc,'nm_pessoa').'.';
     }elseif(strpos($w_descricao,f($RS_Imposto,'nome'))===false){
-//    }elseif(0==1){
       $w_descricao = f($RS_Imposto,'nome').' referente a '.lower(f($RS_Documento,'nm_tipo_documento')).' '.f($RS_Documento,'numero').', emitido por '.f($RS_Vinc,'nm_pessoa').'.';
     }
     ShowHTML('      <tr><td colspan=3><b><u>D</u>etalhamento:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Detalhamento do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.">'.$w_descricao.'</TEXTAREA></td>');

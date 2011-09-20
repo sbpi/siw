@@ -1922,19 +1922,21 @@ function Atender() {
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
   CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
   ShowHTML('  }');
-  Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
-  ShowHTML('  if (theForm.w_fundo_fixo[1].checked && theForm.w_nota_conclusao.value.length>0) {');
-  ShowHTML('    alert("Nota de conclusão pode ser preenchida somente se o pagamento for por fundo fixo!");');
-  ShowHTML('    theForm.w_nota_conclusao.focus();');
-  ShowHTML('    return false;');
-  ShowHTML('  }');
+  if ($w_fn=='N' || ($w_fn=='S' && f($RS_FN,'fundo_fixo_valor')>=$w_valor)) {
+    Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
+    ShowHTML('  if (theForm.w_fundo_fixo[1].checked && theForm.w_nota_conclusao.value.length>0) {');
+    ShowHTML('    alert("Nota de conclusão pode ser preenchida somente se o pagamento for por fundo fixo!");');
+    ShowHTML('    theForm.w_nota_conclusao.focus();');
+    ShowHTML('    return false;');
+    ShowHTML('  }');
+  }
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -2026,12 +2028,19 @@ function Atender() {
   ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
   $w_texto = '';
   if ($w_fn=='S') {
-    if (f($RS_FN,'valor_fundo_fixo')<$w_valor) {
-      $w_texto = ' <font color="#BC3131">ATENÇÃO: VALOR ESTIMADO DA COMPRA ('.formatNumber($w_valor).') SUPERA LIMITE DO FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font>';
+    if (f($RS_FN,'fundo_fixo_valor')<$w_valor) {
+      $w_texto = ' <font color="#BC3131">ATENÇÃO: VALOR ESTIMADO DA COMPRA ('.formatNumber($w_valor).') SUPERA LIMITE DE PAGAMENTO POR FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font>';
+      ShowHTML('      <tr valign="top"><td>');
+      ShowHTML('<b>Pagamento por fundo fixo?&nbspNão<br>'.$w_texto.'</b>');
+      ShowHTML('<INPUT type="hidden" name="w_fundo_fixo" value="N">');
+    } else {
+      MontaRadioNS('<b>Pagamento por fundo fixo?'.$w_texto.'</b>',$w_fundo_fixo,'w_fundo_fixo');
+      ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
     }
+  } else {
+    MontaRadioNS('<b>Pagamento por fundo fixo?'.$w_texto.'</b>',$w_fundo_fixo,'w_fundo_fixo');
+    ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   }
-  MontaRadioNS('<b>Pagamento por fundo fixo?'.$w_texto.'</b>',$w_fundo_fixo,'w_fundo_fixo');
-  ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');

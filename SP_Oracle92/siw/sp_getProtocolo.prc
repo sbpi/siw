@@ -574,7 +574,7 @@ begin
         from siw_solicitacao         b
              inner join pa_documento a on (b.sq_siw_solicitacao = a.sq_siw_solicitacao)
        where b.sq_menu          = p_menu
-         and a.prefixo          = to_char(p_prefixo) 
+         and a.prefixo          = coalesce(to_char(p_prefixo),a.prefixo)
          and a.numero_documento = p_numero 
          and a.ano              = p_ano;
    End If;

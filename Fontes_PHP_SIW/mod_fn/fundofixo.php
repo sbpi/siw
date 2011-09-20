@@ -1589,20 +1589,19 @@ function Encaminhamento() {
   $w_erro       = '';
   $w_tramite    = $_REQUEST['w_tramite'];
   
+  // Recupera os dados da solicitação
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+  
   if ($w_troca>'') {
     // Se for recarga da página
     $w_destinatario=$_REQUEST['w_destinatario'];
     $w_novo_tramite=$_REQUEST['w_novo_tramite'];
     $w_despacho=$_REQUEST['w_despacho'];
   } else {
-    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
-    $w_sg_tramite_ant = f($RS,'sg_tramite');
-    $w_novo_tramite   = f($RS,'sq_siw_tramite');
+    $w_sg_tramite_ant = f($RS_Solic,'sg_tramite');
+    $w_novo_tramite   = f($RS_Solic,'sq_siw_tramite');
   }
    
-  // Recupera os dados da solicitação
-  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-  
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
@@ -1659,7 +1658,7 @@ function Encaminhamento() {
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
+  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS_Solic,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=2>');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');

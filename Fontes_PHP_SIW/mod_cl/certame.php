@@ -3561,6 +3561,7 @@ function Concluir() {
   $w_situacao      = f($RS,'sq_lcsituacao');
   $w_modalidade    = f($RS,'sq_lcmodalidade');
   $w_responsavel   = f($RS,'recebedor');
+  $w_executor      = f($RS,'executor');
   $w_artigo        = f($RS,'sq_modalidade_artigo');
   $w_fundo_fixo    = f($RS,'fundo_fixo');
 
@@ -3601,6 +3602,7 @@ function Concluir() {
       Validate('w_pagina_diario','Página do diário oficial','1','',1,4,'','1');
     } else {
       Validate('w_homologacao','Data de autorização','DATA','',10,10,'','0123456789/');
+      Validate('w_executor','Responsável pelo pagamento','HIDDEN',1,1,18,'','0123456789');
     }
     Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
     if ($w_indica_usuario=='S') Validate('w_responsavel','Responsável pelo recebimento','HIDDEN',1,1,18,'','0123456789');
@@ -3664,7 +3666,7 @@ function Concluir() {
     if ($w_indica_usuario=='S') {
       ShowHTML('<INPUT type="hidden" name="w_financeiro_menu" value="'.f($RS_Fin,'sq_menu').'">');
       ShowHTML('<INPUT type="hidden" name="w_financeiro_tramite" value="'.f($RS_Tramite,'sq_siw_tramite').'">');
-      ShowHTML('      <li><b>SERÁ GERADO '.upper(f($RS_Fin,'nome')).', NO TRÂMITE DE '.upper(f($RS_Tramite,'nome')).', DISPONÍVEL PARA O RESPONSÁVEL PELO RECEBIMENTO INDICADO ABAIXO.</b>');
+      ShowHTML('      <li><b>SERÁ GERADO '.upper(f($RS_Fin,'nome')).', NO TRÂMITE DE '.upper(f($RS_Tramite,'nome')).', DISPONÍVEL PARA O RESPONSÁVEL PELO PAGAMENTO, INDICADO NO CAMPO ABAIXO.</b>');
     }
     ShowHTML('      </b></font></td>');
     ShowHTML('    <tr valign="top">');
@@ -3674,6 +3676,7 @@ function Concluir() {
       ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
     } else {
       ShowHTML('      <td><b><u>D</u>ata de autorização:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+      SelecaoPessoa('<u>R</u>esponsável pelo pagamento:','R','Selecione o responsável pelo pagamento ao fornecedor.',$w_executor,null,'w_executor','EXECUTORCO',null,2);
     }
     ShowHTML('    <tr><td colspan="3"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
     if ($w_indica_usuario=='S') {
@@ -4455,7 +4458,7 @@ function Grava() {
 
           // Registra a conclusão da solicitação
           $SQL = new dml_putSolicConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
-              $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,$_REQUEST['w_financeiro_menu'],
+              nvl($_REQUEST['w_executor'],$_SESSION['SQ_PESSOA']),$_REQUEST['w_nota_conclusao'],null,null,null,null,null,$_REQUEST['w_financeiro_menu'],
               $_REQUEST['w_financeiro_tramite'],$_REQUEST['w_responsavel'],$_REQUEST['w_situacao'],$_REQUEST['w_artigo'],
               $_REQUEST['w_fundo_fixo']);
           

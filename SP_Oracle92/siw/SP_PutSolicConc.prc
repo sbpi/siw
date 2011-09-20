@@ -457,7 +457,7 @@ begin
                              p_menu               => crec.sq_menu,
                              p_sq_unidade         => crec.sq_unidade,
                              p_solicitante        => p_financeiro_resp,
-                             p_cadastrador        => p_financeiro_resp,
+                             p_cadastrador        => p_executor,
                              p_descricao          => crec.descricao,
                              p_vencimento         => crec.vencimento,
                              p_valor              => crec.valor,

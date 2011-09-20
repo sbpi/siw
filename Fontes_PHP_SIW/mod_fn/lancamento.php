@@ -944,7 +944,6 @@ function Geral() {
     $w_fim              = FormataDataEdicao(f($RS_Solic,'fim'));
     $w_padrao_pagamento = f($RS_Solic,'condicoes_pagamento');
   }
-  
   if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
   
   if (nvl($w_solic_vinculo,'')!='' || nvl($w_chave_pai,'')!='') {
@@ -1046,7 +1045,7 @@ function Geral() {
       } 
     }
   }
-
+  
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -1232,7 +1231,7 @@ function Geral() {
           SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"',$w_chave_pai,'<BR />',2);
         }
       }
-      if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
+      if (nvl(f($RS_Relac,'sigla'),'')!='') { $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla')); }
     } elseif(nvl($w_projeto,'---') == 'PR') {
       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
       ShowHTML('      <tr>');
