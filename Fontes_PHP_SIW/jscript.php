@@ -153,8 +153,7 @@ function Modulo() {
 // Rotina auxiliar à de verificação de datas
 function CheckBranco() {
   print "  function checkbranco(elemento){ "."\r\n";
-  print "    var flagbranco = true "."\r\n";
-  print "    //alert( 'elemento = ' + elemento) "."\r\n";
+  print "    var flagbranco = true; "."\r\n";
   print "    for (i=0;i < elemento.length;i++){ "."\r\n";
   print "        //alert('elemento.charat( ' + i + ') = ' + elemento.charAt(i) ) "."\r\n";
   print "        if (elemento.charAt(i) != ' '){ "."\r\n";
@@ -559,23 +558,19 @@ function DaysLeft() {
 
 function FormataValor() {  
 ?>
-
-    function FormataValor(campo, maximo, tammax, teclapres) {     
+  function FormataValor(campo, maximo, tammax, teclapres) {     
     var mascara = "";
     var decimal = "";
-    //campo.setAttribute("id", campo.name);                  
     mascara = repeteCaracter("#",tammax);
 
-    if(mascara != ""){
-      decimal = "," + mascara;
-    }
+    if(mascara != "") decimal = "," + mascara;
 
-     $(campo).bind("keyup", function(e){
-     var sinal = "";
-     if(campo.value.indexOf('-') != -1) sinal = "-"; 
+    $(campo).bind("keyup", function(e){
+      var sinal = "";
+      if(campo.value.indexOf('-') != -1) sinal = "-"; 
       $(campo).val( sinal + mascaraGlobal('[###.]###' + decimal ,$(campo).val()) );
     });        
-    }
+  }
 <?php
 
 }

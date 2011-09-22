@@ -526,19 +526,19 @@ function Geral() {
     }
   }   
   
-  // Verifica os tipos de documento possíveis. Se apenas um, atribui direto
-  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_menu);
-  $w_exibe_dc = true;
-  if (count($RS)==1 || nvl($w_sq_tipo_documento,'')!='') {
+  // Verifica as formas de pagamento possíveis. Se apenas uma, atribui direto
+  $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $SG, null,'S',null);
+  $w_exibe_fp = true;
+  if (count($RS)==1 || nvl($w_sq_forma_pagamento,'')!='') {
     foreach($RS as $row) { 
-      if (nvl($w_sq_tipo_documento,f($row,'chave'))==f($row,'chave')) {
-        $w_sq_tipo_documento = f($row,'chave'); 
-        $w_tipo_documento    = f($row,'sigla'); 
-        $w_nm_tipo_documento = f($row,'nome'); 
+      if (nvl($w_sq_forma_pagamento,f($row,'sq_forma_pagamento'))==f($row,'sq_forma_pagamento')) {
+        $w_sq_forma_pagamento = f($row,'sq_forma_pagamento'); 
+        $w_forma_pagamento    = f($row,'sigla'); 
+        $w_nm_forma_pagamento = f($row,'nome'); 
         break; 
       }
     }
-    if (count($RS)==1) $w_exibe_dc = false;
+    if (count($RS)==1) $w_exibe_fp = false;
   }
   
   // Verifica os tipos de documento possíveis. Se apenas um, atribui direto

@@ -103,27 +103,31 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
         $l_html.=chr(13).'        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
-        $l_html.=chr(13).'        <td>'.nvl(f($row,'marca'),'&nbsp;').'</td>';
-        if ($w_classes[4]) {
-          $l_html.=chr(13).'        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>';
-          $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>';
+        if (f($row,'lote_bloqueado')=='S') {
+          $l_html.=chr(13).'        <td colspan="9">ITEM CANCELADO. '.nvl(f($row,'motivo_bloqueio'),'').'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>'.nvl(f($row,'marca'),'&nbsp;').'</td>';
+          if ($w_classes[4]) {
+            $l_html.=chr(13).'        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>';
+          }
+          if ($w_classes[1]) {
+            $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>';
+          }
+          if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
+            $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td>'.nvl(f($row,'local_armazenamento'),'&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
+          }
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>';
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
+          if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
+          $l_html.=chr(13).'        </tr>';
+          $w_total += f($row,'valor_total');
         }
-        if ($w_classes[1]) {
-          $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>';
-          $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>';
-        }
-        if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
-          $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>';
-          $l_html.=chr(13).'        <td>'.nvl(f($row,'local_armazenamento'),'&nbsp;').'</td>';
-          $l_html.=chr(13).'        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>';
-          $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
-        }
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
-        if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
-        $l_html.=chr(13).'        </tr>';
-        $w_total += f($row,'valor_total');
       }
       if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).((f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) ? '<td>&nbsp;</td>' : '').'</tr>';
       $l_html.=chr(13).'    </table>';

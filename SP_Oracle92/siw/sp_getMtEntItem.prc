@@ -16,7 +16,7 @@ create or replace procedure sp_getMtEntItem
     p_restricao     in varchar2  default null,
     p_result        out sys_refcursor) is
 begin
-   If p_restricao is null or p_restricao = 'COMPRA' Then
+   If p_restricao is null or p_restricao = 'COMPRA' or p_restricao = 'ARMAZEN' Then
       -- Recupera materiais e serviços
       open p_result for 
          select a.sq_mtentrada,                     a.recebimento_previsto,              a.recebimento_efetivo, 
@@ -74,7 +74,7 @@ begin
                 g.valor_unitario,                   g.fator_embalagem,                   g.validade, 
                 g.fabricacao,                       g.vida_util,                         g.lote_numero, 
                 g.lote_bloqueado,                   g.marca,                             g.modelo,
-                g.ordem,
+                g.ordem,                            g.motivo_bloqueio,
                 g1.sq_almoxarifado,                 g1.nome as nm_almox,                 g1.ativo as at_almox,
                 g2.sq_mtsituacao as sq_sit_item,    g2.nome as nm_sit_item,              g2.sigla as sg_sit_item, 
                 g2.entrada as ent_sit_item,         g2.saida as sai_sit_item,            g2.estorno as est_sit_item, 
@@ -132,7 +132,14 @@ begin
                   left            join mt_estoque_item          g5 on (g.sq_entrada_item          = g5.sq_entrada_item)
           where a.cliente         = p_cliente
             and (p_entrada        is null or (p_entrada           is not null and a.sq_mtentrada         = p_entrada))
-            and (p_item           is null or (p_item              is not null and g.sq_entrada_item      = p_item));
+            and (p_item           is null or (p_item              is not null and g.sq_entrada_item      = p_item))
+            and (p_restricao      is null or (p_restricao         is not null and
+                                              (p_restricao <> 'ARMAZEN' or
+                                               (p_restricao = 'ARMAZEN' and g.lote_bloqueado = 'N' and g.quantidade > 0)
+                                              )
+                                             )
+                )
+            ;
    End If;
 end sp_getMtEntItem;
 /

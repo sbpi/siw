@@ -1831,8 +1831,8 @@ function Grava() {
   $w_nome   = ''; 
 
   Cabecalho();
-  ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
+  ShowHTML('</head>');
 
   switch ($SG) {
     case 'CLCAD':
@@ -1929,37 +1929,37 @@ function Grava() {
       } 
       break;
     case 'CLCONTA':
-      if ($O=='I' || $O=='A') {
-        $w_mensagem = '';
-        // Só pode haver uma conta padrão para a pessoa
-        if ($_REQUEST['w_padrao']=='S') {
-          $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_conta'],'CONTASBANCARIAS');
-          if (count($RS)>0) {
-            foreach($RS as $row) {
-              if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0)) {
-                $w_mensagem='ATENÇÃO: Só pode haver uma conta padrão. Favor verificar.';
-                $w_volta = 'w_assinatura';
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          $w_mensagem = '';
+          // Só pode haver uma conta padrão para a pessoa
+          if ($_REQUEST['w_padrao']=='S') {
+            $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_conta'],'CONTASBANCARIAS');
+            if (count($RS)>0) {
+              foreach($RS as $row) {
+                if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0)) {
+                  $w_mensagem='ATENÇÃO: Só pode haver uma conta padrão. Favor verificar.';
+                  $w_volta = 'w_assinatura';
+                }
               }
-            }
+            } 
+          } 
+          // Verifica se a agência informada existe para o banco selecionado
+          $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_banco'],null,null,$_REQUEST['w_agencia']);
+          if (count($RS)<=0) {
+            $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
+            $w_volta = 'w_agencia';
+          } else {
+            foreach ($RS as $row) { $w_chave = f($row,'sq_agencia'); }
+          }
+          // Se algum erro for detectado, apresenta mensagem e aborta a gravação
+          if ($w_mensagem>'') {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\''.$w_mensagem.'\');');
+            ScriptClose();
+            retornaFormulario($w_volta);
           } 
         } 
-        // Verifica se a agência informada existe para o banco selecionado
-        $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_banco'],null,null,$_REQUEST['w_agencia']);
-        if (count($RS)<=0) {
-          $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
-          $w_volta = 'w_agencia';
-        } else {
-          foreach ($RS as $row) { $w_chave = f($row,'sq_agencia'); }
-        }
-        // Se algum erro for detectado, apresenta mensagem e aborta a gravação
-        if ($w_mensagem>'') {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\''.$w_mensagem.'\');');
-          ScriptClose();
-          retornaFormulario($w_volta);
-        } 
-      } 
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $SQL = new dml_putCoPesConBan; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
             $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_saldo'],

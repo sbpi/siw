@@ -223,7 +223,8 @@ function Inicial() {
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
-    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
   } else {
     Cabecalho();
     head();
@@ -240,9 +241,9 @@ function Inicial() {
     } 
     ValidateClose();
     ScriptClose();
-    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
   }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   elseif ($O=='I') BodyOpen('onLoad=\'document.Form.w_smtp_server.focus();\'');
   elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
@@ -582,6 +583,11 @@ function Geral() {
     if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de pagamento','SELECT',1,1,18,'','0123456789');
     Validate('w_conta_debito','Conta origem', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_conta_credito','Conta destino', 'SELECT', 1, 1, 18, '', '0123456789');
+    ShowHTML('  if (theForm.w_conta_debito[theForm.w_conta_debito.selectedIndex].value==theForm.w_conta_credito[theForm.w_conta_credito.selectedIndex].value) {');
+    ShowHTML('    alert("Contas de origem e de destino não podem ser a mesma!");');
+    ShowHTML('    theForm.w_conta_debito.focus;');
+    ShowHTML('    return false;');
+    ShowHTML('  }');
     if ($w_exibe_dc) Validate('w_sq_tipo_documento','Tipo de documento','SELECT',1,1,18,'','0123456789');
     Validate('w_fim','Data da operação', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
@@ -592,7 +598,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'')                               BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('EV',$O)===false))            BodyOpen('onLoad=\'this.focus()\';');
   else                                           BodyOpen('onLoad=\'document.Form.w_sq_tipo_lancamento.focus()\';');
@@ -710,8 +716,8 @@ function Visual() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpenClean(null); 
   if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
   $w_embed = 'HTML';
@@ -758,8 +764,8 @@ function Excluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -868,8 +874,8 @@ function Encaminhamento() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1032,8 +1038,8 @@ function EncAutomatico() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1197,8 +1203,8 @@ function Concluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
@@ -1287,7 +1293,7 @@ function Grava() {
   $w_nome       = '';
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
 
   if (strpos($SG,'FNATRANSF')!==false) {
@@ -1490,8 +1496,6 @@ function Grava() {
             CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
           }
         }  
-        // Envia e-mail comunicando de tramitação
-        SolicMail($_REQUEST['w_chave'],2);
         ScriptOpen('JavaScript');
         if ($P1==0) {
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
@@ -1526,8 +1530,6 @@ function Grava() {
           CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
         }
       }  
-      // Envia e-mail comunicando o envio
-      SolicMail($_REQUEST['w_chave'],2);
       // Se for envio da fase de cadastramento, remonta o menu principal
       ScriptOpen('JavaScript');
       if ($P1==0) {
@@ -1587,8 +1589,6 @@ function Grava() {
             $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta'],$_REQUEST['w_sq_tipo_lancamento'],
             $_REQUEST['w_sq_projeto_rubrica'],
             $_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-          // Envia e-mail comunicando a conclusão
-          SolicMail($_REQUEST['w_chave'],3);
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');

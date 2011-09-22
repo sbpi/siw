@@ -429,7 +429,8 @@ begin
       End If;
    End If;
 
-   If p_sq_agencia is not null and p_nr_conta is not null Then
+   -- Atualiza os dados bancários se o beneficiário não existir em SIW_CLIENTE 
+   If w_chave_pessoa <> p_chave_aux and p_sq_agencia is not null and p_nr_conta is not null Then
       -- Se foi informado o banco, grava
       select count(*) into w_existe
         from co_pessoa_conta a
@@ -524,7 +525,7 @@ begin
             codigo_deposito  = null
       where sq_siw_solicitacao = p_chave;
       
-      If w_forma_pagamento in ('CREDITO','DEPOSITO','DEBITO') Then
+      If w_forma_pagamento in ('CREDITO','DEPOSITO','DEBITO') or w_chave_pessoa = p_chave_aux Then
          update fn_lancamento 
             set sq_tipo_pessoa  = sq_tipo_pessoa,
                 sq_agencia      = p_sq_agencia,

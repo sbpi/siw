@@ -56,55 +56,57 @@ function ValidaEntrada($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
     // Verifica se foram inseridos itens inativos e se o valor dos itens é igual ao do documento
     $tot_itens = 0;
     foreach ($l_rs_item as $row) {
-      $erro_fator       = false;
-      $erro_marca       = false;
-      $erro_modelo      = false;
-      $erro_fabricacao  = false;
-      $erro_lote        = false;
-      if (f($row,'ativo')=='N') {
-        $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') não está disponível. Remova-o da lista de itens.';
-        $l_tipo  = 0;
-      }
-      if (nvl(f($row,'marca'),'')=='') {
-        $l_erro .= '<li>Item '.f($row,'ordem').' deve ter '.((f($row,'classe')==4) ? 'fabricante informado' : 'marca informada').'.';
-        $l_tipo  = 0;
-      }
-      if (f($row,'classe')==4) {
-        // Validações para material permanente
-        if (nvl(f($row,'modelo'),'')=='') {
-          $l_erro .= '<li>Item '.f($row,'ordem').' deve ter modelo informado.';
+      if (f($row,'lote_bloqueado')=='N') {
+        $erro_fator       = false;
+        $erro_marca       = false;
+        $erro_modelo      = false;
+        $erro_fabricacao  = false;
+        $erro_lote        = false;
+        if (f($row,'ativo')=='N') {
+          $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') não está disponível. Remova-o da lista de itens.';
           $l_tipo  = 0;
         }
-        if (nvl(f($row,'vida_util'),'')=='') {
-          $l_erro .= '<li>Item '.f($row,'ordem').' deve ter vida útil informada.';
+        if (nvl(f($row,'marca'),'')=='') {
+          $l_erro .= '<li>Item '.f($row,'ordem').' deve ter '.((f($row,'classe')==4) ? 'fabricante informado' : 'marca informada').'.';
           $l_tipo  = 0;
         }
-      } else {
-        /*
-        if (nvl(f($row,'validade'),'')=='') {
-          $l_erro .= '<li>Item '.f($row,'ordem').' deve ter data de validade informada.';
-          $l_tipo  = 0;
-        }
-        */
-        if (f($row,'classe')==1) {
-          // Validações para medicamentos
-          if (nvl(f($row,'lote_numero'),'')=='') {
-            $l_erro .= '<li>Item '.f($row,'ordem').' deve ter número do lote informado.';
+        if (f($row,'classe')==4) {
+          // Validações para material permanente
+          if (nvl(f($row,'modelo'),'')=='') {
+            $l_erro .= '<li>Item '.f($row,'ordem').' deve ter modelo informado.';
             $l_tipo  = 0;
           }
-          if (nvl(f($row,'fabricacao'),'')=='') {
-            $l_erro .= '<li>Item '.f($row,'ordem').' deve ter data de fabricação informada.';
+          if (nvl(f($row,'vida_util'),'')=='') {
+            $l_erro .= '<li>Item '.f($row,'ordem').' deve ter vida útil informada.';
             $l_tipo  = 0;
           }
+        } else {
+          /*
+          if (nvl(f($row,'validade'),'')=='') {
+            $l_erro .= '<li>Item '.f($row,'ordem').' deve ter data de validade informada.';
+            $l_tipo  = 0;
+          }
+          */
+          if (f($row,'classe')==1) {
+            // Validações para medicamentos
+            if (nvl(f($row,'lote_numero'),'')=='') {
+              $l_erro .= '<li>Item '.f($row,'ordem').' deve ter número do lote informado.';
+              $l_tipo  = 0;
+            }
+            if (nvl(f($row,'fabricacao'),'')=='') {
+              $l_erro .= '<li>Item '.f($row,'ordem').' deve ter data de fabricação informada.';
+              $l_tipo  = 0;
+            }
+          }
         }
+        if (nvl(f($row,'fator_embalagem'),'')=='') {
+          $l_erro .= '<li>Item '.f($row,'ordem').' deve ter fator de embalagem informado.';
+          $l_tipo  = 0;
+        }
+        $tot_itens += floatVal(f($row,'valor_total'));
       }
-      if (nvl(f($row,'fator_embalagem'),'')=='') {
-        $l_erro .= '<li>Item '.f($row,'ordem').' deve ter fator de embalagem informado.';
-        $l_tipo  = 0;
-      }
-      $tot_itens += f($row,'valor_total');
     }
-    if (f($l_rs_solic,'vl_doc')!=$tot_itens) {
+    if (f($l_rs_solic,'vl_doc')!=strVal($tot_itens)) {
       $l_erro.='<li>Valor do documento ('.formatNumber(f($l_rs_solic,'vl_doc')).') difere da soma dos itens ('.formatNumber($tot_itens).').';
       if ($l_tipo=='') $l_tipo=2;
     }
