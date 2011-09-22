@@ -835,6 +835,7 @@ function Geral() {
       $w_sexo          = f($RS_Benef,'sexo');
       $w_vinculo       = f($RS_Benef,'sq_tipo_vinculo');
       $w_tipo_pessoa   = f($RS_Benef,'sq_tipo_pessoa');
+      $w_sq_unidade    = f($RS_Benef,'sq_unidade_benef');
       if (nvl($w_forma_pagamento,'')!='') {
         if (strpos('CREDITO,DEPOSITO,ORDEM',$w_forma_pagamento)!==false) {
           if (Nvl($w_nr_conta,'')=='' || nvl($w_troca,'-')!='w_sq_tipo_lancamento') {
@@ -966,7 +967,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.$w_cidade.'">');
     ShowHTML('<INPUT type="hidden" name="w_solicitante" value="'.$_SESSION['SQ_PESSOA'].'">');
     ShowHTML(MontaFiltro('POST'));
-    ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.f($RS_Menu,'sq_unid_executora').'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
     ShowHTML('<INPUT type="hidden" name="w_forma_atual" value="'.$w_forma_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_vencimento" value="'.formataDataEdicao(addDays(time(),30)).'">');
     if ($O!='I') ShowHTML('<INPUT type="hidden" name="w_vencimento_atual" value="'.formataDataEdicao(addDays(time(),30)).'">');
