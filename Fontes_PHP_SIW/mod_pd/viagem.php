@@ -714,6 +714,7 @@ function Inicial() {
     Rodape();
 }
 
+
 // =========================================================================
 // Rotina dos dados gerais
 // -------------------------------------------------------------------------
@@ -886,7 +887,7 @@ function Geral() {
   }
   ShowHTML('}');
   ValidateOpen('Validacao');
-  if ($O == 'I' || $O == 'A') {
+if ($O == 'I' || $O == 'A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_sq_menu_relac', 'Vinculação', 'SELECT', 1, 1, 18, '1', '1');
     if (nvl($w_sq_menu_relac, '') > '') {
@@ -901,7 +902,7 @@ function Geral() {
     if ($w_cadgeral == 'S') {
       Validate('w_sq_unidade_resp', 'Unidade proponente', 'SELECT', 1, 1, 18, '', '0123456789');
     }
-    //Validate('w_tipo_missao','Tipo da solicitação','SELECT',1,1,1,'1','');
+//Validate('w_tipo_missao','Tipo da solicitação','SELECT',1,1,1,'1','');
     Validate('w_proponente', 'Contato na ausência', '1', 1, 2, 90, '1', '1');
     Validate('w_assunto', 'Agenda da solicitação', '1', '1', 5, 2000, '1', '1');
     ShowHTML('  if (theForm.w_diaria.selectedIndex==0 && (theForm.w_hospedagem[0].checked || theForm.w_veiculo[0].checked)) {');
@@ -917,6 +918,10 @@ function Geral() {
         Validate('w_lancamento', 'Tipo de lançamento', 'SELECT', 1, 1, 18, '', '1');
       }
     }
+    ShowHTML('  if (theForm.w_financeiro.value == \'\') {');
+    ShowHTML('     alert("Vinculações orçamentárias não definidas para o projeto indicado!");');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
   }
   ValidateClose();
   ScriptClose();
@@ -4752,6 +4757,7 @@ function Diarias_Solic() {
     reset($RS);
   } elseif (strpos('AE', $O) !== false) {
     $w_trechos = unserialize(base64_decode($_REQUEST['w_trechos']));
+
     $w_sq_diaria = $w_trechos[1];
     $w_desloc_saida = $w_trechos[2];
     $w_desloc_chegada = $w_trechos[3];
@@ -4883,13 +4889,11 @@ function Diarias_Solic() {
     ShowHTML('  var obj=document.Form;');
     ShowHTML('    var w_qtd = replaceAll(valor,".","");');
     ShowHTML('    w_qtd = replaceAll(w_qtd,",",".");');
-    ShowHTML('    var w_val = obj.w_vl_diaria.value;');
-    ShowHTML('    var w_per = obj.w_vl_diaria_veiculo.value;');
-    ShowHTML('    w_val = replaceAll(w_val,".","");');
-    ShowHTML('    w_val = replaceAll(w_val,",",".");');
+    ShowHTML('    var w_val = obj.w_vl_diaria.value.replace(".","").replace(",",".")');
+    ShowHTML('    var w_per = obj.w_vl_diaria_veiculo.value.replace(".","").replace(",",".")');
     ShowHTML('    w_per = replaceAll(w_per,".","");');
     ShowHTML('    w_per = replaceAll(w_per,",",".");');
-    ShowHTML('    w_res = parseFloat(w_val*w_per*w_qtd,2);');
+    ShowHTML('    w_res = parseFloat(w_val*(w_per/100)*w_qtd,2);');
     ShowHTML('    if (w_res==0) obj.w_veiculo_valor.value="0,00";');
     ShowHTML('    else obj.w_veiculo_valor.value = toMoney(w_res,\'BR\');');
     ShowHTML('}');
@@ -5351,7 +5355,7 @@ function Diarias_Solic() {
       ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
       ShowHTML('          <tr valign="top"><td>');
       ShowHTML('            <td><b>Desconto na diária (%):</b><br><input type="text" READONLY name="w_vl_diaria_veiculo" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_vl_diaria_veiculo . '" style="text-align:center;" title="Percentual de desconto da diária."></td>');
-      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_veiculo == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_veiculo_qtd" SIZE="5" MAXLENGTH="5" VALUE="' . nvl(formatNumber($w_calc_vei_qtd, 1),$w_veiculo_qtd) . '" style="text-align:right;" onBlur="calculaLocacao(this.value);" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
+      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" ' . (($w_veiculo == 'S') ? 'class="STIO"' : 'READONLY class="STI"') . ' name="w_veiculo_qtd" SIZE="5" MAXLENGTH="5" VALUE="' . nvl($w_veiculo_qtd,formatNumber($w_calc_vei_qtd, 1)) . '" style="text-align:right;" onBlur="calculaLocacao(this.value);" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
       ShowHTML('            <td><b>Valor a ser abatido (' . $w_sg_moeda_veiculo . '):</b><br><input type="text" READONLY name="w_veiculo_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="' . $w_veiculo_valor . '" style="text-align:right;" title="Valor cheio da veiculo."></td>');
       ShowHTML('<INPUT type="hidden" name="w_vei_ret" value="' . formataDataEdicao($w_vei_ret) . '">');
       ShowHTML('<INPUT type="hidden" name="w_vei_dev" value="' . formataDataEdicao($w_vei_dev) . '">');
@@ -6837,12 +6841,12 @@ function PrestarContas() {
           $RS_Financ = $row;
           break;
         }
-        ShowHTML('<INPUT type="hidden" name="w_financeiro" value="' . f($RS_Financ, 'chave') . '">');
       }
     } else {
       ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
     }
-
+    ShowHTML('<INPUT type="hidden" name="w_financeiro" value="' . f($RS_Financ, 'chave') . '">');
+    
     ShowHTML('    <tr><td colspan="2"><br><b>Há devolução de valores?</b> ');
     ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="S" ' . (($w_ressarcimento == 'S') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
     ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="N" ' . ((nvl($w_ressarcimento, 'N') == 'N') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
