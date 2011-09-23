@@ -887,7 +887,7 @@ function Geral() {
   }
   ShowHTML('}');
   ValidateOpen('Validacao');
-if ($O == 'I' || $O == 'A') {
+  if ($O == 'I' || $O == 'A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_sq_menu_relac', 'Vinculação', 'SELECT', 1, 1, 18, '1', '1');
     if (nvl($w_sq_menu_relac, '') > '') {
@@ -902,7 +902,6 @@ if ($O == 'I' || $O == 'A') {
     if ($w_cadgeral == 'S') {
       Validate('w_sq_unidade_resp', 'Unidade proponente', 'SELECT', 1, 1, 18, '', '0123456789');
     }
-//Validate('w_tipo_missao','Tipo da solicitação','SELECT',1,1,1,'1','');
     Validate('w_proponente', 'Contato na ausência', '1', 1, 2, 90, '1', '1');
     Validate('w_assunto', 'Agenda da solicitação', '1', '1', 5, 2000, '1', '1');
     ShowHTML('  if (theForm.w_diaria.selectedIndex==0 && (theForm.w_hospedagem[0].checked || theForm.w_veiculo[0].checked)) {');
@@ -918,15 +917,15 @@ if ($O == 'I' || $O == 'A') {
         Validate('w_lancamento', 'Tipo de lançamento', 'SELECT', 1, 1, 18, '', '1');
       }
     }
-    ShowHTML('  if (theForm.w_financeiro.value == \'\') {');
+    ShowHTML('  if (theForm.w_financeiro.value=="") {');
     ShowHTML('     alert("Vinculações orçamentárias não definidas para o projeto indicado!");');
     ShowHTML('     return false;');
     ShowHTML('  }');
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</head>');
   ShowHTML('<base HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad="this.focus();"');
   } elseif (strpos('EV', $O) !== false) {
@@ -953,7 +952,6 @@ if ($O == 'I' || $O == 'A') {
     ShowHTML('<INPUT type="hidden" name="w_inicio_atual" value="' . $w_inicio_atual . '">');
     ShowHTML('<INPUT type="hidden" name="w_atividade_ant" value="' . $w_atividade_ant . '">');
     ShowHTML('<INPUT type="hidden" name="w_aviso" value="N">');
-    //ShowHTML('<INPUT type="hidden" name="w_sq_prop" value="'.$w_sq_prop.'">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
