@@ -6767,6 +6767,10 @@ function PrestarContas() {
     Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
     }
    */
+  ShowHTML('  if (theForm.w_financeiro.value == \'\') {');
+  ShowHTML('     alert("Vinculações orçamentárias não definidas para o projeto indicado!");');
+  ShowHTML('     return false;');
+  ShowHTML('  }');
   ValidateClose();
   ScriptClose();
   ShowHTML('</head>');
@@ -7352,6 +7356,11 @@ function Reembolso() {
     Validate('w_rubrica', 'Rubrica para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
     Validate('w_lancamento', 'Tipo de lançamento para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
   }
+  ShowHTML('  if (theForm.w_financeiro.value == \'\') {');
+  ShowHTML('     alert("Vinculações orçamentárias não definidas para o projeto indicado!");');
+  ShowHTML('     return false;');
+  ShowHTML('  }');
+  
 //  ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
 //  ShowHTML('    alert("ATENÇÃO: Foi informado outro anexo do relatório de viagem.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
 //  ShowHTML('  }');
@@ -7418,11 +7427,11 @@ function Reembolso() {
         $RS_Financ = $row;
         break;
       }
-      ShowHTML('<INPUT type="hidden" name="w_financeiro" value="' . f($RS_Financ, 'chave') . '">');
     }
   } else {
     ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
   }
+  ShowHTML('<INPUT type="hidden" name="w_financeiro" value="' . f($RS_Financ, 'chave') . '">');
   ShowHTML('    <tr><td colspan="2"><b>Há devolução de valores?</b><br>');
   ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="S" ' . (($w_ressarcimento == 'S') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
   ShowHTML('      <input ' . $w_Disabled . ' type="radio" name="w_ressarcimento" value="N" ' . (($w_ressarcimento == 'N') ? 'checked' : '') . ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');

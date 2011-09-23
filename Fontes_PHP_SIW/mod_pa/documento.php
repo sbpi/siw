@@ -352,9 +352,9 @@ function Inicial() {
     }
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
-      $RS = SortArray($RS, $lista[0], $lista[1], 'ano', 'asc', 'numero', 'asc', 'protocolo', 'asc');
+      $RS = SortArray($RS, $lista[0], $lista[1], 'protocolo_completo', 'asc');
     } else {
-      $RS = SortArray($RS, 'ano', 'asc', 'numero', 'asc', 'protocolo', 'asc');
+      $RS = SortArray($RS, 'protocolo_completo', 'asc');
     }
   }
   if ($w_tipo == 'WORD') {
@@ -476,7 +476,7 @@ function Inicial() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . (($w_embed == 'WORD') ? 1 : $conTableBorder) . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     if ($w_embed != 'WORD') {
-      ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . LinkOrdena('Protocolo', 'protocolo') . '</td>');
+      ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . LinkOrdena('Protocolo', 'protocolo_completo') . '</td>');
       ShowHTML('          <td rowspan=2 width="50"><b>' . LinkOrdena('Tipo', 'nm_tipo_protocolo') . '</td>');
       ShowHTML('          <td rowspan=2 nowrap><b>' . LinkOrdena('Posse', 'sg_unidade_posse') . '</td>');
       ShowHTML('          <td colspan=4><b>Documento original</td>');
