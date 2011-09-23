@@ -779,6 +779,7 @@ Fontes_PHP_SIW/classes/sp/db_getCcTree.php -text
 Fontes_PHP_SIW/classes/sp/db_getCentralTel.php -text
 Fontes_PHP_SIW/classes/sp/db_getCiaTrans.php -text
 Fontes_PHP_SIW/classes/sp/db_getCityData.php -text
+Fontes_PHP_SIW/classes/sp/db_getCityList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCivStateList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCnpjCpf.php -text
 Fontes_PHP_SIW/classes/sp/db_getCodigo.php -text
@@ -1380,6 +1381,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSiwCliConf.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliMod.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliente.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCoordenada.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSiwPesCC.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwPessoaMail.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwTramiteFluxo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
