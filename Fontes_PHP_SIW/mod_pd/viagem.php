@@ -6765,14 +6765,14 @@ function PrestarContas() {
     Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
     }
    */
-  ShowHTML('  if (theForm.w_financeiro.value == \'\') {');
+  ShowHTML('  if (theForm.w_reembolso[0].checked && theForm.w_financeiro.value == "") {');
   ShowHTML('     alert("Vinculações orçamentárias não definidas para o projeto indicado!");');
   ShowHTML('     return false;');
   ShowHTML('  }');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</head>');
   ShowHTML('<base HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '' && $w_reembolso == 'S' && $w_ressarcimento == 'S' && nvl($w_cumprimento, '') != '' && $w_cumprimento != 'C') {
     BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
   } else {
