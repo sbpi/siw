@@ -1089,7 +1089,6 @@ Fontes_PHP_SIW/classes/sp/db_getVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getViagemBenef.php -text
 Fontes_PHP_SIW/classes/sp/db_getVincKindData.php -text
 Fontes_PHP_SIW/classes/sp/db_getVincKindList.php -text
-Fontes_PHP_SIW/classes/sp/db_getcitylist.php -text
 Fontes_PHP_SIW/classes/sp/db_putCall.php -text
 Fontes_PHP_SIW/classes/sp/db_updatePassword.php -text
 Fontes_PHP_SIW/classes/sp/db_verificaAssinatura.php -text
@@ -1118,7 +1117,6 @@ Fontes_PHP_SIW/classes/sp/dml_EoLocal.php -text
 Fontes_PHP_SIW/classes/sp/dml_EoResp.php -text
 Fontes_PHP_SIW/classes/sp/dml_EoUnidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_PutGPPensionista.php -text
-Fontes_PHP_SIW/classes/sp/dml_PutSiwPesCC.php -text
 Fontes_PHP_SIW/classes/sp/dml_SgPerMen.php -text
 Fontes_PHP_SIW/classes/sp/dml_SgPesMen.php -text
 Fontes_PHP_SIW/classes/sp/dml_SgPesMod.php -text
