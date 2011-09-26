@@ -951,7 +951,7 @@ if (nvl($w_imposto,'')!='') {
   
   // Recupera a sigla do tipo do documento para tratar a Nota Fiscal
   if ($w_sq_tipo_documento>'') {
-    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null);
+    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null,null);
     foreach ($RS2 as $row) { $w_tipo = f($row,'sigla'); break; }
   } 
   
@@ -1788,7 +1788,7 @@ function Documentos() {
         break;
       }
     } 
-    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null);
+    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null,null);
     foreach ($RS2 as $row) {
       $w_tipo = f($row,'sigla');
     }
@@ -1994,7 +1994,7 @@ function RubricaDoc() {
     $w_valor                = formatNumber(f($RS,'valor'));
   }
   if ($w_sq_tipo_documento>'') {
-    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null);
+    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null,null);
     foreach ($RS2 as $row) {
       $w_tipo = f($row,'sigla');
     }

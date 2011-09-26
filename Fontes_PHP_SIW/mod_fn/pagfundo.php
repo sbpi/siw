@@ -870,7 +870,7 @@ function Geral() {
 
   // Recupera a sigla do tipo do documento para tratar a Nota Fiscal
   if ($w_sq_tipo_documento>'') {
-    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null);
+    $sql = new db_getTipoDocumento; $RS2 = $sql->getInstanceOf($dbms,$w_sq_tipo_documento,$w_cliente,null,null);
     foreach ($RS2 as $row) { $w_tipo = f($row,'sigla'); break; }
   } 
   

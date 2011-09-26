@@ -419,7 +419,7 @@ function Valor(){
       $RS = SortArray($RS,'nome','asc');
     }
   } elseif (!(strpos('AEVT',$O)===false && $w_troca=='')) {
-    //$sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null);
+    //$sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     $sql = new db_getValores;
     $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave, null, null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -679,7 +679,7 @@ function Documento(){
     $w_item              = $_REQUEST['w_item'];
     $w_ativo             = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null);
+    $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'receita','desc');
@@ -687,7 +687,7 @@ function Documento(){
       $RS = SortArray($RS,'receita','desc','nome','asc');
     }
   } elseif (!(strpos('AEVT',$O)===false && $w_troca=='')) {
-    $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null);
+    $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave             = f($RS,'chave');
     $w_nome              = f($RS,'nome');

@@ -542,7 +542,7 @@ function Geral() {
   }
   
   // Verifica os tipos de documento possíveis. Se apenas um, atribui direto
-  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_menu);
+  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,$w_menu,null);
   $w_exibe_dc = true;
   if (count($RS)==1) {
     foreach($RS as $row) { 
