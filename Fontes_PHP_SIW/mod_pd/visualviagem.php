@@ -712,7 +712,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               } else {
                 $l_html.=chr(13).'Não.'.((nvl($w_trechos[$i][28],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][28]) : '').'</td>';
               }
-              if (f($RS,'hospedagem')=='S'&&$w_trechos[$i][39]=='S') {
+              if ($w_trechos[$i][39]=='S') {
                 if ($w_trechos[$i][15]=='S') {
                   $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b><td colspan="12">'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
                 } else {
