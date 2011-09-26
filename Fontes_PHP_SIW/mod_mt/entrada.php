@@ -398,10 +398,7 @@ function inicial() {
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Fornecedor','nm_fornecedor_ind').'</b></td>');
       ShowHTML('          <td colspan="4"><b>Documento</b></td>');
-      //ShowHTML('          <td rownspan="2"><b>'.LinkOrdena('Tipo','nm_tipo_mov').'</b></td>');
-      //ShowHTML('          <td colspan="2"><b>Recebimento</b></td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Armazenamento','armazenamento').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('Lançamento','sq_siw_solicitacao').'</b></td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Situação','nm_sit').'</b></td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Itens','qt_itens').'</b></td>');
       ShowHTML('          <td rowspan="2" class="remover"><b>Operações</b></td>');
@@ -411,16 +408,12 @@ function inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Número','nr_doc').'</b></td>');
       ShowHTML ('         <td><b>'.LinkOrdena('Emissão','dt_doc').'</b></td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor_doc').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('Previsto','recebimento_previsto').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('Efetivo','recebimento_efetivo').'</b></td>');
       ShowHTML('        </tr>');
       
     } else {
       ShowHTML('          <td rowspan="2"><b>Fornecedor</b></td>');
       ShowHTML('          <td colspan="4"><b>Documento</b></td>');
-      //ShowHTML('          <td colspan="2"><b>Recebimento</b></td>');
       ShowHTML('          <td rowspan="2"><b>Armazenamento</b></td>');
-      //ShowHTML('          <td rowspan="2"><b>Lançamento</b></td>');
       ShowHTML('          <td rowspan="2"><b>Situação</b></td>');
       ShowHTML('          <td rowspan="2"><b>Itens</b></td>');
       ShowHTML('        </tr>');
@@ -429,8 +422,6 @@ function inicial() {
       ShowHTML('          <td><b>Documento</b></td>');
       ShowHTML ('         <td><b>Data</b></td>');
       ShowHTML('          <td><b>Valor</b></td>');
-      //ShowHTML('          <td><b>Previsto</b></td>');
-      //ShowHTML('          <td><b>Efetivo</b></td>');
       ShowHTML('        </tr>');
     }
     if (count($RS)==0) {
@@ -446,11 +437,7 @@ function inicial() {
         ShowHTML('        <td>'.f($row,'nr_doc').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'dt_doc'),5).'</td>');
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'vl_doc'),2).'&nbsp;</td>');
-        //ShowHTML('        <td>'.f($row,'nm_tp_mov').'</td>');
-        //ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'recebimento_previsto'),5).'</td>');
-        //ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'recebimento_efetivo'),5).'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'armazenamento'),5).'</td>');
-        //ShowHTML('        <td width="1%" nowrap>'.(($w_tipo=='WORD') ? f($row,'codigo_interno') : exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'))).'</td>');
         ShowHTML('        <td>'.f($row,'nm_sit').'</td>');
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'qt_itens'),0).'&nbsp;</td>');
         if ($w_tipo!='WORD') {
@@ -458,14 +445,11 @@ function inicial() {
           if (strpos('NA,ES',f($row,'sg_sit'))!==false) {
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da entrada">AL</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_mtentrada').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da entrada.">EX</A>&nbsp');
-          } else {
+          } elseif (f($row,'qt_saidas')==0) {
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Estorno&R='.$w_pagina.$par.'&O=S&w_chave='.f($row,'sq_mtentrada').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Estorno da entrada.">Estornar</A>&nbsp');
           }
           ShowHTML('          <a class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_copia='.f($row,'sq_mtentrada').MontaFiltro('GET').'" title="Gera um novo registro a partir das informações deste.">CO</a>&nbsp;');
           ShowHTML('          <a class="HL" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe os dados da entrada.">VS</a>&nbsp;');
-          //ShowHTML('          <A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Itens'.'&SG='.substr($SG,0,4).'ITEM').'" title="Escolhe os itens da compra.">Itens</A>&nbsp');
-          //ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Anexos&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Anexos'.'&SG='.substr($SG,0,4).'ANEXO').'\',\'Anexos\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Vincula arquivos ao pedido de compra.">Anexos</A>&nbsp');
-          //ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_mtentrada').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do pedido">EN</A>&nbsp');
         } 
         ShowHTML('        &nbsp;</td>');
         ShowHTML('      </tr>');
@@ -669,6 +653,10 @@ function Geral() {
     }
   }
   
+  // Itens
+  $sql = new db_getMtEntItem; $RS_Itens = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS_Itens = SortArray($RS_Itens,'ordem','asc','nome','asc'); 
+
   if ($O!='I') {
     // Validação
     $w_erro = ValidaEntrada($w_cliente,$w_chave,$SG,null,null,null,null);
@@ -710,6 +698,7 @@ function Geral() {
   ShowHTML('      }');
   ShowHTML('    }');
   ShowHTML('  }');
+  
   ValidateOpen('Validacao1');
   ShowHTML('  for (ind=1; ind < theForm["w_local[]"].length; ind++) {');
   Validate('["w_local[]"][ind]','local de armazenamento','','1',1,18,'','0123456789');
@@ -780,7 +769,7 @@ function Geral() {
       }
       */
       ShowHTML('      <tr valign="top">');
-      SelecaoTipoDocumento('<u>D</u>ocumento:','D', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+      SelecaoTipoDocumento('<u>D</u>ocumento:','D', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',$SG,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
       ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
       ShowHTML('          <td><b><u>E</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
       ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
@@ -823,19 +812,17 @@ function Geral() {
       } 
     
       // Itens
-      $sql = new db_getMtEntItem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
-      $RS = SortArray($RS,'ordem','asc','nome','asc'); 
       ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
-      ShowHTML('    <tr><td colspan=3><b>Itens</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Itens'.'&SG='.substr($SG,0,4).'ITEM').'" title="Informa os itens do documento.">'.((count($RS)>0) ? 'Ajustar' : 'Incluir').'</A>]</td></tr>');
+      ShowHTML('    <tr><td colspan=3><b>Itens</b>&nbsp;&nbsp;[<A class="box HL" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.removeTP($TP).' - Itens'.'&SG='.substr($SG,0,4).'ITEM').'" title="Informa os itens do documento.">'.((count($RS_Itens)>0) ? 'Ajustar' : 'Incluir').'</A>]</td></tr>');
       ShowHTML('    <tr><td colspan=3 align="center" height="1"></td></tr>');
       ShowHTML('    <tr><td colspan="3"><table width="100%" border="0">');
-      if (count($RS)==0) {
+      if (count($RS_Itens)==0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align=center><b>Itens não informados</b></td></tr>');
         ShowHTML('      <tr><td colspan=2 align=center><hr /></td></tr>');
       } else {
         unset($w_classes);
-        foreach($RS as $row) $w_classes[f($row,'classe')] = 1;
-        reset($RS);
+        foreach($RS_Itens as $row) $w_classes[f($row,'classe')] = 1;
+        reset($RS_Itens);
         $colspan = 0;
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <table class="tudo" width="100%" BORDER=1 bordercolor="#666666">');
@@ -875,7 +862,7 @@ function Geral() {
         ShowHTML('        </tr>');
         // Lista os registros selecionados para listagem
         $w_total = 0;
-        foreach($RS as $row){ 
+        foreach($RS_Itens as $row){ 
           ShowHTML('      <tr valign="top">');
           ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
           ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
@@ -898,12 +885,12 @@ function Geral() {
               ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
             }
             ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
-            ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>');
+            ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unitario'),2).'</td>');
             ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>');
             ShowHTML('        </tr>');
           }
         }
-        if (count($RS)>1) ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).'</tr>');
+        if (count($RS_Itens)>1) ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).'</tr>');
         ShowHTML('    </table>');
       }
       ShowHTML('       </table>');
@@ -1129,12 +1116,20 @@ function Itens() {
   ShowHTML('<TITLE>'.f($RS_Menu,'nome').' - Itens</TITLE>');
   Estrutura_CSS($w_cliente);
   Estrutura_CSS($w_cliente);
-  if (strpos('IA',$O)!==false) {
-    ScriptOpen('JavaScript');
-    FormataValor();
-    checkBranco();
-    FormataData();
-    ValidateOpen('Validacao');
+  ScriptOpen('JavaScript');
+  FormataValor();
+  checkBranco();
+  FormataData();
+  ValidateOpen('Validacao');
+  if ($O=='L') {
+    ShowHTML('  for (ind=1; ind < theForm["w_chave_aux[]"].length; ind++) {');
+    Validate('["w_quantidade[]"][ind]','Quantidade','1','1','1','18','','1');
+    CompValor('["w_quantidade[]"][ind]','Quantidade','>','0','1');  
+    if (!$w_edita) CompValor('["w_quantidade[]"][ind]','Quantidade','<=',$w_qtd_compra,' quantidade comprada');
+    Validate('["w_valor[]"][ind]','Valor total','VALOR','1','4','18','','0123456789.,');
+    CompValor('["w_valor[]"][ind]','Valor total','>','0','zero');
+    ShowHTML('  }');
+  } elseif (strpos('IA',$O)!==false) {
     if ($w_edita) {
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
       CompValor('w_ordem','Ordem','>','0','1');  
@@ -1178,9 +1173,9 @@ function Itens() {
       ShowHTML('  theForm.Botao[1].disabled=true;');
       if ($O=='I') ShowHTML('  theForm.Botao[2].disabled=true;');
     }
-    ValidateClose();
-    ScriptClose();
   } 
+  ValidateClose();
+  ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
   if ($w_troca>'') {
@@ -1236,76 +1231,103 @@ function Itens() {
     ShowHTML('<tr><td>');
     if ($w_edita) ShowHTML('      <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>'.exportaOffice().'Registros: '.count($RS));        
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Item','ordem').'</td>');
-    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
-    if (!$w_classes[4]) {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Marca','marca').'</td>');
-    } elseif (!$w_classes[1] && !$w_classes[2] && !$w_classes[3] && $w_classes[4]) {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fabricante','marca').'</td>');
-    } elseif (($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fabricante / marca','marca').'</td>');
-    }
-    if ($w_classes[4]) {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Modelo','modelo').'</td>');
-      $colspan++;
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Vida útil','vida_util').'</td>');
-      $colspan++;
-    }
-    if ($w_classes[1]) {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Lote','lote_numero').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fabricação','fabricacao').'</td>');
-      $colspan += 2;
-    }
-    if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Validade','validade').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fator<br>Embal.','fator_embalagem').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
-      $colspan += 3;
-    }
-    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','quantidade').'</td>');
-    ShowHTML('          <td colspan=2><b>Valores</td>');
-    ShowHTML('          <td rowspan=2 class="remover"><b>Operações</td>');
-    ShowHTML('        </tr>');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Unit.','valor_unitario').'</td>');
+    $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Item','ordem').'</td>');
+    $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+//    if (!$w_classes[4]) {
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Marca','marca').'</td>');
+//    } elseif (!$w_classes[1] && !$w_classes[2] && !$w_classes[3] && $w_classes[4]) {
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricante','marca').'</td>');
+//    } elseif (($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricante / marca','marca').'</td>');
+//    }
+//    if ($w_classes[4]) {
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Vida útil','vida_util').'</td>');
+//    }
+//    if ($w_classes[1]) {
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Lote','lote_numero').'</td>');
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricação','fabricacao').'</td>');
+//    }
+//    if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Validade','validade').'</td>');
+//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('F.E.','fator_embalagem').'</td>');
+//    }
+    $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Qtd','quantidade').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Total','valor_total').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      // Lista os registros selecionados para listagem
+      AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+      ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+      ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+      ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_ordem[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_material[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_situacao[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_quantidade[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_valor[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_validade[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_fator[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_vida_util[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_lote[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_fabricacao[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_fabricante[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_modelo[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_almoxarifado[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_bloqueio[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_motivo[]" value="">');
       $w_total = 0;
       foreach($RS as $row){ 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
-        ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
+        ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null));
+        ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'sq_entrada_item').'">');
+        ShowHTML('<INPUT type="hidden" name="w_ordem[]" value="'.f($row,'ordem').'">');
+        ShowHTML('<INPUT type="hidden" name="w_material[]" value="'.f($row,'sq_material').'">');
+        ShowHTML('<INPUT type="hidden" name="w_situacao[]" value="'.f($row,'sq_sit_item').'">');
+        ShowHTML('<INPUT type="hidden" name="w_validade[]" value="'.formataDataEdicao(f($row,'validade')).'">');
+        ShowHTML('<INPUT type="hidden" name="w_fator[]" value="'.f($row,'fator_embalagem').'">');
+        ShowHTML('<INPUT type="hidden" name="w_vida_util[]" value="'.f($row,'vida_util').'">');
+        ShowHTML('<INPUT type="hidden" name="w_lote[]" value="'.f($row,'lote_numero').'">');
+        ShowHTML('<INPUT type="hidden" name="w_fabricacao[]" value="'.formataDataEdicao(f($row,'fabricacao')).'">');
+        ShowHTML('<INPUT type="hidden" name="w_fabricante[]" value="'.f($row,'marca').'">');
+        ShowHTML('<INPUT type="hidden" name="w_modelo[]" value="'.f($row,'modelo').'">');
+        ShowHTML('<INPUT type="hidden" name="w_almoxarifado[]" value="'.f($row,'sq_almoxarifado').'">');
+        ShowHTML('<INPUT type="hidden" name="w_bloqueio[]" value="'.f($row,'lote_bloqueado').'">');
+        ShowHTML('<INPUT type="hidden" name="w_motivo[]" value="'.f($row,'motivo_bloqueio').'">');
         if (f($row,'lote_bloqueado')=='S') {
-          ShowHTML('        <td colspan="7">ITEM CANCELADO. '.nvl(f($row,'motivo_bloqueio'),'').'</td>');
+          ShowHTML('        <td colspan="4">ITEM CANCELADO. '.nvl(f($row,'motivo_bloqueio'),'').'</td>');
+          ShowHTML('        <td><input type="text" name="w_quantidade[]" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);"></td>');
+          ShowHTML('        <td><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="8" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_total')).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
         } else {
           $w_total += f($row,'valor_total');
-          ShowHTML('        <td>'.f($row,'marca').'</td>');
-          if ($w_classes[4]) {
-            ShowHTML('        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>');
-            ShowHTML('        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>');
-          }
-          if ($w_classes[1]) {
-            ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>');
-            ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>');
-          }
-          if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
-            ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>');
-            ShowHTML('        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>');
-            ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-          }
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>');
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>');
+          //ShowHTML('        <td>'.f($row,'marca').'</td>');
+          //if ($w_classes[4]) {
+          //  ShowHTML('        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>');
+          //  ShowHTML('        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>');
+          //}
+          //if ($w_classes[1]) {
+          //  ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>');
+          //  ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>');
+          //}
+          //if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
+          //  ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'validade'),5),'&nbsp;').'</td>');
+          //  ShowHTML('        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>');
+          //  ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+          //}
+          ShowHTML('        <td><input type="text" name="w_quantidade[]" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);"></td>');
+          ShowHTML('        <td><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="8" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_total')).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
+          //ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
+          //ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unitario'),2).'</td>');
+          //ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>');
         }
         ShowHTML('        <td align="top" nowrap class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -1314,9 +1336,11 @@ function Itens() {
         }
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_copia='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Copiar">CO</A>&nbsp');
         ShowHTML('        </td>');
-        ShowHTML('        </tr>');
+        ShowHTML('      </tr>');
       }
-      if (count($RS)>1) ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="'.(5+$colspan).'" align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).'<td>&nbsp;</td></tr>');
+      ShowHTML('      <tr><td colspan=5 align="center"><hr>');
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+      ShowHTML('        </form>');
     } 
     ShowHTML('    </table>');
     ShowHTML('  </td>');
@@ -1887,24 +1911,45 @@ function Grava() {
     case 'MTENITEM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (is_array($_REQUEST['w_chave_aux'])) {
+          for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
+            if ($_REQUEST['w_chave_aux'][$i]>'') {
+              $w_valor = $_REQUEST['w_valor'][$i];
 
-        $w_valor = $_REQUEST['w_valor'];
+              if (nvl($_REQUEST['w_qtd_compra'],'')!='') {
+                $w_valor      = toNumberPHP($_REQUEST['w_valor'][$i]);
+                $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra'][$i]);
+                $w_quantidade = toNumberPHP($_REQUEST['w_quantidade'][$i]);
 
-        if (nvl($_REQUEST['w_qtd_compra'],'')!='') {
-          $w_valor      = toNumberPHP($_REQUEST['w_valor']);
-          $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra']);
-          $w_quantidade = toNumberPHP($_REQUEST['w_quantidade']);
+                $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
+              }
 
-          $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
-        }
+              $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$_REQUEST['w_almoxarifado'][$i],
+                      $_REQUEST['w_situacao'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_material'][$i],$_REQUEST['w_quantidade'][$i],$w_valor,$_REQUEST['w_fator'][$i],
+                      $_REQUEST['w_validade'][$i],$_REQUEST['w_fabricacao'][$i],$_REQUEST['w_vida_util'][$i],$_REQUEST['w_lote'][$i],$_REQUEST['w_fabricante'][$i],
+                      $_REQUEST['w_modelo'][$i],$_REQUEST['w_bloqueio'][$i],$_REQUEST['w_motivo'][$i]);
+            }
+          } 
+          
+        } else {
+          $w_valor = $_REQUEST['w_valor'];
 
-        $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_almoxarifado'],
-                $_REQUEST['w_situacao'],$_REQUEST['w_ordem'],$_REQUEST['w_material'],$_REQUEST['w_quantidade'],$w_valor,$_REQUEST['w_fator'],
-                $_REQUEST['w_validade'],$_REQUEST['w_fabricacao'],$_REQUEST['w_vida_util'],$_REQUEST['w_lote'],$_REQUEST['w_fabricante'],
-                $_REQUEST['w_modelo'],$_REQUEST['w_bloqueio'],$_REQUEST['w_motivo']);
-        
+          if (nvl($_REQUEST['w_qtd_compra'],'')!='') {
+            $w_valor      = toNumberPHP($_REQUEST['w_valor']);
+            $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra']);
+            $w_quantidade = toNumberPHP($_REQUEST['w_quantidade']);
+
+            $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
+          }
+
+          $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_almoxarifado'],
+                  $_REQUEST['w_situacao'],$_REQUEST['w_ordem'],$_REQUEST['w_material'],$_REQUEST['w_quantidade'],$w_valor,$_REQUEST['w_fator'],
+                  $_REQUEST['w_validade'],$_REQUEST['w_fabricacao'],$_REQUEST['w_vida_util'],$_REQUEST['w_lote'],$_REQUEST['w_fabricante'],
+                  $_REQUEST['w_modelo'],$_REQUEST['w_bloqueio'],$_REQUEST['w_motivo']);
+        }        
+
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href="'.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'";');
+        ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'Itens&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'";');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

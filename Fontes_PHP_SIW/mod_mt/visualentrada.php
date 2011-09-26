@@ -122,7 +122,7 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
           }
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),10).'</td>';
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),2).'</td>';
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
           if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
           $l_html.=chr(13).'        </tr>';

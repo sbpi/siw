@@ -240,25 +240,25 @@ function Gerencial() {
         $w_TP = ' - Por unidade solicitante';
         $RS1 = SortArray($RS1,'nm_unidade_dest','asc');
         break;
-      case 'GRMTPROJ':
+      case 'GRMTSOLIC':
         $sql = new db_getSolicMT; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por projeto';
-        $RS1 = SortArray($RS1,'dados_pai','asc');
+        $w_TP = ' - Por solicitante';
+        $RS1 = SortArray($RS1,'nm_solic','asc');
         break;
-      case 'GRMTMODAL':
+      case 'GRMTTIPO':
         $sql = new db_getSolicMT; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por modalidade';
-        $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');
+        $w_TP = ' - Por tipo de material';
+        $RS1 = SortArray($RS1,'nm_tipo_material','asc');
         break;
       case 'GRMTENQ':
         $sql = new db_getSolicMT; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
@@ -384,27 +384,27 @@ function Gerencial() {
         ShowHTML('  function lista (filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
-          case 'GRMTENQ':       ShowHTML('     document.Form.p_acao_ppa.value=filtro;'); break;
-          case 'GRMTCIDADE':    ShowHTML('     document.Form.p_cidade.value=filtro;');   break;
-          case 'GRMTUNIDADE':   ShowHTML('     document.Form.p_unidade.value=filtro;');  break;
-          case 'GRMTPROJ':      ShowHTML('     document.Form.p_projeto.value=filtro;');  break;
-          case 'GRMTABERTURA':  ShowHTML('     document.Form.p_ini_i.value=filtro;');    break;
+          case 'GRMTENQ':       ShowHTML('     document.Form.p_acao_ppa.value=filtro;');    break;
+          case 'GRMTCIDADE':    ShowHTML('     document.Form.p_cidade.value=filtro;');      break;
+          case 'GRMTUNIDADE':   ShowHTML('     document.Form.p_unidade.value=filtro;');     break;
+          case 'GRMTSOLIC':     ShowHTML('     document.Form.p_solicitante.value=filtro;'); break;
+          case 'GRMTABERTURA':  ShowHTML('     document.Form.p_ini_i.value=filtro;');       break;
           case 'GRMTAUTORIZ':
             ShowHTML('     document.Form.p_fim_i.value="01/"+filtro.substr(5,2)+"/"+filtro.substr(0,4);');
             break;
-          case 'GRMTMODAL':     ShowHTML('     document.Form.p_usu_resp.value=filtro;'); break;
-          case 'GRMTSITUACAO':  ShowHTML('     document.Form.p_uf.value=filtro;');       break;
+          case 'GRMTTIPO':      ShowHTML('     document.Form.p_pais.value=filtro;');        break;
+          case 'GRMTSITUACAO':  ShowHTML('     document.Form.p_uf.value=filtro;');          break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
-          case 'GRMTENQ':       ShowHTML('    else document.Form.p_acao_ppa.value="'.$_REQUEST['p_acao_ppa'].'";'); break;
-          case 'GRMTCIDADE':    ShowHTML('    else document.Form.p_cidade.value="'.$_REQUEST['p_cidade'].'";');     break;
-          case 'GRMTUNIDADE':   ShowHTML('    else document.Form.p_unidade.value="'.$_REQUEST['p_unidade'].'";');   break;
-          case 'GRMTPROJ':      ShowHTML('    else document.Form.p_projeto.value="'.$_REQUEST['p_projeto'].'";');   break;
-          case 'GRMTABERTURA':  ShowHTML('    else document.Form.p_ini_i.value="'.$_REQUEST['p_ini_i'].'";');       break;
-          case 'GRMTAUTORIZ':   ShowHTML('    else document.Form.p_fim_i.value="'.$_REQUEST['p_fim_i'].'";');       break;
-          case 'GRMTMODAL':     ShowHTML('    else document.Form.p_usu_resp.value="'.$_REQUEST['p_usu_resp'].'";'); break;
-          case 'GRMTSITUACAO':  ShowHTML('    else document.Form.p_uf.value="'.$_REQUEST['p_uf'].'";');             break;
+          case 'GRMTENQ':       ShowHTML('    else document.Form.p_acao_ppa.value="'.$_REQUEST['p_acao_ppa'].'";');       break;
+          case 'GRMTCIDADE':    ShowHTML('    else document.Form.p_cidade.value="'.$_REQUEST['p_cidade'].'";');           break;
+          case 'GRMTUNIDADE':   ShowHTML('    else document.Form.p_unidade.value="'.$_REQUEST['p_unidade'].'";');         break;
+          case 'GRMTSOLIC':     ShowHTML('    else document.Form.p_solicitante.value="'.$_REQUEST['p_solicitante'].'";'); break;
+          case 'GRMTABERTURA':  ShowHTML('    else document.Form.p_ini_i.value="'.$_REQUEST['p_ini_i'].'";');             break;
+          case 'GRMTAUTORIZ':   ShowHTML('    else document.Form.p_fim_i.value="'.$_REQUEST['p_fim_i'].'";');             break;
+          case 'GRMTTIPO':      ShowHTML('    else document.Form.p_pais.value="'.$_REQUEST['p_pais'].'";');               break;
+          case 'GRMTSITUACAO':  ShowHTML('    else document.Form.p_uf.value="'.$_REQUEST['p_uf'].'";');                   break;
         } 
         $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
@@ -431,14 +431,14 @@ function Gerencial() {
         ShowHTML(MontaFiltro('POST'));
         ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
         switch ($p_agrega) {
-          case 'GRMTENQ':       if ($_REQUEST['p_acao_ppa']=='') ShowHTML('<input type="Hidden" name="p_acao_ppa" value="">');  break;
-          case 'GRMTCIDADE':    if ($_REQUEST['p_cidade']=='')   ShowHTML('<input type="Hidden" name="p_cidade" value="">');    break;
-          case 'GRMTUNIDADE':   if ($_REQUEST['p_unidade']=='')  ShowHTML('<input type="Hidden" name="p_unidade" value="">');   break;
-          case 'GRMTPROJ':      if ($_REQUEST['p_projeto']=='')  ShowHTML('<input type="Hidden" name="p_projeto" value="">');   break;
-          case 'GRMTABERTURA':  if ($_REQUEST['p_ini_i']=='')    ShowHTML('<input type="Hidden" name="p_ini_i" value="">');     break;
-          case 'GRMTAUTORIZ':   if ($_REQUEST['p_fim_i']=='')    ShowHTML('<input type="Hidden" name="p_fim_i" value="">');     break;
-          case 'GRMTMODAL':     if ($_REQUEST['p_usu_resp']=='') ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');  break;
-          case 'GRMTSITUACAO':  if ($_REQUEST['p_uf']=='')       ShowHTML('<input type="Hidden" name="p_uf" value="">');        break;
+          case 'GRMTENQ':       if ($_REQUEST['p_acao_ppa']=='')    ShowHTML('<input type="Hidden" name="p_acao_ppa" value="">');     break;
+          case 'GRMTCIDADE':    if ($_REQUEST['p_cidade']=='')      ShowHTML('<input type="Hidden" name="p_cidade" value="">');       break;
+          case 'GRMTUNIDADE':   if ($_REQUEST['p_unidade']=='')     ShowHTML('<input type="Hidden" name="p_unidade" value="">');      break;
+          case 'GRMTSOLIC':     if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
+          case 'GRMTABERTURA':  if ($_REQUEST['p_ini_i']=='')       ShowHTML('<input type="Hidden" name="p_ini_i" value="">');        break;
+          case 'GRMTAUTORIZ':   if ($_REQUEST['p_fim_i']=='')       ShowHTML('<input type="Hidden" name="p_fim_i" value="">');        break;
+          case 'GRMTTIPO':      if ($_REQUEST['p_pais']=='')        ShowHTML('<input type="Hidden" name="p_pais" value="">');         break;
+          case 'GRMTSITUACAO':  if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
         } 
       } 
       $w_nm_quebra  = '';
@@ -583,17 +583,17 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRMTPROJ':
-            if ($w_nm_quebra!=piece(f($row,'dados_pai'),null,'|@|',2)) {
+          case 'GRMTSOLIC':
+            if ($w_nm_quebra!=f($row,'nm_solic')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.piece(f($row,'dados_pai'),null,'|@|',2).' - '.piece(f($row,'dados_pai'),null,'|@|',3));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));
               } 
-              $w_nm_quebra  = piece(f($row,'dados_pai'),null,'|@|',2);
-              $w_chave      = f($row,'sq_solic_pai');
+              $w_nm_quebra  = f($row,'nm_solic');
+              $w_chave      = f($row,'solicitante');
               $w_qt_quebra  = 0;
               $t_solic      = 0;
               $t_cad        = 0;
@@ -631,17 +631,17 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRMTMODAL':
-            if (Nvl($w_nm_quebra,'')!=f($row,'nm_lcmodalidade')) {
+          case 'GRMTTIPO':
+            if (Nvl($w_nm_quebra,'')!=f($row,'nm_tipo_material')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcmodalidade'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_tipo_material'));
               } 
-              $w_nm_quebra  = f($row,'nm_lcmodalidade');
-              $w_chave      = f($row,'sq_lcmodalidade');
+              $w_nm_quebra  = f($row,'nm_tipo_material');
+              $w_chave      = f($row,'sq_tipo_material');
               $w_qt_quebra  = 0;
               $t_solic      = 0;
               $t_cad        = 0;
@@ -698,13 +698,13 @@ function Gerencial() {
           ImprimeCabecalho();
           switch ($p_agrega) {
             case 'GRMTENQ':         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_enquadramento')); break;
-            case 'GRMTCIDADE':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_destino'));        break;
-            case 'GRMTUNIDADE':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_dest'));   break;
-            case 'GRMTPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.piece(f($row,'dados_pai'),null,'|@|',2));        break;
-            case 'GRMTABERTURA':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_abertura'));     break;
-            case 'GRMTAUTORIZ':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'ultima_alteracao'));  break;
-            case 'GRMTMODAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcmodalidade'));   break;
-            case 'GRMTSITUACAO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcsituacao'));     break;
+            case 'GRMTCIDADE':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_destino'));       break;
+            case 'GRMTUNIDADE':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_dest'));  break;
+            case 'GRMTSOLIC':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'solicitante'));      break;
+            case 'GRMTABERTURA':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_abertura'));    break;
+            case 'GRMTAUTORIZ':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'ultima_alteracao')); break;
+            case 'GRMTTIPO':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_tipo_material'));  break;
+            case 'GRMTSITUACAO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcsituacao'));    break;
           } 
           $w_linha += 1;
         } 
@@ -790,13 +790,11 @@ function Gerencial() {
       ShowHTML(' <option value="GRMTABERTURA"'.(($p_agrega=='GRMTABERTURA') ? ' SELECTED': '').'>Mês de abertura');
     }
     ShowHTML(' <option value="GRMTAUTORIZ"'.(($p_agrega=='GRMTAUTORIZ') ? ' SELECTED': '').'>Mês de autorização');
-    if (f($RS_Menu,'sigla')=='CLLCCAD') {
-      ShowHTML(' <option value="GRMTMODAL"'.(($p_agrega=='GRMTMODAL') ? ' SELECTED': '').'>Modalidade');
-    }
-    //ShowHTML(' <option value="GRMTPROJ"'.(($p_agrega=='GRMTPROJ') ? ' SELECTED': '').'>Projeto');
+    ShowHTML(' <option value="GRMTSOLIC"'.(($p_agrega=='GRMTSOLIC') ? ' SELECTED': '').'>Solicitante');
     if (f($RS_Menu,'sigla')=='CLLCCAD') {
       ShowHTML(' <option value="GRMTSITUACAO"'.(($p_agrega=='GRMTSITUACAO') ? ' SELECTED': '').'>Situação do certame');
     }
+    //ShowHTML(' <option value="GRMTTIPO"'.(($p_agrega=='GRMTTIPO') ? ' SELECTED': '').'>Tipo de material');
     ShowHTML(' <option value="GRMTUNIDADE"'.(($p_agrega=='' || $p_agrega=='GRMTUNIDADE') ? ' SELECTED': '').'>Unidade solicitante');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
@@ -814,6 +812,8 @@ function Gerencial() {
     ShowHTML('       <td><b><u>P</u>eríodo de entrega:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('     <tr valign="top">');
     ShowHTML('       <td><b><U>C</U>ódigo '.(($SG=='GRMTLIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
+    ShowHTML('   <tr valign="top">');
+    SelecaoPessoa('<u>S</u>olicitante:','N','Selecione o solicitante do pedido na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','ATIVO',null);
     if ($SG=='GRMTLIC') ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     //ShowHTML('     <td><b><U>D</U>escrição:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
@@ -869,10 +869,10 @@ function ImprimeCabecalho() {
     case 'GRMTENQ':         ShowHTML('          <td><b>Enquadramento</td>');        break;
     case 'GRMTCIDADE':      ShowHTML('          <td><b>Cidade destino</td>');       break;
     case 'GRMTUNIDADE':     ShowHTML('          <td><b>Unidade solicitante</td>');  break;
-    case 'GRMTPROJ':        ShowHTML('          <td><b>Projeto</td>');              break;
+    case 'GRMTSOLIC':       ShowHTML('          <td><b>Solicitante</td>');          break;
     case 'GRMTABERTURA':    ShowHTML('          <td><b>Mês de abertura</td>');      break;
     case 'GRMTAUTORIZ':     ShowHTML('          <td><b>Mês de autorização</td>');   break;
-    case 'GRMTMODAL':       ShowHTML('          <td><b>Modalidade</td>');           break;
+    case 'GRMTTIPO':       ShowHTML('          <td><b>Tipo de material</td>');      break;
     case 'GRMTSITUACAO':    ShowHTML('          <td><b>Situação do certame</td>');  break;
   } 
   ShowHTML('          <td><b>Total</td>');
