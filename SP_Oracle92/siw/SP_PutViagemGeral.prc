@@ -144,7 +144,8 @@ begin
          Insert Into pd_diaria (sq_diaria, sq_siw_solicitacao, sq_cidade, quantidade, valor, hospedagem, hospedagem_qtd, hospedagem_valor, veiculo, veiculo_qtd, veiculo_valor, sq_valor_diaria, diaria, sq_deslocamento_chegada, sq_deslocamento_saida, sq_valor_diaria_hospedagem, sq_valor_diaria_veiculo, justificativa_diaria, justificativa_veiculo, sq_pdvinculo_diaria, sq_pdvinculo_hospedagem, sq_pdvinculo_veiculo, hospedagem_checkin, hospedagem_checkout, hospedagem_observacao, veiculo_retirada, veiculo_devolucao, tipo, calculo_diaria_qtd, calculo_diaria_texto, calculo_hospedagem_qtd, calculo_hospedagem_texto, calculo_veiculo_qtd, calculo_veiculo_texto)
          (Select sq_diaria.nextval,        w_chave,            sq_cidade, quantidade, valor, hospedagem, hospedagem_qtd, hospedagem_valor, veiculo, veiculo_qtd, veiculo_valor, sq_valor_diaria, diaria, sq_deslocamento_chegada, sq_deslocamento_saida, sq_valor_diaria_hospedagem, sq_valor_diaria_veiculo, justificativa_diaria, justificativa_veiculo, sq_pdvinculo_diaria, sq_pdvinculo_hospedagem, sq_pdvinculo_veiculo, hospedagem_checkin, hospedagem_checkout, hospedagem_observacao, veiculo_retirada, veiculo_devolucao, tipo, calculo_diaria_qtd, calculo_diaria_texto, calculo_hospedagem_qtd, calculo_hospedagem_texto, calculo_veiculo_qtd, calculo_veiculo_texto
            from pd_diaria a
-          where a.sq_siw_solicitacao = p_copia
+          where a.tipo               = 'S'
+            and a.sq_siw_solicitacao = p_copia
          );
          
         -- Copia a informação e define se a viagem é internacional ou não

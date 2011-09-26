@@ -125,7 +125,8 @@ begin
                 f1.sq_tipo_pessoa as sq_tipo_fornecedor,             f1.nome as nm_tipo_fornecedor,
                 f2.cpf, 
                 f3.cnpj,
-                g.qtd as qt_itens
+                coalesce(g.qtd,0) as qt_itens,
+                coalesce(h.qtd,0) as qt_saidas
            from mt_entrada                                      a 
                 inner             join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
                    inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
@@ -147,10 +148,17 @@ begin
                     left          join co_pessoa_fisica         f2 on (f.sq_pessoa                = f2.sq_pessoa)
                     left          join co_pessoa_juridica       f3 on (f.sq_pessoa                = f3.sq_pessoa)
                 left              join (select x.sq_mtentrada, count(*) as qtd
-                                       	  from mt_entrada_item w
+                                       	  from mt_entrada_item       w
                                                inner join mt_entrada x on (w.sq_mtentrada = x.sq_mtentrada and x.cliente = p_cliente)
                                         group by x.sq_mtentrada
                                        )                        g  on (a.sq_mtentrada             = g.sq_mtentrada)
+                left              join (select x.sq_mtentrada, count(*) as qtd
+                                       	  from mt_entrada_item             w
+                                               inner join mt_estoque_item w1 on (w.sq_entrada_item = w1.sq_entrada_item)
+                                               inner join mt_entrada       x on (w.sq_mtentrada    = x.sq_mtentrada and x.cliente = p_cliente)
+                                         where w.quantidade <> w1.saldo_atual
+                                        group by x.sq_mtentrada
+                                       )                        h  on (a.sq_mtentrada             = h.sq_mtentrada)
           where a.cliente         = p_cliente
             and (p_chave          is null or (p_chave       is not null and a.sq_mtentrada         = p_chave))
             --and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_modalidade_artigo = to_number(p_sq_acao_ppa)))

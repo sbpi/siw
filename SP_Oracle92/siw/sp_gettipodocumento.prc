@@ -2,6 +2,7 @@ create or replace procedure SP_GetTipoDocumento
    (p_chave     in number   default null,
     p_cliente   in number,
     p_menu      in number   default null,
+    p_restricao in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
    -- Recupera os tipos de contrato do cliente
@@ -22,6 +23,12 @@ begin
                left  join pa_assunto           d on (c.sq_assunto           = d.sq_assunto)
    where a.cliente = p_cliente 
      and ((p_chave is null) or (p_chave is not null and a.sq_tipo_documento = p_chave))
-     and (coalesce(b.vinculo,0) = 0 or p_menu is null or 0 < (select count(*) from fn_tipo_doc_vinc where sq_tipo_documento = a.sq_tipo_documento and sq_menu = coalesce(p_menu,0)));
+     and (coalesce(b.vinculo,0) = 0 or p_menu is null or 0 < (select count(*) from fn_tipo_doc_vinc where sq_tipo_documento = a.sq_tipo_documento and sq_menu = coalesce(p_menu,0)))
+     and (p_restricao is null or (p_restricao is not null and 
+                                  (p_restricao <> 'MTENTMAT' or
+                                   (p_restricao = 'MTENTMAT' and a.detalha_item = 'S')
+                                  )
+                                 )
+         );
 end SP_GetTipoDocumento;
 /
