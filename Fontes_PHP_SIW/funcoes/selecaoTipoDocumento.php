@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoDocumento.php');
 // -------------------------------------------------------------------------
 function selecaoTipoDocumento($label,$accesskey,$hint,$chave,$cliente,$menu,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$cliente,$menu);
+  $sql = new db_getTipoDocumento; $RS = $sql->getInstanceOf($dbms,null,$cliente,$menu,$restricao);
   $RS = SortArray($RS,'nome','asc');
 
   ShowHTML('          <td colspan="'.$colspan.'" '.((!isset($hint)) ? '' : 'TITLE="'.$hint.'"').'>'.((!isset($label)) ? '' : '<b>'.$label.'</b><br>').'<SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
