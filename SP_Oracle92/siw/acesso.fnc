@@ -411,7 +411,7 @@ begin
        If w_existe > 0 Then Result := Result + 1; End If;
     Elsif w_sq_unidade_lotacao   = w_unidade_solicitante or
        w_sq_unidade_lotacao   = w_unidade_resp Then
-       If w_interno = 'S' and w_sigla = 'PADCAD' Then Result := Result + 1; End If;
+       Result := Result + 1;
     Elsif w_sq_pessoa_titular    = p_usuario or
           w_sq_pessoa_substituto = p_usuario
     Then
