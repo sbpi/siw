@@ -530,6 +530,7 @@ begin
                 coalesce(d9.valor,0) as valor_nota,
                 coalesce(da.qtd,0) as qtd_nota,
                 coalesce(db.existe,0) as notas_parcela,
+                da1.sq_lancamento_doc,   da1.numero nr_doc, da1.data dt_doc, da1.valor vl_doc,
                 dc.operacao as oper_org, dc.numero as nr_conta_org,
                 dd.codigo as cd_age_org, dd.nome as nm_age_org,
                 de.codigo as cd_ban_org, de.nome as nm_ban_org,
@@ -548,7 +549,7 @@ begin
                 coalesce(m4.existe,0) as notas_acordo,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic,                         o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
-                p.nome_resumido as nm_exec,                          da1.sq_lancamento_doc,
+                p.nome_resumido as nm_exec,
                 case coalesce(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end as nm_projeto,
                 case coalesce(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end as sq_projeto,
                 case coalesce(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end as qtd_rubrica

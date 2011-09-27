@@ -80,19 +80,6 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>---</td>';
       }
     }
-/*
-    if (Nvl(f($RS,'nm_projeto'),'') > '') {
-      if (!($l_P1==4 || $l_tipo=='WORD')){
-        $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td><td><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($RS,'sq_projeto').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="Projeto">'.f($RS,'nm_projeto').'</a></td></tr>';
-      } else {
-        $l_html.=chr(13).'      <tr><td><b>Projeto: </b></td><td>'.f($RS,'nm_projeto').'  ('.f($RS,'sq_solic_pai').')</td></tr>';
-      }
-    } 
-    // Se a classificação foi informada, exibe.
-    if (Nvl(f($RS,'sq_cc'),'')>'') {
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação: </b></td><td>'.f($RS,'nm_cc').' </td></tr>';
-    }
-*/
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
     $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
@@ -144,11 +131,12 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   }
   $RS1 = SortArray($RS3,'data_lancamento','asc','sq_siw_solicitacao','asc');
   if (count($RS1)>0) {
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>LANÇAMENTOS VINCULADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
-    $l_html.=chr(13).'            <td colspan="2"><b>Comprovante</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Compra</td>';
+    $l_html.=chr(13).'            <td colspan="2"><b>Documento</td>';
     $l_html.=chr(13).'            <td rowspan="2"><b>Pessoa</td>';
     $l_html.=chr(13).'            <td rowspan="2"><b>Finalidade</td>';
     $l_html.=chr(13).'            <td rowspan="2"><b>Crédito</td>';
@@ -167,9 +155,10 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       if ($i==0) {
         $l_html.=chr(13).'      <tr valign="top" BGCOLOR="'.$w_cor.'">';
         $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.ExibeImagemSolic(f($RS,'sigla'),f($RS,'inicio'),f($RS,'vencimento'),f($RS,'inicio'),f($RS,'quitacao'),f($RS,'aviso_prox_conc'),f($RS,'aviso'),f($RS,'sg_tramite'), null).' '.f($RS,'codigo_interno').'</td>';
+        $l_html.=chr(13).'        <td align="right" width="1%" nowrap>&nbsp;</td>';
         $l_html.=chr(13).'        <td align="center" width="1%" nowrap>&nbsp;'.Nvl(FormataDataEdicao(f($RS,'inicio'),5),'-').'</td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'nm_forma_pagamento').' '.nvl(f($RS,'numero_conta'),'&nbsp;').'</td>';
-        $l_html.=chr(13).'        <td colspan="2">'.f($RS,'nm_banco').'&nbsp;</td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'nm_forma_pagamento').'&nbsp;'.f($RS,'nr_doc').'</td>';
+        $l_html.=chr(13).'        <td colspan="2">'.f($RS,'nm_banco').'&nbsp;C/C '.f($RS,'nr_conta_org').'</td>';
         $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($RS,'valor')).'</td>';
         $l_html.=chr(13).'        <td align="right" width="1%" nowrap>&nbsp;</td>';
         $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($RS,'valor')).'</td>';
@@ -180,6 +169,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if ($w_tipo!='WORD') $l_html.=chr(13).'        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>';
       else                 $l_html.=chr(13).'        '.f($row,'codigo_interno').'';
+      $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_vinculo'),f($row,'dados_vinculo'),'N',$w_tipo).'</td>';
       $l_html.=chr(13).'        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'data_lancamento'),5),'-').'&nbsp;</td>';
       $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_tipo_documento').' '.f($row,'numero').'</td>';
       if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
@@ -196,7 +186,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td align="right" nowrap>'.(($i==count($RS1)) ? '<b>' : '').formatNumber($w_atual).'</td>';
     } 
     $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-    $l_html.=chr(13).'        <td align="right" colspan=6><b>Total das despesas</b></td>';
+    $l_html.=chr(13).'        <td align="right" colspan=7><b>Total das despesas</b></td>';
     $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
     $l_html.=chr(13).'        <td align="right"><b>&nbsp;</b></td>';
     $l_html.=chr(13).'      </tr>';

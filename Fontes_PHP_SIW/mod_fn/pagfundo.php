@@ -844,9 +844,10 @@ function Geral() {
       $w_sq_menu_relac        = $w_dados_pai[3];
       if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
 
-      $w_prot_ano             = substr($w_protocolo,strpos($w_protocolo,'/'));
-      $w_prot_numero          = substr($w_protocolo,0,strpos($w_protocolo,'/')-1);
-      $w_prot_numero          = intVal(substr($w_protocolo,strpos($w_protocolo,'.')-1));
+      $w_prot_ano             = substr($w_protocolo,strpos($w_protocolo,'/')+1);
+      $w_prot_ano             = substr($w_prot_ano,0,strpos($w_prot_ano,'-'));
+      $w_prot_numero          = substr($w_protocolo,0,strpos($w_protocolo,'/'));
+      $w_prot_numero          = intVal(substr($w_prot_numero,strpos($w_prot_numero,'.')+1));
       $w_vinc_numero          = $_REQUEST['w_vinc_numero'];
       $w_vinc_ano             = $_REQUEST['w_vinc_ano'];
     }
@@ -913,19 +914,23 @@ function Geral() {
   // Recupera dados do fundo fixo
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
   
-  if (nvl($w_vinc_numero,'')!=''&&nvl($w_vinc_ano,'')!='') {
+  if (nvl($w_solic_vinculo,'')!='' || (nvl($w_vinc_numero,'')!=''&&nvl($w_vinc_ano,'')!='')) {
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
     $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,'-'.$w_vinc_numero.'/'.$w_vinc_ano,null);
+            null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null);
     foreach($RS_Vinculo as $row) {$RS_Vinculo = $row; break; }
     $w_solic_vinculo = f($RS_Vinculo,sq_siw_solicitacao);
     $w_justificativa = f($RS_Vinculo,'justificativa');
     $w_objeto        = f($RS_Vinculo,'objeto');
+    $w_vinc          = f($RS_Vinculo,'codigo_interno');
+    $w_vinc          = substr($w_vinc,strpos($w_vinc,'-')+1);
+    $w_vinc_numero   = substr($w_vinc,0,strpos($w_vinc,'/'));
+    $w_vinc_ano      = substr($w_vinc,strpos($w_vinc,'/')+1);
     if (nvl($_REQUEST['w_descricao'],'')!='') {
       if     ($_REQUEST['w_descricao']==$w_descricao)     $w_descricao = nvl($w_objeto,$w_justificativa);
       elseif ($_REQUEST['w_descricao']==$w_justificativa) $w_descricao = nvl($w_objeto,$w_justificativa);
-    } else {
+    } elseif (nvl($w_descricao,'')=='') {
       $w_descricao = nvl($w_objeto,$w_justificativa);
     }
     $w_texto = '';
@@ -1156,7 +1161,7 @@ function Geral() {
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Documento de despesa</td></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>E</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
