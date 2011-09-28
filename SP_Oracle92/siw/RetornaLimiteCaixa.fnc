@@ -24,20 +24,20 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
   w_especie       varchar2(4000)  := '';
 
   cursor c_especies is
-      select distinct b.nome
+      select /*+ RULE*/ distinct b.nome
         from pa_documento                        a
-             inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
-               inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
-             inner     join pa_especie_documento b on (a.sq_especie_documento  = b.sq_especie_documento)
+             inner     join siw_solicitacao     a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
+               inner   join siw_tramite         a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite and a2.sigla <> 'CA')
+             inner     join pa_especie_documento b on (a.sq_especie_documento = b.sq_especie_documento)
        where a.sq_caixa      = p_chave
          and a1.sq_solic_pai is null
       order by acentos(nome);
 
   cursor c_assuntos is
-      select distinct c.codigo||' - '||c.descricao as nome
+      select /*+ RULE*/ distinct c.codigo||' - '||c.descricao as nome
         from pa_documento                        a
-             inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
-               inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
+             inner     join siw_solicitacao     a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
+               inner   join siw_tramite         a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite and a2.sigla <> 'CA')
              inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')
                inner   join pa_assunto           c on (b.sq_assunto           = c.sq_assunto)
        where a.sq_caixa      = p_chave
@@ -58,9 +58,9 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
                inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
              inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')
                inner   join pa_assunto           c on (b.sq_assunto           = c.sq_assunto)
-                 left  join pa_tipo_guarda       d on (c.fase_corrente_guarda = d.sq_tipo_guarda)
-                 left  join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda)
-                 left  join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
+                 inner join pa_tipo_guarda       d on (c.fase_corrente_guarda = d.sq_tipo_guarda)
+                 inner join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda)
+                 inner join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
        where a3.sq_caixa     = p_chave
          and a1.sq_solic_pai is null
       group by a.data_central, c.fase_intermed_anos, c.fase_final_anos, e.sigla, e.descricao, f.sigla, f.descricao;
