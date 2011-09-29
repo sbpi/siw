@@ -4400,13 +4400,14 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],
-          $_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_sqcc'],
-          $_REQUEST['w_descricao'],$_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],
-          $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],
-          $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
-          Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
-          $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
-          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],&$w_chave_nova,&$w_codigo);
+              $_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_sqcc'],
+              $_REQUEST['w_descricao'],$_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],
+              $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],
+              $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
+              Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
+              $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
+              $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
+              &$w_chave_nova,&$w_codigo);
 
       if ($O!='E') {
 
@@ -4441,7 +4442,6 @@ function Grava() {
         }
       }
 
-      ScriptOpen('JavaScript');
       if ($P1==0) {
         // Recupera os trâmites de cadastramento inicial e de execução 
         $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null, null,'S');
@@ -4455,11 +4455,29 @@ function Grava() {
         $w_html = VisualLancamento($w_chave_nova,'L',$w_usuario,'2','1');
         CriaBaseLine($w_chave_nova,$w_html,f($RS_Menu,'nome'),$w_ee);
         
-        // Envia a solicitação para execução   
-        $SQL = new dml_putLancamentoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_ci,
-                $w_ee,'N',null,$w_usuario,'Envio automático de lançamento financeiro.',null,null,null,null);
-        
+        if (f($RS_Menu,'sigla')!='FNREVENT') {
+          // Envia a solicitação para execução   
+          $SQL = new dml_putLancamentoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_ci,
+                  $w_ee,'N',null,$w_usuario,'Envio automático de lançamento financeiro.',null,null,null,null);
+        } else {
+          // Recupera o trâmite de conclusão
+          $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_menu'],null,null,null);
+          $RS = SortArray($RS,'ordem','asc');
+          foreach ($RS as $row) {
+            if (f($row,'sigla')=='AT') {
+              $w_tramite_conc = f($row,'sq_siw_tramite');
+              break;
+            }
+          }
+          
+          // Envia a solicitação para execução   
+          $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,
+                  $w_tramite_conc,$_REQUEST['w_vencimento'],$_REQUEST['w_valor'],$_REQUEST['w_codigo_deposito'],
+                  $_REQUEST['w_conta_debito'],$_REQUEST['w_sq_tipo_lancamento'],$_REQUEST['w_sq_projeto_rubrica'],
+                  $_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        }
 
+        ScriptOpen('JavaScript');
         if ($P2==1) {
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.nvl($_REQUEST['w_chave'],$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         } else {
@@ -4467,8 +4485,10 @@ function Grava() {
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
         }
       } elseif ($P2==1 && $O!='E') {
+        ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.nvl($_REQUEST['w_chave'],$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       } else {
+        ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       }
       ScriptClose();

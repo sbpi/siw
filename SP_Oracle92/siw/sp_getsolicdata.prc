@@ -946,7 +946,10 @@ begin
                   left       join siw_opiniao               b2 on (b.opiniao             = b2.sq_siw_opiniao)
                   left       join sr_solicitacao_transporte b3 on (b.sq_siw_solicitacao  = b3.sq_siw_solicitacao)
                     left     join sr_veiculo                l  on (b3.sq_veiculo         = l.sq_veiculo)
-                  left       join pe_plano                  b4 on (b.sq_plano            = b4.sq_plano)
+                   left      join pe_plano                  b4 on (b.sq_plano            = b4.sq_plano)
+                   left      join sr_solicitacao_celular    b5 on (b.sq_siw_solicitacao  = b5.sq_siw_solicitacao)
+                     left    join co_pais                  b51 on (b5.sq_pais            = b51.sq_pais)
+                     left    join sr_celular               b52 on (b5.sq_celular         = b52.sq_celular)
                   inner      join eo_unidade                e  on (b.sq_unidade          = e.sq_unidade)
                     left     join eo_unidade_resp           e1 on (e.sq_unidade          = e1.sq_unidade and
                                                                    e1.tipo_respons       = 'T'           and

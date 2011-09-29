@@ -25,6 +25,18 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     $l_html .= chr(13).'        <td>'.f($RS1,'cc_nome').' </td></tr>';
   }
 
+  if ($l_tipo=='WORD') {
+    $l_html.=chr(13).'   <tr><td><b>'.((Nvl(f($RS1,'sigla'),'')=='SRSOLCEL') ? 'Beneficiário' : 'Solicitante').':</b></font></td>';
+    $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').'</font></td></tr>';
+  } else {
+    $l_html.=chr(13).'   <tr><td><b>'.((Nvl(f($RS1,'sigla'),'')=='SRSOLCEL') ? 'Beneficiário' : 'Solicitante').':</b></font></td>';
+    $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).'</font></td></tr>';
+  }
+  if ($l_tipo!='WORD') {
+    $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Unidade solicitante:</b></td><td colspan="12">'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS1,'nm_unidade_solic'),f($RS1,'sq_unidade'),$TP).'</td>';
+  } else {
+    $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Unidade solicitante:</b></td><td colspan="12">'.f($RS1,'nm_unidade_solic').'</td></tr>';
+  } 
   if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
     $l_html.=chr(13).'   <tr><td width="20%"><b>Procedimento:</b></td>';
     $l_html.=chr(13).'       <td><b>'.f($RS1,'nm_procedimento').'</b></font></tr>';
@@ -56,13 +68,6 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
       $l_html.=chr(13).'   <tr><td width="20%"><b>Término:</b></font></td>';
       $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
       break;
-    }
-    if ($l_tipo=='WORD') {
-      $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
-      $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').' ('.f($RS1,'sg_unidade_solic').')</font></td></tr>';
-    } else {
-      $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
-      $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).' ('.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_solic'),f($RS1,'sq_unidade'),$TP).')</font></td></tr>';
     }
   }
 
@@ -96,7 +101,11 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Carga:</b></td>';
     $l_html.=chr(13).'       <td>'.RetornaSimNao(Nvl(f($RS1,'carga'),'-')).'</td></tr>';
-  }  
+  } elseif (Nvl(f($RS1,'sigla'),'')=='SRSOLCEL') {
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Destino:</b></td>';
+    $l_html.=chr(13).'       <td>'.f($RS1,'nm_pais_cel').'</td></tr>';
+  }
   if (Nvl(f($RS1,'justificativa'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Justificativa:</b></font></td>';

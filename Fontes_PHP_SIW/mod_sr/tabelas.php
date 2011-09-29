@@ -13,12 +13,14 @@ include_once($w_dir_volta.'classes/sp/db_getOpiniao.php');
 include_once($w_dir_volta.'classes/sp/db_getGrupoVeiculo.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoVeiculo.php');
 include_once($w_dir_volta.'classes/sp/db_getVeiculo.php');
+include_once($w_dir_volta.'classes/sp/db_getCelular.php');
 include_once($w_dir_volta.'classes/sp/db_getAbastecimento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putOpiniao.php');
 include_once($w_dir_volta.'classes/sp/dml_putGrupoVeiculo.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoVeiculo.php');
 include_once($w_dir_volta.'classes/sp/dml_putVeiculo.php');
+include_once($w_dir_volta.'classes/sp/dml_putCelular.php');
 include_once($w_dir_volta.'classes/sp/dml_putAbastecimento.php');
 include_once($w_dir_volta.'funcoes/selecaoGrupoVeiculo.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoVeiculo.php');
@@ -170,8 +172,8 @@ function Abastecimento() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I') {
@@ -344,8 +346,8 @@ function Grupo() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
@@ -451,6 +453,183 @@ function Grupo() {
 } 
 
 // =========================================================================
+// Rotina de celulares
+// -------------------------------------------------------------------------
+function Celular() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave = $_REQUEST['w_chave'];
+  head();
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de celulares</TITLE>');
+  if ($P1==2) {
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  }
+  Estrutura_CSS($w_cliente);
+  if ($O=='') $O='L';
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_numero       = $_REQUEST['w_numero'];
+    $w_marca        = $_REQUEST['w_marca'];
+    $w_modelo       = $_REQUEST['w_modelo']; 
+    $w_card         = $_REQUEST['w_card'];
+    $w_imei         = $_REQUEST['w_imei'];
+    $w_ativo        = $_REQUEST['w_ativo'];    
+  } elseif ($O=='L') {
+    $sql = new db_getCelular; $RS = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,null,null,null,null, null,null);
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'numero_linha','asc');
+    } else {
+      $RS = SortArray($RS,'numero_linha','asc'); 
+    }
+  } elseif (strpos('AEV',$O)!==false) {
+    $sql = new db_getCelular; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave,null,null,null,null,null,null, null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_numero         = f($RS,'numero_linha');
+    $w_marca          = f($RS,'marca');
+    $w_modelo         = f($RS,'modelo'); 
+    $w_card           = f($RS,'sim_card');
+    $w_imei           = f($RS,'imei'); 
+    $w_ativo          = f($RS,'ativo');       
+  } if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    modulo();
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      Validate('w_numero','Número da linha','1','1','8','20','1','1');
+      Validate('w_marca','Marca','1','1','2','40','1',''); 
+      Validate('w_modelo','Modelo','1','1','2','40','1','1');       
+      Validate('w_card','SIM CARD','1','1','1','25','1',''); 
+      Validate('w_imei','IMEI','1','1','1','25','1','1');       
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_numero.focus()";');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad="this.focus()";');
+  } else{
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Número','numero_linha').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Marca','marca').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('SIM CARD','sim_card').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('IMEI','imei').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
+    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS,(($P3-1)*$P4),$P4);
+      foreach($RS1 as $row) { 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="left">'.f($row,'numero_linha').'</td>');
+        ShowHTML('        <td>'.f($row,'marca').'</td>');
+        ShowHTML('        <td>'.f($row,'modelo').'</td>');
+        ShowHTML('        <td>'.f($row,'sim_card').'</td>');
+        ShowHTML('        <td>'.f($row,'imei').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.f($row,'cliente').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="numero">AL </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if ($O=='E') $w_Disabled=' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_numero_ant"  value="'.$w_numero.'">'); 
+    ShowHTML('<INPUT type="hidden" name="w_marca_ant" value="'.$w_marca.'">');       
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><table width="97%" border="0">');
+    ShowHTML('  <tr><td colspan=2><table width="100%" border="0">');
+    ShowHTML('      <tr><td colspan="2"><b><u>N</u>úmero da linha:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="STI" SIZE="20" MAXLENGTH="20" VALUE="'.$w_numero.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>M</u>arca:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_marca" class="STI" SIZE="10" MAXLENGTH="40" VALUE="'.$w_marca.'"></td>');
+    ShowHTML('        <td><b>M<u>o</u>delo:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_modelo" class="STI" SIZE="10" MAXLENGTH="40" VALUE="'.$w_modelo.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>S</u>IM CARD:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_card" class="STI" SIZE="25" MAXLENGTH="25" VALUE="'.$w_card.'"></td>');
+    ShowHTML('        <td><b><u>I</u>MEI:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_imei" class="STI" SIZE="25" MAXLENGTH="25" VALUE="'.$w_imei.'"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr>');
+    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan=5 align="center"><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert("Opção não disponível");');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+} 
+
+// =========================================================================
 // Rotina de Opiniões
 // -------------------------------------------------------------------------
 function Opiniao() {
@@ -508,8 +687,8 @@ function Opiniao() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
@@ -688,8 +867,8 @@ function TipoVeiculo() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
@@ -885,8 +1064,8 @@ function Veiculo() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
@@ -1019,8 +1198,8 @@ function Veiculo() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'SRABAST':
@@ -1033,7 +1212,40 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
+      } 
+      break;        
+    case 'SRCEL':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O!='E') {
+          // Impede dois celulares com o mesmo número
+          $sql = new db_getCelular; $RS = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,null,null,null,null, null,null);
+          $erro = false;
+          foreach($RS as $row) {
+            if (($O=='I' && $_REQUEST['w_numero']==f($row,'numero_linha')) ||
+                ($O=='A' && $_REQUEST['w_numero']==f($row,'numero_linha') && $_REQUEST['w_chave']!=f($row,'chave'))
+               ) {
+              $erro = true;
+            }
+          }
+          if ($erro) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("Já existe celular cadastrado com o número de linha informado!");');
+            ScriptClose();
+            RetornaFormulario('w_numero');
+          }
+        }
+        $SQL = new dml_putCelular; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_numero'],$_REQUEST['w_marca'],
+                $_REQUEST['w_modelo'], $_REQUEST['w_card'],$_REQUEST['w_imei'], $_REQUEST['w_ativo']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1069,7 +1281,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1113,7 +1325,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1148,7 +1360,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1184,7 +1396,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1209,6 +1421,7 @@ function Main() {
     case 'TIPOVEICULO':       TipoVeiculo();      break;
     case 'OPINIAO':           Opiniao();          break;
     case 'VEICULO':           Veiculo();          break;    
+    case 'CELULAR':           Celular();          break;    
     case 'GRAVA':             Grava();            break;
     default:
     Cabecalho();

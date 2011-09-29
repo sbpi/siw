@@ -103,6 +103,10 @@ begin
                 b4.sq_veiculo,        b4.qtd_pessoas,                b4.carga, 
                 b4.hodometro_saida,   b4.hodometro_chegada,          b4.horario_saida,
                 b4.hodometro_chegada, b4.destino,                    b4.parcial,
+                b5.sq_pais       as sq_pais_cel,   b5.inicio_real inicio_real_cel, b5.fim_real fim_real_cel,
+                b5.pendencia     as pendencia_cel, b5.acessorios_entregues, b5.acessorios_pendentes,
+                b51.nome         as nm_pais_cel,
+                b52.numero_linha as nr_cel,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -127,7 +131,9 @@ begin
                                                                      a4.fim                     is null
                                                                      )
                    inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo and
-                                                                      a1.sigla                   = 'SR'
+                                                                      ((p_menu                   is null and a1.sigla = 'SR') or
+                                                                       (p_menu                   is not null and a1.sigla in ('SR','AL'))
+                                                                      )
                                                                      )
                    left         join eo_unidade                c  on (a.sq_unid_executora        = c.sq_unidade)
                    inner        join siw_solicitacao           b  on (a.sq_menu                  = b.sq_menu)
@@ -136,8 +142,11 @@ begin
                       inner     join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                         from siw_solicitacao
                                      )                         b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      left      join sr_solicitacao_transporte b4 on (b.sq_siw_solicitacao  = b4.sq_siw_solicitacao)
-                      inner     join eo_unidade                e  on (b.sq_unidade          = e.sq_unidade)
+                      left      join sr_solicitacao_transporte b4 on (b.sq_siw_solicitacao       = b4.sq_siw_solicitacao)
+                      left      join sr_solicitacao_celular    b5 on (b.sq_siw_solicitacao       = b5.sq_siw_solicitacao)
+                        left    join co_pais                  b51 on (b5.sq_pais                 = b51.sq_pais)
+                        left    join sr_celular               b52 on (b5.sq_celular              = b52.sq_celular)
+                      inner     join eo_unidade                e  on (b.sq_unidade               = e.sq_unidade)
                         left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null)

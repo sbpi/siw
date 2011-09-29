@@ -23,7 +23,7 @@ create or replace procedure SP_PutMTEntItem
    w_total      number(18,2);
 begin
    If p_operacao in ('I','A') Then
-      w_valor := trunc(p_valor / p_quantidade,10);
+      w_valor := trunc(p_valor / case when p_quantidade > 0 then p_quantidade else 1 end,10);
    End If;
    
    If p_operacao = 'I' Then

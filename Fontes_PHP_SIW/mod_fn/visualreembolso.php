@@ -130,7 +130,8 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor do reembolso:</b></td><td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Mês de referência:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento'),9).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Data de pagamento:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Mês de referência:</b></td><td>'.FormataDataEdicao(f($RS,'referencia_inicio'),9).'</td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Discriminação das despesas: </b></td><td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS PARA '.upper(f($RS,'nm_forma_pagamento')).'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -191,58 +192,6 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').'</td></tr>';
       }
     }
-    /*
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    if (count($RS_Query)<=0) {
-      $l_html.=chr(13).'      <tr><td colspan=2 align=center><font size=1>Outra parte não informada';
-    } else {
-      $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0" style="border: 1px solid rgb(0,0,0);" ><b>';
-      if (f($RS,'sq_tipo_pessoa')>2) {
-        $l_html.=chr(13).'          '.f($RS_Query,'nm_pessoa').' ('.f($RS_Query,'nome_resumido').') - Passaporte: '.f($RS_Query,'passaporte_numero').' '.f($RS_Query,'nm_pais_passaporte').'</b>';
-      } else {
-        $l_html.=chr(13).'          '.f($RS_Query,'nm_pessoa').' ('.f($RS_Query,'nome_resumido').') - '.f($RS_Query,'identificador_primario').'</b></td></tr>';
-      }
-      if (f($RS,'sq_tipo_pessoa')==1) {
-        if (nvl(f($RS_Query,'nm_sexo'),'')!='') $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($RS_Query,'nm_sexo').'</td></tr>';
-        if (nvl(f($RS_Query,'nascimento'),'')!='') $l_html.=chr(13).'      <tr><td><b>Data de nascimento:</b></td><td>'.Nvl(FormataDataEdicao(f($RS_Query,'nascimento')),'---').'</td></tr>';
-        if (nvl(f($RS_Query,'rg_numero'),'')!='') $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($RS_Query,'rg_numero').'</td></tr>';
-        if (nvl(f($RS_Query,'rg_emissao'),'')!='') $l_html.=chr(13).'      <tr><td><b>Data de emissão:</b></td><td>'.FormataDataEdicao(Nvl(f($RS_Query,'rg_emissao'),'---')).'</td></tr>';
-        if (nvl(f($RS_Query,'rg_emissor'),'')!='') $l_html.=chr(13).'      <tr><td><b>Órgão emissor:</b></td><td>'.f($RS_Query,'rg_emissor').'</td></tr>';
-        if (nvl(f($RS_Query,'passaporte_numero'),'')!='') $l_html.=chr(13).'      <tr><td><b>Passaporte:</b></td><td>'.Nvl(f($RS_Query,'passaporte_numero'),'---').'</td></tr>';
-        if (nvl(f($RS_Query,'nm_pais_passaporte'),'')!='') $l_html.=chr(13).'      <tr><td><b>País emissor:</b></td><td>'.Nvl(f($RS_Query,'nm_pais_passaporte'),'---').'</td></tr>';
-      } else {
-        if (nvl(f($RS_Query,'inscricao_estadual'),'')!='') {
-          $l_html.=chr(13).'      <tr><td><b>Inscrição estadual:</b></td><td>'.Nvl(f($RS_Query,'inscricao_estadual'),'---').'</td></tr>';
-        }
-      } 
-      if (nvl(f($RS_Query,'ddd'),'')!='' || nvl(f($RS_Query,'logradouro'),'')!='') {
-        if (f($RS,'sq_tipo_pessoa')==1) {
-          $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Endereço comercial, Telefones e e-Mail</td>';
-        } else {
-          $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Endereço principal, Telefones e e-Mail</td>';
-        }
-        $l_html.=chr(13).'      <tr><td width="30%"><b>Telefone:</b></td><td>'.((nvl(f($row,'ddd'),'')!='') ? '('.f($row,'ddd').') '.f($row,'nr_telefone') : '---').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Fax:</b></td><td>'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Celular:</b></td><td>'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Endereço:</b></td><td>'.f($row,'logradouro').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Complemento:</b></td><td>'.Nvl(f($row,'complemento'),'---').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Bairro:</b></td><td>'.Nvl(f($row,'bairro'),'---').'</td></tr>';
-        if (f($row,'pd_pais')=='S') {
-          $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
-        } else {
-          $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
-        } 
-        $l_html.=chr(13).'      <tr><td><b>CEP:</b></td><td>'.f($row,'cep').'</td></tr>';        
-      }
-      if (nvl(f($RS_Query,'email'),'')!='') {
-        if (!$l_tipo=='WORD') {
-          $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</td></tr>';
-        } else {
-          $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>'.f($row,'email').'</td></tr>';
-        } 
-      } 
-    } 
-    */
     $w_vl_retencao    = Nvl(f($RS,'valor_retencao'),0);
     $w_vl_normal      = Nvl(f($RS,'valor_imposto'),0);
     $w_vl_total       = Nvl(f($RS,'valor_doc'),0);

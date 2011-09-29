@@ -309,7 +309,7 @@ function Inicial() {
     } 
     ValidateClose();
     ScriptClose();
-    ShowHTML('</HEAD>');
+    ShowHTML('</head>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($w_troca>'') {
       // Se for recarga da página
@@ -378,16 +378,19 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
       if ($P1==3) {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Serviço','nome').'</td>');
-        ShowHTML('          <td colspan=2><b>Data</td>');
+        ShowHTML('          <td colspan=3><b>Data</td>');
       } elseif (f($RS_Menu,'data_hora')==0 || f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2) {
-        ShowHTML('          <td colspan=1><b>Data</td>');
-      } elseif (f($RS_Menu,'data_hora')>0) {
         ShowHTML('          <td colspan=2><b>Data</td>');
+      } elseif (f($RS_Menu,'data_hora')>0) {
+        ShowHTML('          <td colspan=3><b>Data</td>');
       }
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Solicitante','nm_solic').'</td>');
       if ($SG=='SRTRANSP') {
         // Se for cadastramento ou mesa de trabalho
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detalhamento','justificativa').'</td>');
+      } elseif ($SG=='SRSOLCEL') {
+        // Se for cadastramento ou mesa de trabalho
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Destino','nm_pais_cel').'</td>');
       } else {
         // Se for cadastramento ou mesa de trabalho
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detalhamento','descricao').'</td>');
@@ -395,6 +398,7 @@ function Inicial() {
       if ($P1==3) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('          <td><b>'.LinkOrdena('Incluão','phpdt_inclusao').'</td>');
       if (f($RS_Menu,'data_hora')==0 || f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
         ShowHTML('          <td><b>'.LinkOrdena('Programada','phpdt_programada').'</td>');
       } elseif (f($RS_Menu,'data_hora')>0) {
@@ -407,16 +411,17 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>Nº</td>');
       if ($P1==3) {
         ShowHTML('          <td rowspan=2><b>Serviço</td>');
-        ShowHTML('          <td colspan=2><b>Data</td>');
+        ShowHTML('          <td colspan=3><b>Data</td>');
       } elseif (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2) {
-        ShowHTML('          <td colspan=1><b>Data</td>');
-      } elseif (f($RS_Menu,'data_hora')>0) {
         ShowHTML('          <td colspan=2><b>Data</td>');
+      } elseif (f($RS_Menu,'data_hora')>0) {
+        ShowHTML('          <td colspan=3><b>Data</td>');
       }
       ShowHTML('          <td rowspan=2><b>Solicitante</td>');
       ShowHTML('          <td rowspan=2><b>Detalhamento</td>');
       if ($P1==3) ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><b>Inclusão</td>');
       if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
         ShowHTML('          <td><b>Programada</td>');
       } elseif (f($RS_Menu,'data_hora')>0) {
@@ -442,6 +447,7 @@ function Inicial() {
           ShowHTML('        '.f($row,'sq_siw_solicitacao'));
         } 
         if ($P1==3) ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'phpdt_inclusao')),'-').'</td>');
         switch (f($row,'data_hora')) {
         case 0 :
           ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'phpdt_programada')),'-').'</td>');
@@ -476,7 +482,9 @@ function Inicial() {
 
         // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
         // Este parâmetro é enviado pela tela de filtragem das páginas gerenciais
-        if ($SG=='SRTRANSP') $w_texto = f($row,'justificativa'); else $w_texto = f($row,'descricao');
+        if ($SG=='SRTRANSP') $w_texto = f($row,'justificativa');
+        elseif ($SG=='SRSOLCEL') $w_texto = f($row,'nm_pais_cel');
+        else $w_texto = f($row,'descricao');
         if ($_REQUEST['p_tamanho']=='N') {
           ShowHTML('        <td>'.Nvl($w_texto,'-').'</td>');
         } else {
@@ -671,7 +679,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -704,6 +712,8 @@ function Geral() {
   }
   if ($SG=='SRTRANSP') {
     include_once('transporte_gerais.php');
+  } elseif ($SG=='SRSOLCEL') {
+    include_once('celular_gerais.php');
   } else {
     include_once('geral_gerais.php');
   }
@@ -728,7 +738,7 @@ function Visual() {
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-    ShowHTML('</HEAD>');
+    ShowHTML('</head>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
     $w_embed = 'WORD';
@@ -739,7 +749,7 @@ function Visual() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-    ShowHTML('</HEAD>');
+    ShowHTML('</head>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
     CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
@@ -777,7 +787,7 @@ function EmiteOS() {
   cabecalho();
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Ordem de Serviço</TITLE>');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
@@ -828,7 +838,7 @@ function Excluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -945,7 +955,7 @@ function Encaminhamento() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
@@ -1087,7 +1097,7 @@ function Opiniao() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
@@ -1155,7 +1165,7 @@ function Anotar() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>'); 
+  ShowHTML('</head>'); 
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -1274,7 +1284,7 @@ function DadosExecucao() {
   Validate('w_valor','Valor previsto','VALOR','',4,18,'','0123456789.,');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   switch (f($RS_Menu,'data_hora')) {
     case 0: BodyOpenClean('onLoad=\'document.Form.w_fim.focus()\';');    break;
@@ -1587,9 +1597,9 @@ function Grava() {
   $w_tipo    = '';
   $w_nome    = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=this.focus();');
+  ShowHTML('</head>');
+  BodyOpen('onLoad=this.focus();');
   if (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1612,6 +1622,12 @@ function Grava() {
             $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $_REQUEST['w_destino'],$_REQUEST['w_sq_veiculo'],$_REQUEST['w_qtd_pessoas'],
             $_REQUEST['w_procedimento'], $_REQUEST['w_carga'], &$w_chave_nova, $w_copia);
+      } elseif ($SG=='SRSOLCEL') {
+        include_once($w_dir_volta.'classes/sp/dml_putSolicCelular.php');
+        $SQL = new dml_putSolicCelular; $SQL->getInstanceOf($dbms,$O,
+            $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],
+            $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
+            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $_REQUEST['w_pais'], &$w_chave_nova, $w_copia);
       } else {
         include_once($w_dir_volta.'classes/sp/dml_putSolicGeral.php');
         if (nvl($_REQUEST['w_solic_recurso'],'')!='' && $O=='E') {
@@ -1640,7 +1656,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
     } 
@@ -1663,7 +1679,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
     } 
@@ -1692,7 +1708,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
     } 
@@ -1796,7 +1812,7 @@ function Grava() {
       } 
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
     } 
@@ -1867,7 +1883,7 @@ function Grava() {
       } 
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
     } 

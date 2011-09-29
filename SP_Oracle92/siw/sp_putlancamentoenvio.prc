@@ -45,10 +45,7 @@ begin
       Where sq_siw_solicitacao = p_chave;
 
       -- Atualiza a situação do lançamento financeiro
-      Update fn_lancamento 
-         set quitacao        = null,
-             sq_pessoa_conta = null
-      Where sq_siw_solicitacao = p_chave;
+      Update fn_lancamento set quitacao = null Where sq_siw_solicitacao = p_chave;
    End If;
 
    -- Verifica se o envio é na/para fase de cadastramento. Se for, atualiza o cadastrador.

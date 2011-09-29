@@ -1124,10 +1124,10 @@ function Itens() {
   if ($O=='L') {
     ShowHTML('  for (ind=1; ind < theForm["w_chave_aux[]"].length; ind++) {');
     Validate('["w_quantidade[]"][ind]','Quantidade','1','1','1','18','','1');
-    CompValor('["w_quantidade[]"][ind]','Quantidade','>','0','1');  
-    if (!$w_edita) CompValor('["w_quantidade[]"][ind]','Quantidade','<=',$w_qtd_compra,' quantidade comprada');
+    //CompValor('["w_quantidade[]"][ind]','Quantidade','>','0','1');  
+    //if (!$w_edita) CompValor('["w_quantidade[]"][ind]','Quantidade','<=',$w_qtd_compra,' quantidade comprada');
     Validate('["w_valor[]"][ind]','Valor total','VALOR','1','4','18','','0123456789.,');
-    CompValor('["w_valor[]"][ind]','Valor total','>','0','zero');
+    //CompValor('["w_valor[]"][ind]','Valor total','>','0','zero');
     ShowHTML('  }');
   } elseif (strpos('IA',$O)!==false) {
     if ($w_edita) {

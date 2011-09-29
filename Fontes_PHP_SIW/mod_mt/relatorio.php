@@ -556,10 +556,10 @@ function Analise() {
           $w_colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Qtd.' : linkOrdena('Qtd.','saldo_atual')).'</b></td>');
           $w_colspan++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'P.M.' : linkOrdena('P.M.','preco_medio')).'</b></td>');
           ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'V.E.' : linkOrdena('V.E.','valor_estoque')).'</b></td>');
-          $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Data' : linkOrdena('Entrada','ultima_entrada')).'</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Data' : linkOrdena('Data','ultima_entrada')).'</b></td>');
           $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Qtd.' : linkOrdena('Qtd.','ultima_qtd_entrada')).'</b></td>');
           $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Preço' : linkOrdena('Preço','ultimo_preco_compra')).'</b></td>');
-          $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Data' : linkOrdena('Saída','ultima_saida')).'</b></td>');
+          $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Data' : linkOrdena('Data','ultima_saida')).'</b></td>');
           $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Qtd.' : linkOrdena('Qtd.','ultima_qtd_saida')).'</b></td>');
           $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'Est.Min.' : linkOrdena('Est.Min.','estoque_minimo')).'</b></td>');
           $w_colspan1++; ShowHTML('          <td><b>'.(($w_embed=='WORD') ? 'C.M.M.' : linkOrdena('C.M.M.','consumo_medio_mensal')).'</b></td>');

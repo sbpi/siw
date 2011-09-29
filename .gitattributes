@@ -776,6 +776,7 @@ Fontes_PHP_SIW/classes/sp/db_getCcData.php -text
 Fontes_PHP_SIW/classes/sp/db_getCcList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCcSubordination.php -text
 Fontes_PHP_SIW/classes/sp/db_getCcTree.php -text
+Fontes_PHP_SIW/classes/sp/db_getCelular.php -text
 Fontes_PHP_SIW/classes/sp/db_getCentralTel.php -text
 Fontes_PHP_SIW/classes/sp/db_getCiaTrans.php -text
 Fontes_PHP_SIW/classes/sp/db_getCityData.php -text
@@ -1182,6 +1183,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCaixaDevolucao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCaixaEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCargo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCategoriaDiaria.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCelular.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCiaTrans.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesConBan.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesEnd.php -text
@@ -1386,6 +1388,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSiwPessoaMail.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwTramiteFluxo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicCelular.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConcTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
@@ -2032,6 +2035,7 @@ Fontes_PHP_SIW/mod_rh_pub/cv.php -text
 Fontes_PHP_SIW/mod_rh_pub/visualcurriculo.php -text
 Fontes_PHP_SIW/mod_sf/sicof.php -text
 Fontes_PHP_SIW/mod_sg/relatorios.php -text
+Fontes_PHP_SIW/mod_sr/celular_gerais.php -text
 Fontes_PHP_SIW/mod_sr/geral.php -text
 Fontes_PHP_SIW/mod_sr/geral_conc.php -text
 Fontes_PHP_SIW/mod_sr/geral_gerais.php -text
@@ -3684,6 +3688,7 @@ SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
 SP_Oracle92/siw/SP_PutProjetoAnalise.prc -text
 SP_Oracle92/siw/SP_PutProjetoDescritivo.prc -text
+SP_Oracle92/siw/SP_PutSolicCelular.prc -text
 SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicEnvio.prc -text
@@ -3781,6 +3786,7 @@ SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getCLSolicItem.prc -text
 SP_Oracle92/siw/sp_getCargo.prc -text
 SP_Oracle92/siw/sp_getCategoriaDiaria.prc -text
+SP_Oracle92/siw/sp_getCelular.prc -text
 SP_Oracle92/siw/sp_getContasCronograma.prc -text
 SP_Oracle92/siw/sp_getContasRegistro.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
@@ -4071,6 +4077,7 @@ SP_Oracle92/siw/sp_putCLARPItem.prc -text
 SP_Oracle92/siw/sp_putCLParametro.prc -text
 SP_Oracle92/siw/sp_putCaixaDevolucao.prc -text
 SP_Oracle92/siw/sp_putCaixaEnvio.prc -text
+SP_Oracle92/siw/sp_putCelular.prc -text
 SP_Oracle92/siw/sp_putConfCL.prc -text
 SP_Oracle92/siw/sp_putConfPD.prc -text
 SP_Oracle92/siw/sp_putContasRegistro.prc -text
