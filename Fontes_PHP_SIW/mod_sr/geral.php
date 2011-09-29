@@ -28,6 +28,7 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteResp.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteSolic.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
+include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getOpiniao.php');
 include_once($w_dir_volta.'classes/sp/db_getRecurso.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');

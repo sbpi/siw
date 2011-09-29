@@ -76,6 +76,15 @@
       } 
     } 
   } 
+  
+  // Recupera a unidade solicitante, que sempre é igual à unidade de lotação atual do beneficiário da solicitação
+  if (nvl($w_solicitante,'')!='') {
+    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,$w_solicitante,null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
+    foreach ($RS_Benef as $row) {$RS_Benef=$row; break;}
+    $w_sq_unidade = f($RS_Benef,'sq_unidade_benef');
+    $w_nm_unidade = f($RS_Benef,'nm_unidade_benef');
+  }
+
   Cabecalho();
   head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -145,6 +154,7 @@
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.$w_cidade.'">');
     ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan=2 align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -154,9 +164,8 @@
     ShowHTML('      <tr><td colspan=2>Os dados deste bloco serão utilizados para identificação da solicitação, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoPessoa('Be<u>n</u>eficiário:','N','Selecione o beneficiário da solicitação.',nvl($w_solicitante,$w_usuario),null,'w_solicitante','USUARIOS');
-    ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>S</U>etor solicitante:','S',null,nvl($w_sq_unidade,$_SESSION['LOTACAO']),null,'w_sq_unidade',null,null);
+    SelecaoPessoa('Be<u>n</u>eficiário:','N','Selecione o beneficiário da solicitação.',nvl($w_solicitante,$w_usuario),null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
+    ShowHTML('        <td>Unidade:<br><b>'.$w_nm_unidade.'</td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td valign="top"><b><u>R</u>etirada:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data desejada para a retirada."></td>'); 
     ShowHTML('        <td valign="top"><b><u>D</u>evolução:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data desejada para devolução."></td>');
