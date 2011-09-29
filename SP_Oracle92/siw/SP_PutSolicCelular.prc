@@ -68,6 +68,7 @@ begin
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
           solicitante      = p_solicitante,
+          sq_unidade       = p_unidade,
           descricao        = trim(p_descricao), 
           justificativa    = trim(p_justificativa),
           inicio           = p_inicio,
