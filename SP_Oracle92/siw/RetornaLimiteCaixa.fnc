@@ -45,25 +45,40 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
       order by 1;
 
   cursor c_dados is
-      select max(case a.processo when 'S' then a.data_autuacao else a1.inicio end) as data_limite,
-             case e.sigla 
-                  when 'ANOS' then (to_char(max(case a.processo when 'S' then a.data_autuacao else a1.inicio end),'yyyy')+c.fase_intermed_anos)||
-                                   to_char(max(case a.processo when 'S' then a.data_autuacao else a1.inicio end),'mmdd')
-                  else null 
-             end as intermediario,
-             case f.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_final_anos) else f.descricao end as final
+      select distinct l.data_limite, i.intermediario, f.descricao as final
         from pa_caixa                            a3
              inner     join pa_documento         a  on (a3.sq_caixa            =  a.sq_caixa)
              inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
-               inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
+               inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite and sigla <> 'CA')
              inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')
                inner   join pa_assunto           c on (b.sq_assunto           = c.sq_assunto)
-                 inner join pa_tipo_guarda       d on (c.fase_corrente_guarda = d.sq_tipo_guarda)
-                 inner join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda)
                  inner join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
+             inner     join (select l3.sq_caixa, max(case l.processo when 'S' then l.data_autuacao else l1.inicio end) as data_limite
+                               from pa_caixa                            l3
+                                    inner     join pa_documento         l  on (l3.sq_caixa            = l.sq_caixa)
+                                    inner     join siw_solicitacao      l1 on (l.sq_siw_solicitacao   = l1.sq_siw_solicitacao)
+                                      inner   join siw_tramite          l2 on (l1.sq_siw_tramite      = l2.sq_siw_tramite and l2.sigla <> 'CA')
+                              where l3.sq_caixa     = p_chave
+                             group by l3.sq_caixa
+                            )                    l on (a3.sq_caixa            = l.sq_caixa)
+             inner     join (select a3.sq_caixa, 
+                                    max(case a.processo 
+                                             when 'S' then (to_char(to_number(to_char(a.data_autuacao,'yyyy'))+c.fase_intermed_anos)||to_char(a.data_autuacao,'mmdd'))
+                                             else          (to_char(to_number(to_char(a1.inicio,'yyyy'))       +c.fase_intermed_anos)||to_char(a1.inicio,'mmdd'))
+                                        end
+                                       ) as intermediario
+                               from pa_caixa                            a3
+                                    inner     join pa_documento         a  on (a3.sq_caixa            =  a.sq_caixa)
+                                    inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
+                                      inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite and sigla <> 'CA')
+                                    inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')
+                                      inner   join pa_assunto           c on (b.sq_assunto           = c.sq_assunto)
+                                        inner join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda and e.sigla = 'ANOS')
+                              where a3.sq_caixa     = p_chave
+                             group by a3.sq_caixa, c.fase_intermed_guarda
+                            )                    i on (a3.sq_caixa            = i.sq_caixa)
        where a3.sq_caixa     = p_chave
-         and a1.sq_solic_pai is null
-      group by a.data_central, c.fase_intermed_anos, c.fase_final_anos, e.sigla, e.descricao, f.sigla, f.descricao;
+      order by f.descricao;
 begin
   if p_chave is not null then
      -- Verifica se a caixa existe e, se existir, recupera seus dados
