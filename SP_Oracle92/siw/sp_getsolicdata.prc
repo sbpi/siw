@@ -908,6 +908,12 @@ begin
                 b3.sq_veiculo,        b3.qtd_pessoas,                b3.carga,
                 b3.hodometro_saida,   b3.hodometro_chegada,          b3.destino,
                 b3.parcial,           b3.procedimento,
+                b5.inicio_real,       b5.fim_real,                   b5.pendencia,
+                b5.acessorios_entregues,                             b5.acessorios_pendentes,
+                b52.sq_celular,       b52.numero_linha,              b52.marca,
+                b51.nome as nm_pais_cel,
+                b52.modelo,           b52.sim_card,                  b52.imei,
+                b52.ativo,
                 to_char(b3.horario_saida,'dd/mm/yyyy, hh24:mi:ss')   phpdt_horario_saida,
                 to_char(b3.horario_chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_horario_chegada,
                 case b3.procedimento when 0 then 'Não Informado' 

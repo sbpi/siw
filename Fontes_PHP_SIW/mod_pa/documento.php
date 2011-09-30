@@ -1820,7 +1820,7 @@ function Encaminhamento() {
           } else {
             $sql = new db_getUorgData;
             $RS = $sql->getInstanceOf($dbms, f($RS_Solic, 'unidade_int_posse'));
-            ShowHTML('    <tr><td align="left" colspan="2"><input type="hidden" name="w_sq_unidade" value="' . $p_unid_posse . '"/><big><b>' . f($RS, 'nome') . '</b></big><br></td></tr>');
+            ShowHTML('    <tr><td align="left" colspan="2"><input type="hidden" name="w_sq_unidade" value="' . f($RS, 'sq_unidade') . '"/><big><b>' . f($RS, 'nome') . '</b></big><br></td></tr>');
           }
         } else {
           SelecaoUnidade('<U>U</U>nidade de destino:', 'U', 'Selecione a unidade de destino.', $w_sq_unidade, null, 'w_sq_unidade', 'MOD_PA', null);
@@ -4613,11 +4613,24 @@ function Grava() {
           $w_html = VisualDocumento($_REQUEST['w_chave'], 'T', $_SESSION['SQ_PESSOA'], $P1, 'WORD', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'N');
           CriaBaseLine($_REQUEST['w_chave'], $w_html, f($RS_Menu, 'nome'), f($RS, 'sq_siw_tramite'));
         }
-        ScriptOpen('JavaScript');
+/*        ScriptOpen('JavaScript');
         if ($P1 == 1 && nvl($_REQUEST['w_copia'],'')=='N') {
           // Se for envio da fase de cadastramento, remonta o menu principal
           ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRAM&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
         } else {
+          $sql = new db_getLinkData;
+          $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
+          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
+        }
+        ScriptClose();
+ */
+        ScriptOpen('JavaScript');
+        if (nvl($w_nu_guia, '') == '') {
+          ShowHTML('  alert(\'O protocolo já está disponível na sua unidade.\\nSe unidade de origem e de destino são iguais, o recebimento é automático!\');');
+          // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
+          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=PADCAD&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
+        } else {
+          ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');
           $sql = new db_getLinkData;
           $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
@@ -4718,7 +4731,7 @@ function Grava() {
         }
         ScriptOpen('JavaScript');
         if (nvl($w_nu_guia, '') == '') {
-          ShowHTML('  alert(\'O protocolo já está disponível na sua unidade.\\nSe unidade de origem e de destino são iguais, o recebimento automático!\');');
+          ShowHTML('  alert(\'O protocolo já está disponível na sua unidade.\\nSe unidade de origem e de destino são iguais, o recebimento é automático!\');');
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
           $sql = new db_getLinkData;
           $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $SG);

@@ -139,6 +139,12 @@ begin
                  where a.sq_menu = p_menu
                    and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
             End If;
+         Elsif w_solic.cadastrador = w_solic.solicitante and w_sg_tramite = 'EA' Then
+            -- Se o trâmite for de ciência pelo beneficiário e o cadastrador for o beneficiário, pula para o próximo.
+            select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+               from siw_tramite a
+             where a.sq_menu = p_menu
+               and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
          End If;
       Else
          -- Recupera dados do novo trâmite

@@ -473,7 +473,7 @@ function ConteudoCaixa() {
   } else {
     Cabecalho();
     head();
-    ShowHTML('<title>' . $conSgSistema . ' - Visualização de viagem</title>');
+    ShowHTML('<title>' . $conSgSistema . ' - Visualização de Caixa</title>');
     ShowHTML('</head>');
     ShowHTML('<base HREF="' . $conRootSIW . '">');
     BodyOpenClean('onLoad="this.focus();" ');

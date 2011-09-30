@@ -30,6 +30,7 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteSolic.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getOpiniao.php');
+include_once($w_dir_volta.'classes/sp/db_getCelular.php');
 include_once($w_dir_volta.'classes/sp/db_getRecurso.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRecurso_PE.php');
@@ -277,7 +278,7 @@ function Inicial() {
     Cabecalho();
     head();
     Estrutura_CSS($w_cliente);
-    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$conRootSIW.MontaURL('MESA').'">');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de solicitações</TITLE>");
     ScriptOpen('Javascript');
     CheckBranco();
@@ -310,8 +311,8 @@ function Inicial() {
     } 
     ValidateClose();
     ScriptClose();
-    ShowHTML('</head>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     if ($w_troca>'') {
       // Se for recarga da página
       BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
@@ -396,10 +397,10 @@ function Inicial() {
         // Se for cadastramento ou mesa de trabalho
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detalhamento','descricao').'</td>');
       }
-      if ($P1==3) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
+      if ($P1>1) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('          <td><b>'.LinkOrdena('Incluão','phpdt_inclusao').'</td>');
+        ShowHTML('          <td><b>'.LinkOrdena('Inclusão','phpdt_inclusao').'</td>');
       if (f($RS_Menu,'data_hora')==0 || f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
         ShowHTML('          <td><b>'.LinkOrdena('Programada','phpdt_programada').'</td>');
       } elseif (f($RS_Menu,'data_hora')>0) {
@@ -420,7 +421,7 @@ function Inicial() {
       }
       ShowHTML('          <td rowspan=2><b>Solicitante</td>');
       ShowHTML('          <td rowspan=2><b>Detalhamento</td>');
-      if ($P1==3) ShowHTML('          <td rowspan=2><b>Fase atual</td>');
+      if ($P1>1) ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>Inclusão</td>');
       if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
@@ -496,7 +497,7 @@ function Inicial() {
             ShowHTML('        <td title="'.htmlspecialchars($w_texto).'">'.$w_titulo.'</td>');
           } 
         }
-        if ($P1==3) ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
+        if ($P1>1) ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         if ($w_embed!='WORD') {
           ShowHTML('        <td  class="remover" align="top" nowrap>');
           if ($P1!=3) {
@@ -528,7 +529,9 @@ function Inicial() {
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'opiniao&R='.$w_pagina.$par.'&O=O&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite opinião sobre o atendimento.">Opinião</A>&nbsp');
                 }
                 if (f($row,'sg_tramite')=='EA') {
-                  if ($SG!='SRTRANSP') {
+                  if ($SG=='SRSOLCEL') {
+                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'AnaliseCelular&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ANALCEL'.MontaFiltro('GET').'" title="Informar a análise do atendimento.">IN</A>&nbsp');
+                  } elseif ($SG!='SRTRANSP') {
                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DadosExecucao&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DADEXEC'.MontaFiltro('GET').'" title="Informar dados da execucao.">IN</A>&nbsp');
                   }
                 }
@@ -1335,11 +1338,132 @@ function DadosExecucao() {
       break;
   } 
   ShowHTML('              <td><b>Valo<u>r</u> previsto:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da demanda, ou zero se não for o caso."></td>');
-  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
-  ShowHTML('      <tr><td align="center" colspan="2">');
+  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('      <tr><td align="center" colspan="3">');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina de análise de solicitações de celular
+// -------------------------------------------------------------------------
+function AnaliseCelular() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave     = $_REQUEST['w_chave'];
+  $w_sq_menu   = $_REQUEST['w_sq_menu'];
+  $w_chave_aux = $_REQUEST['w_chave_aux'];
+
+  $w_readonly       = '';
+  $w_erro           = '';
+
+  // Recupera os dados da solicitação
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+  $w_inicio = formataDataEdicao(f($row,'inicio'));
+  $w_fim    = formataDataEdicao(f($row,'fim'));
+  $w_dias   = ceil((f($RS_Solic,'fim')-f($RS_Solic,'inicio'))/84600);
+  
+  $sql = new db_getCelular; $RS_Celular = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,'N','S',null,null, null,'MAPAFUTURO');
+  $RS_Celular = SortArray($RS_Celular,'numero_linha','asc'); 
+
+  // Verifica se há necessidade de recarregar os dados da tela a partir
+  // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_celular          = $_REQUEST['w_inicio'];
+    $w_acessorios       = $_REQUEST['w_fim'];
+  } else {
+    $w_celular          = f($RS_Solic,'sq_celular');
+    $w_acessorios       = f($RS_Solic,'acessorios_entregues');
+  } 
+  Cabecalho();
+  head();
+  Estrutura_CSS($w_cliente);
+  ScriptOpen('JavaScript');
+  CheckBranco();
+  FormataData();
+  SaltaCampo();
+  FormataDataHora();
+  FormataValor();  
+  ValidateOpen('Validacao');
+  Validate('w_acessorios','Acessórios','','','2','1000','','0123456789.,');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
+  if ($w_troca>'') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  } else {
+    BodyOpenClean('onLoad=\'document.Form.w_acessorios.focus();\'');
+  }
+Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Exibe os dados da solicitação
+  ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('      <tr><td><table border=0 width="100%">');
+  ShowHTML('          <tr valign="top">');
+  ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'sq_siw_solicitacao').'</td>');
+  ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_sol')).'</td>');
+  ShowHTML('            <td>Setor solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_solic'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
+  ShowHTML('          <tr><td colspan="2">Justificativa:<b><br>'.f($RS_Solic,'justificativa').'</td>');
+  ShowHTML('      </table>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</table>');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'F');
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+  
+  ShowHTML('<tr><td>');
+  ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
+  ShowHTML('      <tr><td colspan="3"><font size="2"><b>DADOS DA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('      <tr><td colspan="3"><table id="Tudo" border="1" bgcolor="'.$conTrBgColor.'" cellspacing="0">');
+  ShowHTML('      <tr align="center">');
+  ShowHTML('        <td colspan="2"><b>Número Linha/ Dia</b></td>');
+  $w_atual = f($RS_Solic,'inicio');
+  for ($i=1; $i<=$w_dias; $i++) {
+    ShowHTML('        <td><b>'.substr(formataDataEdicao($w_atual),0,5).'</b></td>');
+    $w_atual = addDays($w_atual,1);
+  }
+  ShowHTML('      </tr>');
+  foreach($RS_Celular as $row) {
+    ShowHTML('      <tr>');
+    ShowHTML('        <td><input class="STR" type="radio" name="w_celular[]" value="'.f($row,'sq_celular').'">');
+    ShowHTML('        <td>'.f($row,'numero_linha'));
+    $w_atual = f($RS_Solic,'inicio');
+    for ($i=1; $i<=$w_dias; $i++) {
+      ShowHTML('        <td>&nbsp;</td>');
+    }
+    $w_atual = addDays($w_atual,1);
+  }
+  ShowHTML('      </table>');
+  ShowHTML('      <tr><td><b>A<u>c</u>essórios:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Relacione, se necessário, a lista de acessórios entregues com o aparelho.">'.$w_acessórios.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('      <tr><td align="center" colspan="3">');
+  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -1652,6 +1776,7 @@ function Grava() {
         $SQL = new dml_putSolicEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$_REQUEST['w_tramite'],null,
           'N',null,null,null,null,null);
       }
+      
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -1918,18 +2043,19 @@ function Main() {
     exit;
   }
   switch ($par) {
-  case 'INICIAL':       Inicial();        break;
-  case 'GERAL':         Geral();          break;
-  case 'VISUAL':        Visual();         break;
-  case 'EXCLUIR':       Excluir();        break;
-  case 'OPINIAO':       Opiniao();        break;
-  case 'DADOSEXECUCAO': DadosExecucao();  break;
-  case 'ENVIO':         Encaminhamento(); break;
-  case 'ANOTACAO':      Anotar();         break;
-  case 'EMITEOS':       EmiteOS();        break;
-  case 'INFORMAR':      Informar();       break;
-  case 'CONCLUIR':      Concluir();       break;
-  case 'GRAVA':         Grava();          break;
+  case 'INICIAL':         Inicial();        break;
+  case 'GERAL':           Geral();          break;
+  case 'VISUAL':          Visual();         break;
+  case 'EXCLUIR':         Excluir();        break;
+  case 'OPINIAO':         Opiniao();        break;
+  case 'DADOSEXECUCAO':   DadosExecucao();  break;
+  case 'ANALISECELULAR':  AnaliseCelular(); break;
+  case 'ENVIO':           Encaminhamento(); break;
+  case 'ANOTACAO':        Anotar();         break;
+  case 'EMITEOS':         EmiteOS();        break;
+  case 'INFORMAR':        Informar();       break;
+  case 'CONCLUIR':        Concluir();       break;
+  case 'GRAVA':           Grava();          break;
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

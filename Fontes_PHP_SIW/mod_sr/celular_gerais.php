@@ -33,6 +33,7 @@
     $w_recurso          = $_REQUEST['w_recurso'];
     $w_solic_recurso    = $_REQUEST['w_solic_recurso'];
     $w_envio            = $_REQUEST['w_envio'];
+    $w_tramite          = $_REQUEST['w_tramite'];
   } else {
     if ((strpos('AEV',$O)!==false) || $w_copia>'') {
       // Recupera os dados da solicitação
@@ -50,22 +51,9 @@
         $w_descricao        = f($RS,'descricao');
         $w_justificativa    = f($RS,'justificativa');
         $w_data_hora        = f($RS,'data_hora');
-        switch ($w_data_hora) {
-          case 1: 
-            $w_fim              = FormataDataEdicao(f($RS,'fim'));
-            break;
-          case 2: 
-            $w_fim              = substr(FormataDataEdicao(f($RS,'phpdt_fim'),3),0,-3);
-            break;
-          case 3: 
-            $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
-            $w_fim              = FormataDataEdicao(f($RS,'fim'));
-            break;
-        case 4:
-            $w_inicio           = substr(FormataDataEdicao(f($RS,'phpdt_inicio'),3),0,-3);
-            $w_fim              = substr(FormataDataEdicao(f($RS,'phpdt_fim'),3),0,-3);
-            break;
-        } 
+        $w_tramite          = f($RS,'sq_siw_tramite');
+        $w_inicio           = FormataDataEdicao(f($RS,'inicio')); 
+        $w_fim              = FormataDataEdicao(f($RS,'fim'));
         if ($w_exibe_recurso) {
           $sql = new db_getSolicRecursos; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
           foreach ($RS as $row) {$RS = $row; break;}
@@ -78,8 +66,8 @@
   } 
   
   // Recupera a unidade solicitante, que sempre é igual à unidade de lotação atual do beneficiário da solicitação
-  if (nvl($w_solicitante,'')!='') {
-    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,$w_solicitante,null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
+  if ($O=='I' || nvl($w_solicitante,'')!='') {
+    $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,nvl($w_solicitante,$w_usuario),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
     foreach ($RS_Benef as $row) {$RS_Benef=$row; break;}
     $w_sq_unidade = f($RS_Benef,'sq_unidade_benef');
     $w_nm_unidade = f($RS_Benef,'nm_unidade_benef');
@@ -143,7 +131,7 @@
         $w_Erro = Validacao($w_sq_solicitacao,$SG);
       } 
     } 
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');

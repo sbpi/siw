@@ -26,7 +26,7 @@ begin
        open p_result for 
           select a.sq_celular as chave, a.cliente, a.numero_linha, a.marca, a.modelo, a.sim_card, a.imei, a.ativo,
                  case a.ativo   when 'S' Then 'Sim' Else 'Não' end  nm_ativo,
-                 d.sq_siw_solicitacao, d.inicio, d.fim, d.conclusao, 
+                 d.sq_siw_solicitacao, d.inicio, d.fim, d.conclusao, d.pendencia,
                  d.sq_siw_tramite, d.nome as nm_tramite, d.ativo as st_tramite, d.sigla as sg_tramite,
                  d.sq_solic, d.nm_solic, d.nm_res_solic,
                  d.sq_unid, d.nm_unid, d.sg_unid,
@@ -74,7 +74,8 @@ begin
                                 )                         d on (a.sq_celular           = d.sq_celular)
            where a.cliente    = p_cliente
              and (p_chave     is null or (p_chave     is not null and a.sq_celular       = p_chave))
-             and (p_ativo     is null or (p_ativo     is not null and a.ativo            = p_ativo))  
+             and (p_pendencia is null or (p_pendencia is not null and (d.pendencia is null or d.pendencia = p_pendencia)))
+             and (p_ativo     is null or (p_ativo     is not null and a.ativo            = p_ativo))
              and (p_numero    is null or (p_numero    is not null and a.numero_linha     = p_numero));
    End If;
 end SP_GetCelular;

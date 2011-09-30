@@ -538,10 +538,14 @@ begin
    w_beneficiario := 0;
  End If;
  
- -- A condição abaixo verifica se:
- -- 1) o trâmite atual pode ser cumprido pelo cumpridor do trâmite anterior
- -- 2) o trâmite atual pode ser cumprido pelo beneficiário da solicitação
- If w_anterior <> p_usuario and w_beneficiario <> p_usuario Then 
+ -- Solicitação de celular na fase de ciência pelo beneficiário deve ser cumprida pelo beneficiário
+ if w_sigla_situacao = 'CB' and w_sigla = 'SRSOLCEL' and w_solicitante = p_usuario Then
+    Result := Result + 16;
+ Elsif w_anterior <> p_usuario and w_beneficiario <> p_usuario Then 
+   -- A condição abaixo verifica se:
+   -- 1) o trâmite atual pode ser cumprido pelo cumpridor do trâmite anterior
+   -- 2) o trâmite atual pode ser cumprido pelo beneficiário da solicitação
+
    -- Verifica se o usuário tem permissão para cumprir o trâmite atual da solicitação
    -- Uma das possibilidades é o trâmite ser cumprido pelo titular/substituto
    -- da unidade do cadastrador ou da solicitação ou usuários que tenham permissão
