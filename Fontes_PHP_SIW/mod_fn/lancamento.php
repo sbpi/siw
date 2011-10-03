@@ -3652,6 +3652,9 @@ function EncAutomatico() {
   $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_tramite);
   $w_sg_tramite = f($RS,'sigla');
 
+  $w_ativo = f($RS, 'ativo');
+  
+
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
     $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms,$w_tramite,$w_chave,'DEVFLUXO',null);
@@ -3661,7 +3664,7 @@ function EncAutomatico() {
   }
 
   // Se for envio, executa verificações nos dados da solicitação
-  if ($O=='V') $w_erro = ValidaLancamento($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
+  if ($O=='V') echo $w_erro = ValidaLancamento($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   
   Cabecalho();
   head();
@@ -3732,7 +3735,8 @@ function EncAutomatico() {
       }
     } else {
       ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+
+      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo == 'N') {
         ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
         ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
       } else {
