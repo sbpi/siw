@@ -66,8 +66,9 @@ begin
         If crec.interno = 'N' Then
            -- Recupera os dados do trâmite de envio para destino externo
            select b.* into w_tramite 
-             from siw_solicitacao        a
-                  inner join siw_tramite b on (b.sq_menu = b.sq_menu)
+             from siw_solicitacao         a
+                  inner join siw_tramite  b on (a.sq_menu = b.sq_menu)
+                  inner join pa_documento c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
              where b.sigla              = 'DE'
                and a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
              
