@@ -825,12 +825,12 @@ function Documento(){
     }
     ShowHTML('      <tr><td><b>Vinculações:</b><br>');
     $sql = new db_getMenuList; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, 'X', $chaveAux, null);
-    $RS1 = SortArray($RS1, 'nome', 'asc');
+    $RS1 = SortArray($RS1, 'nm_modulo', 'asc', 'nome', 'asc');
     ShowHTML('        <tr>');
     if (count($RS1) > 0) {
       $i = 2;
       foreach ($RS1 as $row) {
-        if (strpos('PA,DM,PR,SR,GP',f($row,'sg_modulo'))===false) {
+        if (strpos('FN,CO,AC,PD',f($row,'sg_modulo'))!==false) {
           if (!($i % 2)) ShowHTML('        <tr>');
           $l_marcado = 'N';
           $l_chave = $w_vinculo . ',';
@@ -1051,12 +1051,12 @@ function Lancamento() {
     if ($w_qt_filhos==0) {
       ShowHTML('      <tr><td><b>Vinculações:</b><br>');
       $sql = new db_getMenuList; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, 'X', $chaveAux, null);
-      $RS1 = SortArray($RS1, 'nome', 'asc');
+      $RS1 = SortArray($RS1, 'nm_modulo', 'asc', 'nome', 'asc');
       ShowHTML('        <tr>');
       if (count($RS1) > 0) {
         $i = 2;
         foreach ($RS1 as $row) {
-          if (strpos('PA,DM,PR,SR,GP',f($row,'sg_modulo'))===false) {
+          if (strpos('FN,CO,AC,PD',f($row,'sg_modulo'))!==false) {
             if (!($i % 2)) ShowHTML('        <tr>');
             $l_marcado = 'N';
             $l_chave = $w_vinculo . ',';
