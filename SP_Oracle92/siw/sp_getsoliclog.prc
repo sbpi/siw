@@ -565,7 +565,7 @@ begin
                    b.interno, b.pessoa_externa, b.unidade_externa,
                    to_char(b.envio, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_envio, to_char(b.recebimento, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_receb,
                    null as sq_siw_arquivo, null as caminho, null as tipo, null as tamanho, 
-                   to_char(coalesce(b.recebimento, b.envio), 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pa_documento_log                   b
                    inner    join pa_tipo_despacho     b1 on (b.sq_tipo_despacho   = b1.sq_tipo_despacho)
                    inner    join co_pessoa            b2 on (b.cadastrador        = b2.sq_pessoa)
