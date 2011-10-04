@@ -132,19 +132,19 @@ function Tramitacao() {
   global $w_Disabled;
 
   // Recupera as variáveis utilizadas na filtragem
-  $p_protocolo = $_REQUEST['p_protocolo'];
-  $p_chave = $_REQUEST['p_chave'];
-  $p_chave_aux = $_REQUEST['p_chave_aux'];
-  $p_prefixo = substr($p_protocolo, 0, 5);
-  $p_numero = substr($p_protocolo, 6, 6);
-  $p_ano = substr($p_protocolo, 13, 4);
-  $p_unid_autua = $_REQUEST['p_unid_autua'];
-  $p_unid_receb = $_REQUEST['p_unid_receb'];
+  $p_protocolo      = $_REQUEST['p_protocolo'];
+  $p_chave          = $_REQUEST['p_chave'];
+  $p_chave_aux      = $_REQUEST['p_chave_aux'];
+  $p_prefixo        = substr($p_protocolo, 0, 5);
+  $p_numero         = substr($p_protocolo, 6, 6);
+  $p_ano            = substr($p_protocolo, 13, 4);
+  $p_unid_autua     = $_REQUEST['p_unid_autua'];
+  $p_unid_receb     = $_REQUEST['p_unid_receb'];
+  $p_nu_guia        = $_REQUEST['p_nu_guia'];
+  $p_ano_guia       = $_REQUEST['p_ano_guia'];
+  $p_ini            = $_REQUEST['p_ini'];
+  $p_fim            = $_REQUEST['p_fim'];
   if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))===false) $p_unid_receb = $_SESSION['LOTACAO'];
-  $p_nu_guia = $_REQUEST['p_nu_guia'];
-  $p_ano_guia = $_REQUEST['p_ano_guia'];
-  $p_ini = $_REQUEST['p_ini'];
-  $p_fim = $_REQUEST['p_fim'];
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
@@ -885,27 +885,19 @@ function Main() {
   extract($GLOBALS);
   global $w_Disabled;
   switch ($par) {
-    case 'ETIQUETA': Etiqueta();
-      break;
-    case 'EMITIRETIQUETA': EmitirEtiqueta();
-      break;
-    case 'CONTEUDOCAIXA': ConteudoCaixa();
-      break;
-    case 'TRAMITE': Tramitacao();
-      break;
-    case 'TRANSFERENCIA': Transferencia();
-      break;
-    case 'EMITIRGR': EmitirGR();
-      break;
-    case 'EMITIRGT': EmitirGT();
-      break;
-    case 'EMITIRGF': EmitirGF();
-      break;
-    case 'EMITIRFE': EmitirFE();
-      break;
+    case 'ETIQUETA':        Etiqueta();       break;
+    case 'EMITIRETIQUETA':  EmitirEtiqueta(); break;
+    case 'CONTEUDOCAIXA':   ConteudoCaixa();  break;
+    case 'TRAMITE':         Tramitacao();     break;
+    case 'TRANSFERENCIA':   Transferencia();  break;
+    case 'EMITIRGR':        EmitirGR();       break;
+    case 'EMITIRGT':        EmitirGT();       break;
+    case 'EMITIRGF':        EmitirGF();       break;
+    case 'EMITIRFE':        EmitirFE();       break;
     default:
       Cabecalho();
       ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+      ShowHTML('</head>');
       BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</FONT></B>');
       ShowHTML('<HR>');

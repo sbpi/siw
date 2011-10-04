@@ -4051,6 +4051,9 @@ function BuscaProtocolo() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
+    Validate('l_pais', 'Prefixo', '', '', '2', '6', '', '0123456789');
+    Validate('l_regiao', 'Número', '', '', '1', '7', '', '0123456789');
+    Validate('l_cidade', 'Ano', '', '', '4', '4', '', '0123456789');
     if (nvl($chaveAux,'')!='') {
       Validate('l_uorg_resp', 'Unidade de posse', 'SELECT', '1', '1', '18', '', '1');
     }
@@ -4389,7 +4392,7 @@ function Grava() {
         // Recupera os dados para montagem correta do menu
         $sql = new db_getMenuData;
         $RS1 = $sql->getInstanceOf($dbms, $w_menu);
-        ShowHTML('  parent.menu.location=\'' . montaURL_JS('', 'menu.php?par=ExibeDocs&O=A&w_chave=' . $w_chave_nova . '&w_documento=' . $w_codigo . '&R=' . $R . '&SG=' . f($RS1, 'sigla') . '&TP=' . $TP . MontaFiltro('GET')) . '\';');
+        ShowHTML('  parent.menu.location=\'' . montaURL_JS('', 'menu.php?par=ExibeDocs&O=A&w_chave=' . $w_chave_nova . '&w_documento=' . $w_codigo . '&R=' . $R . '&SG=' . f($RS1, 'sigla') . '&TP=' . $TP) . '\';');
       } elseif ($O == 'E') {
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '\';');
       } else {
@@ -4556,7 +4559,7 @@ function Grava() {
           }
           ScriptClose();
           exit;
-        } else if (nvl($_REQUEST['w_pessoa_destino'], '') != '') {
+        } elseif (nvl($_REQUEST['w_pessoa_destino'], '') != '') {
           // Se o destino for pessoa jurídica, pede unidade da pessoa
           $sql = new db_getBenef;
           $RS_Destino = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_pessoa_destino'], null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -4604,8 +4607,7 @@ function Grava() {
                 $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
                 $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'], $_REQUEST['w_unidade_externa'],
                 &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
-        // Envia e-mail comunicando a tramitação
-        // SolicMail($_REQUEST['w_chave'],2);
+
         // Grava baseline
         $sql = new db_getSolicData;
         $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PADCAD');
@@ -4613,27 +4615,15 @@ function Grava() {
           $w_html = VisualDocumento($_REQUEST['w_chave'], 'T', $_SESSION['SQ_PESSOA'], $P1, 'WORD', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'N');
           CriaBaseLine($_REQUEST['w_chave'], $w_html, f($RS_Menu, 'nome'), f($RS, 'sq_siw_tramite'));
         }
-/*        ScriptOpen('JavaScript');
-        if ($P1 == 1 && nvl($_REQUEST['w_copia'],'')=='N') {
-          // Se for envio da fase de cadastramento, remonta o menu principal
-          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRAM&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
-        } else {
-          $sql = new db_getLinkData;
-          $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
-          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
-        }
-        ScriptClose();
- */
+        
         ScriptOpen('JavaScript');
         if (nvl($w_nu_guia, '') == '') {
-          ShowHTML('  alert(\'O protocolo já está disponível na sua unidade.\\nSe unidade de origem e de destino são iguais, o recebimento é automático!\');');
+          ShowHTML('  alert("O protocolo já está disponível na sua unidade.\\nSe unidade de origem e de destino são iguais, o recebimento é automático!");');
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
           ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=PADCAD&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
         } else {
-          ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');
-          $sql = new db_getLinkData;
-          $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
-          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');
+          ShowHTML('  alert("Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.");');
+          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=RELPATRAM&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia) . '\';');
         }
         ScriptClose();
       }
@@ -4737,7 +4727,7 @@ function Grava() {
           $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $SG);
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS1, 'link') . '&O=&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG) . '\';');
         } else {
-          ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');
+          ShowHTML('  alert("Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.");');
           $sql = new db_getLinkData;
           $RS = $sql->getInstanceOf($dbms, $w_cliente, 'RELPATRAM');
           ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . '&p_unid_receb=' . $w_sq_unidade . '&p_nu_guia=' . $w_nu_guia . '&p_ano_guia=' . $w_ano_guia . MontaFiltro('GET')) . '\';');

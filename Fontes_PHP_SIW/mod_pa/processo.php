@@ -993,7 +993,7 @@ function Autuar() {
   AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
   ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_protocolo" value="' . f($RS, 'protocolo') . '">');
+  ShowHTML('<INPUT type="hidden" name="w_protocolo" value="' . f($RS, 'protocolo_completo') . '">');
   ShowHTML('<tr><td bgcolor="' . $conTrBgColorLightBlue2 . '"" style="border: 2px solid rgb(0,0,0);">');
   ShowHTML('  Orientação:<ul>');
   ShowHTML('  <li>Verifique se realmente deseja autuar este documento, transformando-o em processo.');
@@ -2292,10 +2292,14 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
       $SQL = new dml_putDocumentoAutua;
       $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_unidade_autua'], $_SESSION['SQ_PESSOA'], $_REQUEST['w_descricao']);
-
+      $w_protocolo = $_REQUEST['w_protocolo'];
+      $w_prefixo  = substr($_REQUEST['w_protocolo'], 0, 5);
+      $w_numero   = substr($_REQUEST['w_protocolo'], 6, 6);
+      $w_ano      = substr($_REQUEST['w_protocolo'], 13, 4);
+      
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Autuação realizada com sucesso!\\nImprima a etiqueta na próxima tela.\');');
-      ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=P&R=' . $R . '&SG=RELPAETIQ&TP=' . RemoveTP(RemoveTP($TP)) . '&p_protocolo=' . $_REQUEST['w_protocolo']) . '\';');
+      ShowHTML('  alert("Autuação realizada com sucesso!\\nImprima a etiqueta na próxima tela.");');
+      ShowHTML('  parent.menu.location="'.montaURL_JS(null, $conRootSIW .'menu.php?par=ExibeDocs&O=P&R='.$R.'&SG=RELPAETIQ&p_prefixo='.$w_prefixo.'&p_numero='.$w_numero.'&p_ano='.$w_ano.'&TP='.RemoveTP(RemoveTP($TP))).'";');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
