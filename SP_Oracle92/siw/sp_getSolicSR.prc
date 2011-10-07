@@ -106,7 +106,7 @@ begin
                 b5.sq_pais       as sq_pais_cel,   b5.inicio_real inicio_real_cel, b5.fim_real fim_real_cel,
                 b5.pendencia     as pendencia_cel, b5.acessorios_entregues, b5.acessorios_pendentes,
                 b51.nome         as nm_pais_cel,
-                b52.numero_linha as nr_cel,
+                b52.numero_linha as nr_cel,        b52.acessorios,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,

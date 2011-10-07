@@ -865,13 +865,20 @@ function Geral() {
     $sql = new db_getMenuData; $RS_Relac = $sql->getInstanceOf($dbms, $w_sq_menu_relac);
   }
 
-  // Recupera as possibilidades de vinculação financeira
-  $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
-  $financ = count($RS_Financ);
-  if (count($RS_Financ) == 1) {
-    foreach ($RS_Financ as $row) { $RS_Financ = $row; break; }
+// Recupera as possibilidades de vinculação financeira
+  if (nvl($w_chave_pai, '') != '') {
+    $sql = new db_getPD_Financeiro;
+    $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
+    $financ = count($RS_Financ);
+    if (count($RS_Financ) == 1) {
+      foreach ($RS_Financ as $row) {
+        $RS_Financ = $row;
+        break;
+      }
+    }
+  }else{
+    $financ = 0;
   }
-  
   Cabecalho();
   head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -916,12 +923,12 @@ function Geral() {
     if ($O == 'I' && $w_cadgeral == 'S')
       Validate('w_sq_prop_nm', 'Beneficiário', 'HIDDEN', 1, 5, 100, '1', '1');
     if ($w_chave_pai > '' && $w_passagem == 'S') {
-      if ($financ > 1) {
+      if ($financ >= 1) {
         Validate('w_rubrica', 'Rubrica', 'SELECT', 1, 1, 18, '', '1');
         Validate('w_lancamento', 'Tipo de lançamento', 'SELECT', 1, 1, 18, '', '1');
       }
     }
-    if ($financ == 1) {
+    if ($financ <= 1) {
       ShowHTML('  if (theForm.w_financeiro.value=="") {');
       ShowHTML('     alert("Vinculações orçamentárias para pagamento de viagens não definidas no projeto indicado!");');
       ShowHTML('     return false;');
@@ -1082,7 +1089,7 @@ function Geral() {
         SelecaoTipoLancamento('<u>T</u>ipo de lancamento:', 'T', 'Selecione na lista o tipo de lançamento adequado.', $w_lancamento, null, $w_cliente, 'w_lancamento', 'PDSV' . str_pad($w_chave_pai, 10, '0', STR_PAD_LEFT) . str_pad($w_rubrica, 10, '0', STR_PAD_LEFT) . 'B', null, 3);
       }
     }
-    if ($financ==1) ShowHTML('<INPUT type="hidden" name="w_financeiro" value="' . f($RS_Financ, 'chave') . '">');
+    if ($financ <= 1) ShowHTML('<INPUT type="hidden" name="w_financeiro" value="' . f($RS_Financ, 'chave') . '">');
     ShowHTML('      </tr></table>');
 
     if ($O == 'W') {

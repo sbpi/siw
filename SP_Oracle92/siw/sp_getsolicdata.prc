@@ -913,7 +913,7 @@ begin
                 b52.sq_celular,       b52.numero_linha,              b52.marca,
                 b51.nome as nm_pais_cel,
                 b52.modelo,           b52.sim_card,                  b52.imei,
-                b52.ativo,
+                b52.acessorios,       b52.ativo as at_celular,
                 to_char(b3.horario_saida,'dd/mm/yyyy, hh24:mi:ss')   phpdt_horario_saida,
                 to_char(b3.horario_chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_horario_chegada,
                 case b3.procedimento when 0 then 'Não Informado' 
@@ -930,6 +930,7 @@ begin
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
+                i1.nome_resumido nm_cad,
                 i.nome_resumido nm_exec,
                 j.nome_resumido nm_recebedor,
                 case when l.placa is null 
@@ -967,6 +968,7 @@ begin
                                                                   )
                   inner      join co_pessoa                 f  on (b.solicitante         = f.sq_pessoa)
                     left     join sg_autenticacao           f1 on (f.sq_pessoa           = f1.sq_pessoa)
+                  left       join co_pessoa                 i1 on (b.cadastrador         = i1.sq_pessoa)
                   left       join co_pessoa                 i  on (b.executor            = i.sq_pessoa)
                   left       join co_pessoa                 j  on (b.recebedor           = j.sq_pessoa)                  
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)

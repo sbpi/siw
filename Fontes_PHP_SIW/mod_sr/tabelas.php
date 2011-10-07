@@ -112,12 +112,7 @@ function Abastecimento() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  head();
-  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
-  if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
-  }
-  Estrutura_CSS($w_cliente);
+
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
@@ -145,7 +140,11 @@ function Abastecimento() {
     $w_litros             = f($RS,'litros');
     $w_valor              = f($RS,'valor'); 
     $w_local              = f($RS,'local');    
-  } if (!(strpos('IAE',$O)===false)) {
+  }
+  
+  Cabecalho();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
     CheckBranco();    
@@ -459,21 +458,10 @@ function Celular() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  head();
-  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de celulares</TITLE>');
-  if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
-  }
-  Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
+
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    $w_numero       = $_REQUEST['w_numero'];
-    $w_marca        = $_REQUEST['w_marca'];
-    $w_modelo       = $_REQUEST['w_modelo']; 
-    $w_card         = $_REQUEST['w_card'];
-    $w_imei         = $_REQUEST['w_imei'];
-    $w_ativo        = $_REQUEST['w_ativo'];    
+    extract($_POST);
   } elseif ($O=='L') {
     $sql = new db_getCelular; $RS = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,null,null,null,null, null,null);
     if (Nvl($p_ordena,'') > '') {
@@ -489,12 +477,39 @@ function Celular() {
     $w_marca          = f($RS,'marca');
     $w_modelo         = f($RS,'modelo'); 
     $w_card           = f($RS,'sim_card');
-    $w_imei           = f($RS,'imei'); 
-    $w_ativo          = f($RS,'ativo');       
-  } if (!(strpos('IAE',$O)===false)) {
+    $w_imei           = f($RS,'imei');
+    $w_ativo          = f($RS,'ativo');
+    $w_acessorios     = f($RS,'acessorios');
+    $w_bloqueio       = f($RS,'bloqueado');
+    $w_motivo         = f($RS,'motivo_bloqueio');
+    $w_inicio         = ($w_bloqueio=='N') ? '' : formataDataEdicao(f($RS,'inicio_bloqueio'));
+    $w_fim            = ($w_bloqueio=='S') ? '' : formataDataEdicao(f($RS,'fim_bloqueio'));
+  } 
+  
+  Cabecalho();
+  head();
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de celulares</TITLE>');
+  if ($P1==2) {
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  }
+  Estrutura_CSS($w_cliente);
+  if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
+    checkBranco();
     modulo();
+    saltaCampo();
+    FormataData();
     FormataValor();
+    ShowHTML('  function bloqueio() {');
+    ShowHTML('    var theForm = document.Form;');
+    ShowHTML('    if (theForm.w_bloqueio[0].checked) {');
+    ShowHTML('      theForm.w_inicio.className="STIO";');
+    ShowHTML('      theForm.w_motivo.className="STIO";');
+    ShowHTML('    } else {');
+    ShowHTML('      theForm.w_inicio.className="STI";');
+    ShowHTML('      theForm.w_motivo.className="STI";');
+    ShowHTML('    }');
+    ShowHTML('  } ');
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_numero','Número da linha','1','1','8','20','1','1');
@@ -502,6 +517,18 @@ function Celular() {
       Validate('w_modelo','Modelo','1','1','2','40','1','1');       
       Validate('w_card','SIM CARD','1','1','1','25','1',''); 
       Validate('w_imei','IMEI','1','1','1','25','1','1');       
+      Validate('w_acessorios','Acessórios','1','1','5','1000','1','1');
+      Validate('w_inicio','Data de início do bloqueio','DATA','','10','10','','0123456789/'); 
+      ShowHTML('  if (theForm.w_bloqueio[0].checked && theForm.w_inicio.value=="") {');
+      ShowHTML('    alert("Indique o início do bloqueio!"); ');
+      ShowHTML('    theForm.w_inicio.focus(); ');
+      ShowHTML('    return false; ');
+      ShowHTML('  } else if (theForm.w_bloqueio[1].checked && theForm.w_inicio.value!="") {');
+      ShowHTML('    alert("Indique o início do bloqueio somente se o aparelho estiver bloqueado para empréstimo!"); ');
+      ShowHTML('    theForm.w_inicio.focus(); ');
+      ShowHTML('    return false; ');
+      ShowHTML('  } ');
+      Validate('w_motivo','Motivo do bloqueio','1','','5','1000','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -517,21 +544,23 @@ function Celular() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
   if ($w_troca>'') {
-    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();  bloqueio();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad="document.Form.w_numero.focus()";');
+    BodyOpen('onLoad="document.Form.w_numero.focus(); bloqueio();"');
   } elseif ($O=='L') {
     BodyOpen('onLoad="this.focus()";');
   } else{
-    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus(); bloqueio();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
+  
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    ShowHTML('    [<a accesskey="I" class="ss" href="javascript:window.status.value;" onClick="window.open(\''.$conRootSIW.$w_dir.'geral.php?par=DispCelular&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Mapa de Disponibilidade de Celular&SG='.$SG.'\',\'Indicador\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');">MAPA DE DISPONIBILIDADE DE CELULAR</a>]');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -541,23 +570,29 @@ function Celular() {
     ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('SIM CARD','sim_card').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('IMEI','imei').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Acessórios','acessorios').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Bloqueado','bloqueado').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Início bloqueio','inicio_bloqueio').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b> Operações </td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS,(($P3-1)*$P4),$P4);
       foreach($RS1 as $row) { 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="left">'.f($row,'numero_linha').'</td>');
+        ShowHTML('        <td nowrap>'.f($row,'numero_linha').'</td>');
         ShowHTML('        <td>'.f($row,'marca').'</td>');
         ShowHTML('        <td>'.f($row,'modelo').'</td>');
         ShowHTML('        <td>'.f($row,'sim_card').'</td>');
         ShowHTML('        <td>'.f($row,'imei').'</td>');
+        ShowHTML('        <td>'.f($row,'acessorios').'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'bloqueado')).'</td>');
+        ShowHTML('        <td align="center">'.((f($row,'bloqueado')=='N') ? '&nbsp;' : formataDataEdicao(f($row,'inicio_bloqueio'),5)).'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.f($row,'cliente').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="numero">AL </A>&nbsp');
@@ -594,6 +629,11 @@ function Celular() {
     ShowHTML('        <td><b><u>S</u>IM CARD:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_card" class="STI" SIZE="25" MAXLENGTH="25" VALUE="'.$w_card.'"></td>');
     ShowHTML('        <td><b><u>I</u>MEI:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_imei" class="STI" SIZE="25" MAXLENGTH="25" VALUE="'.$w_imei.'"></td>');
     ShowHTML('      </tr>');
+    ShowHTML('      <tr><td><b>A<U>c</U>essórios:<br><TEXTAREA ACCESSKEY="C" '.$w_Disabled.' class="sti" name="w_acessorios" rows="5" cols=75>'.$w_acessorios.'</textarea></td>');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('<b>Bloqueado?</b>',$w_bloqueio,'w_bloqueio',null,null,'onclick="bloqueio();"');
+    ShowHTML('        <td><b><u>D</u>esde:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'"onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data do abastecimento.">'.ExibeCalendario('Form','w_inicio').'</td>');
+    ShowHTML('      <tr><td><b><U>M</U>otivo do bloqueio:<br><TEXTAREA ACCESSKEY="M" '.$w_Disabled.' class="sti" name="w_motivo" rows="5" cols=75>'.$w_motivo.'</textarea></td>');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
@@ -626,7 +666,7 @@ function Celular() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
-  ShowHTML('</center>');
+  Rodape();
 } 
 
 // =========================================================================
@@ -1239,7 +1279,8 @@ function Grava() {
           }
         }
         $SQL = new dml_putCelular; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_numero'],$_REQUEST['w_marca'],
-                $_REQUEST['w_modelo'], $_REQUEST['w_card'],$_REQUEST['w_imei'], $_REQUEST['w_ativo']);
+                $_REQUEST['w_modelo'], $_REQUEST['w_card'],$_REQUEST['w_imei'], $_REQUEST['w_acessorios'], $_REQUEST['w_bloqueio'],
+                $_REQUEST['w_inicio'], $_REQUEST['w_motivo'], $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

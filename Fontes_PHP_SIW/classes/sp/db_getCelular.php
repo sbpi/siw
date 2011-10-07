@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getCelular {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_numero, $p_pendencia, $p_ativo, $p_solic, $p_inicio, $p_fim, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_numero, $p_pendencia, $p_ativo, $p_solic, $p_ini, $p_fim, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCelular';
      $params=array('p_cliente'                   =>array($p_cliente,                        B_INTEGER,        18),
                    'p_chave'                     =>array(tvl($p_chave),                     B_INTEGER,        18),

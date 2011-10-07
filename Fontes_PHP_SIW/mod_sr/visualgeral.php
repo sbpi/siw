@@ -46,6 +46,9 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
       $l_html.=chr(13).'   <tr><td width="20%"><b>Previsão de retorno:</b></td>';
       $l_html.=chr(13).'       <td><b><b>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</b></td></tr>';
     }
+  } elseif (Nvl(f($RS1,'sigla'),'')=='SRSOLCEL') {
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Período solicitado:</b></td>';
+    $l_html.=chr(13).'       <td>'.FormataDataEdicao(f($RS1,'inicio'),5).' a '.FormataDataEdicao(f($RS1,'fim'),5).'</font></tr>';
   } else {
     switch (f($RS1,'data_hora')) {
     case 1 :
@@ -119,7 +122,27 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   }
 
   // Dados da execução, exceto para transporte
-  if (f($RS1,'or_tramite')>1 && Nvl(f($RS1,'sigla'),'')!='SRTRANSP') {
+  if (f($RS1,'or_tramite')>=3 && Nvl(f($RS1,'sigla'),'')=='SRSOLCEL') {
+    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>DADOS DA EXECUCÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Celular:</b></font></td><td>'.f($RS1,'numero_linha').'</font></td></tr>';
+    $l_html.=chr(13).'   <tr><td><b>Acessórios entregues:</b></font></td><td>'.nvl(f($RS1,'acessorios_entregues'),'---').'</font></td></tr>';
+    if (nvl(f($RS1,'inicio_real'),'')!='') {
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Início do empréstimo:</b></font></td><td>'.formataDataEdicao(f($RS1,'inicio_real'),5);
+      if (nvl(f($RS1,'observacao'),'')!='') {
+        $l_html.='. Observações: '.crlf2br(f($RS1,'observacao'));
+      }
+    }
+    if (nvl(f($RS1,'fim_real'),'')!='') {
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Término do empréstimo:</b></font></td><td>'.formataDataEdicao(f($RS1,'fim_real'),5);
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Entrega com pendência de acessórios? </b></font></td><td>'.retornaSimNao(f($RS1,'pendencia'));
+      if (nvl(f($RS1,'acessorios_pendentes'),'')!='') {
+        $l_html.=': '.crlf2br(f($RS1,'acessorios_pendentes'));
+      }
+      if (nvl(f($RS1,'descricao'),'')!='') {
+        $l_html.=chr(13).'   <tr><td width="20%"><b>Observações sobre a entrega:</b></font></td><td>'.crlf2br(f($RS1,'descricao'));
+      }
+    }
+  } elseif (f($RS1,'or_tramite')>1 && Nvl(f($RS1,'sigla'),'')!='SRTRANSP') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA EXECUCÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td width="20%"><b>Previsão de término:</b></font></td><td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
     if (nvl(f($RS1,'conclusao'),'')=='') {
@@ -173,68 +196,28 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     }
     if (nvl(f($RS1,'observacao'),'')!='') $l_html.=chr(13).'   <tr valign="top"><td><b>Observações:</b></font></td><td>'.crlf2br(f($RS1,'observacao')).'</font></td></tr>';
   } 
-  // Encaminhamentos
-  $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-  $sql = new db_getSolicLog; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,'LISTA');
-  $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
-  $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
-  $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-  $l_html.=chr(13).'       <tr valign="top">';
-  $l_html.=chr(13).'         <td align="center"><b>Data</b></td>';
-  $l_html.=chr(13).'         <td align="center"><b>Ocorrência/Anotação</b></td>';
-  $l_html.=chr(13).'         <td align="center"><b>Responsável</b></td>';
-  $l_html.=chr(13).'         <td align="center"><b>Fase</b></td>';
-  $l_html.=chr(13).'       </tr>';
-  $i=0;
-  if (count($RS1)==0) {
-    $l_html.=chr(13).'      <tr><td colspan=4 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
-  } else {
-    $i = 0;
-    foreach ($RS1 as $row1) {
-      $l_html.=chr(13).'      <tr valign="top">';
-      if ($i==0) {
-        $l_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
-        if ($w_tramite_ativo=='S') {
-          // Recupera os responsáveis pelo tramite
-          $sql = new db_getTramiteResp; $RS2 = $sql->getInstanceOf($dbms,$l_chave,null,null);
-          $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
-          $l_html .= chr(13).'        <td colspan=4>Responsáveis pelo trâmite: <b>';
-          if (count($RS2)>0) {
-            $j = 0;
-            foreach($RS2 as $row2) {
-              if ($j==0) {
-                $w_tramite_resp = f($row2,'nome_resumido');
-                if ($l_tipo!='WORD') $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-                else          $l_html .= chr(13).$w_tramite_resp;
-                $j = 1;
-              } else {
-                if (strpos($w_tramite_resp,f($row,'nome_resumido'))===false) {
-                  if ($l_tipo!='WORD') $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-                  else                 $l_html .= chr(13).', '.f($row2,'nome_resumido');
-                }
-                $w_tramite_resp .= f($row2,'nome_resumido');
-              }
-            } 
-          } 
-          $l_html .= chr(13).'</b></td>';
-        } 
-        $l_html.=chr(13).'      <tr valign="top">';
-        $i=1;
-      }
-      $l_html.=chr(13).'        <td nowrap align="center">'.FormataDataEdicao(f($row1,'phpdt_data'),3).'</td>';
-      if (Nvl(f($row1,'caminho'),'')>'') {
-        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row1,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row1,'tipo').' - '.round(f($row1,'tamanho')/1024,1).' KB',null)).'</td>';
-      } else {
-        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---')).'</td>';
-      }
-      if($l_tipo!='WORD') $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'responsavel')).'</td>';
-      else                $l_html.=chr(13).'        <td nowrap>'.f($row1,'responsavel').'</td>';
-      if ((Nvl(f($row1,'chave_log'),'')>'')  && (Nvl(f($row1,'destinatario'),'')==''))   $l_html.=chr(13).'        <td nowrap>Anotação</td>';
-      else $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row1,'tramite'),'---').'</td>';
-      $l_html.=chr(13).'      </tr>';
+
+  $w_erro = ValidaGeral($w_cliente,$l_chave,$l_sg,null,null,null,null);
+  if ($w_erro>'') {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESULTADO DA VALIDAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2">';
+    if (substr($w_erro,0,1)=='0') {
+      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> As pendências abaixo devem ser resolvidas antes do encaminhamento para as fases posteriores à atual.</font>';
+    } elseif (substr($w_erro,0,1)=='1') {
+      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> As pendências abaixo devem ser resolvidas antes do encaminhamento para as fases posteriores à atual. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de viagens.</font>';
+    } else {
+      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.</font>';
     } 
-    $l_html.=chr(13).'         </table></td></tr>';
-  }
+    $l_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
+    $l_html.=chr(13).'  </td></tr>';
+  } 
+
+  // Encaminhamentos
+  $l_html.=chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=2><table border=0 width="100%"><tr><td>';
+  include_once($w_dir_volta.'funcoes/exibeLog.php');
+  $l_html .= exibeLog($l_chave,$O,$w_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+  $l_html.=chr(13).'        </table></td></tr>';
+
   $l_html.=chr(13).'         </table>';
   return $l_html;
 }

@@ -521,7 +521,7 @@ function Inicial() {
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do lançamento">AL</A>&nbsp');
               } 
               ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da solicitação.">EX</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
+              if (f($RS_Menu,'sigla')!='SRSOLCEL') ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
             } elseif ($P1==2 || $P1==6) {
               if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S' || f($row,'acesso')>15) {
                 // Se for execução
@@ -535,8 +535,20 @@ function Inicial() {
                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DadosExecucao&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DADEXEC'.MontaFiltro('GET').'" title="Informar dados da execucao.">IN</A>&nbsp');
                   }
                 }
+                if (f($row,'sg_tramite')=='DE') {
+                  if ($SG=='SRSOLCEL') {
+                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TermoCelular&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emitir o termo de responsabilidade do empréstimo." target="OS">TR</A>&nbsp');
+                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'EntregaCelular&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ENTCEL'.MontaFiltro('GET').'" title="Registrar a entrega do celular ao beneficiário da solicitação.">IN</A>&nbsp');
+                  }
+                }
+                if (f($row,'sg_tramite')=='AD') {
+                  if ($SG=='SRSOLCEL') {
+                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TermoCelular&R='.$w_pagina.$par.'&O=D&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emitir o termo de devolução." target="OS">TD</A>&nbsp');
+                    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DevolCelular&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=DEVCEL'.MontaFiltro('GET').'" title="Registrar a devolução do celular.">IN</A>&nbsp');
+                  }
+                }
                 if (f($row,'sg_tramite')=='EE') {
-                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-la.">AN</A>&nbsp');
+                  if ($SG!='SRSOLCEL') ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-la.">AN</A>&nbsp');
                   if ($SG=='SRTRANSP') {
                     // link para informar o motorista e o carro
                     ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&O=F&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Informar dados do atendimento.">IN</A>&nbsp');
@@ -549,7 +561,7 @@ function Inicial() {
                       } else {
                         ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'EmiteOS&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite Ordem de Serviço." target="OS">OS</A>&nbsp');
                       }
-                    } else {
+                    } elseif ($SG!='SRSOLCEL') {
                       ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'EmiteOS&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite Ordem de Serviço." target="OS">OS</A>&nbsp');
                     }
                   }
@@ -774,6 +786,46 @@ function Visual() {
 } 
 
 // =========================================================================
+// Rotina de termos de responsabilidade de celular
+// -------------------------------------------------------------------------
+function TermoCelular() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave = $_REQUEST['w_chave'];
+  $w_tipo  = upper(trim($_REQUEST['w_tipo']));
+
+  // Recupera o logo do cliente a ser usado nas listagens
+  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
+  if (f($RS,'logo')>'') {
+    $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  } 
+  cabecalho();
+  head();
+  ShowHTML('<TITLE>'.$conSgSistema.'</TITLE>');
+  ShowHTML('</head>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  BodyOpenClean('onLoad=\'this.focus()\'; ');
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
+  if ($O=='E') {
+    ShowHTML('TERMO DE RECEBIMENTO E RESPONSABILIDADE');
+  } elseif ($O=='D') {
+    ShowHTML('TERMO DE DEVOLUÇÃO');
+  }
+  ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Emissão: '.DataHora().'</font></B></TD></TR>');
+  ShowHTML('</B></TD></TR></TABLE>');
+  // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
+  if ($O=='E') {
+    include_once('celular_termoentrega.php');
+    ShowHTML(celular_termoentrega($w_chave,$SG));
+  } elseif ($O=='D') {
+    include_once('celular_termodevol.php');
+    ShowHTML(celular_termodevol($w_chave,$SG));
+  }
+  Rodape();
+} 
+
+// =========================================================================
 // Rotina de emissão da ordem de serviço
 // -------------------------------------------------------------------------
 function EmiteOS() {
@@ -970,7 +1022,6 @@ function Encaminhamento() {
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(VisualGeral($w_chave,'V',$w_usuario,$SG,null));
@@ -1037,7 +1088,6 @@ function Encaminhamento() {
     ShowHTML('</FORM>');
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 } 
 
@@ -1375,13 +1425,20 @@ function AnaliseCelular() {
 
   // Recupera os dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-  $w_inicio = formataDataEdicao(f($row,'inicio'));
-  $w_fim    = formataDataEdicao(f($row,'fim'));
+  $w_inicio = formataDataEdicao(f($RS_Solic,'inicio'));
+  $w_fim    = formataDataEdicao(f($RS_Solic,'fim'));
   $w_dias   = ceil((f($RS_Solic,'fim')-f($RS_Solic,'inicio'))/84600);
   
-  $sql = new db_getCelular; $RS_Celular = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,null,'S',null,$w_inicio,$w_fim,'1MAPAFUTURO');
+  if (nvl($w_troca,'')!='') {
+    $w_celular    = $_REQUEST['w_celular'];
+    $w_acessorios = $_REQUEST['w_acessorios'];
+  } else {
+    $w_celular    = f($RS_Solic, 'sq_celular');
+    $w_acessorios = f($RS_Solic, 'acessorios_entregues');
+  }
+  $sql = new db_getCelular; $RS_Celular = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,null,'S',$w_chave,$w_inicio,$w_fim,'MAPAFUTURO');
   $RS_Celular = SortArray($RS_Celular,'numero_linha','asc'); 
-  
+
   // Monta array com os celulares e as disponibilidades no período informado
   $dados = array();
   $w_linha    = '';
@@ -1391,28 +1448,31 @@ function AnaliseCelular() {
     if ($w_linha=='' or $w_linha!=f($row,'numero_linha')) {
       $cont++;
       $w_linha         = f($row,'numero_linha');
-      $j               = 2;
+      $j               = 3;
       $dados[$cont][0] = f($row,'chave');
       $dados[$cont][1] = $w_linha;
+      $dados[$cont][2] = f($row,'acessorios');
     }
-    
+
     // Verifica se o celular está alocado
     if (nvl(f($row,'sq_siw_solicitacao'),'')!='') {
       // Recupera o período da solicitação
       $w_ini_sol = ((f($RS_Solic,'inicio')>=nvl(f($row,'inicio'), f($RS_Solic,'inicio'))) ? f($RS_Solic,'inicio') : f($row,'inicio'));
       $w_fim_sol = ((f($RS_Solic,'fim')   <=nvl(f($row,'fim'),    f($RS_Solic,'fim')))    ? f($RS_Solic,'fim')    : f($row,'fim'));
-      for ($i=$w_ini_sol; $i<=f($RS_Solic,'fim'); $i+=86400) {
+      for ($i=$w_ini_sol; $i<=(f($RS_Solic,'fim')+86400); $i+=86400) {
         if ($i<=$w_fim_sol) {
           $dados[$cont][$j] = ((f($row,'pendencia')=='N') ? 'bgcolor="#EE0000" title="Emprestado"' : 'bgcolor="grey" title="Pendência"');
+        } elseif (f($row,'pendencia')=='S') {
+          $dados[$cont][$j] = 'bgcolor="grey" title="Pendência"';
         } else {
-          $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
+          if (strpos(nvl($dados[$cont][$j],'Dísponível'),'Disponível')===false) $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
         }
         $dados[$cont][0] = '';
         $j++;
       }
     } else {
-      for ($i=f($RS_Solic,'inicio'); $i<=f($RS_Solic,'fim'); $i+=86400) {
-        if (nvl($dados[$cont][$j],'')=='') $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
+      for ($i=f($RS_Solic,'inicio'); $i<=(f($RS_Solic,'fim')+86400); $i+=86400) {
+        if (strpos(nvl($dados[$cont][$j],'Dísponível'),'Disponível')===false) if (nvl($dados[$cont][$j],'')=='') $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
         $j++;
       }
     }
@@ -1423,7 +1483,7 @@ function AnaliseCelular() {
   foreach($dados as $row) {
     if ($row[0]!='') $disponiveis++;
   }
-
+  
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'') {
@@ -1443,9 +1503,12 @@ function AnaliseCelular() {
   SaltaCampo();
   FormataDataHora();
   FormataValor();  
+  ShowHTML('  function texto(linha) {');
+  ShowHTML('    document.Form.w_acessorios.value=document.Form["w_texto["+linha+"]"].value;');
+  ShowHTML('  }');
   ValidateOpen('Validacao');
   if ($disponiveis) {
-    Validate('w_acessorios','Acessórios','','','2','1000','','0123456789.,');
+    Validate('w_acessorios','Acessórios','','','2','1000','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } else {
@@ -1471,9 +1534,13 @@ function AnaliseCelular() {
   ShowHTML('      <tr><td><table border=0 width="100%">');
   ShowHTML('          <tr valign="top">');
   ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'sq_siw_solicitacao').'</td>');
-  ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_sol')).'</td>');
-  ShowHTML('            <td>Setor solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_solic'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
-  ShowHTML('          <tr><td colspan="2">Justificativa:<b><br>'.f($RS_Solic,'justificativa').'</td>');
+  ShowHTML('            <td>Beneficiário:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_sol')).'</td>');
+  ShowHTML('            <td>Unidade solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_solic'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
+  ShowHTML('          </tr>');
+  ShowHTML('          <tr valign="top">');
+  ShowHTML('            <td>Período solicitado:<b><br>'.formataDataEdicao(f($RS_Solic,'inicio'),5).' a '.formataDataEdicao(f($RS_Solic,'fim'),5).'</td>');
+  ShowHTML('            <td colspan="2">Justificativa:<b><br>'.f($RS_Solic,'justificativa').'</td>');
+  ShowHTML('          </tr>');
   ShowHTML('      </table>');
   ShowHTML('    </TABLE>');
   ShowHTML('</table>');
@@ -1482,16 +1549,21 @@ function AnaliseCelular() {
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  
+  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS_Solic,'sq_siw_tramite').'">');
+
   ShowHTML('<tr><td>');
   ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
-  ShowHTML('      <tr><td colspan="3"><font size="2"><b>DADOS DA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('      <tr valign="top"><td colspan="3"><table border=0 width="100%">');
+  ShowHTML('        <tr><td><font size="2"><b>DADOS DA EXECUÇÃO');
+  ShowHTML('            <td align="right"><input class="stb" type="button" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'DispCelular&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Mapa de Disponibilidade de Celular&SG='.$SG.'\',\'Indicador\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" value="MAPA DE DISPONIBILIDADE DE CELULAR">');
+  ShowHTML('        <tr><td colspan="2"><hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('    </table>');
   if (!$disponiveis) {
-    ShowHTML('      <tr><td colspan="3"><b>ATENÇÃO: Nenhum aparelho disponível para empréstimo!<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
+    ShowHTML('      <tr><td colspan="3"><b>ATENÇÃO: Nenhum aparelho disponível para empréstimo no período indicado!<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
   } elseif ($disponiveis==1) {
-    ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelho disponível para empréstimo!<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
+    ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelho disponível para empréstimo no período indicado.<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
   } else {
-    ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelhos disponíveis para empréstimo!<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
+    ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelhos disponíveis para empréstimo no período indicado.<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
   }
   ShowHTML('      <tr align="center">');
   echo('        <td colspan="2">Número Linha</td>');
@@ -1505,24 +1577,405 @@ function AnaliseCelular() {
   foreach($dados as $row) {
     ShowHTML('      <tr>');
     if ($row[0]!='') {
-      echo('        <td><input class="STR" type="radio" name="w_celular[]" value="'.$row[0].'"'.(($disponiveis==1) ? ' checked' : '').'></td>');
+      echo('        <td><input class="STR" type="radio" name="w_celular" value="'.$row[0].'"'.(($disponiveis==1 || $w_celular==$row[0]) ? ' checked' : '').' onClick="texto('.$row[0].')">');
+      echo('<INPUT type="hidden" name="w_texto['.$row[0].']" value="'.$row[2].'">');
     } else {
       echo('        <td>&nbsp;&nbsp;&nbsp;</td>');
     }
     echo('<td><b>'.$row[1].'</b></td>');
     $w_atual = f($RS_Solic,'inicio');
-    for ($i=2; $i<=($w_dias+1); $i++) {
+    for ($i=3; $i<=($w_dias+2); $i++) {
       echo('<td '.$row[$i].'>&nbsp;</td>');
     }
     $w_atual = addDays($w_atual,1);
   }
   ShowHTML('</tr></table>');
-  if ($disponiveis) ShowHTML('      <tr><td><b>A<u>c</u>essórios:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Relacione, se necessário, a lista de acessórios entregues com o aparelho.">'.$w_acessórios.'</TEXTAREA></td>');
+  if ($disponiveis) ShowHTML('      <tr><td colspan="3"><b>A<u>c</u>essórios:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Relacione, se necessário, a lista de acessórios entregues com o aparelho.">'.$w_acessorios.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('      <tr><td align="center" colspan="3">');
   if ($disponiveis) ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
   ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
+// Exibição do mapa de disponibilidade de celulares
+// -------------------------------------------------------------------------
+function DispCelular() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave     = $_REQUEST['w_chave'];
+  $w_sq_menu   = $_REQUEST['w_sq_menu'];
+  $w_chave_aux = $_REQUEST['w_chave_aux'];
+  $w_tipo      = upper($_REQUEST['w_tipo']);
+
+  $w_readonly       = '';
+  $w_erro           = '';
+
+  $w_mes      = $_REQUEST['w_mes'];
+  $w_ano      = retornaAno();
+  $w_pag      = 1;
+  $w_linha    = 0;
+  $w_TP       = 'MAPA DE DISPONIBILIDADE DE CELULAR';
+  
+  // Configura variáveis para montagem do calendário
+  if (nvl($w_mes,'')=='') $w_mes = date('m',time());
+  $w_inicio  = first_day(toDate('01/'.substr(100+(intVal($w_mes)),1,2).'/'.$w_ano));
+  $w_fim     = last_day(toDate('01/'.substr(100+(intVal($w_mes)),1,2).'/'.$w_ano));
+  $w_dias    = ceil((($w_fim-$w_inicio)/86400)+1);
+  $w_mes1    = substr(100+intVal($w_mes)-1,1,2);
+  $w_mes3    = substr(100+intVal($w_mes)+1,1,2);
+  $w_ano1    = $w_ano;
+  $w_ano3    = $w_ano;
+  // Ajusta a mudança de ano
+  if ($w_mes1=='00') { $w_mes1 = '12'; $w_ano1 = $w_ano-1; }
+  if ($w_mes3=='13') { $w_mes3 = '01'; $w_ano3 = $w_ano+1; }
+
+  $sql = new db_getCelular; $RS_Celular = $sql->getInstanceOf($dbms, $w_cliente, null,null,null,null,'S',null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),'MAPA');
+  $RS_Celular = SortArray($RS_Celular,'numero_linha','asc'); 
+
+  // Monta array com os celulares e as disponibilidades no período informado
+  $dados = array();
+  $w_linha    = '';
+  $cont       = 0;
+  $disponivel = 0;
+  foreach($RS_Celular as $row) {
+    if ($w_linha=='' || $w_linha!=f($row,'numero_linha')) {
+      $cont++;
+      $w_linha         = f($row,'numero_linha');
+      $j               = 3;
+      $dados[$cont][0] = f($row,'chave');
+      $dados[$cont][1] = $w_linha;
+      $dados[$cont][2] = f($row,'acessorios');
+
+      // Inicializa as células da tabela
+      for ($i=$w_inicio; $i<=($w_fim+86400); $i+=86400) {
+        $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
+        $j++;
+      }
+      $j = 3;
+    }
+
+    // Verifica se o celular está alocado
+    if (nvl(f($row,'sq_siw_solicitacao'),'')!='') {
+      // Recupera o período da solicitação
+      $w_ini_sol = (($w_inicio>=nvl(f($row,'inicio'), $w_inicio)) ? $w_inicio : f($row,'inicio'));
+      $w_fim_sol = (($w_fim   <=nvl(f($row,'fim'),    $w_fim))    ? $w_fim    : f($row,'fim'));
+      $k = intVal(substr(formataDataEdicao($w_ini_sol),0,2));
+      $l = intVal(substr(formataDataEdicao($w_fim_sol),0,2));
+      
+      for ($i=$k; $i<=$l; $i++) {
+        $dados[$cont][$i+2] = 'bgcolor="#EE0000" title="Emprestado"';
+      }
+    }
+    
+    // Inicialização das variáveis para análise do bloqueio
+    $w_ini_bloqueio = nvl(f($row,'inicio_bloqueio'),$w_inicio);
+    $w_fim_bloqueio = nvl(f($row,'fim_bloqueio'),$w_fim);
+
+    // Verifica se o celular está bloqueado no mês em exibição
+    if ((f($row,'bloqueado')=='S' || nvl(f($row,'fim_bloqueio'),'')!='') &&
+        (($w_inicio<=$w_ini_bloqueio && $w_ini_bloqueio<=$w_fim) ||
+         ($w_inicio<=$w_fim_bloqueio && $w_fim_bloqueio<=$w_fim) ||
+         ($w_ini_bloqueio<=$w_inicio && $w_inicio<=$w_fim_bloqueio) ||
+         ($w_ini_bloqueio<=$w_fim    && $w_fim   <=$w_fim_bloqueio)
+        )
+       ) 
+    {
+      // Recupera o período do bloqueio
+      $w_ini_blq = (($w_inicio>=nvl(f($row,'inicio_bloqueio'), $w_inicio)) ? $w_inicio : f($row,'inicio_bloqueio'));
+      $w_fim_blq = (($w_fim   <=nvl(f($row,'fim_bloqueio'),    $w_fim))    ? $w_fim    : f($row,'fim_bloqueio'));
+      $k = intVal(substr(formataDataEdicao($w_ini_blq),0,2));
+      $l = intVal(substr(formataDataEdicao($w_fim_blq),0,2));
+
+      for ($i=$k; $i<=$l; $i++) {
+        $dados[$cont][$i+2] = 'bgcolor="grey" title="Bloqueado"';
+      }
+    }
+  }
+
+  if ($w_tipo == 'WORD') {
+    HeaderWord($_REQUEST['orientacao']);
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
+    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    $w_embed = 'WORD';
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } elseif ($w_tipo=='EXCEL') {
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    $w_embed = 'WORD';
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  }elseif($w_tipo == 'PDF'){
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    $w_embed = 'WORD';
+    HeaderPdf($w_TP,$w_pag);
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } else {
+    $w_embed = 'HTML';
+    Cabecalho();
+    head();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
+    if ($w_Troca>'') {
+      // Se for recarga da página
+      BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
+    } else {
+      BodyOpenClean('onLoad=\'this.focus();\'');
+    } 
+    if ($O=='L') {
+      CabecalhoRelatorio($w_cliente,$w_TP,4);
+      ShowHTML('<HR>');
+      if ($w_filtro>'') ShowHTML($w_filtro);
+    } else {
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+      ShowHTML('<HR>');
+    } 
+  } 
+  ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td><TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('  <tr valign="top">');
+  ShowHTML('    <td>'.(($w_embed=='WORD') ? '' : '<A class="hl" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'"><<<</A>'));
+  ShowHTML('    <td align="center"><b>'.upper(nomeMes($w_mes)).'/'.$w_ano.'</b></td>');
+  ShowHTML('    <td align="right">'.(($w_embed=='WORD') ? '' : '<A class="hl" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'">>>></A>'));
+  ShowHTML('  </tr>');
+  ShowHTML('</table>');
+  ShowHTML('<tr><td><TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="0" CELLPADDING="0" BorderColorDark="'.$conTableBorderColorLight.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('  <tr align="center"><td><font size="1">Linha</font></td>');
+  $w_atual = $w_inicio;
+  for ($i=1; $i<=$w_dias; $i++) {
+    echo('<td nowrap><font size="1">'.substr(formataDataEdicao($w_atual),0,2).'</font></td>');
+    $w_atual = addDays($w_atual,1);
+  }
+  ShowHTML('</tr>');
+
+  foreach($dados as $row) {
+    ShowHTML('  <tr>');
+    echo('<td align="center"><font size="1"><b>'.$row[1].'</b></font></td>');
+    $w_atual = $w_inicio;
+    for ($i=3; $i<=($w_dias+2); $i++) {
+      echo('<td '.$row[$i].'><font size="1">&nbsp;</font></td>');
+    }
+    $w_atual = addDays($w_atual,1);
+  }
+  ShowHTML('</table>');
+  if($w_tipo == 'PDF') RodapePdf();
+  else Rodape();
+} 
+
+// =========================================================================
+// Rotina de dados da entrega do celular ao beneficiário
+// -------------------------------------------------------------------------
+function EntregaCelular() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave   = $_REQUEST['w_chave'];
+  $w_sq_menu = $_REQUEST['w_sq_menu'];
+
+  $w_readonly       = '';
+  $w_erro           = '';
+
+  // Recupera os dados da solicitação
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+
+  // Verifica se há necessidade de recarregar os dados da tela a partir
+  // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_inicio           = $_REQUEST['w_inicio'];
+    $w_observacao       = $_REQUEST['w_observacao'];
+  } else {
+    $w_inicio           = FormataDataEdicao(f($RS_Solic,'inicio'));
+    $w_observacao       = crlf2br(f($RS_Solic,'observacao'));
+  } 
+  Cabecalho();
+  head();
+  Estrutura_CSS($w_cliente);
+  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  // tratando as particularidades de cada serviço
+  ScriptOpen('JavaScript');
+  CheckBranco();
+  FormataData();
+  SaltaCampo();
+  FormataDataHora();
+  ValidateOpen('Validacao');
+  Validate('w_inicio','Início do empréstimo','DATA',1,10,10,'','0123456789/');       
+  Validate('w_observacao','Observações','','',4,1000,'1','1');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
+  BodyOpen('onLoad=\'document.Form.w_inicio.focus()\';');
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Exibe os dados da solicitação
+  // Exibe os dados da solicitação
+  ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('      <tr><td><table border=0 width="100%">');
+  ShowHTML('          <tr valign="top">');
+  ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'sq_siw_solicitacao').'</td>');
+  ShowHTML('            <td>Beneficiário:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_sol')).'</td>');
+  ShowHTML('            <td>Unidade solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_solic'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
+  ShowHTML('          </tr>');
+  ShowHTML('          <tr valign="top">');
+  ShowHTML('            <td>Período solicitado:<b><br>'.formataDataEdicao(f($RS_Solic,'inicio'),5).' a '.formataDataEdicao(f($RS_Solic,'fim'),5).'</td>');
+  ShowHTML('            <td colspan="2">Justificativa:<b><br>'.f($RS_Solic,'justificativa').'</td>');
+  ShowHTML('          </tr>');
+  ShowHTML('      </table>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</table>');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'N');
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+  
+  ShowHTML('<tr><td>');
+  ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
+  ShowHTML('      <tr><td colspan="3"><font size="2"><b>DADOS DA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('              <td><b>Iní<u>c</u>io do empréstimo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início previsto da demanda.">'.ExibeCalendario('Form','w_inicio').'</td>'); 
+  ShowHTML('      <tr><td><b><u>O</u>bservações:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_observacao" class="STI" ROWS=5 cols=75 title="Registre observações gerais a respeito da entrega, caso desejado.">'.$w_observacao.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('      <tr><td align="center" colspan="3">');
+  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina de dados da devolução do celular
+// -------------------------------------------------------------------------
+function DevolCelular() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave   = $_REQUEST['w_chave'];
+  $w_sq_menu = $_REQUEST['w_sq_menu'];
+
+  $w_readonly       = '';
+  $w_erro           = '';
+
+  // Recupera os dados da solicitação
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+
+  // Verifica se há necessidade de recarregar os dados da tela a partir
+  // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_pendencia        = $_REQUEST['w_pendencia'];
+    $w_fim              = $_REQUEST['w_fim'];
+    $w_acessorios       = $_REQUEST['w_acessorios'];
+    $w_observacao       = $_REQUEST['w_observacao'];
+  } else {
+    $w_pendencia        = f($RS_Solic,'pendencia');
+    $w_fim              = FormataDataEdicao(f($RS_Solic,'fim'));
+    $w_acessorios       = f($RS_Solic,'acessorios_pendentes');
+    $w_observacao       = crlf2br(f($RS_Solic,'descricao'));
+  } 
+
+  Cabecalho();
+  head();
+  Estrutura_CSS($w_cliente);
+  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  // tratando as particularidades de cada serviço
+  ScriptOpen('JavaScript');
+  CheckBranco();
+  FormataData();
+  SaltaCampo();
+  FormataDataHora();
+  ValidateOpen('Validacao');
+  Validate('w_fim','Devolução do aparelho','DATA',1,10,10,'','0123456789/');
+  Validate('w_acessorios','Acessórios pendentes','','',4,1000,'1','1');
+  ShowHTML('  if (theForm.w_pendencia[0].checked && theForm.w_acessorios.value=="") {');
+  ShowHTML('    alert("Informe a lista de acessórios pendentes!")');
+  ShowHTML('    theForm.w_acessorios.focus;');
+  ShowHTML('    return false;');
+  ShowHTML('  } else if (theForm.w_pendencia[1].checked && theForm.w_acessorios.value!="") {');
+  ShowHTML('    alert("Lista de acessórios pendentes deve ser informada apenas se houver pendências!")');
+  ShowHTML('    theForm.w_acessorios.focus;');
+  ShowHTML('    return false;');
+  ShowHTML('  }');
+  Validate('w_observacao','Observações','','',4,1000,'1','1');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
+  BodyOpen('onLoad=\'document.Form.w_fim.focus()\';');
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Exibe os dados da solicitação
+  ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('      <tr><td><table border=0 width="100%">');
+  ShowHTML('          <tr valign="top">');
+  ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'sq_siw_solicitacao').'</td>');
+  ShowHTML('            <td>Beneficiário:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_sol')).'</td>');
+  ShowHTML('            <td>Unidade solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_solic'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
+  ShowHTML('          </tr>');
+  ShowHTML('          <tr valign="top">');
+  ShowHTML('            <td>Período solicitado:<b><br>'.formataDataEdicao(f($RS_Solic,'inicio'),5).' a '.formataDataEdicao(f($RS_Solic,'fim'),5).'</td>');
+  ShowHTML('            <td colspan="2">Justificativa:<b><br>'.f($RS_Solic,'justificativa').'</td>');
+  ShowHTML('          </tr>');
+  ShowHTML('      </table>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</table>');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'D');
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+  
+  ShowHTML('<tr><td>');
+  ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
+  ShowHTML('      <tr><td colspan="3"><font size="2"><b>DADOS DA DEVOLUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td><b><u>D</u>ata da devolução:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de devolução do aparelho.">'.ExibeCalendario('Form','w_fim').'</td>'); 
+  MontaRadioNS('<b>Com pendência de acessórios?</b>',$w_pendencia,'w_pendencia');
+  ShowHTML('      <tr><td colspan="3"><b>A<u>c</u>essórios pendentes:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Registre os acessórios pendentes de devolução, se for o caso.">'.$w_acessorios.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td colspan="3"><b><u>O</u>bservações:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75 title="Registre observações gerais a respeito da devolução, caso desejado.">'.$w_observacao.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('      <tr><td align="center" colspan="3">');
+  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+  $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -1546,6 +1999,8 @@ function Concluir() {
   extract($GLOBALS);
   if ($SG=='SRTRANSP') {
     include_once('transporte_conc.php');
+  } elseif ($SG=='SRSOLCEL') {
+    include_once('celular_conc.php');
   } else {
     include_once('geral_conc.php');
   }
@@ -1775,14 +2230,15 @@ function SolicMail($p_solic,$p_tipo) {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-
   $w_file    = '';
   $w_tamanho = '';
   $w_tipo    = '';
   $w_nome    = '';
+  
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
+
   BodyOpen('onLoad=this.focus();');
   if (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida
@@ -1848,20 +2304,117 @@ function Grava() {
   } elseif ($O=='F') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-
+      // Verifica se outro usuário já enviou a solicitação
       if ($SG=='SRTRANSP') {
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
+        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
+          ScriptClose();
+          retornaFormulario('');
+          exit();
+        }
         include_once($w_dir_volta.'classes/sp/dml_putSolicInfTransp.php');
         $SQL = new dml_putSolicInfTransp; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,
               $_REQUEST['w_executor'],$_REQUEST['w_sq_veiculo']);
+      } elseif ($SG=='ANALCEL') {
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],'SRSOLCEL');
+        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
+          ScriptClose();
+          retornaFormulario('');
+          exit();
+        }
+        // Verifica se o celular está disponível para vinculação
+        $w_inicio = formataDataEdicao(f($RS,'inicio'));
+        $w_fim    = formataDataEdicao(f($RS,'fim'));
+        $sql = new db_getCelular; $RS_Celular = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_celular'],null,null,null,'S',$_REQUEST['w_chave'],$w_inicio,$w_fim,'MAPAFUTURO');
+        foreach($RS_Celular as $row) { $RS_Celular = $row; break; }
+        if (nvl(f($RS_Celular,'sq_siw_solicitacao'),$_REQUEST['w_chave'])!=$_REQUEST['w_chave']) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já vinculou o celular à solicitação '.nvl(f($RS_Celular,'codigo_interno'),f($RS_Celular,'sq_siw_solicitacao')).'!");');
+          ScriptClose();
+          retornaFormulario('');
+          exit();
+        }
+
+        include_once($w_dir_volta.'classes/sp/dml_putSolicInfCelular.php');
+        $SQL = new dml_putSolicInfCelular; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,
+              $_REQUEST['w_celular'],$_REQUEST['w_acessorios']);
       } else {
+        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
+        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
+          ScriptClose();
+          retornaFormulario('');
+          exit();
+        }
         include_once($w_dir_volta.'classes/sp/dml_putSolicInfGeral.php');
         $SQL = new dml_putSolicInfGeral; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,
               $_REQUEST['w_executor'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor']);
       }
-            
+
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    } 
+  } elseif ($O=='N') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      // Verifica se outro usuário já enviou a solicitação
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
+      if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
+        ScriptClose();
+        retornaFormulario('');
+        exit();
+      } else {
+        if ($SG=='ENTCEL') {
+          include_once($w_dir_volta.'classes/sp/dml_putSolicEntCelular.php');
+          $SQL = new dml_putSolicEntCelular; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,
+                $_REQUEST['w_inicio'],$_REQUEST['w_observacao']);
+        }
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+        ScriptClose();
+      }
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    } 
+  } elseif ($O=='D') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      // Verifica se outro usuário já enviou a solicitação
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
+      if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
+        ScriptClose();
+        retornaFormulario('');
+        exit();
+      } else {
+        if ($SG=='DEVCEL') {
+          include_once($w_dir_volta.'classes/sp/dml_putSolicDevCelular.php');
+          $SQL = new dml_putSolicDevCelular; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,
+                $_REQUEST['w_fim'],$_REQUEST['w_pendencia'],$_REQUEST['w_acessorios'],$_REQUEST['w_observacao']);
+        }
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+        ScriptClose();
+      }
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert("Assinatura Eletrônica inválida!");');
@@ -2109,6 +2662,10 @@ function Main() {
   case 'OPINIAO':         Opiniao();        break;
   case 'DADOSEXECUCAO':   DadosExecucao();  break;
   case 'ANALISECELULAR':  AnaliseCelular(); break;
+  case 'TERMOCELULAR':    TermoCelular();   break;
+  case 'ENTREGACELULAR':  EntregaCelular(); break;
+  case 'DEVOLCELULAR':    DevolCelular();   break;
+  case 'DISPCELULAR':     DispCelular();    break;
   case 'ENVIO':           Encaminhamento(); break;
   case 'ANOTACAO':        Anotar();         break;
   case 'EMITEOS':         EmiteOS();        break;

@@ -20,12 +20,12 @@ function ValidaGeral($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite)
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
   $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$p_sg1);
-  //-----------------------------------------------------------------------------
+ //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento.
   //-----------------------------------------------------------------------------
   // Se a solicitação informada não existir, abandona a execução
-  if (count($l_rs_solic)<=0) {
+  if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
   // Verifica se o cliente tem o módulo financeiro contratado
@@ -35,7 +35,20 @@ function ValidaGeral($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite)
   $l_tipo='';
   // Recupera o trâmite atual da solicitação
   $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
+  
+  if (f($l_rs_tramite,'sigla')=='EA') {
+    if (f($l_rs_solic,'sigla')=='SRSOLCEL' && nvl(f($l_rs_solic,'sq_celular'),'')=='') {
+      $l_erro .= '<li>Dados do atendimento não informados. Clique na operação IN para informá-los.';
+      $l_tipo = 0;                  
+    }
+  }
 
+  if (f($l_rs_tramite,'sigla')=='DE') {
+    if (f($l_rs_solic,'sigla')=='SRSOLCEL' && nvl(f($l_rs_solic,'inicio_real'),'')=='') {
+      $l_erro .= '<li>Dados da entrega do celular ao beneficiário da solicitação não informados. Clique na operação IN para informá-los.';
+      $l_tipo = 0;                  
+    }
+  }
 
   $l_erro=$l_tipo.$l_erro;
   //-----------------------------------------------------------------------------------

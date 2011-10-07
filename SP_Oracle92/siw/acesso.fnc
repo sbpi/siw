@@ -134,7 +134,7 @@ begin
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
         b2.nome, b2.interno,
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
-        d.sq_siw_tramite, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
+        d.sq_siw_tramite, d.cadastrador, d.solicitante, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
         e.ordem, e.sigla, e.ativo, e.chefia_imediata, e.assina_tramite_anterior, e.beneficiario_cumpre, e.gestor_cumpre,
         h.sq_pessoa_endereco 
    into w_cliente, w_acesso_geral, w_consulta_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
@@ -142,7 +142,7 @@ begin
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
         w_nm_vinculo, w_interno,
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
-        w_sq_siw_tramite, w_cadastrador, w_unidade_solicitante, w_executor, 
+        w_sq_siw_tramite, w_cadastrador, w_solicitante, w_unidade_solicitante, w_executor, 
         w_opiniao_solicitante, w_solic_pai,
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata, w_anterior_assina, w_beneficiario_assina, w_gestor_cumpre,
         w_sq_endereco_unidade
@@ -249,6 +249,9 @@ begin
  Else 
     -- Verifica se o usuário participou de alguma forma na solicitação
     select count(*) into w_existe from (
+      -- Verifica se o usuário participou da tramitação da solicitação
+      select 1 from siw_solic_log a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+      UNION
       -- Verifica se o usuário é interessado na demanda
       select 1 from gd_demanda_interes a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
       UNION
@@ -261,17 +264,29 @@ begin
       -- Verifica se o usuário é interessado na solicitação
       select 1 from siw_solicitacao_interessado a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
       UNION
+      -- Verifica se já participou em algum momento no programa
+      select 1 from pe_programa_log a where a.sq_siw_solicitacao = p_solicitacao and a.cadastrador = p_usuario
+      UNION
+      -- Verifica se já participou em algum momento no projeto
+      select 1 from pj_projeto_log a where a.sq_siw_solicitacao = p_solicitacao and a.cadastrador = p_usuario
+      UNION
       -- Verifica se já participou em algum momento no projeto
       select 1 from pj_projeto_log a where a.sq_siw_solicitacao = p_solicitacao and a.destinatario = p_usuario
       UNION
       -- Verifica se é outra parte no acordo
       select 1 from ac_acordo a where a.sq_siw_solicitacao = p_solicitacao and a.outra_parte= p_usuario
       UNION
+      -- Verifica se o usuário participou da tramitação do acordo
+      select 1 from ac_acordo_log a where a.sq_siw_solicitacao = p_solicitacao and a.cadastrador = p_usuario
+      UNION
       -- Verifica se é outra parte no acordo
       select 1 from ac_acordo_outra_parte a where a.sq_siw_solicitacao = p_solicitacao and a.outra_parte = p_usuario
       UNION
       -- Verifica se é beneficiário de algum lançamento financeiro
       select 1 from fn_lancamento a where a.sq_siw_solicitacao = p_solicitacao and a.pessoa = p_usuario
+      UNION
+      -- Verifica se já participou da tramitação do lançamento financeiro
+      select 1 from fn_lancamento_log a where a.sq_siw_solicitacao = p_solicitacao and a.cadastrador = p_usuario
       UNION
       -- Verifica se é proposto de alguma viagem
       select 1 from pd_missao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario

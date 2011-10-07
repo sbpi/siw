@@ -107,7 +107,7 @@
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (strpos('EV',$O)!==false) {
@@ -186,6 +186,4 @@
     ScriptClose();
   } 
   ShowHTML('</table>');
-  ShowHTML('</center>');
-  Rodape();
 ?>

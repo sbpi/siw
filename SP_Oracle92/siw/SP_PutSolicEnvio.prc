@@ -139,7 +139,26 @@ begin
                  where a.sq_menu = p_menu
                    and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
             End If;
-         Elsif w_solic.cadastrador = w_solic.solicitante and w_sg_tramite = 'EA' Then
+         Elsif w_menu.sigla = 'SRSOLCEL' Then
+            If w_sg_tramite = 'PP' Then
+               -- Se o trâmite for de pendência na entrega de acessórios de celular e não houver pendência, pula para o próximo.
+               select count(*) into w_cont
+                 from siw_solicitacao                       k
+                      inner     join sr_solicitacao_celular l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao)
+                where l.pendencia          = 'S'
+                  and k.sq_siw_solicitacao = p_chave;
+               
+               If w_cont = 0 Then
+                  select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                     from siw_tramite a
+                    where a.sq_menu = p_menu
+                      and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
+               End If;
+            Elsif w_sg_tramite = 'EE' Then
+              -- Se o trâmite for de conclusão, atualiza o campo PENDENCIA.
+              update sr_solicitacao_celular set pendencia = 'N', acessorios_pendentes = null where sq_siw_solicitacao = p_chave;
+            End If;
+         Elsif w_solic.cadastrador = w_solic.solicitante and w_sg_tramite = 'CB' Then
             -- Se o trâmite for de ciência pelo beneficiário e o cadastrador for o beneficiário, pula para o próximo.
             select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                from siw_tramite a
@@ -152,7 +171,10 @@ begin
             from siw_tramite a
            where a.sq_siw_tramite = p_novo_tramite;
            
-         If w_menu.sigla = 'MTCONSUMO' Then
+         If w_sg_tramite = 'PP' and w_menu.sigla = 'SRSOLCEL' Then
+            -- Se o trâmite for de pendência na entrega de acessórios de celular, atualiza o campo PENDENCIA.
+            update sr_solicitacao_celular set pendencia = 'S' where sq_siw_solicitacao = p_chave;
+         Elsif w_menu.sigla = 'MTCONSUMO' Then
             -- Atualiza o valor da solicitação
             update siw_solicitacao a 
                set a.valor     = 0,
