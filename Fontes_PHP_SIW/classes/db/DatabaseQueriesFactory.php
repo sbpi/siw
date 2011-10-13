@@ -12,7 +12,7 @@ include_once('DBTypes.php');
 */
 
 class DatabaseQueriesFactory {
-  function getInstanceOf($query, $conHandle, $params,$db_type=DB_TYPE) {
+  function getInstanceOf($query, $conHandle, $params,$dbType=DB_TYPE) {
     extract($GLOBALS);
     // Se a geração de log estiver ativada, registra.
     if ($conLog && strpos(strtoupper($query),'SP_PUT')!==false) {
@@ -44,7 +44,7 @@ class DatabaseQueriesFactory {
     if (function_exists(oci_server_version)) $oci8 = true; else $oci8 = false;
     if (function_exists(pg_version)) $pg = true; else $pg = false;
     if (function_exists(mssql_connect)) $mssql = true; else $mssql = false;
-    switch($db_type) {
+    switch($dbType) {
     case ORA8  :
       if ($oci8) {
         if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 

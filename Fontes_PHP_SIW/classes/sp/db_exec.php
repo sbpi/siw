@@ -11,9 +11,9 @@ include_once($w_dir_volta.'classes/db/DatabaseQueries.php');
 */
 
 class db_exec {
-   function getInstanceOf($dbms, $p_sql, $numRows) {
+   function getInstanceOf($dbms, $p_sql, $numRows, $db_type=DB_TYPE) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($p_sql, $dbms, null, $db_type=DB_TYPE);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($p_sql, $dbms, null, $db_type);
      if($l_rs->executeQuery()) { 
        $numRows  = $l_rs->getNumRows();
        if ($l_rs = $l_rs->getResultData()) {

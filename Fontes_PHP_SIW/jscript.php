@@ -726,7 +726,13 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
   }
   if ($ValueRequired>"") {
     $w_campo_obrigatorio[$VariableName]='"STIO"';
-    if (upper($DataType)=="SELECT") { 
+    if (upper($DataType)=="RADIO") { 
+      print "  var w_erro = true; "."\r\n"; 
+      print "  for (i=0; i<".$Form.$VariableName.".length; i++) {"."\r\n"; 
+      print "    if (".$Form.$VariableName."[i].checked) w_erro = false;"."\r\n"; 
+      print "  }"."\r\n"; 
+      print "  if (w_erro)"."\r\n"; 
+    } elseif (upper($DataType)=="SELECT") { 
       print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; 
     } else { 
       print "  if (".$Form.$VariableName.".value == '')"."\r\n"; 
@@ -734,7 +740,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
 
     print "  {"."\r\n";
     print "    alert('Favor informar um valor para o campo ".$DisplayName."');"."\r\n";
-    if (upper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
+    if (upper($DataType)!="HIDDEN" && upper($DataType)!="RADIO") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";

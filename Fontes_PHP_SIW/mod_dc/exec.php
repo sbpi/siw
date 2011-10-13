@@ -136,7 +136,7 @@ function ExecSql() {
 // -------------------------------------------------------------------------
 function InputSql() {
   extract($GLOBALS);
-  $dataBank     = nvl($_POST['dataBank'],4);
+  $dataBank     = nvl($_POST['dataBank'],1);
   $dataBank_ant = $_POST['dataBank_ant'];
   $serverName   = $_POST['serverName'];
   $userName     = $_POST['userName'];
@@ -245,7 +245,7 @@ function ResultSql() {
   BodyOpen(null);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-  if (nvl($_POST['sqlStr'],'')=='') {
+  if (nvl($_POST['sqlStr'],'')=='') { 
     ShowHTML('<h4> Instrução SQL não informada </h4>');
   } else {
     //tira os brancos e substitui aspas duplas por aspas simples
@@ -295,20 +295,20 @@ function ResultSql() {
         $sp = substr($v,strpos($v,' ')+1);
         if (strpos($stmt,':data')===false) {
           // Stored procedure sem cursor
-          if ($dataBank=1 or $dataBank=3) {
+          if ($dataBank==1 or $dataBank==3) {
             $stmt = oci_parse($conObj, "begin $sp; end;");
             if (oci_execute($stmt)) ShowHTML('<p> comando executado</p>');
           }
         } else {
           // Stored procedure com cursor
-          if ($dataBank=1 or $dataBank=3) {
+          if ($dataBank==1 or $dataBank==3) {
             $cursor = oci_new_cursor($conObj);
             $stmt   = oci_parse($conObj, "begin ".$sp."; end;");
             oci_bind_by_name($stmt, "data", $cursor, -1, OCI_B_CURSOR);
             oci_execute($stmt);
             oci_execute($cursor);
             $nrows  = oci_fetch_all($cursor, $results, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-          } elseif ($dataBank=4) {
+          } elseif ($dataBank==4) {
             $par      = 'rollback; begin; select '.str_replace(':data','\'p_result\'',$sp).'; fetch all in p_result;';
             $results  = pg_query($conObj, $par);
             $nrows    = pg_num_rows($results); 

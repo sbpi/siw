@@ -43,13 +43,6 @@ function ValidaGeral($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite)
     }
   }
 
-  if (f($l_rs_tramite,'sigla')=='DE') {
-    if (f($l_rs_solic,'sigla')=='SRSOLCEL' && nvl(f($l_rs_solic,'inicio_real'),'')=='') {
-      $l_erro .= '<li>Dados da entrega do celular ao beneficiário da solicitação não informados. Clique na operação IN para informá-los.';
-      $l_tipo = 0;                  
-    }
-  }
-
   $l_erro=$l_tipo.$l_erro;
   //-----------------------------------------------------------------------------------
   // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string
