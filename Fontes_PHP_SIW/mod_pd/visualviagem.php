@@ -937,7 +937,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               $l_html.=chr(13).'     <tr><td colspan="6">';
               if ($w_trechos[$i][35]>'') {
                 if ($w_trechos[$i][8]!=$w_trechos[$i][34]) $l_html.=chr(13).'         <li>Quantidade calculada de diárias alterada de <b>'.formatNumber($w_trechos[$i][34],1).'</b> para <b>'.formatNumber($w_trechos[$i][8],2).'</b>. Motivo: <b>'.$w_trechos[$i][35].'</b></li>';
-                else $l_html.=chr(13).'         <li>Observação sobre as hospedagens: <b>'.$w_trechos[$i][35].'</b></li>';
+                else $l_html.=chr(13).'         <li>Observação sobre as diárias: <b>'.$w_trechos[$i][35].'</b></li>';
               }
               if ($w_trechos[$i][37]>'') {
                 if ($w_trechos[$i][16]!=$w_trechos[$i][36]) $l_html.=chr(13).'         <li>Quantidade calculada de hospedagens alterada de <b>'.formatNumber($w_trechos[$i][36],1).'</b> para <b>'.formatNumber($w_trechos[$i][16],1).'</b>. Motivo: <b>'.$w_trechos[$i][37].'</b></li>';
