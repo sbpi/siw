@@ -2885,13 +2885,13 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<center><h2>ATENÇÃO</h2></center>';
     $w_html .= chr(10).'<blockquote>';
     $w_html .= chr(10).'<p ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</b></p>';
-    $w_html .= chr(10).'<table BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><tr><td><font COLOR="#000000">';
+    $w_html .= chr(10).'<table BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5" width="100%"><tr><td><font COLOR="#000000">';
     $w_html .= chr(10).'<dl><dt><b>Data e hora da ocorrência:</b> <font FACE="courier">'.date('d/m/Y, h:i:s').'<br /><br /></font></dt>';
     $w_html .= chr(10).'<dt><b>Descrição:</b><DD><font FACE="courier">'.crlf2br($Err['message']).'<br /><br /></font>';
     $w_html .= chr(10).'<dt><b>Arquivo:</b><DD><font FACE="courier">'.$file.', linha: '.$line.'<br /><br /></font>';
     //$w_html .= chr(10).'<dt>Objeto:<DD><font FACE="courier">'.$object.'<br /><br /></font>';
 
-    $w_html .= chr(10).'<dt><b>Comando em execução:</b><blockquote>'.nvl($Err['sqltext'],'nenhum').'</blockquote></font></dt>';
+    $w_html .= chr(10).'<dt><b>Comando em execução:</b><blockquote><pre>'.nvl(crlf2br($Err['sqltext']),'nenhum').'</pre></blockquote></font></dt>';
     if (is_array($params)) {
       $w_html .= "<dt><b>Valores dos parâmetros:<table border=0>";
       foreach ($params as $w_chave => $w_valor) {

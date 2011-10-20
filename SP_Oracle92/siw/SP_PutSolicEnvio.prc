@@ -173,7 +173,7 @@ begin
            
          If w_sg_tramite = 'PP' and w_menu.sigla = 'SRSOLCEL' Then
             -- Se o trâmite for de pendência na entrega de acessórios de celular, atualiza o campo PENDENCIA.
-            update sr_solicitacao_celular set pendencia = 'S' where sq_siw_solicitacao = p_chave;
+            update sr_solicitacao_celular set pendencia = 'S', acessorios_pendentes = 'A ser inserido.' where sq_siw_solicitacao = p_chave;
          Elsif w_menu.sigla = 'MTCONSUMO' Then
             -- Atualiza o valor da solicitação
             update siw_solicitacao a 

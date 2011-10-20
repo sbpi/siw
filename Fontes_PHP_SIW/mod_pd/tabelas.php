@@ -519,7 +519,7 @@ function MeioTrans() {
     $w_nome         = f($RS,'nome');
     $w_aereo        = f($RS,'aereo');
     $w_rodoviario   = f($RS,'rodoviario');
-    $w_ferroviario   = f($RS,'ferroviario');    
+    $w_ferroviario  = f($RS,'ferroviario');    
     $w_aquaviario   = f($RS,'aquaviario');
     $w_ativo        = f($RS,'ativo');
   } 
@@ -592,10 +592,10 @@ function MeioTrans() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td><!>'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'aereo').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'rodoviario').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'ferroviario').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'aquaviario').'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'aereo')).'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'rodoviario')).'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'ferroviario')).'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'aquaviario')).'</td>');
         if (Nvl(f($row,'ativo'),'')=='S') {
           ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         } else {

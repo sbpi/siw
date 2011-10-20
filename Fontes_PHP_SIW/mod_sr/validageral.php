@@ -36,13 +36,6 @@ function ValidaGeral($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tramite)
   // Recupera o trâmite atual da solicitação
   $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
   
-  if (f($l_rs_tramite,'sigla')=='EA') {
-    if (f($l_rs_solic,'sigla')=='SRSOLCEL' && nvl(f($l_rs_solic,'sq_celular'),'')=='') {
-      $l_erro .= '<li>Dados do atendimento não informados. Clique na operação IN para informá-los.';
-      $l_tipo = 0;                  
-    }
-  }
-
   $l_erro=$l_tipo.$l_erro;
   //-----------------------------------------------------------------------------------
   // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string

@@ -15,9 +15,9 @@ define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
 define("ORA9_SERVER_NAME", "XE");
-define("ORA9_DB_USERID", "SIW");
-define("ORA9_DB_PASSWORD", "SIW");
-define("ORA9_DATABASE_NAME", "SIW");
+define("ORA9_DB_USERID", "ABDI_VENUS");
+define("ORA9_DB_PASSWORD", "ABDI_VENUS");
+define("ORA9_DATABASE_NAME", "ABDI_VENUS");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
@@ -30,9 +30,9 @@ define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // OracleHM Database Constants
 define("ORAHM_SERVER_NAME", "XE");
-define("ORAHM_DB_USERID", "INTEGRA");
-define("ORAHM_DB_PASSWORD", "INTEGRA");
-define("ORAHM_DATABASE_NAME", "INTEGRA");
+define("ORAHM_DB_USERID", "VENUS");
+define("ORAHM_DB_PASSWORD", "VENUS");
+define("ORAHM_DATABASE_NAME", "VENUS");
 define("ORAHM_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants
@@ -46,20 +46,24 @@ switch ($_SESSION["DBMS"]) {
    case 6 : {
       define("DATABASE_NAME", ORAHM_DATABASE_NAME);
       define("DATABASE_VERSION", ORAHM_VERSION_TEXT);
-      define("B_VARCHAR", null);
-      define("B_NUMERIC", null);
+      define("B_VARCHAR", 2);
+      define("B_NUMERIC", 1);
       define("B_CURSOR", OCI_B_CURSOR);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
+      define("C", "||");
+      break;
    }
    case 5 : {
       define("DATABASE_NAME", ORA10_DATABASE_NAME);
       define("DATABASE_VERSION", ORA10_VERSION_TEXT);
-      define("B_VARCHAR", null);
-      define("B_NUMERIC", null);
+      define("B_VARCHAR", 2);
+      define("B_NUMERIC", 1);
       define("B_CURSOR", OCI_B_CURSOR);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
+      define("C", "||");
+      break;
    }
    case 4 : {
       define("DATABASE_NAME", PGSQL_DATABASE_NAME);
@@ -69,16 +73,18 @@ switch ($_SESSION["DBMS"]) {
       define("B_CURSOR", -1);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
+      define("C", "||");
       break;
    }
    case 3 : {
       define("DATABASE_NAME", ORA8_DATABASE_NAME);
       define("DATABASE_VERSION", ORA8_VERSION_TEXT);
-      define("B_VARCHAR", null);
-      define("B_NUMERIC", null);
+      define("B_VARCHAR", 2);
+      define("B_NUMERIC", 1);
       define("B_CURSOR", OCI_B_CURSOR);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
+      define("C", "||");
       break;
    }
    case 2 : {
@@ -91,16 +97,19 @@ switch ($_SESSION["DBMS"]) {
       define("B_CURSOR", -1);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
+      define("C", "+");
       break;
    }
    case 1 : {
       define("DATABASE_NAME", ORA9_DATABASE_NAME);
       define("DATABASE_VERSION", ORA9_VERSION_TEXT);
-      define("B_VARCHAR", null);
-      define("B_NUMERIC", null);
+      define("B_VARCHAR", 2);
+      define("B_NUMERIC", 1);
       define("B_CURSOR", OCI_B_CURSOR);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
+      define("C", "||");
+      break;
    }
 }
 ?>

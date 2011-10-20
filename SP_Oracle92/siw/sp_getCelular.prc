@@ -36,16 +36,16 @@ begin
                                         y.sq_siw_tramite, y.nome as nm_tramite, y.sigla as sg_tramite,
                                         y.sigla, y.ativo, y.nome,
                                         z.sq_celular, z.pendencia
-                                   from siw_solicitacao                      x
-                                        inner join siw_tramite               y on (x.sq_siw_tramite     = y.sq_siw_tramite and
-                                                                                   'CA'                 <> y.sigla and 
-                                                                                   (p_restricao         <> 'MAPAFUTURO' or
-                                                                                    (p_restricao        = 'MAPAFUTURO' and 
-                                                                                     y.ordem             in (3,4,5,6,7,8)
+                                   from siw_solicitacao                        x
+                                        inner   join siw_tramite               y on (x.sq_siw_tramite     = y.sq_siw_tramite and
+                                                                                     'CA'                 <> y.sigla and 
+                                                                                     (p_restricao         <> 'MAPAFUTURO' or
+                                                                                      (p_restricao        = 'MAPAFUTURO' and 
+                                                                                       y.ordem             in (3,4,5,6,7,8,9)
+                                                                                      )
+                                                                                     )
                                                                                     )
-                                                                                   )
-                                                                                  )
-                                        inner join sr_solicitacao_celular    z on (x.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                        inner   join sr_solicitacao_celular    z on (x.sq_siw_solicitacao = z.sq_siw_solicitacao)
                                   where z.sq_celular is not null
                                     and (p_inicio  is null or 
                                          (p_inicio is not null and (x.inicio     between p_inicio and p_fim or

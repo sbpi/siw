@@ -331,20 +331,35 @@ class OraDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-      if(!($this->result = oci_parse($this->conHandle, $this->query))) { 
+      if(!$this->result = @oci_parse($this->conHandle, $this->query)) { 
+        $e = oci_error($this->conHandle);
+        $this->error['message'] = $e['message'];
+        $this->error['sqltext'] = $this->query;
         return false; 
       } else { 
         if(is_resource($this->result)) { 
-          if (!oci_execute($this->result)) { die($this->query.'<br>'); }
-          $command = strtoupper(substr(trim($this->query),0,strpos(trim($this->query),' ')));
-          if (false!==strpos('INSERT,UPDATE,DELETE',strtoupper($command))) {
-            $this->num_rows = oci_num_rows($this->result);
+          $r = @oci_execute($this->result);
+          if (!$r) { 
+             $e = oci_error($this->result);
+             $this->error['message'] = $e['message'];
+             $this->error['sqltext'] = $e['sqltext'];
+             return false; 
           } else {
-            $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-            oci_execute($this->result);
+            $command = strtoupper(substr(trim($this->query),0,strpos(trim($this->query),' ')));
+            if (false!==strpos('INSERT,UPDATE,DELETE',strtoupper($command))) {
+              $this->num_rows = oci_num_rows($this->result);
+            } else {
+              $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+              array_key_case_change(&$this->resultData);
+              oci_execute($this->result);
+            }
           }
         } else { 
           $this->num_rows = -1; 
+          $e = oci_error($this->result);
+          $this->error['message'] = $e['message'];
+          $this->error['sqltext'] = $e['sqltext'];
+          return false;
         }
       }
       return true; 
@@ -487,9 +502,11 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
            }
 
-           if(!(oci_execute($this->stmt))) { 
-             $this->error = oci_error($this->stmt);
-             $this->error['sqltext'] = $stmt;
+           $r = oci_execute($this->stmt);
+           if(!$r) { 
+             $e = oci_error($this->stmt);
+             $this->error['message'] = $e['message'];
+             $this->error['sqltext'] = $e['sqltext'];
              return false; 
            } else {
               oci_execute($this->result);
@@ -518,19 +535,21 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                  }
               } else { 
                 $this->num_rows = -1; 
-                $this->error = oci_error($this->result); 
-                $this->error['sqltext'] = $stmt;
+                $e = oci_error($this->result);
+                $this->error['message'] = $e['message'];
+                $this->error['sqltext'] = $e['sqltext'];
                 return false; 
               }
               if (!oci_execute($this->stmt)) { 
-                $this->error = oci_error($this->stmt); 
-                $this->error = oci_error($this->stmt); 
-                $this->error['sqltext'] = $stmt;
+                $e = oci_error($this->stmt);
+                $this->error['message'] = $e['message'];
+                $this->error['sqltext'] = $e['sqltext'];
                 return false; 
               } else {
                 if (!oci_execute($this->result)) {
-                  $this->error = oci_error($this->result); 
-                  $this->error['sqltext'] = $stmt;
+                  $e = oci_error($this->result);
+                  $this->error['message'] = $e['message'];
+                  $this->error['sqltext'] = $e['sqltext'];
                   return false; 
                 } 
               } 
@@ -557,8 +576,9 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
 
            if(is_resource($this->result)) {
              if (!oci_execute($this->result)) {
-               $this->error = oci_error($this->result); 
-               $this->error['sqltext'] = $stmt;
+               $e = oci_error($this->result);
+               $this->error['message'] = $e['message'];
+               $this->error['sqltext'] = $e['sqltext'];
                // Registra no servidor syslog
                $w_resultado = enviaSyslog('GR','ERRO ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
                if ($w_resultado>'') {
@@ -617,8 +637,11 @@ class PgSqlDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-      if(!($this->result = pg_query($this->conHandle, $this->query))) { 
-        $this->error = pg_result_error($this->result);
+      $this->result = pg_query($this->conHandle, $this->query);
+      if(!$this->result) { 
+        $this->error['message'] = pg_last_error($this->conHandle);
+        $this->error['sqltext'] = $this->query;
+        $this->num_rows = -1; 
         return false; 
       } else { 
         if(is_resource($this->result)) { 
