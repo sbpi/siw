@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_CoTpFone {
    function getInstanceOf($dbms, $operacao, $chave, $p_sq_tipo_pessoa, $p_nome, $p_padrao, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoTpFone';
-     $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_sq_tipo_pessoa'  =>array($p_sq_tipo_pessoa,  B_NUMERIC,     32),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     25),

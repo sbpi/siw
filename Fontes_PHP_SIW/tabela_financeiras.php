@@ -455,6 +455,12 @@ function Agencia() {
     $w_nome         = $_REQUEST['w_nome'];
   } elseif ($O=='L') {
     $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$p_sq_banco,$p_nome,$p_ordena,null);
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    } else {
+      $RS = SortArray($RS,'padrao', 'desc', 'nome','asc');
+    }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_agencia   = $_REQUEST['w_sq_agencia'];
     $SQL = new db_getBankHouseData; $RS = $SQL->getInstanceOf($dbms,$w_sq_agencia);
@@ -482,14 +488,9 @@ function Agencia() {
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='P') {
-      Validate('p_sq_banco','UF','SELECT','','1','3','1','1');
+      Validate('p_sq_banco','Banco','SELECT','1','1','3','1','1');
       Validate('p_nome','nome','1','','3','50','1','1');
       Validate('P4','Linhas por página','1','1','1','4','','0123456789');
-      ShowHTML('  if (theForm.p_sq_banco.selectedIndex==0 || theForm.p_nome.value==\'\') {');
-      ShowHTML('     alert(\'Informe o banco e parte do nome da agência!\');');
-      ShowHTML('     theForm.p_sq_banco.focus;');
-      ShowHTML('     return false;');
-      ShowHTML('   }');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -501,14 +502,14 @@ function Agencia() {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
-      BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+      BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
     } else {
-      BodyOpen('onLoad=\'document.Form.w_sq_banco.focus()\';');
+      BodyOpen('onLoad="document.Form.w_sq_banco.focus()";');
     } 
   } elseif ($O=='P') {
-    BodyOpen('onLoad=\'document.Form.p_sq_banco.focus()\';');
+    BodyOpen('onLoad="document.Form.p_sq_banco.focus()";');
   } else {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -684,7 +685,7 @@ function Banco() {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
     } else {
-      $RS = SortArray($RS,'codigo','asc');
+      $RS = SortArray($RS,'padrao', 'desc', 'codigo','asc');
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_banco = $_REQUEST['w_sq_banco'];

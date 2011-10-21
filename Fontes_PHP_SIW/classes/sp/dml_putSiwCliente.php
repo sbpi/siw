@@ -14,7 +14,7 @@ class dml_putSiwCliente {
         $p_dias_vigencia, $p_aviso_expiracao, $p_maximo_tentativas, $p_agencia_padrao, $p_segmento,
         $p_mail_tramite, $p_mail_alerta, $p_georeferencia, $p_googlemaps,$p_arp) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliente';
-     $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
+     $params=array('p_operacao'             =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
                    'cliente'                =>array($p_cliente,             B_NUMERIC,     32),
                    'p_nome'                 =>array($p_nome,                B_VARCHAR,     60),

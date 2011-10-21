@@ -13,7 +13,7 @@ class dml_CoMoeda {
            $p_tipo, $p_exclusao_ptax, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
      $sql=$strschema.'sp_putCoMoeda';
-     $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_codigo'          =>array($p_codigo,          B_VARCHAR,      3),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     30),

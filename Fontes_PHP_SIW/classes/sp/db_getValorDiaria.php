@@ -45,9 +45,9 @@ class db_getValorDiaria {
             "       inner  join co_moeda            d  on (a.sq_moeda            = d.sq_moeda)".$crlf.
             "       inner  join pd_categoria_diaria e  on (a.sq_categoria_diaria = e.sq_categoria_diaria)".$crlf.
             " where a.cliente = ".$p_cliente.$crlf.
-            (($p_chave>'') ? "  and a.sq_valor_diaria = ".$p_chave.$crlf : "");
+            "   and ($p_chave  is null or ($p_chave  is not null and a.sq_valor_diaria = $p_chave))$crlf";
 
-     $l_rs = $sql->getInstanceOf($dbms,$SQL,$recordcount);
+     $l_rs = $sql->getInstanceOf($dbms,$SQL,$params);
      return $l_rs;
    }
 }

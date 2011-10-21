@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_DmSegVinc {
    function getInstanceOf($dbms, $operacao, $chave, $sq_segmento, $sq_tipo_pessoa, $nome, $padrao, $ativo, $interno, $contratado, $ordem) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDmSegVinc';
-     $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'sq_segmento'       =>array($sq_segmento,       B_NUMERIC,     32),
                    'sq_tipo_pessoa'    =>array($sq_tipo_pessoa,    B_NUMERIC,     32),

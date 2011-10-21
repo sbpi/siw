@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_CoBanco {
    function getInstanceOf($dbms, $operacao, $chave, $p_nome, $p_codigo, $p_padrao, $p_ativo, $p_exige) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoBanco';
-     $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     60),
                    'p_codigo'          =>array($p_codigo,          B_VARCHAR,     30),

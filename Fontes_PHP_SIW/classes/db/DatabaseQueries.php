@@ -331,14 +331,14 @@ class OraDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-      if(!$this->result = @oci_parse($this->conHandle, $this->query)) { 
+      if(!$this->result = oci_parse($this->conHandle, $this->query)) { 
         $e = oci_error($this->conHandle);
         $this->error['message'] = $e['message'];
         $this->error['sqltext'] = $this->query;
         return false; 
       } else { 
         if(is_resource($this->result)) { 
-          $r = @oci_execute($this->result);
+          $r = oci_execute($this->result);
           if (!$r) { 
              $e = oci_error($this->result);
              $this->error['message'] = $e['message'];
@@ -481,14 +481,24 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
         $par = substr($par, 1);
 
         if ($cursor) {
-           $this->result = oci_new_cursor($this->conHandle);
+           if (!$this->result = oci_new_cursor($this->conHandle)) {
+             $e = oci_error($this->result);
+             $this->error['message'] = $e['message'];
+             $this->error['sqltext'] = $this->query;
+             return false; 
+           }
            if (substr($this->query,0,8)=='FUNCTION') {
              $this->query = substr($this->query,8);
              $stmt = "select $this->query ($par) from dual;";
            } else { 
              $stmt = "begin $this->query ($par); end;";
            }
-           $this->stmt = oci_parse($this->conHandle, $stmt);
+           if (!$this->stmt = oci_parse($this->conHandle, $stmt)) {
+             $e = oci_error($this->stmt);
+             $this->error['message'] = $e['message'];
+             $this->error['sqltext'] = $stmt;
+             return false; 
+           }
            
            $exibe = false;
            foreach($this->params as $paramName=>$value) {
@@ -502,11 +512,10 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
            }
 
-           $r = oci_execute($this->stmt);
-           if(!$r) { 
+           if(!oci_execute($this->stmt)) { 
              $e = oci_error($this->stmt);
              $this->error['message'] = $e['message'];
-             $this->error['sqltext'] = $e['sqltext'];
+             $this->error['sqltext'] = $stmt;
              return false; 
            } else {
               oci_execute($this->result);

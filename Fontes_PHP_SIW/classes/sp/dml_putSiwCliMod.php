@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putSiwCliMod {
    function getInstanceOf($dbms, $operacao, $p_modulo, $p_pessoa) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliMod';
-     $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'         =>array($operacao,          B_VARCHAR,      1),
                    'p_modulo'           =>array($p_modulo,          B_NUMERIC,     32),
                    'p_pessoa'           =>array($p_pessoa,          B_NUMERIC,     32)
                   );

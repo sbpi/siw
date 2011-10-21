@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_CoCidade {
    function getInstanceOf($dbms, $operacao, $chave, $p_ddd, $p_codigo_ibge, $p_sq_pais, $p_sq_regiao, $p_co_uf, $p_nome, $p_capital, $p_aeroportos) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoCidade';
-     $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_ddd'             =>array($p_ddd,             B_VARCHAR,      4),
                    'p_codigo_ibge'     =>array($p_codigo_ibge,     B_VARCHAR,     20),

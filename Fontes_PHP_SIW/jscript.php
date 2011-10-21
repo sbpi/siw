@@ -728,8 +728,12 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     $w_campo_obrigatorio[$VariableName]='"STIO"';
     if (upper($DataType)=="RADIO") { 
       print "  var w_erro = true; "."\r\n"; 
-      print "  for (i=0; i<".$Form.$VariableName.".length; i++) {"."\r\n"; 
-      print "    if (".$Form.$VariableName."[i].checked) w_erro = false;"."\r\n"; 
+      print "  if (".$Form.$VariableName.".length==undefined) {"."\r\n"; 
+      print "    if (".$Form.$VariableName.".checked) w_erro = false;"."\r\n"; 
+      print "  } else {"."\r\n"; 
+      print "    for (i=0; i<".$Form.$VariableName.".length; i++) {"."\r\n"; 
+      print "      if (".$Form.$VariableName."[i].checked) w_erro = false;"."\r\n"; 
+      print "    }"."\r\n"; 
       print "  }"."\r\n"; 
       print "  if (w_erro)"."\r\n"; 
     } elseif (upper($DataType)=="SELECT") { 

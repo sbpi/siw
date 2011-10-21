@@ -11,13 +11,13 @@ include_once($w_dir_volta.'classes/db/DatabaseQueries.php');
 */
 
 class db_exec {
-   function getInstanceOf($dbms, $p_sql, $numRows) {
+   function getInstanceOf($dbms, $p_sql, $params) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($p_sql, $dbms, null, $db_type=DB_TYPE);
+     $l_error_reporting = error_reporting();  error_reporting(0); 
      $result = $l_rs->executeQuery();
      if(!$result) { TrataErro($p_sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {
-       $numRows  = $l_rs->getNumRows();
        error_reporting($l_error_reporting); 
        return $l_rs->getResultData();
      }
@@ -26,18 +26,24 @@ class db_exec {
    function normalize($params) {
      foreach($params as $paramName=>$value) {
        foreach($value as $k=>$v) {
-         if($value[1]==B_VARCHAR) {
-           if ($v>'') {
-             // Trata aspas simples
-             $v = str_replace("'","''",$v);
-             // Limita tamanho máximo
-             $v = substr($v,0,$value[2]-1);
-             // Coloca aspas simples envolvendo a string
-             $value[0] = "'$v'";
-             // Atualiza o array
-             $params[$paramName][$k] = $value[0];
+         if ($v>'') {
+           if($value[1]==B_VARCHAR) {
+             if ($v>'') {
+               // Trata aspas simples
+               $v = str_replace("'","''",$v);
+               // Limita tamanho máximo
+               $v = substr($v,0,$value[2]);
+               // Coloca aspas simples envolvendo a string
+               $value[0] = "'$v'";
+             }
+           } else {
+             $value[0] = $v;
            }
+         } else {
+           $value[0] = 'null';
          }
+         // Atualiza o array
+         $params[$paramName][$k] = $value[0];
          break;
        }
      }

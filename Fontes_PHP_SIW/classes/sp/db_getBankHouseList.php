@@ -21,16 +21,17 @@ class db_getBankHouseList {
 
     $sql = new db_exec; $par = $sql->normalize($params); extract($par,EXTR_OVERWRITE);
 
-    $SQL = "select a.sq_agencia, b.codigo sq_banco, a.nome, a.codigo,$crlf" .
-           "       case a.padrao when 'S' then 'Sim' else 'Não' end padrao,$crlf" .
-           "       case a.ativo  when 'S' then 'Sim' else 'Não' end ativo $crlf".
-           "  from co_agencia a, co_banco b $crlf".
-           " where a.sq_banco   = b.sq_banco $crlf" .
-           (($p_sq_banco > '')  ? "   and b.sq_banco           = $p_sq_banco$crlf" : "") .
-           (($p_nome > '')      ? "   and acentos(a.nome)   like '%'".C."acentos($p_nome)".C."'%'$crlf" : "") .
-           (($p_codigo > '')    ? "   and a.codigo             = $p_codigo$crlf" : "");
+    $SQL = "select a.sq_agencia, b.codigo sq_banco, a.nome, a.codigo, a.ativo, a.padrao,$crlf" .
+           "       case a.padrao when 'S' then 'Sim' else 'Não' end as nm_padrao,$crlf" .
+           "       case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo $crlf".
+           "  from co_agencia          a$crlf" .
+           "       inner join co_banco b on (a.sq_banco = b.sq_banco)$crlf" .
+           " where 1 = 1$crlf".
+           "   and ($p_sq_banco is null or ($p_sq_banco is not null and b.sq_banco      = $p_sq_banco))$crlf".
+           "   and ($p_nome     is null or ($p_nome     is not null and acentos(a.nome) like '%'".C."acentos($p_nome)".C."'%'))$crlf".
+           "   and ($p_codigo   is null or ($p_codigo   is not null and a.codigo        = $p_codigo))$crlf";
 
-    $l_rs = $sql->getInstanceOf($dbms, $SQL, $recordcount, 1);
+    $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
     return $l_rs;
   }
 }

@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_SgPesMen {
    function getInstanceOf($dbms, $operacao, $p_pessoa, $p_menu, $p_endereco) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSgPesMen';
-     $params=array('operacao'       =>array($operacao,      B_VARCHAR,      1),
+     $params=array('p_operacao'     =>array($operacao,      B_VARCHAR,      1),
                    'p_pessoa'       =>array($p_pessoa,      B_NUMERIC,     32),
                    'p_menu'         =>array($p_menu,        B_NUMERIC,     32),
                    'p_endereco'     =>array($p_endereco,    B_NUMERIC,     32)

@@ -22,16 +22,15 @@ class db_getMeioTransporte {
      
      $sql = new db_exec; $par = $sql->normalize($params); extract($par,EXTR_OVERWRITE);
 
-     $SQL = "select a.sq_meio_transporte as chave, ".$crlf.
-            "       a.nome, a.aereo, a.rodoviario, a.ferroviario, a.aquaviario, a.ativo, ".$crlf.
+     $SQL = "select a.sq_meio_transporte as chave, a.nome, a.aereo, a.rodoviario, a.ferroviario, a.aquaviario, a.ativo, ".$crlf.
             "       case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo ".$crlf.
             "  from pd_meio_transporte a ".$crlf.
-            " where a.cliente = ".$p_cliente.$crlf.
-            (($p_chave>'') ? "  and a.sq_meio_transporte = $p_chave$crlf" : "").
-            (($p_ativo>'') ? "  and a.ativo              = $p_ativo$crlf" : "").
-            (($p_nome>'')  ? "  and acentos(a.nome)      = acentos($p_nome)$crlf" : "");
+            " where a.cliente = $p_cliente$crlf".
+            "   and ($p_nome   is null or ($p_nome   is not null and acentos(a.nome)      = acentos($p_nome)))$crlf".
+            "   and ($p_chave  is null or ($p_chave  is not null and a.sq_meio_transporte = $p_chave))$crlf".
+            "   and ($p_ativo  is null or ($p_ativo  is not null and a.ativo              = $p_ativo))$crlf";
 
-     $l_rs = $sql->getInstanceOf($dbms,$SQL,$recordcount);
+     $l_rs = $sql->getInstanceOf($dbms,$SQL,$params);
      return $l_rs;
    }
 }

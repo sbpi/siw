@@ -12,7 +12,7 @@ class dml_putUsuarioTemp {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_cpf, $p_nome, $p_nome_resumido, $p_sexo,
          $p_email, $p_vinculo, $p_unidade, $p_sala, $p_ramal) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putUsuarioTemp';
-     $params=array('operacao'           =>array($operacao,              B_VARCHAR,     1),
+     $params=array('p_operacao'         =>array($operacao,              B_VARCHAR,     1),
                    'p_cliente'          =>array($p_cliente,             B_NUMERIC,     4),
                    'p_cpf'              =>array($p_cpf,                 B_VARCHAR,     14),
                    'p_nome'             =>array($p_nome,                B_VARCHAR,     60),

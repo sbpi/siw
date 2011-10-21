@@ -1564,8 +1564,6 @@ function AnaliseCelular() {
 
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_inicio           = $_REQUEST['w_inicio'];
-    $w_fim              = $_REQUEST['w_fim'];
     $w_tramite          = $_REQUEST['w_tramite'];
     $w_sg_tramite       = $_REQUEST['w_sg_tramite'];
     $w_sg_novo_tramite  = $_REQUEST['w_tramite'];
@@ -1603,15 +1601,8 @@ function AnaliseCelular() {
       $j               = 3;
       for ($i=$w_inicio; $i<=$w_fim; $i+=86400) {
         // Verifica períodos de bloqueio
-        if (f($row,'inicio_bloqueio')<=$i && $i<=addDays(f($row,'fim_bloqueio'),0)) {
-          $dados[$cont][$j] = 'bgcolor="#999999" title="Bloqueado"';
-          $dados[$cont][0]  = '';
-        } elseif (f($RS_Solic,'inicio')<=$i && $i<=addDays(f($RS_Solic,'fim'),0)) {
-          //if (strpos(nvl($dados[$cont][$j],'Dísponível'),'Disponível')===false) { 
-            //if (nvl($dados[$cont][$j],'')=='') { 
-              $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
-            //}
-          //}
+        if (f($RS_Solic,'inicio')<=$i && $i<=addDays(f($RS_Solic,'fim'),0)) {
+          $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
         } else {
           $dados[$cont][$j]= '';
         }
@@ -1630,12 +1621,19 @@ function AnaliseCelular() {
           $dados[$cont][$j] = 'bgcolor="#EE0000" title="Emprestado"';
           $dados[$cont][0] = '';
         } 
-        if (f($row,'inicio_bloqueio')<=$i && (f($row,'fim_bloqueio')=='S' || (f($row,'bloqueado')=='N' && $i<=f($row,'fim_bloqueio')))) {
-          $dados[$cont][$j] = 'bgcolor="#999999" title="Bloqueado"';
-          $dados[$cont][0] = '';
-        }
         $j++;
       }
+    }
+
+    $j = 3;
+    for ($i=$w_inicio; $i<=$w_fim; $i+=86400) {
+      // Verifica períodos de bloqueio
+      //if (f($row,'inicio_bloqueio')<=$i && (f($row,'fim_bloqueio')=='S' || (f($row,'bloqueado')=='N' && $i<=f($row,'fim_bloqueio')))) {
+      if (f($row,'inicio_bloqueio')<=$i && $i<=addDays(f($row,'fim_bloqueio'),0)) {
+        $dados[$cont][$j] = 'bgcolor="#999999" title="Bloqueado"';
+        $dados[$cont][0]  = '';
+      }
+      $j++;
     }
   }
   
@@ -1709,7 +1707,7 @@ function AnaliseCelular() {
   ShowHTML(VisualGeral($w_chave,'V',$w_usuario,'SRSOLCEL',null));
   
   $w_atual = addDays(f($RS_Solic,'inicio'),-5);
-  $v_html ='    <tr><td><table width="100%" border="1"'.((!$disponiveis) ? ' bgcolor="FEFEFE"' : '').'><tr><td>';
+  $v_html ='    <tr><td colspan="3"><table width="100%" border="1"'.((!$disponiveis) ? ' bgcolor="FEFEFE"' : '').'><tr><td>';
   $v_html.='      <tr align="center">';
   $v_html.='        <td rowspan="2"'.(($disponiveis) ? ' colspan="2"' : '').'>Número Linha</td>';
   $l_html  = '';
@@ -1739,7 +1737,7 @@ function AnaliseCelular() {
     $w_atual = addDays($w_atual,1);
   }
   $v_html.='</tr></table>';
-
+  //exibevariaveis();
   ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
   if (!$disponiveis) {
     ShowHTML('    <tr><td><b><font color="#FF0000">ATENÇÃO: Nenhum aparelho disponível para empréstimo no período indicado!</font></b></td>');
@@ -1753,9 +1751,9 @@ function AnaliseCelular() {
     ShowHTML('    <tr><td colspan="2"><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o motivo da devolução e ações a serem executadas.">'.$w_despacho.'</TEXTAREA></td>');
   } else {
     if (Nvl($w_envio,'N')=='N') {
-      ShowHTML('              <input class="STR" type="radio" name="w_envio" value="N" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();" checked> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"> Devolver para a fase anterior');
+      ShowHTML('              <input class="STR" type="radio" name="w_envio" value="N" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.montaFiltro('GET')).'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_assinatura\'; document.Form.submit();" checked> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.montaFiltro('GET')).'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"> Devolver para a fase anterior');
     } else {
-      ShowHTML('              <input class="STR" type="radio" name="w_envio" value="N" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"> Enviar para a próxima fase <br><input class="STR" class="STR" type="radio" name="w_envio" value="S" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();" checked> Devolver para a fase anterior');
+      ShowHTML('              <input class="STR" type="radio" name="w_envio" value="N" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.montaFiltro('GET')).'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_assinatura\'; document.Form.submit();"> Enviar para a próxima fase <br><input class="STR" class="STR" type="radio" name="w_envio" value="S" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.montaFiltro('GET')).'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();" checked> Devolver para a fase anterior');
     } 
     ShowHTML('  <tr><td colspan="3"><font size="2"><hr NOSHADE color=#000000 SIZE=1></font></td></tr>');
     if ($w_envio=='S') {
@@ -1766,7 +1764,6 @@ function AnaliseCelular() {
       ShowHTML('        <tr><td><font size="2"><b>DADOS DA EXECUÇÃO');
       ShowHTML('            <td align="right"><input class="stb" type="button" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'DispCelular&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Mapa de Disponibilidade de Celular&SG='.$SG.'\',\'Indicador\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" value="MAPA DE DISPONIBILIDADE DE CELULAR">');
       ShowHTML('        <tr><td colspan="2"><hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-      ShowHTML('    </table>');
       if (!$disponiveis) {
         ShowHTML('      <tr><td colspan="3"><b>ATENÇÃO: Nenhum aparelho disponível para empréstimo no período indicado!<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
       } elseif ($disponiveis==1) {
@@ -1777,6 +1774,7 @@ function AnaliseCelular() {
       
       ShowHTML($v_html);
 
+      ShowHTML('    </table>');
       if ($disponiveis) ShowHTML('      <tr><td colspan="3"><b>A<u>c</u>essórios:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Relacione, se necessário, a lista de acessórios entregues com o aparelho.">'.$w_acessorios.'</TEXTAREA></td>');
     }
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -1785,6 +1783,7 @@ function AnaliseCelular() {
   ShowHTML('    <tr><td align="center" colspan=3><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
+  exiBearray($RS);
   ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');

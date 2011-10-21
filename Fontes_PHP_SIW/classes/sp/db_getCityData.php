@@ -1,5 +1,5 @@
 <?php
-extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta."classes/sp/db_exec.php");
 /**
 * class db_getCityData
 *
@@ -7,23 +7,24 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 *    Recupera os dados da cidade
 * }
 */
-
 class db_getCityData {
    function getInstanceOf($dbms, $p_chave) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCityData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,   32),
                    "p_result"   =>array(null,           B_CURSOR,    -1)
                   );
-     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
-     else {
-       error_reporting($l_error_reporting); 
-        if ($l_rs = $l_rs->getResultArray()) {
-          return $l_rs;
-        } else {
-          return array();
-        }
-     }
-   }
-}    
+    $sql = new db_exec; $par = $sql->normalize($params); extract($par, EXTR_OVERWRITE);
+
+    $SQL =  "select a.sq_cidade, a.sq_pais, a.sq_regiao, a.co_uf, a.nome, a.ddd, a.codigo_ibge, a.capital, a.codigo_externo, a.aeroportos,$crlf" .
+            "       a.nome".C."', '".C."b.nome".C."', '".C."c.nome as google$crlf" .
+            "  from co_cidade a$crlf" .
+            "       inner join co_uf   b on (a.sq_pais = b.sq_pais and a.co_uf = b.co_uf)$crlf" .
+            "       inner join co_pais c on (a.sq_pais = c.sq_pais)$crlf".
+            " where sq_cidade = $p_chave$crlf";
+
+    $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
+    if (count($l_rs)==1) return $l_rs[0];
+    return $l_rs;
+  }
+}
 ?>

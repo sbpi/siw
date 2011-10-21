@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_PutSiwPessoaMail {
    function getInstanceOf($dbms, $operacao, $sq_pessoa, $sq_menu, $alerta, $tramitacao, $conclusao, $responsabilidade) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwPessoaMail';
-     $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
+     $params=array('p_operacao'         =>array($operacao,          B_VARCHAR,      1),
                    'sq_pessoa'          =>array($sq_pessoa,         B_NUMERIC,     32),
                    'sq_menu'            =>array($sq_menu,           B_NUMERIC,     32),
                    'alerta'             =>array($alerta,            B_VARCHAR,      1),

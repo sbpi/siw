@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putMenuRelac {
    function getInstanceOf($dbms, $operacao, $p_servico_cliente, $p_servico_fornecedor, $p_sq_siw_tramite) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTMENURELAC';
-     $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
+     $params=array('p_operacao'             =>array($operacao,              B_VARCHAR,      1),
                    'p_servico_cliente'      =>array($p_servico_cliente,     B_INTEGER,     32),
                    'p_servico_fornecedor'   =>array($p_servico_fornecedor,  B_INTEGER,     32),
                    'p_sq_siw_tramite'       =>array($p_sq_siw_tramite,      B_INTEGER,     32)

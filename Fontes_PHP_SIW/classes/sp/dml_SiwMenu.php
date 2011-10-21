@@ -16,7 +16,7 @@ class dml_SiwMenu {
          $descentralizado, $externo, $ativo, $ordem, $envio, $controla_ano, $libera_edicao, $numeracao, 
          $numerador, $sequencial, $ano_corrente, $prefixo, $sufixo, $envio_inclusao, $cancela_sem_tramite) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwMenu';
-     $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
+     $params=array('p_operacao'         =>array($operacao,              B_VARCHAR,      1),
                    'chave'              =>array($chave,                 B_NUMERIC,     32),
                    'cliente'            =>array($cliente,               B_NUMERIC,     32),
                    'nome'               =>array($nome,                  B_VARCHAR,     40),
