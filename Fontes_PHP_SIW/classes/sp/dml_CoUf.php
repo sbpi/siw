@@ -12,7 +12,7 @@ class dml_CoUf {
    function getInstanceOf($dbms, $operacao, $chave, $p_sq_pais, $p_sq_regiao, $p_nome, $p_ativo, $p_padrao, $p_codigo_ibge, $p_ordem) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoUf';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
-                   'chave'             =>array($chave,             B_VARCHAR,      3),
+                   'p_chave'           =>array($chave,             B_VARCHAR,      3),
                    'p_sq_pais'         =>array($p_sq_pais,         B_NUMERIC,     32),
                    'p_sq_regiao'       =>array($p_sq_regiao,       B_NUMERIC,     32),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     30),

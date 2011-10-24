@@ -12,7 +12,7 @@ class dml_SgPesMod {
    function getInstanceOf($dbms, $operacao, $chave, $cliente, $sq_modulo, $sq_endereco) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSgPesMod';
      $params=array('p_operacao'         =>array($operacao,          B_VARCHAR,      1),
-                   'chave'              =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'            =>array($chave,             B_NUMERIC,     32),
                    'cliente'            =>array($cliente,           B_NUMERIC,     32),
                    'sq_modulo'          =>array($sq_modulo,         B_NUMERIC,     32),
                    'sq_endereco'        =>array($sq_endereco,       B_NUMERIC,     32),

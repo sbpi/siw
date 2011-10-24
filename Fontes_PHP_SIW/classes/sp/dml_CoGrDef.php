@@ -12,7 +12,7 @@ class dml_CoGrDef {
    function getInstanceOf($dbms, $operacao, $chave, $p_nome, $p_codigo_externo, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoGrDef';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
-                   'chave'             =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'           =>array($chave,             B_NUMERIC,     32),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     50),
                    'p_codigo_externo'  =>array($p_codigo_externo,  B_VARCHAR,     60),
                    'p_ativo'           =>array($p_ativo,           B_VARCHAR,      1)

@@ -12,7 +12,7 @@ class dml_putSgPesUni {
    function getInstanceOf($dbms, $operacao, $chave, $sq_unidade) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSgPesUni';
      $params=array('p_operacao'         =>array($operacao,          B_VARCHAR,      1),
-                   'chave'              =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'            =>array($chave,             B_NUMERIC,     32),
                    'sq_unidade'         =>array($sq_unidade,        B_NUMERIC,     32),
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

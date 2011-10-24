@@ -12,7 +12,7 @@ class dml_CoTipoVinc {
    function getInstanceOf($dbms, $operacao, $chave, $sq_tipo_pessoa, $cliente, $nome, $interno, $contratado, $padrao, $ativo, $mail_tramite, $mail_alerta) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoTipoVinc';
      $params=array('p_operacao'         =>array($operacao,          B_VARCHAR,      1),
-                   'chave'              =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'            =>array($chave,             B_NUMERIC,     32),
                    'sq_tipo_pessoa'     =>array($sq_tipo_pessoa,    B_NUMERIC,     32),
                    'cliente'            =>array($cliente,           B_NUMERIC,     32),
                    'nome'               =>array($nome,              B_VARCHAR,     20),

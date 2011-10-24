@@ -14,7 +14,7 @@ class dml_SiwTramite {
                    $p_beneficiario,$p_gestor) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwTramite';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
-                   'chave'             =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'           =>array($chave,             B_NUMERIC,     32),
                    'p_sq_menu'         =>array($p_sq_menu,         B_NUMERIC,     32),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     50),
                    'p_ordem'           =>array($p_ordem,           B_NUMERIC,     32),

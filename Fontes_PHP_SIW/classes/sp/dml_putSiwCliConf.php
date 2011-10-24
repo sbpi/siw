@@ -20,7 +20,7 @@ class dml_putSiwCliConf {
               
           
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliConf';
-     $params=array('chave'                  =>array($chave,                 B_NUMERIC,     32),
+     $params=array('p_chave'                =>array($chave,                 B_NUMERIC,     32),
                    'tamanho_minimo_senha'   =>array($tamanho_minimo_senha,  B_NUMERIC,     32),
                    'tamanho_maximo_senha'   =>array($tamanho_maximo_senha,  B_NUMERIC,     32),
                    'maximo_tentativas'      =>array($maximo_tentativas,     B_NUMERIC,     32),

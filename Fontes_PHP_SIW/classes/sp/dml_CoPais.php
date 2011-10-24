@@ -12,7 +12,7 @@ class dml_CoPais {
    function getInstanceOf($dbms, $operacao, $chave, $p_nome, $p_ativo, $p_padrao, $p_ddi, $p_sigla, $p_moeda, $p_continente) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoPais';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
-                   'chave'             =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'           =>array($chave,             B_NUMERIC,     32),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     60),
                    'p_ativo'           =>array($p_ativo,           B_VARCHAR,      1),
                    'p_padrao'          =>array($p_padrao,          B_VARCHAR,      1),

@@ -12,7 +12,7 @@ class dml_DmSegVinc {
    function getInstanceOf($dbms, $operacao, $chave, $sq_segmento, $sq_tipo_pessoa, $nome, $padrao, $ativo, $interno, $contratado, $ordem) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDmSegVinc';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
-                   'chave'             =>array($chave,             B_NUMERIC,     32),
+                   'p_chave'           =>array($chave,             B_NUMERIC,     32),
                    'sq_segmento'       =>array($sq_segmento,       B_NUMERIC,     32),
                    'sq_tipo_pessoa'    =>array($sq_tipo_pessoa,    B_NUMERIC,     32),
                    'nome'              =>array($nome,              B_VARCHAR,     20),

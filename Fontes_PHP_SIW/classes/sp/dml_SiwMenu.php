@@ -17,7 +17,7 @@ class dml_SiwMenu {
          $numerador, $sequencial, $ano_corrente, $prefixo, $sufixo, $envio_inclusao, $cancela_sem_tramite) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwMenu';
      $params=array('p_operacao'         =>array($operacao,              B_VARCHAR,      1),
-                   'chave'              =>array($chave,                 B_NUMERIC,     32),
+                   'p_chave'            =>array($chave,                 B_NUMERIC,     32),
                    'cliente'            =>array($cliente,               B_NUMERIC,     32),
                    'nome'               =>array($nome,                  B_VARCHAR,     40),
                    'acesso_geral'       =>array($acesso_geral,          B_VARCHAR,      1),
