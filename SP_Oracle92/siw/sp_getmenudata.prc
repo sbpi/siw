@@ -20,13 +20,13 @@ begin
              left    join (select x.sq_menu, count(sq_siw_tramite) as qtd
                              from siw_tramite x
                             where x.solicita_cc = 'S'
-                              and 'CI'          = coalesce(x.sigla,'--')
+                              and 'CI'          = x.sigla
                            group by x.sq_menu
                           )                  b on (a.sq_menu  = b.sq_menu)
              left    join (select x.sq_menu, count(sq_siw_tramite) as qtd
                              from siw_tramite x
                             where x.envia_mail = 'S'
-                              and 'CI'          = coalesce(x.sigla,'--')
+                              and 'CI'          = x.sigla
                            group by x.sq_menu
                           )                  f on (a.sq_menu  = f.sq_menu)
              left    join eo_unidade         d on (a.sq_unid_executora  = d.sq_unidade)

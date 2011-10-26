@@ -29,7 +29,7 @@ begin
                  a.bloqueado, a.inicio_bloqueio, a.fim_bloqueio, a.motivo_bloqueio,
                  d.sq_siw_solicitacao, d.inicio, d.fim, d.pendencia,
                  d.sq_siw_tramite, d.nome as nm_tramite, d.ativo as st_tramite, d.sigla as sg_tramite,
-                 d.codigo_interno
+                 coalesce(d.codigo_interno, to_char(d.sq_siw_solicitacao)) as codigo_interno
             from sr_celular                               a
                  left      join (select x.sq_siw_solicitacao, x.codigo_interno, 
                                         coalesce(z.inicio_real, x.inicio) as inicio, coalesce(z.fim_real, x.fim) as fim, 
