@@ -905,7 +905,7 @@ function TermoCelular() {
   ShowHTML('    <tr><td align="center" colspan=3><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -1524,7 +1524,7 @@ function DadosExecucao() {
   ShowHTML('      <tr><td align="center" colspan="3">');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -1598,40 +1598,39 @@ function AnaliseCelular() {
       $dados[$cont][1] = $w_linha;
       $dados[$cont][2] = f($row,'acessorios');
 
-      $j               = 3;
-      for ($i=$w_inicio; $i<=$w_fim; $i+=86400) {
+      $j = 3;
+      for ($i=$w_inicio; toDate(formataDataEdicao($i))<=$w_fim; $i+=86400) {
         // Verifica períodos de bloqueio
-        if (f($RS_Solic,'inicio')<=$i && $i<=addDays(f($RS_Solic,'fim'),0)) {
+        if (f($RS_Solic,'inicio')<=toDate(formataDataEdicao($i)) && toDate(formataDataEdicao($i))<=f($RS_Solic,'fim')) {
           $dados[$cont][$j]= 'bgcolor="#CCFFCC" title="Disponível"';
         } else {
           $dados[$cont][$j]= '';
         }
         $j++;
       }
-      $j = 3;
     }
 
+    $j = 3;
     // Verifica se o celular está alocado
     if (nvl(f($row,'sq_siw_solicitacao'),'')!='') {
       // Recupera o período da solicitação
       $w_ini_sol = f($row,'inicio');
       $w_fim_sol = f($row,'fim');
-      for ($i=$w_inicio; $i<=addDays($w_fim,1); $i+=86400) {
-        if ($w_ini_sol<=$i && $i<=$w_fim_sol) {
-          $dados[$cont][$j] = 'bgcolor="#EE0000" title="Emprestado"';
-          $dados[$cont][0] = '';
+      for ($i=$w_inicio; toDate(formataDataEdicao($i))<=$w_fim; $i+=86400) {
+        if ($w_ini_sol<=toDate(formataDataEdicao($i)) && toDate(formataDataEdicao($i))<=$w_fim_sol) {
+          $dados[$cont][$j] = 'bgcolor="#EE0000" title="Emprestado: Solicitação '.f($row,'codigo_interno').'"';
+          if (f($RS_Solic,'inicio')<=$i && $i<=f($RS_Solic,'fim')) $dados[$cont][0] = '';
         } 
         $j++;
       }
     }
 
     $j = 3;
-    for ($i=$w_inicio; $i<=$w_fim; $i+=86400) {
+    for ($i=$w_inicio; toDate(formataDataEdicao($i))<=$w_fim; $i+=86400) {
       // Verifica períodos de bloqueio
-      //if (f($row,'inicio_bloqueio')<=$i && (f($row,'fim_bloqueio')=='S' || (f($row,'bloqueado')=='N' && $i<=f($row,'fim_bloqueio')))) {
-      if (f($row,'inicio_bloqueio')<=$i && $i<=addDays(f($row,'fim_bloqueio'),0)) {
+      if (f($row,'inicio_bloqueio')<=toDate(formataDataEdicao($i)) && toDate(formataDataEdicao($i))<=addDays(f($row,'fim_bloqueio'),0)) {
         $dados[$cont][$j] = 'bgcolor="#999999" title="Bloqueado"';
-        $dados[$cont][0]  = '';
+        if (f($RS_Solic,'inicio')<=toDate(formataDataEdicao($i)) && toDate(formataDataEdicao($i))<=f($RS_Solic,'fim')) $dados[$cont][0] = '';
       }
       $j++;
     }
@@ -1642,7 +1641,7 @@ function AnaliseCelular() {
   foreach($dados as $row) {
     if ($row[0]!='') $disponiveis++;
   }
-  //exibearray($dados);
+
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_tramite);
   $w_sg_tramite = f($RS,'sigla');
@@ -1695,7 +1694,7 @@ function AnaliseCelular() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'D');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'F');
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1742,7 +1741,7 @@ function AnaliseCelular() {
   if (!$disponiveis) {
     ShowHTML('    <tr><td><b><font color="#FF0000">ATENÇÃO: Nenhum aparelho disponível para empréstimo no período indicado!</font></b></td>');
     ShowHTML('            <td align="right"><input class="stb" type="button" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'DispCelular&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Mapa de Disponibilidade de Celular&SG='.$SG.'\',\'Indicador\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" value="MAPA DE DISPONIBILIDADE DE CELULAR">');
-    ShowHTML('    <tr><td colspan=2>'.$v_html);
+    ShowHTML('    <tr><td colspan=2><table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">'.$v_html.'</table>');
     ShowHTML('    <tr><td colspan="2"><b>Tipo do Encaminhamento</b><br>');
     ShowHTML('        <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
     ShowHTML('        <INPUT type="hidden" name="w_envio" value="S">');
@@ -1764,13 +1763,7 @@ function AnaliseCelular() {
       ShowHTML('        <tr><td><font size="2"><b>DADOS DA EXECUÇÃO');
       ShowHTML('            <td align="right"><input class="stb" type="button" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'DispCelular&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Mapa de Disponibilidade de Celular&SG='.$SG.'\',\'Indicador\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" value="MAPA DE DISPONIBILIDADE DE CELULAR">');
       ShowHTML('        <tr><td colspan="2"><hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-      if (!$disponiveis) {
-        ShowHTML('      <tr><td colspan="3"><b>ATENÇÃO: Nenhum aparelho disponível para empréstimo no período indicado!<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
-      } elseif ($disponiveis==1) {
-        ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelho disponível para empréstimo no período indicado.<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
-      } else {
-        ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelhos disponíveis para empréstimo no período indicado.<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
-      }
+      ShowHTML('      <tr><td colspan="3"><b>'.$disponiveis.' aparelho'.(($disponiveis==1) ? ' disponível' : 's disponíveis').' para empréstimo no período indicado.<table id="Tudo" border="1" bgcolor="#f5f5f5" cellspacing="0">');
       
       ShowHTML($v_html);
 
@@ -1783,8 +1776,7 @@ function AnaliseCelular() {
   ShowHTML('    <tr><td align="center" colspan=3><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-  exiBearray($RS);
-  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -1869,7 +1861,7 @@ function DispCelular() {
       $l = intVal(substr(formataDataEdicao($w_fim_sol),0,2));
       
       for ($i=$k; $i<=$l; $i++) {
-        $dados[$cont][$i+2] = 'bgcolor="#EE0000" title="Emprestado"';
+        $dados[$cont][$i+2] = 'bgcolor="#EE0000" title="Emprestado: Solicitação '.f($row,'codigo_interno').'"';
       }
     }
     
@@ -2080,7 +2072,7 @@ function EntregaCelular() {
   ShowHTML('    <tr><td align="center" colspan=3><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -2243,7 +2235,7 @@ function DevolCelular() {
   ShowHTML('    <tr><td align="center" colspan=3><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('          </td>');
   ShowHTML('      </tr>');
   
@@ -2485,8 +2477,6 @@ function SolicMail($p_solic,$p_tipo) {
     } 
     if ($w_destinatarios>'') {
       // Executa o envio do e-mail
-      echo $w_html;
-      exit();
       $w_resultado=EnviaMail($w_assunto,$w_html,$w_destinatarios,null);
     } 
     // Se ocorreu algum erro, avisa da impossibilidade de envio
