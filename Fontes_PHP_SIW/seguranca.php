@@ -307,7 +307,7 @@ function Usuarios() {
     ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr>');
     $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $w_cliente);
-    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'N','p_uf',null,null);
+    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'p_uf',null,null);
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b>Usuários:</b><br>');
