@@ -42,7 +42,7 @@ begin
          select montanometipomaterial(p_tipo_material) into w_raiz from dual;
          
          -- Se o tipo mudar, gera novo código
-         If w_tipo is null or w_tipo <> p_tipo_material or (p_chave is not null and instr(w_codigo, w_raiz)=0) Then
+         If w_tipo is null or w_tipo <> p_tipo_material or (p_chave is not null and instr(w_codigo, substr(w_raiz,1,instr(w_raiz,' ')-1))=0) Then
             
             -- Remove nome de classe, grupo e subgrupo
             If instr(w_raiz,' ') > 0 Then
