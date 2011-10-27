@@ -926,7 +926,7 @@ begin
                 e.sq_tipo_unidade,    e.nome nm_unidade_solic,        e.informal informal_solic,
                 e.vinculada vinc_solic,e.adm_central adm_solic,       e.sigla as sg_unidade_solic,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
-                f.nome_resumido nm_sol,
+                f.nome nm_solicitante, f.nome_resumido nm_sol,
                 coalesce(f1.ativo,'N') as st_sol,
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,

@@ -554,7 +554,7 @@ begin
  End If;
  
  -- Solicitação de celular na fase de ciência pelo beneficiário deve ser cumprida pelo beneficiário
- if w_sigla_situacao = 'CB' and w_sigla = 'SRSOLCEL' and w_solicitante = p_usuario Then
+ if w_sigla_situacao in ('CB','TR') and w_sigla = 'SRSOLCEL' and w_solicitante = p_usuario Then
     Result := Result + 16;
  Elsif w_anterior <> p_usuario and w_beneficiario <> p_usuario Then 
    -- A condição abaixo verifica se:

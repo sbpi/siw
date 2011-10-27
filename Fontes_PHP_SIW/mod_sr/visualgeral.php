@@ -8,6 +8,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   // Recupera os dados da tarefa
   $sql = new db_getSolicData; $RS1 = $sql->getInstanceof($dbms,$l_chave,$l_sg);
   $w_tramite_ativo      = f($RS1,'ativo');
+  $w_or_tramite         = f($RS1,'or_tramite');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
@@ -196,6 +197,22 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     }
     if (nvl(f($RS1,'observacao'),'')!='') $l_html.=chr(13).'   <tr valign="top"><td><b>Observações:</b></font></td><td>'.crlf2br(f($RS1,'observacao')).'</font></td></tr>';
   } 
+  
+  if ($SG=='SRSOLCEL') {
+    // Recupera os trâmites do serviço para exibir os links para termo de referência
+    $sql = new db_getTramiteList; $RS_Tramite = $sql->getInstanceOf($dbms,$w_menu,null,null,null);
+    $RS_Tramite = SortArray($RS_Tramite,'ordem','asc');
+    foreach($RS_Tramite as $row) { 
+      if (f($row,'sigla')=='EA') $w_ea = f($row,'ordem'); // Em análise
+      if (f($row,'sigla')=='AD') $w_ad = f($row,'ordem'); // Aguardando devolução
+    }
+    if ($w_or_tramite>$w_ea) {  
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EMISSÃO DE TERMOS<hr NOSHADE color=#000000 SIZE=1></b></font><ul>';
+      $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteTermoCelular&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=SRSOLCEL" title="Clique neste link para emitir o documento." target="OS">Termo de Recebimento e Responsabilidade</A>&nbsp';
+      if ($w_or_tramite>$w_ad) $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteTermoCelular&R='.$w_pagina.$par.'&O=D&w_chave='.$l_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=SRSOLCEL" title="Emite Ordem de Serviço." target="OS">Termo de Devolução</A>&nbsp';
+      $l_html.=chr(13).'      </ul></td></tr>';
+    }
+  }
 
   $w_erro = ValidaGeral($w_cliente,$l_chave,$l_sg,null,null,null,null);
   if ($w_erro>'') {

@@ -119,13 +119,13 @@
   ShowHTML('<HR>');
   if ($P1==1) ShowHTML('<div align="left"><table border=0><tr valign="top"><td><b>Finalidade:</b><td nowrap>'.f($RS_Menu,'finalidade').'</tr></table></div>');  
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IAEV',$O)===false)) {
+  if (strpos('IAEV',$O)!==false) {
     if ($w_cidade=='') {
       // Carrega o valores padrão para cidade
       $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
       $w_cidade   = f($RS,'sq_cidade_padrao');
     } 
-    if (!(strpos('EV',$O)===false)) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
       if ($O=='V') {
         $w_Erro = Validacao($w_sq_solicitacao,$SG);
@@ -181,7 +181,7 @@
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     //ShowHTML ' history.back(1);'
     ScriptClose();
   } 

@@ -1357,6 +1357,7 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
+
   switch ($SG) {
     case 'CLMATSERV':
       // Verifica se a Assinatura Eletrônica é válida
