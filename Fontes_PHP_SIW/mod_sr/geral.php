@@ -2190,11 +2190,11 @@ function DevolCelular() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();'.(($w_envio=='N') ?  ' pendencia(); bloqueio();' : '').'\'');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();'.(($w_envio=='N') ?  ' pendencia(); bloqueio();' : '').'"');
   } elseif ($w_envio=='S') {
-    BodyOpen('onLoad=\'document.Form.w_novo_tramite.focus();\'');
+    BodyOpen('onLoad="document.Form.w_novo_tramite.focus();"');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_fim.focus();\'');
+    BodyOpen('onLoad="document.Form.w_fim.focus(); pendencia(); bloqueio();"');
   }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2742,13 +2742,17 @@ function Grava() {
           retornaFormulario('w_assinatura');
           exit();
         } 
-        
+        $w_despacho = $_REQUEST['w_despacho'];
+        if ($_REQUEST['w_envio']=='N' && $SG=='SRSOLCEL' && $_REQUEST['w_pendencia']==='S' && $_REQUEST['w_acessorios']!='') {
+          // Se o celular foi devolvido com pendência de acessórios, grava no log de envio
+          $w_despacho = $crlf.'Pendências: '.$_REQUEST['w_acessorios'];
+        }
         if ($_REQUEST['w_envio']=='N') {
           $SQL = new dml_putSolicEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
-            $_REQUEST['w_envio'],$_REQUEST['w_despacho'],null,null,null,null);
+            $_REQUEST['w_envio'],$w_despacho,null,null,null,null);
         } else {
           $SQL = new dml_putSolicEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_novo_tramite'],
-            $_REQUEST['w_envio'],$_REQUEST['w_despacho'],null,null,null,null);
+            $_REQUEST['w_envio'],$w_despacho,null,null,null,null);
         } 
 
         ScriptOpen('JavaScript');

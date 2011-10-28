@@ -235,7 +235,7 @@ begin
                ' para a fase "'||b.nome||'".'||
                case p_devolucao
                    when 'S' then chr(13)||chr(10)||'Despacho: '||chr(13)||chr(10)||p_despacho
-                   else ''
+                   else coalesce(p_despacho,'')
                end
        end
        from siw_tramite a,

@@ -35,7 +35,7 @@ function celular_termoDevol($l_chave,$l_sg,$l_formato=0) {
   // Campos para informar os dados do atendimento
   $l_html.=chr(13).'      <table border=0 width="100%" cellpadding=10 bgcolor="'.$conTrBgColor.'">';
   $l_html.=chr(13).'        <tr valign="top"><td colspan="2">';
-  $l_html.=chr(13).'<p align="justify">Eu, <b>'.f($RS1,'nm_solicitante').'</b>, declaro que devolvi para <b>'.f($RS2,'nome_resumido').' - '.f($RS2,'nm_pessoa').'</b>, o aparelho celular da marca <b>'.f($RS1,'marca').'</b>, ';
+  $l_html.=chr(13).'<p align="justify">A unidade organizacional <b>'.f($RS1,'nm_unidade_exec').'</b>, em nome da <b>'.f($RS2,'nome_resumido').' - '.f($RS2,'nm_pessoa').'</b>, registra o término do empréstimo feito a <b>'.f($RS1,'nm_solicitante').'</b>, de aparelho celular marca <b>'.f($RS1,'marca').'</b>, ';
   $l_html.=chr(13).'modelo <b>'.f($RS1,'modelo').'</b>, número <b>'.f($RS1,'numero_linha').'</b>, sim card no. <b>'.f($RS1,'sim_card').'</b>, imei do aparelho no. <b>'.f($RS1,'imei').'</b> ';
   $l_html.=chr(13).'em perfeitas condições de uso, contendo os seguintes itens:</p>';
   $l_html.=chr(13).'<p align="justify"><b>'.f($RS1,'acessorios').'</b></p>';
@@ -44,7 +44,7 @@ function celular_termoDevol($l_chave,$l_sg,$l_formato=0) {
   }
   if ($l_formato!=1) {
     $l_html.=chr(13).'        <tr valign="top" align="center">';
-    $l_html.=chr(13).'          <td width="50%"><input type="text" size=35 name="responsável" readonly><br><b>Assinatura do Beneficiário</b></td>';
+    $l_html.=chr(13).'          <td width="50%"><input type="text" size=35 name="responsável" readonly><br><b>Assinatura pela Unidade</b></td>';
     $l_html.=chr(13).'          <td width="50%"><input type="text" size=35 name="responsável" readonly><br><b>Local e Data</b></td>';
   }
   $l_html.=chr(13).'      </table>';
