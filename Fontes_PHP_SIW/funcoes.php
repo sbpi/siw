@@ -211,9 +211,9 @@ function headerPdf($titulo,$pag=null) {
 // -------------------------------------------------------------------------
 function headerWord($p_orientation='LANDSCAPE') {
   extract($GLOBALS);
-  header('Cache-Control: no-cache, must-revalidate',false);
   header('Content-type: application/msword',false);
   header('Content-Disposition: attachment; filename=arquivo.doc');
+  header('Cache-Control: no-cache, must-revalidate',false);
   ShowHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office" ');
   ShowHTML('xmlns:w="urn:schemas-microsoft-com:office:word" ');
   ShowHTML('xmlns="http://www.w3.org/TR/REC-html40"> ');

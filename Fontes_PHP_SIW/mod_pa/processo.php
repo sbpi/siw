@@ -814,6 +814,7 @@ function Central() {
     AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="' . $w_menu . '">');
+    ShowHTML(montaFiltro('POST'));
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
     if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
@@ -838,9 +839,8 @@ function Central() {
       ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      $RS1 = array_slice($RS, (($P3 - 1) * $P4), $P4);
       $w_atual = '';
-      foreach ($RS1 as $row) {
+      foreach ($RS as $row) {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
         ShowHTML('        <td>');

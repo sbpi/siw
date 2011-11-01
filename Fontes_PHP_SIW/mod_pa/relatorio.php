@@ -764,7 +764,6 @@ function EmitirGF() {
 
   if ($w_formato == 'WORD') {
     HeaderWord('PORTRAIT');
-    BodyOpenWord(null);
   } else {
     Cabecalho();
     BodyOpen(null);
