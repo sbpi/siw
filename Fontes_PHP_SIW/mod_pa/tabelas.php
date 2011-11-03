@@ -2106,6 +2106,443 @@ function TelaAssunto() {
 }
 
 // =========================================================================
+// Manutenção da tabela de arquivos do protocolo
+// -------------------------------------------------------------------------
+function Arquivo() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave = $_REQUEST['w_chave'];
+
+  if ($w_troca > '' && $O != 'E') {
+    // Se for recarga da página
+    $w_nome = $_REQUEST['w_nome'];
+    $w_ativo = $_REQUEST['w_ativo'];
+    $w_unidade = $_REQUEST['w_unidade'];
+    $w_localizacao = $_REQUEST['w_localizacao'];
+  } elseif ($O == 'L') {
+    // Recupera todos os registros para a listagem
+    $sql = new db_getArquivo_PA;
+    $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, 'OUTROS');
+
+    if (nvl($p_ordena, '') > '') {
+      $lista = explode(',', str_replace(' ', ',', $p_ordena));
+      $RS = SortArray($RS, $lista[0], $lista[1], 'nome', 'asc');
+    } else {
+      $RS = SortArray($RS, 'nome', 'asc');
+    }
+  } elseif (!(strpos('AE', $O) === false) && $w_troca == '') {
+    // Recupera os dados chave informada
+    $sql = new db_getArquivo_PA;
+    $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'OUTROS');
+    foreach ($RS as $row) {
+      $RS = $row;
+      break;
+    }
+    $w_chave = f($RS, 'chave');
+    $w_nome = f($RS, 'nome');
+    $w_localizacao = f($RS, 'sq_localizacao');
+    $w_unidade = f($RS, 'sq_unidade');
+    $w_ativo = f($RS, 'ativo');
+  }
+  Cabecalho();
+  head();
+  if (!(strpos('IAE', $O) === false)) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (!(strpos('IA', $O) === false)) {
+      Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
+      Validate('w_unidade', 'Unidade', 'SELECT', '1', '1', '18', '', '1');
+      Validate('w_localizacao', 'Localização', 'SELECT', '1', '1', '18', '', '1');
+      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    } elseif ($O == 'E') {
+      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    }
+
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  }
+
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca > '') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IA', $O) === false)) {
+    BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
+  } elseif ($O == 'E') {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');
+  }
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O == 'L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('    <td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    }
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome', 'nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Localização', 'nm_unidade').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo', 'nm_ativo').'</font></td>');
+    if ($w_libera_edicao=='S') {
+      ShowHTML('          <td><b>Operações</font></td>');
+    }
+    ShowHTML('        </tr>');
+    if (count($RS) <= 0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row, 'nome').'</td>');
+        ShowHTML('        <td>'.f($row, 'nm_unidade').' ('.f($row, 'nm_localizacao').')</td>');
+        ShowHTML('        <td align="center">'.f($row, 'nm_ativo').'</td>');
+        if ($w_libera_edicao=='S') {
+          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row, 'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">EX</A>&nbsp');
+          ShowHTML('          <a class="HL" href="javascript:this.status.value;" onclick="window.open(\''.montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'LOCAIS&R='.$w_pagina.$par.'&O=L&w_chave='.f($row, 'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDLOCAIS').'\',\'Locais\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Locais</a>');
+          ShowHTML('        </td>');
+        }
+        ShowHTML('      </tr>');
+      }
+    }
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (!(strpos('IAE', $O) === false)) {
+    if ($O == 'E')
+      $w_Disabled = ' DISABLED ';
+    AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <tr>');
+    selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, null, 'w_unidade', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
+    ShowHTML('          <tr>');
+    selecaoLocalizacao('Locali<u>z</u>ação:', 'Z', null, $w_localizacao, nvl($w_unidade, 0), 'w_localizacao', null);
+    ShowHTML('          </tr>');
+    MontaRadioSN('<b>Ativo?</b>', $w_ativo, 'w_ativo');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    if ($O == 'E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O == 'I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      }
+    }
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir, $R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG. montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert("Opção não disponível");');
+    ScriptClose();
+  }
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+// =========================================================================
+// Manutenção das localizações de um arquivo
+// -------------------------------------------------------------------------
+function Locais() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_ImagemPadrao = 'images/Folder/SheetLittle.gif';
+  $w_troca = $_REQUEST['w_troca'];
+  $w_copia = $_REQUEST['w_copia'];
+  $w_chave = $_REQUEST['w_chave'];
+  $w_chave_aux = $_REQUEST['w_chave_aux'];
+
+  // Recupera o nome do arquivo
+  $sql = new db_getArquivo_PA;
+  $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'OUTROS');
+  foreach ($RS as $row) {
+    $RS = $row;
+    break;
+  }
+  $w_nome_arquivo = f($RS, 'nome');
+
+  if ($w_troca > '' && $O != 'E' && $O != 'D' && $O != 'T') {
+    $w_cliente = $_REQUEST['w_cliente'];
+    $w_chave_pai = $_REQUEST['w_chave_pai'];
+    $w_chave_aux = $_REQUEST['w_chave_aux'];
+    $w_nome = $_REQUEST['w_nome'];
+    $w_sigla = $_REQUEST['w_sigla'];
+    $w_ativo = $_REQUEST['w_ativo'];
+  } elseif ($O != 'L' && $O != 'I') {
+    // Se for herança, atribui a chave da opção selecionada para w_chave
+    if ($w_copia > '')
+      $w_chave = $w_copia;
+    $sql = new db_getArquivo_PA;
+    $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, $w_chave_aux, null, null, 'REGISTROS');
+    foreach ($RS as $row) {
+      $RS = $row;
+      break;
+    }
+    $w_chave_pai = f($RS, 'sq_local_pai');
+    $w_nome = f($RS, 'nome');
+    $w_ativo = f($RS, 'ativo');
+  }
+
+  Cabecalho();
+  head();
+  ShowHTML('<TITLE>'.$conSgSistema.' - Locais de Arquivos</TITLE>');
+  Estrutura_CSS($w_cliente);
+
+  if ($O != 'L') {
+    ScriptOpen('JavaScript');
+    CheckBranco();
+    FormataData();
+    SaltaCampo();
+    ValidateOpen('Validacao');
+    if ($O != 'P') {
+      if ($O == 'C' || $O == 'I' || $O == 'A') {
+        Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
+      }
+      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    }
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  }
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
+  if ($w_troca > '') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O == 'C' || $O == 'I' || $O == 'A') {
+    BodyOpen('onLoad="document.Form.w_chave_pai.focus();"');
+  } elseif ($O == 'L') {
+    BodyOpen('onLoad="this.focus();"');
+  } else {
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  }
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td align="center"><font size="2"><b>'.$w_nome_arquivo.'&nbsp;');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <table width="99%" border="0">');
+  if ($O == 'L') {
+
+    ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('      <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('      <tr><td height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td><b>');
+    $sql = new db_getArquivo_PA;
+    $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'IS NULL');
+    $w_contOut = 0;
+    foreach ($RS as $row) {
+      $w_nome = f($row, 'nome');
+      $w_contOut = $w_contOut + 1;
+      if (f($row, 'Filho') > 0) {
+        ShowHTML('<A HREF=#"'.f($row, 'chave').'"></A>');
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row, 'nome').'');
+        if (f($row, 'ativo') == 'S')
+          $w_classe = 'hl'; else
+          $w_classe='lh';
+        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'sq_localizacao').'&w_chave_aux='.f($row, 'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+        ShowHTML('       </div></span>');
+        ShowHTML('   <div style="position:relative; left:12;">');
+        $sql = new db_getArquivo_PA;
+        $RS1 = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, f($row, 'chave'));
+        foreach ($RS1 as $row1) {
+          $w_nome .= ' - '.f($row1, 'nome');
+          if (f($row1, 'Filho') > 0) {
+            $w_contOut = $w_contOut + 1;
+            ShowHTML('<A HREF=#"'.f($row1, 'chave').'"></A>');
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1, 'nome').'');
+            if (f($row1, 'ativo') == 'S')
+              $w_classe = 'hl'; else
+              $w_classe='lh';
+            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1, 'sq_localizacao').'&w_chave_aux='.f($row1, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row1, 'nome').'&pai='.f($row1, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+//            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_chave_aux='.f($row1,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
+            ShowHTML('       </div></span>');
+            ShowHTML('   <div style="position:relative; left:12;">');
+            $sql = new db_getArquivo_PA;
+            $RS2 = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, f($row1, 'chave'));
+            foreach ($RS2 as $row2) {
+              $w_nome .= ' - '.f($row2, 'nome');
+              if (f($row2, 'Filho') > 0) {
+                $w_contOut = $w_contOut + 1;
+                ShowHTML('<A HREF=#"'.f($row2, 'chave').'"></A>');
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2, 'nome').'');
+                if (f($row2, 'ativo') == 'S')
+                  $w_classe = 'hl'; else
+                  $w_classe='lh';
+                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2, 'sq_localizacao').'&w_chave_aux='.f($row2, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row2, 'nome').'&pai='.f($row2, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+//                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_chave_aux='.f($row2,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
+                ShowHTML('       </div></span>');
+                ShowHTML('   <div style="position:relative; left:12;">');
+                $sql = new db_getArquivo_PA;
+                $RS3 = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, f($row2, 'chave'));
+                foreach ($RS3 as $row3) {
+                  $w_nome .= ' - '.f($row3, 'nome');
+                  $w_Imagem = $w_ImagemPadrao;
+                  ShowHTML('<A HREF=#"'.f($row3, 'chave').'"></A>');
+                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3, 'nome'));
+                  if (f($row3, 'ativo') == 'S')
+                    $w_classe = 'hl'; else
+                    $w_classe='lh';
+                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row3, 'sq_localizacao').'&w_chave_aux='.f($row3, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row3, 'nome').'&pai='.f($row3, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row3, 'sq_localizacao').'&w_chave_aux='.f($row3, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row3, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
+//                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row3,'chave').'&w_chave_aux='.f($row3,'chave').'&pai='.f($row3,'sq_local_pai').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
+                  ShowHTML('    <BR>');
+                  $w_nome = str_replace(' - '.f($row3, 'nome'), '', $w_nome);
+                }
+                ShowHTML('   </div>');
+              } else {
+                $w_Imagem = $w_ImagemPadrao;
+                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2, 'nome'));
+                if (f($row2, 'ativo') == 'S')
+                  $w_classe = 'hl'; else
+                  $w_classe='lh';
+                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2, 'sq_localizacao').'&w_chave_aux='.f($row2, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row2, 'nome').'&pai='.f($row2, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2, 'sq_localizacao').'&w_chave_aux='.f($row2, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
+//                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
+                ShowHTML('    <BR>');
+              }
+              $w_nome = str_replace(' - '.f($row2, 'nome'), '', $w_nome);
+            }
+            ShowHTML('   </div>');
+          } else {
+            $w_Imagem = $w_ImagemPadrao;
+            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1, 'nome'));
+            if (f($row1, 'ativo') == 'S')
+              $w_classe = 'hl'; else
+              $w_classe='lh';
+            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1, 'sq_localizacao').'&w_chave_aux='.f($row1, 'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1, 'sq_localizacao').'&w_chave_aux='.f($row1, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
+            //          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
+            ShowHTML('    <BR>');
+          }
+          $w_nome = str_replace(' - '.f($row1, 'nome'), '', $w_nome);
+        }
+        ShowHTML('   </div>');
+      } else {
+        $w_Imagem = $w_ImagemPadrao;
+        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row, 'nome'));
+        if (f($row, 'ativo') == 'S')
+          $w_classe = 'hl'; else
+          $w_classe='lh';
+        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'sq_localizacao').'&w_chave_aux='.f($row, 'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
+        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row, 'sq_localizacao').'&w_chave_aux='.f($row, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
+//        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_chave_aux='.f($row,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
+        ShowHTML('    <BR>');
+      }
+    }
+    if ($w_contOut == 0) {
+      // Se não achou registros
+      ShowHTML('Não foram encontrados registros.');
+    }
+  } elseif (strpos('CIAEDT', $O) !== false) {
+    if ($O == 'C' || $O == 'I' || $O == 'A') {
+      ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Não é permitido subordinar um tipo de recurso a outro que já tenha recursos vinculados.</ul></b></font></td>');
+      if ($O == 'C')
+        ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.</b></font>.</td>');
+    }
+    if ($O != 'C' && $O != 'I' && $O != 'A')
+      $w_Disabled = 'disabled';
+    AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina.$par, $O);
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_ativo" value="'.$w_ativo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    if ($O != 'C')
+      ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('      <tr valign="top">');
+
+
+    if ($O != 'I' && $O != 'C') {
+      // Se for alteração, não deixa vincular a opção a ela mesma, nem a seus filhos
+      selecaoArquivoLocalSubordination('<u>S</u>ubordinação:', 'S', 'Se esta opção estiver subordinada a outra já existente, informe qual.', $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], 'w_chave_pai', 'SUBPARTE', null);
+    } else {
+      selecaoArquivoLocalSubordination('<u>S</u>ubordinação:', 'S', 'Se esta opção estiver subordinada a outra já existente, informe qual.', $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], 'w_chave_pai', 'SUBTODOS', null);
+    }
+    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
+    ShowHTML('            <td><b><u>N</u>ome:<br><INPUT ACCESSKEY="N" TYPE="TEXT" CLASS="sti" NAME="w_nome" SIZE=30 MAXLENGTH=30 VALUE="'.$w_nome.'" '.$w_Disabled.' title="Nome do tipo."></td>');
+    ShowHTML('        </table>');
+    if ($O == 'I' || $O == 'C' || $O == 'A') {
+      ShowHTML('      <tr align="left">');
+      MontaRadioSN('Ativo?', $w_ativo, 'w_ativo');
+      ShowHTML('      </tr>');
+    }
+    ShowHTML('      </td></tr>');
+    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    if ($O == 'E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O == 'I') {
+      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O == 'A') {
+      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O == 'T') {
+      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O == 'C') {
+      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Copiar">');
+    } elseif ($O == 'D') {
+      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    }
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir, $R.'&O=L&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('      </td></tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert("Opção não disponível");');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  }
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+}
+
+// =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
@@ -2593,437 +3030,6 @@ function Grava() {
       ScriptClose();
       break;
   }
-}
-
-function Arquivo() {
-  extract($GLOBALS);
-  global $w_Disabled;
-
-  $w_chave = $_REQUEST['w_chave'];
-
-  if ($w_troca > '' && $O != 'E') {
-    // Se for recarga da página
-    $w_nome = $_REQUEST['w_nome'];
-    $w_ativo = $_REQUEST['w_ativo'];
-    $w_unidade = $_REQUEST['w_unidade'];
-    $w_localizacao = $_REQUEST['w_localizacao'];
-  } elseif ($O == 'L') {
-    // Recupera todos os registros para a listagem
-    $sql = new db_getArquivo_PA;
-    $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, 'OUTROS');
-
-    if (nvl($p_ordena, '') > '') {
-      $lista = explode(',', str_replace(' ', ',', $p_ordena));
-      $RS = SortArray($RS, $lista[0], $lista[1], 'nome', 'asc');
-    } else {
-      $RS = SortArray($RS, 'nome', 'asc');
-    }
-  } elseif (!(strpos('AE', $O) === false) && $w_troca == '') {
-    // Recupera os dados chave informada
-    $sql = new db_getArquivo_PA;
-    $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'OUTROS');
-    foreach ($RS as $row) {
-      $RS = $row;
-      break;
-    }
-    $w_chave = f($RS, 'chave');
-    $w_nome = f($RS, 'nome');
-    $w_localizacao = f($RS, 'sq_localizacao');
-    $w_unidade = f($RS, 'sq_unidade');
-    $w_ativo = f($RS, 'ativo');
-  }
-  Cabecalho();
-  head();
-  if (!(strpos('IAE', $O) === false)) {
-    ScriptOpen('JavaScript');
-    ValidateOpen('Validacao');
-    if (!(strpos('IA', $O) === false)) {
-      Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
-      Validate('w_unidade', 'Unidade', 'SELECT', '1', '1', '18', '', '1');
-      Validate('w_localizacao', 'Localização', 'SELECT', '1', '1', '18', '', '1');
-      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-    } elseif ($O == 'E') {
-      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
-      ShowHTML('     { return (true); }; ');
-      ShowHTML('     { return (false); }; ');
-    }
-
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
-    ValidateClose();
-    ScriptClose();
-  }
-
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca > '') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('IA', $O) === false)) {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
-  } elseif ($O == 'E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  } else {
-    BodyOpen('onLoad=\'this.focus()\';');
-  }
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
-  ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if ($O == 'L') {
-    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr>');
-    if ($w_libera_edicao=='S') {
-      ShowHTML('    <td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-    }
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Nome', 'nome').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Localização', 'nm_unidade').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Ativo', 'nm_ativo').'</font></td>');
-    if ($w_libera_edicao=='S') {
-      ShowHTML('          <td><b>Operações</font></td>');
-    }
-    ShowHTML('        </tr>');
-    if (count($RS) <= 0) {
-      // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
-    } else {
-      // Lista os registros selecionados para listagem
-      foreach ($RS as $row) {
-        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row, 'nome').'</td>');
-        ShowHTML('        <td>'.f($row, 'nm_unidade').' ('.f($row, 'nm_localizacao').')</td>');
-        ShowHTML('        <td align="center">'.f($row, 'nm_ativo').'</td>');
-        if ($w_libera_edicao=='S') {
-          ShowHTML('        <td align="top" nowrap>');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">AL</A>&nbsp');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row, 'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">EX</A>&nbsp');
-          ShowHTML('          <a class="HL" href="javascript:this.status.value;" onclick="window.open(\''.montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'LOCAIS&R='.$w_pagina.$par.'&O=L&w_chave='.f($row, 'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDLOCAIS').'\',\'Locais\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Locais</a>');
-          ShowHTML('        </td>');
-        }
-        ShowHTML('      </tr>');
-      }
-    }
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
-    ShowHTML('  </td>');
-    ShowHTML('</tr>');
-  } elseif (!(strpos('IAE', $O) === false)) {
-    if ($O == 'E')
-      $w_Disabled = ' DISABLED ';
-    AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('        <tr valign="top">');
-    ShowHTML('          <tr>');
-    selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, null, 'w_unidade', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
-    ShowHTML('          <tr>');
-    selecaoLocalizacao('Locali<u>z</u>ação:', 'Z', null, $w_localizacao, nvl($w_unidade, 0), 'w_localizacao', null);
-    ShowHTML('          </tr>');
-    MontaRadioSN('<b>Ativo?</b>', $w_ativo, 'w_ativo');
-    ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('      <tr><td align="center"><hr>');
-    if ($O == 'E') {
-      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
-    } else {
-      if ($O == 'I') {
-        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
-      } else {
-        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
-      }
-    }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir, $R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG. montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
-    ShowHTML('          </td>');
-    ShowHTML('      </tr>');
-    ShowHTML('    </table>');
-    ShowHTML('    </TD>');
-    ShowHTML('</tr>');
-    ShowHTML('</FORM>');
-  } else {
-    ScriptOpen('JavaScript');
-    ShowHTML(' alert("Opção não disponível");');
-    ScriptClose();
-  }
-  ShowHTML('</table>');
-  ShowHTML('</center>');
-  Rodape();
-}
-
-function Locais() {
-  extract($GLOBALS);
-  global $w_Disabled;
-
-  $w_ImagemPadrao = 'images/Folder/SheetLittle.gif';
-  $w_troca = $_REQUEST['w_troca'];
-  $w_copia = $_REQUEST['w_copia'];
-  $w_chave = $_REQUEST['w_chave'];
-  $w_chave_aux = $_REQUEST['w_chave_aux'];
-
-  // Recupera o nome do arquivo
-  $sql = new db_getArquivo_PA;
-  $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'OUTROS');
-  foreach ($RS as $row) {
-    $RS = $row;
-    break;
-  }
-  $w_nome_arquivo = f($RS, 'nome');
-
-  if ($w_troca > '' && $O != 'E' && $O != 'D' && $O != 'T') {
-    $w_cliente = $_REQUEST['w_cliente'];
-    $w_chave_pai = $_REQUEST['w_chave_pai'];
-    $w_chave_aux = $_REQUEST['w_chave_aux'];
-    $w_nome = $_REQUEST['w_nome'];
-    $w_sigla = $_REQUEST['w_sigla'];
-    $w_ativo = $_REQUEST['w_ativo'];
-  } elseif ($O != 'L' && $O != 'I') {
-    // Se for herança, atribui a chave da opção selecionada para w_chave
-    if ($w_copia > '')
-      $w_chave = $w_copia;
-    $sql = new db_getArquivo_PA;
-    $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, $w_chave_aux, null, null, 'REGISTROS');
-    foreach ($RS as $row) {
-      $RS = $row;
-      break;
-    }
-    $w_chave_pai = f($RS, 'sq_local_pai');
-    $w_nome = f($RS, 'nome');
-    $w_ativo = f($RS, 'ativo');
-  }
-
-  Cabecalho();
-  head();
-  ShowHTML('<TITLE>'.$conSgSistema.' - Locais de Arquivos</TITLE>');
-  Estrutura_CSS($w_cliente);
-
-  if ($O != 'L') {
-    ScriptOpen('JavaScript');
-    CheckBranco();
-    FormataData();
-    SaltaCampo();
-    ValidateOpen('Validacao');
-    if ($O != 'P') {
-      if ($O == 'C' || $O == 'I' || $O == 'A') {
-        Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
-      }
-      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-    }
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
-    ValidateClose();
-    ScriptClose();
-  }
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca > '') {
-    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
-  } elseif ($O == 'C' || $O == 'I' || $O == 'A') {
-    BodyOpen('onLoad="document.Form.w_chave_pai.focus();"');
-  } elseif ($O == 'L') {
-    BodyOpen('onLoad="this.focus();"');
-  } else {
-    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
-  }
-  Estrutura_Topo_Limpo();
-  Estrutura_Menu();
-  Estrutura_Corpo_Abre();
-  Estrutura_Texto_Abre();
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('<tr><td align="center"><font size="2"><b>'.$w_nome_arquivo.'&nbsp;');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-  ShowHTML('    <table width="99%" border="0">');
-  if ($O == 'L') {
-
-    ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('      <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('      <tr><td height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td><b>');
-    $sql = new db_getArquivo_PA;
-    $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'IS NULL');
-    $w_contOut = 0;
-    foreach ($RS as $row) {
-      $w_nome = f($row, 'nome');
-      $w_contOut = $w_contOut + 1;
-      if (f($row, 'Filho') > 0) {
-        ShowHTML('<A HREF=#"'.f($row, 'chave').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row, 'nome').'');
-        if (f($row, 'ativo') == 'S')
-          $w_classe = 'hl'; else
-          $w_classe='lh';
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'sq_localizacao').'&w_chave_aux='.f($row, 'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-        ShowHTML('       </div></span>');
-        ShowHTML('   <div style="position:relative; left:12;">');
-        $sql = new db_getArquivo_PA;
-        $RS1 = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, f($row, 'chave'));
-        foreach ($RS1 as $row1) {
-          $w_nome .= ' - '.f($row1, 'nome');
-          if (f($row1, 'Filho') > 0) {
-            $w_contOut = $w_contOut + 1;
-            ShowHTML('<A HREF=#"'.f($row1, 'chave').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1, 'nome').'');
-            if (f($row1, 'ativo') == 'S')
-              $w_classe = 'hl'; else
-              $w_classe='lh';
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1, 'sq_localizacao').'&w_chave_aux='.f($row1, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row1, 'nome').'&pai='.f($row1, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-//            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_chave_aux='.f($row1,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
-            ShowHTML('       </div></span>');
-            ShowHTML('   <div style="position:relative; left:12;">');
-            $sql = new db_getArquivo_PA;
-            $RS2 = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, f($row1, 'chave'));
-            foreach ($RS2 as $row2) {
-              $w_nome .= ' - '.f($row2, 'nome');
-              if (f($row2, 'Filho') > 0) {
-                $w_contOut = $w_contOut + 1;
-                ShowHTML('<A HREF=#"'.f($row2, 'chave').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2, 'nome').'');
-                if (f($row2, 'ativo') == 'S')
-                  $w_classe = 'hl'; else
-                  $w_classe='lh';
-                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2, 'sq_localizacao').'&w_chave_aux='.f($row2, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row2, 'nome').'&pai='.f($row2, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-//                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_chave_aux='.f($row2,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
-                ShowHTML('       </div></span>');
-                ShowHTML('   <div style="position:relative; left:12;">');
-                $sql = new db_getArquivo_PA;
-                $RS3 = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, f($row2, 'chave'));
-                foreach ($RS3 as $row3) {
-                  $w_nome .= ' - '.f($row3, 'nome');
-                  $w_Imagem = $w_ImagemPadrao;
-                  ShowHTML('<A HREF=#"'.f($row3, 'chave').'"></A>');
-                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3, 'nome'));
-                  if (f($row3, 'ativo') == 'S')
-                    $w_classe = 'hl'; else
-                    $w_classe='lh';
-                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row3, 'sq_localizacao').'&w_chave_aux='.f($row3, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row3, 'nome').'&pai='.f($row3, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row3, 'sq_localizacao').'&w_chave_aux='.f($row3, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row3, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
-//                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row3,'chave').'&w_chave_aux='.f($row3,'chave').'&pai='.f($row3,'sq_local_pai').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
-                  ShowHTML('    <BR>');
-                  $w_nome = str_replace(' - '.f($row3, 'nome'), '', $w_nome);
-                }
-                ShowHTML('   </div>');
-              } else {
-                $w_Imagem = $w_ImagemPadrao;
-                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2, 'nome'));
-                if (f($row2, 'ativo') == 'S')
-                  $w_classe = 'hl'; else
-                  $w_classe='lh';
-                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2, 'sq_localizacao').'&w_chave_aux='.f($row2, 'chave').'&w_cliente='.$w_cliente.'&nome='.f($row2, 'nome').'&pai='.f($row2, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2, 'sq_localizacao').'&w_chave_aux='.f($row2, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
-//                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row2,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
-                ShowHTML('    <BR>');
-              }
-              $w_nome = str_replace(' - '.f($row2, 'nome'), '', $w_nome);
-            }
-            ShowHTML('   </div>');
-          } else {
-            $w_Imagem = $w_ImagemPadrao;
-            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1, 'nome'));
-            if (f($row1, 'ativo') == 'S')
-              $w_classe = 'hl'; else
-              $w_classe='lh';
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1, 'sq_localizacao').'&w_chave_aux='.f($row1, 'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1, 'sq_localizacao').'&w_chave_aux='.f($row1, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
-            //          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row1,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
-            ShowHTML('    <BR>');
-          }
-          $w_nome = str_replace(' - '.f($row1, 'nome'), '', $w_nome);
-        }
-        ShowHTML('   </div>');
-      } else {
-        $w_Imagem = $w_ImagemPadrao;
-        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row, 'nome'));
-        if (f($row, 'ativo') == 'S')
-          $w_classe = 'hl'; else
-          $w_classe='lh';
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'sq_localizacao').'&w_chave_aux='.f($row, 'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Altera as informações deste tipo">AL</A>&nbsp');
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row, 'sq_localizacao').'&w_chave_aux='.f($row, 'chave').'&w_cliente='.$w_cliente.'&pai='.f($row, 'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Exclui o tipo">EX</A>&nbsp');
-//        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_chave_aux='.f($row,'chave').'&w_cliente='.$w_cliente.'&pai='.f($row,'sq_local_pai').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
-        ShowHTML('    <BR>');
-      }
-    }
-    if ($w_contOut == 0) {
-      // Se não achou registros
-      ShowHTML('Não foram encontrados registros.');
-    }
-  } elseif (strpos('CIAEDT', $O) !== false) {
-    if ($O == 'C' || $O == 'I' || $O == 'A') {
-      ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Não é permitido subordinar um tipo de recurso a outro que já tenha recursos vinculados.</ul></b></font></td>');
-      if ($O == 'C')
-        ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.</b></font>.</td>');
-    }
-    if ($O != 'C' && $O != 'I' && $O != 'A')
-      $w_Disabled = 'disabled';
-    AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina.$par, $O);
-    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
-    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
-    ShowHTML('<INPUT type="hidden" name="w_ativo" value="'.$w_ativo.'">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    if ($O != 'C')
-      ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-    ShowHTML('      <tr valign="top">');
-
-
-    if ($O != 'I' && $O != 'C') {
-      // Se for alteração, não deixa vincular a opção a ela mesma, nem a seus filhos
-      selecaoArquivoLocalSubordination('<u>S</u>ubordinação:', 'S', 'Se esta opção estiver subordinada a outra já existente, informe qual.', $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], 'w_chave_pai', 'SUBPARTE', null);
-    } else {
-      selecaoArquivoLocalSubordination('<u>S</u>ubordinação:', 'S', 'Se esta opção estiver subordinada a outra já existente, informe qual.', $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], 'w_chave_pai', 'SUBTODOS', null);
-    }
-    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('            <td><b><u>N</u>ome:<br><INPUT ACCESSKEY="N" TYPE="TEXT" CLASS="sti" NAME="w_nome" SIZE=30 MAXLENGTH=30 VALUE="'.$w_nome.'" '.$w_Disabled.' title="Nome do tipo."></td>');
-    ShowHTML('        </table>');
-    if ($O == 'I' || $O == 'C' || $O == 'A') {
-      ShowHTML('      <tr align="left">');
-      MontaRadioSN('Ativo?', $w_ativo, 'w_ativo');
-      ShowHTML('      </tr>');
-    }
-    ShowHTML('      </td></tr>');
-    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
-    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    if ($O == 'E') {
-      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
-    } elseif ($O == 'I') {
-      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
-    } elseif ($O == 'A') {
-      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
-    } elseif ($O == 'T') {
-      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
-    } elseif ($O == 'C') {
-      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Copiar">');
-    } elseif ($O == 'D') {
-      ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
-    }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir, $R.'&O=L&w_cliente='.$w_cliente.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
-    ShowHTML('      </td></tr>');
-    ShowHTML('    </table>');
-    ShowHTML('    </TD>');
-    ShowHTML('</tr>');
-
-    ShowHTML('</FORM>');
-  } else {
-    ScriptOpen('JavaScript');
-    ShowHTML(' alert("Opção não disponível");');
-    ShowHTML(' history.back(1);');
-    ScriptClose();
-  }
-  ShowHTML('    </table>');
-  ShowHTML('    </TD>');
-  ShowHTML('</tr>');
-  ShowHTML('</table>');
-  ShowHTML('</center>');
-  Estrutura_Texto_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Rodape();
 }
 
 // =========================================================================

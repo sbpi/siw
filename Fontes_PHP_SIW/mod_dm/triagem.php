@@ -423,10 +423,10 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Detalhamento','assunto').'</b></td>');
       ShowHTML('          <td><b>'.LinkOrdena('Limite conclusão','limite_conclusao').'</b></td>');
       if($P1!=1 && $_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</b></td>');
-      if ($P1!=1 && $P1!=2) {
+      if ($P1!=1 && $P1!=2 && $_SESSION['INTERNO']=='S') {
         ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</b></td>');
       } 
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</b></td>');
+      ShowHTML('          <td class="remover"><b>Operações</b></td>');
     } else {
       ShowHTML('          <td><b>Nº</b></td>');
       ShowHTML('          <td><b>Tipo</b></td>');
@@ -435,7 +435,7 @@ function Inicial() {
       ShowHTML('          <td><b>Detalhamento</b></td>');
       ShowHTML('          <td><b>Limite conclusão</b></td>');
       if ($_SESSION['INTERNO']=='S' && $P1!=1) ShowHTML('          <td><b>Executor</b></td>');
-      if ($P1!=1 && $P1!=2) {
+      if ($P1!=1 && $P1!=2 && $_SESSION['INTERNO']=='S') {
         ShowHTML('          <td><b>Valor</b></td>');
       } 
     } 
@@ -508,62 +508,60 @@ function Inicial() {
           } 
         } 
         if ($w_embed!='WORD') {
-          if ($_SESSION['INTERNO']=='S') {
-            ShowHTML('        <td class="remover" align="top" nowrap>');
-            if ($P1!=3) {
-              // Se não for acompanhamento
-              if ($w_copia>'') {
-                // Se for listagem para cópia
-                $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-                foreach($RS1 as $row1) { 
-                  ShowHTML('          <a accesskey="I" class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;'); 
-                  break;
-                }
-              } elseif ($P1==1) {
-                // Se for cadastramento
-                if ($w_submenu>'') {
-                  ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais da demanda" TARGET="menu">AL</a>&nbsp;');
-                } else {
-                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da demanda">AL</A>&nbsp');
-                } 
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da demanda.">EX</A>&nbsp');
-              } elseif ($P1==2 || $P1==6) {
-                // Se for execução
-                if ($w_usuario==f($row,'executor')) {
-                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a demanda, sem enviá-la.">AN</A>&nbsp');
-                   if (f($row,'sg_tramite')=='EA') {
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GDTINF&w_menu='.$w_menu.MontaFiltro('GET').'" title="Informar dados da análise.">IN</A>&nbsp');// 
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
-                    }
-                   if (f($row,'sg_tramite')=='EE') {
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DadosExecucao&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GDTINF&w_menu='.$w_menu.MontaFiltro('GET').'" title="Informar dados da execucao.">IN</A>&nbsp');
-                     ShowHTML('          <A class="HL" HREF="mod_pe/recurso.php?par=Solic&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Recursos&SG=RECSOLIC'.MontaFiltro('GET').'" title="Informar os recursos da demanda." target="Recurso">RC</A>&nbsp');
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Areas&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Partes interessadas&SG=GDTAREAS'.MontaFiltro('GET').'" title="Informar as partes interessadas da demanda." target="Parte">PI</A>&nbsp');
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da demanda.">CO</A>&nbsp');
-                   }
-                 } else {
-                   if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
-                   } else {
-                     ShowHTML('          ---&nbsp');
-                   }
-                 } 
-               } 
-             } else {
-               if (Nvl(f($row,'solicitante'),0)==$w_usuario || 
-                   Nvl(f($row,'titular'),0)==$w_usuario || 
-                   Nvl(f($row,'substituto'),0)==$w_usuario ||
-                   RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S'
-                  ) {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
-               } else {
-                 ShowHTML('          ---&nbsp');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
+          if ($P1!=3) {
+            // Se não for acompanhamento
+            if ($w_copia>'') {
+              // Se for listagem para cópia
+              $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+              foreach($RS1 as $row1) { 
+                ShowHTML('          <a accesskey="I" class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;'); 
+                break;
+              }
+            } elseif ($P1==1) {
+              // Se for cadastramento
+              if ($w_submenu>'') {
+                ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais da demanda" TARGET="menu">AL</a>&nbsp;');
+              } else {
+                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da demanda">AL</A>&nbsp');
               } 
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da demanda.">EX</A>&nbsp');
+            } elseif ($P1==2 || $P1==6) {
+              // Se for execução
+              if ($w_usuario==f($row,'executor')) {
+                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a demanda, sem enviá-la.">AN</A>&nbsp');
+                 if (f($row,'sg_tramite')=='EA') {
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GDTINF&w_menu='.$w_menu.MontaFiltro('GET').'" title="Informar dados da análise.">IN</A>&nbsp');// 
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
+                  }
+                 if (f($row,'sg_tramite')=='EE') {
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DadosExecucao&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GDTINF&w_menu='.$w_menu.MontaFiltro('GET').'" title="Informar dados da execucao.">IN</A>&nbsp');
+                   ShowHTML('          <A class="HL" HREF="mod_pe/recurso.php?par=Solic&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Recursos&SG=RECSOLIC'.MontaFiltro('GET').'" title="Informar os recursos da demanda." target="Recurso">RC</A>&nbsp');
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Areas&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Partes interessadas&SG=GDTAREAS'.MontaFiltro('GET').'" title="Informar as partes interessadas da demanda." target="Parte">PI</A>&nbsp');
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da demanda.">CO</A>&nbsp');
+                 }
+               } else {
+                 if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
+                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
+                 } else {
+                   ShowHTML('          ---&nbsp');
+                 }
+               } 
+             } 
+           } else {
+             if (Nvl(f($row,'solicitante'),0)==$w_usuario || 
+                 Nvl(f($row,'titular'),0)==$w_usuario || 
+                 Nvl(f($row,'substituto'),0)==$w_usuario ||
+                 RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S'
+                ) {
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
+             } else {
+               ShowHTML('          ---&nbsp');
             } 
-            ShowHTML('        </td>');
-          }
-        } 
+          } 
+          ShowHTML('        </td>');
+        }
         ShowHTML('      </tr>');
       } 
       // Mostra os valor se o usuário for interno e não for cadastramento nem mesa de trabalho
@@ -847,6 +845,18 @@ function Geral() {
       } 
     } 
   }
+
+  if ($_SESSION['INTERNO']=='N') {
+    // Tratamento para usuários externos
+    $w_solicitante      = $_SESSION['SQ_PESSOA'];
+    $w_sq_unidade       = $_SESSION['LOTACAO'];
+    $w_recebimento      = formataDataEdicao(time());
+    $w_limite_conclusao = formataDataEdicao(time());
+    $w_aviso            = 'N';
+    $w_dias             = 0;
+    $w_envio            = 'N';
+  }
+
   if (nvl($w_sq_demanda_tipo,0)>0) {
     $sql = new db_getTipoDemanda; $RS_TipoDemanda = $sql->getInstanceOf($dbms,$w_sq_demanda_tipo,$w_cliente,null,null,null,null,null);
     foreach ($RS_TipoDemanda as $row) {$RS_TipoDemanda = $row; break;}
@@ -887,14 +897,16 @@ function Geral() {
     Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade','Setor solicitante','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_demanda_tipo','Tipo da demanda','SELECT',1,1,18,'','0123456789');
-    if ($w_reuniao=='N') {
-      Validate('w_recebimento','Data da solicitação','DATA',1,10,10,'','0123456789/');       
-      Validate('w_limite_conclusao','Limite previsto para conclusão','DATA',1,10,10,'','0123456789/');
-      CompData('w_recebimento','Data da solicitacao','<=','w_limite_conclusao','Limite previsto para conclusão');
-    } else {
-      Validate('w_recebimento','Data da reunião','DATA',1,10,10,'','0123456789/');       
+    if ($_SESSION['INTERNO']=='S') {
+      if ($w_reuniao=='N') {
+        Validate('w_recebimento','Data da solicitação','DATA',1,10,10,'','0123456789/');       
+        Validate('w_limite_conclusao','Limite previsto para conclusão','DATA',1,10,10,'','0123456789/');
+        CompData('w_recebimento','Data da solicitacao','<=','w_limite_conclusao','Limite previsto para conclusão');
+      } else {
+        Validate('w_recebimento','Data da reunião','DATA',1,10,10,'','0123456789/');       
+      }
+      Validate('w_proponente','Proponente externo','','',2,90,'1','1');
     }
-    Validate('w_proponente','Proponente externo','','',2,90,'1','1');
     Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
     Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
     Validate('w_cidade','Cidade','SELECT',1,1,18,'','0123456789');
@@ -908,25 +920,27 @@ function Geral() {
     if (f($RS_Menu,'justificativa')=='S') {
       Validate('w_justificativa','Observações','1','',5,2000,'1','1');
     } 
-    Validate('w_dias','Dias de alerta','1','',1,3,'','0123456789');
-    ShowHTML('  if (theForm.w_aviso[0].checked) {');
-    ShowHTML('     if (theForm.w_dias.value == \'\') {');
-    ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
-    ShowHTML('        theForm.w_dias.focus();');
-    ShowHTML('        return false;');
-    ShowHTML('     }');
-    ShowHTML('  } else {');
-    ShowHTML('    theForm.w_dias.value = \'\';');
-    ShowHTML('  }');
-    if(nvl($w_envio,'')=='S' && $O=='I') {
-      Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
-      Validate('w_despacho','Despacho','','1','1','2000','1','1');    
+    if ($_SESSION['INTERNO']=='S') {
+      Validate('w_dias','Dias de alerta','1','',1,3,'','0123456789');
+      ShowHTML('  if (theForm.w_aviso[0].checked) {');
+      ShowHTML('     if (theForm.w_dias.value == \'\') {');
+      ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
+      ShowHTML('        theForm.w_dias.focus();');
+      ShowHTML('        return false;');
+      ShowHTML('     }');
+      ShowHTML('  } else {');
+      ShowHTML('    theForm.w_dias.value = \'\';');
+      ShowHTML('  }');
+      if(nvl($w_envio,'')=='S' && $O=='I') {
+        Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
+        Validate('w_despacho','Despacho','','1','1','2000','1','1');    
+      }
     }
   } 
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -968,30 +982,42 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b>Detalh<u>a</u>mento:</b><br><textarea '.$w_Disabled.' accesskey="A" name="w_assunto" class="STI" ROWS=5 cols=75 title="Escreva um texto de detalhamento para esta demanda">'.$w_assunto.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    if($O=='I') SelecaoPessoa('So<u>l</u>icitante:','S','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
-    else        SelecaoPessoa('So<u>l</u>icitante:','S','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
-    if($O=='I' && nvl($w_solicitante,'')>'') {
-      $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_solicitante, null,null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-      foreach($RS1 as $row1){$RS1=$row1; break;}
-      $w_sq_unidade = f($RS1,'sq_unidade_benef');
-    }
-    SelecaoUnidade('<U>S</U>etor solicitante:','S','Selecione o setor responsável pela execução da demanda',$w_sq_unidade,null,'w_sq_unidade',null,null);
-    SelecaoTipoDemanda('<U>T</U>ipo da demanda:','T','Selecione o tipo desta demanda',$w_sq_demanda_tipo,null,'w_sq_demanda_tipo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recebimento\'; document.Form.submit();"');
-    ShowHTML('          <tr>');
-    if ($w_reuniao=='N') {
-      ShowHTML('              <td valign="top"><b><u>D</u>ata da solicitação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
-      ShowHTML('              <td valign="top"><b><u>L</u>imite previsto para conclusão:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_conclusao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_conclusao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_limite_conclusao').'</td>');
+    if ($_SESSION['INTERNO']=='N') {
+      ShowHTML('<INPUT type="hidden" name="w_solicitante" value="'.$w_solicitante.'">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
+      ShowHTML('<INPUT type="hidden" name="w_recebimento" value="'.$w_recebimento.'">');
+      ShowHTML('<INPUT type="hidden" name="w_limite_conclusao" value="'.$w_limite_conclusao.'">');
+      ShowHTML('<INPUT type="hidden" name="w_aviso" value="'.$w_aviso.'">');
+      ShowHTML('<INPUT type="hidden" name="w_dias" value="'.$w_dias.'">');
+      ShowHTML('<INPUT type="hidden" name="w_envio" value="'.$w_envio.'">');
     } else {
-      ShowHTML('              <td valign="top"><b><u>D</u>ata da reunião:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
+      if($O=='I') SelecaoPessoa('So<u>l</u>icitante:','S','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
+      else        SelecaoPessoa('So<u>l</u>icitante:','S','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
+      if($O=='I' && nvl($w_solicitante,'')>'') {
+        $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_solicitante, null,null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        foreach($RS1 as $row1){$RS1=$row1; break;}
+        $w_sq_unidade = f($RS1,'sq_unidade_benef');
+      }
+      SelecaoUnidade('<U>S</U>etor solicitante:','S','Selecione o setor responsável pela execução da demanda',$w_sq_unidade,null,'w_sq_unidade',null,null);
     }
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da demanda. Preencha apenas se houver."></td>');
-    ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde a demanda será executada, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+    SelecaoTipoDemanda('<U>T</U>ipo da demanda:','T','Selecione o tipo desta demanda',$w_sq_demanda_tipo,null,'w_sq_demanda_tipo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recebimento\'; document.Form.submit();"');
+    if ($_SESSION['INTERNO']=='S') {
+      ShowHTML('          <tr>');
+      if ($w_reuniao=='N') {
+        ShowHTML('              <td valign="top"><b><u>D</u>ata da solicitação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
+        ShowHTML('              <td valign="top"><b><u>L</u>imite previsto para conclusão:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_conclusao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_conclusao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_limite_conclusao').'</td>');
+      } else {
+        ShowHTML('              <td valign="top"><b><u>D</u>ata da reunião:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
+      }
+      ShowHTML('          </table>');
+      ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da demanda. Preencha apenas se houver."></td>');
+      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde a demanda será executada, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+    }
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
@@ -1016,38 +1042,40 @@ function Geral() {
         ShowHTML('      <tr><td valign="top"><b>Obse<u>r</u>vações:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da demanda.">'.$w_justificativa.'</TEXTAREA></td>');
       } 
     } 
-    ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término previsto da demanda.</td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><table border="0" width="100%">');
-    ShowHTML('          <tr>');
-    MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data de término previsto da demanda."></td>');
-    ShowHTML('          </table>');
-    if($O=='I') {
+    if ($_SESSION['INTERNO']=='S') {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Envio da demanda</td></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td>Os dados abaixo indicam se a demanda deve ser enviada para a proxima fase no momento da gravação.</td></tr>');
+      ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término previsto da demanda.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td><table border="0" width="100%">');
       ShowHTML('          <tr>');
-      if(nvl($w_envio,'')=='S') {
-        MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
-      } else {
-        MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
-      }
-      if(nvl($w_envio,'')=='S') {
-        ShowHTML('          <tr>');
-        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
-        SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
-        ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>'); 
-      }
+      MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
+      ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data de término previsto da demanda."></td>');
       ShowHTML('          </table>');
+      if($O=='I') {
+        ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Envio da demanda</td></td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td>Os dados abaixo indicam se a demanda deve ser enviada para a proxima fase no momento da gravação.</td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td><table border="0" width="100%">');
+        ShowHTML('          <tr>');
+        if(nvl($w_envio,'')=='S') {
+          MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
+        } else {
+          MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
+        }
+        if(nvl($w_envio,'')=='S') {
+          ShowHTML('          <tr>');
+          SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+          SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
+          ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>'); 
+        }
+        ShowHTML('          </table>');
+      }
     }
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1741,7 +1769,6 @@ function Visual() {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
   } 
   // Chama a rotina de visualização dos dados da demanda, na opção 'Listagem'
-  //ShowHTML(VisualTriagem($w_chave,'L',$w_usuario,$w_tipo));
   ShowHTML(VisualTriagem($w_chave,'L',$w_usuario,$w_embed));
   if ($w_embed != 'WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
@@ -1848,17 +1875,39 @@ function Encaminhamento() {
     }
     $w_sg_tramite_atual = f($RS,'sg_tramite');
   } 
+  
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
   $w_ativo      = f($RS,'ativo');
-  if ($w_ativo == 'N') {
+  
+  if ($_SESSION['INTERNO']=='S') {
+    if ($w_ativo == 'N') {
+      $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null, null,'S');
+      $RS = SortArray($RS,'ordem','asc');
+      foreach ($RS as $row) {
+        $w_novo_tramite = f($row,'sq_siw_tramite');
+        $w_sg_tramite   = f($row,'sigla');
+        break;
+      }   
+    }
+  } else {
+    $w_envio = 'S';
+    
+    $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, null, 'suporte',null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    // Destinatário sempre SBPI Suporte
+    foreach($RS1 as $row1){$RS1=$row1; break;}
+    $w_destinatario = f($RS1,'sq_pessoa');
+
+    // Sempre trâmite de análise
     $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
-      $w_novo_tramite = f($row,'sq_siw_tramite');
-      $w_sg_tramite   = f($row,'sigla');
-      break;
+      if (f($row,'sigla')=='EA') {
+        $w_novo_tramite = f($row,'sq_siw_tramite');
+        $w_sg_tramite   = f($row,'sigla');
+        break;
+      }
     }   
   }
   // Se for envio, executa verificações nos dados da solicitação
@@ -1869,8 +1918,10 @@ function Encaminhamento() {
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
-    Validate('w_despacho','Despacho','','1','1','2000','1','1');
+    if ($_SESSION['INTERNO']=='S') {
+      Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
+      Validate('w_despacho','Despacho','','1','1','2000','1','1');
+    }
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
@@ -1882,10 +1933,12 @@ function Encaminhamento() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($_SESSION['INTERNO']=='N') {
+    BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'document.Form.w_destinatario.focus()\';');
   } 
@@ -1905,30 +1958,35 @@ function Encaminhamento() {
   ShowHTML('<INPUT type="hidden" name="w_sg_tramite_atual" value="'.$w_sg_tramite_atual.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
-  ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  if ($P1!=1) {
-    // Se não for cadastramento
-    if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S')) {
-      SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+  if ($_SESSION['INTERNO']=='S') {
+    ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
+    if ($P1!=1) {
+      // Se não for cadastramento
+      if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S')) {
+        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+      } else {
+        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','ERRO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+      } 
+      // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
+      if ($w_sg_tramite=='CI') {
+        SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
+      } else {
+        SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
+      } 
     } else {
-      SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','ERRO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
-    } 
-    // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
-    if ($w_sg_tramite=='CI') {
-      SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
-    } else {
+      if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S')) {
+        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+      } else {
+        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','ERRO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+      } 
       SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
     } 
+    ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>');
+    ShowHTML('      </table>');
   } else {
-    if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S')) {
-      SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
-    } else {
-      SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','ERRO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
-    } 
-    SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
-  } 
-  ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>');
-  ShowHTML('      </table>');
+    ShowHTML('<INPUT type="hidden" name="w_envio" value="'.$w_envio.'">');
+    ShowHTML('<INPUT type="hidden" name="w_novo_tramite" value="'.$w_novo_tramite.'">');
+  }
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');

@@ -31,26 +31,26 @@ create or replace function MARCADO
   w_acesso_geral        number(18);
   w_vinculo             number(10);
   w_existe              number(10);
+  w_interno             varchar2(1);
   w_sg_tramite          siw_tramite.sigla%type;
   Result                number := 0;
 begin
 
  -- Recupera as informações da opção
- select a.tramite,     c.sq_modulo, c.sigla,     gestor_seguranca,   gestor_sistema,   d.sq_tipo_vinculo,
+ select a.tramite,     c.sq_modulo, c.sigla,     b.gestor_seguranca, b.gestor_sistema, d.sq_tipo_vinculo, e.interno,
        (select count(x.sq_menu)
           from siw_menu x
          where x.acesso_geral = 'S'
          connect by prior x.sq_menu = x.sq_menu_pai
         start with x.sq_menu = a.sq_menu
        ) as geral
-   into w_sq_servico,  w_sq_modulo, w_sg_modulo, w_gestor_seguranca, w_gestor_sistema, w_vinculo, w_acesso_geral
-   from siw_menu        a,
-        sg_autenticacao b,
-        siw_modulo      c,
-        co_pessoa       d
-  where a.sq_modulo = c.sq_modulo
-    and b.sq_pessoa = d.sq_pessoa
-    and a.sq_menu   = p_menu
+   into w_sq_servico,  w_sq_modulo, w_sg_modulo, w_gestor_seguranca, w_gestor_sistema, w_vinculo, w_interno, w_acesso_geral
+   from siw_menu                       a
+        inner     join sg_autenticacao b on (a.sq_pessoa       = b.cliente)
+          inner   join co_pessoa       d on (b.sq_pessoa       = d.sq_pessoa)
+            inner join co_tipo_vinculo e on (d.sq_tipo_vinculo = e.sq_tipo_vinculo)
+        inner     join siw_modulo      c on (a.sq_modulo       = c.sq_modulo)
+  where a.sq_menu   = p_menu
     and b.sq_pessoa = p_pessoa;
   
  If p_tramite is not null Then
@@ -59,9 +59,17 @@ begin
      where a.sq_siw_tramite = p_tramite;
  End If;
  
- If w_acesso_geral > 0 and (p_tramite is null or (p_tramite is not null and w_sg_tramite = 'CI')) Then -- Se a opção, ou alguma opção a ela subordinada, é de acesso geral
-    Result := 3;
- Elsif w_sq_servico = 'N' Then -- Se a opção não for vinculada a serviço
+ If w_acesso_geral > 0 and (p_tramite is null or (p_tramite is not null and w_sg_tramite = 'CI')) Then
+    If w_interno = 'N' and w_sg_modulo <> 'GR' Then
+       -- Usuários externos não podem ter permissão por acesso geral
+       Result := 0;
+    Else
+       -- Se a opção, ou alguma opção a ela subordinada, é de acesso geral
+       Result := 3;
+    End If;
+ End If;
+ 
+ If Result = 0 and w_sq_servico = 'N' Then -- Se a opção não for vinculada a serviço
     -- Verifica se o usuário é gestor do módulo
     If (w_gestor_sistema = 'S'   and w_sg_modulo <> 'SG') or
        (w_gestor_seguranca = 'S' and w_sg_modulo = 'SG') 
@@ -94,7 +102,7 @@ begin
          End If;
       End If;
     End If;
- Else -- Se a opção for vinculada a serviço
+ Elsif Result = 0 Then -- Se a opção for vinculada a serviço
     -- Recupera o código da situação de cadastramento
     select sq_siw_tramite
        into w_sq_situacao_servico
