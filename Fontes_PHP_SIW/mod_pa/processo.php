@@ -385,7 +385,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -702,7 +702,7 @@ function Alterar() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -720,7 +720,7 @@ function Central() {
 
   if ($O == 'L') {
     $sql = new db_getCaixa;
-    $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, $p_unidade, $p_caixa, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $SG);
+    $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, $p_unidade, $p_caixa, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, null,null,null,null,$SG);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'sg_unidade', 'asc', 'numero', 'asc', 'pasta', 'asc', 'cd_assunto', 'asc', 'protocolo', 'asc');
@@ -761,7 +761,7 @@ function Central() {
       ShowHTML('     if (theForm["w_chave[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos um protocolo!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
       Validate('w_local', 'Local de arquivamento', 'SELECT', '', 1, 18, '', '0123456789');
@@ -916,7 +916,7 @@ function Central() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -958,7 +958,7 @@ function Autuar() {
   // Verifica se o documento a ser autuado já é um processo
   if ($w_processo == 'S') {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Este documento já foi autuado.\');');
+    ShowHTML(' alert("Este documento já foi autuado.");');
     ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $R . '&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
     ScriptClose();
     exit();
@@ -1159,7 +1159,7 @@ function Juntar() {
       ShowHTML('     if (theForm["w_chave[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos um protocolo!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -1299,7 +1299,7 @@ function Juntar() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -1514,7 +1514,7 @@ function Desmembrar() {
   ShowHTML('     if (theForm["w_chave[]"].checked) w_erro=false;');
   ShowHTML('  }');
   ShowHTML('  if (w_erro) {');
-  ShowHTML('    alert(\'Você deve informar pelo menos um protocolo!\'); ');
+  ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
   ShowHTML('    return false;');
   ShowHTML('  }');
   Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -1760,7 +1760,7 @@ function ArqSetorial() {
       ShowHTML('     if (theForm["w_chave[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos um protocolo!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
       Validate('w_observacao', 'Observações sobre o acondicionamento do protocolo', '1', '1', 1, 2000, '1', '1');
@@ -1932,7 +1932,7 @@ function ArqSetorial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -2283,7 +2283,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
     }
@@ -2303,7 +2303,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
@@ -2320,7 +2320,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
@@ -2338,12 +2338,12 @@ function Grava() {
       }
 
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Anexação realizada com sucesso!\');');
+      ShowHTML('  alert("Anexação realizada com sucesso!");');
       ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Juntar&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
@@ -2359,12 +2359,12 @@ function Grava() {
       }
 
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Apensação realizada com sucesso!\');');
+      ShowHTML('  alert("Apensação realizada com sucesso!");');
       ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Juntar&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
@@ -2380,12 +2380,12 @@ function Grava() {
       }
 
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Desmembramento realizado com sucesso!\');');
+      ShowHTML('  alert("Desmembramento realizado com sucesso!");');
       ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Inicial&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
@@ -2401,12 +2401,12 @@ function Grava() {
       }
 
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Arquivamento setorial realizado com sucesso!\');');
+      ShowHTML('  alert("Arquivamento setorial realizado com sucesso!");');
       ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'ArqSetorial&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
@@ -2419,11 +2419,11 @@ function Grava() {
         $SQL = new dml_putDocumentoArqCen;
         for ($i = 0; $i <= count($_POST['w_chave']) - 1; $i = $i + 1) {
           if (Nvl($_POST['w_chave'][$i], '') > '') {
-            $SQL->getInstanceOf($dbms, $_POST['w_chave'][$i], $_SESSION['SQ_PESSOA'], $_REQUEST['w_local']);
+            $SQL->getInstanceOf($dbms, $_POST['w_chave'][$i], $_SESSION['SQ_PESSOA'], $_REQUEST['w_local'], null);
           }
         }
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Arquivamento central realizado com sucesso!\');');
+        ShowHTML('  alert("Arquivamento central realizado com sucesso!");');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Central&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();
       } else {
@@ -2435,20 +2435,20 @@ function Grava() {
           }
         }
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Devolução realizada com sucesso!\');');
+        ShowHTML('  alert("Devolução realizada com sucesso!");');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'Central&O=L&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();
       }
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("Assinatura Eletrônica inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
       exit;
     }
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML('  alert(\'Bloco de dados não encontrado: ' . $SG . '\');');
+    ShowHTML('  alert("Bloco de dados não encontrado: ' . $SG . '");');
     ScriptClose();
     exibevariaveis();
   }

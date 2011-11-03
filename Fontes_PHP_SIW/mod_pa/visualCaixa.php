@@ -8,7 +8,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
-  $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,'PASTA');
+  $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$l_chave,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,null,null,null,null,'PASTA');
    
   if (nvl($p_ordena, '') > '') {
     $lista = explode(',', str_replace(' ', ',', $p_ordena));
@@ -63,6 +63,8 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
       $l_html.=chr(13).'       <td>'.f($row,'intermediario').'</td></tr>';
       $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Destinação Final:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'destinacao_final').'</td></tr>';
+      $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Localização:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($row,'nm_localizacao').'</td></tr>';
       
       $l_html.=chr(13).'   <tr><td colspan=2><br><b>DOCUMENTOS/PROCESSOS ARQUIVADOS NESTA CAIXA</b></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan=2><table border=1 width="100%">';
@@ -94,8 +96,9 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
         $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
         $l_html.=chr(13).'       <td><font size=1><b>Nº</b></font></td>';
         $l_html.=chr(13).'       <td><font size=1><b>Data</b></font></td>';
-        $l_html.=chr(13).'       <td><font size=1><b>Procedência</b></font></td>';        
+        $l_html.=chr(13).'       <td><font size=1><b>Procedência</b></font></td>';
       }
+      
       $l_html.=chr(13).'     </tr>';
       $w_pag   += 1;
       $w_linha = 6;

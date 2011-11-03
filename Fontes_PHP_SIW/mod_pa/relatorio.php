@@ -310,7 +310,7 @@ function Transferencia() {
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $SG);
+    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, null,null,null,null,$SG);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'sg_unidade', 'asc', 'numero', 'asc', 'pasta', 'asc', 'cd_assunto', 'asc', 'protocolo', 'asc');

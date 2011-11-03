@@ -111,6 +111,7 @@ $p_ini_f         = upper($_REQUEST['p_ini_f']);
 $p_fim_i         = upper($_REQUEST['p_fim_i']);
 $p_fim_f         = upper($_REQUEST['p_fim_f']);
 $p_atraso        = upper($_REQUEST['p_atraso']);
+$p_palavra       = upper($_REQUEST['p_palavra']);
 $p_chave         = upper($_REQUEST['p_chave']);
 $p_assunto       = upper($_REQUEST['p_assunto']);
 $p_pais          = upper($_REQUEST['p_pais']);
@@ -234,8 +235,10 @@ function Gerencial() {
     } 
     if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
-    if ($p_processo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
+    if ($p_processo>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
     if ($p_atraso=='S')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
+    if ($p_palavra=='S')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Recuperar <td>[<b>Apenas atendimentos por empréstimo</b>]'; }
+    if ($p_palavra=='N')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Recuperar <td>[<b>Apenas atendimentos com cópias</b>]'; }
     if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     $sql = new db_getSolicPA; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
@@ -370,8 +373,8 @@ function Gerencial() {
     } else {
       ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
     } 
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     if ($w_Troca>'') {
       // Se for recarga da página
       BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
@@ -448,10 +451,10 @@ function Gerencial() {
           } 
         } 
         ShowHTML('    if (cad >= 0) document.Form.p_fase.value='.$w_fase_cad.';');
-        ShowHTML('    if (exec >= 0) document.Form.p_fase.value=\''.substr($w_fase_exec,1,100).'\';');
+        ShowHTML('    if (exec >= 0) document.Form.p_fase.value="'.substr($w_fase_exec,1,100).'";');
         ShowHTML('    if (conc >= 0) document.Form.p_fase.value='.$w_fase_conc.';');
-        ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$p_fase.'\'; ');
-        ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
+        ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value="'.$p_fase.'"; ');
+        ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value="S"; else document.Form.p_atraso.value="'.$_REQUEST['p_atraso'].'"; ');
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
@@ -459,6 +462,7 @@ function Gerencial() {
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Protocolo',5,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         ShowHTML('<input type="Hidden" name="p_tipo" value="">');
+        if ($_REQUEST['p_atraso']=='') ShowHTML('<input type="Hidden" name="p_atraso" value="">');
         switch ($p_agrega) {
           case 'GREMETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
           case 'GREMPROJ':      if ($_REQUEST['p_chave_pai']=='')   ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');    break;
@@ -920,11 +924,14 @@ function Gerencial() {
     //SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Apenas empréstimos com data limite excedida?</b><br>');
-    if ($p_atraso=='S') {
-      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
-    } else {
-      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
-    } 
+    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"'.(($p_atraso=='S') ? ' checked' : '').'> Sim');
+    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="N"'.(($p_atraso=='N') ? ' checked' : '').'> Não');
+    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value=""'.(($p_atraso=='') ? ' checked' : '').'> Tanto faz');
+    ShowHTML('          <td><b>Restringir a:</b><br>');
+    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_palavra" value="S"'.(($p_palavra=='S') ? ' checked' : '').'> Empréstimos');
+    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_palavra" value="N"'.(($p_palavra=='N') ? ' checked' : '').'> Cópias');
+    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_palavra" value=""'.(($p_palavra=='') ? ' checked' : '').'> Não restringir');
+    ShowHTML('      <tr valign="top">');
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');

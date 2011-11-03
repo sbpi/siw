@@ -268,6 +268,8 @@ function Inicial() {
       if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
       if ($p_processo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
       if ($p_atraso=='S')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
+      if ($p_palavra=='S')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Recuperar <td>[<b>Apenas atendimentos por empréstimo</b>]'; }
+      if ($p_palavra=='N')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Recuperar <td>[<b>Apenas atendimentos com cópias</b>]'; }
       if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
     } 
  
@@ -456,6 +458,9 @@ function Inicial() {
           } elseif ($P1==2) {
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
+            if (f($row,'sg_tramite')=='EA') {
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'ConcluirCopia&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registrar conclusão de cópia.">CC</A>&nbsp');
+            }
             if (f($row,'sg_tramite')=='EE') {
               ShowHTML('          <A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=EmitirFE'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=780,height=530,top=30,left=10, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime o formulário de empréstimo.">FE</A>&nbsp');
               ShowHTML('          <A onclick="window.location.href=\''.montaURL_JS($w_dir,'relatorio.php?par=EmitirGF'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_formato=WORD&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" class="HL"  HREF="javascript:this.status.value;" title="Imprime a guia fora.">GF</A>&nbsp');
@@ -538,7 +543,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -659,7 +664,7 @@ function Geral() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -731,7 +736,7 @@ function Itens() {
     ValidateOpen('Validacao');
     if ($O=='P') {
       ShowHTML('if (theForm.p_sq_orprior.value==\'\' && theForm.p_pais.value==\'\' && theForm.p_uf.value==\'\' && theForm.p_empenho.value==\'\') {');
-      ShowHTML(' alert(\'Informe pelo menos um critério de filtragem!\');');
+      ShowHTML(' alert("Informe pelo menos um critério de filtragem!");');
       ShowHTML(' return false;');
       ShowHTML('}');
     } elseif($O=='I') {
@@ -746,7 +751,7 @@ function Itens() {
       ShowHTML('     if (theForm["w_protocolo[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos um protocolo!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
     }
@@ -955,7 +960,7 @@ function Itens() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1134,7 +1139,7 @@ function Anexos() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     //ShowHTML ' history.back(1);' 
     ScriptClose();
   } 
@@ -1318,12 +1323,12 @@ function Encaminhamento() {
       } else {
         Validate('w_despacho','Despacho','','','1','2000','1','1');
         ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-        ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+        ShowHTML('     alert("Informe o despacho apenas se for devolução para a fase anterior!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
         ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-        ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+        ShowHTML('     alert("Informe um despacho descrevendo o motivo da devolução!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
@@ -1616,6 +1621,114 @@ function Concluir() {
 } 
 
 // =========================================================================
+// Rotina de conclusão de cópia
+// -------------------------------------------------------------------------
+function ConcluirCopia() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+
+  //Recupera os dados da solicitacao de passagens e diárias
+  $sql = new db_GetSolicPA; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,5,
+          null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,
+          null,null,null,null,null,null,null,null,null,null,null);
+  foreach($RS as $row){$RS=$row; break;}  
+
+  Cabecalho();
+  head();
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
+  ScriptOpen('JavaScript');
+  CheckBranco();
+  FormataData();
+  SaltaCampo();
+  ValidateOpen('Validacao');
+  Validate('w_fim','Data de atendimento','DATA','1','10','10','','0123456789/');
+  CompData('w_fim','Data de atendimento','<=',FormataDataEdicao(time()),'data atual');
+  Validate('w_nota_conclusao','Nota de conclusão','1','','3','1000','1','1');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  ShowHTML('  theForm.Botao[0].disabled=true;');
+  ShowHTML('  theForm.Botao[1].disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=\'document.Form.w_fim.focus()\';');
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
+  ShowHTML(VisualEmprestimo($w_chave,'X',$w_usuario,$P1,$P4));
+  ShowHTML('<HR>');
+  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=PACONCCOP&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
+  ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
+  ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
+  ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
+  ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
+  ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
+  ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('  <table width="100%" border="0">');
+  $sql = new db_getPAEmpItem; $RS1 = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null);
+  $RS1 = SortArray($RS1,'ano','asc','protocolo','asc');
+  ShowHTML('<tr><td colspan=4><b>Se a solicitação foi atendida com o envio de cópias, informe os dados abaixo e clique no botão <i>Concluir</i>.</b>');
+  ShowHTML('<tr><td align="center" colspan=4>');  
+  ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
+  ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
+  ShowHTML('          <td colspan=4><b>Documento original</td>');
+  ShowHTML('        </tr>');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td><b>Espécie</td>');
+  ShowHTML('          <td><b>Nº</td>');
+  ShowHTML('          <td><b>Data</td>');
+  ShowHTML('          <td><b>Procedência</td>');
+  ShowHTML('        </tr>');
+  if (count($RS1)<=0) {
+    // Se não foram selecionados registros, exibe mensagem
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+  } else {
+    // Lista os registros selecionados para listagem
+    foreach($RS1 as $row){ 
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+      ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+      ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
+      ShowHTML('        <td>&nbsp;'.f($row,'nm_especie').'</td>');
+      ShowHTML('        <td>&nbsp;'.f($row,'numero_original').'</td>');
+      ShowHTML('        <td>&nbsp;'.formataDataEdicao(f($row,'data_recebimento'),5).'&nbsp;</td>');
+      ShowHTML('        <td>&nbsp;'.f($row,'nm_origem_doc').'</td>');
+      ShowHTML('        </tr>');
+    }
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    <tr><td align="center" colspan=3><hr>');
+  ShowHTML('    <tr><td valign="top"><b><u>D</u>ata de atendimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para devolução dos itens.">'.ExibeCalendario('Form','w_fim').'</td>');
+  ShowHTML('    <tr><td colspan=3><b><u>N</u>ota de conclusão:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se desejado, informe uma nota de conclusão.">'.$w_nota_conclusão.'</TEXTAREA></td>');
+  ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('    <tr><td align="center" colspan=3><hr>');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
+  ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('      </td>');
+  ShowHTML('    </tr>');
+  ShowHTML('  </table>');
+  ShowHTML('  </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
+// =========================================================================
 // Rotina de preparação para envio de e-mail relativo a PCDs
 // Finalidade: preparar os dados necessários ao envio automático de e-mail
 // Parâmetro: p_solic: número de identificação da solicitação. 
@@ -1648,17 +1761,17 @@ function SolicMail($p_solic,$p_tipo) {
       $w_file = $conFilePhysical.$w_cliente.'/'.'relatorio_'.str_replace('/','-',$w_nome).'.doc';
       if (!is_writable($conFilePhysical.$w_cliente)) {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: não há permissão de escrita no diretório.\\n'.$conFilePhysical.$w_cliente.'\');');
+        ShowHTML('  alert("ATENÇÃO: não há permissão de escrita no diretório.\n'.$conFilePhysical.$w_cliente.'");');
         ScriptClose();
       } else {
         if (!$handle = fopen($w_file,'w')) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: não foi possível abrir o arquivo para escrita.\\n'.$w_file.'\');');
+          ShowHTML('  alert("ATENÇÃO: não foi possível abrir o arquivo para escrita.\n'.$w_file.'");');
           ScriptClose();
         } else {
           if (!fwrite($handle, RelatorioViagem($p_solic))) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: não foi possível inserir o conteúdo do arquivo.\\n'.$w_file.'\');');
+            ShowHTML('  alert("ATENÇÃO: não foi possível inserir o conteúdo do arquivo.\n'.$w_file.'");');
             ScriptClose();
             fclose($handle);
           } else {
@@ -1812,14 +1925,14 @@ function SolicMail($p_solic,$p_tipo) {
       // Remove o arquivo temporário
       if (!unlink($w_file)) {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: não foi possível remover o arquivo temporário.\\n'.$w_file.'\');');
+        ShowHTML('  alert("ATENÇÃO: não foi possível remover o arquivo temporário.\n'.$w_file.'");');
         ScriptClose();
       }
     } 
     // Se ocorreu algum erro, avisa da impossibilidade de envio
     if ($w_resultado>'') {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\\n'.$w_resultado.'\');');
+      ShowHTML('  alert("ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'");');
       ScriptClose();
     } 
   } 
@@ -1850,7 +1963,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -1873,7 +1986,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }     
@@ -1887,7 +2000,7 @@ function Grava() {
             if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
@@ -1897,7 +2010,7 @@ function Grava() {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -1924,7 +2037,7 @@ function Grava() {
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             }elseif(nvl($Field['name'],'')!=''){
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
               ScriptClose();
               retornaFormulario('w_caminho');
               exit();
@@ -1940,7 +2053,7 @@ function Grava() {
           $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
           ScriptClose();
           exit();
         } 
@@ -1950,7 +2063,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -1967,7 +2080,7 @@ function Grava() {
               if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -1976,7 +2089,7 @@ function Grava() {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
-                  ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                  ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                   ScriptClose();
                   retornaFormulario('w_observacao');
                   exit();
@@ -2005,7 +2118,7 @@ function Grava() {
             }  
           } else {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+            ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
             ScriptClose();
           } 
           ScriptOpen('JavaScript');
@@ -2023,7 +2136,7 @@ function Grava() {
           }
           if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite'] && f($RS, 'sg_tramite') != 'CI') {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!\');');
+            ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!");');
             ScriptClose();
             exit();
           } else {
@@ -2056,7 +2169,7 @@ function Grava() {
         }
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -2071,7 +2184,7 @@ function Grava() {
         foreach($RS as $row){$RS=$row; break;}
         if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!\');');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!");');
           ScriptClose();
           exit();
         } else {
@@ -2105,14 +2218,46 @@ function Grava() {
         } 
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;
+    case 'PACONCCOP':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $sql = new db_GetSolicPA; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
+                null,null,null,null,null,null,null,null,null,null,
+                $_REQUEST['w_chave'],null,null,null,null,null,null,
+                null,null,null,null,null,null,null,null,null,null,null);
+        foreach($RS as $row){$RS=$row; break;}
+        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!");');
+          ScriptClose();
+          exit();
+        } else {
+          // Encerra a solicitação
+          $SQL = new dml_putSolicConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
+              $_REQUEST['w_fim'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,
+              null,null,null);
+          // Envia e-mail comunicando a conclusão
+          SolicMail($_REQUEST['w_chave'],3);
+
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+          ScriptClose();
+        } 
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;
     default:
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+      ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
       ShowHTML('  history.back(1);');
       ScriptClose();
       break;
@@ -2135,6 +2280,7 @@ function Main() {
   case 'ENVIO':             Encaminhamento(); break;
   case 'ANOTACAO':          Anotar();         break;
   case 'CONCLUIR':          Concluir();       break;
+  case 'CONCLUIRCOPIA':     ConcluirCopia();  break;
   case 'GRAVA':             Grava();          break;
   default:
     Cabecalho();

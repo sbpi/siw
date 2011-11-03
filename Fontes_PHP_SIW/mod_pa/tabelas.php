@@ -33,6 +33,7 @@ include_once($w_dir_volta.'classes/sp/db_getArquivo_PA.php');
 include_once($w_dir_volta.'classes/sp/dml_putArquivo_PA.php');
 include_once($w_dir_volta.'classes/sp/dml_putArquivoLocal_PA.php');
 include_once($w_dir_volta.'classes/sp/dml_putCaixa.php');
+include_once($w_dir_volta.'classes/sp/dml_putDocumentoArqCen.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDespacho.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoGuarda.php');
@@ -40,6 +41,7 @@ include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
 include_once($w_dir_volta.'funcoes/selecaoAssuntoRadio.php');
 include_once($w_dir_volta.'funcoes/selecaoLocalizacao.php');
 include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
+include_once($w_dir_volta.'funcoes/selecaoCaixaCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoArquivoLocalSubordination.php');
 
 // =========================================================================
@@ -87,7 +89,7 @@ if ($_SESSION['LOGON'] != 'Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
-if (strpos('PACAIXA', nvl($SG,'.')) !== false) {
+if (strpos('PACAIXA,ALTLOCAL', nvl($SG,'.')) !== false) {
   if ($O == '') {
     $O = 'P';
   }
@@ -142,6 +144,11 @@ if(nvl($w_menu,'')!=''){
     exit();
   }
 }
+
+// Recupera os parâmetros do módulo
+$sql = new db_getParametro;
+$RS_Parametro = $sql->getInstanceOf($dbms, $w_cliente, 'PA', null);
+foreach ($RS_Parametro as $row) { $RS_Parametro = $row; break; }
 
 $w_ano = RetornaAno();
 Main();
@@ -308,7 +315,7 @@ function TipoDespacho() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -329,7 +336,7 @@ function imprimir() {
   }
 
   $sql = new db_getCaixa;
-  $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, $w_usuario,null, null, null, null, null, null, null, null, null);
+  $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, $w_usuario,null, null, null, null, null, null, null, null, null,null,null,null,null);
   foreach ($RS as $row) {
     $RS = $row;
     break;
@@ -416,14 +423,18 @@ function imprimir() {
 function Caixa() {
   extract($GLOBALS);
   global $w_Disabled;
-  $w_chave   = $_REQUEST['w_chave'];
-  $p_unidade = nvl($_REQUEST['p_unidade'],$_SESSION['LOTACAO']);
-  $p_caixa   = $_REQUEST['p_caixa'];
-  $p_ini     = $_REQUEST['p_ini'];
-  $p_fim     = $_REQUEST['p_fim'];
+  $w_chave    = $_REQUEST['w_chave'];
+  $p_unidade  = $_REQUEST['p_unidade'];
+  $p_caixa    = $_REQUEST['p_caixa'];
+  $p_ini      = $_REQUEST['p_ini'];
+  $p_fim      = $_REQUEST['p_fim'];
+  $p_local    = $_REQUEST['p_local'];
+  $p_fase     = explodeArray($_REQUEST['p_fase']);
+  $p_central  = (strpos($p_fase,'C')!==false) ? 'S' : '';
+  $p_transito = (strpos($p_fase,'T')!==false) ? 'S' : '';
+  $p_setorial = (strpos($p_fase,'S')!==false) ? 'S' : '';
 
-
-// Recupera os parâmetros do módulo
+  // Recupera os parâmetros do módulo
   $sql = new db_getParametro;
   $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PA', null);
   foreach ($RS as $row) {
@@ -454,7 +465,7 @@ function Caixa() {
   } elseif ($O == 'L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getCaixa;
-    $RS = $sql->getInstanceOf($dbms, $p_caixa, $w_cliente, $w_usuario,$p_unidade, null, null, null, null, null, null, null, $SG);
+    $RS = $sql->getInstanceOf($dbms, $p_caixa, $w_cliente, $w_usuario,$p_unidade, null, null, null, null, null, null, null, $p_local, $p_central, $p_transito, $p_setorial,$SG);
     if (nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'nm_unidade', 'asc', 'numero', 'asc');
@@ -464,7 +475,7 @@ function Caixa() {
   } elseif (!(strpos('AEV', $O) === false)) {
     // Recupera os dados do endereço informado
     $sql = new db_getCaixa;
-    $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, $w_usuario,null, null, null, null, null, null, $p_ini, $p_fim, null);
+    $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, $w_usuario,null, null, null, null, null, null, $p_ini, $p_fim, null,null,null,null,null);
     foreach ($RS as $row) {
       $RS = $row;
       break;
@@ -498,15 +509,23 @@ function Caixa() {
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O == 'P') {
-      Validate('p_unidade', 'Unidade', 'SELECT', '1', '1', '18', '', '1');
+      Validate('p_unidade', 'Unidade', 'SELECT', '', '1', '18', '', '1');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert("Você deve informar pelo menos uma fase!"); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');      
     }
     ShowHTML('  theForm.Botao.disabled=true;');
     //ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O == 'I') {
@@ -523,6 +542,7 @@ function Caixa() {
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  
   if ($O == 'L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
@@ -539,7 +559,7 @@ function Caixa() {
     ShowHTML('          <td><b>'.linkOrdena('Unidade', 'nm_unidade').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Data Limite', 'data_limite').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Itens', 'qtd').'</td>');
-    ShowHTML('          <td><b>'.linkOrdena('Situação', 'nm_situacao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Localização', 'nm_localizacao').'</td>');
     ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
@@ -555,7 +575,7 @@ function Caixa() {
         ShowHTML('        <td>'.f($row, 'nm_unidade').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row, 'data_limite'), 5).'</td>');
         ShowHTML('        <td align="right">'.f($row, 'qtd').'&nbsp;</td>');
-        ShowHTML('        <td>'.f($row, 'nm_situacao').'</td>');
+        ShowHTML('        <td>'.nvl(f($row, 'nm_localizacao'),'Arquivo Setorial').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row, 'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">EX</A>&nbsp');
@@ -628,8 +648,11 @@ function Caixa() {
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade original da caixa:', 'U', 'Selecione a unidade que transferiu a caixa.', $p_unidade, $w_usuario, 'p_unidade', 'CADPA', null);
     ShowHTML('      <tr valign="top">');
+    selecaoArquivoLocalSubordination('<u>L</u>ocalização', 'L', 'Informe a localização da caixa no arquivo central.', $p_local, f($RS_Parametro, 'arquivo_central'), 'p_local',null,null);
+    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Perío<u>d</u>o entre:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-    ShowHTML('      <tr><td align="center"><hr>');
+    selecaoCaixaCheck('<u>S</u>ituação', 'S', 'Selecione as situações que deseja recuperar.', $p_fase, null , 'p_fase[]',null,null);
+    ShowHTML('      <tr><td align="center" colspan="3"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -639,7 +662,175 @@ function Caixa() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
+    ScriptClose();
+  }
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+// =========================================================================
+// Altera localização de caixas
+// -------------------------------------------------------------------------
+function alteraLocal() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave    = $_REQUEST['w_chave'];
+  $p_unidade  = $_REQUEST['p_unidade'];
+  $p_caixa    = $_REQUEST['p_caixa'];
+  $p_ini      = $_REQUEST['p_ini'];
+  $p_fim      = $_REQUEST['p_fim'];
+  $p_local    = $_REQUEST['p_local'];
+  $p_fase     = explodeArray($_REQUEST['p_fase']);
+  $p_central  = (strpos($p_fase,'C')!==false) ? 'S' : '';
+  $p_transito = (strpos($p_fase,'T')!==false) ? 'S' : '';
+  $p_setorial = (strpos($p_fase,'S')!==false) ? 'S' : '';
+
+
+  if ($_SESSION['LOTACAO'] == f($RS_Parametro, 'arquivo_central') || RetornaModMaster($w_cliente, $w_usuario, $w_menu) == 'S') {
+    $w_gestor = true;
+  } else {
+    $w_gestor = false;
+  }
+
+  if ($w_troca > '' && $O != 'E') {
+
+    // Se for recarga da página
+    $w_chave            = $_REQUEST['w_chave'];
+    $w_local            = $_REQUEST['w_local'];
+    
+  } elseif ($O == 'L') {
+    // Recupera todos os registros para a listagem
+    $sql = new db_getCaixa;
+    $RS = $sql->getInstanceOf($dbms, $p_caixa, $w_cliente, $w_usuario,$p_unidade, null, null, null, null, null, null, null, $p_local, $p_central, $p_transito, $p_setorial,$SG);
+    if (nvl($p_ordena, '') > '') {
+      $lista = explode(',', str_replace(' ', ',', $p_ordena));
+      $RS = SortArray($RS, $lista[0], $lista[1], 'nm_unidade', 'asc', 'numero', 'asc');
+    } else {
+      $RS = SortArray($RS, 'nm_unidade', 'asc', 'numero', 'asc');
+    }
+  }
+  Cabecalho();
+  head();
+  ScriptOpen('JavaScript');
+  CheckBranco();
+  FormataData();
+  SaltaCampo();
+  ValidateOpen('Validacao');
+  if ($O=='L') {
+    ShowHTML('  for (ind=1; ind < theForm["w_local[]"].length; ind++) {');
+    Validate('["w_local[]"][ind]','Localização','SELECT','1','1','18','','1');
+    ShowHTML('  }');
+    Validate('w_observacao', 'Observação', '1', '', '4', '2000', '1', '1');
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+  } elseif ($O == 'P') {
+    Validate('p_unidade', 'Unidade', 'SELECT', '', '1', '18', '', '1');
+  }
+  ShowHTML('  theForm.Botao.disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
+  if ($w_troca > '') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');
+  }
+
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O == 'L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
+      ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
+    } else {
+      ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+    }
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.linkOrdena('Número', 'numero').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Unidade', 'sg_unidade').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Data Limite', 'data_limite').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Itens', 'qtd').'</td>');
+    ShowHTML('          <td class="remover"><b>Localização</td>');
+    ShowHTML('        </tr>');
+    if (count($RS) <= 0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina.$par, $O);
+      ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML('<input type="hidden" name="w_chave[]" value="">');
+      ShowHTML('<input type="hidden" name="w_local[]" value="">');
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('<input type="hidden" name="w_chave[]" value="'.f($row,'sq_caixa').'">');
+        ShowHTML('        <td align="center">'.f($row, 'numero').'</td>');
+        ShowHTML('        <td>'.f($row, 'sg_unidade').'</td>');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row, 'data_limite'), 5).'</td>');
+        ShowHTML('        <td align="right">'.f($row, 'qtd').'&nbsp;</td>');
+        selecaoArquivoLocalSubordination(null, null, 'Informe a localização da caixa no arquivo central.', f($row,'sq_arquivo_local'), f($RS_Parametro, 'arquivo_central'), 'w_local[]', 'FOLHA', null, null, null, null, null, null);
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      }
+      ShowHTML('    </table>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="3">');
+      ShowHTML('    <table width="97%" border="0">');
+      ShowHTML('        <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O"  name="w_observacao" rows=5 cols=80  class="sti">'.$w_observacao.'</textarea></td>');
+      ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('      <tr><td colspan=3 align="center"><hr>');
+      ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      ShowHTML('          </td>');
+      ShowHTML('      </tr>');
+      ShowHTML('    </table>');
+      ShowHTML('    </TD>');
+      ShowHTML('</tr>');
+      ShowHTML('</FORM>');
+    }
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'), ceil(count($RS) / $P4), $P3, $P4, count($RS));
+    ShowHTML('</tr>');
+  } elseif ($O == 'P') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('  <li>Informe quaisquer critérios de busca e clique sobre o botão <i>Aplicar filtro</i>.');
+    ShowHTML('  <li>Para pesquisa por período é obrigatório informar as datas de início e término.');
+    ShowHTML('  <li>Clicando sobre o botao <i>Aplicar filtro</i> sem informar nenhum critério de busca, serão exibidas todas as guias que você tem acesso.');
+    ShowHTML('  </ul></b></font></td>');
+    AbreForm('Form', $w_dir.$w_pagina.$par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    SelecaoCaixa('<u>C</u>aixa:', 'C', "Selecione a caixa transferida.", $p_caixa, $w_cliente, null, 'p_caixa', $SG, null);
+    ShowHTML('      <tr valign="top">');
+    SelecaoUnidade('<U>U</U>nidade original da caixa:', 'U', 'Selecione a unidade que transferiu a caixa.', $p_unidade, $w_usuario, 'p_unidade', 'CADPA', null);
+    ShowHTML('      <tr valign="top">');
+    selecaoArquivoLocalSubordination('<u>L</u>ocalização', 'L', 'Informe a localização da caixa no arquivo central.', $p_local, f($RS_Parametro, 'arquivo_central'), 'p_local',null,null);
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Perío<u>d</u>o entre:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('      <tr><td align="center" colspan="3"><hr>');
+    ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -807,7 +998,7 @@ function EspecieDocumento() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -874,7 +1065,7 @@ function Unidade() {
         Validate('w_chave', 'Unidade', 'SELECT', '1', '1', '18', '', '1');
       }
       ShowHTML('  if (theForm.w_chave.value==theForm.w_unidade_pai[theForm.w_unidade_pai.selectedIndex].value) {');
-      ShowHTML('     alert(\'Não é permitido subordinar uma unidade a si mesma!\'); ');
+      ShowHTML('     alert("Não é permitido subordinar uma unidade a si mesma!"); ');
       ShowHTML('     theForm.w_unidade_pai.focus(); ');
       ShowHTML('     return false; ');
       ShowHTML('  }; ');
@@ -1055,7 +1246,7 @@ function Unidade() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1218,7 +1409,7 @@ function NaturezaDoc() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -1399,7 +1590,7 @@ function TipoGuarda() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -1448,7 +1639,7 @@ function Parametro() {
   Validate('w_limite_interessados', 'Limite de interessados', '1', '1', '1', '18', '', '1');
   Validate('w_ano_corrente', 'Ano corrente', '1', '1', '4', '4', '', '1');
   ShowHTML('  if ((theForm.w_despacho_arqcentral.value==theForm.w_despacho_emprestimo.value)||(theForm.w_despacho_arqcentral.value==theForm.w_despacho_devolucao.value)||(theForm.w_despacho_devolucao.value==theForm.w_despacho_emprestimo.value)) {');
-  ShowHTML('    alert(\'Nenhum dos despachos podem ser iguais!\');');
+  ShowHTML('    alert("Nenhum dos despachos podem ser iguais!");');
   ShowHTML('    theForm.w_despacho_arqcentral.focus();');
   ShowHTML('    return false;');
   ShowHTML('  }');
@@ -1790,7 +1981,7 @@ function Assunto() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     //ShowHTML ' history.back(1);'
     ScriptClose();
   }
@@ -1919,12 +2110,33 @@ function TelaAssunto() {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-  global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
+    case 'ALTLOCAL':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
+
+        $SQL = new dml_putDocumentoArqCen;
+        for ($i = 0; $i <= count($_POST['w_chave']); $i++) {
+          if (Nvl($_POST['w_chave'][$i], '') > '') {
+            $SQL->getInstanceOf($dbms, $_POST['w_chave'][$i], $_SESSION['SQ_PESSOA'], $_REQUEST['w_local'][$i], $_REQUEST['w_observacao']);
+          }
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Alteração nas localizações realizada com sucesso!");');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir, $R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+        exit;
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;
     case 'PACAIXA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
@@ -1937,7 +2149,7 @@ function Grava() {
         exit;
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -1956,7 +2168,7 @@ function Grava() {
                         null, null, null, null, null, null, null, null);
         if (count($RS) == 0) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Protocolo atual não encontrado!\');');
+          ShowHTML('  alert("Protocolo atual não encontrado!");');
           ScriptClose();
           retornaFormulario('w_prefixo_ant');
           break;
@@ -1971,7 +2183,7 @@ function Grava() {
                         null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         if (count($RS) > 0) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Novo protocolo já está associado a um documento/processo existente!\');');
+          ShowHTML('  alert("Novo protocolo já está associado a um documento/processo existente!");');
           ScriptClose();
           retornaFormulario('w_numero');
           break;
@@ -1993,7 +2205,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2007,7 +2219,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, Nvl($_REQUEST['w_nome'], ''), null, null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de despacho com este nome!\');');
+            ShowHTML('  alert("Já existe tipo de despacho com este nome!");');
             ScriptClose();
             retornaFormulario('w_nome');
             break;
@@ -2017,7 +2229,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, Nvl($_REQUEST['w_sigla'], ''), null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo despacho com esta sigla!\');');
+            ShowHTML('  alert("Já existe tipo despacho com esta sigla!");');
             ScriptClose();
             retornaFormulario('w_sigla');
             break;
@@ -2027,7 +2239,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, null, null, 'VINCULADO');
           if (nvl(f($RS, 'existe'), 0) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir esta tipo de despacho. Ele está indicado de parâmetro!\');');
+            ShowHTML('  alert("Não é possível excluir esta tipo de despacho. Ele está indicado de parâmetro!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
             break;
@@ -2040,7 +2252,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2054,7 +2266,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, Nvl($_REQUEST['w_nome'], ''), null, null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe espécie de documento com este nome!\');');
+            ShowHTML('  alert("Já existe espécie de documento com este nome!");');
             ScriptClose();
             retornaFormulario('w_nome');
             break;
@@ -2065,7 +2277,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, Nvl($_REQUEST['w_sigla'], ''), null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe espécie de documento com esta sigla!\');');
+            ShowHTML('  alert("Já existe espécie de documento com esta sigla!");');
             ScriptClose();
             retornaFormulario('w_sigla');
             break;
@@ -2075,7 +2287,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, null, null, 'VINCULADO');
           if (nvl(f($RS, 'existe'), 0) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir esta espécie de documento. Ele está ligado a algum documento!\');');
+            ShowHTML('  alert("Não é possível excluir esta espécie de documento. Ele está ligado a algum documento!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
             break;
@@ -2088,7 +2300,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2102,7 +2314,7 @@ function Grava() {
             $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_chave'], null, null);
             if (count($RS) > 0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Unidade já cadastrada!\');');
+              ShowHTML('  alert("Unidade já cadastrada!");');
               ScriptClose();
               RetornaFormulario('w_chave');
               exit();
@@ -2113,7 +2325,7 @@ function Grava() {
             $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_chave'], null, $_REQUEST['w_prefixo']);
             if (count($RS) > 0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Não é possivel definir o mesmo prefixo para duas unidades!\');');
+              ShowHTML('  alert("Não é possivel definir o mesmo prefixo para duas unidades!");');
               ScriptClose();
               RetornaFormulario('w_prefixo');
               exit();
@@ -2129,7 +2341,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2143,7 +2355,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, Nvl($_REQUEST['w_nome'], ''), null, null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe natureza de documento com este nome!\');');
+            ShowHTML('  alert("Já existe natureza de documento com este nome!");');
             ScriptClose();
             retornaFormulario('w_nome');
             break;
@@ -2154,7 +2366,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, Nvl($_REQUEST['w_sigla'], ''), null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe natureza de documento com esta sigla!\');');
+            ShowHTML('  alert("Já existe natureza de documento com esta sigla!");');
             ScriptClose();
             retornaFormulario('w_sigla');
             break;
@@ -2164,7 +2376,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, null, null, 'VINCULADO');
           if (nvl(f($RS, 'existe'), 0) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir esta natureza de documento. Ela está ligada a algum documento!\');');
+            ShowHTML('  alert("Não é possível excluir esta natureza de documento. Ela está ligada a algum documento!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
             break;
@@ -2177,7 +2389,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2191,7 +2403,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, Nvl($_REQUEST['w_descricao'], ''), null, null, null, null, null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de guarda com esta desrição!\');');
+            ShowHTML('  alert("Já existe tipo de guarda com esta desrição!");');
             ScriptClose();
             retornaFormulario('w_descricao');
             break;
@@ -2201,7 +2413,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, Nvl($_REQUEST['w_sigla'], ''), null, null, null, null, null, null, 'EXISTE');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de guarda com esta sigla!\');');
+            ShowHTML('  alert("Já existe tipo de guarda com esta sigla!");');
             ScriptClose();
             retornaFormulario('w_sigla');
             break;
@@ -2211,7 +2423,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, Nvl($_REQUEST['w_chave'], ''), $w_cliente, null, null, null, null, null, null, null, 'VINCULADO');
           if (nvl(f($RS, 'existe'), 0) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir este tipo de guarda. Ele está ligado a algum assunto!\');');
+            ShowHTML('  alert("Não é possível excluir este tipo de guarda. Ele está ligado a algum assunto!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
             break;
@@ -2226,7 +2438,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2245,7 +2457,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       }
@@ -2258,7 +2470,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, $w_cliente, Nvl($_REQUEST['w_chave'], ''), null, null, null, null, null, null, null, null, 'VINCULADO');
           if (nvl(f($RS, 'existe'), 0) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir este assunto. Ele está ligado a algum documento!\');');
+            ShowHTML('  alert("Não é possível excluir este assunto. Ele está ligado a algum documento!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
             break;
@@ -2326,7 +2538,7 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, $_REQUEST['w_nome'], null, null, 'OUTROS');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Categoria já cadastrada!\');');
+            ShowHTML('  alert("Categoria já cadastrada!");');
             ScriptClose();
             retornaFormulario('w_nome');
             exit;
@@ -2341,7 +2553,7 @@ function Grava() {
         exit;
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
         exit;
@@ -2352,12 +2564,13 @@ function Grava() {
         if ($O == 'I') {
 
           $sql = new db_getArquivo_PA;
-          $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_chave'], null, $_REQUEST['w_nome'], null, null, null);
+          $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_chave'], null, $_REQUEST['w_nome'], null, $_REQUEST['w_chave_pai'], null);
+          echo count($RS);
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Local já cadastrado!\');');
-            ShowHTML('  history.back(1);');
+            ShowHTML('  alert("Local já cadastrado!");');
             ScriptClose();
+            retornaFormulario('w_nome');
             exit;
           }
         }
@@ -2368,7 +2581,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2376,7 +2589,7 @@ function Grava() {
 
     default:
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+      ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
       ScriptClose();
       break;
   }
@@ -2538,7 +2751,7 @@ function Arquivo() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -2797,7 +3010,7 @@ function Locais() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -2822,6 +3035,7 @@ function Main() {
   switch ($par) {
 
     case 'CAIXA':             caixa();            break;
+    case 'ALTLOCAL':          alteraLocal();      break;
     case 'IMPRIMIR':          imprimir();         break;
     case 'RENUMERA':          Renumera();         break;
     case 'TIPODESPACHO':      TipoDespacho();     break;

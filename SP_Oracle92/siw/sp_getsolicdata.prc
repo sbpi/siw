@@ -1194,7 +1194,9 @@ begin
                       left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim
                                              from siw_solicitacao               x
                                                   inner join pa_emprestimo_item y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  inner join siw_tramite        z on (x.sq_siw_tramite     = z.sq_siw_tramite)
                                             where y.devolucao is null
+                                              and z.sigla     not in ('CA','AT')
                                           )                        b7 on (b.sq_siw_solicitacao       = b7.protocolo)
                       left           join (select y.protocolo, x.codigo_interno, y.sq_siw_solicitacao, x.fim, z.sigla, y.eliminacao
                                              from siw_solicitacao          x

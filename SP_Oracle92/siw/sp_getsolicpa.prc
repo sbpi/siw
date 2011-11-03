@@ -186,7 +186,11 @@ begin
                                              )
                 )
             and (p_assunto        is null or (p_assunto     is not null and 0 < (select count(*) from siw_solicitacao x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.descricao,null) like '%'||acentos(p_assunto,null)||'%')))
-            --and (p_palavra        is null or (p_palavra     is not null and acentos(d.numero_certame,null) like '%'||acentos(p_palavra,null)||'%'))
+            and (p_palavra        is null or (p_palavra     is not null and ((p_palavra = 'S' and (b1.sigla in ('CA','CI','EA','EE') or b1.sigla = 'AT' and 0 < (select count(*) from pa_emprestimo_item where sq_siw_solicitacao = b.sq_siw_solicitacao and devolucao is not null))) or
+                                                                             (p_palavra = 'N' and b1.sigla = 'AT' and 0 = (select count(*) from pa_emprestimo_item where sq_siw_solicitacao = b.sq_siw_solicitacao and devolucao is not null))
+                                                                            )
+                                             )
+                )
             and (p_empenho        is null or (p_empenho     is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.numero_original) like '%'||acentos(p_empenho)||'%')))
             --and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and b.conclusao is null))
@@ -434,6 +438,17 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
+   Elsif p_restricao = 'TEXTOSET' Then
+      -- Recupera as solicitações que o usuário pode ver
+      open p_result for 
+         select distinct a.observacao_setorial as texto, acentos(a.observacao_setorial) as ordena
+           from pa_documento                                    a
+                inner             join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
+                   inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite and
+                                                                       b1.sigla                   = 'AS'
+                                                                      )
+          where a.cliente           = p_menu
+            and a.unidade_int_posse = p_unidade;
    End If;
 end SP_GetSolicPA;
 /

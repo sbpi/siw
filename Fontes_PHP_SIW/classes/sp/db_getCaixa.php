@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getCaixa {
   function getInstanceOf($dbms, $p_chave,  $p_cliente ,$p_usuario, $p_unidade,$p_numero,$p_assunto,$p_unid_autua, $p_nu_guia, 
-           $p_ano_guia, $p_ini, $p_fim, $p_restricao) {
+           $p_ano_guia, $p_ini, $p_fim, $p_local, $p_central, $p_transito, $p_setorial, $p_restricao) {
    extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCaixa';
    $params=array('p_chave'                =>array($p_chave,                                  B_INTEGER,        32),
                  'p_cliente'              =>array($p_cliente,                                B_INTEGER,        32),
@@ -23,6 +23,10 @@ class db_getCaixa {
                  'p_ano_guia'             =>array(tvl($p_ano_guia),                          B_INTEGER,        32),
                  'p_ini'                  =>array(tvl($p_ini),                               B_DATE,           32),
                  'p_fim'                  =>array(tvl($p_fim),                               B_DATE,           32),
+                 'p_local'                =>array(tvl($p_local),                             B_INTEGER,        32),
+                 'p_central'              =>array(tvl($p_central),                           B_VARCHAR,         1),
+                 'p_transito'             =>array(tvl($p_transito),                          B_VARCHAR,         1),
+                 'p_setorial'             =>array(tvl($p_setorial),                          B_VARCHAR,         1),
                  'p_restricao'            =>array($p_restricao,                              B_VARCHAR,        20),
                  'p_result'               =>array(null,                                      B_CURSOR,         -1)
                 );

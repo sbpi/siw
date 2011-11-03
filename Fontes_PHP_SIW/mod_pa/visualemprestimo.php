@@ -92,7 +92,11 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>&nbsp;'.f($row,'numero_original').'</td>';
         $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>';
         $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nm_origem_doc').'</td>';
-        if ($w_sg_tramite=='EE' || $w_sg_tramite=='AT') $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'devolucao'),5).'&nbsp;</td>';
+        if ($w_sg_tramite=='AT' && nvl(f($row,'devolucao'),'')=='') {
+          $l_html.=chr(13).'        <td align="center">Atendido por cópia</td>';
+        } elseif ($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+          $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'devolucao'),5).'&nbsp;</td>';
+        }
       }
     } 
     $l_html.=chr(13).'         </table></td></tr>';

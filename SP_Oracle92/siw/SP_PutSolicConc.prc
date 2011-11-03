@@ -235,11 +235,16 @@ begin
    Values
       (w_chave_dem,               p_chave,            p_pessoa,
        p_tramite,                 sysdate,            'N',
-       case w_sg_menu when 'EVCAD' then 'Envio do evento' else 'Conclusão da solicitação' end);
+       case w_sg_menu 
+            when 'EVCAD' then 'Envio do evento' 
+            when 'PAEMP' then 'Conclusão da solicitação.'||case when p_nota_conclusao is null then '' else chr(13)||chr(10)||'Nota de conclusão: '||p_nota_conclusao end
+            else 'Conclusão da solicitação' 
+       end
+      );
        
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
-      conclusao      = coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate),
+      conclusao      = case when length(p_fim) = 10 then to_date(p_fim,'dd/mm/yyyy') else coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate) end,
       executor       = p_executor,
       recebedor      = p_financeiro_resp,
       valor          = coalesce(p_valor,valor),

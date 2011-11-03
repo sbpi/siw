@@ -511,7 +511,11 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
         if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'sg_unidade_resp').'</td>';
         else                    $l_html.=chr(13).'           <td>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'</td>';
         $l_html.=chr(13).'           <td align="center">&nbsp;'.formataDataEdicao(f($row,'fim')).'&nbsp;</td>';
-        $l_html.=chr(13).'           <td align="center">&nbsp;'.formataDataEdicao(f($row,'devolucao')).'&nbsp;</td>';
+        if (f($row,'sg_tramite')=='AT' && nvl(f($row,'devolucao'),'')=='') {
+          $l_html.=chr(13).'           <td align="center">Atendido por cópia</td>';
+        } else {
+          $l_html.=chr(13).'           <td align="center">&nbsp;'.formataDataEdicao(f($row,'devolucao')).'&nbsp;</td>';
+        }
         $l_html.=chr(13).'      </tr>';
       }
       $l_html.=chr(13).'         </table></td></tr>';

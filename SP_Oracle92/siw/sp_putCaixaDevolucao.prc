@@ -11,12 +11,23 @@ create or replace procedure sp_putCaixaDevolucao
    
    cursor c_dados is
       -- cursor para recuperar os protocolos contidos na caixa
-      select a.sq_siw_solicitacao as chave, a.unidade_int_posse, b.sq_siw_tramite, c.sq_menu, d.sq_unidade, e.despacho_devolucao
-        from pa_documento                   a
-             inner     join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-               inner   join siw_menu        c on (b.sq_menu            = c.sq_menu)
-                 inner join pa_parametro    e on (c.sq_pessoa          = e.cliente)
-             inner     join pa_caixa        d on (a.sq_caixa           = d.sq_caixa)
+      select a.sq_siw_solicitacao as chave, a.unidade_int_posse, b.sq_siw_tramite, c.sq_menu, d.sq_unidade, e.despacho_devolucao,
+             g.cadastrador, h.nome
+        from pa_documento                    a
+             inner     join siw_solicitacao  b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+               inner   join siw_menu         c on (b.sq_menu            = c.sq_menu)
+                 inner join pa_parametro     e on (c.sq_pessoa          = e.cliente)
+             inner     join pa_caixa         d on (a.sq_caixa           = d.sq_caixa)
+             inner     join (select x.sq_siw_solicitacao, max(sq_documento_log) sq_documento_log
+                               from pa_documento_log          w
+                                    inner   join pa_documento x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                      inner join pa_caixa     y on (x.sq_caixa           = y.sq_caixa)
+                                    inner join pa_parametro   z on (w.sq_tipo_despacho   = z.despacho_arqcentral)
+                              where y.sq_caixa = p_chave
+                             group by x.sq_siw_solicitacao
+                            )                f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
+               inner   join pa_documento_log g on (f.sq_documento_log   = g.sq_documento_log)
+                 inner join co_pessoa        h on (g.cadastrador        = h.sq_pessoa)
        where a.sq_caixa = p_chave;
 begin
   for crec in c_dados loop
@@ -68,7 +79,7 @@ begin
         crec.unidade_int_posse,  crec.sq_unidade,            null,                      p_pessoa,                   sysdate,
         p_observacao,            sysdate,                    'N',                       0,                          null,
         null,                    null,                       null,                      'N',                        null,
-        null,                    p_pessoa,                   sysdate);
+        null,                    crec.cadastrador,           sysdate);
   end loop;
   
   update pa_caixa a

@@ -10,18 +10,23 @@ create or replace procedure SP_GetCaixa
     p_ano_guia    in  number   default null,
     p_ini         in date      default null,
     p_fim         in date      default null,
+    p_local       in number    default null,
+    p_central     in  varchar2 default null,
+    p_transito    in  varchar2 default null,
+    p_setorial    in  varchar2 default null,
     p_restricao   in  varchar2 default null,
     p_result      out sys_refcursor
    ) is
 begin
    If p_restricao is null        or p_restricao = 'PACAIXA' or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or 
-      p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ'  or p_restricao = 'CENTRAL' 
+      p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ'  or p_restricao = 'CENTRAL' or p_restricao = 'ALTLOCAL' 
    Then
       -- Recupera os grupos da caixa
       open p_result for 
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
                 a.data_limite, a.numero, a.intermediario, a.destinacao_final, a.arquivo_data, a.arquivo_guia_numero, a.arquivo_guia_ano, 
                 a.elimin_data, a.elimin_guia_numero, a.elimin_guia_ano,
+                montaNomeArquivoLocal(a.sq_arquivo_local) as nm_localizacao,
                 case when a.arquivo_guia_numero is not null then 'Arq.Central'
                      when a.elimin_guia_numero  is not null then 'Eliminado'
                      else 'Arq.Setorial'
@@ -59,9 +64,42 @@ begin
             and (p_chave     is null or (p_chave     is not null and a.sq_caixa         = p_chave  ))
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
             and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))
+            and (p_central   is null or (p_central   is not null and a.sq_arquivo_local is not null))
+            and (p_transito  is null or (p_transito  is not null and a.sq_arquivo_local is null and 0 < (select count(*) 
+                                                                                                           from pa_documento                 w
+                                                                                                                inner   join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                                                                                                  inner join siw_menu        y on (x.sq_menu            = y.sq_menu and
+                                                                                                                                                   y.sigla              = 'PADCAD' and
+                                                                                                                                                   y.sq_pessoa          = p_cliente
+                                                                                                                                                  )
+                                                                                                          where w.cliente           = p_cliente
+                                                                                                            and w.unidade_int_posse = y.sq_unid_executora
+                                                                                                        )
+                                        )
+                )
+            and (p_setorial  is null or (p_setorial  is not null and a.sq_arquivo_local is null and 0 = (select count(*) 
+                                                                                                           from pa_documento                 w
+                                                                                                                inner   join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                                                                                                  inner join siw_menu        y on (x.sq_menu            = y.sq_menu and
+                                                                                                                                                   y.sigla              = 'PADCAD' and
+                                                                                                                                                   y.sq_pessoa          = p_cliente
+                                                                                                                                                  )
+                                                                                                          where w.cliente           = p_cliente
+                                                                                                            and w.unidade_int_posse = y.sq_unid_executora
+                                                                                                        )
+                                        )
+                )
+            and (p_local     is null or (p_local     is not null and a.sq_arquivo_local in (select w.sq_arquivo_local
+                                                                                              from pa_arquivo_local w
+                                                                                            connect by prior w.sq_arquivo_local = w.sq_local_pai
+                                                                                            start with w.sq_arquivo_local = p_local
+                                                                                           )
+                                        )
+                )
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
             and (p_ini       is null or (p_ini       is not null and (cast(a.intermediario as  date) between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
-            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
+            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL','ALTLOCAL') or
+                 (p_restricao = 'ALTLOCAL' and a.sq_arquivo_local is not null) or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
                  (p_restricao = 'TRAMITE' and a.arquivo_guia_ano is null and a.arquivo_data is null and c.qtd > 0) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
@@ -74,6 +112,7 @@ begin
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
                 a.data_limite, a.numero, a.intermediario, a.destinacao_final, a.arquivo_data, a.arquivo_guia_numero, a.arquivo_guia_ano, 
                 a.elimin_data, a.elimin_guia_numero, a.elimin_guia_ano,
+                montaNomeArquivoLocal(a.sq_arquivo_local) as nm_localizacao,
                 b.nome as nm_unidade, b.sigla as sg_unidade,
                 coalesce(b3.sq_unidade, b.sq_unidade) as sq_unid_dest,
                 coalesce(b3.nome, b.nome) as nm_unid_dest,
@@ -125,12 +164,43 @@ begin
                     inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite and d2.sigla <> 'CA' and d2.ativo = 'N')
           where a.cliente     = p_cliente
             and d.sq_solic_pai is null
-            and (p_chave      is null or (p_chave      is not null and a.sq_caixa            = p_chave  ))
+            and (p_chave      is null or (p_chave      is not null and a.sq_caixa            = p_chave))
             and (p_unidade    is null or (p_unidade    is not null and a.sq_unidade          = p_unidade))
             and (p_nu_guia    is null or (p_nu_guia    is not null and a.arquivo_guia_numero = p_nu_guia and a.arquivo_guia_ano = p_ano_guia))
             --and (p_unid_autua is null or (p_unid_autua is not null and c.unidade_autuacao    = p_unid_autua))
             and (p_numero     is null or (p_numero     is not null and a.numero              = p_numero ))
             and (p_ini        is null or (p_ini        is not null and a.arquivo_data        between p_ini and p_fim))
+            and (p_transito  is null or (p_transito  is not null and a.sq_arquivo_local is null and 0 < (select count(*) 
+                                                                                                           from pa_documento                 w
+                                                                                                                inner   join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                                                                                                  inner join siw_menu        y on (x.sq_menu            = y.sq_menu and
+                                                                                                                                                   y.sigla              = 'PADCAD' and
+                                                                                                                                                   y.sq_pessoa          = p_cliente
+                                                                                                                                                  )
+                                                                                                          where w.cliente           = p_cliente
+                                                                                                            and w.unidade_int_posse = y.sq_unid_executora
+                                                                                                        )
+                                        )
+                )
+            and (p_setorial  is null or (p_setorial  is not null and a.sq_arquivo_local is null and 0 = (select count(*) 
+                                                                                                           from pa_documento                 w
+                                                                                                                inner   join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                                                                                                  inner join siw_menu        y on (x.sq_menu            = y.sq_menu and
+                                                                                                                                                   y.sigla              = 'PADCAD' and
+                                                                                                                                                   y.sq_pessoa          = p_cliente
+                                                                                                                                                  )
+                                                                                                          where w.cliente           = p_cliente
+                                                                                                            and w.unidade_int_posse = y.sq_unid_executora
+                                                                                                        )
+                                        )
+                )
+            and (p_local     is null or (p_local     is not null and a.sq_arquivo_local in (select w.sq_arquivo_local
+                                                                                              from pa_arquivo_local w
+                                                                                            connect by prior w.sq_arquivo_local = w.sq_local_pai
+                                                                                            start with w.sq_arquivo_local = p_local
+                                                                                           )
+                                        )
+                )
             and (p_assunto    is null or (p_assunto    is not null and acentos(a.assunto)    like '%'||acentos(p_assunto)||'%' ));
    End If;
 end SP_GetCaixa;
