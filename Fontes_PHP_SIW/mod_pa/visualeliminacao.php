@@ -60,49 +60,78 @@ function VisualEliminacao($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if ($l_O!='X') {
     //Listagem dos itens do pedido de compra. Não exibido quando operação igual a X (conclusão do pedido).
     $sql = new db_getPAElimItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null);
-    $RS1 = SortArray($RS1,'ano','asc','protocolo','asc'); 
+    $RS1 = SortArray($RS1,'cd_assunto','asc', 'ano','asc','numero_documento','asc'); 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $l_html.=chr(13).'          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>';
-    $l_html.=chr(13).'          <td rowspan=2 width="1%" nowrap><b>Tipo</td>';
+    $colspan=0;
+    $colspan++; $l_html.=chr(13).'          <td rowspan=2><b>Protocolo</td>';
+    $colspan++; $l_html.=chr(13).'          <td rowspan=2><b>Tipo</td>';
     $l_html.=chr(13).'          <td colspan=4><b>Documento original</td>';
-    $l_html.=chr(13).'          <td colspan=3><b>Localização</td>';
-    $l_html.=chr(13).'          <td rowspan=2><b>Prazo de Guarda</td>';
-    //if ($w_sg_tramite=='EE' || $w_sg_tramite=='AT') $l_html.=chr(13).'          <td rowspan=2><b>Eliminação</td>';
+    $l_html.=chr(13).'          <td colspan='./*(($l_tipo!='WORD') ? */3/* : 2)*/.'><b>Assunto</td>';
+    /*if ($l_tipo!='WORD')*/ $l_html.=chr(13).'          <td colspan=3><b>Localização</td>';
+    $colspan++; $l_html.=chr(13).'          <td rowspan=2><b>Guarda</td>';
     $l_html.=chr(13).'        </tr>';
     $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $l_html.=chr(13).'          <td><b>Espécie</td>';
-    $l_html.=chr(13).'          <td><b>Nº</td>';
-    $l_html.=chr(13).'          <td><b>Data</td>';
-    $l_html.=chr(13).'          <td><b>Procedência</td>';
-    $l_html.=chr(13).'          <td><b>Caixa</td>';
-    $l_html.=chr(13).'          <td><b>Pasta</td>';
-    $l_html.=chr(13).'          <td><b>Local</td>';
+    $colspan++; $l_html.=chr(13).'          <td><b>Espécie</td>';
+    $colspan++; $l_html.=chr(13).'          <td><b>Nº</td>';
+    $colspan++; $l_html.=chr(13).'          <td><b>Data</td>';
+    $colspan++; $l_html.=chr(13).'          <td><b>Procedência</td>';
+    /*if ($l_tipo!='WORD')*/ $colspan++; $l_html.=chr(13).'          <td><b>Código</td>';
+    $colspan++; $l_html.=chr(13).'          <td><b>Descrição</td>';
+    $colspan++; $l_html.=chr(13).'          <td><b>Detalhamento</td>';
+    //if ($l_tipo!='WORD') {
+      $colspan++; $l_html.=chr(13).'          <td><b>Caixa</td>';
+      $colspan++; $l_html.=chr(13).'          <td><b>Pasta</td>';
+      $colspan++; $l_html.=chr(13).'          <td><b>Local</td>';
+    //}
     $l_html.=chr(13).'        </tr>';
-    if (count($RS1)<=0) {
+    if (count($RS1)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      $l_html.=chr(13).'      <tr><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan='.$colspan.' align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       // Lista os registros selecionados para listagem
+      $w_atual = '';
       foreach($RS1 as $row){ 
+        if (f($row,'cd_assunto')!=$w_atual) {
+          if ($w_atual!='') {
+            $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+            $l_html.=chr(13).'        <td colspan='.($colspan-1).' align="right"><b>Documentos na classificação '.$w_atual.'</b>';
+            $l_html.=chr(13).'        <td align="center"><b>'.$w_cont.'</b></td>';
+            $l_html.=chr(13).'      </tr>';
+          }
+          $w_atual = f($row,'cd_assunto');
+          $w_cont  = 0;
+        }
         $l_html.=chr(13).'        <tr valign="top">';
         if (!($l_P1==4 || $l_tipo=='WORD')){
-          $l_html.=chr(13).'        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>';
+          $l_html.=chr(13).'        <td align="center"><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'numero_documento').'/'.substr(f($row,'ano'),2,2).'&nbsp;</a>';
         } else {
-          $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.f($row,'protocolo');
+          $l_html.=chr(13).'        <td align="center">'.f($row,'numero_documento').'/'.substr(f($row,'ano'),2,2);
         }
-        $l_html.=chr(13).'        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>';
-        $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nm_especie').'</td>';
-        $l_html.=chr(13).'        <td>&nbsp;'.f($row,'numero_original').'</td>';
-        $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'nm_tipo').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'nm_especie').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'numero_original').'</td>';
+        $l_html.=chr(13).'        <td align="center">'.formataDataEdicao(f($row,'ini_item'),5).'</td>';
         $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nm_origem_doc').'</td>';
-        $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nr_caixa').((nvl(f($row,'nr_caixa'),'')!='') ? '/' : '').f($row,'sg_unid_caixa').'</td>';
-        $l_html.=chr(13).'        <td align="center">&nbsp;'.f($row,'pasta').'</td>';
-        $l_html.=chr(13).'        <td>&nbsp;'.f($row,'nm_arquivo_local').'</td>';
-        $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'prazo_guarda'),'&nbsp;').'</td>';
-        //if ($w_sg_tramite=='EE' || $w_sg_tramite=='AT') $l_html.=chr(13).'        <td align="center">&nbsp;'.formataDataEdicao(f($row,'eliminacao'),5).'&nbsp;</td>';
+        /*if ($l_tipo!='WORD') */$l_html.=chr(13).'        <td>'.f($row,'cd_assunto').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'ds_assunto').'</td>';
+        $l_html.=chr(13).'        <td>'.wordwrap(f($row,'descricao'),35,'<br />',true).'</td>';
+        //if ($l_tipo!='WORD') {
+          $l_html.=chr(13).'        <td>'.f($row,'nr_caixa').((nvl(f($row,'nr_caixa'),'')!='') ? '/' : '').f($row,'sg_unid_caixa').'</td>';
+          $l_html.=chr(13).'        <td align="center">'.f($row,'pasta').'</td>';
+          $l_html.=chr(13).'        <td>'.f($row,'nm_arquivo_local').'</td>';
+        //}
+        $l_html.=chr(13).'        <td align="center">'.nvl(str_replace('/20','/',f($row,'prazo_guarda')),'&nbsp;').'</td>';
+        $w_cont++;
+      }
+      if ($w_atual!='') {
+        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+        $l_html.=chr(13).'        <td colspan='.($colspan-1).' align="right"><b>Documentos na classificação '.$w_atual.'</b>';
+        $l_html.=chr(13).'        <td align="center"><b>'.$w_cont.'</b></td>';
+        $l_html.=chr(13).'      </tr>';
+        $w_cont = 0;
       }
     } 
     $l_html.=chr(13).'         </table></td></tr>';

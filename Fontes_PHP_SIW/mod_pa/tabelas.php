@@ -286,6 +286,7 @@ function TipoDespacho() {
     AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML(montaFiltro('POST'));
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
@@ -430,8 +431,8 @@ function Caixa() {
   $p_fim      = $_REQUEST['p_fim'];
   $p_local    = $_REQUEST['p_local'];
   $p_fase     = explodeArray($_REQUEST['p_fase']);
-  $p_central  = (strpos($p_fase,'C')!==false) ? 'S' : '';
-  $p_transito = (strpos($p_fase,'T')!==false) ? 'S' : '';
+  $p_central  = (strpos($p_fase,'C')!==false) ? 'C' : '';
+  $p_transito = (strpos($p_fase,'T')!==false) ? 'T' : '';
   $p_setorial = (strpos($p_fase,'S')!==false) ? 'S' : '';
 
   // Recupera os parâmetros do módulo
@@ -575,7 +576,7 @@ function Caixa() {
         ShowHTML('        <td>'.f($row, 'nm_unidade').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row, 'data_limite'), 5).'</td>');
         ShowHTML('        <td align="right">'.f($row, 'qtd').'&nbsp;</td>');
-        ShowHTML('        <td>'.nvl(f($row, 'nm_localizacao'),'Arquivo Setorial').'</td>');
+        ShowHTML('        <td>'.f($row, 'nm_localizacao').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row, 'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row, 'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">EX</A>&nbsp');
@@ -768,6 +769,7 @@ function alteraLocal() {
       AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina.$par, $O);
       ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
       ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML(montaFiltro('POST'));
       ShowHTML('<input type="hidden" name="w_chave[]" value="">');
       ShowHTML('<input type="hidden" name="w_local[]" value="">');
       foreach ($RS as $row) {
@@ -2564,7 +2566,7 @@ function Grava() {
         }
         ScriptOpen('JavaScript');
         ShowHTML('  alert("Alteração nas localizações realizada com sucesso!");');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir, $R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir, $w_pagina.'AltLocal&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
         exit;
       } else {

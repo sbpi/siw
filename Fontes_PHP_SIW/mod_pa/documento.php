@@ -1723,7 +1723,7 @@ function Encaminhamento() {
       if ($w_desmembrar == 'S') {
         Validate('w_despacho', 'Protocolos a serem desmembrados', '', '1', '1', '2000', '1', '1');
       } elseif ($w_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
-        Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '2000', '1', '1');
+        Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '70', '1', '1');
       } else {
         Validate('w_despacho', 'Detalhamento do despacho', '', '1', '1', '2000', '1', '1');
       }
@@ -1832,7 +1832,8 @@ function Encaminhamento() {
     if ($w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial')) {
       ShowHTML('    <tr><td colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea ' . $w_Disabled . ' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">' . $w_despacho . '</TEXTAREA></td>');
     } else {
-      ShowHTML('    <tr><td colspan=3><b>Acondicionamento:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_despacho" class="STI" ROWS=5 cols=75>' . $w_despacho . '</TEXTAREA></td>');
+      ShowHTML('    <tr><td colspan="3"><b>A<U>c</U>ondicionamento setorial:<br><INPUT ' . $w_Disabled . ' ACCESSKEY="C" class="STI" type="text" name="w_despacho" size="70" maxlength="70" value="' . $w_despacho . '">');
+      ShowHTML('          <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'mod_pa/documento.php?par=TextoSetorial&p_campo=w_despacho&SG=' . $SG . '&TP=' . $TP . '&p_unidade=' . $p_unid_posse. '\',\'Texto\',\'top=10,left=10,width=780,height=550,toolbar=no,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o assunto."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
     }
     ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   }
@@ -2700,7 +2701,7 @@ function Tramitacao() {
       ShowHTML('    alert("Os protocolos selecionados devem estar de posse da mesma unidade, que deve ser igual à unidade arquivadora selecionada!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
-      Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '2000', '1', '1');
+      Validate('w_despacho', 'Observações sobre o acondicionamento do protocolo', '', '1', '1', '70', '1', '1');
     } else {
       Validate('w_despacho', 'Detalhamento do despacho', '', '1', '1', '2000', '1', '1');
     }
@@ -2900,7 +2901,8 @@ function Tramitacao() {
       ShowHTML('<INPUT type="hidden" name="w_interno" value="' . $w_interno . '">');
       ShowHTML('    <tr><td>Usuário arquivador:<td colspan=2><b>' . $_SESSION['NOME'] . '</b></td></tr>');
       SelecaoUnidade('Unidade ar<U>q</U>uivadora:', 'Q', 'Selecione o arquivo setorial.', nvl($w_sq_unidade,$p_unid_posse), $w_usuario, 'w_sq_unidade', 'CADPA', null,3,'<td>');
-      ShowHTML('    <tr valign="top"><td><b>Acondicionamento:</b><td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea ' . $w_Disabled . ' accesskey="O" name="w_despacho" class="STI" ROWS=5 cols=75>' . $w_despacho . '</TEXTAREA></td>');
+      ShowHTML('    <tr><td><b>A<U>c</U>ondicionamento:<td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><INPUT ' . $w_Disabled . ' ACCESSKEY="C" class="STI" type="text" name="w_despacho" size="70" maxlength="70" value="' . $w_despacho . '">');
+      ShowHTML('          <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'mod_pa/documento.php?par=TextoSetorial&p_campo=w_despacho&SG=' . $SG . '&TP=' . $TP . '&p_unidade=' . $p_unid_posse. '\',\'Texto\',\'top=10,left=10,width=780,height=550,toolbar=no,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o assunto."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
       ShowHTML('    <tr><td><b><U>A</U>ssinatura Eletrônica:<td><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       ShowHTML('   <tr><td align="center" colspan=3><hr>');
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Arquivar">');
@@ -3810,7 +3812,7 @@ function Recebimento() {
       ShowHTML('                         <a accesskey="F" class="SS" href="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=P&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '"><u>F</u>iltrar (Inativo)</a>');
     }
     ShowHTML('    <td align="right">');
-    ShowHTML('   '.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Registros: '.count($RS));
+    ShowHTML('   '.(($w_tipo!='WORD') ? exportaOffice() : '').' <b>Protocolos: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3818,8 +3820,8 @@ function Recebimento() {
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Última Procedência', 'sg_unid_origem') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Guia', 'guia_tramite') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Despacho', 'nm_despacho') . '</td>');
-    ShowHTML('          <td rowspan=2><b>Protocolo</td>');
     ShowHTML('          <td rowspan=2><b>Envio</td>');
+    ShowHTML('          <td rowspan=2><b>Protocolo</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td class="remover" rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -3837,39 +3839,31 @@ function Recebimento() {
       $RS1 = array_slice($RS, (($P3 - 1) * $P4), $P4);
       $w_atual = '';
       $w_outra_unidade = false;
+      $w_caixa = '';
       foreach ($RS1 as $row) {
-        if ($w_atual == '' || $w_atual != f($row, 'guia_tramite')) {
-          /*
-          if (f($row, 'st_mesma_lotacao') == 'N') {
-            $w_outra_unidade = true;
-          } else {
-            $w_outra_unidade = false;
-          }
-          if ($w_outra_unidade) {
-            ShowHTML('      <tr bgcolor="' . $conTrBgColorLightRed1 . '" valign="top">');
-          } else {
-          */
-            $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
-            ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
-          /*
-          }
-          */
+        if ($w_atual == '' || ($w_atual != f($row, 'guia_tramite'))) {
+          $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+          ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
           ShowHTML('        <td title="' . f($row, 'nm_unid_dest') . '">' . f($row, 'sg_unid_dest') . '</td>');
           ShowHTML('        <td title="' . f($row, 'nm_unid_origem') . '">' . f($row, 'sg_unid_origem') . '</td>');
           ShowHTML('        <td>' . f($row, 'guia_tramite') . '</td>');
           ShowHTML('        <td>' . f($row, 'nm_despacho') . '</td>');
-          ShowHTML('        <td align="center" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
           ShowHTML('        <td align="center">' . formataDataEdicao(f($row, 'phpdt_envio'), 6) . '</td>');
-          ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
-          ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
-          ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
-          if (strlen(Nvl(f($row, 'descricao'), '-')) > 50)
-            $w_titulo = substr(Nvl(f($row, 'descricao'), '-'), 0, 50) . '...'; else
-            $w_titulo=Nvl(f($row, 'descricao'), '-');
-          if (f($row, 'sg_tramite') == 'CA')
-            ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . $w_titulo . '</strike></td>');
-          else
-            ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
+          if (nvl(f($row,'sq_caixa'),'')=='') {
+            ShowHTML('        <td align="center" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
+            ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
+            ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
+            ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
+            if (strlen(Nvl(f($row, 'descricao'), '-')) > 50)
+              $w_titulo = substr(Nvl(f($row, 'descricao'), '-'), 0, 50) . '...'; else
+              $w_titulo=Nvl(f($row, 'descricao'), '-');
+            if (f($row, 'sg_tramite') == 'CA')
+              ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '"><strike>' . $w_titulo . '</strike></td>');
+            else
+              ShowHTML('        <td width="50%" title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_titulo . '</td>');
+          } else {
+            ShowHTML('        <td colspan=5>Caixa ' . f($row, 'numero_caixa') . '</td>');
+          }
           ShowHTML('        <td class="remover" align="top">');
           if (nvl(f($row, 'despacho_arqcentral'), '') == '') {
             ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . $par . '&R=' . $w_pagina . $par . '&O=R&w_unid_autua=' . f($row, 'unidade_origem') . '&w_unid_prot=' . f($row, 'unidade_autuacao') . '&w_nu_guia=' . f($row, 'nu_guia') . '&w_ano_guia=' . f($row, 'ano_guia') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . montaFiltro('GET') . '"' . (($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '') . '>Receber</A>&nbsp');
@@ -3886,7 +3880,7 @@ function Recebimento() {
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
           $w_atual = f($row, 'guia_tramite');
-        } else {
+        } elseif (f($row,'sq_caixa')=='') {
           if ($w_outra_unidade) {
             ShowHTML('      <tr bgcolor="' . $conTrBgColorLightRed1 . '" valign="top">');
           } else {
@@ -3896,8 +3890,8 @@ function Recebimento() {
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
-          ShowHTML('        <td align="center" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
           ShowHTML('        <td align="center">' . formataDataEdicao(f($row, 'phpdt_envio'), 6) . '</td>');
+          ShowHTML('        <td align="center" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
           ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
           ShowHTML('        <td>' . f($row, 'numero_original') . '</td>');
           ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
@@ -4864,7 +4858,8 @@ function Grava() {
           }
         }
       } else {
-        if ($_REQUEST['w_caixa'] == 0) {
+        $w_caixa = $_REQUEST['w_caixa'];
+        if ($_REQUEST['w_caixa'] === '0') {
           $SQL = new dml_putCaixa;
           $SQL->getInstanceOf($dbms, 'I', $w_cliente, null, $_REQUEST['p_unid_posse'], null, null, null,
                   null, null, null, null, null, null, null, null, null, null, &$w_caixa);

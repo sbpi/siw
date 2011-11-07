@@ -462,7 +462,8 @@ begin
              case when d.unidade_destino is null then d4.nome_resumido else d2.nome end as nm_unid_origem,    d2.sigla as sg_unid_origem,
              d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest,
              d7.despacho_arqcentral,
-             d8.nome as nm_pessoa_resp,    d8.nome_resumido as nm_res_pessoa_resp
+             d8.nome as nm_pessoa_resp,    d8.nome_resumido as nm_res_pessoa_resp,
+             e.sq_caixa,                   e.numero||'/'||e1.sigla as numero_caixa
         from siw_menu                                a
              inner         join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
                inner       join eo_unidade           b2 on (b.sq_unidade           = b2.sq_unidade)
@@ -496,7 +497,9 @@ begin
                      inner join eo_unidade           d6 on (d6.sq_unidade          = coalesce(d5.sq_unidade_pai,d5.sq_unidade))
                    left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                    left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa)
-                   left    join co_pessoa            d8 on (d.cadastrador          = d8.sq_pessoa),
+                   left    join co_pessoa            d8 on (d.cadastrador          = d8.sq_pessoa)
+                 left      join pa_caixa             e  on (c.sq_caixa             = e.sq_caixa)
+                   left    join eo_unidade           e1 on (e.sq_unidade           = e1.sq_unidade),
                sg_autenticacao                       w
                left        join (select x.sq_pessoa, y.sq_modulo, y.sigla
                                    from sg_pessoa_modulo      x

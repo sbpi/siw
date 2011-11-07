@@ -3591,6 +3591,7 @@ SP_Oracle92/siw/PD_CriaParametro.prc -text
 SP_Oracle92/siw/Responsavel_Unidade.fnc -text
 SP_Oracle92/siw/RetornaBancoHoras.fnc -text
 SP_Oracle92/siw/RetornaLimiteCaixa.fnc -text
+SP_Oracle92/siw/RetornaLimiteElim.fnc -text
 SP_Oracle92/siw/RetornaLimiteProtocolo.fnc -text
 SP_Oracle92/siw/SF_Consulta.prc -text
 SP_Oracle92/siw/SP_GetACParametro.prc -text
