@@ -210,8 +210,24 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
+ elsif p_restricao = 'LISTELIM' Then
+      -- Recupera o resumo de uma eliminação
+      open p_result for 
+         select retornalimiteElim(lista.sq_siw_solicitacao) as especies, lista.*
+           from (select i.sq_siw_solicitacao, f.codigo, f.descricao, min(c.ano)||'-'||max(c.ano) as datas_limite, count(*) qtd
+                   from pa_eliminacao                         i
+                        inner       join siw_solicitacao      b on (i.protocolo            = b.sq_siw_solicitacao)
+                          inner     join siw_tramite          d on (b.sq_siw_tramite       = d.sq_siw_tramite and d.sigla <> 'CA')
+                          inner     join pa_documento         c on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
+                            inner   join pa_documento_assunto e on (c.sq_siw_solicitacao   = e.sq_siw_solicitacao and e.principal = 'S')
+                              inner join pa_assunto           f on (e.sq_assunto           = f.sq_assunto)
+                            inner   join pa_caixa             g on (c.sq_caixa             = g.sq_caixa)
+                  where i.sq_siw_solicitacao = p_chave
+                    and g.sq_arquivo_local is not null
+                 group by i.sq_siw_solicitacao, f.codigo, f.descricao
+                ) lista;
  elsif p_restricao = 'PAELIM' or substr(p_restricao,1,4) = 'GREL' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera as eliminações cadastradas
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,

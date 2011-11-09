@@ -60,6 +60,7 @@ include_once($w_dir_volta.'funcoes/selecaoEspecieDocumento.php');
 include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
 include_once('visualeliminacao.php');
 include_once('validaeliminacao.php');
+include_once('elim_listagem.php');
 
 // =========================================================================
 //  /eliminacao.php
@@ -1785,6 +1786,20 @@ function SolicMail($p_solic,$p_tipo) {
     } 
   } 
 }
+
+// =========================================================================
+// Rotina de emissão da listagem de eliminação
+// -------------------------------------------------------------------------
+function EmiteListElim() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave = $_REQUEST['w_chave'];
+  $w_tipo  = upper(trim($_REQUEST['w_tipo']));
+  HeaderWord('PORTRAIT');
+  ShowHTML(elim_listagem($w_chave,$SG,'WORD'));
+} 
+
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -2083,6 +2098,7 @@ function Main() {
   case 'EXCLUIR':           Excluir(); break;
   case 'ENVIO':             Encaminhamento(); break;
   case 'ANOTACAO':          Anotar(); break;
+  case 'EMITELISTELIM':     EmiteListElim(); break;
   case 'CONCLUIR':          Concluir(); break;
   case 'GRAVA':             Grava(); break; 
   default:

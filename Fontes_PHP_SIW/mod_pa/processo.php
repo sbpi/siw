@@ -748,6 +748,14 @@ function Central() {
   if ($O == 'L') {
     if ($w_existe) {
       ScriptOpen('JavaScript');
+      ShowHTML('  $(document).ready(function() {');
+      ShowHTML('    $("#marca_todos").click(function() {');
+      ShowHTML('      var checked = this.checked;');
+      ShowHTML('      $(".item").each(function() {');
+      ShowHTML('        this.checked = checked;');
+      ShowHTML('      });');
+      ShowHTML('    });');
+      ShowHTML('  });');
       ValidateOpen('Validacao');
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
@@ -826,7 +834,11 @@ function Central() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    ShowHTML('          <td>&nbsp;</td>');
+    if (count($RS)) {
+      ShowHTML('          <td align="center"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
+    } else {
+      ShowHTML('          <td align="center">&nbsp;</td>');
+    }
     ShowHTML('          <td><b>' . linkOrdena('Caixa', 'numero') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Assunto', 'assunto') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Data Limite', 'data_limite') . '</td>');
@@ -834,7 +846,7 @@ function Central() {
     ShowHTML('          <td><b>' . linkOrdena('Destinação Final', 'destinacao_final') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Protocolos', 'qtd') . '</td>');
     ShowHTML('        </tr>');
-    if (count($RS) <= 0) {
+    if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -848,9 +860,9 @@ function Central() {
         ShowHTML('          <INPUT type="hidden" name="w_unid_origem[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'unidade_int_posse') . '">');
         ShowHTML('          <INPUT type="hidden" name="w_unid_autua[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'unidade_autuacao') . '">');
         if (nvl($w_marcado[f($row, 'sq_siw_solicitacao')], '') != '') {
-          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_caixa') . '" ></td>');
+          ShowHTML('          <input class="item" type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_caixa') . '" ></td>');
         } else {
-          ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="' . f($row, 'sq_caixa') . '" ></td>');
+          ShowHTML('          <input class="item" type="CHECKBOX" name="w_chave[]" value="' . f($row, 'sq_caixa') . '" ></td>');
         }
         ShowHTML('        </td>');
         ShowHTML('        <td><A onclick="window.open (\'' . montaURL_JS($w_dir, 'relatorio.php?par=ConteudoCaixa' . '&R=' . $w_pagina . 'IMPRIMIR' . '&O=L&w_chave=' . f($row, 'sq_caixa') . '&w_formato=HTML&orientacao=PORTRAIT&&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG) . '\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">' . f($row, 'numero') . '/' . f($row, 'sg_unidade') . '</a>&nbsp;');

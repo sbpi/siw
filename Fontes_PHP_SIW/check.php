@@ -136,6 +136,7 @@ function checkBanco() {
   $saida .= '<tr valign="top"><td rowspan="2"> ' . ORA9_SERVER_NAME . '</td><td>' . ORA9_DB_USERID . '</td><td>' . ORA9_DB_PASSWORD . ' </td><td>' . ORA9_DATABASE_NAME . ' </td></tr>';
   ob_start();
   $l_error_reporting = error_reporting(); error_reporting(E_ALL);
+
   $ret = oci_new_connect(ORA9_DB_USERID,ORA9_DB_PASSWORD,ORA9_SERVER_NAME);
   var_dump($ret);
   $texto .= ob_get_contents();

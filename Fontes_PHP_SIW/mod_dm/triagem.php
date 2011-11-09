@@ -850,8 +850,6 @@ function Geral() {
     // Tratamento para usuários externos
     $w_solicitante      = $_SESSION['SQ_PESSOA'];
     $w_sq_unidade       = $_SESSION['LOTACAO'];
-    $w_recebimento      = formataDataEdicao(time());
-    $w_limite_conclusao = formataDataEdicao(time());
     $w_aviso            = 'N';
     $w_dias             = 0;
     $w_envio            = 'N';
@@ -897,16 +895,17 @@ function Geral() {
     Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade','Setor solicitante','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_demanda_tipo','Tipo da demanda','SELECT',1,1,18,'','0123456789');
-    if ($_SESSION['INTERNO']=='S') {
-      if ($w_reuniao=='N') {
-        Validate('w_recebimento','Data da solicitação','DATA',1,10,10,'','0123456789/');       
-        Validate('w_limite_conclusao','Limite previsto para conclusão','DATA',1,10,10,'','0123456789/');
-        CompData('w_recebimento','Data da solicitacao','<=','w_limite_conclusao','Limite previsto para conclusão');
-      } else {
-        Validate('w_recebimento','Data da reunião','DATA',1,10,10,'','0123456789/');       
-      }
-      Validate('w_proponente','Proponente externo','','',2,90,'1','1');
+    if ($w_reuniao=='N') {
+      Validate('w_recebimento','Data da solicitação','DATA',1,10,10,'','0123456789/');       
+      Validate('w_limite_conclusao','Limite previsto para conclusão','DATA',1,10,10,'','0123456789/');
+      CompData('w_recebimento','Data da solicitacao','<=','w_limite_conclusao','Limite previsto para conclusão');
+    } else {
+      Validate('w_recebimento','Data da reunião','DATA',1,10,10,'','0123456789/');       
     }
+    if ($_SESSION['INTERNO']=='N') {
+      Validate('w_palavra_chave','Palavras-chave','','',2,90,'1','1');
+    }
+    Validate('w_proponente','Proponente externo','','',2,90,'1','1');
     Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
     Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
     Validate('w_cidade','Cidade','SELECT',1,1,18,'','0123456789');
@@ -985,8 +984,6 @@ function Geral() {
     if ($_SESSION['INTERNO']=='N') {
       ShowHTML('<INPUT type="hidden" name="w_solicitante" value="'.$w_solicitante.'">');
       ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
-      ShowHTML('<INPUT type="hidden" name="w_recebimento" value="'.$w_recebimento.'">');
-      ShowHTML('<INPUT type="hidden" name="w_limite_conclusao" value="'.$w_limite_conclusao.'">');
       ShowHTML('<INPUT type="hidden" name="w_aviso" value="'.$w_aviso.'">');
       ShowHTML('<INPUT type="hidden" name="w_dias" value="'.$w_dias.'">');
       ShowHTML('<INPUT type="hidden" name="w_envio" value="'.$w_envio.'">');
@@ -1001,16 +998,19 @@ function Geral() {
       SelecaoUnidade('<U>S</U>etor solicitante:','S','Selecione o setor responsável pela execução da demanda',$w_sq_unidade,null,'w_sq_unidade',null,null);
     }
     SelecaoTipoDemanda('<U>T</U>ipo da demanda:','T','Selecione o tipo desta demanda',$w_sq_demanda_tipo,null,'w_sq_demanda_tipo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recebimento\'; document.Form.submit();"');
+    ShowHTML('          <tr>');
+    if ($w_reuniao=='N') {
+      ShowHTML('              <td valign="top"><b><u>D</u>ata da solicitação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
+      ShowHTML('              <td valign="top"><b><u>L</u>imite previsto para conclusão:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_conclusao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_conclusao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_limite_conclusao').'</td>');
+    } else {
+      ShowHTML('              <td valign="top"><b><u>D</u>ata da reunião:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
+    }
+    ShowHTML('          </table>');
+    if ($_SESSION['INTERNO']=='N') {
+      ShowHTML('      <tr valign="top"><td colspan="2"><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta demanda."></td>');
+    }
+    ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da demanda. Preencha apenas se houver."></td>');
     if ($_SESSION['INTERNO']=='S') {
-      ShowHTML('          <tr>');
-      if ($w_reuniao=='N') {
-        ShowHTML('              <td valign="top"><b><u>D</u>ata da solicitação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
-        ShowHTML('              <td valign="top"><b><u>L</u>imite previsto para conclusão:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_conclusao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_conclusao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_limite_conclusao').'</td>');
-      } else {
-        ShowHTML('              <td valign="top"><b><u>D</u>ata da reunião:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_recebimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data da solicitação da demanda.">'.ExibeCalendario('Form','w_recebimento').'</td>'); 
-      }
-      ShowHTML('          </table>');
-      ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da demanda. Preencha apenas se houver."></td>');
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');

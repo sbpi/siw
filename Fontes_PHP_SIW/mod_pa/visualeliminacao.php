@@ -57,6 +57,10 @@ function VisualEliminacao($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.crlf2br(f($RS,'observacao')).' </td></tr>';
   $l_html.=chr(13).'          </table></td></tr>';    
   
+  $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EMISSÃO DE LISTAGEM<hr NOSHADE color=#000000 SIZE=1></b></font><ul>';
+  $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteListElim&R='.$w_pagina.$par.'&O=L&w_chave='.$v_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PAELIM" title="Clique neste link para emitir a listagem.">Listagem de Eliminação de Documentos</A>&nbsp';
+  $l_html.=chr(13).'      </ul></td></tr>';
+
   if ($l_O!='X') {
     //Listagem dos itens do pedido de compra. Não exibido quando operação igual a X (conclusão do pedido).
     $sql = new db_getPAElimItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null);

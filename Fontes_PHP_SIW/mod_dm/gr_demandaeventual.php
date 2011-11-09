@@ -296,6 +296,10 @@ function Gerencial() {
         $w_TP = $TP.' - Por UF';
         $RS1  = SortArray($RS1,'co_uf','asc');
         break;
+      case 'GRDMCIDADE':
+        $w_TP = $TP.' - Por cidade';
+        $RS1  = SortArray($RS1,'nm_cidade','asc');
+        break;
       case 'GRDMTIPDEM':
         $w_TP = $TP.' - Por tipo de demanda';
         $RS1  = SortArray($RS1,'nm_demanda_tipo','asc');
@@ -422,12 +426,13 @@ function Gerencial() {
           case 'GRDMSETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
           case 'GRDMPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GRDMLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
+          case 'GRDMCIDADE':    ShowHTML('      document.Form.p_cidade.value=filtro;');         break;
           case 'GRDMTIPDEM':    ShowHTML('      document.Form.p_empenho.value=filtro;');        break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
           case 'GRDMETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');       break;
-          case 'GRDMPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');           break;
+          case 'GRDMPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');       break;
           case 'GRDMPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');     break;
           case 'GRDMRESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');   break;
           case 'GRDMRESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
@@ -435,7 +440,8 @@ function Gerencial() {
           case 'GRDMSETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');           break;
           case 'GRDMPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
           case 'GRDMLOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
-          case 'GRDMTIPDEM':    ShowHTML('    else document.Form.p_empenho.value=\''.$_REQUEST['p_empenho'].'\';');                     break;
+          case 'GRDMCIDADE':    ShowHTML('    else document.Form.p_cidade.value=\''.$_REQUEST['p_cidade'].'\';');             break;
+          case 'GRDMTIPDEM':    ShowHTML('    else document.Form.p_empenho.value=\''.$_REQUEST['p_empenho'].'\';');           break;
         } 
         $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2  = SortArray($RS2,'ordem','asc');
@@ -470,6 +476,7 @@ function Gerencial() {
           case 'GRDMSETOR':     if ($_REQUEST['p_unidade']=='')     ShowHTML('<input type="Hidden" name="p_unidade" value="">');      break;
           case 'GRDMPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
           case 'GRDMLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
+          case 'GRDMCIDADE':    if ($_REQUEST['p_cidade']=='')      ShowHTML('<input type="Hidden" name="p_cidade" value="">');       break;
           case 'GRDMTIPDEM':    if ($_REQUEST['p_empenho']=='')     ShowHTML('<input type="Hidden" name="p_empenho" value="">');      break;
         } 
       } 
@@ -711,6 +718,30 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
+          case 'GRDMCIDADE':
+            if ($w_nm_quebra!=f($row,'nm_cidade')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
+                $w_linha = $w_linha + 1;
+              } 
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_cidade'));
+              } 
+              $w_nm_quebra  = f($row,'nm_cidade');
+              $w_chave      = f($row,'sq_cidade_origem');
+              $w_qt_quebra  = 0;
+              $t_solic      = 0;
+              $t_cad        = 0;
+              $t_tram       = 0;
+              $t_conc       = 0;
+              $t_atraso     = 0;
+              $t_aviso      = 0;
+              $t_valor      = 0;
+              $t_acima      = 0;
+              $t_custo      = 0;
+            } 
+            break;
           case 'GRDMTIPDEM':
             if ($w_nm_quebra!=f($row,'nm_demanda_tipo')) {
               if ($w_qt_quebra>0) {
@@ -719,7 +750,7 @@ function Gerencial() {
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                //ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_demanda_tipo'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_demanda_tipo'));
               } 
               $w_nm_quebra  = f($row,'nm_demanda_tipo');
               $w_chave      = f($row,'sq_demanda_tipo');
@@ -762,6 +793,7 @@ function Gerencial() {
             case 'GRDMSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
             case 'GRDMPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));     break;
             case 'GRDMLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
+            case 'GRDMCIDADE':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_cidade'));         break;
             case 'GRDMTIPDEM':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_empenho'));        break;
           } 
           $w_linha = $w_linha + 1;
@@ -837,6 +869,7 @@ function Gerencial() {
     if (f($RS_Menu,'solicita_cc')=='S') {
       if ($p_agrega=='GRDMCC')      ShowHTML('          <option value="GRDMCC" selected>Classificação');              else ShowHTML('          <option value="GRDMCC">Classificação');
     } 
+    ShowHTML('          <option value="GRDMCIDADE"'.(($p_agrega=='GRDMCIDADE') ? ' selected' : '').'>Cidade');
     if ($SG=='PROJETO') {
       if ($p_agrega=='GRDMETAPA')   ShowHTML('          <option value="GRDMETAPA" selected>Etapa de projeto');        else ShowHTML('          <option value="GRDMETAPA">Etapa de projeto');
     } 
@@ -967,6 +1000,7 @@ function ImprimeCabecalho() {
     case 'GRDMSETOR':   ShowHTML('          <td><b>Setor responsável</td>');    break;
     case 'GRDMPRIO':    ShowHTML('          <td><b>Prioridade</td>');           break;
     case 'GRDMLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
+    case 'GRDMCIDADE':  ShowHTML('          <td><b>Cidade</td>');               break;
     case 'GRDMTIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');      break;
   } 
   ShowHTML('          <td><b>Total</td>');

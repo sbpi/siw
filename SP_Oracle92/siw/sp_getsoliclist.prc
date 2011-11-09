@@ -284,6 +284,7 @@ begin
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                case f1.padrao when 'S' then f.nome||' - '||f.co_uf else f.nome||' ('||f1.nome||')' end as nm_cidade,
                 m1.titulo as nm_projeto, acentos(m1.titulo) as ac_titulo,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
@@ -325,6 +326,7 @@ begin
                                                                       e2.fim                       is null
                                                                      )
                       inner          join co_cidade            f  on (b.sq_cidade_origem           = f.sq_cidade)
+                        inner        join co_pais              f1 on (f.sq_pais                    = f1.sq_pais)
                       left           join pj_projeto           m  on (b.sq_solic_pai               = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao         = m1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                      = n.sq_cc)
@@ -1779,15 +1781,15 @@ begin
                   (p_restricao = 'GRPAVINC'    and b.sq_solic_pai      is not null)
                  )
                 )
-            and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao                             = p_chave))
-            and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.unidade_int_posse  = p_uorg_resp))
-            and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
+            and (p_chave          is null or (p_chave       is not null and d.sq_caixa                       = p_chave))
+            and (p_atividade      is null or (p_atividade   is not null and d8.sq_unidade                    = p_atividade))
+            and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.unidade_int_posse              = p_uorg_resp))
+            and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc                          = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and ((p_tipo = 9 and b.protocolo_siw = p_projeto) or
                                                                              (p_tipo<> 9 and b.sq_solic_pai  = p_projeto)
                                                                             )
                                              )
                 )
-            --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa = p_atividade))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))

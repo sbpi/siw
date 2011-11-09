@@ -287,6 +287,19 @@ function Inicial() {
         }
         $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Último despacho<td>[<b>' . f($RS, 'nome') . '</b>]';
       }
+      $sql = new db_getCaixa;
+      $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario,null, null, null, null, null, null, null, null, null,null,null,null,null);
+      foreach ($RS as $row) {
+        $w_linha++;
+        $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_chave);
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Caixa<td>[<b>'.f($row, 'numero').'/'.f($row, 'sg_unidade').'</b>]';
+        break;
+      }
+      if ($p_atividade>''){
+        $w_linha++;
+        $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_atividade);
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Unidade arquivadora<td>[<b>'.f($RS,'nome').'</b>]';
+      } 
       if ($p_uorg_resp > '') {
         $sql = new db_getUorgData;
         $RS = $sql->getInstanceOf($dbms, $p_uorg_resp);
@@ -2610,6 +2623,14 @@ function Tramitacao() {
     ScriptClose();
   } elseif ($O == 'L') {
     ScriptOpen('JavaScript');
+    ShowHTML('  $(document).ready(function() {');
+    ShowHTML('    $("#marca_todos").click(function() {');
+    ShowHTML('      var checked = this.checked;');
+    ShowHTML('      $(".item").each(function() {');
+    ShowHTML('        this.checked = checked;');
+    ShowHTML('      });');
+    ShowHTML('    });');
+    ShowHTML('  });');
     FormataProtocolo();
     CheckBranco();
     FormataData();
@@ -2759,7 +2780,11 @@ function Tramitacao() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) {
-      ShowHTML('          <td class="remover"></td>');
+      if (count($RS)) {
+        ShowHTML('          <td align="center"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
+      } else {
+        ShowHTML('          <td align="center">&nbsp;</td>');
+      }
       ShowHTML('          <td width="1%" nowrap><b>Caixa</td>');
       ShowHTML('          <td><b>Unidade</td>');
       ShowHTML('          <td><b>Data Limite</td>');
@@ -2767,7 +2792,11 @@ function Tramitacao() {
       ShowHTML('          <td><b>Destinação final</td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td class="remover" rowspan=2></td>');
+      if (count($RS)) {
+        ShowHTML('          <td rowspan="2" align="center"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
+      } else {
+        ShowHTML('          <td rowspan="2" align="center">&nbsp;</td>');
+      }
       ShowHTML('          <td rowspan=2><b>' . linkOrdena('Posse', 'sg_unidade_posse', 'Form') . '</td>');
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . linkOrdena('Tipo', 'nm_tipo', 'Form') . '</td>');
@@ -2814,10 +2843,10 @@ function Tramitacao() {
         }
         */
         if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) {
-          ShowHTML('        <td class="remover" align="center">');
+          ShowHTML('        <td align="center">');
           ShowHTML('          <INPUT type="hidden" name="w_unid_origem[' . f($row, 'sq_caixa') . ']" value="' . f($row, 'sq_unidade') . '">');
           ShowHTML('          <INPUT type="hidden" name="w_mesma_lotacao[' . f($row, 'sq_caixa') . ']" value="' . f($row, 'st_mesma_lotacao') . '">');
-          ShowHTML('          <input type="CHECKBOX" ' . ((nvl($w_marcado[f($row, 'sq_caixa')], '') != '') ? 'CHECKED' : '') . ' name="w_chave[]" value="' . f($row, 'sq_caixa') . '"></td>');
+          ShowHTML('          <input class="item" type="CHECKBOX" ' . ((nvl($w_marcado[f($row, 'sq_caixa')], '') != '') ? 'CHECKED' : '') . ' name="w_chave[]" value="' . f($row, 'sq_caixa') . '"></td>');
           ShowHTML('        </td>');
           ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;<A onclick="window.open (\'' . montaURL_JS($w_dir, 'relatorio.php?par=ConteudoCaixa' . '&R=' . $w_pagina . 'IMPRIMIR' . '&O=L&w_chave=' . f($row, 'sq_caixa') . '&w_formato=WORD&orientacao=PORTRAIT&&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG) . '\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">' . f($row, 'numero') . '/' . f($row, 'sg_unidade') . '</a>&nbsp;');
           ShowHTML('        <td>' . f($row, 'nm_unidade') . '</td>');
@@ -2842,12 +2871,12 @@ function Tramitacao() {
             ShowHTML('          <INPUT type="hidden" name="w_mesma_lotacao[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'st_mesma_lotacao') . '">');
             ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="' . f($row, 'protocolo') . '">');
             if (nvl($w_marcado[f($row, 'sq_siw_solicitacao')], '') != '') {
-              ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+              ShowHTML('          <input class="item" type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
             } else {
               if (in_array(f($row, 'sq_siw_solicitacao'), $itens)) {
-                ShowHTML('          <input type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+                ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
               } else {
-                ShowHTML('          <input type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+                ShowHTML('          <input class="item" type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
               }
             }
           }
@@ -3100,6 +3129,14 @@ function TramitCentral() {
     ScriptClose();
   } elseif ($w_existe) {
     ScriptOpen('JavaScript');
+    ShowHTML('  $(document).ready(function() {');
+    ShowHTML('    $("#marca_todos").click(function() {');
+    ShowHTML('      var checked = this.checked;');
+    ShowHTML('      $(".item").each(function() {');
+    ShowHTML('        this.checked = checked;');
+    ShowHTML('      });');
+    ShowHTML('    });');
+    ShowHTML('  });');
     FormataProtocolo();
     CheckBranco();
     FormataData();
@@ -3194,10 +3231,15 @@ function TramitCentral() {
     ShowHTML('<tr><td align="center" colspan=4>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
+    if (count($RS)) {
+      ShowHTML('          <td rowspan="2" align="center"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
+    } else {
+      ShowHTML('          <td rowspan="2" align="center">&nbsp;</td>');
+    }
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . linkOrdena('Protocolo', 'protocolo', 'Form') . '</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Tipo', 'nm_tipo', 'Form') . '</td>');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . linkOrdena('Assunto', 'cd_assunto', 'Form') . '</td>');
+    ShowHTML('          <td rowspan=2><b>' . linkOrdena('Detalhamento', 'descricao', 'Form') . '</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td colspan=2><b>Arq. setorial</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Prazo Guarda', 'data_limite_doc', 'Form') . '</td>');
@@ -3209,7 +3251,7 @@ function TramitCentral() {
     ShowHTML('          <td><b>' . linkOrdena('Data', 'inicio', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Procedência', 'nm_origem_doc', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Observação', 'observacao_setorial', 'Form') . '</td>');
-    ShowHTML('          <td><b>' . linkOrdena('Arquivamento', 'data_setorial', 'Form') . '</td>');
+    ShowHTML('          <td><b>' . linkOrdena('Até', 'data_setorial', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Caixa', 'nr_caixa', 'Form') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Pasta', 'pasta', 'Form') . '</td>');
     ShowHTML('        </tr>');
@@ -3234,12 +3276,12 @@ function TramitCentral() {
         if(f($row, 'provisorio') == 'S'){
           $w_cor = $conTrBgColorLightYellow1;
         }
-        ShowHTML('      <tr bgcolor="' . $w_cor . '">');
+        ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
         ShowHTML('        <td align="center" width="1%" nowrap>');
         if (nvl($w_marcado[f($row, 'sq_siw_solicitacao')], '') != '') {
-          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
+          ShowHTML('          <input type="CHECKBOX" class="item" CHECKED name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
         } else {
-          ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
+          ShowHTML('          <input type="CHECKBOX" class="item" name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
         }
         ShowHTML('<input type="hidden" name="w_assunto[]" value="' . f($row, 'cd_assunto') . '">');
         ShowHTML('<input type="hidden" name="w_prov[]" value="' . f($row, 'provisorio') . '">');
@@ -3248,10 +3290,11 @@ function TramitCentral() {
         ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
         ShowHTML('        <td width="10">&nbsp;' . f($row, 'nm_tipo') . '</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'cd_assunto') . '</td>');
+        ShowHTML('        <td>' . wordwrap(f($row,'descricao'),45,'<br />',true) . '</td>');
         ShowHTML('        <td>&nbsp;' . f($row, 'nm_especie') . '</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'numero_original') . '</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;' . formataDataEdicao(f($row, 'inicio'), 5) . '&nbsp;</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'nm_origem_doc') . '</td>');
+        ShowHTML('        <td>' . f($row, 'nm_origem_doc') . '</td>');
         if (strlen(Nvl(f($row, 'observacao_setorial'), '-')) > 50)
           $w_titulo = substr(Nvl(f($row, 'observacao_setorial'), '-'), 0, 50) . '...'; 
         else
@@ -3513,6 +3556,14 @@ function Classificacao() {
     ScriptClose();
   } elseif ($w_existe) {
     ScriptOpen('JavaScript');
+    ShowHTML('  $(document).ready(function() {');
+    ShowHTML('    $("#marca_todos").click(function() {');
+    ShowHTML('      var checked = this.checked;');
+    ShowHTML('      $(".item").each(function() {');
+    ShowHTML('        this.checked = checked;');
+    ShowHTML('      });');
+    ShowHTML('    });');
+    ShowHTML('  });');
     FormataProtocolo();
     CheckBranco();
     FormataData();
@@ -3566,7 +3617,11 @@ function Classificacao() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>&nbsp;</td>');
+    if (count($RS)) {
+      ShowHTML('          <td rowspan="2" align="center" width="1%"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
+    } else {
+      ShowHTML('          <td rowspan="2" align="center" width="1%">&nbsp;</td>');
+    }
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Resumo', 'descricao') . '</td>');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>' . linkOrdena('Tipo', 'nm_tipo') . '</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
@@ -3584,7 +3639,7 @@ function Classificacao() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="' . $w_menu . '">');
     ShowHTML(montaFiltro('POST'));
-    if (count($RS) <= 0) {
+    if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=12 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -3597,9 +3652,9 @@ function Classificacao() {
         ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
         ShowHTML('        <td align="center" width="1%" nowrap>');
         if (nvl($w_marcado[f($row, 'sq_siw_solicitacao')], '') != '') {
-          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
+          ShowHTML('          <input class="item" type="CHECKBOX" CHECKED name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
         } else {
-          ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
+          ShowHTML('          <input class="item" type="CHECKBOX" name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
         }
         ShowHTML('        </td>');
         if (strlen(Nvl(f($row, 'descricao'), '-')) > 500)

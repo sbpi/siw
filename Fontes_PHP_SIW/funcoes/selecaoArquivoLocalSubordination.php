@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getArquivo_PA.php');
 function selecaoArquivoLocalSubordination($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$condicao,$formato=1,$colspan=1,$separador='<BR />') {
   extract($GLOBALS); 
     
-  $sql = new db_getArquivo_PA; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, null, $chave_aux, null, 'S', $restricao);  
+  $sql = new db_getArquivo_PA; $l_rs = $sql->getInstanceOf($dbms, $w_cliente, $chave, $chave_aux, null, 'S', $restricao);  
   $l_rs = SortArray($l_rs,'nome_completo','asc'); 
   
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

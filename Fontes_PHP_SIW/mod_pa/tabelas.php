@@ -350,7 +350,6 @@ function imprimir() {
   $w_data_limite = formataDataEdicao(f($RS, 'data_limite'));
   $w_nome_unidade = f($RS, 'unidade');
   $w_numero = str_pad((int) f($RS, 'numero'), 2, "0", STR_PAD_LEFT);
-  ;
   $w_sigla = f($RS, 'sg_unidade');
   HeaderWord();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2977,15 +2976,14 @@ function Grava() {
           $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, $_REQUEST['w_nome'], null, null, 'OUTROS');
           if (count($RS) > 0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert("Categoria já cadastrada!");');
+            ShowHTML('  alert("Nome de arquivo já cadastrado!");');
             ScriptClose();
             retornaFormulario('w_nome');
             exit;
           }
         }
         $SQL = new dml_putArquivo_PA;
-        $SQL->getInstanceOf($dbms, $O, $w_cliente, $_REQUEST['w_localizacao'],
-                $_REQUEST['w_nome'], $_REQUEST['w_ativo']);
+        $SQL->getInstanceOf($dbms, $O, $w_cliente, $_REQUEST['w_chave'],$_REQUEST['w_nome'], $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir, $R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -3000,17 +2998,16 @@ function Grava() {
       break;
     case 'PDLOCAIS':
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
-        if ($O == 'I') {
-
-          $sql = new db_getArquivo_PA;
-          $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_chave'], null, $_REQUEST['w_nome'], null, $_REQUEST['w_chave_pai'], null);
-          echo count($RS);
-          if (count($RS) > 0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert("Local já cadastrado!");');
-            ScriptClose();
-            retornaFormulario('w_nome');
-            exit;
+        if ($O != 'E') {
+          $sql = new db_getArquivo_PA; $RS = $sql->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_chave'], null, $_REQUEST['w_nome'], null, $_REQUEST['w_chave_pai'], null);
+          foreach($RS as $row) {
+            if ($O=='I' ||($O=='A' && f($row,'sq_localizacao')==$_REQUEST['w_chave'] && f($row,'chave')!=$_REQUEST['w_chave_aux'])) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert("Local já cadastrado!");');
+              ScriptClose();
+              retornaFormulario('w_nome');
+              exit();
+            }
           }
         }
         $SQL = new dml_putArquivoLocal_PA;

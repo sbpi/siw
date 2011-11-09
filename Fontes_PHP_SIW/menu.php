@@ -683,7 +683,7 @@ function Grava() {
 // -------------------------------------------------------------------------
 function Sair() {
   extract($GLOBALS);
-  $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $p_cliente);
+  $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
 
   // Se a geração de log estiver ativada, registra.
   if ($conLog) {
@@ -716,14 +716,18 @@ function Sair() {
     ScriptClose();
   }
 
+  $w_logradouro = f($RS,'logradouro');
+  
+  $sql = new db_getUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $_SESSION['USERNAME']);
+  if (upper(f($RS,'nm_tipo_vinculo'))=='POLIEDUC') $w_logradouro = str_replace('sbpi.com.br','siw.com.br/integra',$w_logradouro);
+
   // Eliminar todas as variáveis de sessão.
   $_SESSION = array();
   // Finalmente, destruição da sessão.
   session_destroy();
 
   ScriptOpen('JavaScript');
-  ShowHTML('  top.location.href=\''.f($RS,'logradouro').'\';');
-
+  ShowHTML('  top.location.href=\''.$w_logradouro.'\';');
   ScriptClose();
 }
 

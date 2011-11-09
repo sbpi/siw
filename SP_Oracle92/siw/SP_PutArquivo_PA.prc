@@ -19,7 +19,18 @@ begin
       where sq_localizacao      = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
-      delete pa_arquivo where sq_localizacao = p_chave;
+      delete pa_arquivo_local 
+      where sq_localizacao    = p_chave
+        and sq_arquivo_local in (select sq_arquivo_local 
+                                   from (select sq_arquivo_local
+                                           from pa_arquivo_local
+                                          where sq_localizacao = p_chave
+                                         connect by prior sq_arquivo_local = sq_local_pai
+                                         start with sq_local_pai is null
+                                         order by level desc
+                                        )
+                                );
+      delete pa_arquivo       where sq_localizacao = p_chave;
    End If;
 end SP_PutArquivo_PA;
 /

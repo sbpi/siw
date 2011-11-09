@@ -536,6 +536,7 @@ Fontes_PHP_SIW/cl_ibict/logo_sistema.gif -text
 Fontes_PHP_SIW/cl_ibict/sgpa_logo.jpg -text
 Fontes_PHP_SIW/cl_ibict/topbg.jpg -text
 Fontes_PHP_SIW/cl_ibict/usuario.php -text
+Fontes_PHP_SIW/cl_integra/compras.php -text
 Fontes_PHP_SIW/cl_pitce/calendario.gif -text
 Fontes_PHP_SIW/cl_pitce/download.gif -text
 Fontes_PHP_SIW/cl_pitce/evento.php -text
@@ -1978,6 +1979,7 @@ Fontes_PHP_SIW/mod_or_pub/siafi.php -text
 Fontes_PHP_SIW/mod_or_pub/visualdemanda.php -text
 Fontes_PHP_SIW/mod_or_pub/visualprojeto.php -text
 Fontes_PHP_SIW/mod_pa/documento.php -text
+Fontes_PHP_SIW/mod_pa/elim_listagem.php -text
 Fontes_PHP_SIW/mod_pa/eliminacao.php -text
 Fontes_PHP_SIW/mod_pa/emprestimo.php -text
 Fontes_PHP_SIW/mod_pa/gr_eliminacao.php -text

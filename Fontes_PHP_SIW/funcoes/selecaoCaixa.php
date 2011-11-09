@@ -11,7 +11,7 @@ function selecaoCaixa($label, $accesskey, $hint, $chave, $cliente, $chaveAux, $c
 
   $sql = new db_getCaixa;
   $l_rs = $sql->getInstanceOf($dbms, null, $cliente, (($restricao=='CENTRAL') ? '' : $w_usuario),$chaveAux, null, null, null, null, null, null, null, null,null,null,null,$restricao);
-  $l_rs = SortArray($l_rs, 'nm_unidade', 'asc', 'numero', 'asc');
+  $l_rs = SortArray($l_rs, 'sg_unidade', 'asc', 'numero', 'asc');
   ShowHTML('          <td colspan="' . $colspan . '" ' . ((isset($hint)) ? 'title="' . $hint : '') . '"><b>' . $label . '</b><br><SELECT ACCESSKEY="' . $accesskey . '" CLASS="sts" NAME="' . $campo . '" ' . $w_Disabled . ' ' . $atributo . '>');
   ShowHTML('          <option value="">---');
   if ($restricao == 'PREPARA') ShowHTML('          <option value="0">Nova caixa');
