@@ -8,9 +8,7 @@ create or replace procedure SP_PutArquivo_PA
 begin
    If p_operacao = 'I' Then
       -- Insere registro
-         insert into pa_arquivo (sq_localizacao, cliente,   nome,   ativo)
-         (select                 p_chave,        p_cliente, p_nome, p_ativo from dual);
-      -- Insere Registro na tabela de locais
+      insert into pa_arquivo (sq_localizacao, cliente, nome, ativo) values (p_chave, p_cliente, p_nome, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pa_arquivo set

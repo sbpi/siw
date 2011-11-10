@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 class dml_putArquivo_PA {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_ativo) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTARQUIVO_PA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putArquivo_PA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

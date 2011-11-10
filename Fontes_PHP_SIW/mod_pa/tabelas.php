@@ -2120,7 +2120,6 @@ function Arquivo() {
     $w_nome = $_REQUEST['w_nome'];
     $w_ativo = $_REQUEST['w_ativo'];
     $w_unidade = $_REQUEST['w_unidade'];
-    $w_localizacao = $_REQUEST['w_localizacao'];
   } elseif ($O == 'L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getArquivo_PA;
@@ -2132,7 +2131,7 @@ function Arquivo() {
     } else {
       $RS = SortArray($RS, 'nome', 'asc');
     }
-  } elseif (!(strpos('AE', $O) === false) && $w_troca == '') {
+  } elseif (!(strpos('AE', $O) === false)) {
     // Recupera os dados chave informada
     $sql = new db_getArquivo_PA;
     $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_chave, null, null, null, 'OUTROS');
@@ -2142,7 +2141,6 @@ function Arquivo() {
     }
     $w_chave = f($RS, 'chave');
     $w_nome = f($RS, 'nome');
-    $w_localizacao = f($RS, 'sq_localizacao');
     $w_unidade = f($RS, 'sq_unidade');
     $w_ativo = f($RS, 'ativo');
   }
@@ -2154,7 +2152,7 @@ function Arquivo() {
     if (!(strpos('IA', $O) === false)) {
       Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
       Validate('w_unidade', 'Unidade', 'SELECT', '1', '1', '18', '', '1');
-      Validate('w_localizacao', 'Localização', 'SELECT', '1', '1', '18', '', '1');
+      Validate('w_chave', 'Localização', 'SELECT', '1', '1', '18', '', '1');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     } elseif ($O == 'E') {
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -2169,8 +2167,8 @@ function Arquivo() {
     ScriptClose();
   }
 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA', $O) === false)) {
@@ -2230,9 +2228,9 @@ function Arquivo() {
     if ($O == 'E')
       $w_Disabled = ' DISABLED ';
     AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    if ($O == 'E') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
@@ -2241,7 +2239,7 @@ function Arquivo() {
     ShowHTML('          <tr>');
     selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, null, 'w_unidade', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
     ShowHTML('          <tr>');
-    selecaoLocalizacao('Locali<u>z</u>ação:', 'Z', null, $w_localizacao, nvl($w_unidade, 0), 'w_localizacao', null);
+    selecaoLocalizacao('Locali<u>z</u>ação:', 'Z', null, $w_chave, nvl($w_unidade, 0), 'w_chave', null);
     ShowHTML('          </tr>');
     MontaRadioSN('<b>Ativo?</b>', $w_ativo, 'w_ativo');
     ShowHTML('           </table>');
@@ -2987,13 +2985,13 @@ function Grava() {
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir, $R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
-        exit;
+        exit();
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
-        exit;
+        exit();
       }
       break;
     case 'PDLOCAIS':
