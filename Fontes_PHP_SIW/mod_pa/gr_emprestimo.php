@@ -177,6 +177,10 @@ function Gerencial() {
       $w_linha++;
       $w_filtro.='<tr valign="top"><td align="right">Busca por <td>[<b>'.(($p_uf=='S') ? 'Processos' : 'Documentos').'</b>]';
     } 
+    if ($p_prioridade>''){
+      $w_linha++;
+      $w_filtro.='<tr valign="top"><td align="right">Número do pedido<td>[<b>'.$p_prioridade.'</b>]';
+    } 
     if (nvl($p_chave_pai,'')>'') {
       $w_linha++;
       if ($p_tipo!='WORD' && $p_tipo!='PDF') {
@@ -226,12 +230,6 @@ function Gerencial() {
     if ($p_pais>'' || $p_regiao>'' || $p_cidade>'') {
       $w_linha++;
       $w_filtro.='<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
-    } 
-    if ($p_prioridade>''){
-      $w_linha++;
-      $sql = new db_getTipoDespacho_PA; $RS = $sql->getInstanceOf($dbms,$p_prioridade,$w_cliente,null,null,null,null);
-      foreach ($RS as $row) {$RS = $row; break;}
-      $w_filtro.='<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
@@ -329,6 +327,7 @@ function Gerencial() {
         }
       }      
       //Validate('p_chave','Chave','','','1','18','','0123456789');
+      Validate('p_prioridade','Número do pedido','','','3','30','1','1');
       Validate('p_pais','Prefixo','','','1','5','','0123456789');
       Validate('p_regiao','Sequencial','','','1','6','','0123456789');
       Validate('p_cidade','Ano','','','1','4','','0123456789');
@@ -423,7 +422,6 @@ function Gerencial() {
           case 'GREMRESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
           case 'GREMCC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
           case 'GREMSETOR':     ShowHTML('      document.Form.p_uorg_resp.value=filtro;');      break;
-          case 'GREMPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GREMLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
         } 
         ShowHTML('    }');
@@ -435,7 +433,6 @@ function Gerencial() {
           case 'GREMRESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
           case 'GREMCC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');                 break;
           case 'GREMSETOR':     ShowHTML('    else document.Form.p_uorg_resp.value=\''.$_REQUEST['p_uorg_resp'].'\';');       break;
-          case 'GREMPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
           case 'GREMLOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
         } 
         $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
@@ -471,7 +468,6 @@ function Gerencial() {
           case 'GREMRESPATU':   if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
           case 'GREMCC':        if ($_REQUEST['p_sqcc']=='')        ShowHTML('<input type="Hidden" name="p_sqcc" value="">');         break;
           case 'GREMSETOR':     if ($_REQUEST['p_uorg_resp']=='')   ShowHTML('<input type="Hidden" name="p_uorg_resp" value="">');  break;
-          case 'GREMPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
           case 'GREMLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
           case 'GREMTIPDEM':    if ($_REQUEST['p_empenho']=='')     ShowHTML('<input type="Hidden" name="p_empenho" value="">');      break;
         } 
@@ -889,7 +885,6 @@ function Gerencial() {
       //ShowHTML('          </td></tr></table></td></tr>');    
     }
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_pais" size="6" maxlength="5" value="'.$p_pais.'">.<INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     ShowHTML('          <td><b>Buscar por?</b><br>');
     if ($p_uf=='S') {
       ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_uf" value="S" checked> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value=""> Ambos');
@@ -898,6 +893,10 @@ function Gerencial() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_uf" value="S"> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="" checked> Ambos');
     }
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><font size="1"><b><U>N</U>úmero do pedido:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_prioridade" size="18" maxlength="18" value="'.$p_prioridade.'"></td>');
+    ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_pais" size="6" maxlength="5" value="'.$p_pais.'">.<INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do empréstimo na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);

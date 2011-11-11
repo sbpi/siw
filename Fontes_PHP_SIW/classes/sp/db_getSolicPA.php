@@ -27,7 +27,7 @@ class db_getSolicPA {
                    'p_atraso'                    =>array(tvl($p_atraso),                             B_VARCHAR,        90),
                    'p_solicitante'               =>array(tvl($p_solicitante),                        B_INTEGER,        32),
                    'p_unidade'                   =>array(tvl($p_unidade),                            B_INTEGER,        32),
-                   'p_prioridade'                =>array(tvl($p_prioridade),                         B_INTEGER,        32),
+                   'p_prioridade'                =>array(tvl($p_prioridade),                         B_VARCHAR2,       32),
                    'p_ativo'                     =>array(tvl($p_ativo),                              B_VARCHAR,        10),
                    'p_proponente'                =>array(tvl($p_proponente),                         B_VARCHAR,        90),
                    'p_chave'                     =>array(tvl($p_chave),                              B_INTEGER,        32),

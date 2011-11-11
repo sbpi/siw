@@ -10,7 +10,7 @@ create or replace procedure SP_GetSolicPA
     p_atraso       in varchar2 default null,
     p_solicitante  in number   default null,
     p_unidade      in number   default null,
-    p_prioridade   in number   default null,
+    p_prioridade   in varchar2 default null,
     p_ativo        in varchar2 default null,
     p_proponente   in varchar2 default null,
     p_chave        in number   default null,
@@ -192,7 +192,7 @@ begin
                                              )
                 )
             and (p_empenho        is null or (p_empenho     is not null and 0 < (select count(*) from pa_documento x join pa_emprestimo_item y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.numero_original) like '%'||acentos(p_empenho)||'%')))
-            --and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
+            and (p_prioridade     is null or (p_prioridade  is not null and acentos(b.codigo_interno) like '%'||acentos(p_prioridade)||'%'))
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and b.conclusao is null))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b1.sigla not in ('CI','AT') and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
@@ -352,7 +352,7 @@ begin
                                              )
                 )
             and (p_assunto        is null or (p_assunto     is not null and 0 < (select count(*) from siw_solicitacao x join pa_eliminacao y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.descricao,null) like '%'||acentos(p_assunto,null)||'%')))
-            --and (p_palavra        is null or (p_palavra     is not null and acentos(d.numero_certame,null) like '%'||acentos(p_palavra,null)||'%'))
+            and (p_palavra        is null or (p_palavra     is not null and acentos(b.codigo_interno,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_empenho        is null or (p_empenho     is not null and 0 < (select count(*) from pa_documento x join pa_eliminacao y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.numero_original) like '%'||acentos(p_empenho)||'%')))
             --and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and b.conclusao is null))
