@@ -1946,8 +1946,8 @@ function Grava() {
   $w_tipo       = '';
   $w_nome       = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PAEMP':

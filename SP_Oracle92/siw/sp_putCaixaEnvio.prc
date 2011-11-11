@@ -12,17 +12,24 @@ create or replace procedure sp_putCaixaEnvio
     p_unidade_autuacao    in out number
    ) is
    
-   w_chave         number(18) := null;
-   w_chave_dem     number(18) := null;
-   w_tramite       number(18);
-   w_sg_tramite    varchar2(2);
+   w_chave         number(18)  := null;
+   w_chave_dem     number(18)  := null;
+   w_devolucao     varchar2(1) := 'N';
    w_parametro     pa_parametro%rowtype;
    
    cursor c_dados is
       -- cursor para recuperar os protocolos contidos na caixa
-      select a.sq_siw_solicitacao as chave, b.sq_siw_tramite
-        from pa_documento               a
-             inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+      select a.sq_siw_solicitacao as chave, a.unidade_int_posse,
+             b.sq_siw_tramite, c.sigla as sg_tramite, 
+             d.sq_arquivo_local, d.arquivo_data, d.arquivo_guia_numero, d.arquivo_guia_ano, d.sq_unidade,
+             e.sq_siw_tramite as sq_at, e.nome as nm_at,
+             f.sq_siw_tramite as sq_as, f.nome as nm_as
+        from pa_documento                 a
+             inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+               inner join siw_tramite     c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+               inner join siw_tramite     e on (b.sq_menu            = e.sq_menu and e.sigla = 'AT')
+               inner join siw_tramite     f on (b.sq_menu            = f.sq_menu and f.sigla = 'AS')
+             inner   join pa_caixa        d on (a.sq_caixa           = d.sq_caixa)
        where a.sq_caixa = p_chave;
 begin
    
@@ -33,43 +40,34 @@ begin
     where b.sq_menu = p_menu;
    
   for crec in c_dados loop
-     -- Recupera os dados do trâmite atual
-     select sigla into w_sg_tramite from siw_tramite a where a.sq_siw_tramite = crec.sq_siw_tramite;
-   
-     -- Recupera o trâmite para o qual está sendo enviada a solicitação
-     If w_sg_tramite = 'AS' Then
-        select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
-           from siw_tramite a
-          where a.sq_menu = p_menu
-            and a.sigla   = 'AT';
-  
-        -- Recupera a próxima chave
-        select sq_siw_solic_log.nextval into w_chave from dual;
+     -- Devolução
+     If crec.sg_tramite = 'AT' Then w_devolucao := 'S'; End If;
         
-        -- Se houve mudança de fase, grava o log
-        Insert Into siw_solic_log 
-            (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
-             sq_siw_tramite,            data,               devolucao, 
-             observacao
-            )
-        (Select 
-             w_chave,                   crec.chave,         p_pessoa,
-             crec.sq_siw_tramite,       sysdate,            'N',
-             'Envio da fase "'||a.nome||'" '||' para a fase "'||b.nome||'".'
-            from siw_tramite a,
-                 siw_tramite b
-           where a.sq_siw_tramite = crec.sq_siw_tramite
-             and b.sq_siw_tramite = w_tramite
-        );
+        
+     
+     -- Recupera a próxima chave
+     select sq_siw_solic_log.nextval into w_chave from dual;
+        
+     -- Se houve mudança de fase, grava o log
+     Insert Into siw_solic_log 
+         (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
+          sq_siw_tramite,            data,               devolucao, 
+          observacao
+         )
+     (Select 
+          w_chave,                   crec.chave,         p_pessoa,
+          crec.sq_siw_tramite,       sysdate,            'N',
+          'Envio da fase "'||a.nome||'" '||' para a fase "'||b.nome||'".'
+         from siw_tramite a,
+              siw_tramite b
+        where a.sq_siw_tramite = crec.sq_siw_tramite
+          and b.sq_siw_tramite = case crec.sg_tramite when 'AS' then crec.sq_at else crec.sq_as end
+     );
     
-        Update siw_solicitacao set sq_siw_tramite = w_tramite Where sq_siw_solicitacao = crec.chave;
-     End If;
-  
-     -- Atualiza os dados do documento
-     If p_interno = 'S' Then
-        -- Se tramitação interna, atualiza a unidade de posse e mantém a pessoa externa
-        update pa_documento a set a.unidade_int_posse = p_unidade_destino where a.sq_siw_solicitacao = crec.chave;
-     End If;
+     Update siw_solicitacao set sq_siw_tramite = case crec.sg_tramite when 'AS' then crec.sq_at else crec.sq_as end Where sq_siw_solicitacao = crec.chave;
+       
+     -- Atualiza a unidade de posse
+     update pa_documento a set a.unidade_int_posse = p_unidade_destino where a.sq_siw_solicitacao = crec.chave;
      
      -- Recupera a nova chave da tabela de encaminhamentos da demanda
      select sq_documento_log.nextval into w_chave_dem from dual;
@@ -83,7 +81,7 @@ begin
         ano_guia)
      values
        (w_chave_dem,             crec.chave,                 w_chave,                   p_tipo_despacho,            p_interno, 
-        p_unidade_origem,        p_unidade_destino,          null,                      p_pessoa,                   sysdate,
+        crec.unidade_int_posse,  p_unidade_destino,          null,                      p_pessoa,                   sysdate,
         p_despacho,              sysdate,                    'N',                       0,                          null,
         null,                    null,                       null,                      'N',                        p_nu_guia,
         p_ano_guia);
@@ -100,7 +98,8 @@ begin
   -- Atualiza os dados do arquivamento da caixa
   update pa_caixa
      set arquivo_guia_numero = p_nu_guia,
-         arquivo_guia_ano    = p_ano_guia
+         arquivo_guia_ano    = p_ano_guia,
+         sq_arquivo_local    = null
   where sq_caixa = p_chave;
 end sp_putCaixaEnvio;
 /

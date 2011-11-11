@@ -1613,6 +1613,7 @@ function Parametro() {
   foreach ($RS as $row) {
     $RS = $row;
   }
+  $w_despacho_desarqcentral = f($RS, 'despacho_desarqcentral');
   $w_despacho_arqcentral = f($RS, 'despacho_arqcentral');
   $w_despacho_emprestimo = f($RS, 'despacho_emprestimo');
   $w_despacho_devolucao = f($RS, 'despacho_devolucao');
@@ -1629,8 +1630,9 @@ function Parametro() {
   head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_despacho_arqsetorial', 'Despacho para arquivo setorial', 'SELECT', '1', '1', '18', '', '1');
   Validate('w_despacho_arqcentral', 'Despacho para arquivo central', 'SELECT', '1', '1', '18', '', '1');
+  Validate('w_despacho_desarqcentral', 'Despacho para desarquivamento central', 'SELECT', '1', '1', '18', '', '1');
+  Validate('w_despacho_arqsetorial', 'Despacho para arquivo setorial', 'SELECT', '1', '1', '18', '', '1');
   Validate('w_despacho_emprestimo', 'Despacho para emprestimo', 'SELECT', '1', '1', '18', '', '1');
   Validate('w_despacho_devolucao', 'Despacho para devolução', 'SELECT', '1', '1', '18', '', '1');
   Validate('w_despacho_eliminar', 'Despacho para eliminar', 'SELECT', '1', '1', '18', '', '1');
@@ -1650,8 +1652,8 @@ function Parametro() {
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=\'document.Form.w_despacho_arqsetorial.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.str_replace('Listagem', 'Alteração', $w_TP).'</FONT></B>');
   ShowHTML('<HR>');
@@ -1661,8 +1663,8 @@ function Parametro() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('    <table width="97%" border="0">');
   ShowHTML('      <tr valign="top">');
-  SelecaoTipoDespacho('Despacho para arqu<U>i</U>vo setorial:', 'I', null, $w_cliente, $w_despacho_arqsetorial, null, 'w_despacho_arqsetorial', 'TODOS', null);
   SelecaoTipoDespacho('Despacho para ar<U>q</U>uivo central:', 'A', null, $w_cliente, $w_despacho_arqcentral, null, 'w_despacho_arqcentral', 'TODOS', null);
+  SelecaoTipoDespacho('Despacho para desarqu<U>i</U>vamento central:', 'I', null, $w_cliente, $w_despacho_desarqcentral, null, 'w_despacho_desarqcentral', 'TODOS', null);
   ShowHTML('      <tr valign="top">');
   SelecaoTipoDespacho('Despacho para <U>e</U>mpréstimo:', 'E', null, $w_cliente, $w_despacho_emprestimo, null, 'w_despacho_emprestimo', 'TODOS', null);
   SelecaoTipoDespacho('Despacho para <U>d</U>evolução:', 'D', null, $w_cliente, $w_despacho_devolucao, null, 'w_despacho_devolucao', 'TODOS', null);
@@ -1674,6 +1676,7 @@ function Parametro() {
   SelecaoTipoDespacho('Despacho para apen<U>s</U>ar:', 'S', null, $w_cliente, $w_despacho_apensar, null, 'w_despacho_apensar', 'TODOS', null);
   ShowHTML('      <tr valign="top">');
   SelecaoTipoDespacho('Despacho para <U>d</U>esmembrar:', 'D', null, $w_cliente, $w_despacho_desmembrar, null, 'w_despacho_desmembrar', 'TODOS', null);
+  SelecaoTipoDespacho('Despacho para arqu<U>i</U>vo setorial:', 'I', null, $w_cliente, $w_despacho_arqsetorial, null, 'w_despacho_arqsetorial', 'TODOS', null);
   ShowHTML('      <tr valign="top"><td colspan="2"><table width="97%" border="0">');
   SelecaoUnidade('<U>A</U>rquivo central:', 'A', null, $w_arquivo_central, null, 'w_arquivo_central', 'MOD_PA', null);
   ShowHTML('          </table>');
@@ -2885,11 +2888,11 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
         $SQL = new dml_putPAParametro;
-        $SQL->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_despacho_arqcentral'], $_REQUEST['w_despacho_emprestimo'],
-                $_REQUEST['w_despacho_devolucao'], $_REQUEST['w_despacho_autuar'], $_REQUEST['w_despacho_arqsetorial'],
-                $_REQUEST['w_despacho_anexar'], $_REQUEST['w_despacho_apensar'], $_REQUEST['w_despacho_eliminar'],
-                $_REQUEST['w_despacho_desmembrar'], $_REQUEST['w_arquivo_central'], $_REQUEST['w_limite_interessados'],
-                $_REQUEST['w_ano_corrente']);
+        $SQL->getInstanceOf($dbms, $w_cliente, $_REQUEST['w_despacho_arqcentral'], $_REQUEST['w_despacho_desarqcentral'], 
+                $_REQUEST['w_despacho_emprestimo'], $_REQUEST['w_despacho_devolucao'], $_REQUEST['w_despacho_autuar'], 
+                $_REQUEST['w_despacho_arqsetorial'], $_REQUEST['w_despacho_anexar'], $_REQUEST['w_despacho_apensar'], 
+                $_REQUEST['w_despacho_eliminar'], $_REQUEST['w_despacho_desmembrar'], $_REQUEST['w_arquivo_central'], 
+                $_REQUEST['w_limite_interessados'], $_REQUEST['w_ano_corrente']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir, $R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

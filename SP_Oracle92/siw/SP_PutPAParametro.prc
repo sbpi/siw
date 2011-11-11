@@ -1,6 +1,7 @@
 create or replace procedure SP_PutPAParametro
    (p_cliente                  in  number,
     p_despacho_arqcentral      in  number,
+    p_despacho_desarqcentral   in  number,
     p_despacho_emprestimo      in  number,
     p_despacho_devolucao       in  number,
     p_despacho_autuar          in  number,
@@ -30,28 +31,29 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pa_parametro
-         (cliente,           despacho_arqcentral,    despacho_emprestimo,    despacho_devolucao,    despacho_autuar,       despacho_arqsetorial, 
-          despacho_anexar,   despacho_apensar,       despacho_eliminar,      arquivo_central,       limite_interessados,   ano_corrente,
-          despacho_desmembrar)
+         (cliente,           despacho_arqcentral,    despacho_desarqcentral,   despacho_emprestimo,    despacho_devolucao,    despacho_autuar,   despacho_arqsetorial, 
+          despacho_anexar,   despacho_apensar,       despacho_eliminar,        arquivo_central,        limite_interessados,   ano_corrente,      despacho_desmembrar
+         )
       values
-         (p_cliente,         p_despacho_arqcentral,  p_despacho_emprestimo,  p_despacho_devolucao,  p_despacho_autuar,     p_despacho_arqsetorial,
-          p_despacho_anexar, p_despacho_apensar,     p_despacho_eliminar,    p_arquivo_central,     p_limite_interessados, p_ano_corrente,
-          p_despacho_desmembrar);
+         (p_cliente,         p_despacho_arqcentral,  p_despacho_desarqcentral, p_despacho_emprestimo,  p_despacho_devolucao,  p_despacho_autuar, p_despacho_arqsetorial,
+          p_despacho_anexar, p_despacho_apensar,     p_despacho_eliminar,      p_arquivo_central,      p_limite_interessados, p_ano_corrente,    p_despacho_desmembrar
+         );
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pa_parametro
-         set despacho_arqcentral   = p_despacho_arqcentral,
-             despacho_emprestimo   = p_despacho_emprestimo,
-             despacho_devolucao    = p_despacho_devolucao,
-             despacho_autuar       = p_despacho_autuar,
-             despacho_arqsetorial  = p_despacho_arqsetorial,
-             despacho_anexar       = p_despacho_anexar,
-             despacho_apensar      = p_despacho_apensar,
-             despacho_eliminar     = p_despacho_eliminar,
-             despacho_desmembrar   = p_despacho_desmembrar,
-             arquivo_central       = p_arquivo_central,
-             limite_interessados   = p_limite_interessados,
-             ano_corrente          = p_ano_corrente
+         set despacho_arqcentral    = p_despacho_arqcentral,
+             despacho_desarqcentral = p_despacho_desarqcentral,
+             despacho_emprestimo    = p_despacho_emprestimo,
+             despacho_devolucao     = p_despacho_devolucao,
+             despacho_autuar        = p_despacho_autuar,
+             despacho_arqsetorial   = p_despacho_arqsetorial,
+             despacho_anexar        = p_despacho_anexar,
+             despacho_apensar       = p_despacho_apensar,
+             despacho_eliminar      = p_despacho_eliminar,
+             despacho_desmembrar    = p_despacho_desmembrar,
+             arquivo_central        = p_arquivo_central,
+             limite_interessados    = p_limite_interessados,
+             ano_corrente           = p_ano_corrente
        where cliente = p_cliente;
    End If;
 end  SP_PutPAParametro;

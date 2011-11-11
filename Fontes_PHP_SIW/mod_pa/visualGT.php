@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização dos dados do documento
 // -------------------------------------------------------------------------
-function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato='WORD') {
+function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato='WORD', $l_devolucao='N') {
   extract($GLOBALS);
 
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
@@ -10,7 +10,7 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
   // Recupera os dados da guia
   $sql = new db_getCaixa; $RS_Dados = $sql->getInstanceOf($dbms,$p_chave,$w_cliente,$w_usuario,null,null,null,$l_unidade,$l_nu_guia,$l_ano_guia,null,null,null,null,null,null,'PASTA');
   $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
-  
+
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';
   $w_linha = 99;
   $w_pag   = 1;
@@ -46,16 +46,9 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
       $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=center><font size="2"><b>GUIA DE TRANSFERÊNCIA Nº '.f($row,'guia_transferencia').'</b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
       $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade de origem:</b></td>';
-      $l_html.=chr(13).'       <td>'.f($row,'nm_unidade').'</td></tr>';
-      if (f($row,'interno')=='S') {
-        $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade de destino:</b></td>';
-        $l_html.=chr(13).'       <td>'.f($row,'nm_unid_dest').'</td></tr>';
-      } else {
-        $l_html.=chr(13).'   <tr><td width="30%"><b>Pessoa de destino:</b></td>';
-        $l_html.=chr(13).'       <td>'.f($row,'nm_pessoa_dest').'</td></tr>';
-        $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade externa de destino:</b></td>';
-        $l_html.=chr(13).'       <td>'.f($row,'unidade_externa').'</td></tr>';
-      }
+      $l_html.=chr(13).'       <td>'.(($l_devolucao==='S') ? f($row,'nm_unid_dest') : f($row,'nm_unidade')).'</td></tr>';
+      $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade de destino:</b></td>';
+      $l_html.=chr(13).'       <td>'.(($l_devolucao==='S') ? f($row,'nm_unidade') : f($row,'nm_unid_dest')).'</td></tr>';
 
       $l_html.=chr(13).'   <tr><td colspan=2><br><b>PROTOCOLOS ENCAMINHADOS PARA O ARQUIVO</b></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan=2><table border=1 width="100%">';

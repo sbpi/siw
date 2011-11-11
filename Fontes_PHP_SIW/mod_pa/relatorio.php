@@ -302,6 +302,7 @@ function Transferencia() {
   $p_protocolo = $_REQUEST['p_protocolo'];
   $p_chave = $_REQUEST['p_chave'];
   $p_unid_autua = $_REQUEST['p_unid_autua'];
+  $p_devolucao =  $_REQUEST['p_devolucao'];
   if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))===false) $p_unid_autua = $_SESSION['LOTACAO'];
   $p_nu_guia = $_REQUEST['p_nu_guia'];
   $p_ano_guia = $_REQUEST['p_ano_guia'];
@@ -310,7 +311,7 @@ function Transferencia() {
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, null,null,null,null,$SG);
+    $sql = new db_getCaixa; $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario, null, null, null, $p_unid_autua, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, null,null,null,null,(($p_devolucao==='S') ? 'RELDEVOLVE' : $SG));
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
       $RS = SortArray($RS, $lista[0], $lista[1], 'sg_unidade', 'asc', 'numero', 'asc', 'pasta', 'asc', 'cd_assunto', 'asc', 'protocolo', 'asc');
@@ -394,7 +395,7 @@ function Transferencia() {
           ShowHTML('        <td>' . f($row, 'assunto') . '</td>');
           ShowHTML('        <td align="center">' . f($row, 'qtd') . '</td>');
           ShowHTML('        <td align="top" nowrap>');
-          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGT&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'sq_unidade') . '&w_formato=WORD&orientacao=PORTRAIT&w_nu_guia=' . f($row, 'arquivo_guia_numero') . '&w_ano_guia=' . f($row, 'arquivo_guia_ano') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '" target="GT">Emitir</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGT&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'sq_unidade') . '&w_formato=WORD&orientacao=PORTRAIT&w_nu_guia=' . f($row, 'arquivo_guia_numero') . '&w_ano_guia=' . f($row, 'arquivo_guia_ano') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&p_devolucao=' . $p_devolucao . '">Emitir</A>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
           $w_atual = f($row, 'guia_tramite');
@@ -781,6 +782,7 @@ function EmitirGT() {
   $w_nu_guia = nvl($w_nu_guia, $_REQUEST['w_nu_guia']);
   $w_ano_guia = nvl($w_ano_guia, $_REQUEST['w_ano_guia']);
   $w_formato = $_REQUEST['w_formato'];
+  $p_devolucao = $_REQUEST['p_devolucao'];
 
   if ($w_formato == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
@@ -788,7 +790,7 @@ function EmitirGT() {
     Cabecalho();
     BodyOpen(null);
   }
-  ShowHTML(VisualGT($w_unidade, $w_nu_guia, $w_ano_guia, $formato));
+  ShowHTML(VisualGT($w_unidade, $w_nu_guia, $w_ano_guia, null, $formato, $p_devolucao));
   Rodape();
 }
 

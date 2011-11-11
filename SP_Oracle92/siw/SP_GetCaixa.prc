@@ -18,8 +18,8 @@ create or replace procedure SP_GetCaixa
     p_result      out sys_refcursor
    ) is
 begin
-   If p_restricao is null        or p_restricao = 'PACAIXA' or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or 
-      p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ'  or p_restricao = 'CENTRAL' or p_restricao = 'ALTLOCAL' 
+   If p_restricao is null        or p_restricao = 'PACAIXA' or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE'  or p_restricao = 'DEVOLVE' or
+      p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ'  or p_restricao = 'CENTRAL' or p_restricao = 'ALTLOCAL' or p_restricao = 'RELDEVOLVE'
    Then
       -- Recupera os grupos da caixa
       open p_result for 
@@ -90,11 +90,13 @@ begin
                 )
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
             and (p_ini       is null or (p_ini       is not null and (cast(a.intermediario as  date) between p_ini and p_fim or a.data_limite between p_ini and p_fim)))
-            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL','ALTLOCAL') or
+            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','DEVOLVE','RELPATRANS','RELDEVOLVE','PADARQ','CENTRAL','ALTLOCAL') or
                  (p_restricao = 'ALTLOCAL' and a.sq_arquivo_local is not null) or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
                  (p_restricao = 'TRAMITE' and a.arquivo_guia_ano is null and a.arquivo_data is null and c.qtd > 0) or
+                 (p_restricao = 'DEVOLVE' and a.arquivo_guia_ano is not null and a.arquivo_data is not null and c.qtd > 0) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
+                 (p_restricao = 'RELDEVOLVE' and a.arquivo_guia_numero = p_nu_guia and a.arquivo_guia_ano = p_ano_guia) or
                  (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null) or
                  (p_restricao = 'CENTRAL' and a.sq_arquivo_local is not null)
                 );

@@ -10,12 +10,13 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putPAParametro {
-   function getInstanceOf($dbms, $p_cliente, $p_despacho_arqcentral, $p_despacho_emprestimo, $p_despacho_devolucao,
-            $p_despacho_autuar, $p_despacho_arqsetorial, $p_despacho_anexar, $p_despacho_apensar, $p_despacho_eliminar,
-            $p_despacho_desmembrar, $p_arquivo_central, $p_limite_interessados, $p_ano_corrente) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPAPARAMETRO';
+   function getInstanceOf($dbms, $p_cliente, $p_despacho_arqcentral, $p_despacho_desarqcentral, $p_despacho_emprestimo, 
+           $p_despacho_devolucao, $p_despacho_autuar, $p_despacho_arqsetorial, $p_despacho_anexar, $p_despacho_apensar, 
+           $p_despacho_eliminar, $p_despacho_desmembrar, $p_arquivo_central, $p_limite_interessados, $p_ano_corrente) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPAParametro';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_despacho_arqcentral'       =>array(tvl($p_despacho_arqcentral),                      B_INTEGER,        32),
+                   'p_despacho_desarqcentral'    =>array(tvl($p_despacho_desarqcentral),                   B_INTEGER,        32),
                    'p_despacho_emprestimo'       =>array(tvl($p_despacho_emprestimo),                      B_INTEGER,        32),
                    'p_despacho_devolucao'        =>array(tvl($p_despacho_devolucao),                       B_INTEGER,        32),
                    'p_despacho_autuar'           =>array(tvl($p_despacho_autuar),                          B_INTEGER,        32),
