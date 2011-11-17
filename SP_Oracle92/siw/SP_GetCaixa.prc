@@ -26,35 +26,50 @@ begin
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
                 a.data_limite, a.numero, a.intermediario, a.destinacao_final, a.arquivo_data, a.arquivo_guia_numero, a.arquivo_guia_ano, 
                 a.elimin_data, a.elimin_guia_numero, a.elimin_guia_ano,
-                case when a.arquivo_guia_numero is not null then 'Arq.Central'
+                case when coalesce(e.sigla,'-') = 'AS'      then 'Arq.Setorial'
+                     when a.sq_arquivo_local    is not null then montaNomeArquivoLocal(a.sq_arquivo_local)
+                     when a.arquivo_guia_numero is not null then 'Arq.Central'
                      when a.elimin_guia_numero  is not null then 'Eliminado'
-                     else 'Arq.Setorial'
                 end as nm_situacao,
                 b.nome as nm_unidade, b.sigla as sg_unidade,
                 coalesce(c.qtd,0) as qtd,
-                d.nm_localizacao
+                d.nm_localizacao,
+                coalesce(e.sigla,'-') as sg_tramite
            from pa_caixa              a 
                 inner join eo_unidade b on (a.sq_unidade = b.sq_unidade)
                 left  join (select x.sq_caixa, count(x.sq_siw_solicitacao) as qtd
-                              from pa_documento x
-                                   inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                  where y.sq_solic_pai is null
+                              from pa_documento                 x
+                                   inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
+                             where y.sq_solic_pai is null
+                               and x.cliente      = p_cliente
                             group by sq_caixa
                            )          c on (a.sq_caixa   = c.sq_caixa)
                 inner join (select w.sq_caixa,
-                                   case when w.sq_arquivo_local is not null then montaNomeArquivoLocal(w.sq_arquivo_local)
+                                   case when x.sigla               = 'AS'      then 'Arq.Setorial'
+                                        when w.sq_arquivo_local    is not null then montaNomeArquivoLocal(w.sq_arquivo_local)
                                         when w.arquivo_guia_numero is not null then 'Aguardando arq. central'
                                         when w.elimin_guia_numero  is not null then 'Eliminado'
-                                        else 'Arq.Setorial'
                                    end as nm_localizacao,
-                                   case when w.sq_arquivo_local is not null then 'C'
+                                   case when x.sigla               = 'AS'      then 'S'
+                                        when w.sq_arquivo_local    is not null then 'C'
                                         when w.arquivo_guia_numero is not null then 'T'
                                         when w.elimin_guia_numero  is not null then 'E'
-                                        else 'S'
                                    end as situacao
-                              from pa_caixa w
-                             where w.cliente = p_cliente
+                              from pa_caixa                       w
+                                   inner join (select distinct k.sq_caixa, m.sigla
+                                                 from pa_documento                 k
+                                                      inner   join siw_solicitacao l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao)
+                                                        inner join siw_tramite     m on (l.sq_siw_tramite     = m.sq_siw_tramite and m.sigla <> 'CA')
+                                                where k.cliente = p_cliente
+                                              )               x on (w.sq_caixa           = x.sq_caixa)
                            )          d on (a.sq_caixa   = d.sq_caixa)
+                left  join (select distinct x.sq_caixa, z.sigla
+                              from pa_documento                 x
+                                   inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
+                             where x.cliente = p_cliente
+                           )          e on (a.sq_caixa   = e.sq_caixa)
           where a.cliente    = p_cliente
             and (p_usuario   is null or (p_usuario   is not null and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_usuario
                                                                                       UNION
@@ -94,10 +109,10 @@ begin
                  (p_restricao = 'ALTLOCAL' and a.sq_arquivo_local is not null) or
                  (p_restricao = 'PREPARA' and a.arquivo_data is null) or
                  (p_restricao = 'TRAMITE' and a.arquivo_guia_ano is null and a.arquivo_data is null and c.qtd > 0) or
-                 (p_restricao = 'DEVOLVE' and a.arquivo_guia_ano is not null and a.arquivo_data is not null and c.qtd > 0) or
+                 (p_restricao = 'DEVOLVE' and a.arquivo_guia_ano is not null and a.arquivo_data is not null and c.qtd > 0 and d.situacao =  'C') or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
                  (p_restricao = 'RELDEVOLVE' and a.arquivo_guia_numero = p_nu_guia and a.arquivo_guia_ano = p_ano_guia) or
-                 (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null) or
+                 (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null and coalesce(e.sigla,'-') = 'AT') or
                  (p_restricao = 'CENTRAL' and a.sq_arquivo_local is not null)
                 );
    Elsif p_restricao = 'PASTA' Then
@@ -154,7 +169,6 @@ begin
                   inner     join pa_especie_documento     c7 on (c.sq_especie_documento     = c7.sq_especie_documento)
                   inner     join siw_solicitacao          d on (c.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                     left    join eo_unidade               d1 on (d.sq_unidade               = d1.sq_unidade)
-                    -- inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite) LINHA ALTERADA EM 14/02/2011 PARA A NÃO EXIBIÇÃO DE REGISTROS CANCELADOS
                     inner   join siw_tramite              d2 on (d.sq_siw_tramite           = d2.sq_siw_tramite and d2.sigla <> 'CA' and d2.ativo = 'N')
                 inner join (select w.sq_caixa,
                                    case when w.sq_arquivo_local is not null then montaNomeArquivoLocal(w.sq_arquivo_local)
@@ -168,7 +182,6 @@ begin
                                         else 'S'
                                    end as situacao
                               from pa_caixa w
-
                              where w.cliente = p_cliente
                            )          e on (a.sq_caixa   = e.sq_caixa)
           where a.cliente     = p_cliente

@@ -3693,6 +3693,7 @@ SP_Oracle92/siw/SP_PutPD_Fatura_Outros.prc -text
 SP_Oracle92/siw/SP_PutPD_FimSemana.prc -text
 SP_Oracle92/siw/SP_PutPD_ReembValor.prc -text
 SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
+SP_Oracle92/siw/SP_PutPD_RespContas.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
 SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
@@ -4106,6 +4107,7 @@ SP_Oracle92/siw/sp_putDocumentoArqSet.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_putDocumentoAutua.prc -text
 SP_Oracle92/siw/sp_putDocumentoCaixa.prc -text
+SP_Oracle92/siw/sp_putDocumentoDescarte.prc -text
 SP_Oracle92/siw/sp_putDocumentoDesm.prc -text
 SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text

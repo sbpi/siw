@@ -26,6 +26,7 @@ create or replace procedure sp_getProtocolo
     
     w_filtro    varchar2(10);
     w_arq_set   varchar2(1) := 'N';
+    w_descarte  varchar2(1) := 'N';
     w_parametro pa_parametro%rowtype;
 begin
    -- Recupera os parâmetros do módulo de  protocolo
@@ -37,6 +38,8 @@ begin
    If p_despacho is not null Then
       If p_despacho = w_parametro.despacho_arqsetorial Then
          w_arq_set := 'S';
+      Elsif p_despacho = w_parametro.despacho_eliminar Then
+         w_descarte := 'S';
       End If;
    End If;
 
@@ -118,6 +121,8 @@ begin
              c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
              c.sq_documento_pai, c.processo, c.copias, 
              c.numero_documento||'/'||substr(to_char(c.ano),3,2) as protocolo,
+             c.prefixo||'.'||substr(to_char(1000000+c.numero_documento),2,6)||'/'||to_char(c.ano)||'-'||substr(to_char(100+to_number(c.digito)),2,2) as protocolo_completo,
+             to_char(c.ano)||'/'||substr(to_char(1000000+c.numero_documento),2,6) as protocolo_ordena,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
@@ -291,8 +296,8 @@ begin
               )
              );
    Elsif p_restricao = 'PADTRAM' Then
-      If w_arq_set = 'S' Then
-         -- Se arquivamento setorial, libera crítica somente se o protocolo desejado for informado
+      If w_arq_set = 'S' or w_descarte = 'S' Then
+         -- Se arquivamento setorial ou descarte, libera crítica somente se o protocolo desejado for informado
          If p_numero is not null and p_ano is not null Then w_filtro := 'true'; Else w_filtro := 'false'; End If;
       End If;
    
@@ -385,18 +390,14 @@ begin
              )
          and (p_despacho   is null or (p_despacho    is not null and 
                                        ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and w_filtro = 'true'))) or 
-                                        (b4.ativo = 'N' and (b4.sigla = 'AS' or b4.sigla = 'DE') and p_numero is not null and p_ano is not null)
+                                        (b4.ativo = 'N' and b4.sigla in ('CA','AS','DE') and p_numero is not null and p_ano is not null)
                                        ) and
                                        ((p_despacho not in (a1.despacho_autuar,
-                                                            a1.despacho_anexar,
-                                                            a1.despacho_apensar,
                                                             a1.despacho_desmembrar
                                                            ) and
                                          c.sq_documento_pai is null
                                         ) or
                                         (p_despacho = a1.despacho_autuar     and c.processo = 'N') or
-                                        (p_despacho = a1.despacho_anexar     and c.sq_documento_pai is null) or
-                                        (p_despacho = a1.despacho_apensar    and c.sq_documento_pai is null) or
                                         (p_despacho = a1.despacho_desmembrar and c.sq_documento_pai is null and coalesce(c5.qtd,0) > 0) 
                                        )
                                       )

@@ -61,8 +61,8 @@ begin
    End If;
    
   for crec in c_dados loop
-     -- Se o protocolo estiver arquivado setorialmente, desarquiva automaticamente
-     If crec.sg_tramite_atual = 'AS' Then
+     -- Se o protocolo estiver arquivado setorialmente ou descartado, desarquiva/recupera automaticamente
+     If crec.sg_tramite_atual IN ('CA','AS') Then
         -- Coloca o protocolo em tramitação
         select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
            from siw_tramite a
@@ -75,18 +75,16 @@ begin
         -- Atualiza a tabela de documentos
         update pa_documento set observacao_setorial = null, data_setorial = null, sq_caixa = null, pasta = null where sq_siw_solicitacao = crec.chave;
 
-         -- Registra os dados do desarquivamento
+         -- Registra os dados do desarquivamento/recuperação. Não pode vincular a PA_DOCUMENTO_LOG pois deve haver um log da ação e outro do envio.
          Insert Into siw_solic_log 
-             (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa, 
-              sq_siw_tramite,            data,                 devolucao, 
-              observacao
-             )
-         (Select 
-              sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_pessoa,
-              a.sq_siw_tramite,          w_data,               'N',
-              'Desarquivamento setorial automático.'
-             from siw_solicitacao a
-            where a.sq_siw_solicitacao = crec.chave
+                (sq_siw_solic_log,         sq_siw_solicitacao,   sq_pessoa, sq_siw_tramite,   data,   devolucao, observacao)
+         (Select sq_siw_solic_log.nextval, a.sq_siw_solicitacao, p_pessoa,  a.sq_siw_tramite, w_data, 'N',
+                 case crec.sg_tramite_atual
+                      when 'CA' then 'Recuperação automática de protocolo'
+                      else           'Desarquivamento setorial automático.'
+                 end
+            from siw_solicitacao a
+           where a.sq_siw_solicitacao = crec.chave
          );
      End If;
      

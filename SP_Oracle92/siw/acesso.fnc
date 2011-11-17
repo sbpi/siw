@@ -717,7 +717,7 @@ begin
              from siw_solicitacao      a
                   inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
             where a.sq_siw_solicitacao = p_solicitacao
-              and (a.solicitante       = p_usuario or b.sq_pessoa = p_usuario);
+              and (a.solicitante       = p_usuario or a.cadastrador = p_usuario or b.sq_pessoa = p_usuario);
            If w_existe > 0 Then
              Result := Result + 16;
            End If;
