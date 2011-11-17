@@ -184,16 +184,13 @@ function TipoDespacho() {
     // Recupera os dados chave informada
     $sql = new db_getTipoDespacho_PA;
     $RS = $sql->getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
-    foreach ($RS as $row) {
-      $RS = $row;
-      break;
-    }
+    foreach ($RS as $row) { $RS = $row; break; }
     $w_chave = f($RS, 'chave');
     $w_nome = f($RS, 'nome');
     $w_sigla = f($RS, 'sigla');
     $w_descricao = f($RS, 'descricao');
     $w_ativo = f($RS, 'ativo');
-    $w_original = f($RS, 'tramite_original');
+    $w_original = f($RS, 'despacho_original');
   }
   Cabecalho();
   head();
@@ -216,8 +213,8 @@ function TipoDespacho() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA', $O) === false)) {
@@ -525,7 +522,7 @@ function Caixa() {
     ScriptClose();
   }
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O == 'I') {
@@ -902,8 +899,8 @@ function EspecieDocumento() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA', $O) === false)) {
@@ -1091,8 +1088,8 @@ function Unidade() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (strpos('I', $O) !== false) {
@@ -1317,8 +1314,8 @@ function NaturezaDoc() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA', $O) === false)) {
@@ -1484,8 +1481,8 @@ function TipoGuarda() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA', $O) === false)) {
@@ -1653,7 +1650,7 @@ function Parametro() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   BodyOpen('onLoad=\'document.Form.w_despacho_arqsetorial.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.str_replace('Listagem', 'Alteração', $w_TP).'</FONT></B>');
   ShowHTML('<HR>');
@@ -1734,8 +1731,8 @@ function Renumera() {
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if (nvl($w_prefixo_ant, '') == '') {
     BodyOpen('onLoad=\'document.Form.w_prefixo_ant.focus()\';');
   } else {
@@ -1865,7 +1862,7 @@ function Assunto() {
     ScriptClose();
   }
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O == 'C' || $O == 'I' || $O == 'A') {
@@ -2033,8 +2030,8 @@ function TelaAssunto() {
   head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>SIW - Protocolo - Assunto</TITLE>');
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   BodyOpen('onLoad="this.focus();"');
   $w_TP = 'Protocolo e Arquivo - Visualização de assunto';
   Estrutura_Texto_Abre();
@@ -2173,7 +2170,7 @@ function Arquivo() {
   }
 
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA', $O) === false)) {
@@ -2343,7 +2340,7 @@ function Locais() {
     ScriptClose();
   }
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O == 'C' || $O == 'I' || $O == 'A') {
@@ -2552,8 +2549,8 @@ function Locais() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'ALTLOCAL':

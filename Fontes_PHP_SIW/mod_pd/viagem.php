@@ -54,6 +54,7 @@ include_once($w_dir_volta . 'classes/sp/dml_putViagemGeral.php');
 include_once($w_dir_volta . 'classes/sp/dml_putViagemOutra.php');
 include_once($w_dir_volta . 'classes/sp/dml_putViagemEnvio.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Contas.php');
+include_once($w_dir_volta . 'classes/sp/dml_putPD_RespContas.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Reembolso.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_ReembValor.php');
 include_once($w_dir_volta . 'classes/sp/dml_putPD_Cotacao.php');
@@ -578,22 +579,21 @@ function Inicial() {
                 ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Anotacao&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               if (f($row, 'sg_tramite') == 'DF' || f($row, 'sg_tramite') == 'AE') {
                 // Se cotação ou emissão de bilhetes, é possível alterar os dados da solicitação original
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'AltSolic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Solicitação&SG=ALTSOLIC') . '\',\'AltSolic\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Alterar dados da solicitação.">SL</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'AltSolic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Solicitação&SG=ALTSOLIC') . '\',\'AltSolic\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Alterar dados da solicitação.">SL</A>&nbsp');
               }
               if (f($row, 'sg_tramite') == 'DF') {
                 if (f($row, 'internacional') == 'S')
-                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
+                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
               } elseif (f($row, 'sg_tramite') == 'AE' || f($row, 'sg_tramite') == 'AC') {
-                if (f($row, 'internacional') == 'S')
-                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">BL</A>&nbsp');
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Diarias_Solic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Diarias&SG=PDDIARIA') . '\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados das diárias.">DI</A>&nbsp');
+                if (f($row, 'internacional') == 'S') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">BL</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Diarias_Solic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Diarias&SG=PDDIARIA') . '\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados das diárias.">DI</A>&nbsp');
               } elseif (f($row, 'sg_tramite') == 'PC') {
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'PrestarContas&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Prestação de contas&SG=PDCONTAS') . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados da prestação de contas.">Prestar contas</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'PrestarContas&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Prestação de contas&SG=PDCONTAS') . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados da prestação de contas.">Prestar contas</A>&nbsp');
               } elseif (f($row, 'sg_tramite') == 'VP') {
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">BL</A>&nbsp');
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Diarias_Solic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Diarias&SG=PDDIARIA') . '\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados das diárias.">DI</A>&nbsp');
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Reembolso&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Reembolso&SG=PDREEMB') . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados do reembolso, se necessário.">RB</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">BL</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Diarias_Solic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Diarias&SG=PDDIARIA') . '\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados das diárias.">DI</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Reembolso&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Reembolso&SG=PDREEMB') . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados do reembolso, se necessário.">RB</A>&nbsp');
               } elseif (f($row, 'sg_tramite') == 'PD') {
                 //ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PagDiaria&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar o pagamento de diárias.">Informar</A>&nbsp');
               }
@@ -602,8 +602,9 @@ function Inicial() {
                 ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'Concluir&R=' . $w_pagina . $par . '&O=V&w_chave=' . f($row, 'sq_siw_solicitacao') . '&w_tipo=Volta&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" title="Conclui a execução da solicitação.">CO</A>&nbsp');
               }
             } elseif ($SG == 'PDALTERA') {
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Alteracoes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Registro&SG=' . $SG) . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Registrar alterações.">Registrar</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW . $w_dir . $w_pagina . 'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">Bilhetes</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Alteracoes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Registro&SG=' . $SG) . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Registrar alterações.">Registrar</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . removeTP($TP) . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">Bilhetes</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Responsavel&R=' . $w_pagina . $par . '&O=A&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . removeTP($TP) . ' - Responsável pela prestação de contas&SG=RESPCONTA') . '\',\'Responsavel\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar o responsável pela prestação de contas da viagem.">Responsável</A>&nbsp');
             }
           } else {
             if (RetornaGestor(f($row, 'sq_siw_solicitacao'), $w_usuario) == 'S') {
@@ -2696,6 +2697,120 @@ function AltSolic() {
     ShowHTML('       </FORM>');
     ShowHTML('        </table></td></tr>');
   }
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+}
+
+// =========================================================================
+// Rotina de registro do responsável pela prestação de contas da viagem
+// -------------------------------------------------------------------------
+function RespContas() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_erro = '';
+  $w_chave = $_REQUEST['w_chave'];
+
+  // Recupera os dados da solicitação e do cliente
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
+
+  if ($w_troca > '') {
+    // Se for recarga da página
+    $w_justificativa = $_REQUEST['w_justificativa'];
+    $w_pessoa        = $_REQUEST['w_pessoa'];
+    $w_atual         = $_REQUEST['w_atual'];
+  } else {
+    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
+
+    $w_pessoa = f($RS, 'cadastrador');
+    $w_atual  = f($RS, 'cadastrador');
+  }
+  Cabecalho();
+  head();
+  ShowHTML('<title>' . $conSgSistema . ' - Alterações de viagem</title>');
+  Estrutura_CSS($w_cliente);
+  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  // tratando as particularidades de cada serviço
+  ScriptOpen('JavaScript');
+  if ($O != 'L') {
+    ValidateOpen('Validacao');
+    Validate('w_pessoa', 'Responsável', 'SELECT', '1', 1, 18, '', '1');
+    ShowHTML('  if (theForm.w_pessoa[theForm.w_pessoa.selectedIndex].value==theForm.w_atual.value) {');
+    ShowHTML('    alert("É necessário alterar o responsável atual pela prestação de contas!");');
+    ShowHTML('    theForm.w_pessoa.focus();');
+    ShowHTML('    return false;');
+    ShowHTML('  }');
+    Validate('w_justificativa', 'Justificativa', '', 1, 5, 2000, '1', '1');
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+  }
+  ScriptClose();
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
+  if ($w_troca > '') {
+    BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();"');
+  } else {
+    BodyOpenClean('onLoad="document.Form.w_justificativa.focus();"');
+  }
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="2">');
+  ShowHTML('      <table border=1 width="100%">');
+  ShowHTML('        <tr><td valign="top" colspan="2">');
+  ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+  ShowHTML('            <tr><td>Número:<b><br>' . f($RS_Solic, 'codigo_interno') . '</td>');
+  ShowHTML('                <td>Primeira saída:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_inicio')) . ' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>' . date('d/m/y, H:i', f($RS_Solic, 'phpdt_fim')) . ' </b></td>');
+  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, Nvl(f($RS_Solic, 'sq_prop'), 0), null, null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
+  foreach ($RS1 as $row) {
+    $RS1 = $row;
+    break;
+  }
+  ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>' . f($RS1, 'nm_pessoa') . '</td></tr>');
+  ShowHTML('          </TABLE></td></tr>');
+  ShowHTML('      </table>');
+  ShowHTML('  </table>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
+  ShowHTML('<INPUT type="hidden" name="w_atual" value="' . $w_atual . '">');
+  ShowHTML(montaFiltro('POST'));
+
+  ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td align="center">');
+  ShowHTML('    <table width="97%" border="0">');
+  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Responsável e Justificativa da alteração</td></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5">Informe o novo responsável pela prestação de contas da viagem e a justificativa para a alteração do responsável atual.<BR /><b>TANTO O BENEFICIÁRIO QUANTO A PESSOA INDICADA NESTA TELA PODERÃO REGISTRAR A PRESTAÇÃO DE CONTAS.</b></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr valign="top">');
+  SelecaoPessoa('<u>R</u>esponsável:', 'R', 'Selecione o responsável pela prestação de contas.', $w_pessoa, null, 'w_pessoa', 'USUARIOS');
+
+  ShowHTML('      <tr><td colspan="5"><b><u>J</u>ustificativa:</b><br><textarea class="STI" accesskey="J" ' . $w_Disabled . ' name="w_justificativa" class="STI" ROWS=5 cols=75 title="Informe a justificativa para a alteração da viagem.">' . $w_justificativa . '</TEXTAREA></td>');
+
+  ShowHTML('      <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="center" colspan="5" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('      <tr><td align="center" colspan="5">');
+  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
+  ShowHTML('              <input class="stb" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Cancelar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
   ShowHTML('</table>');
   ShowHTML('</center>');
   Estrutura_Texto_Fecha();
@@ -8344,6 +8459,23 @@ function Grava() {
         retornaFormulario('w_assinatura');
       }
       break;
+    case 'RESPCONTA' :
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
+        // Grava o novo responsável pela prestação de contas
+        $SQL = new dml_putPD_RespContas; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_pessoa'],$_REQUEST['w_justificativa']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Alteração efetivada!");');
+        ShowHTML('  window.close();');
+        ShowHTML('  opener.focus();');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;
     case 'PDREEMB' :
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
@@ -8638,6 +8770,8 @@ function Main() {
 
   switch ($par) {
     case 'ALTERACOES': RegistroAlteracao();
+      break;
+    case 'RESPONSAVEL': RespContas();
       break;
     case 'IMPRIMEALTERACAO': ImprimeAlteracao();
       break;

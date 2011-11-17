@@ -180,8 +180,8 @@ function Tramitacao() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } elseif ($O == 'P') {
@@ -299,15 +299,15 @@ function Transferencia() {
   global $p_unid_autua;
   
   // Recupera as variáveis utilizadas na filtragem
-  $p_protocolo = $_REQUEST['p_protocolo'];
-  $p_chave = $_REQUEST['p_chave'];
+  $p_protocolo  = $_REQUEST['p_protocolo'];
+  $p_chave      = $_REQUEST['p_chave'];
   $p_unid_autua = $_REQUEST['p_unid_autua'];
-  $p_devolucao =  $_REQUEST['p_devolucao'];
+  $p_devolucao  = $_REQUEST['p_devolucao'];
   if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))===false) $p_unid_autua = $_SESSION['LOTACAO'];
-  $p_nu_guia = $_REQUEST['p_nu_guia'];
-  $p_ano_guia = $_REQUEST['p_ano_guia'];
-  $p_ini = $_REQUEST['p_ini'];
-  $p_fim = $_REQUEST['p_fim'];
+  $p_nu_guia    = $_REQUEST['p_nu_guia'];
+  $p_ano_guia   = $_REQUEST['p_ano_guia'];
+  $p_ini        = $_REQUEST['p_ini'];
+  $p_fim        = $_REQUEST['p_fim'];
 
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
@@ -340,8 +340,8 @@ function Transferencia() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } elseif ($O == 'P') {
@@ -395,7 +395,7 @@ function Transferencia() {
           ShowHTML('        <td>' . f($row, 'assunto') . '</td>');
           ShowHTML('        <td align="center">' . f($row, 'qtd') . '</td>');
           ShowHTML('        <td align="top" nowrap>');
-          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGT&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'sq_unidade') . '&w_formato=WORD&orientacao=PORTRAIT&w_nu_guia=' . f($row, 'arquivo_guia_numero') . '&w_ano_guia=' . f($row, 'arquivo_guia_ano') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&p_devolucao=' . $p_devolucao . '">Emitir</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="' . $w_dir . $w_pagina . 'EmitirGT&R=' . $w_pagina . $par . '&O=L&w_unidade=' . f($row, 'sq_unidade') . '&w_nu_guia=' . f($row, 'arquivo_guia_numero') . '&w_ano_guia=' . f($row, 'arquivo_guia_ano') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&p_devolucao=' . $p_devolucao . '" target="GT">Emitir</A>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
           $w_atual = f($row, 'guia_tramite');
@@ -475,8 +475,8 @@ function ConteudoCaixa() {
     Cabecalho();
     head();
     ShowHTML('<title>' . $conSgSistema . ' - Visualização de Caixa</title>');
-    ShowHTML('</head>');
     ShowHTML('<base HREF="' . $conRootSIW . '">');
+    ShowHTML('</head>');
     BodyOpenClean('onLoad="this.focus();" ');
     if ($w_tipo != 'WORD')
       CabecalhoRelatorio($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 4, $w_chave);
@@ -549,8 +549,8 @@ function Etiqueta() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } elseif ($O == 'P') {

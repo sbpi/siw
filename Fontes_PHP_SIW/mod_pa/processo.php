@@ -256,8 +256,8 @@ function Inicial() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -564,7 +564,7 @@ function Alterar() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } elseif ($O == 'E') {
@@ -782,7 +782,6 @@ function Central() {
       ShowHTML('    return false;');
       ShowHTML('  } ');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-      ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para ' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados') . '?\')) return false;');
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao.disabled=true;');
       ValidateClose();
@@ -806,8 +805,8 @@ function Central() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -989,8 +988,8 @@ function Autuar() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -1181,8 +1180,8 @@ function Juntar() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -1391,8 +1390,8 @@ function Vincular() {
   }
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($O == 'P') {
     BodyOpen('onLoad=\'document.Form.p_numero.focus()\';');
   } else {
@@ -1535,8 +1534,8 @@ function Desmembrar() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -1784,8 +1783,8 @@ function ArqSetorial() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -1978,8 +1977,8 @@ function Arquivar() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -2066,7 +2065,7 @@ function Eliminar() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
@@ -2169,8 +2168,8 @@ function Emprestar() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   if ($w_troca > '') {
     BodyOpen('onLoad=\'document.Form.' . $w_troca . '.focus()\';');
   } else {
@@ -2247,8 +2246,8 @@ function Grava() {
   $w_tipo = '';
   $w_nome = '';
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+  ShowHTML('</head>');
   BodyOpen(null);
   if ($SG == 'PADALTREG') {
     // Verifica se a Assinatura Eletrônica é válida

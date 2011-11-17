@@ -64,7 +64,7 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho=null) {
       $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Destinação Final:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'destinacao_final').'</td></tr>';
       $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Localização:</b></td>';
-      $l_html.=chr(13).'       <td>'.f($row,'nm_localizacao').'</td></tr>';
+      $l_html.=chr(13).'       <td>'.nvl(f($row,'nm_localizacao'),f($row,'localizacao')).'</td></tr>';
       
       $l_html.=chr(13).'   <tr><td colspan=2><br><b>DOCUMENTOS/PROCESSOS ARQUIVADOS NESTA CAIXA</b></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan=2><table border=1 width="100%">';

@@ -1220,6 +1220,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDocumentoArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoCaixa.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoDescarte.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoDesm.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
@@ -1334,6 +1335,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura_Outros.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_ReembValor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Reembolso.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_RespContas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPessoa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlanoEstrategico.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlano_Menu.php -text
