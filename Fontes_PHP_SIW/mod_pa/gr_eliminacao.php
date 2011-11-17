@@ -176,6 +176,10 @@ function Gerencial() {
       $w_linha++;
       $w_filtro.='<tr valign="top"><td align="right">Busca por <td>[<b>'.(($p_uf=='S') ? 'Processos' : 'Documentos').'</b>]';
     } 
+    if ($p_prioridade>''){
+      $w_linha++;
+      $w_filtro.='<tr valign="top"><td align="right">Número do pedido<td>[<b>'.$p_prioridade.'</b>]';
+    } 
     if (nvl($p_chave_pai,'')>'') {
       $w_linha++;
       if ($p_tipo!='WORD' && $p_tipo!='PDF') {
@@ -226,12 +230,6 @@ function Gerencial() {
       $w_linha++;
       $w_filtro.='<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
     } 
-    if ($p_prioridade>''){
-      $w_linha++;
-      $sql = new db_getTipoDespacho_PA; $RS = $sql->getInstanceOf($dbms,$p_prioridade,$w_cliente,null,null,null,null);
-      foreach ($RS as $row) {$RS = $row; break;}
-      $w_filtro.='<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
-    } 
     if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_processo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
@@ -239,11 +237,9 @@ function Gerencial() {
     if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
       
     $sql = new db_getSolicPA; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
-        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-        $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null, 
-        $p_empenho, $p_processo);
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, 
+        $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null, $p_empenho, $p_processo);
 
     switch ($p_agrega) {
       case 'GRELETAPA':
@@ -327,6 +323,7 @@ function Gerencial() {
       }      
       //Validate('p_chave','Chave','','','1','18','','0123456789');
       //Validate('p_prazo','Dias para a devolução','','','1','2','','0123456789');
+      Validate('p_prioridade','Número do pedido','','','3','30','1','1');
       Validate('p_pais','Prefixo','','','1','5','','0123456789');
       Validate('p_regiao','Sequencial','','','1','6','','0123456789');
       Validate('p_cidade','Ano','','','1','4','','0123456789');
@@ -420,7 +417,6 @@ function Gerencial() {
           case 'GRELRESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
           case 'GRELCC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
           case 'GRELSETOR':     ShowHTML('      document.Form.p_uorg_resp.value=filtro;');      break;
-          case 'GRELPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GRELLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
         } 
         ShowHTML('    }');
@@ -879,7 +875,6 @@ function Gerencial() {
       //ShowHTML('          </td></tr></table></td></tr>');    
     }
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_pais" size="6" maxlength="5" value="'.$p_pais.'">.<INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     ShowHTML('          <td><b>Buscar por?</b><br>');
     if ($p_uf=='S') {
       ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_uf" value="S" checked> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value=""> Ambos');
@@ -889,6 +884,10 @@ function Gerencial() {
       ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_uf" value="S"> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="" checked> Ambos');
     }
     
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b><U>N</U>úmero do pedido:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_prioridade" size="18" maxlength="18" value="'.$p_prioridade.'"></td>');
+    ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_pais" size="6" maxlength="5" value="'.$p_pais.'">.<INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
+
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do empréstimo na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
     //ShowHTML('          <td><b>Dias para a de<U>v</U>olução:<br><INPUT ACCESSKEY="V" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');

@@ -352,9 +352,9 @@ begin
                                              )
                 )
             and (p_assunto        is null or (p_assunto     is not null and 0 < (select count(*) from siw_solicitacao x join pa_eliminacao y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.descricao,null) like '%'||acentos(p_assunto,null)||'%')))
-            and (p_palavra        is null or (p_palavra     is not null and acentos(b.codigo_interno,null) like '%'||acentos(p_palavra,null)||'%'))
+            --and (p_palavra        is null or (p_palavra     is not null and acentos(b.codigo_interno,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_empenho        is null or (p_empenho     is not null and 0 < (select count(*) from pa_documento x join pa_eliminacao y on x.sq_siw_solicitacao = y.protocolo where y.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(x.numero_original) like '%'||acentos(p_empenho)||'%')))
-            --and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
+            and (p_prioridade     is null or (p_prioridade  is not null and acentos(b.codigo_interno) like '%'||acentos(p_prioridade)||'%'))
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and b.conclusao is null))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b1.sigla not in ('CI','AT') and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
@@ -445,6 +445,7 @@ begin
                                         group by sq_siw_solicitacao
                                        )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where b3.protocolo = to_number(p_processo)
+            and (p_prioridade     is null or (p_prioridade  is not null and acentos(b.codigo_interno) like '%'||acentos(p_prioridade)||'%'))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

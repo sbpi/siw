@@ -224,6 +224,10 @@ function Inicial() {
         foreach ($RS as $row) { $RS = $row; break; }
         $w_filtro.='<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
+      if ($p_prioridade>''){
+        $w_linha++;
+        $w_filtro.='<tr valign="top"><td align="right">Número do pedido<td>[<b>'.$p_prioridade.'</b>]';
+      } 
       if ($p_sqcc>'') {
         $w_linha++;
         $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
@@ -259,12 +263,6 @@ function Inicial() {
       if ($p_pais>'' || $p_regiao>'' || $p_cidade>'') {
         $w_linha++;
         $w_filtro.='<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
-      } 
-      if ($p_prioridade>''){
-        $w_linha++;
-        $sql = new db_getTipoDespacho_PA; $RS = $sql->getInstanceOf($dbms,$p_prioridade,$w_cliente,null,null,null,null);
-        foreach ($RS as $row) {$RS = $row; break;}
-        $w_filtro.='<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
       if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }

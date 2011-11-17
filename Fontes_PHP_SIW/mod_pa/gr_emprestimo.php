@@ -240,11 +240,9 @@ function Gerencial() {
     if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     $sql = new db_getSolicPA; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
-        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-        $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null, 
-        $p_empenho, $p_processo);
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, 
+        $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null,$p_empenho, $p_processo);
 
     switch ($p_agrega) {
       case 'GREMETAPA':
@@ -895,7 +893,7 @@ function Gerencial() {
     }
 
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b><U>N</U>úmero do pedido:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_prioridade" size="18" maxlength="18" value="'.$p_prioridade.'"></td>');
+    ShowHTML('          <td><b><U>N</U>úmero do pedido:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_prioridade" size="18" maxlength="18" value="'.$p_prioridade.'"></td>');
     ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_pais" size="6" maxlength="5" value="'.$p_pais.'">.<INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     
     ShowHTML('      <tr valign="top">');
