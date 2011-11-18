@@ -301,7 +301,7 @@ begin
          If p_numero is not null and p_ano is not null Then w_filtro := 'true'; Else w_filtro := 'false'; End If;
       End If;
    
-      -- Recupera guias de tramitação
+      -- Recupera protocolos para envio
       open p_result for
       select b.sq_siw_solicitacao, b.inicio, b.fim, b.sq_siw_tramite, b.sq_solic_pai, b.descricao,
              c.numero_original, c.numero_documento, c.unidade_int_posse, c.pessoa_ext_posse,
@@ -351,7 +351,7 @@ begin
                                   )                    c5 on (c.sq_siw_solicitacao   = c5.sq_documento_pai)
                  left        join eo_unidade           c6 on (c.unidade_int_posse    = c6.sq_unidade)
                  left        join (select x.sq_siw_solicitacao, count(*) as existe
-                                     from pa_documento               x
+                                     from pa_documento                 x
                                           inner   join siw_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)
                                             inner join siw_menu        x2 on (x2.sq_menu  = p_menu  and x1.sq_menu           = x2.sq_menu)
                                           left    join sg_autenticacao y  on (y.sq_pessoa = p_pessoa and x.unidade_int_posse = y.sq_unidade)
@@ -393,11 +393,13 @@ begin
                                         (b4.ativo = 'N' and b4.sigla in ('CA','AS','DE') and p_numero is not null and p_ano is not null)
                                        ) and
                                        ((p_despacho not in (a1.despacho_autuar,
+                                                            a1.despacho_eliminar,
                                                             a1.despacho_desmembrar
                                                            ) and
                                          c.sq_documento_pai is null
                                         ) or
                                         (p_despacho = a1.despacho_autuar     and c.processo = 'N') or
+                                        (p_despacho = a1.despacho_eliminar   and c.processo = 'N' and c.sq_documento_pai is null) or
                                         (p_despacho = a1.despacho_desmembrar and c.sq_documento_pai is null and coalesce(c5.qtd,0) > 0) 
                                        )
                                       )

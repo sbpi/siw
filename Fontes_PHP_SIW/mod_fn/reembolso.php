@@ -318,7 +318,8 @@ function Inicial() {
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
-    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
   } else {
     Cabecalho();
     head();
@@ -360,9 +361,9 @@ function Inicial() {
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();
-    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
   }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   elseif ($O=='I') BodyOpen('onLoad=\'document.Form.w_smtp_server.focus();\'');
   elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
@@ -932,7 +933,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'')                 BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (strpos('EV',$O)!==false) BodyOpen('onLoad=\'this.focus()\';');
   else                             BodyOpen('onLoad=\'document.Form.w_valor.focus()\';');
@@ -1392,7 +1393,7 @@ function OutraParte() {
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
@@ -1755,7 +1756,7 @@ function Documentos() {
   } 
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1994,8 +1995,8 @@ function Visual() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</head>');
     BodyOpenClean(null); 
     if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
     $w_embed = 'HTML';
@@ -2042,8 +2043,8 @@ function Excluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2351,8 +2352,8 @@ function Anotar() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else
@@ -2443,7 +2444,7 @@ function Concluir() {
 
     // Recupera os documentos do lançamento
     $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
-    
+        
     if (count($RS_Doc)>0) {
       foreach($RS_Doc as $row) {
         $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
@@ -2494,8 +2495,8 @@ function Concluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
@@ -2557,8 +2558,8 @@ function Concluir() {
       ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_debito.'">');
     }
 
-    if (f($RS_Solic,'lancamento_vinculado')=='N') {
-      // Pagamentos vinculados
+    if (count($RS_Doc)>0) {
+      // Pagamentos vinculados só podem existir se houver documento para o lançamento financeiro (fatura, nota fiscal, recibo etc)
       $sql = new db_getImpostoDoc; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,$w_SG);
       $RS1 = SortArray($RS1,'sq_lancamento_doc','asc','phpdt_inclusao','asc','calculo','asc','esfera','asc','nm_imposto','asc');
       ShowHTML('      <tr><td colspan="2"><br><b>LANÇAMENTOS VINCULADOS</b>&nbsp;&nbsp;&nbsp;<A class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=I&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Incluir lançamento vinculado a este.">Incluir</A>&nbsp</td></tr>');  

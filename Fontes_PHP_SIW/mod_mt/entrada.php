@@ -572,13 +572,11 @@ function Geral() {
     // Recupera os dados da entrada
     if ($w_copia>'') {
       $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,
-        null,null,null,null,null,null,null,null,null,null,
-        $w_copia,null,null,null,null,null,null,
+        null,null,null,null,null,null,null,null,null,null,$w_copia,null,null,null,null,null,null,
         null,null,null,null,null,null,null,null,null,null,null);
     } else {
       $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,
-        null,null,null,null,null,null,null,null,null,null,
-        $w_chave,null,null,null,null,null,null,
+        null,null,null,null,null,null,null,null,null,null,$w_chave,null,null,null,null,null,null,
         null,null,null,null,null,null,null,null,null,null,null);
     }
     if (count($RS)>0) {
@@ -599,7 +597,7 @@ function Geral() {
       $w_situacao                 = f($RS,'sq_mtsituacao');
     } 
   } 
-
+  
   // Se não puder cadastrar para outros, carrega os dados do usuário logado
   if (nvl($w_protocolo,'')!='') {
     // Se receber o protocolo, recupera as informações do lançamento financeiro a ele associado
@@ -621,9 +619,9 @@ function Geral() {
           $RS2 = SortArray($RS2,'data','asc');
           foreach($RS2 as $row2) {
             $sql = new db_getSolicData; $RS3 = $sql->getInstanceOf($dbms,f($row1,'sq_siw_solicitacao'),f($row1,'sigla'));
-            $w_solicitacao              = f($RS3,  'sq_siw_solicitacao');
-            $w_fornecedor               = f($RS3,  'pessoa');
-            $w_fornecedor_nm            = f($row3, 'nm_pessoa_resumido');
+            $w_solicitacao              = f($RS3, 'sq_siw_solicitacao');
+            $w_fornecedor               = f($RS3, 'pessoa');
+            $w_fornecedor_nm            = f($RS3, 'nm_pessoa_resumido');
             $w_documento                = f($row2, 'sq_lancamento_doc');
             $w_tipo                     = f($row2, 'sq_tipo_documento');
             $w_prevista                 = formataDataEdicao(f($row2, 'data'));
@@ -632,18 +630,20 @@ function Geral() {
             $w_numero                   = f($row2, 'numero');
             $w_data                     = formataDataEdicao(f($row2, 'data'));
             $w_valor                    = formatNumber(f($row2, 'valor'));
-            $sql = new db_getTipoMovimentacao; $RS4 = $sql->getInstanceOf($dbms,$w_cliente,null,null,'S',null,null,null,null,null,'S',null);
-            foreach($RS4 as $row4) {
-              if (lower(f($row4,'nome'))=='entrada orçamentária') {
-                $w_tipo = f($row4,'chave');
-                break;
-              }
+            if ($w_fornecedor==nvl($_REQUEST['w_fornecedor'],$w_fornecedor)) {
+              $w_erro = false;
+              break;
             }
-            $w_erro = false;
-            break;
           }
         }
         if (!$w_erro) break;
+      }
+    }
+    $sql = new db_getTipoMovimentacao; $RS4 = $sql->getInstanceOf($dbms,$w_cliente,null,null,'S',null,null,null,null,null,'S',null);
+    foreach($RS4 as $row4) {
+      if (lower(f($row4,'nome'))=='entrada orçamentária') {
+        $w_tipo = f($row4,'chave');
+        break;
       }
     }
     if ($w_erro) {

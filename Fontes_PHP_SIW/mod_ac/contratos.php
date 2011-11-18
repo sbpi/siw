@@ -739,7 +739,7 @@ function Inicial() {
       ShowHTML('<INPUT type="hidden" name="w_copia" value="OK">');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $P2, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $w_menu, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
     if(Nvl($p_sq_menu_relac,'')!='') {
       ShowHTML('          <tr valign="top">');
       if ($p_sq_menu_relac=='CLASSIF') {
@@ -1025,6 +1025,9 @@ function Geral() {
             null,null,null,null,null,null,null,null,null,null,substr($w_herda,0,strpos($w_herda,'|')),null,null,null,null,null,null,
             null,null,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) $RS = $RS[0];
+        
+        $w_cd_compra = f($RS,'codigo_interno');
+        $w_ds_compra = nvl(f($RS,'objeto'),f($RS,'justificativa'));
 
         // Recupera os dados do beneficiário em co_pessoa
         $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,substr($w_herda,strpos($w_herda,'|')+1),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
@@ -1286,13 +1289,24 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_inicio_atual" value="'.$w_inicio_atual.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
+    if (nvl($w_cd_compra,'')!='') {
+      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Dados da Licitação</td></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('          <td><b>Número:</b><br>'.$w_cd_compra.'</td>');
+      ShowHTML('          <td><b>Justificativa/Objeto:</b><br>'.$w_ds_compra.'</td>');
+      ShowHTML('      </tr></table>');
+    }
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr valign="top">');
     if($w_numeracao_automatica=='N') {
       ShowHTML('          <td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" title="Informar sigla e número do contrato (CTR) ou Ata de Registro de Preços (ATA)" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
@@ -4274,8 +4288,11 @@ function Aditivos() {
           CompData('w_inicio','Início','>=',formataDataEdicao($w_contrato_ini),'início da vigência');
           CompData('w_fim','Fim','<=',formataDataEdicao($w_contrato_fim),'final da vigência');
         }
-        Validate('w_doc_origem','Documento de origem','1','','1','30','1','1');
-        Validate('w_doc_data','Data do documento','DATA','','10','10','','0123456789/');
+        if ($w_cliente!=10135) { 
+          //ABDI
+          Validate('w_doc_origem','Documento de origem','1','','1','30','1','1');
+          Validate('w_doc_data','Data do documento','DATA','','10','10','','0123456789/');
+        }
         if(substr($SG,0,3)!='GCZ' && f($RS_Solic,'limite_variacao')>0) {
           Validate('w_tipo','Acréscimo/Supressão','SELECT',1,1,18,'1','1');
           if(nvl($w_tipo,'')!='NAOAPLICA') {
@@ -4484,8 +4501,11 @@ function Aditivos() {
       ShowHTML('          <td><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
     }
     ShowHTML('          <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('      <tr><td><b>D<u>o</u>cumento de origem:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_doc_origem" class="STI" SIZE="30" MAXLENGTH="30" VALUE="'.$w_doc_origem.'" title="Registre o tipo e o número do documento que originou o aditivo."></td>');
-    ShowHTML('          <td><b>D<u>a</u>ta do documento:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_doc_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_doc_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_doc_data').'</td>');
+    if ($w_cliente!=10135) { 
+      //ABDI
+      ShowHTML('      <tr><td><b>D<u>o</u>cumento de origem:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_doc_origem" class="STI" SIZE="30" MAXLENGTH="30" VALUE="'.$w_doc_origem.'" title="Registre o tipo e o número do documento que originou o aditivo."></td>');
+      ShowHTML('          <td><b>D<u>a</u>ta do documento:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_doc_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_doc_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_doc_data').'</td>');
+    }
     ShowHTML('      <tr>');
     if(substr($SG,0,3)!='GCZ' && f($RS_Solic,'limite_variacao')>0) {
       ShowHTML('          <td valign="top"><b><u>A</u>créscimo/Supressão</b><br><SELECT ACCESSKEY="A" CLASS="STS" NAME="w_tipo" '.$w_Disabled.' onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&O='.$O.'&SG='.$SG.'\'; document.Form.w_troca.value=\'TROCA\'; document.Form.submit();">');

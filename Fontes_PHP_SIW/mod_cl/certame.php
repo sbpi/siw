@@ -2017,7 +2017,6 @@ function PesquisaPreco() {
     FormataValor();
     if ($O=='I' || $O=='A') {
       ShowHTML('  function valor(p_indice) {');
-      //ShowHTML('    alert(p_indice); ');
       ShowHTML('    var theForm = document.Form; ');
       ShowHTML('    if (theForm["w_chave_aux[]"][p_indice].checked) { ');
       //ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
@@ -2053,7 +2052,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_inicio[]"][i].disabled=false; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][i].disabled=false; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=false; ');
-      ShowHTML('         if(theForm["w_classe[]"][i].value==4) {');
+      ShowHTML('         if(theForm["w_classe[]"][i].value==3 || theForm["w_classe[]"][i].value==4) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=false; ');
       ShowHTML('           theForm["w_marca_modelo[]"][i].disabled=false; ');
       ShowHTML('           theForm["w_embalagem[]"][i].disabled=false; ');
@@ -2067,7 +2066,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_inicio[]"][i].disabled=true; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][i].disabled=true; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=true; ');
-      ShowHTML('         if(theForm["w_classe[]"][i].value==4) {');
+      ShowHTML('         if(theForm["w_classe[]"][i].value==3 || theForm["w_classe[]"][i].value==4) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=true; ');
       ShowHTML('           theForm["w_marca_modelo[]"][i].disabled=true; ');
       ShowHTML('           theForm["w_embalagem[]"][i].disabled=true; ');

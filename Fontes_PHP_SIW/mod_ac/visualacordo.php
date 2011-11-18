@@ -59,34 +59,16 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=$crlf . '<style>';
     $l_html.=$crlf . '.remover{background-color:#ff3737}';
     $l_html.=$crlf . '</style>';
-    $l_html.=$crlf . '<script>';
+    $l_html.=$crlf . '<script language="Javascript">';
     $l_html.=$crlf . '$(document).ready(function(){';
     //Fecha toda a visualização
     $l_html.=$crlf . '  $(\'a[id^="link"]\').each(function() {';
     $l_html.=$crlf . '    id = $(this).attr("value");';
-    $l_html.=$crlf . '    quantidade = parseInt($(this).attr("quantidade"))+1;';
-    $l_html.=$crlf . '   content = $(".rodape-"+id+":last").html();';
-    $l_html.=$crlf . '    header = $(".cabecalho-"+id+":first").html();';
-    $l_html.=$crlf . '    rowspan = $(".cabecalho-"+id+" td").attr("rowspan");';
-    $l_html.=$crlf . '      sinal = "[+]";';
-
-    $l_html.=$crlf . '      $(".rodape-" + id).hide();';
-    $l_html.=$crlf . '      $(".remover-" + id).hide();';
-    $l_html.=$crlf . '      $(".cabecalho-" + id).append($(".rodape-" + id +":last").html());';
-
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
-    $l_html.=$crlf . '        $(this).attr("rowspan","1")';
-    $l_html.=$crlf . '      })';
-
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      count = 0;';
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
-    $l_html.=$crlf . '        count++';
-    $l_html.=$crlf . '        if(count > 13){';
-    $l_html.=$crlf . '          $(this).remove();';
-    $l_html.=$crlf . '        }';
-    $l_html.=$crlf . '      })';
+    $l_html.=$crlf . '    $(this).css("text-decoration","none")';
+    $l_html.=$crlf . '           .css("color","#000000")';
+    $l_html.=$crlf . '           .css("font-weight","bold");';
+    $l_html.=$crlf . '    sinal = "[+]";';
+    $l_html.=$crlf . '    $(".remover-" + id).hide();';
     $l_html.=$crlf . '    $(this).html(sinal);';
     $l_html.=$crlf . '  });';
     
@@ -94,56 +76,18 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=$crlf . '  $(\'a[id^="link"]\').click(function() {';
     $l_html.=$crlf . '    sinal = $(this).html();';
     $l_html.=$crlf . '    id = $(this).attr("value");';
-    $l_html.=$crlf . '    quantidade = parseInt($(this).attr("quantidade"))+1;';
-    $l_html.=$crlf . '   content = $(".rodape-"+id+":last").html();';
-    $l_html.=$crlf . '    header = $(".cabecalho-"+id+":first").html();';
-    $l_html.=$crlf . '    rowspan = $(".cabecalho-"+id+" td").attr("rowspan");';
-
 
     //Fechado
     $l_html.=$crlf . '    if(sinal == "[+]"){';
     $l_html.=$crlf . '      sinal = "[-]";';
-
-    $l_html.=$crlf . '      $(".rodape-" + id).show();';
     $l_html.=$crlf . '      $(".remover-" + id).show();';
-
-    //Atualiza o cabeçalho
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
-    $l_html.=$crlf . '        $(this).attr("rowspan",quantidade)';
-    $l_html.=$crlf . '      })';
-    $l_html.=$crlf . '      $(".remover-" + id).show();';
-
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      count = 0;';
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
-    $l_html.=$crlf . '        count++';
-    $l_html.=$crlf . '        if(count > 10){';
-    $l_html.=$crlf . '          $(this).remove();';
-    $l_html.=$crlf . '        }';
-    $l_html.=$crlf . '      })';
 
     //Aberto
     $l_html.=$crlf . '    } else {';
     $l_html.=$crlf . '      sinal = "[+]";';
 
-    $l_html.=$crlf . '      $(".rodape-" + id).hide();';
     $l_html.=$crlf . '      $(".remover-" + id).hide();';
-    $l_html.=$crlf . '      $(".cabecalho-" + id).append($(".rodape-" + id +":last").html());';
 
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td[rowspan="+rowspan+"]").each(function(data){';
-    $l_html.=$crlf . '        $(this).attr("rowspan","1")';
-    $l_html.=$crlf . '      })';
-
-    //Verifica o tamanho do rowspan
-    $l_html.=$crlf . '      count = 0;';
-    $l_html.=$crlf . '      $(".cabecalho-"+id).find("td").each(function(data){';
-    $l_html.=$crlf . '        count++';
-    $l_html.=$crlf . '        if(count > 13){';
-    $l_html.=$crlf . '          $(this).remove();';
-    $l_html.=$crlf . '        }';
-    $l_html.=$crlf . '      })';
     $l_html.=$crlf . '    }';
 
     $l_html.=$crlf . '    $(this).html(sinal);';
@@ -424,23 +368,23 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if (count($RS1)>0) {
         $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
-        $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';
-        $l_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=$crlf.'          <td rowspan=2><b>Código</td>';
-        $l_html.=$crlf.'          <td rowspan=2><b>Período</td>';
-        $l_html.=$crlf.'          <td rowspan=2><b>Objeto</td>';
-        $l_html.=$crlf.'          <td colspan=4><b>Totais do aditivo</td>';
-        $l_html.=$crlf.'          <td colspan=4><b>Parcelas do aditivo</td>';
+        $l_html.=$crlf.'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';
+        $l_html.=$crlf.'        <tr align="center">';
+        $l_html.=$crlf.'          <td rowspan=2 bgcolor="'.$conTrBgColor.'"><b>Código</td>';
+        $l_html.=$crlf.'          <td rowspan=2 bgcolor="'.$conTrBgColor.'"><b>Período</td>';
+        $l_html.=$crlf.'          <td rowspan=2 bgcolor="'.$conTrBgColor.'"><b>Objeto</td>';
+        $l_html.=$crlf.'          <td colspan=4 bgcolor="'.$conTrBgColor.'"><b>Totais do aditivo</td>';
+        $l_html.=$crlf.'          <td colspan=4 bgcolor="'.$conTrBgColor.'"><b>Parcelas do aditivo</td>';
         $l_html.=$crlf.'        </tr>';
-        $l_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=$crlf.'          <td><b>Inicial</td>';
-        $l_html.=$crlf.'          <td><b>Reajuste</td>';
-        $l_html.=$crlf.'          <td><b>Acr./Supr.</td>';
-        $l_html.=$crlf.'          <td><b>Total</td>';
-        $l_html.=$crlf.'          <td><b>Inicial</td>';
-        $l_html.=$crlf.'          <td><b>Reajuste</td>';
-        $l_html.=$crlf.'          <td><b>Acr./Supr.</td>';
-        $l_html.=$crlf.'          <td><b>Total</td>';
+        $l_html.=$crlf.'        <tr align="center">';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Inicial</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Reajuste</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Acr./Supr.</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Total</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Inicial</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Reajuste</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Acr./Supr.</td>';
+        $l_html.=$crlf.'          <td bgcolor="'.$conTrBgColor.'"><b>Total</td>';
         $l_html.=$crlf.'        </tr>';
         if (count($RS1)==0) {
           // Se não foram selecionados registros, exibe mensagem 
@@ -494,8 +438,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=$crlf.'          <td><b>Código</td>';
         $l_html.=$crlf.'          <td><b>Período</td>';
         $l_html.=$crlf.'          <td><b>Objeto</td>';
-        $l_html.=$crlf.'          <td><b>Documento</td>';
-        $l_html.=$crlf.'          <td><b>Data</td>';
+        if ($w_cliente!=10135) { 
+        //ABDI
+          $l_html.=$crlf.'          <td><b>Documento</td>';
+          $l_html.=$crlf.'          <td><b>Data</td>';
+        }
         $l_html.=$crlf.'          <td><b>Observação</td>';
         $l_html.=$crlf.'        </tr>';
         if (count($RS1)==0) {
@@ -508,8 +455,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=$crlf.'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
             $l_html.=$crlf.'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
             $l_html.=$crlf.'        <td align="left">'.f($row,'objeto').'</td>';
-            $l_html.=$crlf.'        <td align="left" width="1%" nowrap>'.nvl(f($row,'documento_origem'),'---').'</td>';
-            $l_html.=$crlf.'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'documento_data'),5),'---').'</td>';
+            if ($w_cliente!=10135) { 
+              //ABDI
+              $l_html.=$crlf.'        <td align="left" width="1%" nowrap>'.nvl(f($row,'documento_origem'),'---').'</td>';
+              $l_html.=$crlf.'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'documento_data'),5),'---').'</td>';
+            }
             $l_html.=$crlf.'        <td align="left">'.nvl(f($row,'observacao'),'---').'</td>';
             $l_html.=$crlf.'      </tr>';
           } 
@@ -852,10 +802,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'RESFIN',null,null,null,null,null,null,null);
     $RS = SortArray($RS,'inicio','asc', 'ini_aditivo', 'asc');
     if (count($RS)>0) {
-      //$l_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
       $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>RESUMO FINANCEIRO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
-      $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=$crlf.'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';
       $l_html.=$crlf.'          <tr align="center">';
       $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Aditivo</b></td>';
       $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
@@ -929,31 +878,32 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc', 'dt_lancamento', 'asc');
     if (count($RS)>0) {
+      $l_colspan = 0;
       $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (nvl($w_texto_pagamento,'')!='') {
         $l_html.=$crlf.'      <tr valign="top"><td><b>Condições para pagamento:</b></td>';
         $l_html.=$crlf.'        <td>'.CRLF2BR($w_texto_pagamento).'</td></tr>';
       }
       $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
-      $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=$crlf.'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';
       $l_html.=$crlf.'          <tr align="center">';
-      $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Ordem</b></td>';
-      $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
-      $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Vencimento</b></td>';
+      $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Ordem</b></td>';
+      $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
+      $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Vencimento</b></td>';
       if($w_aditivo>0) {
         $l_html.=$crlf.'            <td colspan=4 bgColor="'.$conTrBgColor.'"><b>Valor</b></td>';
       } else {
-        $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Valor</b></td>';
+        $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Valor</b></td>';
       }
-      $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Observações</b></td>';
+      $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Observações</b></td>';
       $l_html.=$crlf.'            <td colspan=5 bgColor="'.$conTrBgColor.'"><b>Financeiro</b></td>';
       $l_html.=$crlf.'          </tr>';
       $l_html.=$crlf.'          <tr align="center">';
       if($w_aditivo>0) {
-        $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Inicial</b></td>';
-        $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Excedente</b></td>';
-        $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Reajuste</b></td>';
-        $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Total</b></td>';
+        $l_colspan++; $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Inicial</b></td>';
+        $l_colspan++; $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Excedente</b></td>';
+        $l_colspan++; $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Reajuste</b></td>';
+        $l_colspan++; $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Total</b></td>';
       }
       $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Lançamento</b></td>';
       $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
@@ -978,61 +928,65 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $w_tot_liq  = 0;
       $w_bloco    = '';
       $w_id = 0;
+      $f_html = '';
+      $i = 0;
       foreach($RS as $row) {
-        if ($w_bloco!=f($row,'sq_acordo_aditivo') && $w_aditivo>0 && f($row,'prorrogacao')=='S') {
-          $l_html.=$crlf.'        <tr valign="top" bgColor="'.$conTrBgColor.'">';
-          $l_html.=$crlf.'        <td align="right" colspan="2"><b>Totais do período</b></td>';
-          $l_html.=$crlf.'        <td align="right"><b>Previsto</b></td>';
-          if($w_aditivo>0) {
-            $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total_i).'</b></td>';
-            $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total_e).'</b></td>';
-            $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total_r).'</b></td>';
-          }
-          $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total).'</b></td>';
-          $l_html.=$crlf.'        <td colspan=3>';
-          $l_html.=$crlf.'        &nbsp;</td>';
-          $l_html.=$crlf.'        <td align="right"><b>Liquidado<br>Pago</b></td>';
-          $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_tot_liq).'<br>'.formatNumber($s_real).'</b></td>';
-          if ($s_total==0) {
-            $l_html.=$crlf.'        <td align="center">0,00%<br>0,00%</td>';
-          } else {
-            $l_html.=$crlf.'        <td align="center"><b>'.formatNumber($s_tot_liq/$s_total*100,2).'%<br>'.formatNumber($s_real/$s_total*100,2).'%</b></td>';
-          }
-          $l_html.=$crlf.'      </tr>';
-          
-          $w_bloco    = f($row,'sq_acordo_aditivo');
-          $s_total    = 0;
-          $s_total_i  = 0;
-          $s_total_e  = 0;
-          $s_total_r  = 0;
-          $s_tot_liq  = 0;
-          $s_real     = 0;
-        } 
-        
         if ($w_atual!=f($row,'sq_acordo_parcela')) {
           // Verifica se a parcela anterior tem mais de um financeiro para colocar a linha-resumo
           if ($w_cont > 1) {
             // chamada para o JavaScript de colapsar/expandir
-            $l_html.=$crlf.'      <tr class="rodape-'.$w_id.'" valign="top">';
-            $l_html.=$crlf.'          <td class="total-'.$w_id.'" colspan=3 align="right">';
-            $l_html.=$crlf.'            <b>Total dos '.$w_cont.' lançamentos: </b></td>';
-            $l_html.=$crlf.'          <td class="total-'.$w_id.'" align="right"><b>'.formatNumber($w_tot_parc).'</b></td>';
-            $l_html.=$crlf.'          <td class="total-'.$w_id.'" ></td>';
+            $l_html.=$crlf.'          <td colspan=3 align="right">Total dos '.$w_cont.' lançamentos&nbsp;<a href="javascript:this.status.value" value="'.$w_id.'" id="link-'.$w_id.'">[-]</a>&nbsp;</td>';
+            $l_html.=$crlf.'          <td align="right"><b>'.formatNumber($w_tot_parc).'</b></td>';
+            $l_html.=$crlf.'          <td>&nbsp;</td>';
             $l_html.=$crlf.'        </tr>';
+            $l_html.=$crlf.$f_html;
+            $f_html = '';
             $w_id++;
-          }
-          // Verifica se a próxima parcela tem mais de um financeiro associado e cria uma nova classe
-          if (f($row,'qt_financeiro')>1) {
-            $l_html.=$crlf.'      <tr class="cabecalho-'.$w_id.'" valign="top">';
+            $i = 0;
           } else {
-            $l_html.=$crlf.'      <tr valign="top">';
+            $l_html.=$crlf.$f_html;
+            $f_html = '';
+            $i = 0;
           }
+
+          if ($w_bloco!=f($row,'sq_acordo_aditivo') && $w_aditivo>0 && f($row,'prorrogacao')=='S') {
+            $l_html.=$crlf.$f_html;
+            $f_html = '';
+            $l_html.=$crlf.'        <tr valign="top" bgColor="'.$conTrBgColor.'">';
+            $l_html.=$crlf.'        <td align="right" colspan="2"><b>Totais do período</b></td>';
+            $l_html.=$crlf.'        <td align="right"><b>Previsto</b></td>';
+            if($w_aditivo>0) {
+              $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total_i).'</b></td>';
+              $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total_e).'</b></td>';
+              $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total_r).'</b></td>';
+            }
+            $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_total).'</b></td>';
+            $l_html.=$crlf.'        <td colspan=3>';
+            $l_html.=$crlf.'        &nbsp;</td>';
+            $l_html.=$crlf.'        <td align="right"><b>Liquidado<br>Pago</b></td>';
+            $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($s_tot_liq).'<br>'.formatNumber($s_real).'</b></td>';
+            if ($s_total==0) {
+              $l_html.=$crlf.'        <td align="center">0,00%<br>0,00%</td>';
+            } else {
+              $l_html.=$crlf.'        <td align="center"><b>'.formatNumber($s_tot_liq/$s_total*100,2).'%<br>'.formatNumber($s_real/$s_total*100,2).'%</b></td>';
+            }
+            $l_html.=$crlf.'      </tr>';
+
+            $w_bloco    = f($row,'sq_acordo_aditivo');
+            $s_total    = 0;
+            $s_total_i  = 0;
+            $s_total_e  = 0;
+            $s_total_r  = 0;
+            $s_tot_liq  = 0;
+            $s_real     = 0;
+          } 
+
+          // Verifica se a próxima parcela tem mais de um financeiro associado e cria uma nova classe
+          $l_html.=$crlf.'      <tr valign="top">';
           $w_tot_parc = 0;
           $w_atual = f($row,'sq_acordo_parcela');
 
-          $l_html.=$crlf.'          <td align="center" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>';
-          if (f($row,'qt_financeiro')>1) $l_html.=$crlf.'            <a quantidade="'.f($row,'qt_financeiro').'" href="javascript:this.status.value" value="'.$w_id.'" id="link-'.$w_id.'">[-]</a>';
-
+          $l_html.=$crlf.'          <td align="center">';
           if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row,'vencimento')<0) {
             $l_html.=$crlf.'           <img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center" title="Parcela cancelada!">';
           } elseif (Nvl(f($row,'quitacao'),'nulo')=='nulo') {
@@ -1052,16 +1006,16 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           } 
 
           $l_html.=$crlf.'      '.f($row,'ordem').'</td>';
-          if(nvl(f($row,'inicio'),'')!='') $l_html.=$crlf.'        <td align="center" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
-          else                             $l_html.=$crlf.'        <td align="center" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>---</td>';
-          $l_html.=$crlf.'        <td align="center" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
+          if(nvl(f($row,'inicio'),'')!='') $l_html.=$crlf.'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
+          else                             $l_html.=$crlf.'        <td align="center">---</td>';
+          $l_html.=$crlf.'        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
           if($w_aditivo>0) {
-            $l_html.=$crlf.'        <td align="right" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.formatNumber(f($row,'valor_inicial')).'</td>';
-            $l_html.=$crlf.'        <td align="right" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.formatNumber(f($row,'valor_excedente')).'</td>';
-            $l_html.=$crlf.'        <td align="right" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.formatNumber(f($row,'valor_reajuste')).'</td>';
+            $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
+            $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_excedente')).'</td>';
+            $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
           }
-          $l_html.=$crlf.'        <td align="right" '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.formatNumber(f($row,'valor')).'</td>';
-          $l_html.=$crlf.'        <td '.((f($row,'qt_financeiro')>1) ? ' rowspan="'.(f($row,'qt_financeiro')+1).'"' : '').'>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
+          $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          $l_html.=$crlf.'        <td>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
           $w_total   += f($row,'valor');
           $w_total_i += f($row,'valor_inicial');
           $w_total_e += f($row,'valor_excedente');
@@ -1072,18 +1026,18 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $s_total_e += f($row,'valor_excedente');
           $s_total_r += f($row,'valor_reajuste');
           $w_cont = f($row,'qt_financeiro');
-        } else {
-          $l_html.=$crlf.'      <tr class="rodape-'.$w_id.'" valign="top">';
         }
 
         if (Nvl(f($row,'cd_lancamento'),'')>'') {
-          if ($l_tipo!='WORD') $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
-          else                 $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="center" nowrap>'.f($row,'cd_lancamento').'</td>';
-          if(nvl(f($row,'inicio'),'')!='') $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>';
-          else                             $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="center">---</td>';
-          $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
-          $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="right">'.formatNumber(f($row,'vl_lancamento')).'</td>';
-          $l_html.=$crlf.'        <td class="remover-'.$w_id.'" align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
+          if (f($row,'qt_financeiro')>1) $f_html.=$crlf . '      <tr valign="top" class="remover-'.$w_id.'"><td colspan="'.$l_colspan.'">';
+          if ($l_tipo!='WORD') $f_html.=$crlf.'        <td align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
+          else                 $f_html.=$crlf.'        <td align="center" nowrap>'.f($row,'cd_lancamento').'</td>';
+          if(nvl(f($row,'inicio'),'')!='') $f_html.=$crlf.'        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>';
+          else                             $f_html.=$crlf.'        <td align="center">---</td>';
+          $f_html.=$crlf.'        <td align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
+          $f_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'vl_lancamento')).'</td>';
+          $f_html.=$crlf.'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
+          $f_html.=$crlf.'      </tr>';
           if (Nvl(f($row,'quitacao'),'')!='') { 
             $w_real += f($row,'vl_lancamento');
             $s_real += f($row,'vl_lancamento');
@@ -1091,23 +1045,26 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $w_tot_parc += f($row,'vl_lancamento');
           $w_tot_liq  += f($row,'vl_lancamento');
           $s_tot_liq  += f($row,'vl_lancamento');
+          $i++;
         } else {
-          $l_html.=$crlf.'        <td align="center">---</td>';
-          $l_html.=$crlf.'        <td align="center">---</td>';
-          $l_html.=$crlf.'        <td align="center">---</td>';
-          $l_html.=$crlf.'        <td align="center">---</td>';
-          $l_html.=$crlf.'        <td align="center">---</td>';
+          $f_html.=$crlf.'        <td align="center">---</td>';
+          $f_html.=$crlf.'        <td align="center">---</td>';
+          $f_html.=$crlf.'        <td align="center">---</td>';
+          $f_html.=$crlf.'        <td align="center">---</td>';
+          $f_html.=$crlf.'        <td align="center">---</td>';
+          $i = 0;
         } 
-        $l_html.=$crlf.'      </tr>';
       }
       
       if ($w_cont > 1) {
-        $l_html.=$crlf . '      <tr class="rodape-' . $w_id . '" valign="top">';
-        $l_html.=$crlf . '          <td class="total-' . $w_id . '" colspan=3 align="right">';
-        $l_html.=$crlf . '            <b>Total dos ' . $w_cont . ' lançamentos: </b></td>';
-        $l_html.=$crlf . '          <td class="total-' . $w_id . '" align="right"><b>' . formatNumber($w_tot_parc) . '</b></td>';
-        $l_html.=$crlf . '          <td class="total-' . $w_id . '" ></td>';
+        $l_html.=$crlf . '      <tr valign="top">';
+        $l_html.=$crlf . '          <td colspan=3 align="right">Total dos ' . $w_cont . ' lançamentos&nbsp;<a href="javascript:this.status.value" value="'.$w_id.'" id="link-'.$w_id.'">[-]</a>&nbsp;</td>';
+        $l_html.=$crlf . '          <td align="right"><b>' . formatNumber($w_tot_parc) . '</b></td>';
+        $l_html.=$crlf . '          <td>&nbsp;</td>';
         $l_html.=$crlf . '        </tr>';
+        $l_html.=$crlf.$f_html;
+      } else {
+        $l_html.=$crlf.$f_html;
       }
       if ($w_total>0 || $w_real>0) {
         if ($w_bloco!='') {
