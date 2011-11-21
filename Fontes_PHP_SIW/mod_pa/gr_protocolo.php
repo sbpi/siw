@@ -24,8 +24,6 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'funcoes/selecaoAssuntoRadio.php');
 include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
-include_once($w_dir_volta.'classes/sp/db_getCaixa.php');
-include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -190,24 +188,18 @@ function Gerencial() {
         $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S').']</td></tr>';
       }
     }    
-    $sql = new db_getCaixa;
-    $RS = $sql->getInstanceOf($dbms, $p_chave, $w_cliente, $w_usuario,null, null, null, null, null, null, null, null, null,null,null,null,null);
-    foreach ($RS as $row) {
+    if ($p_atividade>'') {
       $w_linha++;
-      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_chave);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Caixa<td>[<b>'.f($row, 'numero').'/'.f($row, 'sg_unidade').'</b>]';
-      break;
-    }
-    if ($p_atividade>''){
-      $w_linha++;
-      $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_atividade);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Unidade arquivadora<td>[<b>'.f($RS,'nome').'</b>]';
+      $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
+      foreach ($RS as $row) { $RS = $row; break; }
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
     if ($p_sqcc>'') {
       $w_linha++;
       $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
     } 
+    if ($p_chave>'') { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]'; }
     if ($p_prazo>'') { $w_linha++; $w_filtro = $w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
@@ -947,11 +939,6 @@ function Gerencial() {
     SelecaoUnidade('<U>U</U>nidade de posse:','U','Selecione a Unidade de posse do protocolo na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
     selecaoTipoDespacho('Último des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$p_prioridade,null,'p_prioridade','SELECAO',null);
     
-    ShowHTML('      <tr valign="top"><td colspan="2"><b>Documentos no arquivo central: (não esqueça de marcar a fase "Arquivado central", abaixo)</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
-    SelecaoCaixa('<u>C</u>aixa:', 'C', "Selecione a caixa que deseja consultar.", $p_chave, $w_cliente, null, 'p_chave', 'CENTRAL', null);
-    SelecaoUnidade('<U>U</U>nidade da caixa:','U',null,$p_atividade,null,'p_atividade',null,null);
-    ShowHTML('        </tr></table>');
-
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
     ShowHTML('          <td><b>Número:<br><INPUT class="STI" type="text" name="p_empenho" size="10" maxlength="30" value="'.$p_empenho.'">');
     selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$p_solicitante,null,'p_solicitante',null,null);

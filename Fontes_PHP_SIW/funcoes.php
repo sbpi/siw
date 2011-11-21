@@ -332,7 +332,7 @@ function headerExcel($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Montagem do cabeçalho de visualização de documentos
 // -------------------------------------------------------------------------
-function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, $l_linha_pag=45,$l_filtro='') {
+function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, &$l_linha_pag=45,$l_filtro='') {
   extract($GLOBALS);
   if ($l_formato=='V') {
     // Visualização de documento

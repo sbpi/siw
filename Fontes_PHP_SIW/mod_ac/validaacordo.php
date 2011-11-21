@@ -73,7 +73,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
     }
   }
 
-  // Recupera os dados do preposto
+  // Recupera os dados do representante legal
   $sql = new db_getBenef; $l_rs2 = $sql->getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
   if (count($l_rs2)==0) {
     $l_existe_rs2=0; 
@@ -103,19 +103,19 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   // um encaminhamento.
   //-----------------------------------------------------------------------------
 
-  // Validações para a outra parte e preposto
+  // Validações para a outra parte e representante legal
       // Verifica se foi indicada a outra parte
       if ($l_existe_rs1==0) {
         if (substr($l_sg1,0,3)!='GCB')$l_erro.='<li>A outra parte não foi informada'; 
         else                          $l_erro.='<li>O bolsista não foi informado';
         $l_tipo=0;
       } else {
-        // Validação do preposto
-        // Não há preposto para contratos com pessoa física
+        // Validação do representante legal
+        // Não há representante legal para contratos com pessoa física
         if (Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==1) {
-          // Se outra parte for pessoa física, não pode ter preposto
+          // Se outra parte for pessoa física, não pode ter representante legal
           if ($l_existe_rs2>0) {
-            $l_erro.='<li>Quando a outra parte é pessoa física não pode haver preposto.';
+            $l_erro.='<li>Quando a outra parte é pessoa física não pode haver representante legal.';
             $l_tipo=0;
           } 
         } else {
@@ -126,14 +126,13 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
             $l_tipo=0; 
           } 
   
-          // Se outra parte for pessoa jurídica, deve ter preposto
+          // Se outra parte for pessoa jurídica, deve ter representante legal
           if ($l_existe_rs2==0) {
-            $l_erro.='<li>O preposto não foi informado.';
+            $l_erro.='<li>O representante legal não foi informado.';
             $l_tipo=0;
           } else {
             if (!(Nvl(f($l_rs2,'sq_tipo_pessoa'),0)==1)) {
-              // O preposto deve ser pessoa física
-              $l_erro.='<li>O preposto deve ser pessoa física.';
+              $l_erro.='<li>O representante legal deve ser pessoa física.';
               $l_tipo=0;
             } 
           } 

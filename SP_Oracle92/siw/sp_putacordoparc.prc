@@ -17,7 +17,8 @@ create or replace procedure SP_PutAcordoParc
     p_per_fim             in date     default null,
     p_valor_inicial       in number   default null,
     p_valor_excedente     in number   default null,
-    p_valor_reajuste      in number   default null
+    p_valor_reajuste      in number   default null,
+    p_qtd_31              in number   default null
    ) is
    
    w_cont        number(4) := 1;
@@ -28,6 +29,7 @@ create or replace procedure SP_PutAcordoParc
    w_valor_n     number(18,4);
    w_meses       number(4);
    w_meses_parc  number(4);
+   w_dias_parc   number(4);
    w_dias_1      number(5);
    w_dias_n      number(5);
    w_dias        number(18);
@@ -175,6 +177,121 @@ begin
          values
            (sq_acordo_parcela.nextval, p_chave,            1+w_ordem,          sysdate,       w_fim,           p_observacao,  w_total, 
             w_inicio,                  w_fim,              p_aditivo,          w_inicial,     w_excedente,     w_reajuste);
+      Elsif p_tipo_geracao = 31 Then -- Se uma parcela, no fim do acordo
+         -- Define o número de meses da vigência para cálculo do valor mensal e para geração das parcelas
+         w_meses      := round(months_between(w_fim, w_inicio));
+         w_meses_parc := p_qtd_31;
+         If w_meses/w_meses_parc = floor(w_meses/w_meses_parc) 
+            Then If w_meses/w_meses_parc > 0
+                    Then w_dias_parc := 0; -- Mais meses que parcelas. Períodos maiores que 30 dias
+                    Else w_dias_parc := 1; -- Mais parcelas que meses. Períodos menores que 30 dias.
+                         w_dias_parc := round((w_fim - w_inicio) / w_meses_parc,0);
+
+                 End If;
+            Else w_dias_parc := round((w_fim - w_inicio) / w_meses_parc,0);
+         End If;
+         
+         w_valor       := round(w_total / w_meses_parc,2);
+         w_valor_1     := w_valor;
+         w_valor_n     := w_valor;
+         w_inicial_1   := w_inicial;
+         w_inicial_n   := w_inicial;
+         w_excedente_1 := w_excedente;
+         w_excedente_n := w_excedente;
+         w_reajuste_1  := w_reajuste;
+         w_reajuste_n  := w_reajuste;
+
+         for w_cont in 1 .. w_meses_parc loop
+            If w_cont = 1 Then
+               -- Define o período de realização da primeira parcela
+               w_per_ini := w_inicio;
+               
+               If w_dias_parc = 0 Then
+                  w_per_fim := add_months(w_inicio,(w_meses/w_meses_parc))-1;
+               Else
+                  w_per_fim := w_per_ini + w_dias_parc - 1;
+                  if to_char(w_per_fim,'dd') >=29 then w_per_fim := last_day(w_per_fim); end if;
+               End If;
+               
+               w_vencimento := w_per_fim;
+               
+               If w_vencimento > w_fim    Then w_vencimento := w_fim;    End If;
+               If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
+
+               -- Calcula o valor total da parcela
+               If(w_existe_aditivo='N' or (w_existe_aditivo='S' and w_aditivo.prorrogacao='N')) Then
+                  w_valor_1 := round(coalesce(w_valor_1,0),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
+               Else
+                  w_valor_1 :=  round(coalesce(w_inicial_1,p_valor_diferente),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
+               End If;
+
+               -- Se parcela do contrato original, valor inicial igual ao valor da parcela
+               If p_aditivo is null Then w_inicial_1 := w_valor_1; End If;
+
+               -- insere a primeira parcela
+               insert into ac_acordo_parcela
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,              vencimento,             observacao,    valor, 
+                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
+               values
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_1,2),
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor_1),2), round(coalesce(w_excedente_1,0),2), round(coalesce(w_reajuste_1,0),2));
+            Elsif w_cont = w_meses_parc Then
+               -- Define o período de realização da ultima parcela
+               w_per_ini    := w_per_fim +1;
+               w_per_fim    := w_fim;
+               w_vencimento := w_per_fim;
+               
+               -- Calcula o valor total da parcela
+               If(w_existe_aditivo='N' or (w_existe_aditivo='S' and w_aditivo.prorrogacao='N')) Then
+                  w_valor_n := round(coalesce(w_valor_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
+               Else
+                  w_valor_n :=  round(coalesce(w_inicial_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
+               End If;
+
+               -- Se parcela do contrato original, valor inicial igual ao valor da parcela
+               If p_aditivo is null Then w_inicial_n := w_valor_n; End If;
+
+               -- Insere a última parcela
+               insert into ac_acordo_parcela
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,              vencimento,             observacao,    valor, 
+                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
+               values
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_n,2),
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_n,w_valor_n),2), round(coalesce(w_excedente_n,0),2), round(coalesce(w_reajuste_n,0),2));
+            Else
+               -- Define o período de realização da parcela
+               w_per_ini := w_per_fim + 1;
+
+               If w_dias_parc = 0 Then
+                  w_per_fim := add_months(w_per_ini,(w_meses/w_meses_parc))-1;
+               Else
+                  w_per_fim := w_per_ini + w_dias_parc - 1;
+                  if to_char(w_per_fim,'dd') >=29 or to_char(w_per_fim,'dd') <= 3 then w_per_fim := last_day(w_per_fim-10); end if;
+               End If;
+
+               w_vencimento := w_per_fim;
+
+               If w_vencimento > w_fim    Then w_vencimento := w_fim;    End If;
+               If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
+               
+               -- Calcula o valor total da parcela
+               If(w_existe_aditivo='N' or (w_existe_aditivo='S' and w_aditivo.prorrogacao='N')) Then
+                  w_valor := round(coalesce(w_valor,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
+               Else
+                  w_valor :=  round(coalesce(w_inicial,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
+               End If;
+               
+               -- Se parcela do contrato original, valor inicial igual ao valor da parcela
+               If p_aditivo is null Then w_inicial := w_valor; End If;
+
+               insert into ac_acordo_parcela
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,            vencimento,           observacao,    valor, 
+                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,      valor_excedente,      valor_reajuste)
+               values
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,            w_vencimento,         p_observacao,  round(w_valor,2),
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial,w_valor),2), round(coalesce(w_excedente,0),2), round(coalesce(w_reajuste,0),2));
+            End If;
+         end loop;
       Else
          -- Define o número de meses da vigência para cálculo do valor mensal e para geração das parcelas
          w_meses      := round(months_between(w_fim, w_inicio));

@@ -227,10 +227,6 @@ function Inicial() {
         $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
         $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_prioridade>''){
-        $w_linha++;
-        $w_filtro.='<tr valign="top"><td align="right">Número do pedido<td>[<b>'.$p_prioridade.'</b>]';
-      } 
       if ($p_chave>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]'; }
       if ($p_prazo>'') { $w_linha++; $w_filtro.=' <tr valign="top"><td align="right">Prazo de devolução até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
       if ($p_ini_i>'')      { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Data da solicitação entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
@@ -261,6 +257,12 @@ function Inicial() {
       if ($p_pais>'' || $p_regiao>'' || $p_cidade>'') {
         $w_linha++;
         $w_filtro.='<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+      } 
+      if ($p_prioridade>''){
+        $w_linha++;
+        $sql = new db_getTipoDespacho_PA; $RS = $sql->getInstanceOf($dbms,$p_prioridade,$w_cliente,null,null,null,null);
+        foreach ($RS as $row) {$RS = $row; break;}
+        $w_filtro.='<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
       if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
@@ -1946,8 +1948,8 @@ function Grava() {
   $w_tipo       = '';
   $w_nome       = '';
   Cabecalho();
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PAEMP':
