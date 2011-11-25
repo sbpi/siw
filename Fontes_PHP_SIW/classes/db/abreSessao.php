@@ -22,6 +22,7 @@ class abreSessao {
      if ($DB_TYPE==MSSQL) { ini_set('mssql.datetimeconvert', 0);}
      if ($DB_TYPE==PGSQL) { 
        pg_query($DBMS->getConnectionHandle(), "set client_encoding to 'LATIN1'"); 
+       pg_query($DBMS->getConnectionHandle(), "set datestyle to 'SQL, DMY'"); 
        //pg_query($DBMS->getConnectionHandle(), "set search_path to siw,public");
      }
      return $DBMS->getConnectionHandle();

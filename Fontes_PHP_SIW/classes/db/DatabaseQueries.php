@@ -755,7 +755,8 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                 if ($value[1]!=B_CURSOR) {
                    if (nvl($value[0],'')==='') { $par .= ", null"; }
                    elseif ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
-                   elseif ($value[1]==B_DATE) { $par .= ", '".date('d/m/Y',toDate($value[0]))."'"; }
+                   elseif ($value[1]==B_DATE)    { $par .= ", '".date('d/m/Y',toDate($value[0]))."'"; }
+                   elseif ($value[1]==B_NUMERIC) { $par .= ", ".str_replace(',','.',str_replace('.','',$value[0])); }
                    else { $par .= ", $value[0]"; }
                 } else {
                   $cursor = true;
@@ -810,7 +811,6 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     }
 
     function getResultData() {
-
         if(is_resource($this->result)) { 
           for ($i = 0; $i < pg_num_fields($this->result); $i++) {
             if (pg_field_type($this->result, $i)=='timestamp' || pg_field_type($this->result, $i)=='date' || pg_field_type($this->result, $i)=='numeric') { $this->column_datatype[pg_field_name($this->result, $i)] = pg_field_type($this->result, $i); }
@@ -824,13 +824,13 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                 if (nvl($this->resultData[$i][$key],'')>'') { 
                   if ($val=='date') {
                     $tmp = $this->resultData[$i][$key];
-                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 
+                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
                   } elseif ($val=='timestamp1') {
                     $tmp = $this->resultData[$i][$key];
                     $this->resultData[$i][$key] = mktime(substr($tmp,12,2),substr($tmp,15,2),substr($tmp,18,2),substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
                   } elseif ($val=='timestamp') {
                     $tmp = $this->resultData[$i][$key];
-                    $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,8,2),substr($tmp,0,4)); 
+                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
                   } else {
                     $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
                   }
@@ -843,5 +843,38 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
           return null; 
         }
     }
+
+    function getResultArray() {
+        if(is_resource($this->result)) { 
+          for ($i = 0; $i < pg_num_fields($this->result); $i++) {
+            if (pg_field_type($this->result, $i)=='timestamp' || pg_field_type($this->result, $i)=='date' || pg_field_type($this->result, $i)=='numeric') { $this->column_datatype[pg_field_name($this->result, $i)] = pg_field_type($this->result, $i); }
+            elseif (substr(strtolower(pg_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(pg_field_name($this->result, $i))] = 'timestamp1'; }
+          }
+          $this->resultData  = pg_fetch_array($this->result);
+          $this->num_rows    = pg_num_rows($this->result);
+          if (isset($this->column_datatype)) {
+            foreach ($this->column_datatype as $key => $val) {
+              if (nvl($this->resultData[$key],'')>'') { 
+                if ($val=='date') {
+                  $tmp = $this->resultData[$key];
+                  $this->resultData[$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                } elseif ($val=='timestamp1') {
+                  $tmp = $this->resultData[$key];
+                  $this->resultData[$key] = mktime(substr($tmp,12,2),substr($tmp,15,2),substr($tmp,18,2),substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                } elseif ($val=='timestamp') {
+                  $tmp = $this->resultData[$key];
+                  $this->resultData[$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                } else {
+                  $this->resultData[$key] = str_replace(',','.',$this->resultData[$key]); 
+                }
+              }
+            }
+          }
+          return $this->resultData; 
+        } else { 
+          return null; 
+        }
+    }
+    
 } 
 ?>

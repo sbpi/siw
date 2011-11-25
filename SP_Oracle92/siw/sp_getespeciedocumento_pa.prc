@@ -12,6 +12,7 @@ begin
       open p_result for 
          select a.sq_especie_documento as chave, a.cliente, a.nome, a.sigla, a.ativo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                acentos(a.nome) as nome_indice,
                 b.sq_assunto, b.codigo as cd_assunto, b.descricao as ds_assunto
            from pa_especie_documento a
                 left join pa_assunto b on (a.sq_assunto = b.sq_assunto)
@@ -24,6 +25,7 @@ begin
       -- Verifica se há outro registro com a mesma descrição ou sigla
       open p_result for 
          select a.sq_especie_documento as chave, a.cliente, a.nome, a.sigla, a.ativo,
+                acentos(a.nome) as nome_indice,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
            from pa_especie_documento a
           where a.sq_especie_documento <> coalesce(p_chave,0)

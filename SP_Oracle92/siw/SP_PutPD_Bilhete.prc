@@ -34,7 +34,7 @@ begin
             x_desloc := x_desloc||','''||to_number(l_item)||'''';
          End If;
          l_desloc := substr(l_desloc,Instr(l_desloc,',')+1,200);
-         Exit when l_desloc is null;
+         Exit when length(l_desloc) = 0;
       End Loop;
       x_desloc := substr(x_desloc,2,200);
    End If;

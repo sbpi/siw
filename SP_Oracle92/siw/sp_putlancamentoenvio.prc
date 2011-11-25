@@ -15,10 +15,37 @@ create or replace procedure SP_PutLancamentoEnvio
    ) is
    w_reg           number(18) := null;
    w_chave         number(18) := null;
+   w_pp            number(18);
+   w_novo_tramite  number(18) := p_novo_tramite;
+   w_pendencia     number(18) := 0;
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
+
 begin
-   If p_tramite <> p_novo_tramite Then
+   If p_tramite <> w_novo_tramite Then
+      -- Verifica se há pendência na prestação de contas de alguma viagem
+      select count(*) into w_pendencia
+        from pd_missao                        a
+             inner   join pd_categoria_diaria f on (a.diaria              = f.sq_categoria_diaria)
+             inner   join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+               inner join siw_tramite         c on (b.sq_siw_tramite      = c.sq_siw_tramite and
+                                                    c.sigla               in ('PC','AP')
+                                                   )
+               inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
+               inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
+       where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+         and a.sq_pessoa = (select pessoa from fn_lancamento where sq_siw_solicitacao = p_chave);
+
+      -- Se houver, coloca o pagamento como pendente de prestação de contas
+      If w_pendencia > 0 Then
+         select c.sq_siw_tramite into w_novo_tramite 
+           from siw_solicitacao        b
+                inner join siw_tramite c on (b.sq_menu             = c.sq_menu and
+                                             c.sigla               = 'PP'
+                                            )
+          where b.sq_siw_solicitacao = p_chave;
+      End If;
+      
       -- Recupera a próxima chave
       select sq_siw_solic_log.nextval into w_chave from dual;
       
@@ -35,12 +62,12 @@ begin
          from siw_tramite a,
               siw_tramite b
         where a.sq_siw_tramite = p_tramite
-          and b.sq_siw_tramite = p_novo_tramite
+          and b.sq_siw_tramite = w_novo_tramite
       );
 
       -- Atualiza a situação da solicitação
       Update siw_solicitacao set
-         sq_siw_tramite = p_novo_tramite,
+         sq_siw_tramite = w_novo_tramite,
          conclusao      = null
       Where sq_siw_solicitacao = p_chave;
 
@@ -54,7 +81,7 @@ begin
       -- Atualiza o responsável atual pela demanda
       Update siw_solicitacao set conclusao = null, executor = p_destinatario Where sq_siw_solicitacao = p_chave;
 
-      select count(*) into w_reg from siw_tramite where sq_siw_tramite = Nvl(p_novo_tramite,p_tramite) and sigla='CI';
+      select count(*) into w_reg from siw_tramite where sq_siw_tramite = Nvl(w_novo_tramite,p_tramite) and sigla='CI';
       If w_reg > 0 Then
          Update siw_solicitacao set cadastrador = p_destinatario Where sq_siw_solicitacao = p_chave;
       End If;
@@ -89,7 +116,7 @@ begin
       );
       
       -- Decide se o vínculo do arquivo será com o log da solicitação ou da demanda.
-      If p_tramite <> p_novo_tramite Then
+      If p_tramite <> w_novo_tramite Then
          -- Insere registro em SIW_SOLIC_LOG_ARQ
          insert into siw_solic_log_arq (sq_siw_solic_log, sq_siw_arquivo)
          values (w_chave, w_chave_arq);

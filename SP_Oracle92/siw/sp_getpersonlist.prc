@@ -424,7 +424,7 @@ begin
             x_tipo := x_tipo||','''||l_item||'''';
          End If;
          l_tipo := substr(l_tipo,Instr(l_tipo,',')+1,200);
-         Exit when l_tipo is null;
+         Exit when length(l_tipo)=0;
       End Loop;
       x_tipo := upper(substr(x_tipo,2,200));
 

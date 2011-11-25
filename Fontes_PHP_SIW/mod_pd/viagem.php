@@ -6546,6 +6546,9 @@ function SolicMail($p_solic, $p_tipo) {
   }
 }
 
+// =========================================================================
+// Rotina de inclusão de arquivos
+// -------------------------------------------------------------------------
 function relAnexo() {
   extract($GLOBALS);
   global $w_Disabled;

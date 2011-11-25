@@ -55,11 +55,15 @@ create or replace procedure SP_PutAcordoOutra
    w_sq_tipo_vinculo number(18);
 begin
    -- Recupera o módulo ao qual a solicitação pertence
-   select c.sigla into w_sg_modulo
+   select case when b.sq_siw_solicitacao is not null then 'PR'
+               when c.sq_siw_solicitacao is not null then 'AC'
+               when d.sq_siw_solicitacao is not null then 'FN'
+          end into w_sg_modulo
      from siw_solicitacao         a
-          inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
-            inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
-    where sq_siw_solicitacao = p_chave;
+          left join pj_projeto    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+          left join ac_acordo     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+          left join fn_lancamento d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+    where a.sq_siw_solicitacao = p_chave;
 
    -- Recupera a forma de pagamento
    If w_sg_modulo = 'AC' Then

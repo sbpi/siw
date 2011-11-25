@@ -3046,7 +3046,7 @@ function Tramitacao() {
         ShowHTML('<INPUT type="hidden" name="w_despacho" value="DESCARTE DE PROTOCOLO.">');
       } else {
         ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
-        ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESPACHO: ' . $w_nm_tipo_despacho . '</b></font></td></tr>');
+        ShowHTML('      <tr><td colspan="3" bgcolor="#f0f0f0" align=justify><font size="2"><b>DESPACHO: ' . $w_nm_tipo_despacho . '</b></font></td></tr>');
         if ($p_tipo_despacho == f($RS_Parametro, 'despacho_apensar') || $p_tipo_despacho == f($RS_Parametro, 'despacho_anexar')) {
           SelecaoProtocolo('ao <U>p</U>rocesso:', 'U', 'Selecione o processo ao qual o protocolo será juntado.', $w_protocolo, $p_unid_posse, 'w_protocolo', 'JUNTADA', null, 3);
           //ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');

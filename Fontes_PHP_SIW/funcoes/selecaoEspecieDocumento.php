@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getEspecieDocumento_PA.php');
 function selecaoEspecieDocumento($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $sql = new db_getEspecieDocumento_PA; $RS = $sql->getInstanceOf($dbms,null,$w_cliente,null,null,'S',null);
-  $RS = SortArray($RS,'nome','asc');
+  $RS = SortArray($RS,'nome_indice','asc');
   if (!isset($hint)) ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else               ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');

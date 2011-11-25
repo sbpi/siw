@@ -44,7 +44,7 @@ begin
              (w_chave, l_item);
          End If;
          l_fase := substr(l_fase,Instr(l_fase,',')+1,200);
-         Exit when l_fase is null;
+         Exit when length(l_fase)=0;
       End Loop;
    End If;
    Elsif p_operacao = 'A' Then
@@ -76,7 +76,7 @@ begin
                  (p_chave, l_item);
             End If;
             l_fase := substr(l_fase,Instr(l_fase,',')+1,200);
-            Exit when l_fase is null;
+            Exit when length(l_fase)=0;
          End Loop;
       End If;
    Elsif p_operacao = 'E' Then

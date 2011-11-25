@@ -815,11 +815,7 @@ function Geral() {
   } else {
     if (strpos('AEV',$O)!==false or nvl($w_copia,'')!='') {
       // Recupera os dados do projeto
-      if ($w_copia > '')  {
-        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG); 
-      } else {
-        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
-      }
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),$SG); 
       if (count($RS)>0) {
         $w_plano                = f($RS,'sq_plano');
         $w_solic_pai            = f($RS,'sq_solic_pai');
@@ -865,7 +861,7 @@ function Geral() {
         $w_palavra_chave        = f($RS,'palavra_chave');
         $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
         $w_sq_menu_relac        = $w_dados_pai[3];
-        $sql = new db_getSolicObjetivo; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null);
+        $sql = new db_getSolicObjetivo; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null);
         $RS = SortArray($RS,'nome','asc');
         $w_objetivo = '';
         foreach($RS as $row) { $w_objetivo .= ','.f($row,'sq_peobjetivo'); }

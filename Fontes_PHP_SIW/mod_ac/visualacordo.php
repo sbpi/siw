@@ -396,10 +396,21 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $w_tot_ac = 0;
           $w_tot_ad = 0;
           foreach($RS1 as $row) {
+            // Recupera os arquivos do aditivo
+            $sql = new db_getAditivoAnexo; $RS2 = $sql->getInstanceOf($dbms, $l_chave, f($row,'sq_acordo_aditivo'), null);
+            $RS2 = SortArray($RS2, 'nome', 'asc', 'tamanho', 'asc');
+
             $l_html.=$crlf.'      <tr valign="top" align="center">';
             $l_html.=$crlf.'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
             $l_html.=$crlf.'        <td>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
-            $l_html.=$crlf.'        <td align="left">'.f($row,'objeto').'</td>';
+            $l_html.=$crlf.'        <td align="left">'.crlf2br(f($row,'objeto'));
+            if (count($RS2)) {
+              $l_html.='<br><b>Arquivo(s) anexado(s):</b>';
+              foreach($RS2 as $row2) {
+                $l_html.='<br>'.LinkArquivo('HL', $w_cliente, f($row, 'arquivo'), null, null, f($row2,'nome'), null) . ' (' . round(f($row2, 'tamanho') / 1024, 1) . ' KB) ';
+              }
+            }
+            $l_html.='</td>';
             $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
             $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
             $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_acrescimo')).'</td>';
