@@ -203,14 +203,10 @@ function TipoAcordo() {
     if ($O=='I' || $O=='A') {
       Validate('w_nome','Nome','1','1','5','60','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
-      ShowHTML('if (theForm.w_prazo_indeterminado[0].checked) {');
-      ShowHTML('  alert(\'Opção escolhida no campo prazo indetermindo é inválido!\')');
-      ShowHTML('  return false;');
-      ShowHTML('}');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
-      ShowHTML('  if (confirm(\'Confirma herança dos dados da opção selecionada?\')) {');
+      ShowHTML('  if (confirm("Confirma herança dos dados da opção selecionada?")) {');
       ShowHTML('     window.close(); ');
       ShowHTML('     opener.focus(); ');
       ShowHTML('     return true; ');
@@ -218,7 +214,7 @@ function TipoAcordo() {
       ShowHTML('  else { return false; } ');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='T' || $O=='D'){
@@ -443,52 +439,21 @@ function TipoAcordo() {
     } 
     ShowHTML('        </table></tr>');
     ShowHTML('      <tr><td valign="top"><b>S<u>i</u>gla:<br><INPUT ACCESSKEY="S" TYPE="TEXT" class="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' TITLE="Informe a sigla desejada para o tipo de acordo."></td>');
-    ShowHTML('          <td valign="top" TITLE="Informe "Sim" se este tipo de acordo aplicar-se a pessoas fisicas."><b>Pessoa física?</b><br>');
-    if ($w_pessoa_fisica=='S' || $w_pessoa_fisica=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_fisica" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_fisica" value="N"> Não');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_fisica" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_fisica" value="N" checked> Não');
-    } 
-    ShowHTML('          <td valign="top" TITLE="Informe "Sim" se este tipo de acordo aplicar-se a pessoas jurídicas."><b>Pessoa jurídica?</b><br>');
-    if ($w_pessoa_juridica=='S' || $w_pessoa_juridica=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="N" checked> Não');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="N" checked> Não');
-    } 
+    MontaRadioSN('<b>Pessoa física?</b>',$w_pessoa_fisica,'w_pessoa_fisica','Marque Sim se contratos deste tipo puderem ser associados a pessoas físicas.');
+    MontaRadioSN('<b>Pessoa jurídica?</b>',$w_pessoa_juridica,'w_pessoa_juridica','Marque Sim se contratos deste tipo puderem ser associados a pessoas jurídicas.');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td valign="top" TITLE="Selecione a modalidade deste tipo de acordo dentre as apresentadas."><b>Modalidade:</b><br>');
-    if ($w_modalidade=='Q' || $w_modalidade=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q" checked> Aquisição<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A"> Arrendamento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E"> Emprego<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"> Fornecimento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"> Parceria institucional<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"> Permissão');
-    } elseif ($w_modalidade=='A') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q"> Aquisição<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A" checked> Arrendamento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E"> Emprego<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"> Fornecimento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"> Parceria institucional<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"> Permissão');
-    } elseif ($w_modalidade=='E') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q"> Aquisição<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A"> Arrendamento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E" checked> Emprego<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"> Fornecimento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"> Parceria institucional<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"> Permissão');
-    } elseif ($w_modalidade=='F') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q"> Aquisição<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A"> Arrendamento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E"> Emprego<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F" checked> Fornecimento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"> Parceria institucional<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"> Permissão');
-    } elseif ($w_modalidade=='P') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q"> Aquisição<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A"> Arrendamento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E"> Emprego<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"> Fornecimento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"> Parceria institucional<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P" checked> Permissão');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q"> Aquisição<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A"> Arrendamento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E"> Emprego<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"> Fornecimento<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I" checked> Parceria institucional<br><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"> Permissão');
-    } 
-    ShowHTML('          <td valign="top" TITLE="Informe "Sim" se este tipo de acordo tiver prazo indeterminado."><b>Prazo indeterminado?</b><br>');
-    if ($w_prazo_indeterminado=='S' || $w_prazo_indeterminado=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="N"> Não');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="N" checked> Não');
-    }
-    ShowHTML('          <td valign="top" TITLE="Indica se deve ser exibido indice de desempenho de escopo do contrato."><b>Exibir índice de desempenho de escopo?</b><br>');
-    if ($w_idec=='S' || $w_idec=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="N"> Não');
-    } else {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="N" checked> Não');
-    } 
+    ShowHTML('        <td valign="top" TITLE="Selecione a modalidade deste tipo de acordo dentre as apresentadas."><b>Modalidade:</b><br><b>');
+    ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="Q"'.((nvl($w_modalidade,'Q')=='Q') ? ' checked' : '').'> Aquisição/Contratação</label><br>');
+    ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="A"'.((nvl($w_modalidade,'Q')=='A') ? ' checked' : '').'> Arrendamento</label><br>');
+    ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="E"'.((nvl($w_modalidade,'Q')=='E') ? ' checked' : '').'> Emprego</label><br>');
+    ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"'.((nvl($w_modalidade,'Q')=='F') ? ' checked' : '').'> Fornecimento</label><br>');
+    ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"'.((nvl($w_modalidade,'Q')=='I') ? ' checked' : '').'> Parceria institucional</label><br>');
+    ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"'.((nvl($w_modalidade,'Q')=='P') ? ' checked' : '').'> Permissão</label>');
+    MontaRadioNS('<b>Prazo indeterminado?</b>',$w_prazo_indeterminado,'w_prazo_indeterminado','Marque Sim se contratos deste tipo forem contínuos; caso contrário marque Não.');
+    MontaRadioNS('<b>Exibir índice de desempenho de escopo?</b>',$w_idec,'w_idec','Indica se deve ser exibido indice de desempenho de escopo do contrato.');
     if ($O=='I') {
-      ShowHTML('          <tr><td height="30"><b>Ativo?</b><br>');
-      if ($w_ativo=='S') {
-        ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="w_ativo" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_ativo" value="N"> Não');
-      } else {
-        ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="w_ativo" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_ativo" value="N" checked> Não');
-      } 
+      ShowHTML('          <tr>');
+      MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     } 
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
@@ -532,7 +497,7 @@ function TipoAcordo() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -591,7 +556,7 @@ function FormaPagamento(){
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     }
@@ -720,7 +685,7 @@ function FormaPagamento(){
     ShowHTML('</FORM>'); 
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -917,7 +882,7 @@ function Modalidades() {
         Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
      } elseif ($O=='E') {
         Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-        ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+        ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
     }
@@ -1051,7 +1016,7 @@ function Modalidades() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen( 'JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1105,7 +1070,7 @@ function FonteRecurso() {
        Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
      } elseif ($O=='E') {
        Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
        ShowHTML('     { return (true); }; ');
        ShowHTML('     { return (false); }; ');
      }
@@ -1206,7 +1171,7 @@ function FonteRecurso() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen( 'JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1285,7 +1250,7 @@ function EspecDespesa() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
-      ShowHTML('  if (confirm(\'Confirma herança dos dados da opção selecionada?\')) {');
+      ShowHTML('  if (confirm("Confirma herança dos dados da opção selecionada?")) {');
       ShowHTML('     window.close(); ');
       ShowHTML('     opener.focus(); ');
       ShowHTML('     return true; ');
@@ -1536,7 +1501,7 @@ function EspecDespesa() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1812,7 +1777,7 @@ function PrestacaoContas() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1846,7 +1811,7 @@ function Grava() {
           $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de acordo com este nome!\');');
+            ShowHTML('  alert("Já existe tipo de acordo com este nome!");');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;
@@ -1855,7 +1820,7 @@ function Grava() {
           $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,null,upper(Nvl($_REQUEST['w_sigla'],'')),'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de acordo com esta sigla!\');');
+            ShowHTML('  alert("Já existe tipo de acordo com esta sigla!");');
             ScriptClose(); 
             retornaFormulario('w_sigla');
             break;
@@ -1871,7 +1836,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1896,7 +1861,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1912,7 +1877,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -1925,7 +1890,7 @@ function Grava() {
           $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de modalidade com este nome!\');');
+            ShowHTML('  alert("Já existe tipo de modalidade com este nome!");');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;
@@ -1934,7 +1899,7 @@ function Grava() {
           $sql = new db_getLCModalidade; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, null ,upper(Nvl($_REQUEST['w_sigla'],'')),null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe tipo de modalidade com esta sigla!\');');
+            ShowHTML('  alert("Já existe tipo de modalidade com esta sigla!");');
             ScriptClose(); 
             retornaFormulario('w_sigla');
             break;
@@ -1950,7 +1915,7 @@ function Grava() {
         ScriptClose();        
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1963,7 +1928,7 @@ function Grava() {
           $sql = new db_getLCFonteRecurso; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe fonte de recurso com este nome!\');');
+            ShowHTML('  alert("Já existe fonte de recurso com este nome!");');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;
@@ -1977,7 +1942,7 @@ function Grava() {
         ScriptClose();        
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1994,7 +1959,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -2007,7 +1972,7 @@ function Grava() {
           $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe prestação de contas com este nome neste nível!\');');
+            ShowHTML('  alert("Já existe prestação de contas com este nome neste nível!");');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;
@@ -2016,7 +1981,7 @@ function Grava() {
           $sql = new db_getPrestacaoContas; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é possível excluir esta prestação de contas. Ele está ligado a algum projeto!\');');
+            ShowHTML('  alert("Não é possível excluir esta prestação de contas. Ele está ligado a algum projeto!");');
             ScriptClose();
             break;
             retornaFormulario('w_assinatura');
@@ -2029,14 +1994,14 @@ function Grava() {
         ScriptClose();
         } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;    
     default:
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+      ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
       ShowHTML('  history.back(1);');
       ScriptClose();
       break;

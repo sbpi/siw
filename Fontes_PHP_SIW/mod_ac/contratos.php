@@ -518,9 +518,9 @@ function Inicial() {
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinc.','dados_pai').'</td>');
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
-        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Previsto','valor').'</font></td>');
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Previsto','valor_contrato').'</font></td>');
         if (strpos(upper($R),'GR_')!==false) {
-          ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Liquidado','valor_atual').'</font></td>');
+          ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Liquidado','saldo_contrato').'</font></td>');
         }  
       }
       if ($P1!=1) {
@@ -602,15 +602,11 @@ function Inicial() {
           ShowHTML('        <td align="center">&nbsp;');
         } 
         if (substr($SG,0,3)!='GCA') {
-          ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
-          $w_parcial += f($row,'valor'); 
+          ShowHTML('        <td align="right">'.number_format(f($row,'valor_contrato'),2,',','.').'&nbsp;</td>');
+          $w_parcial += f($row,'valor_contrato'); 
           if (strpos(upper($R),'GR_')!==false) {
-            if (Nvl(f($row,'valor_atual'),0)>0 && Nvl(f($row,'valor_atual'),0)!=f($row,'valor')) {
-              ShowHTML('        <td align="right"><font color="#BC3131"><b>'.number_format(Nvl(f($row,'valor_atual'),0),2,',','.').'&nbsp;</td>');
-            } else {
-              ShowHTML('        <td align="right">'.number_format(Nvl(f($row,'valor_atual'),0),2,',','.').'&nbsp;</td>');
-            } 
-            $w_atual += Nvl(f($row,'valor_atual'),0);
+            ShowHTML('        <td align="right">'.formatNumber(Nvl(f($row,'valor_contrato')-f($row,'saldo_contrato'),0)).'</td>');
+            $w_atual += (Nvl(f($row,'valor_contrato')-f($row,'saldo_contrato'),0));
           } 
         }
         if ($P1!=1) {
@@ -681,7 +677,7 @@ function Inicial() {
         } 
         ShowHTML('      </tr>');
       } 
-      if ($P1!=1 && $P1!=2 && substr($SG,0,3)!='GCA') {
+      if ($P1!=1 && substr($SG,0,3)!='GCA') {
         // Se não for cadastramento nem mesa de trabalho
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
@@ -691,14 +687,13 @@ function Inicial() {
           if (strpos(upper($R),'GR_')!==false) {
             ShowHTML('          <td align="right"><b>'.number_format($w_atual,2,',','.').'&nbsp;</font></td>');
           } 
-          ShowHTML('          <td colspan=4>&nbsp;</font></td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
           foreach($RS as $row) {
-            $w_real  += Nvl(f($row,'valor_atual'),0);
-            $w_total += f($row,'valor');
+            $w_real  += (f($row,'valor_contrato')-Nvl(f($row,'saldo_contrato'),0));
+            $w_total += f($row,'valor_contrato');
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan=6 align="right"><b>Total da listagem&nbsp;</font></td>');
@@ -1048,7 +1043,7 @@ function Geral() {
         $w_dias                 = f($RS,'dias_aviso');
         $w_inicio_real          = f($RS,'inicio');
         $w_fim_real             = f($RS,'fim');
-        $w_custo_real           = f($RS,'valor');
+        $w_custo_real           = f($RS,'valor_contrato');
         $w_projeto              = f($RS,'sq_solic_pai');
         $w_etapa                = f($RS,'sq_projeto_etapa');
         $w_sq_tipo_acordo       = f($RS,'sq_tipo_acordo');
@@ -4326,15 +4321,15 @@ function Aditivos() {
         }
         if($w_prorrogacao=='S' && substr($SG,0,3)!='GCZ') {
           Validate('w_valor_inicial','Valor inicial','VALOR','1',4,18,'','0123456789.,');
-          Validate('w_parcela_inicial','Valor mensal inicial','VALOR','1',4,18,'','0123456789.,');
+          Validate('w_parcela_inicial','Valor inicial da parcela','VALOR','1',4,18,'','0123456789.,');
           //CompValor('w_valor_inicial','Valor inicial','>',0,'0');
-          //CompValor('w_parcela_inicial','Valor mensal inicial','>',0,'0');
+          //CompValor('w_parcela_inicial','Valor inicial da parcela','>',0,'0');
         }
         if($w_revisao=='S') {
           Validate('w_valor_reajuste','Valor do reajste','VALOR','1',4,18,'','0123456789.,-');
-          Validate('w_parcela_reajustada','Valor mensal do reajuste','VALOR','1',4,18,'','0123456789.,-');
+          Validate('w_parcela_reajustada','Valor da parcela do reajuste','VALOR','1',4,18,'','0123456789.,-');
           CompValor('w_valor_reajuste','Valor do reajuste','!=',0,'0');
-          CompValor('w_parcela_reajustada','Valor mensal do reajuste','!=',0,'0');
+          CompValor('w_parcela_reajustada','Valor da parcela do reajuste','!=',0,'0');
         }
         if(substr($SG,0,3)!='GCZ' && f($RS_Solic,'limite_variacao')>0) {
           Validate('w_tipo','Acréscimo/Supressão','SELECT',1,1,18,'1','1');
@@ -4343,9 +4338,9 @@ function Aditivos() {
             CompValor('w_variacao_valor','% de acréscimo/supressão','>',0,'0');
             CompValor('w_variacao_valor','% de acréscimo/supressão','<=',f($RS_Solic,'limite_variacao'),' ao limite de variação');
             Validate('w_valor_acrescimo','Valor do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,-');
-            Validate('w_parcela_acrescida','Valor mensal do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,-');
+            Validate('w_parcela_acrescida','Valor da parcela do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,-');
             CompValor('w_valor_acrescimo','Valor do acréscimo/supressao','!=',0,'0');
-            CompValor('w_parcela_acrescida','Valor mensal do acréscimo/supressao','!=',0,'0');
+            CompValor('w_parcela_acrescida','Valor da parcela do acréscimo/supressao','!=',0,'0');
           }
         }
       }
@@ -4534,9 +4529,9 @@ function Aditivos() {
     } else {
       MontaRadioNS('<b>Prorrogação?</b>',$w_prorrogacao,'w_prorrogacao','Marque a opção SIM se este aditivo prorrogar o contrato original.',null,'onClick="recarrega();"');
     }
-    if(($w_prorrogacao=='S') && substr($SG,0,3)!='GCZ' && nvl($w_tipo,'')!='') {
+    if(($w_prorrogacao=='S') && substr($SG,0,3)!='GCZ') {
       ShowHTML('        <td><b>$ total da <u>p</u>rorrogação:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor total do aditivo, referente ao valor inicial do contrato."></td>');
-      ShowHTML('        <td><b>$ mensal da <u>p</u>rorrogação:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_parcela_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_inicial.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao valor inicial das parcelas do contrato."></td>');
+      ShowHTML('        <td><b>$ da parcela da <u>p</u>rorrogação:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_parcela_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_inicial.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao valor inicial das parcelas do contrato."></td>');
     }
     ShowHTML('        </tr></table>');
     
@@ -4549,7 +4544,7 @@ function Aditivos() {
     }
     if($w_revisao=='S') {
       ShowHTML('        <td><b>$ total do <u>r</u>eajuste:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_reajuste" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_reajuste.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor total do reajuste, referente ao reajuste do valor ao valor de reajuste do contrato."></td>');
-      ShowHTML('        <td><b>$ mensal do <u>r</u>eajuste:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_parcela_reajustada" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_reajustada.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao reajuste do valor inicial das parcelas do contrato"></td>');
+      ShowHTML('        <td><b>$ da parcela do <u>r</u>eajuste:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_parcela_reajustada" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_reajustada.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao reajuste do valor inicial das parcelas do contrato"></td>');
     }
     ShowHTML('        </tr></table>');
 
@@ -4576,7 +4571,7 @@ function Aditivos() {
     }
     if(substr($SG,0,3)!='GCZ' && f($RS_Solic,'limite_variacao')>0 && $w_tipo!='NAOAPLICA' && nvl($w_tipo,'')!='') {
       ShowHTML('        <td><b>$ total do a<u>c</u>réscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_valor_acrescimo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_acrescimo.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor total do aditivo, referente ao acrescimo ao acréscimo/supressão do valor inicial do contrato."></td>');
-      ShowHTML('        <td><b>$ mensal do a<u>c</u>réscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_parcela_acrescida" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_acrescida.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao acréscimo/supressão do valor inicial das parcelas do contrato."></td>');
+      ShowHTML('        <td><b>$ da parcela do a<u>c</u>réscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_parcela_acrescida" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_acrescida.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao acréscimo/supressão do valor inicial das parcelas do contrato."></td>');
     }
     ShowHTML('        </tr></table>');
 
@@ -5588,7 +5583,7 @@ function Grava() {
           if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
             $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
               $_REQUEST['w_sq_acordo_aditivo'], null,null,null,null,null,null,null,
-              null,null,null,$_REQUEST['w_inicio'][$i],$_REQUEST['w_fim'][$i],null,null,null);
+              null,null,null,$_REQUEST['w_inicio'][$i],$_REQUEST['w_fim'][$i],null,null,null,null);
            }
         }
       } else {

@@ -178,7 +178,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=$crlf.'              <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     } 
     $l_html.=$crlf.'          <tr><td valign="top"><b>Valor:</b></td>';
-    $l_html.=$crlf.'              <td>'.formatNumber(f($RS,'valor')).' </td></tr>';
+    $l_html.=$crlf.'              <td>'.formatNumber(f($RS,'valor_contrato')).' </td></tr>';
     if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ') {
       $l_html.=$crlf.'          <tr><td><b>Vigência:</b></td>';
       $l_html.=$crlf.'              <td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).' (contrato e aditivos)</td></tr>';
@@ -265,7 +265,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=$crlf.'        <td>'.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
       if ($w_tipo_visao==0 && substr($w_sigla,0,3)!='GCA') {
         $l_html.=$crlf.'    <tr><td><b>Valor realizado:</b></td>';
-        $l_html.=$crlf.'      <td>'.formatNumber(f($RS,'valor_atual')).'</td></tr>';
+        $l_html.=$crlf.'      <td>'.formatNumber(f($RS,'saldo_contrato')).'</td></tr>';
       } 
       if ($w_tipo_visao==0) {
         $l_html.=$crlf.'      <tr><td valign="top"><b>Nota de conclusão:</b></td>';

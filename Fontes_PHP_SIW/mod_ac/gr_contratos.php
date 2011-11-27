@@ -347,13 +347,13 @@ function Gerencial() {
       if(nvl($p_sq_menu_relac,'')>'') {
         if ($p_sq_menu_relac=='CLASSIF') {
           ShowHTML('  if (theForm.p_sqcc.selectedIndex==0) {');
-          ShowHTML('    alert(\'Você deve indicar a classificação!\');');
+          ShowHTML('    alert("Você deve indicar a classificação!");');
           ShowHTML('    theForm.p_sqcc.focus();');
           ShowHTML('    return false;');
           ShowHTML('  }');
         } else {
           ShowHTML('  if (theForm.p_chave_pai.selectedIndex==0) {');
-          ShowHTML('    alert(\'Você deve indicar a vinculação!\');');
+          ShowHTML('    alert("Você deve indicar a vinculação!");');
           ShowHTML('    theForm.p_chave_pai.focus();');
           ShowHTML('    return false;');
           ShowHTML('  }');
@@ -380,7 +380,7 @@ function Gerencial() {
       ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos uma fase!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
       CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
@@ -936,13 +936,13 @@ function Gerencial() {
           $t_conc += 1;
           $t_totconc += 1;
         }
-        $t_acima        += f($row1,'valor') - Nvl(f($row1,'valor_atual'),0);
-        $t_totacima     += f($row1,'valor') - Nvl(f($row1,'valor_atual'),0);
+        $t_acima        += Nvl(f($row1,'saldo_contrato'),0);
+        $t_totacima     += Nvl(f($row1,'saldo_contrato'),0);
         $t_solic        += 1;
-        $t_valor        += Nvl(f($row1,'valor'),0);
-        $t_custo        += Nvl(f($row1,'valor_atual'),0);
-        $t_totvalor     += Nvl(f($row1,'valor'),0);
-        $t_totcusto     += Nvl(f($row1,'valor_atual'),0);
+        $t_valor        += Nvl(f($row1,'valor_contrato'),0);
+        $t_custo        += f($row1,'valor_contrato') - Nvl(f($row1,'saldo_contrato'),0);
+        $t_totvalor     += Nvl(f($row1,'valor_contrato'),0);
+        $t_totcusto     += f($row1,'valor_contrato') - Nvl(f($row1,'saldo_contrato'),0);
         $t_totsolic     += 1;
         $w_qt_quebra    += 1;
       } 
@@ -997,7 +997,7 @@ function Gerencial() {
     if ($sigla_origem=='GCB') ShowHTML('          <option value="'.$sigla.'ETAPA" '.(($p_agrega==$sigla.'ETAPA') ? 'selected' : '').'>Modalidade de bolsa');
     ShowHTML('          <option value="'.$sigla.'RESP" '.(($p_agrega==$sigla.'RESP') ? 'selected' : '').'>Responsável');
     ShowHTML('          <option value="'.$sigla.'SETOR" '.(($p_agrega==$sigla.'SETOR') ? 'selected' : '').'>Setor responsável');
-    ShowHTML('          <option value="'.$sigla.'TIPO" '.(($p_agrega==$sigla.'TIPO') ? 'selected' : '').'>Tipo de acordo');
+    ShowHTML('          <option value="'.$sigla.'TIPO" '.(($p_agrega==$sigla.'TIPO') ? 'selected' : '').'>Tipo de contrato');
     ShowHTML('          <option value="'.$sigla.'TITULO" '.(($p_agrega==$sigla.'TITULO') ? 'selected' : '').'>Título');
     ShowHTML('          <option value="'.$sigla.'LOCAL" '.(($p_agrega==$sigla.'LOCAL') ? 'selected' : '').'>UF');
     if($w_segmento=='Público') {
@@ -1083,7 +1083,7 @@ function Gerencial() {
     ShowHTML('</table>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1092,10 +1092,8 @@ function Gerencial() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Estrutura_Fecha();
-  if($p_tipo == 'PDF'){
-    RodapePdf();  
-  }
-  Rodape();
+  if($p_tipo == 'PDF') RodapePdf();  
+  else                 Rodape();
 }
 // =========================================================================
 // Rotina de impressao do cabecalho
@@ -1107,7 +1105,7 @@ function ImprimeCabecalho() {
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
     case $sigla.'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');                      break;
-    case $sigla.'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de acordo</font></td>');             break;
+    case $sigla.'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de contrato</font></td>');             break;
     case $sigla.'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');                    break;
     case $sigla.'PROP':        ShowHTML('          <td><font size="1"><b>Outra parte</font></td>');                break;
     case $sigla.'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');                break;
