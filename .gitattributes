@@ -3577,6 +3577,8 @@ SP_Oracle92/siw/CalculaIDE.fnc -text
 SP_Oracle92/siw/CalculaIGC.fnc -text
 SP_Oracle92/siw/CalculaIGCC.fnc -text
 SP_Oracle92/siw/CalculaIGE.fnc -text
+SP_Oracle92/siw/CalculaSaldoContrato.fnc -text
+SP_Oracle92/siw/CalculaValorContrato.fnc -text
 SP_Oracle92/siw/GeraCodigoInterno.prc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/LIMPA_BASE.prc -text

@@ -80,7 +80,7 @@ begin
                 );
    Elsif p_restricao = 'RESFIN' Then
       open p_result for 
-        select a.codigo_interno, a.inicio, a.fim, a.sq_siw_solicitacao, d.sq_acordo_aditivo, d.codigo, d.ini_aditivo, d.fim_aditivo, d.valor valor_previsto, e.liquidado valor_liquidado, e.pago as valor_pago
+        select a.codigo_interno, a.sq_siw_solicitacao, c.inicio, c.fim, d.sq_acordo_aditivo, d.codigo, d.ini_aditivo, d.fim_aditivo, d.valor valor_previsto, e.liquidado valor_liquidado, e.pago as valor_pago
           from siw_solicitacao        a
                inner join siw_tramite b on (a.sq_siw_tramite     = b.sq_siw_tramite)
                inner join ac_acordo   c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)

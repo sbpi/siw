@@ -290,7 +290,9 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.protocolo_siw,
-                calculaIDCC(b.sq_siw_solicitacao) as idcc, calculaIGCC(b.sq_siw_solicitacao) as igcc,
+                calculaIDCC(b.sq_siw_solicitacao,null,null,null) as idcc, calculaIGCC(b.sq_siw_solicitacao,null,null) as igcc,
+                calculaValorContrato(b.sq_siw_solicitacao,null) as valor_contrato,
+                calculaSaldoContrato(b.sq_siw_solicitacao,null) as saldo_contrato,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'

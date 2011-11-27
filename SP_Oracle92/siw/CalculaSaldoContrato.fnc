@@ -1,4 +1,4 @@
-create or replace function CalculaIGCC(p_chave in number, p_aditivo in number default null, p_data in date default null) return float is
+create or replace function CalculaSaldoContrato(p_chave in number, p_aditivo in number default null) return float is
   Result        float      := 0;
   w_existe      number(18);
   w_cliente     number(18);
@@ -13,11 +13,7 @@ create or replace function CalculaIGCC(p_chave in number, p_aditivo in number de
   w_tipo_prazo  ac_tipo_acordo.prazo_indeterm%type;
   
   cursor c_dados (p_cliente in number) is
-     select coalesce(previsto.valor,0) as previsto, coalesce(realizado.valor,0) as realizado,
-            case when previsto.valor is not null
-                 then coalesce(realizado.valor,0)/case when previsto.valor is null or previsto.valor = 0 then 1 else previsto.valor end
-                 else 1
-            end  as igcc
+     select coalesce(previsto.valor,0) - coalesce(realizado.valor,0) as valor
        from siw_solicitacao             w
             inner   join (select a.sq_siw_solicitacao, sum(b.valor) as valor
                           from siw_solicitacao                a
@@ -95,18 +91,6 @@ begin
               and w_inicio_adi between inicio and fim;
         End If;
      End If;
-  Elsif p_data is not null and p_data between w_inicio_con and w_fim_con Then
-     If p_data between w_inicio_ori and w_fim_ori Then
-        -- Se data relativa ao período do contrato original, trata o o contrato original
-        w_aditivo := null;
-     Else
-        -- Caso contrário, trata o período do aditivo de prorrogação
-        select sq_acordo_aditivo into w_aditivo 
-          from ac_acordo_aditivo
-         where sq_siw_solicitacao = p_chave
-           and prorrogacao        = 'S'
-           and p_data       between inicio and fim;
-     End If;
   Elsif w_tipo_prazo = 'N' Then
      -- Se pagamento não continuado, recupera a prorrogação mais recente
      select count(*) into w_existe from ac_acordo_aditivo where sq_siw_solicitacao = p_chave and prorrogacao = 'S';
@@ -118,7 +102,7 @@ begin
      End If;
   End If;
   
-  for crec in c_dados (w_cliente) loop Result := (crec.igcc * 100); end loop;
+  for crec in c_dados (w_cliente) loop Result := crec.valor; end loop;
   Return Result;
-end CalculaIGCC;
+end CalculaSaldoContrato;
 /

@@ -657,7 +657,8 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.sq_plano,                    b.protocolo_siw,
-                b2.idcc,              b2.igcc,
+                b2.idcc,              b2.igcc,                       b2.valor_contrato,
+                b2.saldo_contrato,
                 case when b2.idcc < 75   then 'IDCC próximo da faixa desejável'
                      when b2.idcc <= 100 then 'IDCC na faixa desejável'
                      else                     'IDCC fora da faixa desejável'
@@ -740,7 +741,12 @@ begin
                       left           join pa_documento         b4  on (b.protocolo_siw           = b4.sq_siw_solicitacao)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                      inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso, calculaIDCC(x.sq_siw_solicitacao) as idcc, calculaIGCC(x.sq_siw_solicitacao) as igcc
+                      inner          join (select x.sq_siw_solicitacao, 
+                                                  acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso, 
+                                                  calculaIDCC(x.sq_siw_solicitacao,null,null,null) as idcc, 
+                                                  calculaIGCC(x.sq_siw_solicitacao,null,null) as igcc,
+                                                  calculaValorContrato(x.sq_siw_solicitacao,null) as valor_contrato,
+                                                  calculaSaldoContrato(x.sq_siw_solicitacao,null) as saldo_contrato
                                              from siw_solicitacao        x
                                                   inner join siw_menu    y on (x.sq_menu        = y.sq_menu and
                                                                                y.sq_menu        = p_menu
