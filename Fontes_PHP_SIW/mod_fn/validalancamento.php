@@ -107,6 +107,17 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     }
   }
 
+  // 5 - Pagamento de contrato só pode ser enviado se o saldo do contrato for maior ou igual ao valor do pagamento
+  if (f($l_rs_solic,'sigla')=='FNDCONT') {
+    // Recupera os dados do contrato
+    $v_dados_pai = explode('|@|',f($l_rs_solic,'dados_pai'));
+    $sql = new db_getSolicData; $l_rs_cont = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_solic_pai'),$v_dados_pai[5]);
+    if (f($l_rs_solic,'valor')>f($l_rs_cont,'saldo_contrato') && f($l_rs_tramite,'ativo')=='S') {
+      $l_erro.='<li>Saldo de <b>'.$v_dados_pai[1].' (R$ '.formatNumber(f($l_rs_cont,'saldo_contrato')).')</b> não é suficiente para pagamento do valor deste lançamento (<b>R$ '.formatNumber(f($l_rs_solic,'valor')).'</b>).';
+      $l_tipo=0;
+    }
+  }
+  
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
     $sql = new db_getSolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
     if (count($l_rs_rubrica)>0) {

@@ -421,6 +421,39 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'         </table></td></tr>';
     }
     
+    // Itens
+    $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,null,null);
+    $RS = SortArray($RS,'rubrica','asc');
+    if (count($RS)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'        <table class="tudo" width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Item</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Qtd.</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Unitário</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Total</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      $w_total = 0;
+      foreach($RS as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.f($row,'quantidade').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario')).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
+        $w_total += nvl(f($row,'valor_total'),0);
+      } 
+      if ($w_total>0) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="right" colspan="4"><b>Total</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+        $l_html.=chr(13).'      </tr>';
+      }      
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
     /*
     // Outra parte
     $sql = new db_getBenef; $RS_Query = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null,null,null,null,null);
