@@ -30,7 +30,7 @@ begin
             x_afastamento := x_afastamento||','''||to_number(l_item)||'''';
          End If;
          l_afastamento := substr(l_afastamento,Instr(l_afastamento,',')+1,200);
-         Exit when length(l_afastamento)=0;
+         Exit when length(l_afastamento)=0 or l_afastamento is null;
       End Loop;
       x_afastamento := substr(x_afastamento,2,200);
    End If;

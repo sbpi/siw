@@ -59,7 +59,7 @@ begin
             x_fase := x_fase||','''||to_number(l_item)||'''';
          End If;
          l_fase := substr(l_fase,Instr(l_fase,',')+1,200);
-         Exit when length(l_fase)=0;
+         Exit when length(l_fase)=0 or l_fase is null;
       End Loop;
       x_fase := substr(x_fase,2,200);
    End If;
@@ -71,7 +71,7 @@ begin
             x_atend := x_atend||','''||to_number(l_item)||'''';
          End If;
          l_atend := substr(l_atend,Instr(l_atend,',')+1,200);
-         Exit when length(l_atend)=0;
+         Exit when length(l_atend)=0 or l_atend is null;
       End Loop;
       x_atend := substr(x_atend,2,200);
    End If;

@@ -37,7 +37,7 @@ begin
             x_sq_cc := x_sq_cc||',''['||to_number(l_item)||']''';
          End If;
          l_sq_cc := substr(l_sq_cc,Instr(l_sq_cc,',')+1,200);
-         Exit when length(l_sq_cc) = 0;
+         Exit when length(l_sq_cc)=0 or l_sq_cc is null;
       End Loop;
       x_sq_cc := substr(x_sq_cc,2,200);
       

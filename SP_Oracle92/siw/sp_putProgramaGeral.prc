@@ -227,7 +227,7 @@ begin
             insert into siw_solicitacao_objetivo(sq_siw_solicitacao, sq_plano, sq_peobjetivo) values (coalesce(w_chave,p_chave), p_plano, to_number(w_item));
          End If;
          w_objetivo := substr(w_objetivo,Instr(w_objetivo,',')+1,200);
-         Exit when length(w_objetivo) = 0;
+         Exit when length(w_objetivo)=0 or w_objetivo is null;
       End Loop;
    End If;
    
