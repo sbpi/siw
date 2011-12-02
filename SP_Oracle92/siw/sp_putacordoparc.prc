@@ -21,6 +21,7 @@ create or replace procedure SP_PutAcordoParc
     p_qtd_31              in number   default null
    ) is
    
+   w_qtd         number(4);
    w_cont        number(4) := 1;
    w_vencimento  date;
    w_dia         varchar2(2) := substr(100+p_dia_vencimento,2,2);
@@ -39,6 +40,7 @@ create or replace procedure SP_PutAcordoParc
    w_reg         ac_acordo%rowtype;
    w_aditivo     ac_acordo_aditivo%rowtype;
    w_existe_aditivo varchar2(1) := 'N';
+   w_chave_aditivo  number(18);
    w_parcela     ac_acordo_parcela%rowtype;
    
    w_inicio      date;
@@ -59,6 +61,20 @@ create or replace procedure SP_PutAcordoParc
    w_total_r     number(18,4);
    w_ultimo      number(2);
 begin
+   If p_aditivo is not null Then
+      -- Verifica os dados do aditivo
+      select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
+        
+      If w_aditivo.prorrogacao = 'S' and w_aditivo.valor_inicial+w_aditivo.valor_reajuste+w_aditivo.valor_acrescimo = 0 Then
+         -- Verifica se há algum aditivo com valor no período da parcela
+         select count(*) into w_qtd from ac_acordo_aditivo where prorrogacao = 'S' and valor_inicial+valor_reajuste+valor_acrescimo > 0 and sq_siw_solicitacao = p_chave;
+         If w_qtd = 0 Then
+            -- Se não tiver nenhuma prorrogação com valor, a parcela é do contrato original.
+            w_chave_aditivo := null; 
+         End If;
+      End If;
+   End If; 
+
    If p_operacao = 'I' Then -- Inclusão
       -- O valor de uma parcela de aditivo depende da soma do valor inicial mais reajuste mais excedentes
       If p_aditivo is not null Then
@@ -72,8 +88,9 @@ begin
          inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,         valor_excedente,         valor_reajuste)
       values
         (sq_acordo_parcela.nextval, p_chave,            p_ordem,            sysdate,               p_data,                  p_observacao,      w_valor,
-         p_per_ini,                 p_per_fim,          p_aditivo,          coalesce(w_inicial, case when p_aditivo is null then w_valor else 0 end), 
+         p_per_ini,                 p_per_fim,          w_chave_aditivo,    coalesce(w_inicial, case when p_aditivo is null then w_valor else 0 end), 
          coalesce(w_excedente,0), coalesce(w_reajuste,0));
+      
    Elsif p_operacao = 'A' Then -- Alteração
       -- O valor de uma parcela de aditivo depende da soma do valor inicial mais reajuste mais excedentes
       If p_aditivo is not null Then
@@ -102,7 +119,7 @@ begin
             update ac_acordo_parcela x
                set valor             = valor_inicial + valor_reajuste,
                    valor_excedente   = 0,
-                   sq_acordo_aditivo = (select b.sq_acordo_aditivo
+                   sq_acordo_aditivo = (select max(b.sq_acordo_aditivo) as sq_acordo_aditivo
                                           from ac_acordo_parcela a
                                                left join ac_acordo_aditivo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao and
                                                                                  a.inicio             between b.inicio and b.fim and

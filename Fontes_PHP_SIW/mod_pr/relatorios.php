@@ -210,7 +210,7 @@ function Rel_Progresso() {
     ShowHTML('     </table>');
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
-    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
+    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
     $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc'); 
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -312,7 +312,7 @@ function Rel_Progresso() {
               } 
               if(($w_restricao=='PROPREV'&& $p_prevista=='S')||($w_restricao=='PROREPORT'&& $p_realizada=='S')||($w_restricao=='PROPEND'&& $p_pendente=='S')||($w_restricao=='PROENTR'&& $p_proximo=='S')) {
                 ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="11"><div align="justify"><font size="2"><b>'.$w_label.'</b></font></div></td>');
-                $sql = new db_getRelProgresso; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
+                $sql = new db_getRelProgresso; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
                 $RS1 = SortArray($RS1,'cd_ordem','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
                 if(count($RS1)==0) {
                   ShowHTML('          <tr><td colspan="11" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
@@ -693,7 +693,7 @@ function Rel_Executivo() {
     //ShowHTML('   <tr><td colspan="3"><hr NOSHADE color=#000000 size=4></td></tr>');
     ShowHTML('   <tr><td colspan="3" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.nomeMes(date("m")-1).'/'.$w_ano.'</b></td></tr>');
     $w_projeto_atual = 0;
-    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
+    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
     $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc');
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="3"><br><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -794,7 +794,7 @@ function Rel_Executivo() {
               $w_restricao = 'RELATORIO';
               //if(($w_restricao=='PROPREV'&& $p_prevista=='S')||($w_restricao=='PROREPORT'&& $p_realizada=='S')||($w_restricao=='PROPEND'&& $p_pendente=='S')||($w_restricao=='PROENTR'&& $p_proximo=='S')) {
                 ShowHTML('          <tr><td bgColor="#f0f0f0" colspan="5" height="30"><div align="justify"><font size="2"><b>'.$w_label.'</b></font></div></td>');
-                $sql = new db_getRelProgresso; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
+                $sql = new db_getRelProgresso; $RS1 = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
                 if(count($RS1)==0) {
                   ShowHTML('          <tr><td colspan="5" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
                 } else {
@@ -1163,7 +1163,7 @@ function Rel_Projeto() {
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
 
     $w_projeto_atual = 0;
-    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_DET');
+    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_DET');
     $RS = SortArray($RS,'nm_projeto','asc','codigo_interno','asc');
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -1468,7 +1468,7 @@ function Rel_Atualizacao() {
     }
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
-    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_ATUAL');
+    $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_ATUAL');
     $RS = SortArray($RS,'codigo_interno','asc','ordena','asc','bloco','asc'); 
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');

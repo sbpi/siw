@@ -16,12 +16,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_SG              = f($RS,'sigla');
   $w_tramite         = f($RS,'sq_siw_tramite');
   $w_tramite_ativo   = f($RS,'ativo');
-  $w_valor_inicial   = f($RS,'valor');
+  $w_valor_inicial   = f($RS,'valor_contrato');
   $w_fim             = f($RS,'fim_real');
   $w_sg_tramite      = f($RS,'sg_tramite');
   $w_sigla           = f($RS,'sigla');
   $w_aditivo         = f($RS,'aditivo');
   $w_texto_pagamento = f($RS,'condicoes_pagamento');
+  $w_aditivo         = f($RS,'aditivo');
   $w_idcc            = f($RS,'idcc');
   $w_igcc            = f($RS,'igcc');
   $w_exibe_idec      = f($RS,'exibe_idec');
@@ -404,8 +405,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=$crlf.'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
             $l_html.=$crlf.'        <td>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
             $l_html.=$crlf.'        <td align="left">'.crlf2br(f($row,'objeto'));
+            if (nvl(f($row,'observacao'),'')!='') $l_html.='<hr NOSHADE color=#000000 size=1><b>Observação:</b>'.crlf2br(f($row,'observacao'));
             if (count($RS2)) {
-              $l_html.='<br><b>Arquivo(s) anexado(s):</b>';
+              $l_html.='<hr NOSHADE color=#000000 size=1><b>Arquivo(s) anexado(s):</b>';
               foreach($RS2 as $row2) {
                 $l_html.='<br>'.LinkArquivo('HL', $w_cliente, f($row, 'arquivo'), null, null, f($row2,'nome'), null) . ' (' . round(f($row2, 'tamanho') / 1024, 1) . ' KB) ';
               }

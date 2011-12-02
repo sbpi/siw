@@ -1802,7 +1802,7 @@ function Estorno() {
   ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
   ShowHTML('<tr><td align="center">');
   ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
-  ShowHTML('      <tr><td colspan=4><b>ATENÇÃO: Para efetirar o estorno da entrada de material, informe sua assinatura eletrônica e clique no botão <i>Estornar</i>. Se não desejar a efetivação do estorno, clique no botão <i>Abandonar</i> para voltar à listagem.</b></td></tr>');
+  ShowHTML('      <tr><td colspan=4><b>ATENÇÃO: Para efetivar o estorno da entrada de material, informe sua assinatura eletrônica e clique no botão <i>Estornar</i>. Se não desejar a efetivação do estorno, clique no botão <i>Abandonar</i> para voltar à listagem.</b></td></tr>');
   ShowHTML('      <tr><td colspan=4 height=1 bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');

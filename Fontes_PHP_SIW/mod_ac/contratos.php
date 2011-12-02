@@ -2797,6 +2797,7 @@ function Parcelas() {
   global $w_Disabled;
   $w_chave             = $_REQUEST['w_chave'];
   $w_chave_aux         = $_REQUEST['w_chave_aux'];
+  $w_copia             = $_REQUEST['w_copia'];
   $w_sq_acordo_aditivo = $_REQUEST['w_sq_acordo_aditivo'];
 
   // Recupera dados do contrato
@@ -2808,19 +2809,16 @@ function Parcelas() {
   $w_texto            = '';
   $w_edita            = true;
   
-  // Bloqueia a inclusão, geração e exclusão de parcelas ligadas ao contrato se já existir algum aditivo
-  if(nvl($w_sq_acordo_aditivo,'')=='' && (nvl(f($RS_Solic,'aditivo_prorrogacao'),'')!='' || nvl(f($RS_Solic,'aditivo_excedente'),'')!='')) {
-    $w_edita           = false;
-  }
-
   // Recupera dados do aditivo, caso tenha sido informado
   if (nvl($w_sq_acordo_aditivo,'')!='') {
     $sql = new db_getAcordoAditivo; $RS_Adit = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_acordo_aditivo,$w_chave,null,null,null,null,null,null,null,null,null);
     foreach($RS_Adit as $row) { $RS_Adit = $row; break; }
-    $w_inicio           = f($RS_Adit,'inicio');
+    if (f($RS_Adit,'prorrogacao')=='N' || (f($RS_Adit,'prorrogacao')=='S' && f($RS_Adit,'valor_aditivo')>0)) {
+      $w_inicio         = f($RS_Adit,'inicio');
+      $w_valor_acordo   = f($RS_Adit,'valor_aditivo');
+    }
     $w_fim              = f($RS_Adit,'fim');
     $w_prazo_indeterm   = f($RS_Adit,'prazo_indeterm');
-    $w_valor_acordo     = f($RS_Adit,'valor_aditivo');
     $w_prorrogacao      = f($RS_Adit,'prorrogacao');
     $w_acrescimo        = f($RS_Adit,'acrescimo');
     $w_supressao        = f($RS_Adit,'supressao');
@@ -2831,9 +2829,11 @@ function Parcelas() {
     $w_texto            .= chr(13).'  <br>[Prorrogação: '.f($RS_Adit,'nm_prorrogacao').'] [Reajuste: '.f($RS_Adit,'nm_revisao').'] [Tipo: '.f($RS_Adit,'nm_tipo').']';
   }
     
-  //if((nvl($w_sq_acordo_aditivo,'')!='')&&($w_acrescimo=='S' || $w_supressao=='S')) {
-  //  $w_edita           = false;
-  // }
+  // Bloqueia a inclusão, geração e exclusão de parcelas ligadas ao contrato se já existir algum aditivo
+  if((nvl($w_sq_acordo_aditivo,'')=='' && ((nvl(f($RS_Solic,'aditivo_prorrogacao'),'')!='' && nvl(f($RS_Adit,'valor_aditivo'),0)>0)|| nvl(f($RS_Solic,'aditivo_excedente'),'')!=''))) {
+    $w_edita           = false;
+  }
+
   if ($w_troca>'') {
     // Se for recarga da página
     $w_ordem           = $_REQUEST['w_ordem'];
@@ -2848,9 +2848,9 @@ function Parcelas() {
   } elseif ($O=='L') {
     $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'NOTA',null,null,null,null,null,null,$w_sq_acordo_aditivo);
     $RS = SortArray($RS,'ordem','asc');
-  } elseif (strpos('AEV',$O)!==false) {
+  } elseif (strpos('AEV',$O)!==false || nvl($w_copia,'')!='') {
     // Recupera os dados do endereço informado
-    $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,'NOTA',null,null,null,null,null,null,$w_sq_acordo_aditivo);
+    $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$w_chave,nvl($w_chave_aux,$w_copia),'NOTA',null,null,null,null,null,null,$w_sq_acordo_aditivo);
     foreach($RS as $row) {
       $w_ordem           = f($row,'ordem');
       $w_data            = FormataDataEdicao(f($row,'vencimento'));
@@ -2952,7 +2952,7 @@ function Parcelas() {
       if(nvl($w_sq_acordo_aditivo,'')=='') {
         Validate('w_valor','Valor da parcela','VALOR','1',4,18,'','0123456789.,');
       } else {
-        if(f($RS_Adit,'prorrogacao')=='S') Validate('w_valor_inicial','Valor inicial','VALOR','1',4,18,'','0123456789.,');
+        if(f($RS_Adit,'prorrogacao')=='S'||(f($RS_Adit,'prorrogacao')=='N'&&f($RS_Adit,'acrescimo')=='N'&&f($RS_Adit,'supressao')=='N')) Validate('w_valor_inicial','Valor inicial','VALOR','1',4,18,'','0123456789.,');
         if(f($RS_Adit,'acrescimo')=='S'||f($RS_Adit,'supressao')=='S') Validate('w_valor_excedente','Valor do acréscimo/supressão','VALOR','1',4,18,'','-0123456789.,');
         if(f($RS_Adit,'revisao')=='S')     Validate('w_valor_reajuste','Valor reajuste','VALOR','1',4,18,'','0123456789.,-');
       }
@@ -3027,6 +3027,21 @@ function Parcelas() {
       ShowHTML('     }');
       ShowHTML('  }');
       Validate('w_observacao','Observação','1','','3','200','1','1');
+    } elseif ($O=='V') {
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  if (theForm["w_sq_acordo_parcela[]"].value==undefined) {');
+      ShowHTML('     for (i=0; i < theForm["w_sq_acordo_parcela[]"].length; i++) {');
+      ShowHTML('       if (theForm["w_sq_acordo_parcela[]"][i].checked) w_erro=false;');
+      ShowHTML('     }');
+      ShowHTML('  }');
+      ShowHTML('  else {');
+      ShowHTML('     if (theForm["w_sq_acordo_parcela[]"].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert("Você deve informar pelo menos uma parcela!"); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -3060,13 +3075,15 @@ function Parcelas() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr valign="top"><td>');
     if($w_edita) {
-      if (nvl($w_sq_acordo_aditivo,'')=='' || (nvl($w_sq_acordo_aditivo,'')!='' && $w_prorrogacao=='S')) {
+      if (nvl($w_sq_acordo_aditivo,'')=='' || (f($RS_Adit,'prorrogacao')=='S'||(f($RS_Adit,'prorrogacao')=='N'&&f($RS_Adit,'acrescimo')=='N'&&f($RS_Adit,'supressao')=='N'))) {
         ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
       }
-      if($w_prorrogacao=='N') {
-        ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
-      } else {
-        ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=G&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
+      if (nvl($w_sq_acordo_aditivo,'')=='' || (f($RS_Adit,'prorrogacao')=='S'||f($RS_Adit,'acrescimo')=='S'||f($RS_Adit,'supressao')=='S')) {
+        if($w_prorrogacao=='N') {
+          ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
+        } else {
+          ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=G&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
+        }
       }
     }
     if(nvl($w_sq_acordo_aditivo,'')>'') ShowHTML('                         <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
@@ -3144,10 +3161,11 @@ function Parcelas() {
           if(nvl(f($row,'sq_acordo_aditivo'),'')!='' && $P1==1) {
             ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert("Parcelas ligada a aditivo!\nUse a operação parcelas do aditivo.")";>AL</A>&nbsp');
           } else {
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
           }
           if($w_edita) {
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_copia='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" TITLE="Gera uma nova parcela a partir dos dados desta.">CO</A>&nbsp');
           }
         }
         ShowHTML('        </td>');
@@ -3155,10 +3173,9 @@ function Parcelas() {
         if(f($row,'prorrogacao')=='N' && (f($row,'acrescimo')=='S'||f($row,'supressao')=='S')) {
           $w_total += f($row,'valor_excedente');
         } else {
-          $w_total   += f($row,'valor');
-          $w_total_i += f($row,'valor_inicial');
-          $w_total_e += f($row,'valor_excedente');
-          $w_total_r += f($row,'valor_reajuste');
+          if (f($row,'adi_vl_ini')>0) { $w_total_i += f($row,'valor_inicial');   $w_total   += f($row,'valor_inicial'); };
+          if (f($row,'adi_vl_acr')>0) { $w_total_e += f($row,'valor_excedente'); $w_total   += f($row,'valor_excedente'); };
+          if (f($row,'adi_vl_rea')>0) { $w_total_r += f($row,'valor_reajuste');  $w_total   += f($row,'valor_reajuste'); };
         }
       } 
     } 
@@ -3206,7 +3223,7 @@ function Parcelas() {
     if(nvl($w_sq_acordo_aditivo,'')=='') {
       ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
     } else {
-      if(f($RS_Adit,'prorrogacao')=='S') {
+      if(f($RS_Adit,'prorrogacao')=='S'||(f($RS_Adit,'prorrogacao')=='N'&&f($RS_Adit,'acrescimo')=='N'&&f($RS_Adit,'supressao')=='N')) {
         ShowHTML('          <td><b><u>V</u>alor inicial:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor inicial da parcela."></td>');
       } else {
         ShowHTML('<INPUT type="hidden" name="w_valor_inicial" value="'.$w_valor_inicial.'">');
@@ -3343,8 +3360,7 @@ function Parcelas() {
         $w_cont+= 1;
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td width="1%" nowrap align="center"><input type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" DISABLED CHECKED>');
-        ShowHTML('<INPUT type="hidden" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'">');
+        ShowHTML('        <td width="1%" nowrap align="center"><input type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" CHECKED>');
         ShowHTML('<INPUT type="hidden" name="w_inicio[]" value="'.FormataDataEdicao(f($row,'inicio')).'">');
         ShowHTML('<INPUT type="hidden" name="w_fim[]" value="'.FormataDataEdicao(f($row,'fim')).'">');
         ShowHTML('        <td>');
@@ -3744,7 +3760,6 @@ function Encaminhamento() {
 
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualAcordo($w_chave,'V',$w_usuario,$P1,$P4));
-
   ShowHTML('<HR>');
   AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,substr($SG,0,3).'ENVIO',$w_pagina.$par,$O);
   ShowHTML(MontaFiltro('POST'));
@@ -4427,7 +4442,7 @@ function Aditivos() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         if(f($row,'prorrogacao')=='S' || f($row,'acrescimo')=='S' || f($row,'supressao')=='S') {
-          if (f($row,'valor_aditivo')!=f($row,'vl_parcela')) {
+          if (f($row,'valor_aditivo')>0 && f($row,'valor_aditivo')!=f($row,'vl_parcela')) {
             $w_cor        = $conTrBgColorLightRed2; 
             $w_diferenca  = true;
           }
@@ -4451,7 +4466,7 @@ function Aditivos() {
         if ($i==0) {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
-          if (f($row,'valor_aditivo')>0 && substr($SG,0,3)!='GCZ' && (f($row,'prorrogacao')=='S' || f($row,'revisao')=='S' || f($row,'acrescimo')=='S' || f($row,'supressao')=='S')) {
+          if (substr($SG,0,3)!='GCZ'/* && (f($row,'prorrogacao')=='S' || f($row,'revisao')=='S' || f($row,'acrescimo')=='S' || f($row,'supressao')=='S')*/) {
             ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'PARCELAS'.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.substr($SG,0,3).'PARC'.'" target="Parcelas">Parcelas</A>&nbsp');
           }
           $i = 1;
@@ -5579,8 +5594,8 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $SQL = new dml_putAcordoParc; 
       if($O=='V') {
-        for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
-          if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
+        for ($i=1; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i++) {
+          if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')!='') {
             $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
               $_REQUEST['w_sq_acordo_aditivo'], null,null,null,null,null,null,null,
               null,null,null,$_REQUEST['w_inicio'][$i],$_REQUEST['w_fim'][$i],null,null,null,null);

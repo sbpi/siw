@@ -63,18 +63,28 @@ begin
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
                 a.sq_acordo_aditivo, a.valor_inicial, a.valor_excedente, a.valor_reajuste,
-                c.prorrogacao, c.acrescimo, c.supressao, c.revisao
+                c.prorrogacao, c.acrescimo, c.supressao, c.revisao,
+                e.valor_reajuste as adi_vl_rea, e.valor_acrescimo as adi_vl_acr, e.valor_inicial as adi_vl_ini
            from ac_acordo_parcela                  a
                 left     join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
                                                         )
                 inner    join ac_acordo            d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                  left   join ac_acordo_aditivo    e on (a.sq_siw_solicitacao = d.sq_siw_solicitacao and 
+                                                         e.sq_acordo_aditivo  = coalesce(p_aditivo,0)
+                                                        )
           where (p_chave             is null or (p_chave             is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_restricao         = 'VALIDA' or
                  (p_restricao        <> 'VALIDA' and
-                  ((p_aditivo is null     and coalesce(a.inicio,a.vencimento) between d.inicio and d.fim) or
-                   (p_aditivo is not null and c.sq_acordo_aditivo = p_aditivo)
+                  ((p_aditivo is     null and coalesce(a.inicio,a.vencimento) between d.inicio and d.fim) or
+                   (p_aditivo is     null and e.prorrogacao = 'S' and e.valor_inicial = 0 and a.inicio between d.inicio and e.fim) or
+                   (p_aditivo is not null and c.sq_acordo_aditivo = p_aditivo) or
+                   (p_aditivo is not null and (c.sq_acordo_aditivo = p_aditivo or
+                                               (e.prorrogacao = 'S' and e.valor_aditivo = 0 and a.inicio between d.inicio and e.fim) or
+                                               (e.prorrogacao = 'N' and e.revisao = 'N' and e.acrescimo = 'N' and a.inicio between e.inicio and e.fim)
+                                               )
+                   )
                   )
                  )
                 );
