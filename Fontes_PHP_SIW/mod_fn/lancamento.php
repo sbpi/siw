@@ -2994,7 +2994,7 @@ function BuscaParcela() {
     } 
     $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'GC'.substr($SG,2,1).'CAD');
     $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$p_sq_acordo,$p_sq_acordo_parcela,'CADASTRO',$p_outra_parte,$p_inicio,$p_fim,$w_usuario,"'EE', 'ER'",f($RS1,'sq_menu'),null);
-    $RS = SortArray($RS,'vencimento','asc','nome_resumido','asc');
+    $RS = SortArray($RS,'ordem','asc','nome_resumido','asc');
   } elseif ($O=='A') {
   } 
   Cabecalho();

@@ -88,21 +88,24 @@ begin
          End If;
       End If;      
    Elsif  p_operacao = 'A' Then 
-   -- Caso contrário, altera
+         -- Altera dados em CO_PESSOA
          update co_pessoa
             set nome          = p_nome,
                 nome_resumido = p_nome_resumido
-          where sq_pessoa = w_chave_pessoa;
-   -- Caso contrário, altera
+         where sq_pessoa = w_chave_pessoa;
+
+         -- Altera dados em CO_PESSOA_FISICA
          update co_pessoa_fisica
             set cpf                = p_cpf,
                 sexo               = p_sexo,
                 rg_numero          = p_rg_numero,
                 rg_emissor         = p_rg_emissor,
                 rg_emissao         = p_rg_emissao
-          where sq_pessoa = w_chave_pessoa;
-          update ac_acordo_preposto
-             set cargo = p_cargo
+         where sq_pessoa = w_chave_pessoa;
+
+         -- Altera cargo do PREPOSTO
+         update ac_acordo_preposto
+            set cargo = p_cargo
          where sq_pessoa             = w_chave_pessoa
            and sq_acordo_outra_parte = p_sq_acordo_outra_parte
            and sq_siw_solicitacao    = p_chave;

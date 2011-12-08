@@ -74,7 +74,7 @@ begin
                                                          e.sq_acordo_aditivo  = coalesce(p_aditivo,0)
                                                         )
           where (p_chave             is null or (p_chave             is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
+            and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))/*
             and (p_restricao         = 'VALIDA' or
                  (p_restricao        <> 'VALIDA' and
                   ((p_aditivo is     null and coalesce(a.inicio,a.vencimento) between d.inicio and d.fim) or
@@ -87,7 +87,7 @@ begin
                    )
                   )
                  )
-                );
+                )*/;
    Elsif p_restricao = 'RESFIN' Then
       open p_result for 
         select a.codigo_interno, a.sq_siw_solicitacao, c.inicio, c.fim, d.sq_acordo_aditivo, d.codigo, d.ini_aditivo, d.fim_aditivo, d.valor valor_previsto, e.liquidado valor_liquidado, e.pago as valor_pago

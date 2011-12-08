@@ -405,7 +405,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=$crlf.'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
             $l_html.=$crlf.'        <td>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
             $l_html.=$crlf.'        <td align="left">'.crlf2br(f($row,'objeto'));
-            if (nvl(f($row,'observacao'),'')!='') $l_html.='<hr NOSHADE color=#000000 size=1><b>Observação:</b>'.crlf2br(f($row,'observacao'));
+            if (nvl(f($row,'observacao'),'')!='') $l_html.='<hr NOSHADE color=#000000 size=1><b>Observação:</b>&nbsp;'.crlf2br(f($row,'observacao'));
             if (count($RS2)) {
               $l_html.='<hr NOSHADE color=#000000 size=1><b>Arquivo(s) anexado(s):</b>';
               foreach($RS2 as $row2) {

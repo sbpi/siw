@@ -449,7 +449,7 @@ function TipoAcordo() {
     ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="F"'.((nvl($w_modalidade,'Q')=='F') ? ' checked' : '').'> Fornecimento</label><br>');
     ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="I"'.((nvl($w_modalidade,'Q')=='I') ? ' checked' : '').'> Parceria institucional</label><br>');
     ShowHTML('          <label><input '.$w_Disabled.' class="str" type="radio" name="w_modalidade" value="P"'.((nvl($w_modalidade,'Q')=='P') ? ' checked' : '').'> Permissão</label>');
-    MontaRadioNS('<b>Prazo indeterminado?</b>',$w_prazo_indeterminado,'w_prazo_indeterminado','Marque Sim se contratos deste tipo forem contínuos; caso contrário marque Não.');
+    MontaRadioNS('<b>Tratamento global do valor?</b>',$w_prazo_indeterminado,'w_prazo_indeterminado','Marque Sim se contratos deste tipo tiverem tratamento do valor de forma global e Não se o tratamento for por renovação.');
     MontaRadioNS('<b>Exibir índice de desempenho de escopo?</b>',$w_idec,'w_idec','Indica se deve ser exibido indice de desempenho de escopo do contrato.');
     if ($O=='I') {
       ShowHTML('          <tr>');

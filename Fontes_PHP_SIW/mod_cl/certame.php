@@ -2843,8 +2843,7 @@ function DadosAnalise() {
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
-  
-  // Verifica se há necessidade de recarregar os dados da tela a partir
+    // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'') {
     // Se for recarga da página
@@ -2891,8 +2890,8 @@ function DadosAnalise() {
     $w_arp                = f($RS_Solic,'arp');
     $w_dias               = f($RS_Solic,'dias_validade_proposta');
     $w_dias_ant           = f($RS_Solic,'dias_validade_proposta');
-    $w_protocolo          = f($RS_Solic,'processo');
-    $w_protocolo_nm       = f($RS_Solic,'processo');
+    $w_protocolo          = f($RS_Solic,'protocolo_completo');
+    $w_protocolo_nm       = f($RS_Solic,'protocolo_completo');
     $w_abertura           = formataDataEdicao(f($RS_Solic,'data_abertura'));
     $w_prioridade         = f($RS_Solic,'prioridade');
     $w_fim                = FormataDataEdicao(f($RS_Solic,'fim'));

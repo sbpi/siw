@@ -3,21 +3,21 @@
 define("MSSQL_SERVER_NAME", "NETUNO\NETUNO");
 define("MSSQL_DB_USERID", "SIW");
 define("MSSQL_DB_PASSWORD", "SIW");
-define("MSSQL_DATABASE_NAME", "SIWGP");
+define("MSSQL_DATABASE_NAME", "SIW_DB");
 define("MSSQL_VERSION_TEXT", "MS SQL Server 2000 SP 3");
 
 // Oracle8 Database Constants
-define("ORA8_SERVER_NAME", "XE.localdomain");
-define("ORA8_DB_USERID", "PDP_UOL");
-define("ORA8_DB_PASSWORD", "PDP_UOL");
-define("ORA8_DATABASE_NAME", "PDP_UOL");
+define("ORA8_SERVER_NAME", "XE");
+define("ORA8_DB_USERID", "SIW");
+define("ORA8_DB_PASSWORD", "SIW");
+define("ORA8_DATABASE_NAME", "SIW");
 define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
 define("ORA9_SERVER_NAME", "XE");
-define("ORA9_DB_USERID", "ABDI_VENUS");
-define("ORA9_DB_PASSWORD", "ABDI_VENUS");
-define("ORA9_DATABASE_NAME", "ABDI_VENUS");
+define("ORA9_DB_USERID", "SIW");
+define("ORA9_DB_PASSWORD", "SIW");
+define("ORA9_DATABASE_NAME", "SIW");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
@@ -30,9 +30,9 @@ define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // OracleHM Database Constants
 define("ORAHM_SERVER_NAME", "XE");
-define("ORAHM_DB_USERID", "VENUS");
-define("ORAHM_DB_PASSWORD", "VENUS");
-define("ORAHM_DATABASE_NAME", "VENUS");
+define("ORAHM_DB_USERID", "INTEGRA");
+define("ORAHM_DB_PASSWORD", "INTEGRA");
+define("ORAHM_DATABASE_NAME", "INTEGRA");
 define("ORAHM_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants
