@@ -47,8 +47,8 @@ class db_getStateList {
             "   and ($p_regiao     is null or ($p_regiao    is not null and a.sq_regiao = $p_regiao))$crlf" .
             "   and ($p_ativo      is null or ($p_ativo     is not null and a.ativo     = $p_ativo))$crlf";
 
-    $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
-    return $l_rs;    
+    $l_rs = $sql->getInstanceOf($dbms, $SQL, $params, __FILE__);
+    return $l_rs;  
   }  
 }    
 ?>

@@ -19,11 +19,7 @@ class db_exec {
      } else {
        error_reporting($l_error_reporting); 
        if ($l_rs = $l_rs->getResultData()) {
-         if (count($l_rs) == 1){
-           return $l_rs[0];
-         }else{
-           return $l_rs;
-         }
+         return $l_rs;
        } else {
          return array();
        }
