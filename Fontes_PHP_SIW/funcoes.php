@@ -128,8 +128,14 @@ function CriaBaseLine($l_chave,$l_html,$l_nome,$l_tramite) {
   fwrite($l_arq,'<html>');
   fwrite($l_arq,'<head>');
   fwrite($l_arq,'<title>Visualização de '.$l_nome.'</title>');
-  fwrite($l_arq,'</head>');
+  fwrite($l_arq,'<meta NAME="robots" CONTENT="noindex, nofollow, noarchive" />');
+  fwrite($l_arq,'<meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />');
+  fwrite($l_arq,'<meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" />');
+  fwrite($l_arq,'<meta NAME="author" CONTENT="SBPI Consultoria Ltda" />');
+  fwrite($l_arq,'<meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />');
+  fwrite($l_arq,'<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />');
   fwrite($l_arq,'<base HREF="'.$conRootSIW.'">');
+  fwrite($l_arq,'</head>');
   fwrite($l_arq,'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css"/>');
   fwrite($l_arq,'<body>');
   fwrite($l_arq,'<div align="center">');
@@ -332,7 +338,7 @@ function headerExcel($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Montagem do cabeçalho de visualização de documentos
 // -------------------------------------------------------------------------
-function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, &$l_linha_pag=45,$l_filtro='') {
+function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, $l_linha_pag=45,$l_filtro='') {
   extract($GLOBALS);
   if ($l_formato=='V') {
     // Visualização de documento
@@ -2873,12 +2879,12 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
   } else {
     $w_html='<html>';
     $w_html .= chr(10).'<head>';
-    $w_html .= chr(10).'<meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">';
-    $w_html .= chr(10).'<meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">';
-    $w_html .= chr(10).'<meta NAME="author" CONTENT="SBPI Consultoria Ltda">';
-    $w_html .= chr(10).'<meta NAME="robots" CONTENT="noindex,nofollow">';
-    $w_html .= chr(10).'<meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR">';
-    $w_html .= chr(10).'<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1">';
+    $w_html .= chr(10).'<meta NAME="robots" CONTENT="noindex, nofollow, noarchive" />';
+    $w_html .= chr(10).'<meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />';
+    $w_html .= chr(10).'<meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" />';
+    $w_html .= chr(10).'<meta NAME="author" CONTENT="SBPI Consultoria Ltda" />';
+    $w_html .= chr(10).'<meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />';
+    $w_html .= chr(10).'<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />';
     $w_html .= chr(10).'  <baseFONT FACE="Arial" SIZE="2">';
     $w_html .= chr(10).'</head>';
     $w_html .= chr(10).'<body BGCOLOR="#FF5555">';
@@ -2957,10 +2963,10 @@ function Cabecalho() {
 function head() {
   extract($GLOBALS);
   ShowHTML('<head>');
+  ShowHTML('<meta NAME="robots" CONTENT="noindex, nofollow, noarchive" />');
   ShowHTML('<meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />');
   ShowHTML('<meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" />');
   ShowHTML('<meta NAME="author" CONTENT="SBPI Consultoria Ltda" />');
-  ShowHTML('<meta NAME="robots" CONTENT="noindex,nofollow" />');
   ShowHTML('<meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />');
   ShowHTML('<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
