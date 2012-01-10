@@ -57,7 +57,7 @@ begin
                                         when w.elimin_guia_numero  is not null then 'E'
                                    end as situacao
                               from pa_caixa                       w
-                                   inner join (select distinct k.sq_caixa, m.sigla
+                                   left join (select distinct k.sq_caixa, m.sigla
                                                  from pa_documento                 k
                                                       inner   join siw_solicitacao l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao)
                                                         inner join siw_tramite     m on (l.sq_siw_tramite     = m.sq_siw_tramite and m.sigla <> 'CA')

@@ -15,7 +15,7 @@ begin
   for crec in c_ordem loop
      If p_retorno is null 
         Then Result :=  crec.ordem||'.'||Result;
-        Else Result := substr(1000+crec.ordem,2,3)||Result;
+        Else Result := substr(cast(1000+crec as varchar).ordem,2,3)||Result;
      End If;
   end loop;
   If p_retorno is null Then Result := substr(Result,1,length(Result)-1); End If;
