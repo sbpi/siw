@@ -8,7 +8,6 @@ include_once($w_dir_volta . 'classes/sp/db_getCaixa.php');
 
 function selecaoCaixa($label, $accesskey, $hint, $chave, $cliente, $chaveAux, $campo, $restricao, $atributo, $colspan=1) {
   extract($GLOBALS);
-
   $sql = new db_getCaixa;
   $l_rs = $sql->getInstanceOf($dbms, null, $cliente, (($restricao=='CENTRAL') ? '' : $w_usuario),$chaveAux, null, null, null, null, null, null, null, null,null,null,null,$restricao);
   $l_rs = SortArray($l_rs, 'nm_unidade', 'asc', 'numero', 'asc');

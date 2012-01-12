@@ -116,7 +116,6 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
     } else {
 
 // Verifica se o beneficiário tem os dados mínimos cadastrados
-      
       if(nvl(f($l_rs1, 'sq_tipo_pessoa'), '') == 1 && nvl(f($l_rs1, 'cpf'), '') == ''){
         $l_erro .= '<li>CPF do beneficiário da viagem não informado. Entre em contato com os gestores.';
         $l_tipo = 0;          
@@ -132,10 +131,24 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         $l_erro .= '<li>Beneficiário da viagem com dados incompletos. Acesse a tela do beneficiário, informe os dados obrigatórios e clique no botão "Gravar"';
         $l_tipo = 0;
       }
-      if (nvl(f($l_rs_solic, 'sq_forma_pagamento'), '') == '' && nvl(f($l_rs_solic, 'diaria'), '') != '') {
-        $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
-        $l_tipo = 0;
+
+      if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
+        if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
+      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
+        if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
+      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
+        if (nvl(f($l_rs_solic,'banco_estrang'),'')=='' || 
+            nvl(f($l_rs_solic,'agencia_estrang'),'')=='' ||
+            nvl(f($l_rs_solic,'numero_conta'),'')=='' ||
+            nvl(f($l_rs_solic,'cidade_estrang'),'')=='' ||
+            nvl(f($l_rs_solic,'sq_pais_estrang'),'')==''
+           ) $l_erro_banco = 1;
       }
+    }
+    
+    if ($l_erro_banco==1) {
+      $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
+      $l_tipo=0;
     }
 
     if (f($l_rs_solic, 'fim_semana') == 'S' and nvl(f($l_rs_solic, 'justificativa_dia_util'), '') == '') {

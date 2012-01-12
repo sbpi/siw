@@ -5007,6 +5007,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
       // Verifica se é necessário criar uma nova caixa
+
       if ($_REQUEST['w_opcao']=='D') {
         $SQL = new dml_putDocumentoArqSet;
         for ($i = 1; $i <= count($_POST['w_chave']); $i++) {

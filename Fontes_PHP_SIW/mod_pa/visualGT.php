@@ -17,15 +17,17 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
 
   foreach ($RS_Dados as $row) {
     if (($w_linha > 30 && $l_formato=='WORD') || ($w_pag==1 && $l_formato!='WORD')) {
-      $l_html.=chr(13).'    </table>';
-      $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
-      $l_html.=chr(13).'    <tr><td colspan=2><table border=0 width="100%"><tr valign="top">';
-      $l_html.=chr(13).'      <td align="center" width=30%>'.formataDataEdicao(time(),6).'<br><b>Data e hora</b>';
-      $l_html.=chr(13).'      <td align="center" width=70%>__________________________________________________<br><b>Nome e assinatura</b>';
-      $l_html.=chr(13).'    </table>';
-      $l_html.=chr(13).'  </table>';
-      $l_html.=chr(13).'</table>';
-      $l_html.=chr(13).'<br style="page-break-after:always">';
+      if ($l_formato == 'WORD'){
+        $l_html.=chr(13).'    </table>';
+        $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
+        $l_html.=chr(13).'    <tr><td colspan=2><table border=0 width="100%"><tr valign="top">';
+        $l_html.=chr(13).'      <td align="center" width=30%>'.formataDataEdicao(time(),6).'<br><b>Data e hora</b>';
+        $l_html.=chr(13).'      <td align="center" width=70%>__________________________________________________<br><b>Nome e assinatura</b>';
+        $l_html.=chr(13).'    </table>';
+        $l_html.=chr(13).'  </table>';
+        $l_html.=chr(13).'</table>';
+        $l_html.=chr(13).'<br style="page-break-after:always">';
+      }      
       $l_html.=chr(13).'<table width="95%" border="0" cellspacing="3">';
       $l_html.=chr(13).'<tr><td colspan="2">';
       $l_html.=chr(13).'  <table width="100%" border=0>';
@@ -83,12 +85,15 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
     $w_linha += 1;
   }
   $l_html.=chr(13).'    </table>';
-  $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
-  $l_html.=chr(13).'    <tr><td colspan=2><table border=0 width="100%"><tr valign="top">';
-  $l_html.=chr(13).'      <td align="center" width=30%>'.formataDataEdicao(time(),6).'<br><b>Data e hora</b>';
-  $l_html.=chr(13).'      <td align="center" width=70%>__________________________________________________<br><b>Nome e assinatura</b>';
-  $l_html.=chr(13).'    </table>';
-  $l_html.=chr(13).'  </table>';
+
+  if ($l_formato == 'WORD' || substr($SG,0,3) == 'REL'){
+    $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
+    $l_html.=chr(13).'    <tr><td colspan=2><table border=0 width="100%"><tr valign="top">';
+    $l_html.=chr(13).'      <td align="center" width=30%>'.formataDataEdicao(time(),6).'<br><b>Data e hora</b>';
+    $l_html.=chr(13).'      <td align="center" width=70%>__________________________________________________<br><b>Nome e assinatura</b>';
+    $l_html.=chr(13).'    </table>';
+    $l_html.=chr(13).'  </table>';
+  }
   $l_html.=chr(13).'</table>';
   return $l_html;
 } ?>

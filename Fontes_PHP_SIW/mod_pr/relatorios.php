@@ -212,6 +212,7 @@ function Rel_Progresso() {
     $w_projeto_atual = 0;
     $sql = new db_getRelProgresso; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, $p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
     $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc'); 
+
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
