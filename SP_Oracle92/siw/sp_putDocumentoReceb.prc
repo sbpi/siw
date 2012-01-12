@@ -11,14 +11,19 @@ create or replace procedure sp_putDocumentoReceb
 
    cursor c_protocolo is
      select a.sq_documento_log, a.sq_siw_solicitacao, a.unidade_destino, a.unidade_origem, a.interno,
+            b2.sigla as sg_tramite_atual,
+            b3.sq_siw_tramite as sq_as,
             d.sq_caixa,
             case when e.cliente is not null then 'S' else 'N' end as atualiza_caixa
        from pa_documento_log             a
-            inner   join   pa_unidade    a1 on (a.unidade_origem      = a1.sq_unidade)
+            inner   join   pa_unidade    a1 on (a.unidade_origem     = a1.sq_unidade)
             inner   join pa_documento    b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
               inner join pa_unidade      c  on (b.unidade_autuacao   = c.sq_unidade)
-              left  join pa_caixa        d on  (b.sq_caixa           = d.sq_caixa)
-            left    join pa_parametro    e on (a.sq_tipo_despacho    = e.despacho_arqcentral)
+              left  join pa_caixa        d  on  (b.sq_caixa          = d.sq_caixa)
+            left    join pa_parametro    e  on (a.sq_tipo_despacho   = e.despacho_arqcentral)
+            inner   join siw_solicitacao b1 on (a.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+              inner join siw_tramite     b2 on (b1.sq_siw_tramite    = b2.sq_siw_tramite)
+              inner join siw_tramite     b3 on (b2.sq_menu           = b3.sq_menu and b3.sigla = 'AS')
       where p_nu_guia     = a.nu_guia
         and p_ano_guia    = a.ano_guia
         and coalesce(a1.sq_unidade_pai,a1.sq_unidade) = coalesce(c.sq_unidade_pai,c.sq_unidade)
@@ -34,10 +39,10 @@ begin
 
         -- Atualiza a caixa com os dados da recusa        
         If crec.sq_caixa is not null Then
-         update pa_caixa
-           set arquivo_guia_numero = null,
-               arquivo_guia_ano = null
-         where sq_caixa = crec.sq_caixa;
+           update pa_caixa
+             set arquivo_guia_numero = null,
+                 arquivo_guia_ano = null
+           where sq_caixa = crec.sq_caixa;
         End If;
         
         -- Atualiza o log com os dados da recusa
@@ -46,6 +51,13 @@ begin
                a.recebimento = sysdate,
                a.resumo      = a.resumo||chr(13)||chr(10)||'*** RECUSADO'||case when p_observacao is null then '' else chr(13)||chr(10)||'Observação: '||p_observacao end
          where a.sq_documento_log = crec.sq_documento_log;
+
+        -- Se recusa de caixa pelo arquivo central, atualiza a situação dos protocolos para ARQUIVADO SETORIAL
+        If crec.sg_tramite_atual = 'AT' Then
+          update siw_solicitacao a 
+             set a.sq_siw_tramite = crec.sq_as
+           where a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
+        End If;
      Else
         -- Se tramitação interna, garante que a unidade de posse é a unidade recebedora
         update pa_documento a 
