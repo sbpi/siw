@@ -1379,7 +1379,7 @@ function OutraParte() {
     ShowHTML('  theForm.w_sq_pessoa.value = \'\';');
     ShowHTML('}');
   } elseif ($O=='I' || $O=='A') {
-    ShowHTML('  if (theForm.Botao.value.indexOf(\'Alterar\') >= 0) { return true; }');
+    ShowHTML('  if (theForm.w_troca.value.indexOf(\'Alterar\') >= 0) { return true; }');
     if (Nvl($w_sq_pessoa,'')=='') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
