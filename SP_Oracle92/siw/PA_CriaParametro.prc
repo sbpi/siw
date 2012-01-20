@@ -29,7 +29,9 @@ begin
      -- Atualiza a tabela de parâmetros
      Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
 
+     
      -- Atualiza a tabela de unidades
+     Update pa_unidade Set numero_documento = 0, numero_tramite = 0, numero_transferencia = 0, numero_eliminacao = 0 Where cliente = w_unid.cliente and sq_unidade_pai is null;
      Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = w_unid_pai;
 
   Elsif to_char(p_data,'yyyy') < to_char(sysdate,'YYYY') Then

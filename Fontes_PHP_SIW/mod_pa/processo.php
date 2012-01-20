@@ -1732,6 +1732,7 @@ function ArqSetorial() {
     SaltaCampo();
     CheckBranco();
     ValidateOpen('Validacao');
+
     Validate('p_prefixo', 'Prefixo', '1', '', '5', '5', '', '0123456789');
     Validate('p_numero', 'Número', '1', '', '1', '6', '', '0123456789');
     Validate('p_ano', 'Ano', '1', '', '4', '4', '', '0123456789');
@@ -1759,7 +1760,7 @@ function ArqSetorial() {
     SaltaCampo();
     ValidateOpen('Validacao');
     if ($w_existe) {
-      ShowHTML('  var i; ');
+      /*ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  if (theForm["w_chave[]"].value==undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_chave[]"].length; i++) {');
@@ -1773,7 +1774,8 @@ function ArqSetorial() {
       ShowHTML('  if (w_erro) {');
       ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
-      ShowHTML('  }');
+      ShowHTML('  }');*/
+      Validate('w_chave', 'nº. de protocolo', 'CHECKBOX', '1', '1', '5', '', '1');
       Validate('w_observacao', 'Observações sobre o acondicionamento do protocolo', '1', '1', 1, 2000, '1', '1');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
       ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para ' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados') . '?\')) return false;');
@@ -1851,7 +1853,7 @@ function ArqSetorial() {
           ShowHTML('        <td align="center" width="1%" nowrap>');
           ShowHTML('          <INPUT type="hidden" name="w_tramite[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'sq_siw_tramite') . '">');
           ShowHTML('          <INPUT type="hidden" name="w_unid_origem[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'unidade_int_posse') . '">');
-          ShowHTML('          <input type="CHECKBOX" ' . ((nvl($w_marcado[f($row, 'sq_siw_solicitacao')], '') != '') ? 'CHECKED' : '') . ' name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+          ShowHTML('          <input type="CHECKBOX" ' . ((nvl($w_marcado[f($row, 'sq_siw_solicitacao')], '') != '') ? 'CHECKED' : '') . ' class="w_chave_cb" name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
           ShowHTML('          <INPUT type="hidden" name="w_unid_autua[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'unidade_autuacao') . '">');
           /* if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
             ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_solic_pai').'" ></td>');

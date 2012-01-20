@@ -31,7 +31,7 @@ begin
         Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
     
         -- Atualiza a tabela de unidades
-        Update pa_unidade Set numero_tramite = 0, numero_transferencia = 0, numero_eliminacao = 0 Where cliente = w_unid.cliente and sq_unidade_pai is null;
+        Update pa_unidade Set numero_documento = 0, numero_tramite = 0, numero_transferencia = 0, numero_eliminacao = 0 Where cliente = w_unid.cliente and sq_unidade_pai is null;
      Else
         w_ano        := w_reg.ano_corrente;
         If w_sg_tramite = 'AT' Then

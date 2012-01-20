@@ -2200,7 +2200,7 @@ function MontaURL($p_sigla) {
 // Montagem de cabeçalho padrão de formulário
 // -------------------------------------------------------------------------
 function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,$p_P3,$p_P4,$p_TP,$p_SG,$p_R,$p_O, $p_retorno=null) {
-  $l_html = '<form action="'.$p_Action.'" method="'.$p_Method.'" NAME="'.$p_Name.'"'.((nvl($p_onSubmit,'')=='') ? '' : ' onSubmit="'.$p_onSubmit.'"').((nvl($p_Target,'')=='') ? '' : '" target="'.$p_Target.'"').'>';
+  $l_html = '<form action="'.$p_Action.'" method="'.$p_Method.'" id="'.strtolower($p_Name).'" NAME="'.$p_Name.'"'.((nvl($p_onSubmit,'')=='') ? '' : ' onSubmit="'.$p_onSubmit.'"').((nvl($p_Target,'')=='') ? '' : '" target="'.$p_Target.'"').'>';
   if (nvl($p_P1,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P1" VALUE="'.$p_P1.'">';
   if (nvl($p_P2,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P2" VALUE="'.$p_P2.'">';
   if (nvl($p_P3,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P3" VALUE="'.$p_P3.'">';

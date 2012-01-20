@@ -20,8 +20,12 @@ create or replace procedure SP_PutLancamentoEnvio
    w_pendencia     number(18) := 0;
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
+   w_menu          siw_menu%rowtype;
 
 begin
+   -- Recupera os dados da opção de menu
+   select * into w_menu from siw_menu where sq_menu = p_menu;
+   
    If p_tramite <> w_novo_tramite Then
       -- Verifica se há pendência na prestação de contas de alguma viagem
       select count(*) into w_pendencia
@@ -34,7 +38,8 @@ begin
                inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
                inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
        where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
-         and a.sq_pessoa = (select pessoa from fn_lancamento where sq_siw_solicitacao = p_chave);
+         and a.sq_pessoa = (select pessoa from fn_lancamento where sq_siw_solicitacao = p_chave)
+         and w_menu.sigla = 'FNDVIA';
 
       -- Se houver, coloca o pagamento como pendente de prestação de contas
       If w_pendencia > 0 Then

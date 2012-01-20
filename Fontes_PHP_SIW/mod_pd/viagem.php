@@ -911,6 +911,7 @@ function Geral() {
       }
     }
     Validate('w_descricao', 'Objetivo/assunto/evento', '1', 1, 5, 2000, '1', '1');
+    Validate('w_veiculo', 'locação de veículos', 'RADIO', 1, 5, 2000, '1', '1');
     if ($w_cadgeral == 'S') {
       Validate('w_sq_unidade_resp', 'Unidade proponente', 'SELECT', 1, 1, 18, '', '0123456789');
     }
@@ -1387,7 +1388,7 @@ function OutraParte() {
       ShowHTML('  theForm.w_sq_pessoa.value = \'\';');
       ShowHTML('}'); */
   } elseif ($O == 'I' || $O == 'A') {
-    ShowHTML('  if (theForm.Botao.value.indexOf(\'Alterar\') >= 0) { return true; }');
+    ShowHTML('  if (theForm.w_troca.value.indexOf(\'Alterar\') >= 0) { return true; }');
     Validate('w_nome', 'Nome', '1', 1, 5, 60, '1', '1');
     Validate('w_nome_resumido', 'Nome resumido', '1', 1, 2, 21, '1', '1');
     Validate('w_sexo', 'Sexo', 'SELECT', 1, 1, 1, 'MF', '');
@@ -1720,9 +1721,9 @@ function OutraParte() {
       }
       ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
       ShowHTML('      <tr><td align="center" colspan="3">');
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="w_troca.value=this.value;">');
       if ($w_cadgeral == 'S') {
-        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Alterar beneficiário" onClick="Botao.value=this.value; document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.submit();">');
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Alterar beneficiário" onClick="w_troca.value=this.value; document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.submit();">');
       }
       ShowHTML('          </td>');
       ShowHTML('      </tr>');

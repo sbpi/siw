@@ -717,60 +717,81 @@ function openBox($action=null,$width="80%",$height="95%",$autoScale="true",$auto
 }
 
 // Abre a tag SCRIPT
+
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
   extract($GLOBALS);
   global $w_campo_obrigatorio;
   if(strpos($VariableName,'[')===false) $Form = "  theForm."; else $Form = "theForm";
-  if (upper($DataType)!="SELECT" && upper($DataType)!="HIDDEN") {
+  if (upper($DataType)!="SELECT" && upper($DataType)!="HIDDEN" && upper($DataType) != 'CHECKBOX') {
     print "  ".$Form.$VariableName.".value = Trim(".$Form.$VariableName.".value);"."\r\n"; 
   }
+
   if ($ValueRequired>"") {
     $w_campo_obrigatorio[$VariableName]='"STIO"';
-    if (upper($DataType)=="RADIO") { 
-      print "  var w_erro = true; "."\r\n"; 
-      print "  if (".$Form.$VariableName.".length==undefined) {"."\r\n"; 
-      print "    if (".$Form.$VariableName.".checked) w_erro = false;"."\r\n"; 
-      print "  } else {"."\r\n"; 
-      print "    for (i=0; i<".$Form.$VariableName.".length; i++) {"."\r\n"; 
-      print "      if (".$Form.$VariableName."[i].checked) w_erro = false;"."\r\n"; 
-      print "    }"."\r\n"; 
-      print "  }"."\r\n"; 
-      print "  if (w_erro)"."\r\n"; 
+    if (upper($DataType)=="CHECKBOX") {
+      print " var campos = $(\"input[class^=".$VariableName."_cb]\").serializeArray();"."\r\n";
+      print " var marcados = campos.length;"."\r\n";
+      print " if (marcados <= 0) ";
+    } elseif (upper($DataType)=="RADIO") {
+      print " var campos = '';"."\r\n";
+      print " $(\"[name=$VariableName]\").each(function(i){"."\r\n";          
+      print "   if ($(this).is(':checked')) {"."\r\n";          
+      print "     campos = $(this).val();"."\r\n";          
+      print "   }"."\r\n";          
+      print " });"."\r\n";          
+      print " if(campos == '')"."\r\n";          
     } elseif (upper($DataType)=="SELECT") { 
-      print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; 
+      print "  if ($(\"[name=$VariableName]\").attr('selectedIndex') <= 0)"."\r\n"; 
     } else { 
-      print "  if (".$Form.$VariableName.".value == '')"."\r\n"; 
+      print "  if ($(\"[name=$VariableName]\").val() == '')"."\r\n"; 
     }
 
     print "  {"."\r\n";
-    print "    alert('Favor informar um valor para o campo ".$DisplayName."');"."\r\n";
-    if (upper($DataType)!="HIDDEN" && upper($DataType)!="RADIO") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
-    print "    return (false);"."\r\n";
+    print "    var msg = 'Favor informar um valor para o campo ".$DisplayName."';"."\r\n";
+    print "    alert(msg);"."\r\n";
+    if (upper($DataType)!="HIDDEN" && upper($DataType)!="RADIO" && upper($DataType)!="CHECKBOX") {
+    print "    $(\"[name=$VariableName]\").focus();"."\r\n"; }
+    print "    return false;"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
   }
 
-  if ($MinimumLength>"") {
-    print "  if (".$Form.$VariableName.".value.length < ".$MinimumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
-    print "  {"."\r\n";
-    print "    alert('Favor digitar pelo menos ".$MinimumLength." posições no campo ".$DisplayName."');"."\r\n";
-    if (upper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
-    print "    return (false);"."\r\n";
-    print "  }"."\r\n";
-    print "\r\n";
+  if ($MinimumLength > "") {
+    if (upper($DataType) == "CHECKBOX" && intval($MinimumLength) > 0) {
+      print " if(marcados < $MinimumLength){";
+      print "    alert('Favor selecionar pelo menos " . $MinimumLength . " opções de " . $DisplayName . ". \\nVocê selecionou apenas ' + marcados + ' opções.');" . "\r\n";
+      print " }";
+    } else {
+      print "  if (" . $Form . $VariableName . ".value.length < " . $MinimumLength . " && " . $Form . $VariableName . ".value != '')" . "\r\n";
+      print "  {" . "\r\n";
+      print "    alert('Favor digitar pelo menos " . $MinimumLength . " posições no campo " . $DisplayName . "');" . "\r\n";
+      if (upper($DataType)!="HIDDEN" && upper($DataType)!="RADIO" && upper($DataType)!="CHECKBOX") {
+        print "    " . $Form . $VariableName . ".focus();" . "\r\n";
+      }
+      print "    return (false);" . "\r\n";
+      print "  }" . "\r\n";
+      print "\r\n";
+    }
   }
-
+  
   if ($MaximumLength>"") {
-    print "  if (".$Form.$VariableName.".value.length > ".$MaximumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
-    print "  {"."\r\n";
-    print "    alert('Favor digitar no máximo ".$MaximumLength." posições no campo ".$DisplayName.".\\nForam digitadas ' + ".$Form.$VariableName.".value.length + ' posições.');"."\r\n";
-    if (upper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
-    print "    return (false);"."\r\n";
+    if (upper($DataType) == "CHECKBOX" && nvl($MaximumLength,'')!='' && nvl($MaximumLength,0) > 0 ) {
+      print " if(marcados > $MaximumLength){";
+      print "    alert('Favor selecionar no máximo " . $MaximumLength . " opções de " . $DisplayName . ". \\nVocê selecionou ' + marcados + ' opções.');" . "\r\n";
+    } else {
+      print "  if (".$Form.$VariableName.".value.length > ".$MaximumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
+      print "  {"."\r\n";
+      print "    alert('Favor digitar no máximo ".$MaximumLength." posições no campo ".$DisplayName.".\\nForam digitadas ' + ".$Form.$VariableName.".value.length + ' posições.');"."\r\n";
+    }
+    if (upper($DataType)!="HIDDEN" && upper($DataType)!="RADIO" && upper($DataType)!="CHECKBOX") {
+      print "    " . $Form . $VariableName . ".focus();" . "\r\n";
+    }
+    print "    return false;"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
   }
 
-  if ($AllowLetters>"" || $AllowDigits>"") {
+  if ($AllowLetters>"" || $AllowDigits>"" && upper($DataType)!="CHECKBOX") {
     $checkOK="";
     if ($AllowLetters>"") {
       if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-–,.()-:;[]{}*€&%$#@!/º°ª²³?<>|+=_\\“”"\\\' '; }
