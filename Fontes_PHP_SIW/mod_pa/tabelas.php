@@ -555,6 +555,8 @@ function Caixa() {
     ShowHTML('          <td><b>'.linkOrdena('Número', 'numero').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Unidade', 'nm_unidade').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Data Limite', 'data_limite').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Prazo Guarda', 'intermediario').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Destinação Final', 'destinacao_final').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Itens', 'qtd').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Localização', 'nm_localizacao').'</td>');
     ShowHTML('          <td class="remover"><b>Operações</td>');
@@ -571,6 +573,8 @@ function Caixa() {
         ShowHTML('        <td align="center">'.f($row, 'numero').'</td>');
         ShowHTML('        <td>'.f($row, 'nm_unidade').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row, 'data_limite'), 5).'</td>');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row, 'intermediario'), 5).'</td>');
+        ShowHTML('        <td>'.f($row, 'destinacao_final').'</td>');
         ShowHTML('        <td align="right">'.f($row, 'qtd').'&nbsp;</td>');
         ShowHTML('        <td>'.f($row, 'nm_localizacao').'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');

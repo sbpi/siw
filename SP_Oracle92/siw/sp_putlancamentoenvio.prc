@@ -38,6 +38,12 @@ begin
                inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
                inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
        where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+         and 0           < (select count(*)
+                              from siw_solicitacao        w
+                                   inner join siw_tramite x on (w.sq_menu = x.sq_menu)
+                             where w.sq_siw_solicitacao = p_chave
+                               and x.sigla              = 'PP'
+                            )
          and a.sq_pessoa = (select pessoa from fn_lancamento where sq_siw_solicitacao = p_chave)
          and w_menu.sigla = 'FNDVIA';
 

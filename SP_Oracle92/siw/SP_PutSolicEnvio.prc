@@ -99,6 +99,33 @@ begin
                    vencimento      = soma_dias(w_menu.sq_pessoa, trunc(sysdate), 2, 'U'),
                    sq_pessoa_conta = null
             Where sq_siw_solicitacao = p_chave;
+         Elsif w_sg_tramite = 'PP' and w_menu.sigla = 'FNDVIA' Then
+            -- Pagamento de diária de beneficiário sem pendência na prestação de contas vai salta para o trâmite EE (Pagamento)
+            select count(*) into w_cont
+              from pd_missao                        a
+                   inner   join pd_categoria_diaria f on (a.diaria              = f.sq_categoria_diaria)
+                   inner   join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                     inner join siw_tramite         c on (b.sq_siw_tramite      = c.sq_siw_tramite and
+                                                          c.sigla               in ('PC','AP')
+                                                         )
+                     inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
+                     inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
+             where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+               and 0           < (select count(*)
+                                    from siw_solicitacao        w
+                                         inner join siw_tramite x on (w.sq_menu = x.sq_menu)
+                                   where w.sq_siw_solicitacao = p_chave
+                                     and x.sigla              = 'PP'
+                                  )
+               and a.sq_pessoa = (select pessoa from fn_lancamento where sq_siw_solicitacao = p_chave);
+
+            -- Se não houver pendência, coloca o lançamento na fase de pagamento (última antes de estar concluída).
+            If w_cont = 0 Then
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.ordem   = (select max(ordem) from siw_tramite where sq_menu = p_menu and ativo = 'S');
+            End If;
          Elsif w_sg_tramite = 'PP' and substr(w_menu.sigla,1,4)='CLRP' Then
             -- Se o trâmite for de pesquisa de preços de pedido de ARP e tiver o número necessário de pesquisas, pula para o próximo.
             select count(*)
