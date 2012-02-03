@@ -41,6 +41,16 @@ begin
               and b.sq_assunto = p_assunto
          );
       End If;
+   Elsif p_operacao = 'A' Then -- Alteração
+      -- Atualiza a tabela de assuntos do documento
+      update pa_documento_assunto set principal = p_principal where sq_siw_solicitacao = p_chave and sq_assunto = p_assunto;
+   Elsif p_operacao = 'E' Then -- Exclusão
+      -- Remove o registro na tabela de interessados da solicitação
+      delete pa_documento_assunto where sq_siw_solicitacao = p_chave and sq_assunto = p_assunto;
+   End If;
+
+   -- Se documento está vinculado a uma caixa, atualiza os dados da caixa.
+   If p_operacao <> 'E' Then
 
       -- Verifica se o protocolo está em uma caixa
       select sq_caixa into w_sq_caixa from pa_documento where sq_siw_solicitacao = p_chave;
@@ -69,12 +79,6 @@ begin
                 destinacao_final    = substr(w_final,1,40)
          where sq_caixa = w_sq_caixa;
       End If;
-   Elsif p_operacao = 'A' Then -- Alteração
-      -- Atualiza a tabela de assuntos do documento
-      update pa_documento_assunto set principal = p_principal where sq_siw_solicitacao = p_chave and sq_assunto = p_assunto;
-   Elsif p_operacao = 'E' Then -- Exclusão
-      -- Remove o registro na tabela de interessados da solicitação
-      delete pa_documento_assunto where sq_siw_solicitacao = p_chave and sq_assunto = p_assunto;
    End If;
 end sp_putDocumentoAssunto;
 /

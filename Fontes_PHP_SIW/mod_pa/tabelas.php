@@ -548,6 +548,7 @@ function Caixa() {
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     }
+    ShowHTML('          <A class="SS" HREF="'.$w_dir.$w_pagina.'grava&R='.$w_pagina.$par.'&O=U&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'" onClick="return(confirm(\'Este procedimento irá atualizar os dados de todas as caixas, mesmo as não constantes da lista abaixo!\nA atualização abrange data limite, prazo de guarda, destinação final, assunto e espécies documentais.\nConfirma?\'))">Atualização automática</A>&nbsp');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
