@@ -531,6 +531,7 @@ begin
          If w_reembolso = 'S' or w_complemento > 0 or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso loop
+              w_cd_financ := null;
               If crec.sg_tramite <> 'AT' Then
                 sp_putfinanceirogeral(
                                   p_operacao           => case when crec.sq_financeiro is null then 'I' else 'A' end,
@@ -640,6 +641,7 @@ begin
 
              -- Cria/atualiza lançamento financeiro para a devolução de valores
             for crec in c_ressarcimento_geral loop
+              w_cd_financ := null;
                 sp_putfinanceirogeral(
                                   p_operacao           => case when crec.sq_financeiro is null then 'I' else 'A' end,
                                   p_cliente            => crec.cliente,
