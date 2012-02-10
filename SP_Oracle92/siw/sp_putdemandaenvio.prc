@@ -18,17 +18,17 @@ create or replace procedure SP_PutDemandaEnvio
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
 begin
-   If p_tramite <> p_novo_tramite Then
+   If nvl(p_tramite,0) <> p_novo_tramite Then
       -- Recupera a próxima chave
       select sq_siw_solic_log.nextval into w_chave from dual;
-      
+
       -- Se houve mudança de fase, grava o log
-      Insert Into siw_solic_log 
-         (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
-          sq_siw_tramite,            data,               devolucao, 
+      Insert Into siw_solic_log
+         (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa,
+          sq_siw_tramite,            data,               devolucao,
           observacao
          )
-      (Select 
+      (Select
           w_chave,                   p_chave,            p_pessoa,
           p_tramite,                 sysdate,            p_devolucao,
           'Envio da fase "'||a.nome||'" '||
@@ -52,12 +52,12 @@ begin
       Update siw_solicitacao set conclusao = null, executor = p_destinatario Where sq_siw_solicitacao = p_chave;
 
       -- Atualiza o situacao da demanda para não concluída
-      Update gd_demanda set 
+      Update gd_demanda set
          concluida      = 'N',
          inicio_real    = null,
          fim_real       = null,
-         data_conclusao = null, 
-         nota_conclusao = null, 
+         data_conclusao = null,
+         nota_conclusao = null,
          custo_real     = 0
       Where sq_siw_solicitacao = p_chave;
 
@@ -69,11 +69,11 @@ begin
 
    -- Recupera a nova chave da tabela de encaminhamentos da demanda
    select sq_demanda_log.nextval into w_chave_dem from dual;
-   
+
    -- Insere registro na tabela de encaminhamentos da demanda
-   Insert into gd_demanda_log 
-      (sq_demanda_log,            sq_siw_solicitacao, cadastrador, 
-       destinatario,              data_inclusao,      observacao, 
+   Insert into gd_demanda_log
+      (sq_demanda_log,            sq_siw_solicitacao, cadastrador,
+       destinatario,              data_inclusao,      observacao,
        despacho,                  sq_siw_solic_log
       )
    Values (
@@ -86,15 +86,15 @@ begin
    If p_caminho is not null Then
       -- Recupera a próxima chave
       select sq_siw_arquivo.nextval into w_chave_arq from dual;
-       
+
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
-      (select w_chave_arq, sq_pessoa_pai, p_chave||' - Anexo', null, sysdate, 
+      (select w_chave_arq, sq_pessoa_pai, p_chave||' - Anexo', null, sysdate,
               p_tamanho,   p_tipo,        p_caminho, p_nome_original
          from co_pessoa a
         where a.sq_pessoa = p_pessoa
       );
-      
+
       -- Decide se o vínculo do arquivo será com o log da solicitação ou da demanda.
       If p_tramite <> p_novo_tramite Then
          -- Insere registro em SIW_SOLIC_LOG_ARQ
@@ -108,6 +108,6 @@ begin
    End If;
 
    commit;
-      
+
 end SP_PutDemandaEnvio;
 /

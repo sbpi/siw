@@ -3568,6 +3568,7 @@ SP_Oracle92/fbaj/sp_getalberlist.prc -text
 SP_Oracle92/fbaj/sp_putalbcad.prc -text
 SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
+SP_Oracle92/siw/AC_RetornaValorAditivo.fnc -text
 SP_Oracle92/siw/CARREGA_PAC.prc -text
 SP_Oracle92/siw/CL_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/CL_CriaParametro.prc -text
@@ -3639,6 +3640,7 @@ SP_Oracle92/siw/SP_GetPD_Financeiro.prc -text
 SP_Oracle92/siw/SP_GetPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_GetPD_Vinculacao.prc -text
 SP_Oracle92/siw/SP_GetParametro.prc -text
+SP_Oracle92/siw/SP_GetRetricaoEtapa.prc -text
 SP_Oracle92/siw/SP_GetSIWArquivo.prc -text
 SP_Oracle92/siw/SP_GetSIWCoordenada.prc -text
 SP_Oracle92/siw/SP_GetSolicGP.prc -text
@@ -3656,6 +3658,7 @@ SP_Oracle92/siw/SP_PutAlmoxarifado.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifadoLocal.prc -text
 SP_Oracle92/siw/SP_PutArquivoLocal_PA.prc -text
 SP_Oracle92/siw/SP_PutArquivo_PA.prc -text
+SP_Oracle92/siw/SP_PutCLDadosAnalise.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
 SP_Oracle92/siw/SP_PutCaixa.prc -text
@@ -3677,6 +3680,8 @@ SP_Oracle92/siw/SP_PutGPModalidade.prc -text
 SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPPensionista.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
+SP_Oracle92/siw/SP_PutMTSolicItem.prc -text
+SP_Oracle92/siw/SP_PutMeioTrans.prc -text
 SP_Oracle92/siw/SP_PutMetaAnexo.prc -text
 SP_Oracle92/siw/SP_PutMtSituacao.prc -text
 SP_Oracle92/siw/SP_PutPAElimGeral.prc -text
@@ -3706,6 +3711,7 @@ SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
 SP_Oracle92/siw/SP_PutProjetoAnalise.prc -text
 SP_Oracle92/siw/SP_PutProjetoDescritivo.prc -text
+SP_Oracle92/siw/SP_PutSgPesUsu.prc -text
 SP_Oracle92/siw/SP_PutSolicCelular.prc -text
 SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text
@@ -3717,6 +3723,7 @@ SP_Oracle92/siw/SP_PutSolicGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfCelular.prc -text
 SP_Oracle92/siw/SP_PutSolicInfGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfTransp.prc -text
+SP_Oracle92/siw/SP_PutSolicOpiniao.prc -text
 SP_Oracle92/siw/SP_PutSolicRelAnexo.prc -text
 SP_Oracle92/siw/SP_PutSolicTransp.prc -text
 SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text
@@ -3734,9 +3741,10 @@ SP_Oracle92/siw/TG_FN_LANCAMENTO_RUBRICA.trg -text
 SP_Oracle92/siw/TG_GP_AFASTAMENTO.trg -text
 SP_Oracle92/siw/TG_GP_CONTRATO_COLAB_IN_UP.trg -text
 SP_Oracle92/siw/TG_GP_FERIAS_IN_UP.trg -text
-SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
+SP_Oracle92/siw/TG_PA_ASSUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_LOG_IN_UP.trg -text
+SP_Oracle92/siw/TG_PD_DIARIA_IN_UP_EX.trg -text
 SP_Oracle92/siw/TG_PD_MISSAO_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_EX.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_UP.trg -text
@@ -3827,6 +3835,7 @@ SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_getMTMovim.prc -text
+SP_Oracle92/siw/sp_getMTSolicItem.prc -text
 SP_Oracle92/siw/sp_getMatImp.prc -text
 SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getMeioTransporte.prc -text

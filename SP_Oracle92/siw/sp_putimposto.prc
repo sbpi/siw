@@ -16,23 +16,24 @@ create or replace procedure SP_PutImposto
     p_tipo_vinc                in  number    default null,
     p_sq_cc                    in  number    default null,
     p_sq_solic                 in  number    default null,
-    p_sq_forma_pag             in  number    default null
+    p_sq_forma_pag             in  number    default null,
+    p_codigo_externo           in  varchar2  default null
    ) is
 begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into fn_imposto
-        (sq_imposto,         cliente,   nome,     descricao,   sq_tipo_lancamento, 
-         sq_tipo_documento,  sigla,     esfera,   calculo,     dia_pagamento, 
+        (sq_imposto,         cliente,   nome,     descricao,   sq_tipo_lancamento,
+         sq_tipo_documento,  sigla,     esfera,   calculo,     dia_pagamento,
          ativo,              tipo_beneficiario,   sq_beneficiario,
          tipo_vinculo,       sq_cc_vinculo,       sq_solic_vinculo,
-         sq_forma_pagamento)
+         sq_forma_pagamento, codigo_externo)
       values
-        (sq_imposto.nextval, p_cliente, p_nome,   p_descricao, p_tipo_lancamento,  
-         p_tipo_documento,   p_sigla,   p_esfera, p_calculo,   p_dia_pagamento, 
+        (sq_imposto.nextval, p_cliente, p_nome,   p_descricao, p_tipo_lancamento,
+         p_tipo_documento,   p_sigla,   p_esfera, p_calculo,   p_dia_pagamento,
          p_ativo,            p_tipo_benef,        p_sq_benef,
          p_tipo_vinc,        p_sq_cc,             p_sq_solic,
-         p_sq_forma_pag);
+         p_sq_forma_pag,     p_codigo_externo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update fn_imposto
@@ -51,7 +52,8 @@ begin
              tipo_vinculo       = p_tipo_vinc,
              sq_cc_vinculo      = p_sq_cc,
              sq_solic_vinculo   = p_sq_solic,
-             sq_forma_pagamento = p_sq_forma_pag
+             sq_forma_pagamento = p_sq_forma_pag,
+             codigo_externo     = p_codigo_externo
        where sq_imposto = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

@@ -2,8 +2,8 @@ create or replace procedure SP_PutConfCL
    (p_operacao                 in varchar2,
     p_cliente                  in number,
     p_menu                     in number,
-    p_siw_solicitacao          in number   default null,
     p_chave                    in number   default null,
+    p_siw_solicitacao          in number   default null,
     p_rubrica                  in number   default null,
     p_lancamento               in number   default null,
     p_consumo                  in varchar2 default null,
@@ -15,10 +15,10 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into cl_vinculo_financeiro
-        (sq_clvinculo_financeiro,         cliente,      sq_siw_solicitacao,   sq_projeto_rubrica,   sq_tipo_lancamento, 
+        (sq_clvinculo_financeiro,         cliente,      sq_siw_solicitacao,   sq_projeto_rubrica,   sq_tipo_lancamento,
          consumo,                         permanente,   servico,              outros,               sq_menu)
       values
-        (sq_clvinculo_financeiro.nextval, p_cliente,    p_siw_solicitacao,    p_rubrica,            p_lancamento, 
+        (sq_clvinculo_financeiro.nextval, p_cliente,    p_siw_solicitacao,    p_rubrica,            p_lancamento,
          p_consumo,                       p_permanente, p_servico,            p_outros,             p_menu
         );
    Elsif p_operacao = 'A' Then

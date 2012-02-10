@@ -216,7 +216,8 @@ begin
       update pd_diaria a
          set veiculo_qtd = quantidade
       where sq_diaria  = p_sq_diaria
-        and quantidade < veiculo_qtd;
+        and quantidade < veiculo_qtd
+        and a.justificativa_veiculo is null;
    End If;
 end SP_PutPdDiaria;
 /

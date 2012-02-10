@@ -1,4 +1,4 @@
-create or replace trigger TG_PA_ASUNTO_IN_UP
+create or replace trigger TG_PA_ASSUNTO_IN_UP
   before insert or update on pa_assunto
   for each row
 begin
@@ -11,5 +11,5 @@ begin
     Else                                 :new.tipo := '3 - Grupo';     -- Caso contrário, é grupo
     End If;
   End If;
-end TG_PA_ASUNTO_IN_UP;
+end TG_PA_ASSUNTO_IN_UP;
 /

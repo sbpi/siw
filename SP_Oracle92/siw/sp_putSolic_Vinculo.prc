@@ -19,4 +19,5 @@ begin
        where sq_siw_solicitacao = p_chave
          and (p_menu      is null or (p_menu is not null and sq_menu      = p_menu));
    End If;
-end sp_putSolic_Vinculo
+end sp_putSolic_Vinculo;
+/

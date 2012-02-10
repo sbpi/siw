@@ -7,8 +7,8 @@ create or replace procedure SP_GetMeioTransporte
     p_result            out sys_refcursor) is
 begin
    -- Recupera os grupos de veículos
-   open p_result for 
-      select a.sq_meio_transporte as chave, 
+   open p_result for
+      select a.sq_meio_transporte as chave,
              a.nome, a.aereo, a.rodoviario, a.ferroviario, a.aquaviario, a.ativo,
              case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
         from pd_meio_transporte a

@@ -11,10 +11,10 @@ create or replace procedure SP_GetMenuRelac
 begin
    -- Verifica se o cliente é um serviço
    select tramite into w_tramite from siw_menu where sq_menu = p_sq_menu;
-   
-   -- Se não for, recupera os serviços fornecedores a clientes do mesmo módulo   
+
+   -- Se não for, recupera os serviços fornecedores a clientes do mesmo módulo
    If w_tramite = 'N' Then
-      open p_result for 
+      open p_result for
          select distinct a.servico_fornecedor as sq_menu, c.nome
            from siw_menu_relac                  a
                 inner   join siw_menu           b on (a.servico_cliente    = b.sq_menu)
@@ -37,9 +37,9 @@ begin
       End If;
       If p_viagem = 'N' Then
          l_modulo := l_modulo||',PD';
-      End If;   
+      End If;
       l_modulo := substr(l_modulo,2,200);
-      open p_result for 
+      open p_result for
          select distinct
                 a.servico_fornecedor,         b.nome as nm_servico_fornecedor, b.sigla as sg_servico_fornecedor,
                 a.servico_cliente,            c.ordem as or_servico_cliente,   c.nome as nm_servico_cliente,    c.sigla as sg_servico_cliente,
@@ -65,9 +65,9 @@ begin
       End If;
       If p_viagem = 'N' Then
          l_modulo := l_modulo||',PD';
-      End If;   
+      End If;
       l_modulo := substr(l_modulo,2,200);
-      open p_result for 
+      open p_result for
          select distinct(a.servico_cliente), a.servico_fornecedor,
                 b.nome as nm_servico_cliente,
                 c.nome as nm_servico_fornecedor, d.nome as nm_modulo_fornecedor,
@@ -84,12 +84,12 @@ begin
            and (l_modulo is null or (l_modulo is not null and InStr(l_modulo,d.sigla) = 0))
           order by b.nome, c.nome;
    Else
-      open p_result for 
+      open p_result for
          select a.servico_cliente, a.servico_fornecedor, a.sq_siw_tramite,
                 b.nome as nm_servico_cliente,
                 c.nome as nm_servico_fornecedor, d.nome as nm_modulo_fornecedor,
                 e.nome as nm_tramite,
-                a.servico_fornecedor as sq_menu, c.nome
+                a.servico_fornecedor as sq_menu, c.nome, d.sigla as sg_modulo
            from siw_menu_relac           a
                 inner   join siw_menu    b on (a.servico_cliente    = b.sq_menu)
                 inner   join siw_menu    c on (a.servico_fornecedor = c.sq_menu)
