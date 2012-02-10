@@ -849,10 +849,7 @@ function Geral() {
   if ($w_cadgeral == 'N') {
     $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, $_SESSION['USERNAME'], null, null, null, 1, null, null, null, null, null, null, null, null, null, null, null);
     if (count($RS) > 0) {
-      foreach ($RS as $row) {
-        $RS = $row;
-        break;
-      }
+      foreach ($RS as $row) { $RS = $row; break; }
       $w_cpf = f($RS, 'cpf');
       $w_sq_prop = f($RS, 'sq_pessoa');
       $w_nm_prop = f($RS, 'nm_pessoa');
@@ -866,7 +863,7 @@ function Geral() {
     $sql = new db_getMenuData; $RS_Relac = $sql->getInstanceOf($dbms, $w_sq_menu_relac);
   }
 
-// Recupera as possibilidades de vinculação financeira
+  // Recupera as possibilidades de vinculação financeira
   if (nvl($w_chave_pai, '') != '') {
     $sql = new db_getPD_Financeiro;
     $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);

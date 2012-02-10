@@ -38,9 +38,15 @@ create or replace procedure SP_PutViagemGeral
    w_chave      number(18)     := Nvl(p_chave,0);
    w_log_sol    number(18);
    w_log_esp    number(18);
-   w_reg        PD_parametro%rowtype;
+   w_reg        pd_parametro%rowtype;
    w_menu       siw_menu%rowtype;
-   w_financeiro number(18) := p_financeiro;
+   w_projeto    number(18);
+   w_financeiro number(18)     := p_financeiro;
+   w_fin_dia    number(18);
+   w_fin_hos    number(18);
+   w_fin_vei    number(18);
+   w_fin_rmb    number(18);
+   w_fim_dev    number(18);
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
@@ -207,6 +213,57 @@ begin
           veiculo                = p_veiculo,
           sq_pdvinculo_bilhete   = w_financeiro
       where sq_siw_solicitacao = p_chave;
+
+      -- Recupera a chave pai da solicitação, desde que seja projeto passível de vinculação a viagens
+      select sq_solic_pai into w_projeto from siw_solicitacao where sq_siw_solicitacao = p_chave;
+         
+      -- Verifica se a viagem é ligada a projeto com detalhamento de rubricas
+      select count(*) into w_existe from pd_vinculo_financeiro where sq_siw_solicitacao = w_projeto;
+
+      If w_existe > 0 Then
+         -- Grava vinculações financeiras de bilhetes, reembolsos, devoluções, diárias, hospedagens e veículos, 
+         -- desde que só exista uma possibilidade para cada uma.
+
+         -- Reembolso ao beneficiário
+         select count(*) into w_existe from pd_vinculo_financeiro where reembolso = 'S' and sq_siw_solicitacao = w_projeto;
+         If w_existe = 1 Then 
+            update pd_missao
+              set sq_pdvinculo_reembolso = (select sq_pdvinculo_financeiro from pd_vinculo_financeiro where reembolso = 'S' and sq_siw_solicitacao = w_projeto)
+            where sq_siw_solicitacao = p_chave;
+         End If;
+
+         -- Devolução de valores para a organização
+         select count(*) into w_existe from pd_vinculo_financeiro where ressarcimento = 'S' and sq_siw_solicitacao = w_projeto;
+         If w_existe = 1 Then 
+            update pd_missao
+              set sq_pdvinculo_ressarcimento = (select sq_pdvinculo_financeiro from pd_vinculo_financeiro where ressarcimento = 'S' and sq_siw_solicitacao = w_projeto)
+            where sq_siw_solicitacao = p_chave;
+         End If;
+
+         -- Diária
+         select count(*) into w_existe from pd_vinculo_financeiro where diaria = 'S' and sq_siw_solicitacao = w_projeto;
+         If w_existe = 1 Then 
+            update pd_diaria
+              set sq_pdvinculo_diaria = (select sq_pdvinculo_financeiro from pd_vinculo_financeiro where diaria = 'S' and sq_siw_solicitacao = w_projeto)
+            where sq_siw_solicitacao = p_chave;
+         End If;
+
+         -- Hospedagem
+         select count(*) into w_existe from pd_vinculo_financeiro where hospedagem = 'S' and sq_siw_solicitacao = w_projeto;
+         If w_existe = 1 Then 
+            update pd_diaria
+              set sq_pdvinculo_hospedagem = (select sq_pdvinculo_financeiro from pd_vinculo_financeiro where hospedagem = 'S' and sq_siw_solicitacao = w_projeto)
+            where sq_siw_solicitacao = p_chave;
+         End If;
+
+         -- Veículo
+         select count(*) into w_existe from pd_vinculo_financeiro where veiculo = 'S' and sq_siw_solicitacao = w_projeto;
+         If w_existe = 1 Then 
+            update pd_diaria
+              set sq_pdvinculo_veiculo = (select sq_pdvinculo_financeiro from pd_vinculo_financeiro where veiculo = 'S' and sq_siw_solicitacao = w_projeto)
+            where sq_siw_solicitacao = p_chave;
+         End If;
+      End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Recupera os dados do menu
       select * into w_menu from siw_menu where sq_menu = p_menu;

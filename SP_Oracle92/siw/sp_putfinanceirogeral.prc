@@ -66,12 +66,12 @@ begin
          sq_siw_solicitacao, sq_menu,          sq_siw_tramite,   solicitante, 
          cadastrador,        descricao,        fim,              inclusao,
          ultima_alteracao,   valor,            data_hora,        sq_unidade,
-         sq_cc,              sq_cidade_origem, sq_solic_pai,     codigo_interno)
+         sq_cc,              sq_cidade_origem, sq_solic_pai)
       (select 
          w_Chave,            p_menu,           a.sq_siw_tramite, p_solicitante,
          p_cadastrador,      p_descricao,      p_vencimento,     sysdate,
          sysdate,            nvl(p_valor,0),   p_data_hora,      p_sq_unidade,
-         p_sqcc,             p_cidade,         p_projeto,        p_codigo_interno
+         p_sqcc,             p_cidade,         p_projeto
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'

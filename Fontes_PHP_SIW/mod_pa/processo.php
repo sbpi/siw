@@ -1760,7 +1760,7 @@ function ArqSetorial() {
     SaltaCampo();
     ValidateOpen('Validacao');
     if ($w_existe) {
-      /*ShowHTML('  var i; ');
+      ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  if (theForm["w_chave[]"].value==undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_chave[]"].length; i++) {');
@@ -1774,8 +1774,8 @@ function ArqSetorial() {
       ShowHTML('  if (w_erro) {');
       ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
-      ShowHTML('  }');*/
-      Validate('w_chave', 'nº. de protocolo', 'CHECKBOX', '1', '1', '5', '', '1');
+      ShowHTML('  }');
+      //Validate('w_chave', 'nº. de protocolo', 'CHECKBOX', '1', '1', '5', '', '1');
       Validate('w_observacao', 'Observações sobre o acondicionamento do protocolo', '1', '1', 1, 2000, '1', '1');
       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
       ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para ' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados') . '?\')) return false;');

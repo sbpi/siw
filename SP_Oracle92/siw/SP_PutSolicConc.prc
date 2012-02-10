@@ -455,6 +455,7 @@ begin
    Elsif p_financeiro_resp is not null Then
       -- Cria/atualiza lançamento financeiro
       for crec in c_financeiro_geral loop
+          w_cd_financ := null;
           sp_putfinanceirogeral(
                              p_operacao           => 'I',
                              p_cliente            => crec.cliente,
