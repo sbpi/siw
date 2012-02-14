@@ -2597,7 +2597,7 @@ function Tramitacao() {
       // Recupera todos os registros para a listagem
       $sql = new db_getProtocolo;
       $RS = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux,
-                      $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2,
+                      $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $p_tipo,
                       $p_tipo_despacho, $p_empenho, $p_solicitante, $p_unidade, $p_proponente, $p_sq_acao_ppa, $p_detalhamento, $p_processo);
       if (Nvl($p_ordena, '') > '') {
         $lista = explode(',', str_replace(' ', ',', $p_ordena));
@@ -3086,7 +3086,10 @@ function Tramitacao() {
     ShowHTML('<tr valign="top">');
     selecaoTipoDespacho('Des<u>p</u>acho a ser usado para o envio:', 'P', 'Selecione o despacho a ser utilizado para os documentos relacionados na próxima tela.', $w_cliente, $p_tipo_despacho, null, 'p_tipo_despacho', 'SELECAO', null);
     ShowHTML('<tr><td><br><font size="2"><b>FILTRAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-    ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="' . $p_prefixo . '">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="' . $p_numero . '">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="' . $p_ano . '">');
+    ShowHTML('        <INPUT class="STC" type="checkbox" name="p_tipo" value="1" '.((nvl($p_tipo,'')!='') ? 'checked': '').'><b>Recuperar protocolos arquivados setorialmente</b></td>');
+    ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade de posse do protocolo (somente unidades que o usuário tem acesso):', 'U', 'Selecione a unidade de posse.', nvl($p_unid_posse,$_SESSION['LOTACAO']), $w_usuario, 'p_unid_posse', 'CADPA', null,2);
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
@@ -3255,6 +3258,38 @@ function TramitCentral() {
     ShowHTML('        return false;');
     ShowHTML('     }');
     ShowHTML('  } else if (theForm.w_opcao[1].checked) {');
+    ShowHTML('    w_erro  = false; ');
+    ShowHTML('    w_teste = ""; ');
+    ShowHTML('    for (i=1; i < theForm["w_destino[]"].length; i++) {');
+    ShowHTML('      if (theForm["w_chave[]"][i].checked) {');
+    ShowHTML('        if (w_teste!="" && theForm["w_destino[]"][i].value!=w_teste) {');
+    ShowHTML('          w_erro = true;');
+    ShowHTML('          break;');
+    ShowHTML('        }');
+    ShowHTML('        w_teste = theForm["w_destino[]"][i].value;');
+    ShowHTML('      }');
+    ShowHTML('    }');
+    ShowHTML('    if (w_erro) {');
+    ShowHTML('       alert("Não é permitido selecionar protocolos com diferentes destinações finais!");');
+    ShowHTML('       return false; ');
+    ShowHTML('    }');
+    ShowHTML('    if (theForm.w_caixa.selectedIndex>1) {');
+    ShowHTML('      w_erro  = false; ');
+    ShowHTML('      w_teste = theForm["w_dest_cx[]"][theForm.w_caixa.selectedIndex].value; ');
+    ShowHTML('      for (i=1; i < theForm["w_destino[]"].length; i++) {');
+    ShowHTML('        if (theForm["w_chave[]"][i].checked) {');
+    ShowHTML('          if (w_teste!="" && theForm["w_destino[]"][i].value!=w_teste) {');
+    ShowHTML('            w_erro = true;');
+    ShowHTML('            break;');
+    ShowHTML('          }');
+    ShowHTML('          w_teste = theForm["w_destino[]"][i].value;');
+    ShowHTML('        }');
+    ShowHTML('      }');
+    ShowHTML('      if (w_erro) {');
+    ShowHTML('         alert("Destinação final da caixa difere da destinação final dos protocolos selecionados!");');
+    ShowHTML('         return false; ');
+    ShowHTML('      }');
+    ShowHTML('    }');
     Validate('w_caixa', 'Caixa para arquivamento', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_pasta', 'Pasta', '', 1, 1, 20, '1', '1');
     ShowHTML('    if (theForm.w_local.value!="") {');
@@ -3329,6 +3364,7 @@ function TramitCentral() {
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td colspan=2><b>Arq. setorial</td>');
     ShowHTML('          <td rowspan=2><b>' . linkOrdena('Prazo Guarda', 'data_limite_doc', 'Form') . '</td>');
+    ShowHTML('          <td rowspan=2><b>' . linkOrdena('Destino Final', 'sg_destino_final', 'Form') . '</td>');
     ShowHTML('          <td colspan=2><b>Acondicionamento</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -3347,9 +3383,11 @@ function TramitCentral() {
     } else {
       AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina . $par, $O);
       ShowHTML('<input type="hidden" name="w_chave[]" value="">');
-      ShowHTML('<input type="hidden" name="w_assunto[]" value=""></td>');
-      ShowHTML('<input type="hidden" name="w_prov[]" value=""></td>');
-      ShowHTML('<input type="hidden" name="w_codigo[]" value=""></td>');
+      ShowHTML('<input type="hidden" name="w_assunto[]" value="">');
+      ShowHTML('<input type="hidden" name="w_prov[]" value="">');
+      ShowHTML('<input type="hidden" name="w_codigo[]" value="">');
+      ShowHTML('<input type="hidden" name="w_destino[]" value="">');
+      ShowHTML('<input type="hidden" name="w_dest_cx[]" value="">');
       ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
       ShowHTML('<INPUT type="hidden" name="w_menu" value="' . $w_menu . '">');
       if (nvl($_REQUEST['p_ordena'], '') == '') ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
@@ -3372,6 +3410,7 @@ function TramitCentral() {
         ShowHTML('<input type="hidden" name="w_assunto[]" value="' . f($row, 'cd_assunto') . '">');
         ShowHTML('<input type="hidden" name="w_prov[]" value="' . f($row, 'provisorio') . '">');
         ShowHTML('<input type="hidden" name="w_codigo[]" value="' . f($row, 'protocolo') . '">');
+        ShowHTML('<input type="hidden" name="w_destino[]" value="' . f($row, 'nm_destino_final') . '">');
         ShowHTML('        </td>');
         ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="' . $w_dir . $w_pagina . 'Visual&R=' . $w_pagina . $par . '&O=L&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=2&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET') . '" target="visualdoc" title="Exibe as informações deste registro.">' . f($row, 'protocolo') . '&nbsp;</a>');
         ShowHTML('        <td width="10">&nbsp;' . f($row, 'nm_tipo') . '</td>');
@@ -3388,6 +3427,7 @@ function TramitCentral() {
         ShowHTML('        <td title="' . htmlspecialchars(f($row, 'observacao_setorial')) . '">' . $w_titulo . '</td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;' . formataDataEdicao(f($row, 'data_setorial'), 5) . '</td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;' . f($row, 'data_limite_doc') . '</td>');
+        ShowHTML('        <td width="1%" nowrap title="' . htmlspecialchars(f($row, 'nm_destino_final')) . '">&nbsp;' . f($row, 'sg_destino_final') . '</td>');
 
         if (nvl(f($row, 'nr_caixa'), '') != '') {
           ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;<A HREF="' . montaURL_JS($w_dir, 'relatorio.php?par=ConteudoCaixa' . '&R=' . $w_pagina . 'IMPRIMIR' . '&O=L&w_chave=' . f($row, 'sq_caixa') . '&w_espelho=s&w_formato=WORD&orientacao=PORTRAIT&&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG) . '" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa." target="caixa">' . f($row, 'nr_caixa') . '/' . f($row, 'sg_unid_caixa') . '</a>&nbsp;');
@@ -4560,7 +4600,7 @@ function Grava() {
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   ShowHTML('</head>');
   BodyOpen(null);
-  
+
   if ($SG == 'PADGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
@@ -5007,7 +5047,6 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura == '') {
       // Verifica se é necessário criar uma nova caixa
-
       if ($_REQUEST['w_opcao']=='D') {
         $SQL = new dml_putDocumentoArqSet;
         for ($i = 1; $i <= count($_POST['w_chave']); $i++) {

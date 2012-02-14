@@ -50,11 +50,13 @@ begin
                                         when w.sq_arquivo_local    is not null then montaNomeArquivoLocal(w.sq_arquivo_local)
                                         when w.arquivo_guia_numero is not null then 'Aguardando arq. central'
                                         when w.elimin_guia_numero  is not null then 'Eliminado'
+                                        else '---'
                                    end as nm_localizacao,
                                    case when x.sigla               = 'AS'      then 'S'
                                         when w.sq_arquivo_local    is not null then 'C'
                                         when w.arquivo_guia_numero is not null then 'T'
                                         when w.elimin_guia_numero  is not null then 'E'
+                                        else '---'
                                    end as situacao
                               from pa_caixa                       w
                                    left join (select distinct k.sq_caixa, m.sigla
@@ -94,6 +96,7 @@ begin
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
             and (p_numero    is null or (p_numero    is not null and a.sq_caixa         = p_numero ))
             and ((p_central  is null and p_transito is null and p_setorial is null) or
+                 d.situacao  = '---' or
                  ((p_central  is not null or p_transito is not null or p_setorial is not null) and instr(coalesce(p_central,'')||coalesce(p_transito,'')||coalesce(p_setorial,''), d.situacao)>0)
                 )
             and (p_local     is null or (p_local     is not null and a.sq_arquivo_local in (select w.sq_arquivo_local

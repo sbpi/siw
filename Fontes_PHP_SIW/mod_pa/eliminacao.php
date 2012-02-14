@@ -1792,10 +1792,11 @@ function EmiteListElim() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_chave = $_REQUEST['w_chave'];
-  $w_tipo  = upper(trim($_REQUEST['w_tipo']));
+  $w_chave   = $_REQUEST['w_chave'];
+  $w_unidade = $_REQUEST['w_unidade'];
+  $w_tipo    = upper(trim($_REQUEST['w_tipo']));
   HeaderWord('PORTRAIT');
-  ShowHTML(elim_listagem($w_chave,$SG,'WORD'));
+  ShowHTML(elim_listagem($w_chave,$w_unidade,$SG,'WORD'));
 } 
 
 // =========================================================================

@@ -47,7 +47,7 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
   cursor c_dados is
       select distinct l.data_limite, i.intermediario, f.descricao as final
         from pa_caixa                            a3
-             inner     join pa_documento         a  on (a3.sq_caixa            =  a.sq_caixa)
+             inner     join pa_documento         a  on (a3.sq_caixa            =  a.sq_caixa and a.sq_documento_pai is null)
              inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
                inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite and sigla <> 'CA')
              inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')

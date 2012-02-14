@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de emissão da ordem de serviço
 // -------------------------------------------------------------------------
-function elim_listagem($l_chave,$l_sg,$l_formato='0') {
+function elim_listagem($l_chave,$l_unidade,$l_sg,$l_formato='0') {
   extract($GLOBALS);
   
   // Recupera os dados da tarefa
@@ -17,11 +17,21 @@ function elim_listagem($l_chave,$l_sg,$l_formato='0') {
   
   $sql = new db_GetSolicPA; $RS_Lista = $sql->getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'LISTELIM',4,
       $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-      $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+      $l_unidade,$p_prioridade,$p_ativo,$p_proponente,
       $l_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
       $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
       null, null, $p_empenho, $p_servico);
   $RS_Lista = SortArray($RS_Lista, 'codigo', 'asc');
+  
+  if (nvl($l_unidade,'')=='') {
+    $w_nm_unidade = 'UNIDADE/SETOR';
+  } else {
+    $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$l_unidade);
+    $w_nm_unidade = upper(f($RS_Unidade,'nome'));
+  }
+  
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
+  $w_nm_cliente = upper(f($RS_Cliente,'nome'));
 
   $l_html ='<html xmlns:v="urn:schemas-microsoft-com:vml"';
   $l_html.=$crlf.'xmlns:o="urn:schemas-microsoft-com:office:office"';
@@ -507,11 +517,11 @@ function elim_listagem($l_chave,$l_sg,$l_formato='0') {
   $l_html.=$crlf.'  <p class=MsoNormal style=\'margin-top:0cm;margin-right:5.65pt;margin-bottom:';
   $l_html.=$crlf.'  0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:justify;line-height:';
   $l_html.=$crlf.'  9.0pt;mso-line-height-rule:exactly\'><span style=\'font-size:8.0pt;font-family:';
-  $l_html.=$crlf.'  "Albertus Medium","sans-serif"\'>ÓRGÃO/ENTIDADE<o:p></o:p></span></p>';
+  $l_html.=$crlf.'  "Albertus Medium","sans-serif"\'>'.$w_nm_cliente.'<o:p></o:p></span></p>';
   $l_html.=$crlf.'  <p class=MsoNormal style=\'margin-top:0cm;margin-right:5.65pt;margin-bottom:';
   $l_html.=$crlf.'  0cm;margin-left:5.65pt;margin-bottom:.0001pt;text-align:justify;line-height:';
   $l_html.=$crlf.'  9.0pt;mso-line-height-rule:exactly\'><span style=\'font-size:8.0pt;font-family:';
-  $l_html.=$crlf.'  "Albertus Medium","sans-serif"\'>UNIDADE/SETOR<o:p></o:p></span></p>';
+  $l_html.=$crlf.'  "Albertus Medium","sans-serif"\'>'.$w_nm_unidade.'<o:p></o:p></span></p>';
   $l_html.=$crlf.'  </td>';
   $l_html.=$crlf.'  <td width=189 colspan=2 valign=top style=\'width:5.0cm;border-top:solid windowtext 1.0pt;';
   $l_html.=$crlf.'  border-left:none;border-bottom:none;border-right:solid windowtext 1.0pt;';
@@ -537,7 +547,7 @@ function elim_listagem($l_chave,$l_sg,$l_formato='0') {
   $l_html.=$crlf.'  solid windowtext .75pt;mso-border-right-alt:solid windowtext .75pt;';
   $l_html.=$crlf.'  padding:0cm 5.35pt 0cm 5.35pt\'>';
   $l_html.=$crlf.'  <p class=MsoNormal align=center style=\'margin-right:2.85pt;text-align:center;';
-  $l_html.=$crlf.'  line-height:9.0pt;mso-line-height-rule:exactly\'><span style=\'font-size:8.0pt;';
+  $l_html.=$crlf.'  line-height:9.0pt;mso-line-height-rule:exactly\'><span style=\'font-size:7.5pt;';
   $l_html.=$crlf.'  font-family:"Albertus Medium","sans-serif"\'>CÓDIGO OU<o:p></o:p></span></p>';
   $l_html.=$crlf.'  <p class=MsoNormal align=center style=\'margin-right:2.85pt;text-align:center;';
   $l_html.=$crlf.'  line-height:9.0pt;mso-line-height-rule:exactly\'><span style=\'font-size:8.0pt;';

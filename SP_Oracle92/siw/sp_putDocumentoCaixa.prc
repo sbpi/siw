@@ -26,7 +26,7 @@ begin
   where sq_siw_solicitacao in (select sq_siw_solicitacao from siw_solicitacao where sq_siw_solicitacao = p_chave or sq_solic_pai = p_chave);
   
   -- Atualiza os dados do arquivamento da caixa
-  select retornaLimiteCaixa(p_caixa)||'|@|' into w_dados_caixa from dual;
+  select retornaLimiteCaixa(coalesce(p_caixa,w_caixa_atual))||'|@|' into w_dados_caixa from dual;
   Loop
      w_cont := w_cont + 1;
      w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);
@@ -40,14 +40,14 @@ begin
      w_dados_caixa := substr(w_dados_caixa,instr(w_dados_caixa,'|@|')+3);
   End Loop;
   update pa_caixa
-     set assunto             = substr(w_assunto,1,800),
-         descricao           = substr(w_descricao,1,2000),
+     set assunto             = coalesce(substr(w_assunto,1,800),assunto),
+         descricao           = coalesce(substr(w_descricao,1,2000),descricao),
          data_limite         = w_limite,
          intermediario       = substr(w_intermediario,1,400),
          destinacao_final    = substr(w_final,1,40)
-  where sq_caixa = p_caixa;
+  where sq_caixa = coalesce(p_caixa,w_caixa_atual);
 
-  If w_caixa_atual is not null and w_caixa_atual <> p_caixa Then
+  If w_caixa_atual is not null and w_caixa_atual <> coalesce(p_caixa,w_caixa_atual) Then
      -- Atualiza os dados do arquivamento da caixa em que o docuumento estava armazenado
      select retornaLimiteCaixa(w_caixa_atual)||'|@|' into w_dados_caixa from dual;
      Loop
@@ -64,25 +64,28 @@ begin
         set data_limite         = w_limite,
             intermediario       = w_intermediario,
             destinacao_final    = w_final
-     where sq_caixa = p_caixa;
+     where sq_caixa = w_caixa_atual;
   End If;
   
   -- Registra os dados da autuação
   Insert Into siw_solic_log 
-       (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
-        sq_siw_tramite,            data,               devolucao, 
-        observacao
-       )
-  (Select 
-        sq_siw_solic_log.nextval,  p_chave,            p_usuario,
-        a.sq_siw_tramite,          sysdate,            'N',
-        'Preparação para envio ao Arquivo Central. Caixa: '||c.numero||'/'||d.sigla||', Pasta: '||p_pasta||'.'
+         (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
+          sq_siw_tramite,            data,               devolucao, 
+          observacao
+         )
+  (Select sq_siw_solic_log.nextval,  p_chave,            p_usuario,
+          a.sq_siw_tramite,          sysdate,            'N',
+          case when p_caixa is null 
+               then 'Remoção do protocolo da caixa '||c.numero||'/'||d.sigla 
+               else 'Preparação para envio ao Arquivo Central. Caixa: '||c.numero||'/'||d.sigla
+          end ||
+          case when p_caixa is null then '.' else ', Pasta: '||p_pasta||'.' end
        from siw_solicitacao         a
             inner join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao),
             pa_caixa                c
             inner join eo_unidade   d on (c.sq_unidade         = d.sq_unidade)
       where (a.sq_siw_solicitacao = p_chave or a.sq_solic_pai = p_chave)
-        and c.sq_caixa           = p_caixa
+        and c.sq_caixa           = coalesce(p_caixa,w_caixa_atual)
   );
 end sp_putDocumentoCaixa;
 /

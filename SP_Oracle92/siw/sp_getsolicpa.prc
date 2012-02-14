@@ -224,8 +224,21 @@ begin
                             inner   join pa_caixa             g on (c.sq_caixa             = g.sq_caixa)
                   where i.sq_siw_solicitacao = p_chave
                     and g.sq_arquivo_local is not null
+                    and (p_unidade is null or (p_unidade is not null and g.sq_unidade = p_unidade))
                  group by i.sq_siw_solicitacao, f.codigo, f.descricao
                 ) lista;
+ elsif p_restricao = 'AUTELIM' Then
+      -- Recupera o resumo de uma eliminação
+      open p_result for 
+         select distinct i.sq_siw_solicitacao, h.sq_unidade, h.nome, h.sigla
+           from pa_eliminacao                         i
+                inner       join siw_solicitacao      b on (i.protocolo            = b.sq_siw_solicitacao)
+                  inner     join siw_tramite          d on (b.sq_siw_tramite       = d.sq_siw_tramite and d.sigla <> 'CA')
+                  inner     join pa_documento         c on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
+                    inner   join pa_caixa             g on (c.sq_caixa             = g.sq_caixa)
+                      inner join eo_unidade           h on (g.sq_unidade           = h.sq_unidade)
+          where i.sq_siw_solicitacao = p_chave
+            and g.sq_arquivo_local is not null;
  elsif p_restricao = 'PAELIM' or substr(p_restricao,1,4) = 'GREL' Then
       -- Recupera as eliminações cadastradas
       open p_result for 

@@ -127,7 +127,7 @@ begin
              c2.nome as nm_especie,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
-             c5.codigo as cd_assunto, c5.provisorio,
+             c5.codigo as cd_assunto, c5.provisorio, 
              case b3.ativo 
                   when 'S' then case c5.fase_corrente_anos when 0 then c6.descricao else to_char(c5.fase_corrente_anos) || ' '  || c6.sigla end
                   else case b3.sigla
@@ -135,6 +135,7 @@ begin
                             when 'AT' then case c5.fase_final_anos when 0 then c9.descricao else to_char(c5.fase_final_anos) || ' '  || c9.sigla end
                        end
              end as data_limite_doc,
+             c9.sigla as sg_destino_final, c9.descricao as nm_destino_final,
              ca.numero as nr_caixa, cb.sigla as sg_unid_caixa,
              cc.numero_documento||'/'||substr(to_char(cc.ano),3,2) as protocolo_pai,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
@@ -390,7 +391,9 @@ begin
              )
          and (p_despacho   is null or (p_despacho    is not null and 
                                        ((b4.ativo = 'S' and (coalesce(d1.sigla,'-') <> 'ARQUIVAR S' or (d1.sigla = 'ARQUIVAR S' and w_filtro = 'true'))) or 
-                                        (b4.ativo = 'N' and b4.sigla in ('CA','AS','DE') and p_numero is not null and p_ano is not null)
+                                        (b4.ativo = 'N' and (b4.sigla in ('CA','AS','DE') and p_numero is not null and p_ano is not null) or
+                                                            (b4.sigla = 'AS' and p_tipo is not null)
+                                        )
                                        ) and
                                        ((p_despacho not in (a1.despacho_autuar,
                                                             a1.despacho_eliminar,

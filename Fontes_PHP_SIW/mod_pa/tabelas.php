@@ -606,6 +606,7 @@ function Caixa() {
     ShowHTML('<input type="hidden" name="w_data_limite" value="'.$w_data_limite.'">');
     ShowHTML('<input type="hidden" name="w_intermediario" value="'.$w_intermediario.'">');
     ShowHTML('<input type="hidden" name="w_destinacao_final" value="'.$w_destinacao_final.'">');
+    ShowHTML(montaFiltro('POST'));
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
@@ -2244,7 +2245,7 @@ function Arquivo() {
     ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <tr>');
-    selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, null, 'w_unidade', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
+    selecaoUnidade('<U>U</U>nidade:', 'U', 'Selecione a unidade e aguarde a recarga da página para selecionar sua localização.', $w_unidade, null, 'w_unidade', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_chave\'; document.Form.submit();"');
     ShowHTML('          <tr>');
     selecaoLocalizacao('Locali<u>z</u>ação:', 'Z', null, $w_chave, nvl($w_unidade, 0), 'w_chave', null);
     ShowHTML('          </tr>');

@@ -71,8 +71,25 @@ begin
              data_limite      = p_data_limite, 
              intermediario    = p_intermediario,
              destinacao_final = p_destinacao_final
-       where sq_caixa = p_chave;
+      where sq_caixa = p_chave;
 
+      -- Atualiza destinação final da caixa
+      select retornaLimiteCaixa(p_chave) into w_dados_caixa from dual;
+      w_cont := 0;
+      Loop
+         w_cont := w_cont + 1;
+         w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);
+         If    w_cont = 1 Then w_limite        := w_texto;
+         Elsif w_cont = 2 then w_intermediario := w_texto;
+         Elsif w_cont = 3 then w_final         := w_texto;
+         Elsif w_cont = 4 then w_assunto       := substr(w_texto,1,800);
+         Else                  w_descricao     := substr(w_texto,1,2000);
+         End If;
+         If w_cont > 4 Then Exit; End If;
+         w_dados_caixa := substr(w_dados_caixa,instr(w_dados_caixa,'|@|')+3);
+      End Loop;
+      update pa_caixa set destinacao_final = substr(w_final,1,40) where sq_caixa = p_chave;
+      
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       delete pa_caixa where sq_caixa = p_chave;
