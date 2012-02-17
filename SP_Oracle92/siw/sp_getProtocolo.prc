@@ -250,7 +250,7 @@ begin
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADVINCULA' and b.sq_solic_pai is null and c.copias is null) or
               (p_restricao = 'PADTRANSF'  and (b3.sigla <> 'CA' and d5.cliente is not null and c.data_setorial is null)) or
-              (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and b3.sigla <> 'CA' and b.sq_solic_pai is null and c.data_setorial is not null) or
+              (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and b3.sigla <> 'CA' and b.sq_solic_pai is null and c.data_setorial is not null and (ca.sq_caixa is null or (ca.sq_caixa is not null and ca.sq_unidade = p_unidade))) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
               (p_restricao = 'PACLASSIF'  and b3.sigla <> 'CA' and b.sq_solic_pai is null and c.copias is null and (c5.provisorio = 'S' or w_filtro = 'true')) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or

@@ -3164,7 +3164,7 @@ function TramitCentral() {
   if ($O == 'L') {
     $sql = new db_getProtocolo;
     $RS = $sql->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux,$p_prefixo, $p_numero, $p_ano, 
-                  $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia,$p_ini, $p_fim, 2, $p_tipo_despacho, $p_empenho, $p_solicitante, 
+                  $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia,$p_ini, $p_fim, $p_tipo, $p_tipo_despacho, $p_empenho, $p_solicitante, 
                   $p_unidade, $p_proponente,$p_sq_acao_ppa, $p_assunto, $p_processo);
     if (Nvl($p_ordena, '') > '') {
       $lista = explode(',', str_replace(' ', ',', $p_ordena));
