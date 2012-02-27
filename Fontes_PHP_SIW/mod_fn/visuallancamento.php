@@ -66,9 +66,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $w_exibe_processo = false;
     if ($w_mod_pa=='S' && (nvl(f($RS,'processo'),'')!='' || nvl(f($RS,'protocolo_siw'),'')!='')) {
       if ((!($l_P1==4 || $l_tipo=='WORD')) && nvl(f($RS,'protocolo_siw'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td><td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
+        $l_html.=chr(13).'      <tr><td><b>'.(($SG=='FNDFIXO') ? 'Processo de fundo fixo': 'Número do protocolo').': </b></td><td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
       } else {
-        $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td><td>'.f($RS,'processo');
+        $l_html.=chr(13).'      <tr><td><b>'.(($SG=='FNDFIXO') ? 'Processo de fundo fixo': 'Número do protocolo').': </b></td><td>'.f($RS,'processo');
       }
       $w_exibe_processo = true;
     } elseif ($w_segmento=='Público') { 
@@ -78,9 +78,8 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if (nvl(f($RS,'solic_origem'),'')!='') {
       // Recupera dados da solicitação de compra
       $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'solic_origem'),null);
-      $imp = explode('|@|',f($RS1,'dados_solic'));
       $l_html.=chr(13).'      <tr><td width="30%"><b>Lançamento original: </b></td>';
-      $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'solic_origem'),$imp,'N',$l_tipo).'</td>';
+      $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'solic_origem'),f($RS1,'dados_solic'),'N',$l_tipo).'</td>';
     } 
     if (Nvl(f($RS,'cd_acordo'),'')>'') {
       if (!($l_P1==4 || $l_tipo=='WORD')) {

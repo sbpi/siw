@@ -34,6 +34,15 @@ begin
             and ((a1.sq_projeto_rubrica is     null) or
                  (a1.sq_projeto_rubrica is not null and b.sq_documento_item is not null)
                 )
+            and 0 = (select count(*)
+                       from fn_lancamento_doc                  a
+                            inner   join fn_lancamento        a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao)
+                              left  join pj_rubrica            e on (a1.sq_projeto_rubrica = e.sq_projeto_rubrica)
+                            left    join fn_documento_item     b on (a.sq_lancamento_doc   = b.sq_lancamento_doc)
+                      where a.sq_siw_solicitacao = p_chave
+                        and a.sq_acordo_nota     is null
+                        and b.sq_documento_item  is null
+                    )
           group by d.sq_projeto_rubrica, d.codigo, d.nome, e.sq_projeto_rubrica, e.codigo, e.nome
          UNION
          select sum(a.valor) as valor_total, e.nome as nm_rubrica, e.codigo as codigo_rubrica,

@@ -140,7 +140,7 @@ switch ($O) {
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
-$w_menu     = RetornaMenu($w_cliente,$SG);
+$w_menu     = RetornaMenu($w_cliente,'FNDFUNDO');
 
 // Recupera os parâmetros de funcionamento do módulo
 $sql = new db_getFNParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,null,null);

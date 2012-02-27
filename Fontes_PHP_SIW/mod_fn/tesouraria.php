@@ -583,7 +583,7 @@ function Inicial() {
           } elseif (f($row,'sigla')=='FNDFUNDO') {
             $w_destino = 'pagfundo';
             $w_acao    = 'Pagar';
-          } elseif (f($row,'sigla')=='FNDFIXO') {
+          } elseif (f($row,'sigla')=='FNDFUNDO') {
             $w_destino = 'fundofixo';
             $w_acao    = 'Encerrar';
           } elseif (f($row,'sigla')=='FNAAPLICA') {
