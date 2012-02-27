@@ -66,11 +66,11 @@ function ValidaConsumo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
 
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
   if (count($l_rs_tramite)>0) {
-    if(f($l_rs_tramite,'sigla')=='AF') {
+    if(f($l_rs_tramite,'sigla')=='EA') {
       // Verifica se pelo menos um item foi autorizado com quantidade maior que zero.
       $l_autorizado = false;
       foreach ($l_rs_item as $row) {
-        if (f($row,'quantidade_autorizada')>0) {
+        if (f($row,'quantidade_entregue')>0) {
           $l_autorizado = true;
         }
       }

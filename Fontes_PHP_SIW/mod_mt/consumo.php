@@ -396,7 +396,7 @@ function Inicial() {
               //ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o pedido para outra fase.">EN</A>&nbsp');
               if (f($row,'sg_tramite')=='EA') {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Atender&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Dados do atendimento.">AT</A>&nbsp');
+                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Atender&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Dados do atendimento.">AT</A>&nbsp');
               } elseif (f($row,'sg_tramite')=='EE') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclusão do pedido.">CO</A>&nbsp');
               } 
@@ -418,7 +418,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan='.$colspan.' align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
-          ShowHTML('          <td colspan=4>&nbsp;</td>');
+          ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -428,7 +428,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan='.$colspan.' align="right"><b>Total da listagem&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
-          ShowHTML('          <td>&nbsp;</td>');
+          ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       }
@@ -1408,7 +1408,7 @@ function Atender() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<B><FONT COLOR="#000000">'.$TP.' - Atendimento</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -1544,7 +1544,7 @@ function Concluir() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<B><FONT COLOR="#000000">'.$TP.' - Conclusão</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -1577,7 +1577,7 @@ function Concluir() {
   ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">');
   ShowHTML('          <td rowspan=2><b>Nome</td>');
   ShowHTML('          <td rowspan=2><b>U.M.</td>');
-  ShowHTML('          <td rowspan=2><b>Entrega</td>');
+  ShowHTML('          <td rowspan=2><b>Data de<br>Entrega</td>');
   ShowHTML('          <td colspan=2><b>Quantidade</td>');
   ShowHTML('          <td colspan='.(($w_classes[1]) ? '6' : '4').'><b>Origem</td>');
   ShowHTML('        </tr>');
@@ -1627,7 +1627,7 @@ function Concluir() {
   ShowHTML('    </table>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');

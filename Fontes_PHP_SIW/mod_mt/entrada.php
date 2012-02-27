@@ -384,7 +384,7 @@ function inicial() {
     if ($w_tipo!='WORD') { 
       ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;'); 
     }
-    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
+    if (1==0 && (strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
       if ((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_'))) {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.(($w_copia>'') ? 'C' : 'P').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
       } else {
@@ -870,7 +870,7 @@ function Geral() {
             ShowHTML('        <td colspan="7">ITEM CANCELADO. '.nvl(f($row,'motivo_bloqueio'),'').'</td>');
           } else {
             $w_total += f($row,'valor_total');
-            ShowHTML('        <td>'.f($row,'marca').'</td>');
+            ShowHTML('        <td>'.nvl(f($row,'marca'),'&nbsp;').'</td>');
             if ($w_classes[4]) {
               ShowHTML('        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>');
               ShowHTML('        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>');
@@ -1124,7 +1124,7 @@ function Itens() {
   if ($O=='L') {
     ShowHTML('  for (ind=1; ind < theForm["w_chave_aux[]"].length; ind++) {');
     Validate('["w_quantidade[]"][ind]','Quantidade','1','1','1','18','','1');
-    //CompValor('["w_quantidade[]"][ind]','Quantidade','>','0','1');  
+    CompValor('["w_quantidade[]"][ind]','Quantidade','>=','0','1');  
     //if (!$w_edita) CompValor('["w_quantidade[]"][ind]','Quantidade','<=',$w_qtd_compra,' quantidade comprada');
     Validate('["w_valor[]"][ind]','Valor total','VALOR','1','4','18','','0123456789.,');
     //CompValor('["w_valor[]"][ind]','Valor total','>','0','zero');
@@ -1132,7 +1132,7 @@ function Itens() {
   } elseif (strpos('IA',$O)!==false) {
     if ($w_edita) {
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
-      CompValor('w_ordem','Ordem','>','0','1');  
+      CompValor('w_ordem','Ordem','>=','0','1');  
       Validate('w_nome','Nome','1','','2','30','1','1');
       Validate('w_material','Material/Serviço','SELECT','1','1','18','','1');
     }
@@ -1237,8 +1237,8 @@ function Itens() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Item','ordem').'</td>');
     $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
-//    if (!$w_classes[4]) {
-//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Marca','marca').'</td>');
+    if (!$w_classes[4]) {
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Marca','marca').'</td>');
 //    } elseif (!$w_classes[1] && !$w_classes[2] && !$w_classes[3] && $w_classes[4]) {
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricante','marca').'</td>');
 //    } elseif (($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
@@ -1255,7 +1255,7 @@ function Itens() {
 //    if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Validade','validade').'</td>');
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('F.E.','fator_embalagem').'</td>');
-//    }
+    }
     $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Qtd','quantidade').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Total','valor_total').'</td>');
     ShowHTML('          <td><b>Operações</td>');
@@ -1309,7 +1309,7 @@ function Itens() {
           ShowHTML('        <td><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="8" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_total')).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
         } else {
           $w_total += f($row,'valor_total');
-          //ShowHTML('        <td>'.f($row,'marca').'</td>');
+          ShowHTML('        <td>'.f($row,'marca').'</td>');
           //if ($w_classes[4]) {
           //  ShowHTML('        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>');
           //  ShowHTML('        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>');
@@ -1333,12 +1333,12 @@ function Itens() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         if ($w_edita) {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_copia='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Copiar">CO</A>&nbsp');
         }
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_copia='.f($row,'sq_entrada_item').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Copiar">CO</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
-      ShowHTML('      <tr><td colspan=5 align="center"><hr>');
+      ShowHTML('      <tr><td colspan=6 align="center"><hr>');
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
       ShowHTML('        </form>');
     } 

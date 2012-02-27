@@ -445,7 +445,7 @@ begin
       -- Recupera dados para exibição do mapa de entradas e saídas de material 
       open p_result for 
         select retornaSaldoEstoque(lista.sq_material, p_ini_i, lista.sq_almoxarifado) as saldo, lista.*
-          from (select a.cliente,
+          from (select 1 as tipo,                           a.cliente,
                        a.sq_almoxarifado,                   a.nome as nm_almoxarifado,
                        a1.sq_localizacao,                   a1.nome as nm_localizacao,
                        a11.sq_unidade,                      a11.nome as nm_unidade,
@@ -468,7 +468,7 @@ begin
                        null as quantidade_pedida,           null as quantidade_entregue,                     null as fator_embalagem,
                        null as valor_unitario,              null as data_efetivacao,                         null as vl_saida,
                        null as tp_destino,                  null as sq_destino,                              null as nm_destino,
-                       null as sq_tipo_saida,        null as nm_tipo_saida,
+                       null as sq_tipo_saida,               null as nm_tipo_saida,
                        null as sq_siw_solicitacao,          null as codigo_interno,                          null as justificativa,
                        null as inicio,                      null as fim,                                     null as dados_solic,
                        null as sq_siw_tramite,              null as nm_tramite,                              null as sg_tramite,
@@ -513,7 +513,7 @@ begin
                    and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||d12.classe||'''') > 0))
                    and (p_ini_i          is null or (p_ini_i       is not null and d2.armazenamento      between p_ini_i and p_ini_f))
                 UNION
-                select distinct
+                select distinct                             2 as tipo,
                        a.cliente,                           a.sq_almoxarifado,                               a.nome as nm_almoxarifado,
                        a1.sq_localizacao,                   a1.nome as nm_localizacao,
                        a11.sq_unidade,                      a11.nome as nm_unidade,
@@ -545,7 +545,8 @@ begin
                        f2.sq_menu,                          f2.sigla as sg_menu,                             f2.nome as nm_menu,
                        null as p1,                          null as p2,                                      null as p3,
                        null as p4,                          null as link_menu,
-                       g.ultima_saida,                      g.ultima_entrada,                                g.preco_medio,
+                       g.ultima_saida,                      g.ultima_entrada,
+                       case when e1.quantidade_entregue > 0 then e1.valor_unitario / e1.quantidade_entregue else 0 end preco_medio,
                        g.ultimo_preco_compra,               g.consumo_medio_mensal,                          g.ponto_ressuprimento,
                        g.ciclo_compra,                      g.disponivel,                                    g.chefe_autoriza
                   from mt_almoxarifado                                a
@@ -587,7 +588,7 @@ begin
                    and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||d12.classe||'''') > 0))
                    and (p_ini_i          is null or (p_ini_i       is not null and e1.data_efetivacao between p_ini_i and p_ini_f))
                ) lista
-        order by nm_almoxarifado, nm_material, nm_almoxarifado_local, armazenamento;
+        order by nm_almoxarifado, nm_material, nm_almoxarifado_local, armazenamento, tipo;
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for 
