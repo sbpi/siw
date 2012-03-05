@@ -922,7 +922,7 @@ function Geral() {
     if ($O == 'I' && $w_cadgeral == 'S')
       Validate('w_sq_prop_nm', 'Beneficiário', 'HIDDEN', 1, 5, 100, '1', '1');
     if ($w_chave_pai > '' && $w_passagem == 'S') {
-      if ($financ >= 1) {
+      if ($financ > 1) {
         Validate('w_rubrica', 'Rubrica', 'SELECT', 1, 1, 18, '', '1');
         Validate('w_lancamento', 'Tipo de lançamento', 'SELECT', 1, 1, 18, '', '1');
       }
