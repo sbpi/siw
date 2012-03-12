@@ -172,8 +172,8 @@ begin
       If p_copia is not null Then
          -- Ajusta o início e o término da missão
          update siw_solicitacao
-            set inicio = (select min(saida) from pd_deslocamento where sq_siw_solicitacao = w_chave),
-                fim    = (select max(chegada) from pd_deslocamento where sq_siw_solicitacao = w_chave)
+            set inicio = (select nvl(min(saida),to_char(sysdate)) from pd_deslocamento where sq_siw_solicitacao = p_copia),
+                fim    = (select nvl(max(chegada),to_char(sysdate)) from pd_deslocamento where sq_siw_solicitacao = p_copia)
          where sq_siw_solicitacao = w_chave;
  
          -- Copia a informação e define se a viagem é internacional ou não

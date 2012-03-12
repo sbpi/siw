@@ -296,6 +296,16 @@ begin
          
          -- Atualiza a situação da solicitação
          update siw_solicitacao set sq_siw_tramite = w_chave where sq_siw_solicitacao = p_chave;
+         
+         --Elimina as informações de arquivamento do documento
+         update pa_documento
+            set pasta = null,
+                sq_caixa = null,
+                data_setorial = null,
+                data_central = null,
+                observacao_setorial = null
+          where sq_siw_solicitacao = p_chave;
+                   
       Else
          -- Monta string com a chave dos arquivos ligados à solicitação informada
          for crec in c_arquivos loop
