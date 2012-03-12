@@ -112,8 +112,8 @@ begin
          sq_solic_pai)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_cadastrador,
-         p_cadastrador,      p_descricao,   null,                case when p_copia is not null then sysdate else p_inicio end,
-         case when p_copia is not null then sysdate else p_fim end,              sysdate,       sysdate,             0,
+         p_cadastrador,      p_descricao,   null,                sysdate,
+         sysdate,            sysdate,       sysdate,             0,
          p_data_hora,        p_unidade,     null,                d.sq_cidade,
          Nvl(p_tarefa, p_projeto)
          from siw_tramite                     a,
@@ -170,19 +170,10 @@ begin
 
       -- Se a demanda foi copiada de outra, grava os dados complementares
       If p_copia is not null Then
-         -- Ajusta o início e o término da missão
-         update siw_solicitacao
-            set inicio = (select nvl(min(saida),to_char(sysdate)) from pd_deslocamento where sq_siw_solicitacao = p_copia),
-                fim    = (select nvl(max(chegada),to_char(sysdate)) from pd_deslocamento where sq_siw_solicitacao = p_copia)
-         where sq_siw_solicitacao = w_chave;
- 
-         -- Copia a informação e define se a viagem é internacional ou não
-         Update pd_missao
-            set internacional = (select internacional from pd_missao where sq_siw_solicitacao = p_copia)
-         where sq_siw_solicitacao = w_chave;
-
          -- Insere os deslocamentos da viagem
+         w_existe := 0;
          for crec in c_trechos loop
+            w_existe := 1;
             -- recupera a próxima chave do recurso
             select sq_deslocamento.nextval into w_chave1 from dual;
 
@@ -202,6 +193,19 @@ begin
                     crec.aeroporto_destino,   'S'
                    );
          end loop;
+         
+         If w_existe > 0 Then
+            -- Ajusta o início e o término da missão
+            update siw_solicitacao
+               set inicio = (select min(saida)   from pd_deslocamento where sq_siw_solicitacao = w_chave),
+                   fim    = (select max(chegada) from pd_deslocamento where sq_siw_solicitacao = w_chave)
+            where sq_siw_solicitacao = w_chave;
+     
+            -- Copia a informação e define se a viagem é internacional ou não
+            Update pd_missao
+               set internacional = (select internacional from pd_missao where sq_siw_solicitacao = p_copia)
+            where sq_siw_solicitacao = w_chave;
+         End If;
 
          -- Copia as diárias da missão original
          For crec in c_diarias Loop
