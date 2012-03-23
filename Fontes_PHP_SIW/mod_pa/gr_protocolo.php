@@ -306,21 +306,11 @@ function Gerencial() {
     } 
   } 
   $w_linha_filtro = $w_linha;
-  if ($p_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($p_tipo == 'PDF'){
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    $w_embed = 'WORD';
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } else {
-    $w_embed = 'HTML';
-    Cabecalho();
-    head();
+  $w_linha_pag    = 0;
+  $w_embed        = '';
+  headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+  
+  if ($w_embed!='WORD') {
     if ($O=='P') {
       ScriptOpen('Javascript');
 /*      ShowHTML(' $(document).ready(function(){');
@@ -432,7 +422,7 @@ function Gerencial() {
 
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $w_embed == 'WORD') {
-    if ($O=='L' && $w_embed != 'WORD') {
+    if ($w_embed != 'WORD') {
       ShowHTML('<tr><td>');
       if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
@@ -441,7 +431,6 @@ function Gerencial() {
       } 
     } 
     ImprimeCabecalho();
-    flush();
     if (count($RS1)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {

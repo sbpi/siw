@@ -253,7 +253,8 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
-//exibevariaveis();
+  $w_tipo = $_REQUEST['w_tipo'];
+
   if ($O=='L') {
     if ((strpos(upper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
       $w_filtro='';
@@ -354,13 +355,25 @@ function Inicial() {
       $RS = SortArray($RS,'inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     }
   }
-  if ($w_tipo=='WORD') {
+  if ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 45 : 30);
+    CabecalhoWord($w_cliente, 'Consulta de ' . f($RS_Menu, 'nome'), 0);
+    $w_embed = 'WORD';
+    if ($w_filtro > '')
+      ShowHTML($w_filtro);
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0,1,6);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'PDF') {
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 60 : 35);
+    $w_embed = 'WORD';
+    HeaderPdf('Consulta de ' . f($RS_Menu, 'nome'), $w_pag);
+    if ($w_filtro > '')
+      ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -391,17 +404,20 @@ function Inicial() {
     ScriptClose();
     ShowHTML('</HEAD>');
   }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_Troca>'') {
+  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  if ($w_embed == 'WORD') {
+    // Se for Word
+    BodyOpenWord();
+  } elseif ($w_troca > '') {
     // Se for recarga da página
-    BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
-  } elseif (strpos('CP',$O)!==false) {
-    BodyOpen('onLoad=\'document.Form.p_empenho.focus()\';');
-  } elseif ($P1==2) {
+    BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();\'');
+  } elseif (strpos('CP', $O) !== false) {
+    BodyOpen('onLoad="document.Form.p_projeto.focus();"');
+  } elseif ($P1 == 2) {
     BodyOpen(null);
   } else {
-    BodyOpen('onLoad=this.focus();');
-  } 
+    BodyOpen('onLoad="this.focus();"');
+  }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -443,7 +459,7 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
       if ($w_pa=='S' || $w_segmento=='Público') ShowHTML ('          <td><b>'.LinkOrdena('Processo','processo').'</td>');
@@ -480,7 +496,11 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td width="1%" nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+        if ($w_embed!='WORD'){
+          ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+        }else{
+          ShowHTML('&nbsp;'.f($row,'codigo_interno').'&nbsp;');
+        }
         ShowHTML('        <td>'.f($row,'justificativa').'</td>');
         if ($w_pa=='S') {
           if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
@@ -496,7 +516,13 @@ function Inicial() {
         } 
         */
         //ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'&nbsp;</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+        
+        if ($w_embed!='WORD'){
+          ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+        }else{
+          ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'sg_unidade_resp').'&nbsp;</td>');
+        }
+        
         //ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
         if ($P1!=1) {
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.formatNumber(f($row,'valor')).'&nbsp;</td>');
@@ -505,7 +531,7 @@ function Inicial() {
           ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
         } 
         ShowHTML('        <td class="remover" width="1%" nowrap>');
-        if ($P1!=3 && $P1!=5 && $P1!=6) {
+        if ($P1!=3 && $P1!=5 && $P1!=6 && $w_embed != 'WORD') {
           // Se não for acompanhamento
           if ($w_copia>'') {
             // Se for listagem para cópia
@@ -541,10 +567,12 @@ function Inicial() {
             } 
           } 
         } else {
-          if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o pedido para outro responsável.">EN</A>&nbsp');
-          } else {
-            ShowHTML('          ---&nbsp');
+          if ($w_embed!='WORD'){
+            if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o pedido para outro responsável.">EN</A>&nbsp');
+            } else {
+              ShowHTML('          ---&nbsp');
+            } 
           } 
         } 
         ShowHTML('        </td>');
@@ -644,7 +672,11 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Rodape();
+  
+  if ($w_tipo == 'PDF')
+    RodapePdf();
+  else
+    Rodape();
 } 
 
 // =========================================================================

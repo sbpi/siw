@@ -222,6 +222,7 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
+  $w_tipo = $_REQUEST['w_tipo'];
 
   if ($O=='L') {
     if ((strpos(upper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
@@ -305,13 +306,25 @@ function Inicial() {
       $RS = SortArray($RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     }
   }
-  if ($w_tipo=='WORD') {
+  if ($w_tipo == 'WORD') {
+    $w_embed = 'WORD';
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,6);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'PDF') {
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 60 : 35);
+    $w_embed = 'WORD';
+    HeaderPdf('Consulta de ' . f($RS_Menu, 'nome'), $w_pag);
+    if ($w_filtro > '')
+      ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -343,7 +356,10 @@ function Inicial() {
     ShowHTML('</HEAD>');
   }
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_Troca>'') {
+  if ($w_embed == 'WORD') {
+      // Se for Word
+      BodyOpenWord();
+  } elseif ($w_Troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
   } elseif (strpos('CP',$O)!==false) {
@@ -356,12 +372,10 @@ function Inicial() {
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
-  if($w_tipo!='WORD') {
-    if ((strpos(upper($R),'GR_'))===false) {
-      Estrutura_Texto_Abre();
-    } else {
-      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
-    }
+  if ((strpos(upper($R), 'GR_')) === false) {
+    Estrutura_Texto_Abre();
+  } else {
+    CabecalhoRelatorio($w_cliente, 'Consulta de ' . f($RS_Menu, 'nome'), 4);
   }
   if ($w_filtro > '') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -374,7 +388,7 @@ function Inicial() {
         ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
       }
     } 
-    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
+    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
       if ($w_copia>'') {
         // Se for cópia
         if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
@@ -394,7 +408,7 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Objeto','objeto').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
@@ -503,7 +517,7 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('<tr><td align="center" colspan=3>');
       if ($R>'') {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -568,7 +582,7 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Rodape();
+  if ($w_tipo == 'PDF') RodapePdf(); else Rodape();
 } 
 
 // =========================================================================
