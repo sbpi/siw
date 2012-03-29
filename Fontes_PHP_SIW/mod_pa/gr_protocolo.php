@@ -310,7 +310,22 @@ function Gerencial() {
   $w_embed        = '';
   headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
   
-  if ($w_embed!='WORD') {
+  $w_linha_filtro = $w_linha;
+  if ($p_tipo == 'WORD') {
+    HeaderWord($_REQUEST['orientacao']);
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 40: 25);
+    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    $w_embed = 'WORD';
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } elseif($p_tipo == 'PDF'){
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 25: 25);
+    $w_embed = 'WORD';
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome').$w_TP,$w_pag);
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } else {
+    $w_embed = 'HTML';
+    Cabecalho();
+    head();
     if ($O=='P') {
       ScriptOpen('Javascript');
 /*      ShowHTML(' $(document).ready(function(){');
