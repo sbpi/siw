@@ -287,7 +287,7 @@ begin
             If w_existe = 0 Then
                w_sequencial := 1;
             Else
-               select Nvl(max(to_number(replace(replace(replace(b.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
+               select Nvl(max(to_number(translate(replace(replace(replace(upper(b.codigo_interno),'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(null,''),''),'0123456789ABCDEFGHIJKLMNOPQRSTUVWXZ-:. ','0123456789'))),0)+1
                  into w_sequencial
                  from fn_lancamento a
                       inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
