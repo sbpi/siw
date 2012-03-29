@@ -5015,7 +5015,7 @@ function Grava() {
         $SQL = new dml_putDocumentoEnvio;
         for ($i = 1; $i < count($_POST['w_chave']); $i++) {
           if (Nvl($_POST['w_chave'][$i], '') > '') {
-            $SQL->getInstanceOf($dbms1, f($RS_Menu, 'sq_menu'), $_POST['w_chave'][$i], $w_usuario,
+            $SQL->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $_POST['w_chave'][$i], $w_usuario,
                     $_POST['w_tramite'][$_POST['w_chave'][$i]], $_REQUEST['w_interno'],
                     $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
                     $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'],
