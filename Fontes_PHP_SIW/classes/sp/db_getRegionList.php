@@ -35,9 +35,9 @@ class db_getRegionList {
             "                     and x.sq_regiao is not null$crlf" .
             "                  group by x.sq_regiao$crlf" .
             "                 )          c on (a.sq_regiao = c.sq_regiao)$crlf" .
-            " where ($w_restricao   = 'N'          or ($w_restricao <> 'N' and a.sq_pais = b.sq_pais))$crlf" .
-            "   and (($w_restricao  = 'INDICADOR'  and c.sq_regiao is not null) or$crlf" .
-            "        ($w_restricao  <> 'INDICADOR' and ($p_nome     is null      or ($p_nome is not null and acentos(a.nome) like '%'" . C . "acentos($p_nome)" . C . "'%')))$crlf" .
+            " where ($p_restricao   = 'N'          or ($p_restricao <> 'N' and a.sq_pais = b.sq_pais))$crlf" .
+            "   and (($p_restricao  = 'INDICADOR'  and c.sq_regiao is not null) or$crlf" .
+            "        ($p_restricao  <> 'INDICADOR' and ($p_nome     is null      or ($p_nome is not null and acentos(a.nome) like '%'" . C . "acentos($p_nome)" . C . "'%')))$crlf" .
             "       )$crlf" .
             "   and ($p_pais        is null        or ($p_pais is not null and b.sq_pais = $p_pais))$crlf";
     

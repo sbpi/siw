@@ -268,7 +268,7 @@ function Gerencial() {
   }elseif($w_tipo == 'PDF'){
     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
     $w_embed = 'WORD';
-    HeaderPdf($w_TP,$w_pag);
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome').$w_TP,$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
     $w_embed = 'HTML';

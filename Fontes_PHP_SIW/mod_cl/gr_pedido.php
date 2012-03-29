@@ -288,7 +288,23 @@ function Gerencial() {
   $w_embed        = '';
   headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
   
-  if ($w_embed!='WORD') {
+  $w_linha_filtro = $w_linha;
+
+  if ($p_tipo == 'WORD') {
+    HeaderWord($_REQUEST['orientacao']);
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 40: 25);
+    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    $w_embed = 'WORD';
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } elseif($p_tipo == 'PDF'){
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 25: 25);
+    $w_embed = 'WORD';
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome').$w_TP,$w_pag);
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  } else {
+    $w_embed = 'HTML';
+    Cabecalho();
+    head();
     if ($O=='P') {
       ScriptOpen('Javascript');
       CheckBranco();
@@ -331,8 +347,10 @@ function Gerencial() {
       BodyOpenClean('onLoad=this.focus();');
     } 
 
-    if ($O=='L' && $w_embed != 'WORD') {
-      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome').$w_TP,4);
+    if ($O=='L') {
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+      ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
@@ -343,7 +361,7 @@ function Gerencial() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $w_embed == 'WORD') {
-    if ($O=='L' && $w_embed != 'WORD') {
+    if ($w_embed != 'WORD') {
       ShowHTML('<tr><td>');
       if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');

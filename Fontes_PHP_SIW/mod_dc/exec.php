@@ -266,7 +266,8 @@ function ResultSql() {
     
       $command = upper(substr(trim($v),0,strpos(trim($v),' ')));
       if ($command=='SELECT') {
-        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows, $dataBank);
+        $numRows = 0;
+        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, null, $dataBank, $numRows);
         if (count($RS) > 0) {
            ShowHTML($numRows.' registros selecionados<br />');
            ShowHTML('<table border="1">');
@@ -289,7 +290,7 @@ function ResultSql() {
            ShowHTML('Nenhum registro encontrado<br />');
         }      
       } elseif (false!==strpos('INSERT,UPDATE,DELETE',$command)) {
-        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, &$numRows, $dataBank);
+        $sql = new db_exec; $RS = $sql->getInstanceOf($conObj, $v, null, $dataBank, $numRows);
         ShowHTML('<p>'.$numRows.' registros processados</p>');
       } elseif ($command=='EXEC') {
         $sp = substr($v,strpos($v,' ')+1);

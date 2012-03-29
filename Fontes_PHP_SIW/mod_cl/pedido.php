@@ -1521,12 +1521,16 @@ function Visual() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = upper(trim($_REQUEST['w_tipo']));
 
-  if ($w_tipo=='PDF') {
-    headerPdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
+  if ($w_tipo == 'PDF') {
+    headerpdf('Visualização de ' . f($RS_Menu, 'nome'), $w_pag);
     $w_embed = 'WORD';
-  } elseif ($w_tipo=='WORD') {
+  } elseif ($w_tipo=='EXCEL') {
+    HeaderExcel($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,8);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    CabecalhoWord($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 0);
     $w_embed = 'WORD';
   } else {
     Cabecalho();

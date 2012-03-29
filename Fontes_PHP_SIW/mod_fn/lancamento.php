@@ -1077,7 +1077,7 @@ function Geral() {
       Validate('w_solic_vinculo','Projeto para débito','SELECT',1,1,18,'','0123456789');
     }
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
-    Validate('w_pessoa_nm', ((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Receber de:': 'Beneficiário:'), 'HIDDEN', 1, 5, 100, '1', '1');
+    if (substr($SG,3)!='CONT') Validate('w_pessoa_nm', ((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Receber de:': 'Beneficiário:'), 'HIDDEN', 1, 5, 100, '1', '1');
     Validate('w_sq_tipo_lancamento','Tipo do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'','SELECT',1,1,18,'','0123456789');
     Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
     if (strpos('EVENT,VIA',substr($SG,3)!==false)) {
@@ -1249,14 +1249,29 @@ function Geral() {
     }
     
     ShowHTML('      <tr>');
-    SelecaoPessoaOrigem(((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Rece<u>b</u>er de:': '<u>B</u>eneficiário:'), 'P', 'Clique na lupa para selecionar a pessoa.', $w_pessoa, null, 'w_pessoa', 'NF,NJ', null, 'onFocus="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"', 1, 'w_identificador');
-    if (count($RS_Benef)) {
-      if ($w_tipo_pessoa==1) {
-        ShowHTML('        <td><b>CPF:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cpf" VALUE="'.f($RS_Benef,'cpf').'" SIZE="16">');
-      } else {
-        ShowHTML('        <td><b>CNPJ:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cnpj" VALUE="'.f($RS_Benef,'cnpj').'" SIZE="20">');
+    if (substr($SG,3)=='CONT') {
+      ShowHTML('        <td>Beneficiário:<br><b>'.$w_nome.'</b>');
+      ShowHTML('          <INPUT type="hidden" name="w_pessoa" value="'.$w_pessoa.'">');
+      if (count($RS_Benef)) {
+        if ($w_tipo_pessoa==1) {
+          ShowHTML('        <td>CPF:<br><b>'.f($RS_Benef,'cpf').'</b>');
+          ShowHTML('          <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
+        } else {
+          ShowHTML('        <td>CNPJ:<br><b>'.f($RS_Benef,'cnpj').'</b>');
+          ShowHTML('          <INPUT type="hidden" name="w_cnpj" value="'.$w_cnpj.'">');
+        }
+      }
+    } else {
+      SelecaoPessoaOrigem(((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Rece<u>b</u>er de:': '<u>B</u>eneficiário:'), 'P', 'Clique na lupa para selecionar a pessoa.', $w_pessoa, null, 'w_pessoa', 'NF,NJ', null, 'onFocus="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"', 1, 'w_identificador');
+      if (count($RS_Benef)) {
+        if ($w_tipo_pessoa==1) {
+          ShowHTML('        <td><b>CPF:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cpf" VALUE="'.f($RS_Benef,'cpf').'" SIZE="16">');
+        } else {
+          ShowHTML('        <td><b>CNPJ:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cnpj" VALUE="'.f($RS_Benef,'cnpj').'" SIZE="20">');
+        }
       }
     }
+    ShowHTML('      </tr>');
 
     ShowHTML('      <tr>');
     SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
