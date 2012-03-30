@@ -79,6 +79,12 @@ begin
          where sq_siw_solicitacao = p_chave;
 
          if w_existe <= 1 then
+            -- Exclui pesquisa de preço
+            delete cl_item_fornecedor a where a.sq_solicitacao_item = p_chave_aux;
+            
+            -- Atualiza a tabela de materiais
+            sp_ajustapesquisamaterial(w_menu.sq_pessoa,w_material);  
+         
             -- Verifica se é necessário remover o item da licitação.
             delete cl_solicitacao_item where sq_solicitacao_item = p_chave_aux;
          end if;
