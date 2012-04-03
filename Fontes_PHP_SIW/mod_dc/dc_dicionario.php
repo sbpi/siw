@@ -1058,7 +1058,7 @@ function Sistema() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Título</td>');
+    ShowHTML('          <td><b>Nome</td>');
     ShowHTML('          <td><b>Descrição</td>');
     if ($P1==0) ShowHTML('<td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
