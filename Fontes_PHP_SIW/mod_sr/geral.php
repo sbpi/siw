@@ -1730,7 +1730,7 @@ function AnaliseCelular() {
         $v_html.='        <td>&nbsp;&nbsp;&nbsp;</td>';
       }
     }
-    $v_html.='<td><b>'.$row[1].'</b></td>';
+    $v_html.='<td nowrap><b>'.$row[1].'</b></td>';
     $w_atual = f($RS_Solic,'inicio');
     for ($i=3; $i<=($w_dias+2); $i++) {
       $v_html.='<td '.$row[$i].'>&nbsp;</td>';
@@ -1738,7 +1738,6 @@ function AnaliseCelular() {
     $w_atual = addDays($w_atual,1);
   }
   $v_html.='</tr></table>';
-  //exibevariaveis();
   ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
   if (!$disponiveis || $P1==6) {
     ShowHTML('    <tr><td>'.(($P1!=6) ? '<b><font color="#FF0000">ATENÇÃO: Nenhum aparelho disponível para empréstimo no período indicado!</font></b>' : '').'</td>');
@@ -1770,7 +1769,20 @@ function AnaliseCelular() {
       ShowHTML($v_html);
 
       ShowHTML('    </table>');
-      if ($disponiveis) ShowHTML('      <tr><td colspan="3"><b>A<u>c</u>essórios:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Relacione, se necessário, a lista de acessórios entregues com o aparelho.">'.$w_acessorios.'</TEXTAREA></td>');
+      if ($disponiveis) {
+        ShowHTML('      <tr><td colspan="3"><b>A<u>c</u>essórios:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_acessorios" class="STI" ROWS=5 cols=75 title="Relacione, se necessário, a lista de acessórios entregues com o aparelho.">'.$w_acessorios.'</TEXTAREA></td>');
+        if ($disponiveis==1) {
+          ShowHTML('        <SCRIPT LANGUAGE="JAVASCRIPT">');
+          foreach($dados as $row) {
+            if ($disponiveis) {
+              if ($row[0]!='') {
+                ShowHTML('        texto('.$row[0].')');
+              }
+            }
+          }
+          ShowHTML('        </SCRIPT>');
+        }
+      }
     }
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -2504,6 +2516,7 @@ function Grava() {
   ShowHTML('</head>');
 
   BodyOpen('onLoad=this.focus();');
+  exibevariaveis();
   if (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {

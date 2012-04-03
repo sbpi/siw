@@ -2824,12 +2824,12 @@ function ExtractFileName($arquivo) {
 // Rotina de deleção de arquivos em disco
 // -------------------------------------------------------------------------
 function DeleteAFile($filespec) {
-  extract($GLOBALS);
+	extract($GLOBALS);
 
 
-$fso=$CreateObject['Scripting.FileSystemObject'];
-$fso->DeleteFile($filespec);
-return $function_ret;
+	$fso=$CreateObject['Scripting.FileSystemObject'];
+	$fso->DeleteFile($filespec);
+	return $function_ret;
 }
 
 // =========================================================================
