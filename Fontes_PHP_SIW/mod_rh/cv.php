@@ -741,7 +741,7 @@ function Historico() {
     MontaRadioNS('<b>Você já fixou residência permanente legal em país estrangeiro?</b>',$w_residencia_outro_pais,'w_residencia_outro_pais');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Você já tomou alguma medida para mudar de nacionalidade?</b>',$w_mudanca_nacionalidade,'w_mudanca_nacionalidade');
-    ShowHTML('              <br><textarea '.$w_Disabled.' name="w_mudanca_nacionalidade_medida" class="sti" rows=3 cols=90>'.$w_mudanca_nacionalidade_medida.'</textarea>');
+    ShowHTML('      <tr><td><textarea '.$w_Disabled.' name="w_mudanca_nacionalidade_medida" class="sti" rows=3 cols=90>'.$w_mudanca_nacionalidade_medida.'</textarea>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Você aceitaria um emprego por menos de 6 meses?</b>',$w_emprego_seis_meses,'w_emprego_seis_meses');
     ShowHTML('      <tr>');
@@ -752,12 +752,12 @@ function Historico() {
     MontaRadioNS('<b>Você tem alguma objeção a fazer com relação à solicitação de informações a seu respeito para seu último empregador?</b>',$w_objecao_informacoes,'w_objecao_informacoes');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Você alguma vez já foi preso, acusado ou convocado pela Corte como réu em algum processo criminal ou sentenciado, penalizado ou aprisionado por violação de alguma lei? (excluem-se violações menores de trânsito)</b>',$w_prisao_envolv_justica,'w_prisao_envolv_justica');
-    ShowHTML('              <br><textarea '.$w_Disabled.' name="w_motivo_prisao" class="sti" rows=3 cols=90>'.$w_motivo_prisao.'</textarea>');
+    ShowHTML('      <tr><td><textarea '.$w_Disabled.' name="w_motivo_prisao" class="sti" rows=3 cols=90>'.$w_motivo_prisao.'</textarea>');
     ShowHTML('      <tr><td valign="top"><b>Exponha algum outro fato relevante. Inclua informações relacionadas a qualquer residência fora do país de origem:</b><br>');
     ShowHTML('              <textarea '.$w_Disabled.' name="w_fato_relevante_vida" class="sti" rows=3 cols=90>'.$w_fato_relevante_vida.'</textarea>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Você é ou foi Funcionário Público?</b>',$w_servidor_publico,'w_servidor_publico');
-    ShowHTML('              de <input '.$w_Disabled.' type="text" name="w_servico_publico_inicio" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_inicio.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
+    ShowHTML('              <tr> <td> de <input '.$w_Disabled.' type="text" name="w_servico_publico_inicio" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_inicio.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     ShowHTML('              a <input '.$w_Disabled.' type="text" name="w_servico_publico_fim" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_fim.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> (dd/mm/aaaa)');
     ShowHTML('      <tr><td valign="top"><b>Informe alguma sociedade profissional ou atividades ligadas a assuntos cívicos, públicos ou internacionais das quais você faz parte:</b><br>');
     ShowHTML('              <textarea '.$w_Disabled.' name="w_atividades_civicas" class="sti" rows=3 cols=90>'.$w_atividades_civicas.'</textarea>');
