@@ -588,7 +588,7 @@ begin
                    and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||d12.classe||'''') > 0))
                    and (p_ini_i          is null or (p_ini_i       is not null and e1.data_efetivacao between p_ini_i and p_ini_f))
                ) lista
-        order by nm_almoxarifado, nm_material, nm_almoxarifado_local, armazenamento, tipo;
+        order by nm_almoxarifado, nm_material, armazenamento, nm_almoxarifado_local, tipo;
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for 
