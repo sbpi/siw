@@ -879,7 +879,7 @@ function TermoCelular() {
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS_Solic,'sq_siw_tramite').'">');
 
   ShowHTML('<tr><td>');
-  ShowHTML('    <tr><td><table width="100%" border="0"><tr><td>');
+  ShowHTML('    <tr><td><table width="100%" border="0"><tr><td colspan=3>');
   ShowHTML(VisualGeral($w_chave,'V',$w_usuario,$SG,null));
   if (Nvl($w_envio,'N')=='N') {
     if ($O=='E') {
@@ -893,10 +893,11 @@ function TermoCelular() {
     }
     ShowHTML('  <tr><td colspan="3"><font size="2"><hr NOSHADE color=#000000 SIZE=1></font></td></tr>');
   }
-  ShowHTML('      <tr valign="top"><td colspan="3">');
+  ShowHTML('      <tr><td colspan="3">');
   ShowHTML('        <input class="STR" '.(($P1==6) ? 'DISABLED' : '').' type="radio" name="w_envio" value="N" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'w_assinatura\'; document.Form.submit();"'.((Nvl($w_envio,'N')=='N') ? ' checked' : '').'> Enviar para a próxima fase <br>');
   ShowHTML('        <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" onClick="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'w_assinatura\'; document.Form.submit();"'.((Nvl($w_envio,'N')=='S') ? ' checked' : '').'> Devolver para a fase anterior');
   if ($w_envio=='S') {
+    ShowHTML('      <tr>');
     SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','DEVFLUXO',null);
     ShowHTML('    <tr><td colspan="3"><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o motivo da devolução e ações a serem executadas.">'.$w_despacho.'</TEXTAREA></td>');
   }
@@ -2516,7 +2517,6 @@ function Grava() {
   ShowHTML('</head>');
 
   BodyOpen('onLoad=this.focus();');
-  exibevariaveis();
   if (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {

@@ -35,8 +35,8 @@ function celular_termoEntrega($l_chave,$l_sg,$l_formato=0) {
   $l_html.=chr(13).'        <tr valign="top"><td colspan="2">';
   $l_html.=chr(13).'<p align="justify">Eu, <b>'.f($RS1,'nm_solicitante').'</b>, declaro que recebi da <b>'.f($RS2,'nome_resumido').' - '.f($RS2,'nm_pessoa').'</b>, o aparelho celular da marca <b>'.f($RS1,'marca').'</b>, ';
   $l_html.=chr(13).'modelo <b>'.f($RS1,'modelo').'</b>, número <b>'.f($RS1,'numero_linha').'</b>, sim card no. <b>'.f($RS1,'sim_card').'</b>, imei do aparelho no. <b>'.f($RS1,'imei').'</b> ';
-  $l_html.=chr(13).'em perfeitas condições de uso, contendo os seguintes itens:</p>';
-  $l_html.=chr(13).'<p align="justify"><b>'.f($RS1,'acessorios').'</b></p>';
+  $l_html.=chr(13).'em perfeitas condições de uso'.((nvl(f($RS1,'acessorios_entregues'),'')=='') ? '.' : ', contendo os seguintes itens:').'</p>';
+  $l_html.=chr(13).'<p align="justify"><b>'.f($RS1,'acessorios_entregues').'</b></p>';
   $l_html.=chr(13).'<p align="justify">Referido aparelho destina-se a uso exclusivo de atividades relativas à Agência, de acordo com o procedimento operacional ';
   $l_html.=chr(13).'vigente, do qual declaro ter ciência e anuência a todos os seus termos.</p>';
   $l_html.=chr(13).'<p align="justify"><b><font color="#FF0000">Atenção: este termo de responsabilidade invalida qualquer outro assinado nesta mesma solicitação.</font></b></p>';

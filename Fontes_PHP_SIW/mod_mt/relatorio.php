@@ -224,7 +224,7 @@ function Inventario() {
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
         $p_acao_ppa, null, $p_empenho, null);
-    $RS1 = SortArray($RS1,'nm_tipo_completo','asc','nm_material','asc');
+    $RS1 = SortArray($RS1,'nm_material','asc','nm_tipo_completo','asc');
   }
   $w_linha_filtro = $w_linha;
 
@@ -300,9 +300,9 @@ function Inventario() {
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
+          $w_colspan++; ShowHTML('          <td><b>Material</b></td>');
           if ($tipo) { $w_colspan++; ShowHTML('          <td><b>Tipo de material</b></td>'); }
           $w_colspan++; ShowHTML('          <td><b>End. Estoque</b></td>');
-          $w_colspan++; ShowHTML('          <td><b>Material</b></td>');
           $w_colspan++; ShowHTML('          <td><b>U.M.</b></td>');
           $w_colspan++; ShowHTML('          <td><b>Qtd.</b></td>');
           $w_colspan++; ShowHTML('          <td><b>P.M.</b></td>');
@@ -314,9 +314,9 @@ function Inventario() {
         }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
         ShowHTML('          <td>'.f($row,'nm_almoxarifado_local').'</td>');
-        ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
         ShowHTML('          <td align="center">'.f($row,'nm_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio')).'</td>');
@@ -463,9 +463,9 @@ function Analise() {
         $p_acao_ppa, null, $p_empenho, null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS1 = SortArray($RS1,$lista[0],$lista[1],'nm_tipo_completo','asc','nm_material','asc');
+      $RS1 = SortArray($RS1,$lista[0],$lista[1],'nm_material','asc','nm_tipo_completo','asc');
     } else {
-      $RS1 = SortArray($RS1,'nm_tipo_completo','asc','nm_material','asc');
+      $RS1 = SortArray($RS1,'nm_material','asc','nm_tipo_completo','asc');
     }
   }
   $w_linha_filtro = $w_linha;
@@ -542,8 +542,8 @@ function Analise() {
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-          if ($tipo) { $w_colspan++; ShowHTML('          <td rowspan="2"><b>Tipo de material</b></td>'); }
           $w_colspan++; ShowHTML('          <td rowspan="2"><b>'.(($w_embed=='WORD') ? 'Material' : linkOrdena('Material','nm_material')).'</b></td>');
+          if ($tipo) { $w_colspan++; ShowHTML('          <td rowspan="2"><b>Tipo de material</b></td>'); }
           $w_colspan++; ShowHTML('          <td rowspan="2"><b>'.(($w_embed=='WORD') ? 'U.M.' : linkOrdena('U.M.','sg_unidade_medida')).'</b></td>');
           ShowHTML('          <td colspan="3"><b>Posição de Estoque</b></td>');
           ShowHTML('          <td colspan="3"><b>Últ. Entrada</b></td>');
@@ -570,8 +570,8 @@ function Analise() {
         }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
-        if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
+        if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
         ShowHTML('          <td align="center">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('          <td align="center">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
         ShowHTML('          <td align="right">'.formatNumber(f($row,'preco_medio')).'</td>');
@@ -813,11 +813,11 @@ function Entrada() {
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
+          ShowHTML('          <td><b>Material</b></td>');
           if ($tipo) {
             $colspan++;
             ShowHTML('          <td><b>Tipo de material</b></td>');
           }
-          ShowHTML('          <td><b>Material</b></td>');
           ShowHTML('          <td><b>U.M.</b></td>');
           ShowHTML('          <td><b>Fornecedor</b></td>');
           ShowHTML('          <td><b>Documento</b></td>');
@@ -831,8 +831,8 @@ function Entrada() {
         }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
-        if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
+        if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
         ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_fornecedor') : ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor'))).'</td>');
         ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'sg_tip_doc').' '.f($row,'nr_doc') : '<a class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,f($row,'link_menu').'visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_mtentrada').'&SG='.f($row,'sg_menu').'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_menu')).'\',\'TelaEntrada\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Exibe os dados da entrada.">'.f($row,'sg_tip_doc').' '.f($row,'nr_doc').'</a>').'</td>');
@@ -1721,11 +1721,11 @@ function MapaSint() {
           ShowHTML('<tr><td align="center">');
           ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
+          ShowHTML('          <td rowspan="2"><b>Material</b></td>');
           if ($tipo) {
             $colspan++;
             ShowHTML('          <td rowspan="2"><b>Tipo de material</b></td>');
           }
-          ShowHTML('          <td rowspan="2"><b>Material</b></td>');
           ShowHTML('          <td rowspan="2"><b>U.M.</b></td>');
           ShowHTML('          <td colspan="4"><b>Quantitativo</b></td>');
           ShowHTML('          <td colspan="4"><b>Financeiro</b></td>');
@@ -1760,8 +1760,8 @@ function MapaSint() {
             $w_tot_ant += $w_atual_va;
           }
           ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top">');
-          if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
           ShowHTML('          <td>'.(($w_embed=='WORD') ? f($row,'nm_material') : ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nm_material'),f($row,'sq_material'),$TP,null)).'</td>');
+          if ($tipo) ShowHTML('          <td>'.f($row,'nm_tipo_completo').'</td>');
           ShowHTML('          <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
           $w_atual = f($row,'nm_material');
         }
