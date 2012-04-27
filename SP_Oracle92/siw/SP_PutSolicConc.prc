@@ -129,7 +129,7 @@ create or replace procedure SP_PutSolicConc
                                                        w2.sq_siw_tramite     = p_financeiro_tramite
                                                       )
                inner join co_forma_pagamento    w3 on (w1.sq_pessoa          = w3.cliente and w3.sigla = 'CREDITO')
-               inner join fn_tipo_documento     w4 on (w1.sq_pessoa          = w4.cliente and w4.sigla = 'NF'),
+               inner join fn_tipo_documento     w4 on (w1.sq_pessoa          = w4.cliente and w4.sigla = 'DEFINIR'),
              siw_solicitacao                    x
              inner     join siw_tramite         x5 on (x.sq_siw_tramite      = x5.sq_siw_tramite)
              inner     join cl_solicitacao      x1 on (x.sq_siw_solicitacao  = x1.sq_siw_solicitacao)

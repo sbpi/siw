@@ -79,6 +79,27 @@ begin
                            )      b on (a.sq_tipo_material = b.sq_tipo_material)
           where a.cliente = p_cliente
          order by a.nome;
+   Elsif upper(p_restricao) = 'ENTMAT' Then
+     -- Recupera tipos de material relativos a medicamentos, alimentos e material de consumo
+      open p_result for
+         select a.sq_tipo_material chave,a.nome, a.codigo_externo, a.classe,
+                montanometipomaterial(a.sq_tipo_material) as nome_completo,
+                case a.classe
+                     when 1 then 'Medicamento'
+                     when 2 then 'Alimento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                coalesce(b.qtd,0) as qt_materiais
+           from cl_tipo_material  a
+                left  join (select x.sq_tipo_material, count(x.sq_material) qtd 
+                              from cl_material x
+                            group by x.sq_tipo_material
+                           )      b on (a.sq_tipo_material = b.sq_tipo_material)
+          where a.cliente = p_cliente
+            and a.classe  in (1,2,3)
+         order by a.nome;
    Elsif upper(p_restricao) = 'SUBPARTE' Then
      -- Se for alteração, não deixa vincular a si mesmo nem a algum filho
       open p_result for

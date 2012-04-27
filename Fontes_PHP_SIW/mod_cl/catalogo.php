@@ -1149,6 +1149,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><b>['.f($l_rs,'codigo_interno').'] '.f($l_rs,'nome').'</font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $l_html .= chr(13).'    <tr valign="top"><td width="30%"><b>Classe:<b></td><td>'.f($l_rs,'nm_classe').' </td></tr>';
   $l_html .= chr(13).'    <tr valign="top"><td width="30%"><b>Tipo:<b></td><td>'.f($l_rs,'nm_tipo_material_completo').' </td></tr>';
   $l_html .= chr(13).'    <tr valign="top"><td width="30%"><b>Exibe no catálogo:<b></td><td>'.f($l_rs,'nm_exibe_catalogo').' </td></tr>';
   $l_html .= chr(13).'    <tr><td width="30%"><b>Item ativo:<b></td><td>'.f($l_rs,'nm_ativo').' </td></tr>';

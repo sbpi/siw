@@ -127,7 +127,7 @@ begin
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 case when b.protocolo_siw is null
                      then d.processo
-                     else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),2)
+                     else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),3)
                 end as processo,
                 to_char(b5.prefixo)||'.'||substr(1000000+to_char(b5.numero_documento),2,6)||'/'||to_char(b5.ano)||'-'||substr(100+to_char(b5.digito),2,2) as protocolo_completo,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,

@@ -24,6 +24,11 @@ create or replace procedure SP_PutMTEntItem
 begin
    If p_operacao in ('I','A') Then
       w_valor := trunc(p_valor / case when p_quantidade > 0 then p_quantidade else 1 end,10);
+      If p_operacao = 'A' and p_valor is null Then
+         -- p_valor é nulo se a entrada de material é ligada a compra ou a contrato.
+         -- Nesse caso, o valor unitário não é alterado e o valor total é calculado em função da quantidade.
+         select valor_unitario into w_valor from mt_entrada_item where sq_entrada_item = p_chave_aux;
+      End If;
    End If;
    
    If p_operacao = 'I' Then
@@ -55,7 +60,13 @@ begin
              sq_mtsituacao     = p_situacao,
              ordem             = p_ordem,
              quantidade        = case p_bloqueio when 'S' then 0 else p_quantidade end,
-             valor_total       = case p_bloqueio when 'S' then 0 else p_valor end,
+             valor_total       = case when p_valor is null -- Entrada de material ligada a compra ou contrato
+                                      then p_quantidade * w_valor 
+                                      else case p_bloqueio 
+                                                when 'S' then 0 
+                                                else p_valor 
+                                           end
+                                 end,
              valor_unitario    = case p_bloqueio when 'S' then 0 else w_valor end,
              fator_embalagem   = p_fator,
              validade          = case p_bloqueio when 'S' then null else p_validade end,
