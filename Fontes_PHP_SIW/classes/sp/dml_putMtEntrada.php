@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putMtEntrada {
-   function getInstanceOf($dbms, $p_operacao,$p_cliente,$p_usuario,$p_chave,$p_copia,$p_fornecedor,$p_tipo_movimentacao,$p_situacao,
+   function getInstanceOf($dbms, $p_operacao,$p_cliente,$p_usuario,$p_chave,$p_copia,$p_executor, $p_fornecedor,$p_tipo_movimentacao,$p_situacao,
            $p_solicitacao,$p_documento,$p_previsto,$p_efetivo,$p_tipo_doc,$p_numero_doc,$p_data_doc,$p_valor_doc,$p_armazenamento,
            $p_numero_empenho,$p_data_empenho,$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMtEntrada';
@@ -19,6 +19,7 @@ class dml_putMtEntrada {
                    'p_usuario'                =>array(tvl($p_usuario),                            B_INTEGER,        32),
                    'p_chave'                  =>array(tvl($p_chave),                              B_INTEGER,        32),
                    'p_copia'                  =>array(tvl($p_copia),                              B_INTEGER,        32),
+                   'p_executor'               =>array(tvl($p_executor),                           B_INTEGER,        32),                   
                    'p_fornecedor'             =>array(tvl($p_fornecedor),                         B_INTEGER,        32),                   
                    'p_tipo_movimentacao'      =>array(tvl($p_tipo_movimentacao),                  B_INTEGER,        32),
                    'p_situacao'               =>array(tvl($p_situacao),                           B_INTEGER,        32),

@@ -91,7 +91,8 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       $l_html.=chr(13).'          <td rowspan=2><b>Qtd</b></td>';
       $l_html.=chr(13).'          <td colspan=2><b>Valores</b></td>';
-      if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'          <td rowspan=2><b>Saldo atual</b></td>';
+      // Comentado até resolver questão de itens com controle por compra e itens com controle global
+      if (1==0 && f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'          <td rowspan=2><b>Saldo atual</b></td>';
       $l_html.=chr(13).'        </tr>';
       $l_html.=chr(13).'        <tr align="center">';
       $l_html.=chr(13).'          <td><b>Unit.</b></td>';
@@ -124,12 +125,12 @@ function VisualEntrada($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario'),2).'</td>';
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
-          if (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
+          if (1==0 && f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>';
           $l_html.=chr(13).'        </tr>';
           $w_total += f($row,'valor_total');
         }
       }
-      if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).((f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) ? '<td>&nbsp;</td>' : '').'</tr>';
+      if (count($RS1)>1) $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top"><td colspan='.(5+$colspan).' align="right"><b>Total dos itens</b><td align="right">'.formatNumber($w_total).(1==0 && (f($RS,'sg_sit')=='AR' && ($w_classes[1] || $w_classes[2] || $w_classes[3])) ? '<td>&nbsp;</td>' : '').'</tr>';
       $l_html.=chr(13).'    </table>';
     }
   }

@@ -4,6 +4,7 @@ create or replace procedure SP_PutMtEntrada
     p_usuario               in number,
     p_chave                 in number   default null,
     p_copia                 in  number  default null,
+    p_executor              in number   default null,
     p_fornecedor            in number   default null,
     p_tipo_movimentacao     in number   default null,    
     p_situacao              in number   default null,
@@ -111,7 +112,7 @@ begin
                                     p_menu               => crec.sq_menu,
                                     p_sq_unidade         => crec.sq_unidade,
                                     p_solicitante        => p_usuario,
-                                    p_cadastrador        => p_usuario,
+                                    p_cadastrador        => p_executor,
                                     p_descricao          => crec.descricao,
                                     p_vencimento         => crec.vencimento,
                                     p_valor              => p_valor_doc,
@@ -238,6 +239,39 @@ begin
                 data_empenho         = p_data_empenho
          where sq_mtentrada = p_chave;
           
+        -- Se a solicitação foi informada, ajusta o responsável pelo pagamento, desde que ele esteja na fase de cadastramento.
+        If p_solicitacao is not null Then
+           -- Grava o log registrando a alteração do responsável pelo pagamento.
+           Insert Into siw_solic_log 
+              (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
+               sq_siw_tramite,            data,               devolucao, 
+               observacao
+              )
+           (Select 
+               sq_siw_solic_log.nextval,  p_solicitacao,      p_usuario,
+               a.sq_siw_tramite,          sysdate,            'N',
+               'Alteração do responsável pelo pagamento de "'||b.nome||'" para "'||c.nome||'".'
+              from siw_solicitacao      a
+                   inner join co_pessoa b on (a.cadastrador = b.sq_pessoa),
+                   co_pessoa       c
+             where a.sq_siw_solicitacao = p_solicitacao
+               and a.cadastrador        <> p_executor
+               and c.sq_pessoa          = p_executor
+           );
+
+           -- Atualiza a solicitação
+           update siw_solicitacao 
+              set cadastrador = p_executor
+           where sq_siw_solicitacao = p_solicitacao
+             and cadastrador        <> p_executor
+             and sq_siw_tramite     = (select x.sq_siw_tramite
+                                         from siw_solicitacao        w
+                                              inner join siw_tramite x on (w.sq_menu = x.sq_menu and x.sigla = 'CI')
+                                        where w.sq_siw_solicitacao = p_solicitacao
+                                      );
+
+        End If;
+      
       Elsif p_operacao = 'E' Then -- Exclusão
          -- Monta string com a chave dos arquivos ligados à solicitação informada
          for crec in c_arquivos loop

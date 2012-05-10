@@ -119,7 +119,7 @@ if (strpos($SG,'ENVIO')!==false) {
     $O='V';
 } elseif ($O=='') {
   // Se for acompanhamento, entra na filtragem
-  if ($P1==3) $O='P'; else $O='L';
+  if ($P1==3 || $SG=='MTENTMAT') $O='P'; else $O='L';
 } 
 
 switch ($O) {
@@ -362,7 +362,7 @@ function Inicial() {
     // Se for recarga da página
     BodyOpen('onLoad="document.Form.'.$w_Troca.'.focus();"');
   } elseif (strpos('CP',$O)!==false) {
-    BodyOpen('onLoad="document.Form.p_codigo.focus()";');
+    BodyOpen('onLoad="document.Form.p_proponente.focus()";');
   } elseif ($P1==2) {
     BodyOpen(null);
   } else {
@@ -515,6 +515,7 @@ function Inicial() {
       // Se for cópia
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Abandonar cópia">');
     } else {
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Incluir">');
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
     } 
     ShowHTML('          </td>');
@@ -561,6 +562,7 @@ function Geral() {
     $w_armazenamento            = $_REQUEST['w_armazenamento'];
     $w_sq_tipo_documento        = $_REQUEST['w_sq_tipo_documento'];
     $w_numero                   = $_REQUEST['w_numero'];
+    $w_executor                 = $_REQUEST['w_executor'];
     $w_data                     = $_REQUEST['w_data'];
     $w_valor                    = $_REQUEST['w_valor'];
     $w_sq_tipo_doc_ant          = $_REQUEST['w_sq_tipo_doc_ant'];
@@ -583,6 +585,7 @@ function Geral() {
       foreach($RS as $row){$RS=$row; break;}
       $w_solicitacao              = f($RS,'sq_siw_solicitacao');
       $w_documento                = f($RS,'sq_lancamento_doc');
+      $w_executor                 = f($RS,'cadastrador');
       $w_fornecedor               = f($RS,'sq_fornecedor');
       $w_fornecedor_nm            = f($RS,'nm_fornecedor');
       $w_tipo                     = f($RS,'sq_tipo_movimentacao');
@@ -624,6 +627,7 @@ function Geral() {
           foreach($RS2 as $row2) {
             $sql = new db_getSolicData; $RS3 = $sql->getInstanceOf($dbms,f($row1,'sq_siw_solicitacao'),f($row1,'sigla'));
             $w_solicitacao              = f($RS3, 'sq_siw_solicitacao');
+            $w_executor                 = f($RS,'executor_fn');
             $w_fornecedor               = f($RS3, 'pessoa');
             $w_fornecedor_nm            = f($RS3, 'nm_pessoa_resumido');
             $w_documento                = f($row2, 'sq_lancamento_doc');
@@ -684,7 +688,7 @@ function Geral() {
   if ($O=='I' || $O=='A') {
     if ($O=='I' || $w_mod_fn=='N') {
       // Dados não editáveis se estiver ligado a um lançamento financeiro
-      Validate('w_fornecedor_nm','Fornecedor','','1','1','40','1','1');
+      Validate('w_fornecedor_nm','Fornecedor','','1','1','100','1','1');
       Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
       Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
       Validate('w_data','Data do documento', 'DATA', '1', '10', '10', '', '0123456789/');
@@ -694,6 +698,7 @@ function Geral() {
     Validate('w_tipo','Tipo da movimentação', 'SELECT', '1', '1', '18', '', '0123456789');
     //Validate('w_prevista','Data prevista para recebimento','DATA',1,10,10,'','0123456789/');
     Validate('w_efetiva','Data efetiva de recebimento','DATA',1,10,10,'','0123456789/');
+    Validate('w_executor','Responsável pelo pagamento','SELECT',1,1,18,'','0123456789');
     ShowHTML('  document.Form.Botao[0].disabled = true;');
     ShowHTML('  document.Form.Botao[1].disabled = true;');
   } 
@@ -797,6 +802,7 @@ function Geral() {
     SelecaoTipoMovimentacao('Tipo da <u>m</u>ovimentação:','M', 'Selecione o tipo da movimentação.', $w_tipo,'S',null,'w_tipo','CONSUMO',null);
     //ShowHTML('          <td><b>Data <u>p</u>revista para recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_prevista" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prevista.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data prevista para recebimento do material.">'.ExibeCalendario('Form','w_prevista').'</td>');
     ShowHTML('          <td><b>Data de <u>e</u>ntrega:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_efetiva" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_efetiva.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de entrega do material.">'.ExibeCalendario('Form','w_efetiva').'</td>');
+    SelecaoPessoa('<u>R</u>esponsável pelo pagamento:','R','Selecione o responsável pelo pagamento ao fornecedor.',$w_executor,null,'w_executor','EXECUTORCO',null,2);
     ShowHTML('      <tr><td align="center" colspan=4 height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan=4>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -1318,7 +1324,7 @@ function Itens() {
         ShowHTML('<INPUT type="hidden" name="w_motivo[]" value="'.f($row,'motivo_bloqueio').'">');
         if (f($row,'lote_bloqueado')=='S') {
           ShowHTML('        <td colspan="4">ITEM CANCELADO. '.nvl(f($row,'motivo_bloqueio'),'').'</td>');
-          ShowHTML('        <td><input type="text" name="w_quantidade[]" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);"></td>');
+          ShowHTML('        <td><input type="text" name="w_quantidade[]" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;"></td>');
           ShowHTML('        <td><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="8" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_total')).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
         } else {
           $w_total += f($row,'valor_total');
@@ -1336,7 +1342,7 @@ function Itens() {
           //  ShowHTML('        <td align="center">'.((f($row,'classe')==1||f($row,'classe')==3) ? f($row,'fator_embalagem') : '&nbsp;').'</td>');
           //  ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
           //}
-          ShowHTML('        <td><input type="text" name="w_quantidade[]" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);"></td>');
+          ShowHTML('        <td><input type="text" name="w_quantidade[]" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;"></td>');
           if ($w_edita) ShowHTML('        <td><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="8" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_total')).'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
           //ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
           //ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unitario'),2).'</td>');
@@ -1406,7 +1412,7 @@ function Itens() {
       ShowHTML('      <tr><td colspan=6 align="center"><b>Classe do material: '.$w_classe.' - '.upper($w_nm_classe).'</b></td></tr>');
       ShowHTML('      <tr><td colspan="6" align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td><b><u>Q</u>uantidade:</b><br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);"></td>');
+      ShowHTML('        <td><b><u>Q</u>uantidade:</b><br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;"></td>');
       if ($w_edita) ShowHTML('        <td><b>$ <u>T</u>otal:</b><br><input type="text" '.$w_Disabled.' accesskey="T" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="javascript:FormataValor(this,18,2,event);" title="Informe o valor total do item. O sistema calculará o valor unitário."></td>');
       if ($w_classe==1||$w_classe==2||$w_classe==3) {
         ShowHTML('        <td><b><u>V</u>alidade:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_validade" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_validade.'" onKeyDown="FormataData(this,event);" title="Data de validade do item."></td>');
@@ -1904,7 +1910,7 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_copia'],
+        $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_copia'],$_REQUEST['w_executor'],
                 $_REQUEST['w_fornecedor'],$_REQUEST['w_tipo'],$w_situacao,$_REQUEST['w_solicitacao'],$_REQUEST['w_documento'],
                 nvl($_REQUEST['w_prevista'],$_REQUEST['w_efetiva']),$_REQUEST['w_efetiva'],
                 $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
@@ -2090,7 +2096,7 @@ function Grava() {
           }
 
           // Registra o armazenamento
-          $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,'V',$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,
+          $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,'V',$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,
             null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_armazenamento'],null,null,&$w_chave_nova);
 
           ScriptOpen('JavaScript');
