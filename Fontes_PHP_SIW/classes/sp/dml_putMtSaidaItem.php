@@ -10,10 +10,12 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putMtSaidaItem {
-   function getInstanceOf($dbms, $operacao, $p_saida, $p_item, $p_solicitacao, $p_material, $p_fator, $p_solicitada, $p_entregue, $p_efetivacao) {
+   function getInstanceOf($dbms, $operacao, $p_saida, $p_estoque, $p_local, $p_item, $p_solicitacao, $p_material, $p_fator, $p_solicitada, $p_entregue, $p_efetivacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMtSaidaItem';
      $params=array('p_operacao'                 =>array($operacao,                                    B_VARCHAR,         1),
                    'p_saida'                    =>array(tvl($p_saida),                                B_INTEGER,        32),
+                   'p_estoque'                  =>array(tvl($p_estoque),                              B_INTEGER,        32),
+                   'p_local'                    =>array(tvl($p_local),                                B_INTEGER,        32),
                    'p_item'                     =>array(tvl($p_item),                                 B_INTEGER,        32),
                    'p_solicitacao'              =>array(tvl($p_solicitacao),                          B_INTEGER,        32),
                    'p_material'                 =>array(tvl($p_material),                             B_INTEGER,        32),

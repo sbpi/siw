@@ -264,6 +264,43 @@ begin
       open p_result for 
          select a.sq_saida_item as chave,    a.quantidade_pedida,         a.quantidade_entregue,
                 a.valor_unitario,            a.data_efetivacao,
+                b.sq_material,               b.nome,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+                f.sq_estoque,                g.sq_almoxarifado_local,
+                montaNomeAlmoxLocal(g.sq_almoxarifado_local) as nm_localizacao,
+                sum(g.saldo_atual) as saldo_atual,
+                sum(i.quantidade) as quantidade,
+                case when sum(i.quantidade) > 0 then 'S' else 'N' end as marcado
+           from mt_saida_item                                a
+                inner               join mt_saida           a1 on (a.sq_mtsaida           = a1.sq_mtsaida)
+                  inner             join siw_solicitacao    a2 on (a1.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
+                  inner             join eo_unidade         a3 on (a1.sq_unidade_origem   = a3.sq_unidade)
+                    inner           join eo_localizacao     a4 on (a3.sq_pessoa_endereco  = a4.sq_pessoa_endereco)
+                      inner         join mt_almoxarifado     e on (a4.sq_localizacao      = e.sq_localizacao)
+                        inner       join mt_estoque          f on (e.sq_almoxarifado      = f.sq_almoxarifado and
+                                                                   a.sq_material          = f.sq_material
+                                                                  )
+                          inner     join mt_estoque_item     g on (f.sq_estoque           = g.sq_estoque and
+                                                                   g.saldo_atual          > 0
+                                                                  )
+                            left    join mt_saida_estoque    i on (a.sq_saida_item        = i.sq_saida_item and
+                                                                   g.sq_estoque_item      = i.sq_estoque_item
+                                                                  )
+                inner               join cl_material         b on (a.sq_material          = b.sq_material)
+                inner               join co_unidade_medida   d on (b.sq_unidade_medida    = d.sq_unidade_medida)
+          where (p_chave         is null or (p_chave         is not null and a.sq_saida_item       = p_chave))
+            and (p_solicitacao   is null or (p_solicitacao   is not null and a2.sq_siw_solicitacao = p_solicitacao))
+            and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
+            and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material    = p_tipo_material))
+            and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno      like '%'||p_codigo||'%'))
+            and (p_nome          is null or (p_nome          is not null and acentos(b.nome)       like '%'||acentos(p_nome)||'%'))
+         group by a.sq_saida_item, a.quantidade_pedida, a.quantidade_entregue, a.valor_unitario, a.data_efetivacao, b.sq_material, b.nome,
+                d.nome, d.sigla, g.sq_almoxarifado_local, f.sq_estoque, g.sq_almoxarifado_local;
+   ElsIf p_restricao = 'PEDMATAUT1' Then
+      -- Recupera itens passíveis de vinculação a um pedido de material
+      open p_result for 
+         select a.sq_saida_item as chave,    a.quantidade_pedida,         a.quantidade_entregue,
+                a.valor_unitario,            a.data_efetivacao,
                 b.sq_material,               b.sq_tipo_material,          b.sq_unidade_medida, 
                 b.nome,                      b.descricao,                 b.detalhamento, 
                 b.apresentacao,              b.codigo_interno,            b.codigo_externo, 

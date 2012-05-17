@@ -208,22 +208,31 @@ begin
                    a.conclusao = null
              where a.sq_siw_solicitacao = p_chave;
             
-            -- Atualiza o saldo de estoque
-            update mt_estoque_item a
-               set saldo_atual = saldo_atual + (select sum(y.quantidade)
-                                                  from mt_saida                      w
-                                                       inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
-                                                         inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
-                                                where w.sq_siw_solicitacao = p_chave
-                                                  and y.sq_estoque_item    = a.sq_estoque_item
-                                               )
-            where sq_estoque_item in (select sq_estoque_item
-                                        from mt_saida                      w
-                                             inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
-                                               inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
-                                      where w.sq_siw_solicitacao = p_chave
-                                        and y.quantidade         > 0
-                                     );
+            -- Verifica se o envio é da fase concluída para outra qualquer.
+            select count(*) into w_cont
+              from siw_solicitacao            k
+                   inner     join siw_tramite l on (k.sq_siw_tramite = l.sq_siw_tramite)
+             where l.ativo              = 'N'
+               and k.sq_siw_solicitacao = p_chave;
+            
+            If w_cont > 0 Then
+               -- Atualiza o saldo de estoque se a solicitação estava concluída foi reativada
+               update mt_estoque_item a
+                  set saldo_atual = saldo_atual + (select sum(y.quantidade)
+                                                     from mt_saida                      w
+                                                           inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
+                                                            inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
+                                                   where w.sq_siw_solicitacao = p_chave
+                                                     and y.sq_estoque_item    = a.sq_estoque_item
+                                                   )
+               where sq_estoque_item in (select sq_estoque_item
+                                           from mt_saida                      w
+                                                inner   join mt_saida_item    x on (w.sq_mtsaida    = x.sq_mtsaida)
+                                                  inner join mt_saida_estoque y on (x.sq_saida_item = y.sq_saida_item)
+                                         where w.sq_siw_solicitacao = p_chave
+                                           and y.quantidade         > 0
+                                        );
+            End If;
          Elsif w_menu.sigla = 'PAELIM' Then
             -- Atualiza os protocolos vinculados a uma lista de exclusão
             update siw_solicitacao a

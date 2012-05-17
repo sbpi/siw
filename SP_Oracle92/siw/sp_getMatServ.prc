@@ -217,7 +217,7 @@ begin
    Elsif p_restricao = 'PEDMAT' Then
       -- Recupera pesquisas de preço vinculadas a uma solicitação
       open p_result for 
-         select a.sq_material, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
+         select distinct a.sq_material, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
                 a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,

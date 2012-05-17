@@ -1422,7 +1422,8 @@ function Atender() {
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<INPUT type="hidden" name="w_saida_item[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_estoque_item[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_estoque[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_local[]" value="">');
   ShowHTML('<INPUT type="hidden" name="w_quantidade[]" value="">');
   ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="">');
   ShowHTML('<INPUT type="hidden" name="w_material[]" value="">');
@@ -1445,20 +1446,13 @@ function Atender() {
   ShowHTML('          <td rowspan=2><b>Nome</td>');
   ShowHTML('          <td rowspan=2><b>U.M.</td>');
   ShowHTML('          <td colspan=2><b>Quantidade</td>');
-  ShowHTML('          <td colspan='.(($w_classes[1]) ? '7' : '5').'><b>Origem</td>');
+  ShowHTML('          <td colspan='.(($w_classes[1]) ? '7' : '2').'><b>Origem</td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">');
   ShowHTML('          <td><b>Solicitada</td>');
   ShowHTML('          <td><b>Autorizada</td>');
   ShowHTML('          <td><b>Saldo</td>');
   ShowHTML('          <td><b>Localização</td>');
-  ShowHTML('          <td><b>Fator Embal.</td>');
-  ShowHTML('          <td><b>Marca</td>');
-  ShowHTML('          <td><b>Validade</td>');
-  if ($w_classes[1]) {
-    ShowHTML('          <td><b>Lote</td>');
-    ShowHTML('          <td><b>Fabricação</td>');
-  }
   ShowHTML('        </tr>');
   // Lista os registros selecionados para listagem
   $i=1;
@@ -1474,19 +1468,13 @@ function Atender() {
       ShowHTML('        <td colspan=3>&nbsp;</td>');
     }
     ShowHTML('<INPUT type="hidden" name="w_saida_item[]" value="'.f($row,'chave').'">');
-    ShowHTML('<INPUT type="hidden" name="w_estoque_item[]" value="'.f($row,'sq_estoque_item').'">');
+    ShowHTML('<INPUT type="hidden" name="w_estoque[]" value="'.f($row,'sq_estoque').'">');
+    ShowHTML('<INPUT type="hidden" name="w_local[]" value="'.f($row,'sq_almoxarifado_local').'">');
     ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="'.formatNumber(f($row,'quantidade_pedida'),0).'">');
     ShowHTML('<INPUT type="hidden" name="w_material[]" value="'.f($row,'sq_material').'">');
     ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($_REQUEST['w_quantidade'][$i],Nvl(formatNumber(f($row,'quantidade'),0),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade autorizada para entrega."></td>');
     ShowHTML('        <td align="right">'.formatNumber(f($row,'saldo_atual'),0).'</td>');
     ShowHTML('        <td>'.f($row,'nm_localizacao').'</td>');
-    ShowHTML('        <td align="center">'.f($row,'fator_embalagem').'</td>');
-    ShowHTML('        <td>'.f($row,'marca').'</td>');
-    ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'validade'),5).'</td>');
-    if ($w_classes[1]) {
-      ShowHTML('        <td>'.nvl(f($row,'lote_numero'),'---').'</td>');
-      ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'---').'</td>');
-    }
     ShowHTML('        </tr>');
     $i++;
   }
@@ -1579,19 +1567,12 @@ function Concluir() {
   ShowHTML('          <td rowspan=2><b>U.M.</td>');
   ShowHTML('          <td rowspan=2><b>Data de<br>Entrega</td>');
   ShowHTML('          <td colspan=2><b>Quantidade</td>');
-  ShowHTML('          <td colspan='.(($w_classes[1]) ? '6' : '4').'><b>Origem</td>');
+  ShowHTML('          <td colspan='.(($w_classes[1]) ? '6' : '2').'><b>Origem</td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">');
   ShowHTML('          <td><b>Solicitada</td>');
   ShowHTML('          <td><b>Autorizada</td>');
   ShowHTML('          <td><b>Localização</td>');
-  ShowHTML('          <td><b>Fator Embal.</td>');
-  ShowHTML('          <td><b>Marca</td>');
-  ShowHTML('          <td><b>Validade</td>');
-  if ($w_classes[1]) {
-    ShowHTML('          <td><b>Lote</td>');
-    ShowHTML('          <td><b>Fabricação</td>');
-  }
   ShowHTML('        </tr>');
   // Lista os registros selecionados para listagem
   $i=1;
@@ -1614,13 +1595,6 @@ function Concluir() {
     }
     ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
     ShowHTML('        <td>'.f($row,'nm_localizacao').'</td>');
-    ShowHTML('        <td align="center">'.f($row,'fator_embalagem').'</td>');
-    ShowHTML('        <td>'.f($row,'marca').'</td>');
-    ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'validade'),5).'</td>');
-    if ($w_classes[1]) {
-      ShowHTML('        <td>'.nvl(f($row,'lote_numero'),'---').'</td>');
-      ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'---').'</td>');
-    }
     ShowHTML('        </tr>');
     $i++;
   }
@@ -1886,16 +1860,16 @@ function Grava() {
         $SQL = new dml_putMtSaidaItem; 
         if ($O=='E') {
           // Remove o item indicado
-          $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,null,null,null,null);
+          $SQL->getInstanceOf($dbms,$O,null,null,null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,null,null,null,null);
         } elseif ($O=='A') {
           // Ajusta a quantidade do item
-          $SQL->getInstanceOf($dbms,$O,null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'],
+          $SQL->getInstanceOf($dbms,$O,null,null,null,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'],
               $_REQUEST['w_fator'],Nvl($_REQUEST['w_quantidade'],0),null,null);
         } else {
           //Grava os novos itens
           for ($i=0; $i<=count($_POST['w_sq_material'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_material'][$i]>'') {
-              $SQL->getInstanceOf($dbms,'I',null,$_REQUEST['w_chave_aux'][$i],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'][$i],
+              $SQL->getInstanceOf($dbms,'I',null,null,null,$_REQUEST['w_chave_aux'][$i],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'][$i],
                   $_REQUEST['w_fator'][$i],Nvl($_REQUEST['w_quantidade'][$i],0),null,null);
             }
           } 
@@ -1972,13 +1946,13 @@ function Grava() {
         } else {
           $SQL = new dml_putMtSaidaItem; 
           // Remove as autorizações gravadas
-          $SQL->getInstanceOf($dbms,'R',null,null,$_REQUEST['w_chave'],null,null,null,null,null);
+          $SQL->getInstanceOf($dbms,'R',null,null,null,null,$_REQUEST['w_chave'],null,null,null,null,null);
 
           //Grava os novos itens
           for ($i=0; $i<count($_POST['w_material']); $i++) {
             if ($_REQUEST['w_quantidade'][$i]>0) {
-              $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_saida_item'][$i],$_REQUEST['w_estoque_item'][$i],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'][$i],
-                  $_REQUEST['w_fator'][$i],null,Nvl($_REQUEST['w_quantidade'][$i],0),null);
+              $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_saida_item'][$i],$_REQUEST['w_estoque'][$i],$_REQUEST['w_local'][$i],null,
+                  $_REQUEST['w_chave'],$_REQUEST['w_material'][$i],$_REQUEST['w_fator'][$i],null,Nvl($_REQUEST['w_quantidade'][$i],0),null);
             }
           } 
           ScriptOpen('JavaScript');
@@ -2009,7 +1983,7 @@ function Grava() {
           // Grava a data de entrega
           for ($i=0; $i<count($_POST['w_entrega']); $i++) {
             if ($_REQUEST['w_entrega'][$i]>'') {
-              $SQL->getInstanceOf($dbms,'C',null,$_REQUEST['w_saida_item'][$i],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'][$i],
+              $SQL->getInstanceOf($dbms,'C',null,null,null,$_REQUEST['w_saida_item'][$i],$_REQUEST['w_chave'],$_REQUEST['w_sq_material'][$i],
                   $_REQUEST['w_fator'][$i],null,null,$_REQUEST['w_entrega'][$i]);
             }
           } 
