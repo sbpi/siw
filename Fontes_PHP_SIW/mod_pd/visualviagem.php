@@ -1542,94 +1542,94 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'       </table></td></tr>';
       } 
       
-      // Execução financeira
-      if ($w_financeiro) {
-        $RSF = SortArray($RSF,'inclusao','asc', 'codigo_interno', 'asc');
-        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>EXECUÇÃO FINANCEIRA</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
-        $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Código</b></td>';
-        $l_html.=chr(13).'          <td><b>Histórico</b></td>';
-        $l_html.=chr(13).'          <td><b>Valor</b></td>';
-        $l_html.=chr(13).'          <td><b>Situação atual</b></td>';
-        $l_html.=chr(13).'          <td><b>Data Pagamento</b></td>';
-        $l_html.=chr(13).'        </tr>';
-        $w_cor=$conTrBgColor;
-        $i             = 1;
-        $w_total       = 0;
-        foreach ($RSF as $row) {
-          $soma = false;
-          if (f($row,'sg_tramite')=='AT' || strpos(f($row,'descricao'),'(REAL)')!==false  || strpos(f($row,'descricao'),'(')===false) $soma = true;
-          if ($soma) {
-            if (f($row,'sigla')=='FNREVENT') {
-              $w_total       -= f($row,'valor');
-            } else {
-              $w_total       += f($row,'valor');
-            }
-          }
-          $l_html.=chr(13).'        <tr valign="middle">';
-          if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N').'</td>';
-          else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
-          $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
-          if ($soma) {
-            $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
-          } else {
-            $l_html.=chr(13).'           <td align="right">&nbsp;</td>';
-          }
-          $l_html.=chr(13).'           <td>'.f($row,'nm_tramite').'</td>';
-          $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'conclusao')),'&nbsp;').'</td>';
-          $l_html.=chr(13).'        </tr>';
-        } 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan="2"><b>TOTAL</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
-        $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
-        $l_html.=chr(13).'      </tr>';
-        $l_html.=chr(13).'         </table></td></tr>';
-      }
-
-      // Exibe outros valores associados à viagem
-      $sql = new db_getPD_Fatura; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null, null,
-        null, null, null, null, null, null, null, null, null, 'OUTROS');
-      $RS1 = SortArray($RS1,'nr_fatura','asc','nm_tipo_reg','asc', 'inicio_reg', 'asc', 'fim_reg', 'asc');
-      if (count($RS1)>0) {
-        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>DESPESAS COM HOSPEDAGENS, LOCAÇÃO DE VEÍCULOS E SEGUROS DE VIAGEM</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
-        $l_html.=chr(13).'      <tr><td colspan="14">';
-        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Fatura</b></td>';
-        $l_html.=chr(13).'          <td><b>Agência de Viagens</b></td>';
-        $l_html.=chr(13).'          <td><b>Tipo</b></td>';
-        $l_html.=chr(13).'          <td><b>Início</b></td>';
-        $l_html.=chr(13).'          <td><b>Fim</b></td>';
-        $l_html.=chr(13).'          <td><b>Valor</b></td>';
-        $l_html.=chr(13).'          <td><b>Hotel/Locadora/Seguradora</b></td>';
-        $l_html.=chr(13).'        </tr>';
-        $w_cor=$conTrBgColor;
-        $i             = 1;
-        $w_total       = 0;
-        foreach ($RS1 as $row) {
-          $w_total       += f($row,'valor_reg');
-          $l_html.=chr(13).'        <tr valign="middle">';
-          $l_html.=chr(13).'           <td>'.f($row,'nr_fatura').'</td>';
-          $l_html.=chr(13).'           <td>'.f($row,'nm_agencia_res').'</td>';
-          $l_html.=chr(13).'           <td>'.f($row,'nm_tipo_reg').'</td>';
-          $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_reg')),'&nbsp;').'</td>';
-          $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'fim_reg')),'&nbsp;').'</td>';
-          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_reg')).'</td>';
-          $l_html.=chr(13).'           <td>'.f($row,'nm_hotel').'</td>';
-          $l_html.=chr(13).'        </tr>';
-        } 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan="5"><b>TOTAL</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
-        $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
-        $l_html.=chr(13).'      </tr>';
-        $l_html.=chr(13).'         </table></td></tr>';
-      }
-      
     } 
     
+    // Execução financeira
+    if ($w_financeiro) {
+      $RSF = SortArray($RSF,'inclusao','asc', 'codigo_interno', 'asc');
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>EXECUÇÃO FINANCEIRA</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14"><table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $l_html.=chr(13).'          <td><b>Código</b></td>';
+      $l_html.=chr(13).'          <td><b>Histórico</b></td>';
+      $l_html.=chr(13).'          <td><b>Valor</b></td>';
+      $l_html.=chr(13).'          <td><b>Situação atual</b></td>';
+      $l_html.=chr(13).'          <td><b>Data Pagamento</b></td>';
+      $l_html.=chr(13).'        </tr>';
+      $w_cor=$conTrBgColor;
+      $i             = 1;
+      $w_total       = 0;
+      foreach ($RSF as $row) {
+        $soma = false;
+        if (f($row,'sg_tramite')=='AT' || strpos(f($row,'descricao'),'(REAL)')!==false  || strpos(f($row,'descricao'),'(')===false) $soma = true;
+        if ($soma) {
+          if (f($row,'sigla')=='FNREVENT') {
+            $w_total       -= f($row,'valor');
+          } else {
+            $w_total       += f($row,'valor');
+          }
+        }
+        $l_html.=chr(13).'        <tr valign="middle">';
+        if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N').'</td>';
+        else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
+        if ($soma) {
+          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+        } else {
+          $l_html.=chr(13).'           <td align="right">&nbsp;</td>';
+        }
+        $l_html.=chr(13).'           <td>'.f($row,'nm_tramite').'</td>';
+        $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'conclusao')),'&nbsp;').'</td>';
+        $l_html.=chr(13).'        </tr>';
+      } 
+      $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+      $l_html.=chr(13).'        <td align="right" colspan="2"><b>TOTAL</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
+
+    // Exibe outros valores associados à viagem
+    $sql = new db_getPD_Fatura; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null, null,
+      null, null, null, null, null, null, null, null, null, 'OUTROS');
+    $RS1 = SortArray($RS1,'nr_fatura','asc','nm_tipo_reg','asc', 'inicio_reg', 'asc', 'fim_reg', 'asc');
+    if (count($RS1)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>DESPESAS COM HOSPEDAGENS, LOCAÇÃO DE VEÍCULOS E SEGUROS DE VIAGEM</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="14">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $l_html.=chr(13).'          <td><b>Fatura</b></td>';
+      $l_html.=chr(13).'          <td><b>Agência de Viagens</b></td>';
+      $l_html.=chr(13).'          <td><b>Tipo</b></td>';
+      $l_html.=chr(13).'          <td><b>Início</b></td>';
+      $l_html.=chr(13).'          <td><b>Fim</b></td>';
+      $l_html.=chr(13).'          <td><b>Valor</b></td>';
+      $l_html.=chr(13).'          <td><b>Hotel/Locadora/Seguradora</b></td>';
+      $l_html.=chr(13).'        </tr>';
+      $w_cor=$conTrBgColor;
+      $i             = 1;
+      $w_total       = 0;
+      foreach ($RS1 as $row) {
+        $w_total       += f($row,'valor_reg');
+        $l_html.=chr(13).'        <tr valign="middle">';
+        $l_html.=chr(13).'           <td>'.f($row,'nr_fatura').'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'nm_agencia_res').'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'nm_tipo_reg').'</td>';
+        $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_reg')),'&nbsp;').'</td>';
+        $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'fim_reg')),'&nbsp;').'</td>';
+        $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_reg')).'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'nm_hotel').'</td>';
+        $l_html.=chr(13).'        </tr>';
+      } 
+      $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+      $l_html.=chr(13).'        <td align="right" colspan="5"><b>TOTAL</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
+
     // Arquivos vinculados
     $sql = new db_getSolicAnexo; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');

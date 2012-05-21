@@ -8674,31 +8674,26 @@ function Grava() {
             // Verifica o próximo trâmite
             if ($_REQUEST['w_envio'] == 'N') {
               $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'PROXIMO', null);
+              foreach ($RS as $row) { $RS = $row; break; }
             } else {
-              $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'ANTERIOR', null);
-            }
-            foreach ($RS as $row) {
-              $RS = $row;
-              break;
+              if (nvl($_REQUEST['w_novo_tramite'],'')=='') {
+                $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite'], null, 'ANTERIOR', null);
+                foreach ($RS as $row) { $RS = $row; break; }
+              } else {
+                $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_novo_tramite'], null);
+              }
             }
             $sql = new db_getTramiteSolic; $RS1 = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS, 'sq_siw_tramite'), null, null);
-            if (count($RS1) <= 0) {
-              foreach ($RS1 as $row) {
-                $RS1 = $row;
-                break;
-              }
+            if (count($RS1)==0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'ATENÇÃO: Não há nenhuma pessoa habilitada a cumprir o trâmite "' . f($RS, 'nome') . '"!\');');
               ScriptClose();
               retornaFormulario('w_despacho');
             }
-            if ($_REQUEST['w_envio'] == 'N') {
-              $SQL = new dml_putViagemEnvio; $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'], null,
-                              $_REQUEST['w_envio'], $_REQUEST['w_despacho'], $_REQUEST['w_justificativa'], $_REQUEST['w_justif_dia_util']);
-            } else {
-              $SQL = new dml_putViagemEnvio; $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'], $_REQUEST['w_novo_tramite'],
-                              $_REQUEST['w_envio'], $_REQUEST['w_despacho'], $_REQUEST['w_justificativa'], $_REQUEST['w_justif_dia_util']);
-            }
+
+            $SQL = new dml_putViagemEnvio; $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'], $_REQUEST['w_chave'], $w_usuario, $_REQUEST['w_tramite'], $_REQUEST['w_novo_tramite'],
+                            $_REQUEST['w_envio'], $_REQUEST['w_despacho'], $_REQUEST['w_justificativa'], $_REQUEST['w_justif_dia_util']);
+            
             if ($_REQUEST['w_tramite'] != $_REQUEST['w_novo_tramite']) {
               $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_tramite']);
               $w_sg_tramite = f($RS, 'sigla');
