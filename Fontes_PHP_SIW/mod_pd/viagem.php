@@ -4019,9 +4019,7 @@ function Diarias() {
   // Recupera os dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
 
-  if ($P1 == 1 || strpos($R, 'ALTSOLIC') !== false)
-    $w_tipo_reg = 'S'; else
-    $w_tipo_reg = 'P';
+  if ($P1 == 1 || strpos($R, 'ALTSOLIC') !== false) $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
 
   // Verifica se a misão permite registro de diárias, hospedagens ou locações de veículos
   if (nvl(f($RS_Solic, 'diaria'), '') == '' && f($RS_Solic, 'hospedagem') == 'N' && f($RS_Solic, 'veiculo') == 'N') {
@@ -4210,18 +4208,18 @@ function Diarias() {
     ShowHTML('  if (obj.w_diaria[0].checked) {');
     ShowHTML('    $(obj.w_justificativa_diaria).attr("class","STI");');
     if (count($RS_Fin_Dia) > 1) {
-      ShowHTML('    $(obj.w_rub_dia).attr("disabled","");');
-      ShowHTML('    $(obj.w_rub_dia).attr("class","STIO");');
-      ShowHTML('    $(obj.w_lan_dia).attr("disabled","");');
-      ShowHTML('    $(obj.w_lan_dia).attr("class","STIO");');
+        ShowHTML('    $(obj.w_rub_dia).attr("disabled","");');
+        ShowHTML('    $(obj.w_rub_dia).attr("class","STIO");');
+        ShowHTML('    $(obj.w_lan_dia).attr("disabled","");');
+        ShowHTML('    $(obj.w_lan_dia).attr("class","STIO");');
     }
     ShowHTML('  } else {');
     ShowHTML('    $(obj.w_justificativa_diaria).attr("class","STIO");');
     if (count($RS_Fin_Dia) > 1) {
-      ShowHTML('    $(obj.w_rub_dia).attr("disabled","disabled");');
-      ShowHTML('    $(obj.w_rub_dia).attr("class","STI");');
-      ShowHTML('    $(obj.w_lan_dia).attr("disabled","disabled");');
-      ShowHTML('    $(obj.w_lan_dia).attr("class","STI");');
+        ShowHTML('    $(obj.w_rub_dia).attr("disabled","disabled");');
+        ShowHTML('    $(obj.w_rub_dia).attr("class","STI");');
+        ShowHTML('    $(obj.w_lan_dia).attr("disabled","disabled");');
+        ShowHTML('    $(obj.w_lan_dia).attr("class","STI");');
     }
     ShowHTML('    obj.w_justificativa_diaria.focus();');
     ShowHTML('  }');
@@ -4239,10 +4237,10 @@ function Diarias() {
     ShowHTML('      obj.w_hos_out.value=obj.w_dt_saida.value;');
     ShowHTML('    }');
     if (count($RS_Fin_Hsp) == 1) {
-      ShowHTML('    $(obj.w_rub_hsp).attr("disabled","");');
-      ShowHTML('    $(obj.w_rub_hsp).attr("class","STIO");');
-      ShowHTML('    $(obj.w_lan_hsp).attr("disabled","");');
-      ShowHTML('    $(obj.w_lan_hsp).attr("class","STIO");');
+        ShowHTML('    $(obj.w_rub_hsp).attr("disabled","");');
+        ShowHTML('    $(obj.w_rub_hsp).attr("class","STIO");');
+        ShowHTML('    $(obj.w_lan_hsp).attr("disabled","");');
+        ShowHTML('    $(obj.w_lan_hsp).attr("class","STIO");');
     }
     ShowHTML('    obj.w_hos_in.focus();');
     ShowHTML('  } else {');
@@ -4253,10 +4251,10 @@ function Diarias() {
     ShowHTML('    obj.w_hos_in.value="";');
     ShowHTML('    obj.w_hos_out.value="";');
     if (count($RS_Fin_Hsp) == 1) {
-      ShowHTML('    $(obj.w_rub_hsp).attr("disabled","disabled");');
-      ShowHTML('    $(obj.w_rub_hsp).attr("class","STI");');
-      ShowHTML('    $(obj.w_lan_hsp).attr("disabled","disabled");');
-      ShowHTML('    $(obj.w_lan_hsp).attr("class","STI");');
+        ShowHTML('    $(obj.w_rub_hsp).attr("disabled","disabled");');
+        ShowHTML('    $(obj.w_rub_hsp).attr("class","STI");');
+        ShowHTML('    $(obj.w_lan_hsp).attr("disabled","disabled");');
+        ShowHTML('    $(obj.w_lan_hsp).attr("class","STI");');
     }
     ShowHTML('  }');
     ShowHTML('}');
@@ -4275,10 +4273,10 @@ function Diarias() {
     ShowHTML('    $(obj.w_justificativa_veiculo).attr("readonly","");');
     ShowHTML('    $(obj.w_justificativa_veiculo).attr("class","STIO");');
     if (count($RS_Fin_Vei) == 1) {
-      ShowHTML('    $(obj.w_rub_vei).attr("disabled","");');
-      ShowHTML('    $(obj.w_rub_vei).attr("class","STIO");');
-      ShowHTML('    $(obj.w_lan_vei).attr("disabled","");');
-      ShowHTML('    $(obj.w_lan_vei).attr("class","STIO");');
+        ShowHTML('    $(obj.w_rub_vei).attr("disabled","");');
+        ShowHTML('    $(obj.w_rub_vei).attr("class","STIO");');
+        ShowHTML('    $(obj.w_lan_vei).attr("disabled","");');
+        ShowHTML('    $(obj.w_lan_vei).attr("class","STIO");');
     }
     ShowHTML('    obj.w_vei_ret.focus();');
     ShowHTML('  } else {');
@@ -4292,10 +4290,10 @@ function Diarias() {
     ShowHTML('    obj.w_vei_dev.value="";');
     ShowHTML('    obj.w_justificativa_veiculo.value="";');
     if (count($RS_Fin_Vei) == 1) {
-      ShowHTML('    $(obj.w_rub_vei).attr("disabled","disabled");');
-      ShowHTML('    $(obj.w_rub_vei).attr("class","STI");');
-      ShowHTML('    $(obj.w_lan_vei).attr("disabled","disabled");');
-      ShowHTML('    $(obj.w_lan_vei).attr("class","STI");');
+        ShowHTML('    $(obj.w_rub_vei).attr("disabled","disabled");');
+        ShowHTML('    $(obj.w_rub_vei).attr("class","STI");');
+        ShowHTML('    $(obj.w_lan_vei).attr("disabled","disabled");');
+        ShowHTML('    $(obj.w_lan_vei).attr("class","STI");');
     }
     ShowHTML('  }');
     ShowHTML('}');
@@ -4349,6 +4347,7 @@ function Diarias() {
     ValidateOpen('Validacao');
     if (nvl(f($RS_Solic, 'diaria'), '') != '') {
       ShowHTML('  if (theForm.w_diaria[0].checked) {');
+      Validate('w_justificativa_diaria', 'Observações / Justificativa para não pagamento de diárias', '', '', 3, 500, '1', '1');
       if (count($RS_Fin_Dia) > 1) {
         ShowHTML('    if(theForm.w_rub_dia.selectedIndex==0) {');
         ShowHTML('      alert("Favor informar a rubrica para pagamento de diárias!");');
