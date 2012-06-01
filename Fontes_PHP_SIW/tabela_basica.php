@@ -441,7 +441,7 @@ function TipoTelefone() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
         ShowHTML('        <td align="center">'.f($row,'sq_tipo_telefone').'</td>');
-        ShowHTML('        <td>'.f($row,'sq_tipo_pessoa').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ativodesc').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padraodesc').'</td>');
