@@ -365,7 +365,7 @@ function Grava() {
           // Procura pelas tarefas
           $result = $xml->xpath('Tasks/Task');
           foreach($xml->Tasks->Task as $row) {
-            if ($row->ID!='0') {
+            if ($row->ID!='0' && nvl($row->OutlineNumber, '') != '') {
               $w_titulo     = substr(utf8_decode(str_replace('–','-',str_replace('  ','  ',$row->Name))),0,100);
               $w_inicio     = utf8_decode($row->Start);
               $w_inicio     = substr($w_inicio,8,2).'/'.substr($w_inicio,5,2).'/'.substr($w_inicio,0,4);
