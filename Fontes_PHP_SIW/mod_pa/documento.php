@@ -1855,7 +1855,7 @@ function Encaminhamento() {
       ShowHTML('    <tr><td colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea ' . $w_Disabled . ' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">' . $w_despacho . '</TEXTAREA></td>');
     } else {
       ShowHTML('    <tr><td colspan="3"><b>A<U>c</U>ondicionamento setorial:<br><INPUT ' . $w_Disabled . ' ACCESSKEY="C" class="STI" type="text" name="w_despacho" size="70" maxlength="70" value="' . $w_despacho . '">');
-      ShowHTML('          <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'mod_pa/documento.php?par=TextoSetorial&p_campo=w_despacho&SG=' . $SG . '&TP=' . $TP . '&p_unidade=' . $p_unid_posse. '\',\'Texto\',\'top=10,left=10,width=780,height=550,toolbar=no,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o assunto."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
+      ShowHTML('          <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'mod_pa/documento.php?par=TextoSetorial&p_campo=w_despacho&SG=' . $SG . '&TP=' . $TP . '&p_unidade=' . f($RS_Solic, 'unidade_int_posse'). '\',\'Texto\',\'top=10,left=10,width=780,height=550,toolbar=no,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o assunto."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
     }
     ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   }
@@ -3549,7 +3549,7 @@ function TextoSetorial() {
     ShowHTML('  </ul>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
-    ShowHTML('      <tr><td colspan=2><b>Parte do <U>n</U>ome da pessoa:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="100" value="'.$p_nome.'">');
+    ShowHTML('      <tr><td colspan=2><b>Parte do <U>t</U>exto:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="100" value="'.$p_nome.'">');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');

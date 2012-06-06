@@ -478,6 +478,7 @@ begin
                                                                        b1.sigla                   = 'AS'
                                                                       )
           where a.cliente           = p_menu
+            and (p_proponente       is null or (p_proponente is not null and acentos(a.observacao_setorial) like '%'||acentos(p_proponente)||'%'))
             and a.unidade_int_posse = p_unidade;
    End If;
 end SP_GetSolicPA;
