@@ -174,7 +174,7 @@ begin
                 )
             and (p_ini_emifat        is null or (p_ini_emifat    is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
             and (p_ini_ven           is null or (p_ini_ven       is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)));
-      Elsif p_restricao = 'TODOS' Then
+   Elsif p_restricao = 'TODOS' Then
       -- Recupera os bilhetes ligados a faturas
       open p_result for
          select distinct a.sq_fatura_agencia, a.sq_arquivo_eletronico, a.agencia_viagem, a.numero as nr_fatura, a.fim_decendio, a.emissao as emissao_fat, a.vencimento, a.valor, 
@@ -191,7 +191,6 @@ begin
                 d.nome as nm_agencia, d.nome_resumido as nm_agencia_res,
                 coalesce(c3.sq_siw_solicitacao, e3.sq_siw_solicitacao) as sq_projeto,
                 coalesce(c3.codigo_interno,     e3.codigo_interno) as cd_projeto
-                
            from pd_fatura_agencia                         a
                 inner         join pd_arquivo_eletronico  b  on (a.sq_arquivo_eletronico = b.sq_arquivo_eletronico)
                   inner       join siw_arquivo            b1 on (b.arquivo_recebido      = b1.sq_siw_arquivo)

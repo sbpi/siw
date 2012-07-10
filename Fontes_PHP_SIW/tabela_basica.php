@@ -1272,7 +1272,7 @@ function Idioma() {
     ShowHTML('    </table>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
-    ShowHTML('</FORM>');
+    ShowHTML('</FORM>');    
   } elseif ($O=='P') {
     AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,1,null,$TP,$SG,$R,'L');
     ShowHTML(montaFiltro('POST',true));

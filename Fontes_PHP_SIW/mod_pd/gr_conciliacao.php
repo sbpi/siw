@@ -185,9 +185,9 @@ function Conciliacao() {
       $w_filtro .= '<tr valign="top"><td align="right">Número da fatura<td>[<b>' . $p_numero_fat . '</b>]';
     }
 
-    if ($p_bilhete > '') {
+    if ($p_numero_bil > '') {
       $w_linha++;
-      $w_filtro .= '<tr valign="top"><td align="right">Número do bilhete<td>[<b>' . $p_bilhete . '</b>]';
+      $w_filtro .= '<tr valign="top"><td align="right">Número do bilhete<td>[<b>' . $p_numero_bil . '</b>]';
     }
     if ($p_codigo > '') {
       $w_linha++;
@@ -416,7 +416,7 @@ function Conciliacao() {
     ShowHTML('     <td colspan="2"><br><fieldset class="rh_fieldset"><legend><big>Bilhetes</big></legend>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td><b>Número do bilhete</b><br><input ' . $w_Disabled . ' type="text" name="p_bilhete" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_bilhete . '" title="Caso deseje pesquisar por este critério, informe o valor do mesmo.">');
+    ShowHTML('     <td><b>Número do bilhete</b><br><input ' . $w_Disabled . ' type="text" name="p_numero_bil" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_numero_bil . '" title="Caso deseje pesquisar por este critério, informe o valor do mesmo.">');
     ShowHTML('     <td><b>Data de emissão do bilhete</b><br><input ' . $w_Disabled . ' type="text" name="p_ini_emibil" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_ini_emibil . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> a <input ' . $w_Disabled . ' type="text" name="p_fim_emibil" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim_emibil . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('   <tr valign="top">');
     SelecaoCiaTrans('Cia. Via<u>g</u>em', 'R', 'Selecione a companhia de transporte desejada.', $w_cliente, $p_cia_trans, null, 'p_cia_trans', null, null);
