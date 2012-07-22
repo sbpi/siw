@@ -27,6 +27,7 @@ begin
   
   -- Atualiza os dados do arquivamento da caixa
   select retornaLimiteCaixa(coalesce(p_caixa,w_caixa_atual))||'|@|' into w_dados_caixa from dual;
+  w_cont := 0;
   Loop
      w_cont := w_cont + 1;
      w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);
@@ -50,20 +51,25 @@ begin
   If w_caixa_atual is not null and w_caixa_atual <> coalesce(p_caixa,w_caixa_atual) Then
      -- Atualiza os dados do arquivamento da caixa em que o docuumento estava armazenado
      select retornaLimiteCaixa(w_caixa_atual)||'|@|' into w_dados_caixa from dual;
+     w_cont := 0;
      Loop
         w_cont := w_cont + 1;
         w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);
         If    w_cont = 1 Then w_limite        := w_texto;
         Elsif w_cont = 2 then w_intermediario := w_texto;
-        Else                  w_final         := w_texto;
+        Elsif w_cont = 3 then w_final         := w_texto;
+        Elsif w_cont = 4 then w_assunto       := w_texto;
+        Else                  w_descricao     := w_texto;
         End If;
         If w_cont > 2 Then Exit; End If;
         w_dados_caixa := substr(w_dados_caixa,instr(w_dados_caixa,'|@|')+3);
      End Loop;
      update pa_caixa
-        set data_limite         = w_limite,
-            intermediario       = w_intermediario,
-            destinacao_final    = w_final
+        set assunto             = coalesce(substr(w_assunto,1,800),assunto),
+            descricao           = coalesce(substr(w_descricao,1,2000),descricao),
+            data_limite         = w_limite,
+            intermediario       = substr(w_intermediario,1,400),
+            destinacao_final    = substr(w_final,1,40)
      where sq_caixa = w_caixa_atual;
   End If;
   
