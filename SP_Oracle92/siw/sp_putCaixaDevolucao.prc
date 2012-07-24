@@ -6,17 +6,17 @@ create or replace procedure sp_putCaixaDevolucao
    
    w_chave         number(18) := null;
    w_chave_dem     number(18) := null;
-   w_tramite       number(18);
-   w_sg_tramite    varchar2(2);
    
    cursor c_dados is
       -- cursor para recuperar os protocolos contidos na caixa
-      select a.sq_siw_solicitacao as chave, a.unidade_int_posse, b.sq_siw_tramite, c.sq_menu, d.sq_unidade, e.despacho_devolucao,
-             g.cadastrador, h.nome
+      select a.sq_siw_solicitacao as chave, a.unidade_int_posse, b.sq_siw_tramite, c.sq_menu, c.sigla sg_at, c.nome nm_at,
+             d.sq_unidade, e.despacho_devolucao,g.cadastrador, 
+             h.sq_siw_tramite sq_as, h.nome nm_as
         from pa_documento                    a
              inner     join siw_solicitacao  b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-               inner   join siw_menu         c on (b.sq_menu            = c.sq_menu)
-                 inner join pa_parametro     e on (c.sq_pessoa          = e.cliente)
+               inner   join siw_tramite      c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+                 inner join siw_tramite      h on (c.sq_menu            = h.sq_menu and h.sigla = 'AS')
+             inner     join pa_parametro     e on (a.cliente            = e.cliente)
              inner     join pa_caixa         d on (a.sq_caixa           = d.sq_caixa)
              inner     join (select x.sq_siw_solicitacao, max(sq_documento_log) sq_documento_log
                                from pa_documento_log          w
@@ -27,40 +27,27 @@ create or replace procedure sp_putCaixaDevolucao
                              group by x.sq_siw_solicitacao
                             )                f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
                inner   join pa_documento_log g on (f.sq_documento_log   = g.sq_documento_log)
-                 inner join co_pessoa        h on (g.cadastrador        = h.sq_pessoa)
        where a.sq_caixa = p_chave;
 begin
   for crec in c_dados loop
-     -- Recupera os dados do trâmite atual
-     select sigla into w_sg_tramite from siw_tramite a where a.sq_siw_tramite = crec.sq_siw_tramite;
-   
-     -- Recupera o trâmite para o qual está sendo enviada a solicitação
-     If w_sg_tramite = 'AT' Then
-        select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
-           from siw_tramite a
-          where a.sq_menu = crec.sq_menu
-            and a.sigla   = 'AS';
-  
+     -- Reinicializa o valor das chaves
+     w_chave := null;
+     
+     -- Verifica se é devolução
+     If crec.sg_at = 'AT' Then
         -- Recupera a próxima chave
         select sq_siw_solic_log.nextval into w_chave from dual;
         
         -- Se houve mudança de fase, grava o log
         Insert Into siw_solic_log 
-            (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, 
-             sq_siw_tramite,            data,               devolucao, 
-             observacao
-            )
-        (Select 
-             w_chave,                   crec.chave,         p_pessoa,
-             crec.sq_siw_tramite,       sysdate,            'N',
-             'Devolucao da fase "'||a.nome||'" '||' para a fase "'||b.nome||'".'
-            from siw_tramite a,
-                 siw_tramite b
-           where a.sq_siw_tramite = crec.sq_siw_tramite
-             and b.sq_siw_tramite = w_tramite
-        );
+                (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa, sq_siw_tramite,     data,    devolucao, 
+                 observacao
+                )
+        Values  (w_chave,                   crec.chave,         p_pessoa, crec.sq_siw_tramite, sysdate, 'N',
+                 'Devolucao da fase "'||crec.nm_at||'" '||' para a fase "'||crec.nm_as||'".'
+                );
     
-        Update siw_solicitacao set sq_siw_tramite = w_tramite          Where sq_siw_solicitacao = crec.chave;
+        Update siw_solicitacao set sq_siw_tramite    = crec.sq_as      Where sq_siw_solicitacao = crec.chave;
         Update pa_documento    set unidade_int_posse = crec.sq_unidade Where sq_siw_solicitacao = crec.chave;
      End If;
   
