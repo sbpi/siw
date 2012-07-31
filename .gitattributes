@@ -5365,6 +5365,7 @@ hooks/pre-unlock.tmpl -text
 hooks/start-commit.tmpl -text
 locks/db-logs.lock -text
 locks/db.lock -text
+manuais/Patrimonio_2012.docx -text
 matricial/cadastro.php -text
 matricial/default.htm -text
 matricial/funcoes.js -text
