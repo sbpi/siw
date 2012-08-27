@@ -437,8 +437,6 @@ function Mesa() {
         
     ShowHTML('<img name="renapi" src="'.$w_dir.'mapa.gif" width="100%" border="0" id="pdp" usemap="#m_pdp" alt="" />');
     ShowHTML('<map name="m_pdp" id="m_pdp">');
-    //http://www2.sbpi.com.br/siw/cl_renapi/projeto.php?par=inicial&P1=1&P2=&P3=&P4=&TP=%3Cimg%20src=images/Folder/SheetLittle.gif%20BORDER=0%3EProgramas%20-%20Programa&SG=PJCAD
-    //href="cl_renapi/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row, 'sq_siw_solicitacao').'&w_chave_aux='.f($row, 'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"
     $sql = new db_getCountryList; $RSPais = $sql->getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
     foreach($RSPais as $row){
       If(Nvl(f($row,'padrao'),'N') == 'S'){
