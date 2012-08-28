@@ -310,6 +310,9 @@ begin
          delete siw_solic_arquivo           where sq_siw_solicitacao = p_chave;
          delete siw_arquivo                 where sq_siw_arquivo     in (w_arq);
 
+         -- Desvincula pesquisas de preço da solicitação
+         update cl_item_fornecedor a set a.sq_solicitacao_item = null where sq_solicitacao_item in (select sq_solicitacao_item from cl_solicitacao_item where sq_siw_solicitacao = p_chave);
+         
          -- Remove os itens da solicitacao
          delete cl_solicitacao_item_vinc a  where a.item_pedido    in (select sq_solicitacao_item from cl_solicitacao_item where sq_siw_solicitacao = p_chave)
                                                or a.item_licitacao in (select sq_solicitacao_item from cl_solicitacao_item where sq_siw_solicitacao = p_chave);
@@ -319,6 +322,7 @@ begin
          delete cl_solicitacao              where sq_siw_solicitacao = p_chave;
 
          -- Remove o log da solicitação
+         delete siw_solic_log_arq           where sq_siw_solic_log in (select sq_siw_solic_log from siw_solic_log where sq_siw_solicitacao = p_chave);
          delete siw_solic_log               where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de solicitações

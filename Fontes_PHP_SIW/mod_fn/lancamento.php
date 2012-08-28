@@ -3888,12 +3888,6 @@ function Concluir() {
   extract($GLOBALS);
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
-  if ($w_troca>'') {
-    // Se for recarga da página
-    $w_valor_real         = $_REQUEST['w_valor_real'];
-    $w_codigo_deposito    = $_REQUEST['w_codigo_deposito'];
-    $w_sq_tipo_lancamento = $_REQUEST['$w_sq_tipo_lancamento'];
-  } 
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
@@ -3903,8 +3897,13 @@ function Concluir() {
   $w_conta_debito       = f($RS_Solic,'sq_pessoa_conta');
   $w_valor_real         = formatNumber(f($RS_Solic,'valor')+f($RS_Solic,'vl_outros')-f($RS_Solic,'vl_abatimento'));
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
-  $w_sq_tipo_lancamento = nvl($w_sq_tipo_lancamento,f($RS_Solic,'sq_tipo_lancamento'));
+  $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
   $w_inicio             = FormataDataEdicao(time());
+
+  // Se for recarga da página
+  if ($w_troca>'') {
+    extract($_POST);
+  }
 
   $RS_Rub = array();
   

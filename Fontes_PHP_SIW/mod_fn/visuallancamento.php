@@ -157,6 +157,10 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
     }
+    if (Nvl(f($RS,'nm_tipo_lancamento'),'')!='') {
+      $l_html.=chr(13).'      <tr><td><b>Tipo de lançamento: </b></td>';
+      $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
+    }
     $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
     $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
     if (f($RS_Menu,'sigla')!='FNDFUNDO') {
