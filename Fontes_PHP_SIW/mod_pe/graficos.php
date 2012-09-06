@@ -157,11 +157,13 @@ function Gera_Hierarquico($l_gera) {
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   if (count($RS)>0) {
     foreach ($RS as $row) {
+      if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row,'sigla'),0,2))!==false) continue;
       if (f($row,'qtd')>0 && f($row,'sigla')=='PEPROCAD') {
         //$l_xml .= chr(13).'     <node name="'.(f($row,'nome')).' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
         $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
         $RS1 = SortArray($RS1,'codigo_interno','asc');
         foreach($RS1 as $row1) {
+          if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row1,'sigla'),0,2))!==false) continue;
           if (f($row1,'sq_plano')==f($row,'sq_plano') && f($row1,'sigla')=='PEPROCAD') {
             if (f($row1,'sg_tramite')=='AT') {
               $w_cor_nome = '"#0000ff"';
@@ -185,6 +187,7 @@ function Gera_Hierarquico($l_gera) {
             $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','titulo','asc');
             foreach($RS2 as $row2) {
+              if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row2,'sigla'),0,2))!==false) continue;
               if (f($row2,'sigla')=='PEPROCAD') {
                 if (f($row2,'sg_tramite')=='AT') {
                   $w_cor_nome = '"#0000ff"';
@@ -211,6 +214,7 @@ function Gera_Hierarquico($l_gera) {
                   $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
                   $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','titulo','asc');
                   foreach ($RS3 as $row3) {
+                    if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row3,'sigla'),0,2))!==false) continue;
                     if (f($row3,'sigla')=='PEPROCAD') {
                       if (f($row3,'fim')<time() && f($row3,'sg_tramite')!='AT' && f($row3,'sg_tramite')!='CA') {
                         $w_cor_nome = '"#ff0000"';
@@ -502,12 +506,14 @@ function Gera_Gantt1() {
   // Nível 0
   $i = 0;
   foreach ($RS as $row) {
+    if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row,'sigla'),0,2))!==false) continue;
     // Nível 1
     $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
     $RS1 = SortArray($RS1,'ac_titulo','asc');
     if (count($RS1)>0) {
       $w_cor = $conTrBgColor;
       foreach($RS1 as $row1) {
+        if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row1,'sigla'),0,2))!==false) continue;
         if (f($row1,'sq_plano')==f($row,'sq_plano')) {
           if($menorData > nvl(f($row1,'inicio'),f($row1,'fim'))) $menorData = nvl(f($row1,'inicio'),f($row1,'fim'));
           if($maiorData < f($row1,'fim'))    $maiorData = f($row1,'fim');
@@ -539,6 +545,7 @@ function Gera_Gantt1() {
             $array = '';
             $i++;
             foreach($RS2 as $row2) {
+              if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row2,'sigla'),0,2))!==false) continue;
               if($menorData > nvl(f($row2,'inicio'),f($row2,'fim'))) $menorData = nvl(f($row2,'inicio'),f($row2,'fim'));
               if($maiorData < f($row2,'fim'))    $maiorData = f($row2,'fim');
               // Nível 3
@@ -569,6 +576,7 @@ function Gera_Gantt1() {
                 $array = '';
                 $i++;
                 foreach($RS3 as $row3) {
+                  if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row3,'sigla'),0,2))!==false) continue;
                   if($menorData > nvl(f($row3,'inicio'),f($row3,'fim'))) $menorData = nvl(f($row3,'inicio'),f($row3,'fim'));
                   if($maiorData < f($row3,'fim'))    $maiorData = f($row3,'fim');
                   $array = array($i,

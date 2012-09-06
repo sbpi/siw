@@ -15,8 +15,13 @@ class abreSessao {
      $DBMS->doConnection();
      $DBMS->selectDatabase();
      if ($DB_TYPE==ORA8 || $DB_TYPE==ORA9 || $DB_TYPE==ORA10 || $DB_TYPE==ORAHM) { 
-       //$query = 'ALTER SESSION SET NLS_TERRITORY = \'BRAZIL\'';
-       $query = 'ALTER SESSION SET NLS_LANG = \'BRAZILIAN PORTUGUESE_BRAZIL.WE8MSWIN1252\'';
+       $query = 'ALTER SESSION SET NLS_TERRITORY = \'BRAZIL\'';
+       $stid  = oci_parse($DBMS->getConnectionHandle(),$query);
+       $r = oci_execute($stid,OCI_DEFAULT);
+       $query = 'ALTER SESSION SET NLS_LANGUAGE = \'BRAZILIAN PORTUGUESE\'';
+       $stid  = oci_parse($DBMS->getConnectionHandle(),$query);
+       $r = oci_execute($stid,OCI_DEFAULT);
+       $query = 'ALTER SESSION SET NLS_NUMERIC_CHARACTERS = \',.\'';
        $stid  = oci_parse($DBMS->getConnectionHandle(),$query);
        $r = oci_execute($stid,OCI_DEFAULT);
      }

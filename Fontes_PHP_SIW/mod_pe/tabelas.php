@@ -1370,11 +1370,13 @@ function Telaplano(){
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     foreach ($RS as $row) {
+      if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row,'sigla'),0,2))!==false) continue;
       $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
-      $RS1 = SortArray($RS1,'codigo_interno','asc');
+      $RS1 = SortArray($RS1,'ac_titulo','asc');
       if (count($RS1)>0) {
         $w_cor = $conTrBgColor;
         foreach($RS1 as $row1) {
+          if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row1,'sigla'),0,2))!==false) continue;
           if (f($row1,'sq_plano')==f($row,'sq_plano')) {
             if ($i==0) {
               ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1402,8 +1404,9 @@ function Telaplano(){
             ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'fim'),5).'</td>');
             // Recupera os documentos vinculados
             $sql = new db_getSolicList; $RS2 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-            $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','titulo','asc');
+            $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
             foreach($RS2 as $row2) {
+              if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row2,'sigla'),0,2))!==false) continue;
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
               ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
               ShowHTML('        <td nowrap>');
@@ -1418,8 +1421,9 @@ function Telaplano(){
               ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'fim'),5).'</td>');
               // Recupera os documentos vinculados
               $sql = new db_getSolicList; $RS3 = $sql->getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-              $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','titulo','asc');
+              $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
               foreach($RS3 as $row3) {
+                if (strpos('FN,MT,CL,GP,PA,SR,PD',substr(f($row3,'sigla'),0,2))!==false) continue;
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
                 ShowHTML('        <td nowrap>');

@@ -171,7 +171,7 @@ begin
                 b.palavra_chave,      dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
-                b.titulo as ac_titulo,
+                coalesce(b.titulo,b.descricao,b.justificativa) as ac_titulo,
                 b1.sq_siw_tramite,    b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 case a.sigla when 'FNDVIA'
