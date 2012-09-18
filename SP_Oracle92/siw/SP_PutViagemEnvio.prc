@@ -82,10 +82,8 @@ create or replace procedure SP_PutViagemEnvio
                                             inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao and
                                                                                         a1.complemento_valor         > 0
                                                                                        )
-                                            inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
-                                                                                        c.diaria                     = 'S'
-                                                                                       )
-                                              inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
+                                              inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_bilhete      = c.sq_pdvinculo_financeiro)
+                                                inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
                                             co_moeda                             d1
                                       where a.sq_siw_solicitacao = p_chave
                                         and d1.sigla             =	'BRL'
