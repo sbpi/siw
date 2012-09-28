@@ -44,7 +44,7 @@ class db_exec {
              $value[0] = $v;
            }
          } else {
-           $value[0] = 'null';
+           if (is_int($v)) $value[0] = $v; else $value[0] = 'null';
          }
          // Atualiza o array
          $params[$paramName][$k] = $value[0];

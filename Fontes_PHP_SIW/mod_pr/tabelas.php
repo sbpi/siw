@@ -368,7 +368,7 @@ function Vinculacao() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td>');
-    ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+    ShowHTML('      <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar</a>');
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>'.exportaOffice().'Registros: '.count($RS));
     ShowHTML('    </td>');
@@ -531,10 +531,10 @@ function Vinculacao() {
       SelecaoUnidade('<U>S</U>etor atual:','S','Selecione a unidade onde o projeto se encontra na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
       ShowHTML('      <tr>');
       SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
-      SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
+      SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,nvl($p_pais,0),'p_regiao',null,'onChange="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
       ShowHTML('      <tr>');
-      SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
-      SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
+      SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,nvl($p_pais,0),$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.montaURL_JS($w_dir,$w_pagina.$par.'\'; document.Form.O.value=\''.$O).'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+      SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,nvl($p_pais,0),nvl($p_uf,'--'),'p_cidade',null,null);
       ShowHTML('      <tr>');
       SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$p_prioridade,null,'p_prioridade',null,null);
       ShowHTML('          <td valign="top"><b>Propo<U>n</U>ente externo:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');

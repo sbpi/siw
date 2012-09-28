@@ -48,7 +48,7 @@ begin
    from siw_menu                       a
         inner     join sg_autenticacao b on (a.sq_pessoa       = b.cliente)
           inner   join co_pessoa       d on (b.sq_pessoa       = d.sq_pessoa)
-            inner join co_tipo_vinculo e on (d.sq_tipo_vinculo = e.sq_tipo_vinculo)
+            left  join co_tipo_vinculo e on (d.sq_tipo_vinculo = e.sq_tipo_vinculo)
         inner     join siw_modulo      c on (a.sq_modulo       = c.sq_modulo)
   where a.sq_menu   = p_menu
     and b.sq_pessoa = p_pessoa;

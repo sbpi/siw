@@ -739,10 +739,10 @@ function Gerencial() {
     ShowHTML('     <td><b>CP<u>F</u> do beneficiário:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
     ShowHTML('   <tr valign="top">');
     SelecaoPais('Pa<u>í</u>s destino:','I',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
-    SelecaoRegiao('<u>R</u>egião destino:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
+    SelecaoRegiao('<u>R</u>egião destino:','R',null,$p_regiao,nvl($p_pais,0),'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
     ShowHTML('   <tr valign="top">');
-    SelecaoEstado('E<u>s</u>tado destino:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
-    SelecaoCidade('<u>C</u>idade destino:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
+    SelecaoEstado('E<u>s</u>tado destino:','S',null,$p_uf,nvl($p_pais,0),$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+    SelecaoCidade('<u>C</u>idade destino:','C',null,$p_cidade,nvl($p_pais,0),nvl($p_uf,'--'),'p_cidade',null,null);
     ShowHTML('   <tr valign="top">');
     SelecaoCiaTrans('Cia. Via<u>g</u>em','R','Selecione a companhia de transporte desejada.',$w_cliente,$p_usu_resp,null,'p_usu_resp','S',null);
     ShowHTML('     <td><b>Pri<u>m</u>eira saída e Último retorno:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');

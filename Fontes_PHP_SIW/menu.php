@@ -321,7 +321,7 @@ function ExibeDocs() {
   ShowHTML('  <CENTER><table border=0 cellpadding=0 height="80" width="100%">');
   ShowHTML('      <tr><td width="100%" valign="center" align="center">');
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $p_cliente);
-  ShowHTML('         <img src="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'logo1'),null,null,null,'EMBED').'" vspace="0" hspace="0" border="1"></td></tr>');
+  ShowHTML('         <img src="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'logo1'),null,null,null,'EMBED').'" vspace="0" hspace="0" '.(($p_cliente!=17305) ? 'border="1"' : '').'></td></tr>');
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
   ShowHTML('          <td>'.$_SESSION['USUARIO'].': <b>'.$_SESSION['NOME_RESUMIDO'].'</b>');

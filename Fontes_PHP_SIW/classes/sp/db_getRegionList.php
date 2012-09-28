@@ -21,7 +21,6 @@ class db_getRegionList {
     $sql = new db_exec;
     $par = $sql->normalize($params);
     extract($par, EXTR_OVERWRITE);
-    
     $SQL = "select a.sq_regiao, a.nome, a.ordem, a.sigla, b.nome nome_pais, b.sq_pais, b.padrao,$crlf" .
             "       b.padrao, a.sq_regiao$crlf" .
             "  from co_regiao            a$crlf" .
@@ -40,7 +39,6 @@ class db_getRegionList {
             "        (coalesce($p_restricao,'-')  <> 'INDICADOR' and ($p_nome     is null      or ($p_nome is not null and acentos(a.nome) like '%'" . C . "acentos($p_nome)" . C . "'%')))$crlf" .
             "       )$crlf" .
             "   and ($p_pais        is null        or ($p_pais is not null and b.sq_pais = $p_pais))$crlf";
-    
     $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
     return $l_rs;     
    }
