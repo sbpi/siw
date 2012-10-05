@@ -16,6 +16,7 @@ create or replace function CalculaIDC(p_chave in number, p_data in date default 
                         where c.sq_siw_solicitacao          = p_chave
                           and a.fim                         < coalesce(p_data,sysdate)
                           and b.ativo                       = 'S'
+                          and b.ultimo_nivel                = 'S'
                           and (a.inicio                     between coalesce(p_inicio,c.inicio) and coalesce(p_data,sysdate) or
                                coalesce(p_inicio,c.inicio) between a.inicio                     and a.fim
                               )
@@ -28,6 +29,7 @@ create or replace function CalculaIDC(p_chave in number, p_data in date default 
                         where c.sq_siw_solicitacao          = p_chave
                           and a.fim                         < coalesce(p_data,sysdate)
                           and b.ativo                       = 'S'
+                          and b.ultimo_nivel                = 'S'
                           and (a.inicio                     between coalesce(p_inicio,c.inicio) and coalesce(p_data,sysdate) or
                                coalesce(p_inicio,c.inicio) between a.inicio                     and a.fim
                               )

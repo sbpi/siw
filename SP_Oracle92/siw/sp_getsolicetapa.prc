@@ -251,6 +251,10 @@ begin
                 q.co_uf,
                 r.sq_cidade, r.nome as nm_cidade
            from pj_projeto_etapa                a
+                inner      join co_pessoa       d on (a.sq_pessoa        = d.sq_pessoa)
+                  inner    join sg_autenticacao e on (d.sq_pessoa        = e.sq_pessoa)
+                    inner  join eo_unidade      f on (e.sq_unidade       = f.sq_unidade)
+                inner      join eo_unidade      g on (a.sq_unidade       = g.sq_unidade)
                 left       join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
                                                       b.tipo_respons     = 'T'          and
                                                       b.fim              is null
@@ -259,21 +263,19 @@ begin
                                                       c.tipo_respons     = 'S'          and
                                                       c.fim              is null
                                                      )
-                inner      join co_pessoa       d on (a.sq_pessoa        = d.sq_pessoa)
-                  inner    join sg_autenticacao e on (d.sq_pessoa        = e.sq_pessoa)
-                    inner  join eo_unidade      f on (e.sq_unidade       = f.sq_unidade)
-                inner      join eo_unidade      g on (a.sq_unidade       = g.sq_unidade)
                 left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
+                                      where x.sq_projeto_etapa = p_chave_aux
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
                 left           join (select x.sq_projeto_etapa, count(y.sq_projeto_etapa) qt_filhos
                                        from pj_projeto_etapa            x
                                             inner join pj_projeto_etapa y on (x.sq_projeto_etapa = y.sq_etapa_pai)
+                                      where x.sq_projeto_etapa = p_chave_aux
                                      group by x.sq_projeto_etapa
                                 )               i on (i.sq_projeto_etapa = a.sq_projeto_etapa)
                 left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
@@ -282,6 +284,7 @@ begin
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
+                                      where x.sq_projeto_etapa = p_chave_aux
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
                 left   join co_pais             o  on (a.sq_pais           = o.sq_pais)

@@ -39,6 +39,7 @@ include_once('funcoes/selecaoCidade.php');
 include_once('funcoes/selecaoSegMercado.php');
 include_once('funcoes/selecaoBanco.php');
 include_once('funcoes/selecaoAgencia.php');
+include_once('funcoes/selecaoMoeda.php');
 include_once('funcoes/selecaoTipoEndereco.php');
 include_once('funcoes/selecaoTipoFone.php');
 include_once('funcoes/selecaoModulo.php');
@@ -1075,12 +1076,16 @@ function ContasBancarias() {
     $w_sq_pessoa = $_SESSION['P_CLIENTE'];
   } 
 
+  // Recupera os dados do cliente
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
+
   $w_sq_pessoa_conta=$_REQUEST['w_sq_pessoa_conta'];
 
   if ($w_troca>'') {
     $w_banco        = $_REQUEST['w_banco'];
     $w_agencia      = $_REQUEST['w_agencia'];
     $w_numero_conta = $_REQUEST['w_numero_conta'];
+    $w_moeda        = $_REQUEST['w_moeda'];
     $w_operacao     = $_REQUEST['w_operacao'];
     $w_tipo_conta   = $_REQUEST['w_tipo_conta'];
     $w_ativo        = $_REQUEST['w_ativo'];
@@ -1089,13 +1094,14 @@ function ContasBancarias() {
   } elseif ($O=='L') {
     // Recupera as contas bancárias do cliente
     $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa,null,null);
-    $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
+    $RS = SortArray($RS,'padrao','desc', 'tipo_conta','asc','banco','asc','numero','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados da conta bancária informada
-    $SQL = new db_getContaBancoData; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa_conta);
+    $sql = new db_getContaBancoData; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa_conta);
     $w_banco        = f($RS,'sq_banco');
     $w_agencia      = f($RS,'agencia');
     $w_numero_conta = f($RS,'numero');
+    $w_moeda        = f($RS,'sq_moeda');
     $w_operacao     = f($RS,'operacao');
     $w_tipo_conta   = f($RS,'tipo_conta');
     $w_ativo        = f($RS,'ativo');
@@ -1103,7 +1109,6 @@ function ContasBancarias() {
     $w_devolucao    = f($RS,'devolucao_valor');
     $w_saldo        = formatNumber(f($RS,'saldo_inicial'));
   } 
-
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
     $SQL = new db_getBankData; $RS_Banco = $SQL->getInstanceOf($dbms, $w_sq_banco);
@@ -1130,6 +1135,7 @@ function ContasBancarias() {
     } 
     if (strpos('IA',$O)!==false) {
       if ($P1==2) {
+        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT','1','1','10','','1');
         Validate('w_saldo','Saldo inicial','VALOR','1','4','18','','0123456789.,');
       }
     }
@@ -1166,7 +1172,8 @@ function ContasBancarias() {
     ShowHTML('          <td><b>Agência</td>');
     ShowHTML('          <td><b>Conta</td>');
     if ($P1==2) {
-      ShowHTML('          <td><b>Devolução</td>');    
+      ShowHTML('          <td><b>Devolução</td>');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ShowHTML('          <td><b>Moeda</td>');
       ShowHTML('          <td><b>Saldo inicial</td>');
     }
     ShowHTML('          <td><b>Ativo</td>');
@@ -1175,7 +1182,7 @@ function ContasBancarias() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontradas despesas adicionais cadastradas.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontradas despesas adicionais cadastradas.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
@@ -1187,6 +1194,7 @@ function ContasBancarias() {
         ShowHTML('        <td>'.f($row,'numero').'</td>');
         if ($P1==2) {
           ShowHTML('        <td align="center">'.retornaSimNao(f($row,'devolucao_valor')).'</td>');
+          if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ShowHTML('        <td align="center">'.f($row,'sb_moeda').'</td>');
           ShowHTML('        <td align="right">'.formatNumber(f($row,'saldo_inicial')).'</td>');
         }
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'ativo')).'</td>');
@@ -1211,7 +1219,7 @@ function ContasBancarias() {
         $w_agencia=f($RS,'codigo');
       } 
     } 
-    if ($O=='A') $w_Disabled=' DISABLED ';
+    if ($O=='E') $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
@@ -1224,15 +1232,14 @@ function ContasBancarias() {
     } 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('      <tr><td valign="top" colspan="2">');
     ShowHTML('      <tr valign="top">');
-    selecaoBanco('<u>B</u>anco:','B','Informe o valor padrão para o campo "Banco".',$w_banco,null,'w_banco',null,null);
-    ShowHTML('              <td><b><u>A</u>gência:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_agencia" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_agencia.'" title="Informe o número da agência, com quatro posições, sem dígito verificador. Preencha com zeros à esquerda, se necessário. Exempo: para agência 3592-0, informe 3592; para agência 206, informe 0206."></td>');
-    if ($w_exige_operacao=='S') ShowHTML('              <td><b><u>O</u>peração:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_operacao" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_operacao.'" title="Informe um valor apenas se o seu banco trabalhar com o campo Operação."></td>');
-    ShowHTML('              <td><b><u>C</u>onta corrente:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_numero_conta" class="sti" SIZE="12" MAXLENGTH="12" VALUE="'.$w_numero_conta.'" title="Informe o número da conta corrente. Se a conta tiver dígito verificador (DV), informe-o separado por hífen (-). Exemplo sem DV: 0391039. Exemplos com DV: 9301-3, 91093-X, 01934-P."></td>');
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('          <td title="Informe se a conta é corrente ou de poupança."><b>Tipo conta</b><br>');
+    selecaoBanco('<u>B</u>anco:','B','Informe o valor padrão para o campo "Banco".',$w_banco,null,'w_banco',null,(($O=='A') ? ' DISABLED ' : ''),2);
+    ShowHTML('        <td><b><u>A</u>gência:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="B" type="text" name="w_agencia" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_agencia.'" title="Informe o número da agência, com quatro posições, sem dígito verificador. Preencha com zeros à esquerda, se necessário. Exempo: para agência 3592-0, informe 3592; para agência 206, informe 0206."></td>');
+    if ($w_exige_operacao=='S') ShowHTML('              <td><b><u>O</u>peração:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="O" type="text" name="w_operacao" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_operacao.'" title="Informe um valor apenas se o seu banco trabalhar com o campo Operação."></td>');
+    ShowHTML('              <td><b><u>C</u>onta corrente:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="C" type="text" name="w_numero_conta" class="sti" SIZE="12" MAXLENGTH="12" VALUE="'.$w_numero_conta.'" title="Informe o número da conta corrente. Se a conta tiver dígito verificador (DV), informe-o separado por hífen (-). Exemplo sem DV: 0391039. Exemplos com DV: 9301-3, 91093-X, 01934-P."></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td title="Informe se a conta é corrente ou de poupança."><b>Tipo conta</b><br>');
     if ($w_tipo_conta=='' || $w_tipo_conta=='1') {
       ShowHTML('              <input class="str" type="radio" name="w_tipo_conta" VALUE="1" checked>Corrente <input class="str" type="radio" name="w_tipo_conta" VALUE="2">Poupança');
     } else {
@@ -1245,24 +1252,20 @@ function ContasBancarias() {
       } else {
         ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N">Não <input class="str" type="radio" name="w_devolucao" VALUE="S" checked>Sim');
       }
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
       ShowHTML('        <td><b><u>S</u>aldo inicial:</b><br><input accesskey="S" type="text" name="w_saldo" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(nvl($w_saldo,0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Saldo inicial desta conta."></td>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_devolucao" value="N">');
       ShowHTML('<INPUT type="hidden" name="w_saldo" value="0,00">');
     }
-    ShowHTML('          <tr><td title="Indique se esta conta está ativa, clicando sobre a opção "Sim"."><b>Ativa?</b><br>');
-    if ($w_ativo=='' || $w_ativo=='N') {
-      ShowHTML('              <input class="str" type="radio" name="w_ativo" VALUE="N" checked>Não <input class="str" type="radio" name="w_ativo" VALUE="S">Sim');
-    } else {
-      ShowHTML('              <input class="str" type="radio" name="w_ativo" VALUE="N">Não <input class="str" type="radio" name="w_ativo" VALUE="S" checked>Sim');
-    } 
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('Ativa?',$w_ativo,'w_ativo','Indique se esta conta está ativa, clicando sobre a opção "Sim".');
     ShowHTML('          <td valign="top" title="Indique se esta conta é a padrão da organização, clicando sobre a opção SIM.Somente pode haver uma conta padrão."><b>Conta padrão?</b><br>');
     if ($w_padrao=='' || $w_padrao=='N') {
       ShowHTML('              <input type="radio" name="w_padrao" class="str" VALUE="N" checked>Não <input type="radio" name="w_padrao" class="str" VALUE="S">Sim');
     } else {
       ShowHTML('              <input type="radio" name="w_padrao" class="str" VALUE="N">Não <input type="radio" name="w_padrao" class="str" VALUE="S" checked>Sim');
-    } 
-    ShowHTML('          </table>');
+    }
     if ($_SESSION['P_PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     } 
@@ -1961,7 +1964,7 @@ function Grava() {
           } 
         } 
         $SQL = new dml_putCoPesConBan; $SQL->getInstanceOf($dbms,$O,
-            $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
+            $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_moeda'],$_REQUEST['w_tipo_conta'],
             $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_saldo'],
             $_REQUEST['w_ativo'], $_REQUEST['w_padrao']);
 

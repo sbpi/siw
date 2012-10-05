@@ -257,7 +257,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($l_O=='T')) {
     $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
     $RSQuery = SortArray($RSQuery,'codigo','asc');
-    if (count($RSQuery)>0 && $w_financeiro=='S' && $w_cliente!='10135') {
+    if (count($RSQuery)>0 && $w_financeiro=='S' && $w_cliente!='10135' && $w_cliente!=17305) {
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';

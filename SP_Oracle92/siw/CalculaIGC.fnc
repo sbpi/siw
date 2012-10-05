@@ -6,7 +6,8 @@ create or replace function CalculaIGC(p_chave in number) return float is
      select coalesce(case when sum(valor_previsto) = 0 then -1 else sum(valor_real)/sum(valor_previsto) end,0) as igc
        from siw_solicitacao                    a
             inner   join pj_rubrica            b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao and
-                                                     b.ativo              = 'S'
+                                                     b.ativo              = 'S' and
+                                                     b.ultimo_nivel       = 'S'
                                                     )
               inner join pj_rubrica_cronograma c on (b.sq_projeto_rubrica = c.sq_projeto_rubrica)
       where a.sq_siw_solicitacao = p_chave;

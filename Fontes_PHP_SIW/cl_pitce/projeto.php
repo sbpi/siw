@@ -4627,7 +4627,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],$_REQUEST['w_codigo_interno'],
           $_REQUEST['w_titulo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_aviso_pacote'],$_REQUEST['w_dias_pacote'],$_REQUEST['w_cidade'],
           $_REQUEST['w_palavra_chave'],$_REQUEST['w_vincula_contrato'],$_REQUEST['w_vincula_viagem'],null,null,
-          null,null,null,&$w_chave_nova,$_REQUEST['w_copia']);
+          null,null,null,$_REQUEST['w_moeda'],&$w_chave_nova,$_REQUEST['w_copia']);
       if ($O == 'I') {
         // Recupera os dados para montagem correta do menu
         $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms,$w_menu);
@@ -4777,7 +4777,7 @@ function Grava() {
           exit();
         }          
         $SQL = new dml_putCronograma; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
-            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real']);
+            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real'],$_REQUEST['w_quantidade']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
         $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -4830,7 +4830,7 @@ function Grava() {
       $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null);
       if(count($RS)>0) {
         foreach($RS as $row) {
-          if (f($row,'sq_projeto_rubrica')!=nvl($_REQUEST['w_chave_aux'],0)) {
+          if (f($row,'sq_projeto_rubrica')!=nvl($_REQUEST['w_chave_aux'],0) && f($row,'sq_rubrica_pai')==nvl($_REQUEST['w_chave_pai'],0)) {
             if (f($row,'codigo')==$_REQUEST['w_codigo']) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe rubrica com este código!\');');
@@ -4849,6 +4849,7 @@ function Grava() {
       }
 
       $SQL = new dml_putProjetoRubrica; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+          $_REQUEST['w_chave_pai'],$_REQUEST['w_unidade_medida'],nvl($_REQUEST['w_ultimo_nivel'],'S'),
           $_REQUEST['w_sq_cc'], $_REQUEST['w_codigo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
           $_REQUEST['w_ativo'],$_REQUEST['w_aplicacao_financeira'], $_REQUEST['w_copia']);
       ScriptOpen('JavaScript');

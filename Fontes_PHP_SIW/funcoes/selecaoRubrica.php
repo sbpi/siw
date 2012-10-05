@@ -6,6 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
 function selecaoRubrica($label,$accesskey,$hint,$chave,$chaveAux,$sq_rubrica_destino,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   if ($restricao=='RUBRICAS')                  { $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,'N',null,null,null); }
+  elseif ($restricao=='ARVORE')                { $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,'N',null,null,null); }
   elseif (strpos($restricao,'FINANC')!==false) { $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$chaveAux,$w_menu,'S',null,$sq_rubrica_destino,null,null,null,$restricao); }
   else                                         { $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,null,null,null,$restricao); }
   $RS = SortArray($RS,'codigo','asc','nome','asc');

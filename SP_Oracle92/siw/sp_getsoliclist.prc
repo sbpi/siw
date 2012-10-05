@@ -247,8 +247,10 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,                          a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
@@ -269,8 +271,6 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla sg_tramite, b1.ativo,                    b1.envia_mail,
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
@@ -334,7 +334,6 @@ begin
                         left         join sg_autenticacao      o1 on (o.sq_pessoa                  = o1.sq_pessoa)
                           left       join eo_unidade           o2 on (o1.sq_unidade                = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                   = p.sq_pessoa)
-                   left              join eo_unidade           c  on (a.sq_unid_executora          = c.sq_unidade)
                    left              join pj_etapa_demanda     i  on (b.sq_siw_solicitacao         = i.sq_siw_solicitacao)
                       left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa           = q.sq_projeto_etapa)
                    left              join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
@@ -396,7 +395,7 @@ begin
    Elsif substr(p_restricao,1,5) = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or 
          p_restricao = 'ORCAD'             or p_restricao = 'ORACOMP' or Substr(p_restricao,1,4) = 'GROR' 
          or substr(p_restricao,1,3) = 'PJM' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera os projetos que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -408,8 +407,10 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,                          a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
@@ -433,10 +434,10 @@ begin
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b2.acesso,
+                b4.sq_moeda,          b4.codigo cd_moeda,            b4.nome nm_moeda,
+                b4.sigla sg_moeda,    b4.simbolo sb_moeda,           b4.ativo at_moeda,
                 bb.sq_siw_coordenada, bb.nome as nm_coordenada,
                 bb.latitude, bb.longitude, bb.icone, bb.tipo,
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
@@ -466,99 +467,99 @@ begin
                 SolicRestricao(b.sq_siw_solicitacao,null) as restricao,
                 calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao,null,null)  as ide,
                 calculaIGC(d.sq_siw_solicitacao) as igc, calculaIDC(d.sq_siw_solicitacao,null,null)  as idc
-           from siw_menu                                       a 
-                   inner       join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)
-                     left      join eo_unidade_resp            a3 on (a2.sq_unidade              = a3.sq_unidade and
-                                                                      a3.tipo_respons            = 'T'           and
-                                                                      a3.fim                     is null
-                                                                     )
-                     left      join eo_unidade_resp            a4 on (a2.sq_unidade              = a4.sq_unidade and
-                                                                      a4.tipo_respons            = 'S'           and
-                                                                      a4.fim                     is null
-                                                                     )
-                   inner       join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
-                   inner       join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
-                      inner    join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner    join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao x
-                                                  inner join pj_projeto y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                            where sq_menu = p_menu
-                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      left     join pe_plano                   b3 on (b.sq_plano                 = b3.sq_plano)
-                      inner    join pj_projeto                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        inner  join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
-                          left join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade and
-                                                                      e1.tipo_respons            = 'T'           and
-                                                                      e1.fim                     is null
-                                                                     )
-                          left join eo_unidade_resp            e2 on (e.sq_unidade               = e2.sq_unidade and
-                                                                      e2.tipo_respons            = 'S'           and
-                                                                      e2.fim                     is null
-                                                                     )
-                        inner  join co_cidade                  f  on (b.sq_cidade_origem         = f.sq_cidade)
-                        inner  join co_uf                      f1 on (f.sq_pais                  = f1.sq_pais and f.co_uf = f1.co_uf)
-                        inner  join co_pais                    f2 on (f.sq_pais                  = f2.sq_pais)
-                        left   join siw_coordenada_solicitacao ba on (d.sq_siw_solicitacao       = ba.sq_siw_solicitacao)
-                        left   join siw_coordenada             bb on (ba.sq_siw_coordenada       = bb.sq_siw_coordenada)
-                        left   join co_pessoa                  d1 on (d.outra_parte              = d1.sq_pessoa)
-                        left   join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
-                                             from pj_rubrica_cronograma x
-                                                  inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
-                                            where y.ativo = 'S'
-                                           group by y.sq_siw_solicitacao
-                                          )                    d2 on (d.sq_siw_solicitacao       = d2.sq_siw_solicitacao)
-                        left   join or_acao                    r  on (d.sq_siw_solicitacao       = r.sq_siw_solicitacao)
-                      left     join siw_solicitacao            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
-                        left   join siw_menu                   m1 on (m.sq_menu                  = m1.sq_menu)
-                      left     join ct_cc                      n  on (b.sq_cc                    = n.sq_cc)
-                      left     join co_pessoa                  o  on (b.solicitante              = o.sq_pessoa)
-                      left     join co_pessoa                  p  on (b.executor                 = p.sq_pessoa)
-                      left     join (select sq_siw_solicitacao, count(a.sq_projeto_etapa) as existe
-                                       from pj_projeto_etapa                a
-                                            left       join eo_unidade_resp b on (a.sq_unidade = b.sq_unidade and
-                                                                                  b.fim        is null        and
-                                                                                  b.sq_pessoa  = p_pessoa
-                                                                                 )
-                                      where (a.sq_pessoa         = p_pessoa or
-                                             b.sq_unidade_resp   is not null)
-                                     group  by a.sq_siw_solicitacao
-                                    )                          q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
-                      left     join (select sq_siw_solicitacao, count(a.sq_siw_restricao) as existe
-                                       from siw_restricao a
-                                      where a.sq_pessoa = p_pessoa
-                                        and a.risco     = 'S'
-                                     group  by a.sq_siw_solicitacao
-                                    )                          q1 on (b.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
-                      left     join (select sq_siw_solicitacao, count(a.sq_siw_restricao) as existe
-                                       from siw_restricao a
-                                      where a.sq_pessoa = p_pessoa
-                                        and a.problema  = 'S'
-                                     group  by a.sq_siw_solicitacao
-                                    )                          q2 on (b.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
-                      left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
-                                       from siw_solic_meta a
-                                      where a.sq_pessoa          = p_pessoa
-                                        and a.sq_siw_solicitacao is not null
-                                     group  by a.sq_siw_solicitacao
-                                    )                          q3 on (b.sq_siw_solicitacao       = q3.sq_siw_solicitacao)
-                      left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
-                                       from siw_solic_meta a
-                                      where a.sq_siw_solicitacao is not null
-                                     group  by a.sq_siw_solicitacao
-                                    )                          q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
-                      left     join (select sq_siw_solicitacao, count(a.sq_projeto_rubrica) as existe
-                                       from pj_rubrica                       a
-                                            inner join pj_rubrica_cronograma b on (a.sq_projeto_rubrica = b.sq_projeto_rubrica)
-                                     group  by a.sq_siw_solicitacao
-                                    )                          q5 on (b.sq_siw_solicitacao       = q5.sq_siw_solicitacao)
-                   left        join eo_unidade                 c   on (a.sq_unid_executora       = c.sq_unidade)
-                   inner       join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
-                                       from siw_solic_log              x
-                                            inner join pj_projeto      y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                     group by x.sq_siw_solicitacao
-                                    )                          j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-                     left      join pj_projeto_log             k  on (j.chave                    = k.sq_siw_solic_log)
-                       left    join sg_autenticacao            l  on (k.destinatario             = l.sq_pessoa)
+           from siw_menu                                    a 
+                inner       join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
+                inner       join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
+                   inner    join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                   inner    join co_cidade                  f  on (b.sq_cidade_origem         = f.sq_cidade)
+                     inner  join co_uf                      f1 on (f.sq_pais                  = f1.sq_pais and f.co_uf = f1.co_uf)
+                     inner  join co_pais                    f2 on (f.sq_pais                  = f2.sq_pais)
+                   inner    join pj_projeto                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                   inner    join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
+                                          from siw_solicitacao x
+                                               inner join pj_projeto y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                         where sq_menu = p_menu
+                                       )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                   left     join pe_plano                   b3 on (b.sq_plano                 = b3.sq_plano)
+                   left     join co_moeda                   b4 on (b.sq_moeda                 = b4.sq_moeda)
+                inner       join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                   left     join eo_unidade_resp            a3 on (a2.sq_unidade              = a3.sq_unidade and
+                                                                   a3.tipo_respons            = 'T'           and
+                                                                   a3.fim                     is null
+                                                                  )
+                   left     join eo_unidade_resp            a4 on (a2.sq_unidade              = a4.sq_unidade and
+                                                                   a4.tipo_respons            = 'S'           and
+                                                                   a4.fim                     is null
+                                                                  )
+                     inner  join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
+                       left join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                   e1.tipo_respons            = 'T'           and
+                                                                   e1.fim                     is null
+                                                                  )
+                       left join eo_unidade_resp            e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                   e2.tipo_respons            = 'S'           and
+                                                                   e2.fim                     is null
+                                                                  )
+                     left   join siw_coordenada_solicitacao ba on (d.sq_siw_solicitacao       = ba.sq_siw_solicitacao)
+                     left   join siw_coordenada             bb on (ba.sq_siw_coordenada       = bb.sq_siw_coordenada)
+                     left   join co_pessoa                  d1 on (d.outra_parte              = d1.sq_pessoa)
+                     left   join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
+                                          from pj_rubrica_cronograma x
+                                               inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                                         where y.ativo = 'S'
+                                        group by y.sq_siw_solicitacao
+                                       )                    d2 on (d.sq_siw_solicitacao       = d2.sq_siw_solicitacao)
+                     left   join or_acao                    r  on (d.sq_siw_solicitacao       = r.sq_siw_solicitacao)
+                   left     join siw_solicitacao            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                     left   join siw_menu                   m1 on (m.sq_menu                  = m1.sq_menu)
+                   left     join ct_cc                      n  on (b.sq_cc                    = n.sq_cc)
+                   left     join co_pessoa                  o  on (b.solicitante              = o.sq_pessoa)
+                   left     join co_pessoa                  p  on (b.executor                 = p.sq_pessoa)
+                   left     join (select sq_siw_solicitacao, count(a.sq_projeto_etapa) as existe
+                                    from pj_projeto_etapa                a
+                                         left       join eo_unidade_resp b on (a.sq_unidade = b.sq_unidade and
+                                                                               b.fim        is null        and
+                                                                               b.sq_pessoa  = p_pessoa
+                                                                              )
+                                   where (a.sq_pessoa         = p_pessoa or
+                                          b.sq_unidade_resp   is not null)
+                                  group  by a.sq_siw_solicitacao
+                                 )                          q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
+                   left     join (select sq_siw_solicitacao, count(a.sq_siw_restricao) as existe
+                                    from siw_restricao a
+                                   where a.sq_pessoa = p_pessoa
+                                     and a.risco     = 'S'
+                                  group  by a.sq_siw_solicitacao
+                                 )                          q1 on (b.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
+                   left     join (select sq_siw_solicitacao, count(a.sq_siw_restricao) as existe
+                                    from siw_restricao a
+                                   where a.sq_pessoa = p_pessoa
+                                     and a.problema  = 'S'
+                                  group  by a.sq_siw_solicitacao
+                                 )                          q2 on (b.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
+                   left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
+                                    from siw_solic_meta a
+                                   where a.sq_pessoa          = p_pessoa
+                                     and a.sq_siw_solicitacao is not null
+                                  group  by a.sq_siw_solicitacao
+                                 )                          q3 on (b.sq_siw_solicitacao       = q3.sq_siw_solicitacao)
+                   left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
+                                    from siw_solic_meta a
+                                   where a.sq_siw_solicitacao is not null
+                                  group  by a.sq_siw_solicitacao
+                                 )                          q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
+                   left     join (select sq_siw_solicitacao, count(a.sq_projeto_rubrica) as existe
+                                    from pj_rubrica                       a
+                                         inner join pj_rubrica_cronograma b on (a.sq_projeto_rubrica = b.sq_projeto_rubrica)
+                                  group  by a.sq_siw_solicitacao
+                                 )                          q5 on (b.sq_siw_solicitacao       = q5.sq_siw_solicitacao)
+                inner       join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                    from siw_solic_log              x
+                                         inner join pj_projeto      y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                  group by x.sq_siw_solicitacao
+                                 )                          j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                  left      join pj_projeto_log             k  on (j.chave                    = k.sq_siw_solic_log)
+                    left    join sg_autenticacao            l  on (k.destinatario             = l.sq_pessoa)
           where a.sq_menu         = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = p_sq_acao_ppa or
@@ -647,9 +648,11 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
-                a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,                          a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
+                a3.sq_pessoa as tit_exec,                            a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -683,8 +686,6 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,            b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                      b1.envia_mail,
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio as inicio_real, d.fim as fim_real,          d.duracao,
                 d.valor_inicial,      coalesce(d8.valor,d.valor_atual) as valor_atual, b.codigo_interno,
@@ -821,7 +822,6 @@ begin
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa and
                                                                      	b.executor                 is not null
                                                                       )
-                   left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                    left              join (select x.sq_siw_solicitacao, count(x.sq_solicitacao_item) as qtd
                                              from cl_solicitacao_item x
                                            group by x.sq_siw_solicitacao
@@ -925,8 +925,10 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,                          a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
@@ -966,8 +968,6 @@ begin
                 case when b6.sq_siw_solicitacao is null then null else to_char(b6.numero_documento)||'/'||substr(to_char(b6.ano),3) end as protocolo,
                 case when b6.sq_siw_solicitacao is null then null else to_char(b6.prefixo)||'.'||substr(1000000+to_char(b6.numero_documento),2,6)||'/'||to_char(b6.ano)||'-'||substr(100+to_char(b6.digito),2,2) end as protocolo_completo,
                 q.rubrica, 	
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
@@ -1178,7 +1178,6 @@ begin
                                                                                  )
                                   )                         o  on (b.solicitante              = o.sq_pessoa)
                    left      join co_pessoa                 p  on (b.executor                 = p.sq_pessoa)
-                left         join eo_unidade                c  on (a.sq_unid_executora        = c.sq_unidade)
           where a.sq_menu        = p_menu
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
@@ -1257,8 +1256,10 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,                          a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
                 a5.dias_prestacao_contas, 
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
@@ -1281,8 +1282,6 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
@@ -1359,7 +1358,6 @@ begin
                                                                e2.fim                     is null)
                     left      join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                     left      join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                  left        join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                     left      join gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                       left    join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
                  left         join (select x.sq_siw_solicitacao, sum((y.quantidade*y.valor)) as valor_diaria
@@ -1431,8 +1429,10 @@ begin
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
                 a1.ordem as or_modulo,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,                          a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
@@ -1460,8 +1460,6 @@ begin
                 b2.ativo as st_plano,
                 b8.sq_unidade sq_unidade_adm, b8.nome nm_unidade_adm, b8.sigla sg_unidade_adm,
                 b8.codigo as cd_unidade_adm,
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
-                c.vinculada,          c.adm_central,
                 b.codigo_interno,
                 b.codigo_interno as cd_programa,                     d.ln_programa,
                 d.exequivel,          d.inicio_real,                 d.fim_real,
@@ -1529,7 +1527,6 @@ begin
                                             where a.sq_siw_solicitacao is not null
                                            group  by a.sq_siw_solicitacao
                                           )                    q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
-                   left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                    inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
                                              from siw_solic_log              x
                                                   inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -1605,8 +1602,9 @@ begin
                 a.consulta_geral,     a.sq_unid_executora,           a.envia_email,
                 a.vinculacao,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,
-                a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
-                a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -1663,7 +1661,7 @@ begin
                 r.nome as nm_pessoa_posse,                           r.nome_resumido as nm_res_pessoa_posse,
                 case when r.sq_pessoa is null then r.nome else q.nome end as nm_posse
            from siw_menu                                           a 
-                   inner        join eo_unidade                    a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                   inner             join eo_unidade               a2 on (a.sq_unid_executora        = a2.sq_unidade)
                    inner             join siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu and
                                                                           ('PADMTENT'               <> substr(p_restricao,1,8) or

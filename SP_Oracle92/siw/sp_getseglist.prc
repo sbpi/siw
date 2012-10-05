@@ -5,7 +5,7 @@ create or replace procedure SP_GetSegList
 begin
    --Recupera a lista de segmentos
    open p_result for
-      select sq_segmento, nome, padrao, ativo 
+      select sq_segmento, sigla, nome, padrao, ativo 
         from co_segmento
        where (p_ativo is null or (p_ativo is not null and ativo = p_ativo));
 end SP_GetSegList;

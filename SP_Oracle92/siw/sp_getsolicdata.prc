@@ -149,6 +149,8 @@ begin
                 b2.visao_futuro,      b2.inicio as inicio_plano,     b2.fim as fim_plano,
                 b2.ativo as st_plano,
                 b3.nome as nm_unidade,
+                b4.sq_moeda,          b4.codigo cd_moeda,            b4.nome nm_moeda,
+                b4.sigla sg_moeda,    b4.simbolo sb_moeda,           b4.ativo at_moeda,
                 bb.sq_siw_coordenada, bb.nome as nm_coordenada,      bb.latitude, 
                 bb.longitude,         bb.icone,                      bb.tipo,
                 d.sq_unidade_resp,    d.prioridade,                  
@@ -215,6 +217,7 @@ begin
                   inner      join siw_tramite                b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
                   left       join pe_plano                   b2 on (b.sq_plano            = b2.sq_plano)
                   left       join eo_unidade                 b3 on (b.sq_unidade          = b3.sq_unidade)
+                  left       join co_moeda                   b4 on (b.sq_moeda            = b4.sq_moeda)
                   left       join siw_coordenada_solicitacao ba on (b.sq_siw_solicitacao  = ba.sq_siw_solicitacao)
                     left     join siw_coordenada             bb on (ba.sq_siw_coordenada  = bb.sq_siw_coordenada)
                   inner      join pj_projeto                 d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
@@ -279,8 +282,10 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao as ds_menu,        a.justificativa as just_menu,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
-                a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a2.sq_tipo_unidade tp_exec,                          a2.nome nm_unidade_exec,
+                a2.informal informal_exec,                           a2.vinculada vinc_exec,
+                a2.adm_central adm_exec,                             a2.sq_tipo_unidade,
+                a2.informal,          a2.vinculada,                  a2.adm_central,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 a5.dias_pagamento,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
@@ -304,8 +309,6 @@ begin
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 case when b4.sq_siw_solicitacao is null then null else to_char(b4.numero_documento)||'/'||substr(to_char(b4.ano),3) end as protocolo,
                 case when b4.sq_siw_solicitacao is null then null else to_char(b4.prefixo)||'.'||substr(1000000+to_char(b4.numero_documento),2,6)||'/'||to_char(b4.ano)||'-'||substr(100+to_char(b4.digito),2,2) end as protocolo_completo,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio inicio_real, d.fim fim_real,                d.duracao,
                 d.valor_inicial,      d.valor_atual,                 b.codigo_interno,
@@ -435,7 +438,6 @@ begin
                      inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                        inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                    left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                 left         join pj_etapa_contrato         i  on (b.sq_siw_solicitacao  = i.sq_siw_solicitacao)
                   left       join pj_projeto_etapa          i1 on (i.sq_projeto_etapa    = i1.sq_projeto_etapa)                
                 inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) chave 

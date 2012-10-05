@@ -5,7 +5,7 @@ create or replace procedure sp_ajustaDataEtapa(p_projeto in number, p_todos in v
   -- Cursor que recupera todos os projetos
   cursor c_projetos is
     select a.sq_siw_solicitacao
-           from pj_projeto a
+           from pj_projeto                  a
                 inner join pj_projeto_etapa b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao);
 
   cursor c_pacotes is

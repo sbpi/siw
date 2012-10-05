@@ -35,6 +35,7 @@ create or replace procedure SP_PutProjetoGeral
     p_selecionada_mpog    in varchar2  default null,
     p_selecionada_relev   in varchar2  default null,
     p_sq_tipo_pessoa      in varchar2  default null,
+    p_sq_moeda            in number    default null,
     p_chave_nova          out number
    ) is
    w_arq       varchar2(4000) := ', ';
@@ -63,9 +64,12 @@ create or replace procedure SP_PutProjetoGeral
    type tb_etapa is table of rec_etapa index by binary_integer;
    type tb_etapa_pai is table of number(10) index by binary_integer;
 
-   w_etapa     tb_etapa;
-   w_etapa_pai tb_etapa_pai;
+   w_etapa       tb_etapa;
+   w_etapa_pai   tb_etapa_pai;
    
+   w_rubrica     tb_etapa;
+   w_rubrica_pai tb_etapa_pai;
+
    cursor c_rubricas is
      select * from pj_rubrica    where ativo = 'S' and sq_siw_solicitacao = p_copia;
      
@@ -115,14 +119,16 @@ begin
          inicio,             fim,           inclusao,            ultima_alteracao,
          conclusao,          valor,         opiniao,             data_hora,
          sq_unidade,         sq_cc,         sq_solic_pai,        sq_cidade_origem,
-         palavra_chave,      sq_plano,      codigo_interno,      titulo)
+         palavra_chave,      sq_plano,      codigo_interno,      titulo,
+         sq_moeda)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_descricao,         p_justificativa,
          p_inicio,           p_fim,         sysdate,             sysdate,
          null,               p_valor,       null,                p_data_hora,
          p_unidade,          p_sqcc,        p_solic_pai,         p_cidade,
-         p_palavra_chave,    p_plano,       p_codigo,            p_titulo
+         p_palavra_chave,    p_plano,       p_codigo,            p_titulo,
+         p_sq_moeda
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -130,10 +136,10 @@ begin
 
       -- Insere registro em pj_projeto
       Insert into pj_projeto
-         ( sq_siw_solicitacao,  sq_unidade_resp,  prioridade,        aviso_prox_conc,
-           dias_aviso,          inicio_real,      fim_real,          concluida,
-           data_conclusao,      nota_conclusao,   custo_real,        proponente,
-           sq_tipo_pessoa,      vincula_contrato, vincula_viagem,    aviso_prox_conc_pacote, 
+         ( sq_siw_solicitacao,     sq_unidade_resp,  prioridade,        aviso_prox_conc,
+           dias_aviso,             inicio_real,      fim_real,          concluida,
+           data_conclusao,         nota_conclusao,   custo_real,        proponente,
+           sq_tipo_pessoa,         vincula_contrato, vincula_viagem,    aviso_prox_conc_pacote, 
            perc_dias_aviso_pacote
          )
       (select
@@ -244,6 +250,7 @@ begin
           end loop;
 
           -- Insere etapas do projeto
+          i := 0;
           for crec in c_etapas loop
              -- recupera a próxima chave do recurso
              select sq_projeto_etapa.nextval into w_chave1 from dual;
@@ -315,26 +322,49 @@ begin
           end loop;
           
           -- Insere rubricas do projeto
+          i := 0;
           for crec in c_rubricas loop
              -- recupera a próxima chave da rubrica
              select sq_projeto_rubrica.nextval into w_chave1 from dual;
           
+             -- Guarda pai do registro original
+             i := i + 1;
+             w_rubrica(i).sq_chave_destino    := w_chave1;
+             w_rubrica(i).sq_chave_origem     := crec.sq_projeto_rubrica;
+             w_rubrica(i).sq_chave_pai_origem := crec.sq_rubrica_pai;
+
+             w_rubrica_pai(crec.sq_projeto_rubrica) := w_chave1;
+
              insert into pj_rubrica
-                (sq_projeto_rubrica, sq_siw_solicitacao,  sq_cc,        codigo,      nome,      descricao,      ativo,      aplicacao_financeira)
+                (sq_projeto_rubrica,     sq_siw_solicitacao,        sq_cc,        codigo,      nome,      descricao,      ativo,      ultimo_nivel,
+                 sq_unidade_medida,      aplicacao_financeira)
              values 
-                (w_chave1,           w_chave,             crec.sq_cc ,  crec.codigo, crec.nome, crec.descricao, crec.ativo, crec.aplicacao_financeira);
+                (w_chave1,               w_chave,                   crec.sq_cc ,  crec.codigo, crec.nome, crec.descricao, crec.ativo, crec.ultimo_nivel,
+                 crec.sq_unidade_medida, crec.aplicacao_financeira);
              
              insert into pj_rubrica_cronograma
-               (sq_rubrica_cronograma,                sq_projeto_rubrica, inicio, fim, valor_previsto, valor_real)
-               (select sq_rubrica_cronograma.nextval, w_chave1, inicio,   fim,    valor_previsto,      valor_real 
+               (sq_rubrica_cronograma,                sq_projeto_rubrica, inicio, fim, valor_previsto, valor_real, quantidade)
+               (select sq_rubrica_cronograma.nextval, w_chave1, inicio,   fim,    valor_previsto,      0,          quantidade
                   from pj_rubrica_cronograma
                  where sq_projeto_rubrica = crec.sq_projeto_rubrica);
           end loop;
+
+          -- Acerta o vínculo entre as rubricas
+          i := 0;
+          for i in 1 .. w_rubrica.Count loop
+              if w_rubrica(i).sq_chave_pai_origem is not null then
+                 update pj_rubrica a
+                    set sq_rubrica_pai = w_rubrica_pai(w_rubrica(i).sq_chave_pai_origem)
+                  where sq_projeto_rubrica = w_rubrica(i).sq_chave_destino;
+              end if;
+          end loop;
+
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
           sq_plano         = p_plano,
+          sq_moeda         = p_sq_moeda,
           codigo_interno   = p_codigo,
           titulo           = trim(p_titulo),
           sq_cc            = p_sqcc,

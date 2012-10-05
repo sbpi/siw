@@ -819,6 +819,7 @@ function Segmento() {
   extract($GLOBALS);
   global $w_Disabled;
 
+  $p_sigla       = trim(upper($_REQUEST['p_sigla']));
   $p_nome        = trim(upper($_REQUEST['p_nome']));
   $p_ativo       = trim($_REQUEST['p_ativo']);
   $w_sq_segmento = $_REQUEST['w_sq_segmento'];
@@ -826,6 +827,7 @@ function Segmento() {
   if ($O=='') $O='L';
 
   if (nvl($w_troca,'')!='' && $O!='E') {
+    $w_sigla    = $_REQUEST['w_sigla'];
     $w_nome     = $_REQUEST['w_nome'];
     $w_ativo    = $_REQUEST['w_ativo'];
     $w_padrao   = $_REQUEST['w_padrao'];
@@ -834,6 +836,7 @@ function Segmento() {
     $RS = SortArray($RS,'padrao','desc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $SQL = new db_getSegData; $RS = $SQL->getInstanceOf($dbms,$w_sq_segmento);
+    $w_sigla    = f($RS,'sigla');
     $w_nome     = f($RS,'nome');
     $w_ativo    = f($RS,'ativo');
     $w_padrao   = f($RS,'padrao');
@@ -846,6 +849,7 @@ function Segmento() {
     modulo();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
+      Validate('w_sigla','Sigla','1','1','1','3','1','1');
       Validate('w_nome','Nome','1','1','1','40','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -868,7 +872,7 @@ function Segmento() {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
-      BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
+      BodyOpen('onLoad=\'document.Form.w_sigla.focus()\';');
     } 
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
@@ -886,6 +890,7 @@ function Segmento() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Chave</td>');
+    ShowHTML('          <td><b>Sigla</td>');
     ShowHTML('          <td><b>Nome</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Padrão</td>');
@@ -898,6 +903,7 @@ function Segmento() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center">'.f($row,'sq_segmento').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         if (f($row,'ativo')=='S') {
           ShowHTML('        <td align="center">Sim</td>');
@@ -930,14 +936,15 @@ function Segmento() {
     ShowHTML('<INPUT type="hidden" name="w_sq_segmento" value="'.$w_sq_segmento.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
-    ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="40" maxlength="40" value="'.$w_nome.'"></td></tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><U>S</U>igla:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="STI" type="text" name="w_sigla" size="4" maxlength="3" value="'.$w_sigla.'"></td>');
+    ShowHTML('        <td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="40" maxlength="40" value="'.$w_nome.'"></td>');
+    ShowHTML('      </tr>');
     ShowHTML('      <tr align="left">');
     MontaRadioNS('Padrão?',$w_padrao,'w_padrao');
-    ShowHTML('      </tr>');
-    ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
@@ -1050,7 +1057,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $SQL = new dml_CoSegmento; $SQL->getInstanceOf($dbms, $O,
-            $_REQUEST['w_sq_segmento'],$_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
+            $_REQUEST['w_sq_segmento'],$_REQUEST['w_sigla'],$_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();

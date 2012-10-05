@@ -8,4 +8,3 @@ begin
       select * from co_segmento where sq_segmento = p_chave;
 end SP_GetSegData;
 /
-

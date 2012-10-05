@@ -3493,7 +3493,7 @@ function Grava() {
             $_SESSION['SQ_PESSOA'],null,null,$_REQUEST['w_sqcc'],null,$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],
             $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],$_REQUEST['w_titulo'],$_REQUEST['w_prioridade'],
             $_REQUEST['w_aviso'],$w_dias,$_REQUEST['w_aviso_pacote'],$_REQUEST['w_dias_pacote'],$_REQUEST['w_cidade'],$_REQUEST['w_palavra_chave'],null,null,$_REQUEST['w_sq_acao_ppa'],$_REQUEST['w_sq_orprioridade'],
-            $_REQUEST['w_selecionada_mpog'],$_REQUEST['w_selecionada_relevante'],null,&$w_chave_nova,$w_copia);
+            $_REQUEST['w_selecionada_mpog'],$_REQUEST['w_selecionada_relevante'],null,$_REQUEST['w_moeda'],&$w_chave_nova,$w_copia);
         ScriptOpen('JavaScript');
         if ($O=='I') {
           // Recupera os dados para montagem correta do menu

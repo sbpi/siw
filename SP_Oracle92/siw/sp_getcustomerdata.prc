@@ -10,7 +10,7 @@ begin
              d.nome, d.nome_resumido, d.sq_tipo_vinculo,
              e.cnpj, e.inscricao_estadual, e.inicio_atividade, e.sede,
              g.nome as pais,
-             h.sq_segmento, h.nome as segmento,
+             h.sq_segmento, h.nome as segmento, h.sigla as sg_segmento,
              i.sq_banco, i.nome as banco
         from siw_cliente                     a
              inner   join co_cidade          b on (a.sq_cidade_padrao  = b.sq_cidade)

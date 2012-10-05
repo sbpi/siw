@@ -29,7 +29,7 @@ class db_getBankHouseList {
            " where 1 = 1$crlf".
            "   and ($p_sq_banco is null or ($p_sq_banco is not null and b.sq_banco      = $p_sq_banco))$crlf".
            "   and ($p_nome     is null or ($p_nome     is not null and acentos(a.nome) like '%'".C."acentos($p_nome)".C."'%'))$crlf".
-           "   and ($p_codigo   is null or ($p_codigo   is not null and a.codigo        = $p_codigo))$crlf";
+           "   and ($p_codigo   is null or ($p_codigo   is not null and ((length($p_codigo)=6 and a.codigo = $p_codigo) or (length($p_codigo)=4 and $p_codigo = substr(a.codigo,1,4)))))$crlf";
 
     $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
     return $l_rs;

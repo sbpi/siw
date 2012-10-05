@@ -9,7 +9,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putCronograma {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_inicio, $p_fim, $p_valor_previsto, $p_valor_real) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_inicio, $p_fim, $p_valor_previsto, $p_valor_real, $p_quantidade) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCRONOGRAMA';
      $params=array('p_operacao'             =>array($operacao,                            B_VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                        B_INTEGER,        32),
@@ -18,6 +18,7 @@ class dml_putCronograma {
                    'p_fim'                  =>array(tvl($p_fim),                          B_DATE,           32),
                    'p_valor_previsto'       =>array(toNumber(tvl($p_valor_previsto)),     B_NUMERIC,      18,2),
                    'p_valor_real'           =>array(toNumber(tvl($p_valor_real)),         B_NUMERIC,      18,2),
+                   'p_quantidade'           =>array(tvl($p_quantidade),                   B_INTEGER,        32)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

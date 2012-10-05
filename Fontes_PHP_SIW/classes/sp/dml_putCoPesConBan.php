@@ -9,12 +9,13 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_PutCoPesConBan {
-   function getInstanceOf($dbms, $p_operacao, $p_chave, $p_pessoa, $p_tipo_conta, $p_agencia, $p_oper, $p_numero, $p_devolucao, 
+   function getInstanceOf($dbms, $p_operacao, $p_chave, $p_pessoa, $p_moeda, $p_tipo_conta, $p_agencia, $p_oper, $p_numero, $p_devolucao, 
           $p_saldo, $p_ativo, $p_padrao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoPesConBan';
      $params=array('p_operacao'         =>array($p_operacao,             B_VARCHAR,      1),
                    'p_chave'            =>array(tvl($p_chave),           B_NUMERIC,     32),
                    'p_pessoa'           =>array(tvl($p_pessoa),          B_NUMERIC,     32),
+                   'p_moeda'            =>array(tvl($p_moeda),           B_NUMERIC,     32),
                    'p_agencia'          =>array(tvl($p_agencia),         B_NUMERIC,     32),
                    'p_oper'             =>array(tvl($p_oper),            B_VARCHAR,      6),
                    'p_numero'           =>array(tvl($p_numero),          B_VARCHAR,     30),
