@@ -1644,7 +1644,10 @@ function Configuracao() {
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração dos serviços de e-Mail e Upload</td></td></tr>');
+    ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>');
+    ShowHTML('        Configuração dos serviços de e-Mail e Upload');
+    ShowHTML('        [<a class="HL" HREF="'.$w_pagina.'visual&SG=CLVISUAL&O=L&w_sq_pessoa='.$w_sq_pessoa.'" target="_blank">Visualizar</a>]');
+    ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados do bloco abaixo são utilizados pelo mecanismo de upload e de envio de mensagens automáticas da aplicação. A incorreção nos dados impossibilitará o envio de e-mail e o recebimento de arquivos.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1811,7 +1814,7 @@ function Visual() {
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_sq_pessoa,$w_logo,null,null,null,'EMBED').'">');
-  ShowHTML('<TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">CLIENTE</FONT>');
+  ShowHTML('<TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">PARAMETRIZAÇÃO</FONT>');
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</FONT></B></TD></TR>');
   ShowHTML('</B></TD></TR></TABLE>');
   ShowHTML('<HR>');

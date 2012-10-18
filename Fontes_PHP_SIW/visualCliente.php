@@ -5,7 +5,7 @@
 function visualCliente($w_sq_cliente,$O) {
   extract($GLOBALS);
 
-  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente);
+  $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_sq_cliente);
 
   if ($O=='L') {
     // Se for listagem dos dados
@@ -13,41 +13,41 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="99%" border="0">');
-    ShowHTML('      <tr><td align="center" colspan="2"><font size=3><b>'.f($RS,'nome_resumido').' ('.f($RS,'cnpj').')</font></b></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan="2"><font size=3><b>'.f($RS_Cliente,'nome_resumido').' ('.f($RS_Cliente,'cnpj').')</font></b></td></tr>');
 
     // Identificação civil e localização
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação Civil e Localização</td>');
-    ShowHTML('      <tr><td valign="top">Razão Social:<br><b>'.f($RS,'nome').' </b></td>');
+    ShowHTML('      <tr><td valign="top">Razão Social:<br><b>'.f($RS_Cliente,'nome').' </b></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Código interno:<br><b>'.f($RS,'sq_pessoa').' </b></td>');
-    ShowHTML('          <td valign="top">Segmento:<br><b>'.f($RS,'segmento').' </b></td>');
+    ShowHTML('          <td valign="top">Código interno:<br><b>'.f($RS_Cliente,'sq_pessoa').' </b></td>');
+    ShowHTML('          <td valign="top">Segmento:<br><b>'.f($RS_Cliente,'segmento').' </b></td>');
     ShowHTML('          <tr>');
-    ShowHTML('          <td valign="top">Inscrição estadual:<br><b>'.Nvl(f($RS,'inscricao_estadual'),'Não informada').' </b></td>');
-    ShowHTML('          <td valign="top">Início das atividades:<br><b>'.FormataDataEdicao(f($RS,'inicio_atividade')).' </b></td>');
-    ShowHTML('          <td valign="top">Sede (Matriz)?<br><b>'.str_replace('N','Não',str_replace('S','Sim',f($RS,'sede'))).' </b></td>');
+    ShowHTML('          <td valign="top">Inscrição estadual:<br><b>'.Nvl(f($RS_Cliente,'inscricao_estadual'),'Não informada').' </b></td>');
+    ShowHTML('          <td valign="top">Início das atividades:<br><b>'.FormataDataEdicao(f($RS_Cliente,'inicio_atividade')).' </b></td>');
+    ShowHTML('          <td valign="top">Sede (Matriz)?<br><b>'.str_replace('N','Não',str_replace('S','Sim',f($RS_Cliente,'sede'))).' </b></td>');
     ShowHTML('          </table>');
 
     // Cidade e agência padrão
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cidade e Agência Padrão</td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Cidade:<br><b>'.f($RS,'cidade').' </b></td>');
-    ShowHTML('          <td valign="top">Estado:<br><b>'.f($RS,'co_uf').' </b></td>');
-    ShowHTML('          <td valign="top">País:<br><b>'.f($RS,'pais').' </b></td>');
+    ShowHTML('          <td valign="top">Cidade:<br><b>'.f($RS_Cliente,'cidade').' </b></td>');
+    ShowHTML('          <td valign="top">Estado:<br><b>'.f($RS_Cliente,'co_uf').' </b></td>');
+    ShowHTML('          <td valign="top">País:<br><b>'.f($RS_Cliente,'pais').' </b></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Banco:<br><b>'.f($RS,'banco').' </b></td>');
-    ShowHTML('          <td valign="top">Agência:<br><b>'.f($RS,'codigo').' - '.f($RS,'agencia').' </b></td>');
+    ShowHTML('          <td valign="top">Banco:<br><b>'.f($RS_Cliente,'banco').' </b></td>');
+    ShowHTML('          <td valign="top">Agência:<br><b>'.f($RS_Cliente,'codigo').' - '.f($RS_Cliente,'agencia').' </b></td>');
     ShowHTML('          </table>');
 
     // Parâmetros de segurança
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Segurança</td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Tamanho mínimo:<br><b>'.f($RS,'TAMANHO_MIN_SENHA').' </b></td>');
-    ShowHTML('          <td valign="top">Tamanho máximo:<br><b>'.f($RS,'TAMANHO_MAX_SENHA').' </b></td>');
-    ShowHTML('          <td valign="top">Máximo de tentativas:<br><b>'.f($RS,'maximo_tentativas').' </b></td>');
+    ShowHTML('          <td valign="top">Tamanho mínimo:<br><b>'.f($RS_Cliente,'TAMANHO_MIN_SENHA').' </b></td>');
+    ShowHTML('          <td valign="top">Tamanho máximo:<br><b>'.f($RS_Cliente,'TAMANHO_MAX_SENHA').' </b></td>');
+    ShowHTML('          <td valign="top">Máximo de tentativas:<br><b>'.f($RS_Cliente,'maximo_tentativas').' </b></td>');
     ShowHTML('          <tr>');
-    ShowHTML('          <td valign="top">Limite da vigência:<br><b>'.f($RS,'DIAS_VIG_SENHA').' </b></td>');
-    ShowHTML('          <td valign="top">Dias para aviso:<br><b>'.f($RS,'DIAS_AVISO_EXPIR').' </b></td>');
+    ShowHTML('          <td valign="top">Limite da vigência:<br><b>'.f($RS_Cliente,'DIAS_VIG_SENHA').' </b></td>');
+    ShowHTML('          <td valign="top">Dias para aviso:<br><b>'.f($RS_Cliente,'DIAS_AVISO_EXPIR').' </b></td>');
     ShowHTML('          </table>');
 
     //Endereços de e-mail e internet
@@ -135,20 +135,22 @@ function visualCliente($w_sq_cliente,$O) {
     //Contas bancárias
     $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null);
     $RS = SortArray($RS,'tipo_conta','asc','padrao','desc','banco','asc','numero','asc');
+    $cs = 0;
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Contas Bancárias ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('            <td><b>Tipo</td>');
-    ShowHTML('            <td><b>Banco</td>');
-    ShowHTML('            <td><b>Agência</td>');
-    ShowHTML('            <td><b>Operação</td>');
-    ShowHTML('            <td><b>Número</td>');
-    ShowHTML('            <td><b>Ativo</td>');
-    ShowHTML('            <td><b>Padrão</td>');
+    $cs++; ShowHTML('            <td><b>Tipo</td>');
+    $cs++; ShowHTML('            <td><b>Banco</td>');
+    $cs++; ShowHTML('            <td><b>Agência</td>');
+    $cs++; ShowHTML('            <td><b>Operação</td>');
+    $cs++; ShowHTML('            <td><b>Número</td>');
+    if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') { $cs++; ShowHTML('            <td><b>Moeda</td>'); }
+    $cs++; ShowHTML('            <td><b>Ativo</td>');
+    $cs++; ShowHTML('            <td><b>Padrão</td>');
     ShowHTML('          </tr>');
     if (count($RS)==0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não informado.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$cs.' align="center"><b>Não informado.</b></td></tr>');
     } else {
       foreach ($RS as $row) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
@@ -157,6 +159,7 @@ function visualCliente($w_sq_cliente,$O) {
         ShowHTML('        <td>'.f($row,'agencia').'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'operacao'),'---').'</td>');
         ShowHTML('        <td>'.f($row,'numero').'</td>');
+        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ShowHTML('        <td align="center">'.f($row,'sb_moeda').'</td>');
         ShowHTML('        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'ativo'))).'</td>');
         ShowHTML('        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'padrao'))).'</td>');
         ShowHTML('      </tr>');
@@ -218,26 +221,25 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Configuração da aplicação
-    $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente);
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Configuração da Aplicação</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-    ShowHTML('             <td>Servidor SMTP:<br><b>'.f($RS,'smtp_server').'</b></td>');
-    ShowHTML('             <td>Nome do remetente:<br><b>'.f($RS,'siw_email_nome').'</b></td>');
-    ShowHTML('             <td>Conta do remetente:<br><b>'.f($RS,'siw_email_conta').'</b></td>');
+    ShowHTML('             <td>Servidor SMTP:<br><b>'.f($RS_Cliente,'smtp_server').'</b></td>');
+    ShowHTML('             <td>Nome do remetente:<br><b>'.f($RS_Cliente,'siw_email_nome').'</b></td>');
+    ShowHTML('             <td>Conta do remetente:<br><b>'.f($RS_Cliente,'siw_email_conta').'</b></td>');
     ShowHTML('          </tr>');
     ShowHTML('         </table></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-    if (f($RS,'logo')>'') {
-      ShowHTML('             <td colspan=3>Logomarca telas e relatórios:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
+    if (f($RS_Cliente,'logo')>'') {
+      ShowHTML('             <td colspan=3>Logomarca telas e relatórios:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img/logo'.substr(f($RS_Cliente,'logo'),(strpos(f($RS_Cliente,'logo'),'.') ? strpos(f($RS_Cliente,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
     } else {
       ShowHTML('             <td colspan=3>Não informado</td>');
     } 
-    if (f($RS,'logo')>'') {
-      ShowHTML('             <td colspan=3>Logomarca menu:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img/logo1'.substr(f($RS,'logo1'),(strpos(f($RS,'logo1'),'.') ? strpos(f($RS,'logo1'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
+    if (f($RS_Cliente,'logo')>'') {
+      ShowHTML('             <td colspan=3>Logomarca menu:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img/logo1'.substr(f($RS_Cliente,'logo1'),(strpos(f($RS_Cliente,'logo1'),'.') ? strpos(f($RS_Cliente,'logo1'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
     } else {
       ShowHTML('             <td colspan=3>Não informado</td>');
     } 
@@ -248,40 +250,46 @@ function visualCliente($w_sq_cliente,$O) {
     $w_imagemPadrao='images/Folder/SheetLittle.gif';
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Funcionalidades</td>');
     $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
+    $cs = 0;
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('            <td><b>Opção</td>');
-    ShowHTML('            <td><b>Link</td>');
-    ShowHTML('            <td><b>Sigla</td>');
-    ShowHTML('            <td><b>P1</td>');
-    ShowHTML('            <td><b>P2</td>');
-    ShowHTML('            <td><b>P3</td>');
-    ShowHTML('            <td><b>P4</td>');
-    ShowHTML('            <td><b>Target</td>');
-    ShowHTML('            <td><b>Sub-menu</td>');
-    ShowHTML('            <td><b>Ativo</td>');
+    ShowHTML('            <td><b>Chave</td>');
+    $cs++; ShowHTML('            <td><b>Opção</td>');
+    $cs++; ShowHTML('            <td><b>Link</td>');
+    $cs++; ShowHTML('            <td><b>Sigla</td>');
+    $cs++; ShowHTML('            <td><b>P1</td>');
+    $cs++; ShowHTML('            <td><b>P2</td>');
+    $cs++; ShowHTML('            <td><b>P3</td>');
+    $cs++; ShowHTML('            <td><b>P4</td>');
+    $cs++; ShowHTML('            <td><b>Target</td>');
+    $cs++; ShowHTML('            <td><b>Sub-menu</td>');
+    $cs++; ShowHTML('            <td><b>Ativo</td>');
     ShowHTML('          </tr>');
     if (count($RS)==0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não informado.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$cs.' align="center"><b>Não informado.</b></td></tr>');
     } else {
       foreach ($RS as $row) {
         if (f($row,'Filho')>0) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
+          ShowHTML('        <td align="center"> '.f($row,'sq_menu'));
+          ShowHTML('        <td colspan='.$cs.'><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
           $sql = new db_getLinkDataUser; $RS1 = $sql->getInstanceOf($dbms,$w_sq_cliente,0,f($row,'sq_menu'));
           foreach ($RS1 as $row1) {
             if (f($row1,'Filho')>0) {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-              ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+              ShowHTML('        <td align="center"> '.f($row1,'sq_menu'));
+              ShowHTML('        <td colspan='.$cs.' nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
               $sql = new db_getLinkDataUser; $RS2 = $sql->getInstanceOf($dbms,$w_sq_cliente,0,f($row1,'sq_menu'));
               foreach ($RS2 as $row2) {
                 if (f($row2,'Filho')>0) {
                   ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-                  ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                  ShowHTML('        <td align="center"> '.f($row2,'sq_menu'));
+                  ShowHTML('        <td colspan='.$cs.' nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
                   $sql = new db_getLinkDataUser; $RS3 = $sql->getInstanceOf($dbms,$w_sq_cliente,0,f($row2,'sq_menu'));
                   foreach ($RS3 as $row3) {
                     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+                    ShowHTML('        <td align="center"> '.f($row3,'sq_menu'));
                     ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
                     ShowHTML('        <td title="'.f($row3,'link').'"> '.Nvl(substr(f($row3,'link'),0,30),'-'));
                     ShowHTML('        <td> '.Nvl(f($row3,'sigla'),'-'));
@@ -300,6 +308,7 @@ function visualCliente($w_sq_cliente,$O) {
                     $w_imagem=$w_imagemPadrao;
                   } 
                   ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+                  ShowHTML('        <td align="center"> '.f($row2,'sq_menu'));
                   ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome'));
                   ShowHTML('        <td title="'.f($row2,'link').'"> '.Nvl(substr(f($row2,'link'),0,30),'-'));
                   ShowHTML('        <td> '.Nvl(f($row2,'sigla'),'-'));
@@ -320,6 +329,7 @@ function visualCliente($w_sq_cliente,$O) {
                 $w_imagem=$w_imagemPadrao;
               } 
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+              ShowHTML('        <td align="center"> '.f($row1,'sq_menu'));
               ShowHTML('        <td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome'));
               ShowHTML('        <td title="'.f($row1,'link').'"> '.Nvl(substr(f($row1,'link'),0,30),'-'));
               ShowHTML('        <td> '.Nvl(f($row1,'sigla'),'-'));
@@ -340,6 +350,7 @@ function visualCliente($w_sq_cliente,$O) {
             $w_imagem=$w_imagemPadrao;
           } 
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td align="center"> '.f($row,'sq_menu'));
           ShowHTML('        <td nowrap><img src="'.$w_imagem.'" border=0 align="center"><b> '.f($row,'nome'));
           ShowHTML('        <td title="'.f($row,'link').'"> '.Nvl(substr(f($row,'link'),0,30),'-'));
           ShowHTML('        <td> '.Nvl(f($row,'sigla'),'-'));

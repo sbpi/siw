@@ -10,13 +10,15 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getCronograma {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_inicio, $p_fim) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETCRONOGRAMA';
-     $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
-                   'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        18),
-                   'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
-                   'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),
-                   'p_result'                    =>array(null,                                             B_CURSOR,         -1)
+   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_inicio, $p_fim, $p_solic_apoio, $p_restricao) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCronograma';
+     $params=array('p_chave'                =>array(tvl($p_chave),                        B_INTEGER,        18),
+                   'p_chave_aux'            =>array(tvl($p_chave_aux),                    B_INTEGER,        18),
+                   'p_inicio'               =>array(tvl($p_inicio),                       B_DATE,           32),
+                   'p_fim'                  =>array(tvl($p_fim),                          B_DATE,           32),
+                   'p_solic_apoio'          =>array(tvl($p_solic_apoio),                  B_INTEGER,        32),
+                   'p_restricao'            =>array(tvl($p_restricao),                    B_VARCHAR2,       20),
+                   'p_result'               =>array(null,                                 B_CURSOR,         -1)
                   );
      //print_r($params);             
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -11,7 +11,7 @@ create or replace procedure SP_GetSolicRubrica
     p_result               out sys_refcursor
    ) is
 begin
-   If p_restricao is null Then
+   If p_restricao is null or p_restricao = 'SUBORDINACAO' Then
       open p_result for 
          select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.sq_unidade_medida, a.ultimo_nivel,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
@@ -19,15 +19,43 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
                 b.nome nm_cc, a.aplicacao_financeira,
-                c.total_previsto, c.total_real, 
-                coalesce(i.qt_filhos,0) as qt_filhos
+                coalesce((select sum(w.valor_previsto)
+                            from pj_rubrica_cronograma w
+                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica)
+                           where x.sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
+                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                          from pj_rubrica 
+                                                         where sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
+                                                           and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
+                                                        connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                        start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                       )
+                         ),0) total_previsto,
+                coalesce((select sum(w.valor_real)
+                            from pj_rubrica_cronograma w
+                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica)
+                           where x.sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
+                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                          from pj_rubrica 
+                                                         where sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
+                                                           and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
+                                                        connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                        start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                       )
+                         ),0) total_real,
+                c.quantidade,
+                coalesce(i.qt_filhos,0) as qt_filhos,
+                d.sq_unidade_medida, d.nome nm_unidade, d.sigla sg_unidade
            from pj_rubrica                      a
                 inner join ct_cc                b on (a.sq_cc              = b.sq_cc)
-                left  join (select sum(x.valor_previsto) as total_previsto, 
-                                   sum(x.valor_real) as total_real, 
-                                   x.sq_projeto_rubrica
+                left  join co_unidade_medida    d on (a.sq_unidade_medida  = d.sq_unidade_medida)
+                left  join (select sum(x.quantidade) as quantidade, x.sq_projeto_rubrica
                               from pj_rubrica_cronograma x
-                             where ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
+                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica and y.ultimo_nivel = 'S')
+                             where (p_chave   is null or (p_chave   is not null and y.sq_siw_solicitacao   = p_chave))
+                               and ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
                                                                                      (x.fim     between p_inicio and p_fim) or
                                                                                      (p_inicio  between x.inicio and x.fim) or
                                                                                      (p_fim     between x.inicio and x.fim)
@@ -39,16 +67,21 @@ begin
                 left  join (select x.sq_projeto_rubrica, count(y.sq_projeto_rubrica) qt_filhos
                               from pj_rubrica            x
                                    inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_rubrica_pai)
-                             where x.sq_projeto_rubrica = coalesce(p_chave_aux, x.sq_projeto_rubrica)
+                             where (p_chave   is null or (p_chave   is not null and y.sq_siw_solicitacao   = p_chave))
+                               and x.sq_projeto_rubrica = coalesce(p_chave_aux, x.sq_projeto_rubrica)
                             group by x.sq_projeto_rubrica
-                           )               i on (i.sq_projeto_rubrica = a.sq_projeto_rubrica)
+                           )                    i on (i.sq_projeto_rubrica = a.sq_projeto_rubrica)
           where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
             and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
             and (p_ativo                is null or (p_ativo                is not null and a.ativo                = p_ativo))
             and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
             and (p_codigo               is null or (p_codigo               is not null and a.codigo               = p_codigo))
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira))
-            and (p_inicio               is null or (p_inicio               is not null and c.sq_projeto_rubrica   is not null));
+            and (p_inicio               is null or (p_inicio               is not null and c.sq_projeto_rubrica   is not null))
+            and (p_restricao            is null or
+                 p_restricao            <> 'SUBORDINACAO' or
+                 (p_restricao           = 'SUBORDINACAO' and a.ultimo_nivel = 'N')
+                );
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das rubricas
       open p_result for 
@@ -58,15 +91,18 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
                 b.nome nm_cc, a.aplicacao_financeira,
-                c.total_previsto, c.total_real, 
+                c.total_previsto, c.total_real, c.quantidade,
                 coalesce(i.qt_filhos,0) as qt_filhos
            from pj_rubrica                      a
                 inner join ct_cc                b on (a.sq_cc              = b.sq_cc)
                 left  join (select sum(x.valor_previsto) as total_previsto, 
                                    sum(x.valor_real) as total_real, 
+                                   sum(x.quantidade) as quantidade,
                                    x.sq_projeto_rubrica
                               from pj_rubrica_cronograma x
-                             where ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
+                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                             where y.sq_siw_solicitacao = p_chave
+                               and ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
                                                                                      (x.fim     between p_inicio and p_fim) or
                                                                                      (p_inicio  between x.inicio and x.fim) or
                                                                                      (p_fim     between x.inicio and x.fim)
@@ -77,10 +113,11 @@ begin
                            )                    c on (a.sq_projeto_rubrica = c.sq_projeto_rubrica)
                 left  join (select x.sq_projeto_rubrica, count(y.sq_projeto_rubrica) qt_filhos
                               from pj_rubrica            x
-                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_rubrica_pai)
-                             where x.sq_projeto_rubrica = coalesce(p_chave_aux, x.sq_projeto_rubrica)
+                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                             where y.sq_siw_solicitacao = p_chave
+                               and x.sq_projeto_rubrica = coalesce(p_chave_aux, x.sq_projeto_rubrica)
                             group by x.sq_projeto_rubrica
-                           )               i on (i.sq_projeto_rubrica = a.sq_projeto_rubrica)
+                           )               i on (i.sq_projeto_rubrica = a.sq_rubrica_pai)
           where a.sq_siw_solicitacao = p_chave
             and a.ultimo_nivel       = 'N'
             and (p_sq_rubrica_destino is null or (p_sq_rubrica_destino is not null and a.sq_projeto_rubrica <> p_sq_rubrica_destino))
@@ -95,14 +132,17 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
                 b.nome nm_cc, a.aplicacao_financeira,
-                c.total_previsto, c.total_real
+                c.total_previsto, c.total_real, c.quantidade
            from pj_rubrica                       a
                 inner join ct_cc                 b on (a.sq_cc              = b.sq_cc)
                 left  join (select sum(x.valor_previsto) as total_previsto, 
                                    sum(x.valor_real) as total_real, 
+                                   sum(x.quantidade) as quantidade,
                                    x.sq_projeto_rubrica
                               from pj_rubrica_cronograma x
-                             where ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
+                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                             where y.sq_siw_solicitacao = p_chave
+                               and ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
                                                                                      (x.fim     between p_inicio and p_fim) or
                                                                                      (p_inicio  between x.inicio and x.fim) or
                                                                                      (p_fim     between x.inicio and x.fim)
@@ -134,14 +174,17 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
                 b.nome nm_cc, a.aplicacao_financeira,
-                c.total_previsto, c.total_real
+                c.total_previsto, c.total_real, c.quantidade
            from pj_rubrica                       a
                 inner join ct_cc                 b on (a.sq_cc              = b.sq_cc)
                 left  join (select sum(x.valor_previsto) as total_previsto, 
                                    sum(x.valor_real) as total_real, 
+                                   sum(x.quantidade) as quantidade,
                                    x.sq_projeto_rubrica
                               from pj_rubrica_cronograma x
-                             where ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
+                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                             where y.sq_siw_solicitacao = p_chave
+                               and ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
                                                                                      (x.fim     between p_inicio and p_fim) or
                                                                                      (p_inicio  between x.inicio and x.fim) or
                                                                                      (p_fim     between x.inicio and x.fim)

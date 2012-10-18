@@ -238,7 +238,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       $w_total_previsto  = 0;
       $w_total_executado = 0;
       foreach ($RS as $row) {
-        $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,f($row,'sq_projeto_rubrica'),null,null,null);
+        $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,f($row,'sq_projeto_rubrica'),null,null,null,null,null);
         $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
         if (count($RS_Cronograma)>0) $w_rowspan = 'rowspan="2"'; else $w_rowspan = '';
         $l_html .= chr(13).'      <tr valign="top">';

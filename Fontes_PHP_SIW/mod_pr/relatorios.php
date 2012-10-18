@@ -436,7 +436,7 @@ function Rel_Progresso() {
                 // A linha abaixo foi alterada para exibir todo o cronograma dos projetos, a pedido da ABDI.
                 // O funcionamento correto é para apresentar o cronograma do ano corrente ou do ano selecionado pelo usuário.
                 $sql = new db_getCronograma; //$RS_Cronograma = $sql->getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,$w_inicio,$w_fim);
-                $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,null,null);
+                $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,null,null,null,null);
                 $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
                 if (count($RS_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RS_Cronograma)+1).'"'; else $w_rowspan = '';
                 ShowHTML('      <tr valign="top">');

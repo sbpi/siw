@@ -3573,10 +3573,6 @@ function mesAno($l_data, $l_formato=null) {
   }
 }
 
-
-
-
-
 // =========================================================================
 // Monta string html para montagem de calendário do mês informado
 // -------------------------------------------------------------------------

@@ -2228,7 +2228,7 @@ function PesquisaPreco() {
         ShowHTML('  }');
       } else {
         ShowHTML('  if (w_erro) {');
-        ShowHTML('    return confirm(\'Nenhum item foi selecionado, deseja continuar?\'); ');
+        ShowHTML('    return confirm("Nenhum item foi selecionado, deseja continuar?"); ');
         ShowHTML('  }');
       }
       ShowHTML('  for (ind=1; ind < theForm["w_chave_aux[]"].length; ind++) {');

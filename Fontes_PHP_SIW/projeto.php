@@ -1579,6 +1579,9 @@ function Rubrica() {
   $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'FN');
   if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
 
+  // Recupera os dados da Solicitação
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
+
   if ($w_troca > '' && $O!='E') {
     // Se for recarga da página
     $w_sq_cc                = $_REQUEST['w_sq_cc'];
@@ -1599,6 +1602,14 @@ function Rubrica() {
     } else {
       $RS = SortArray($RS,'codigo','asc','nome','asc','descricao','asc','aplicacao_financeira','asc','ativo','asc');
     }
+    // Configura indicador de exibição da unidade de medida
+    $w_unid_med = false;
+    foreach($RS as $row) {
+      if (nvl(f($row,'sq_unidade_medida'),'')!='') {
+        $w_unid_med = true;
+        break;
+      }
+    }
   } elseif (strpos('AEV',$O)!==false || nvl($w_copia,'')!='') {
     // Recupera os dados do endereço informado
     $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null,null);
@@ -1617,9 +1628,8 @@ function Rubrica() {
     $w_filhos               = f($RS,'qt_filhos');
   } elseif (Nvl($w_sq_pessoa,'')=='') {
     // Se a etapa não tiver responsável atribuído, recupera o responsável pelo projeto
-    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-    $w_sq_pessoa    = f($RS,'solicitante');
-    $w_sq_unidade   = f($RS,'sq_unidade_resp');
+    $w_sq_pessoa    = f($RS_Solic,'solicitante');
+    $w_sq_unidade   = f($RS_Solic,'sq_unidade_resp');
   } 
   cabecalho();
   head();
@@ -1676,51 +1686,64 @@ function Rubrica() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    $cs = 0;
     if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305') { 
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AF','aplicacao_financeira').'</td>');
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','ativo').'</td>');
-      ShowHTML('          <td colspan="2"><b>Orçamento</td>');
-      ShowHTML('          <td rowspan="2" class="remover" valign="top"><b>Operações </td>');
+      $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</td>');
+      $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
+      $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</td>');
+      $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('A.F.','aplicacao_financeira').'</td>');
+      $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','ativo').'</td>');
+      if ($w_unid_med) ShowHTML('          <td colspan="2"><b>Quantitativo</td>');
+      ShowHTML('          <td colspan="2"><b>Orçamento'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : '').'</td>');
+      $cs++; ShowHTML('          <td rowspan="2" class="remover" valign="top"><b>Operações </td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td align="center"><b>'.LinkOrdena('Previsto','total_previsto').'</td>');
-      ShowHTML('          <td align="center"><b>'.LinkOrdena('Realizado','total_real').'</td>');        
+      if ($w_unid_med) {
+        $cs++; ShowHTML('          <td><b>'.LinkOrdena('U.M.','sg_unidade').'</td>');
+        $cs++; ShowHTML('          <td><b>'.LinkOrdena('Qtd.','quantidade').'</td>');
+      }
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('Previsto','total_previsto').'</td>');
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('Realizado','total_real').'</td>');        
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td><b>'.LinkOrdena('Codigo','codigo').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('AF','aplicacao_financeira').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
-      ShowHTML('          <td class="remover" valign="top"><b>Operações </td>');
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('Codigo','codigo').'</td>');
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('AF','aplicacao_financeira').'</td>');
+      $cs++; ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
+      $cs++; ShowHTML('          <td class="remover" valign="top"><b>Operações </td>');
       ShowHTML('        </tr>');
     }
-    if (count($RS)<=0) {
+    if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$cs.' align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       $sql = new db_getSolicData; $RS2 = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
       $w_valor_projeto = f($RS2,'valor');
       $w_total_previsto = 0;
-      $w_total_real     = 0;      
+      $w_total_real     = 0;
       foreach ($RS1 as $row) {
-        $w_total_previsto += nvl(f($row,'total_previsto'),0);
-        $w_total_real     += nvl(f($row,'total_real'),0);
+        $w_folha = ((f($row,'ultimo_nivel')=='S') ? ' class="folha"' : '');
+        if (f($row,'ultimo_nivel')=='S') {
+          $w_total_previsto += nvl(f($row,'total_previsto'),0);
+          $w_total_real     += nvl(f($row,'total_real'),0);
+        }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row,'codigo').'</td>');
-        ShowHTML('        <td>'.f($row,'nome').'</td>');
-        ShowHTML('        <td>'.f($row,'descricao').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_aplicacao_financeira').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td'.$w_folha.'>'.f($row,'codigo').'</td>');
+        ShowHTML('        <td'.$w_folha.'>'.f($row,'nome').'</td>');
+        ShowHTML('        <td'.$w_folha.'>'.f($row,'descricao').'</td>');
+        ShowHTML('        <td align="center"'.$w_folha.'>'.f($row,'nm_aplicacao_financeira').'</td>');
+        ShowHTML('        <td align="center"'.$w_folha.'>'.f($row,'nm_ativo').'</td>');
         if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305') {
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'total_previsto')).'</td>');
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'total_real')).'</td>');
+          if ($w_unid_med) {
+            ShowHTML('        <td align="center" title="'.f($row,'nm_unidade').'"'.$w_folha.'>'.f($row,'sg_unidade').'</td>');
+            ShowHTML('        <td align="center"'.$w_folha.'>'.((nvl(f($row,'quantidade'),'')=='' || nvl(f($row,'sq_unidade_medida'),'')=='') ? '&nbsp;' : formatNumber(f($row,'quantidade'),0)).'</td>');
+          }
+          ShowHTML('        <td align="right"'.$w_folha.'>'.formatNumber(f($row,'total_previsto')).'</td>');
+          ShowHTML('        <td align="right"'.$w_folha.'>'.formatNumber(f($row,'total_real')).'</td>');
         }
         ShowHTML('        <td class="remover">');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar os dados deste registro.">AL</A>&nbsp');
@@ -1734,24 +1757,24 @@ function Rubrica() {
       } 
       if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305') {
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="5" align="right"><b>Totais</td>'); 
+        ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Totais</td>'); 
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_previsto).'</td>');
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_real).'</td>');
         ShowHTML('      </tr>');
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="5" align="right"><b>Total do projeto</td>'); 
+        ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Total do projeto</td>'); 
         ShowHTML('        <td align="right">-'.formatNumber($w_valor_projeto).'</td>');
         ShowHTML('        <td align="right">-'.formatNumber($w_valor_projeto).'</td>');
         ShowHTML('      </tr>');
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="5" align="right"><b>Saldo disponível</td>'); 
+        ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Saldo disponível</td>'); 
         ShowHTML('        <td align="right"><b>'.formatNumber($w_valor_projeto-$w_total_previsto).'</td>');
         ShowHTML('        <td align="right"><b>'.formatNumber($w_valor_projeto-$w_total_real).'</td>');
         ShowHTML('      </tr>');
       }
     } 
     ShowHTML('    </table>');
-    ShowHTML('      <tr><td>Legenda: AF - Aplicação financeira.</td>');
+    ShowHTML('      <tr><td>Legenda: [A.F.] Aplicação financeira'.(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'</td>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -1833,8 +1856,8 @@ function AtualizaRubrica() {
   $w_chave_rub  = $_REQUEST['w_chave_rub'];
 
   // Recupera os dados do projeto
-  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $w_cabecalho  = f($RS_Solic,'titulo').' ('.$w_chave.')';
 
   if ($w_troca > '' && $O!='E') {
     // Se for recarga da página
@@ -1856,7 +1879,7 @@ function AtualizaRubrica() {
     }
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do cronograma
-    $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,$w_chave_rub,null,null,null);
+    $sql = new db_getCronograma; $RS_Cronograma = $sql->getInstanceOf($dbms,$w_chave_rub,null,null,null,null,null);
 
     // Recupera todos os dados do projeto e rubrica
     $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_rub,null,null,null,null,null,null,null);
@@ -1921,7 +1944,7 @@ function AtualizaRubrica() {
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</b></td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AF','aplicacao_financeira').'</b></td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','ativo').'</b></td>');
-    ShowHTML('          <td colspan="2"><b>Orçamento</b></td>');
+    ShowHTML('          <td colspan="2"><b>Orçamento'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : '').'</b></td>');
     if($O==L)ShowHTML('          <td rowspan="2" valign="top"><b>Operação </b></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2121,7 +2144,7 @@ function Etapas() {
   if (!count($RS)<=0) {
     $w_texto_titulo = '<b>Dados das etapas de mesma subordinação:</b>:<br>';
     $w_texto = '<table border=1 bgcolor="#FAEBD7">'.
-               '<tr valign="top" align=center><td><b>Ordem<td><b>Título<td><b>Início<td><b>Fim<td><b>Orçamento<td><b>Peso';
+               '<tr valign="top" align=center><td><b>Ordem<td><b>Título<td><b>Início<td><b>Fim<td><b>Orçam.'.((nvl(f($RS_Projeto,'sb_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sb_moeda').')' : '').'<td><b>Peso';
     foreach ($RS as $row) {
       if (f($row,'ordena')=='0') {
         $w_texto .= '<tr valign=top>';
@@ -2221,28 +2244,29 @@ function Etapas() {
     }
     // Recupera as etapas principais
     $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
+    $cs  = 0;
 
     ShowHTML('        <a accesskey="M" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'/mod_pr/project.php?par=Etapa&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Importação MS-Project').'&SG=IMPPROJ\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">I<u>m</u>portação MS-Project</a>&nbsp');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan=2><b>Etapa</td>');
-    ShowHTML('          <td rowspan=2><b>Título</td>');
-    ShowHTML('          <td rowspan=2><b>Responsável</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Etapa</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Título</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Responsável</td>');
     ShowHTML('          <td colspan=2><b>Execução prevista</td>');
-    ShowHTML('          <td rowspan=2><b>Orçam.</td>');
-    ShowHTML('          <td rowspan=2><b>Peso</td>');
-    ShowHTML('          <td rowspan=2><b>Arq.</td>');
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Orçam.'.((nvl(f($RS_Projeto,'sb_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sb_moeda').')' : '').'</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Peso</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Arq.</td>');
+    $cs++; ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>De</td>');
-    ShowHTML('          <td><b>Até</td>');
+    $cs++; ShowHTML('          <td><b>De</td>');
+    $cs++; ShowHTML('          <td><b>Até</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$cs.' align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Etapas do projeto
       // Recupera todos os registros para a listagem
@@ -2348,7 +2372,7 @@ function Etapas() {
       ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('        ATENÇÃO:<ul>');
       ShowHTML('        <li>O período previsto para execução desta etapa deve estar contido no período de '.$w_inicio_pai.' a '.$w_fim_pai.'.');
-      ShowHTML('        <li>O orçamento previsto para execução desta etapa não pode ser superior a '.$w_valor_pai.'.');
+      ShowHTML('        <li>O orçamento previsto para execução desta etapa não pode ser superior a'.((nvl(f($RS_Projeto,'sb_moeda'),'')!='') ? ' '.f($RS_Projeto,'sb_moeda').' ' : ' ').$w_valor_pai.'.');
       ShowHTML('        </ul></b></font></td>');
       ShowHTML('      </tr>');
 
@@ -2390,7 +2414,7 @@ function Etapas() {
     ShowHTML('        <td><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);"  onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('        <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b>Orça<u>m</u>ento previsto:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_orcamento" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_orcamento.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Orçamento previsto para execução desta etapa."></td>');
+    ShowHTML('        <td><b>Orça<u>m</u>ento previsto:<br>'.((nvl(f($RS_Projeto,'sb_moeda'),'')!='') ? f($RS_Projeto,'sb_moeda') : '').' </b><input '.$w_Disabled.' accesskey="M" type="text" name="w_orcamento" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_orcamento.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Orçamento previsto para execução desta etapa."></td>');
     MontaRadioSN('<b>Permite vinculação de tarefas?</b>',$w_vincula_atividade,'w_vincula_atividade','Marque SIM se desejar que tarefas sejam vinculadas a esta etapa.');
     MontaRadioNS('<b>Permite vinculação de contratos?</b>',$w_vincula_contrato,'w_vincula_contrato','Marque SIM se desejar que contratos sejam vinculados a esta etapa.');
     if ($w_pacote=='N') {
@@ -2467,15 +2491,19 @@ function Cronograma() {
   $w_edita      = nvl($_REQUEST['w_edita'],'S');
 
   // Recupera todos os dados do projeto e rubrica
-  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,'PJGERAL');
-  $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
-  $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
-  $w_projeto  = nvl(f($RS,'codigo_interno'),$w_chave_pai).' - '.f($RS,'titulo').' ('.$w_inicio_projeto.' - '.$w_fim_projeto.')';
-  $w_valor_projeto = f($RS,'valor');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave_pai,'PJGERAL');
+  $w_inicio_projeto = formataDataEdicao(f($RS_Solic,'inicio'));
+  $w_fim_projeto    = formataDataEdicao(f($RS_Solic,'fim'));
+  $w_projeto  = nvl(f($RS_Solic,'codigo_interno'),$w_chave_pai).' - '.f($RS_Solic,'titulo').' ('.$w_inicio_projeto.' - '.$w_fim_projeto.')';
+  $w_valor_projeto = f($RS_Solic,'valor');
+  
   // Recupera todos os dados do projeto e rubrica
   $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,null,null,null);
   foreach ($RS as $row) {
     $w_rubrica        = f($row,'codigo').' - '.f($row,'nome');
+    $w_sq_unid_med    = nvl(f($row,'sq_unidade_medida'),'');
+    $w_nm_unid_med    = nvl(f($row,'nm_unidade'),'');
+    $w_sg_unid_med    = nvl(f($row,'sg_unidade'),'');
     break;
   }
 
@@ -2485,18 +2513,20 @@ function Cronograma() {
     $w_fim            = $_REQUEST['w_fim'];
     $w_valor_previsto = $_REQUEST['w_valor_previsto'];
     $w_valor_real     = $_REQUEST['w_valor_real'];
+    $w_quantidade     = $_REQUEST['w_quantidade'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null);
+    $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null);
     $RS = SortArray($RS,'inicio', 'asc', 'fim', 'asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null);
+    $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null);
     foreach ($RS as $row) {
       $w_inicio         = FormataDataEdicao(f($row,'inicio'),1);
       $w_fim            = FormataDataEdicao(f($row,'fim'),1);
       $w_valor_previsto = formatNumber(f($row,'valor_previsto'));
       $w_valor_real     = formatNumber(f($row,'valor_real'));
+      $w_quantidade     = formatNumber(f($row,'quantidade'),0);
     }
   } 
   cabecalho();
@@ -2517,6 +2547,7 @@ function Cronograma() {
       CompData('w_inicio','Início previsto','<=','w_fim_projeto','Fim previsto do projeto');
       CompData('w_fim','Fim previsto','>=','w_inicio_projeto','Início previsto do projeto');
       CompData('w_fim','Fim previsto','<=','w_fim_projeto','Fim previsto do projeto');
+      if (nvl($w_sq_unid_med,'')!='') Validate('w_quantidade','Quantidade','VALOR','1',1,10,'','0123456789.');
       Validate('w_valor_previsto','Valor previsto','VALOR','1',4,18,'','0123456789.,');
       if ($P1!=1) {      
         Validate('w_valor_real','Valor real','VALOR','1',4,18,'','0123456789.,');
@@ -2558,7 +2589,14 @@ function Cronograma() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td colspan=2><b>Período</td>');
-    ShowHTML('          <td colspan=2><b>Orçamento</td>'); 
+    if (nvl($w_sq_unid_med,'')!='') {
+      if ($w_tipo!='WORD') {
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd. ('.$w_nm_unid_med,'quantidade').')</td>');
+      } else {
+        ShowHTML('          <td rowspan=2><b>Qtd. ('.$w_nm_unid_med.')</td>');
+      }
+    }
+    ShowHTML('          <td colspan=2><b>Orçamento'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : '').'</td>'); 
     if ($w_edita=='S') ShowHTML('          <td class="remover" rowspan=2 valign="top"><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2572,13 +2610,13 @@ function Cronograma() {
       ShowHTML('          <td><b>Fim</td>');
       ShowHTML('          <td><b>Previsto</td>');
       ShowHTML('          <td><b>Realizado</td>');
-      ShowHTML('        </tr>');    
     }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
+      $w_qtd       = 0;
       $w_previsto  = 0;
       $w_realizado = 0;
       foreach ($RS as $row) {
@@ -2586,6 +2624,7 @@ function Cronograma() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'fim'),5).'</td>');
+        if (nvl($w_sq_unid_med,'')!='') ShowHTML('        <td align="center">'.formatNumber(f($row,'quantidade'),0).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_previsto')).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_real')).'</td>');
         if ($w_edita=='S') {
@@ -2595,13 +2634,16 @@ function Cronograma() {
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');
+        $w_qtd       += f($row,'quantidade');
         $w_previsto  += f($row,'valor_previsto');
         $w_realizado += f($row,'valor_real');
       } 
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
       ShowHTML('        <td align="right" colspan="2"><b>Totais&nbsp;</b></td>');
+      if (nvl($w_sq_unid_med,'')!='') ShowHTML('        <td align="center"><b>'.formatNumber($w_qtd,0).'</b></td>');
       ShowHTML('        <td align="right"><b>'.formatNumber($w_previsto).'</b></td>');
       ShowHTML('        <td align="right"><b>'.formatNumber($w_realizado).'</b></td>');
+      if (nvl($w_edita,'S')!='N') ShowHTML('        <td>&nbsp;</td>');
       ShowHTML('      </tr>');
     } 
     ShowHTML('    </table>');
@@ -2626,11 +2668,16 @@ function Cronograma() {
     ShowHTML('<INPUT type="hidden" name="w_valor_previsto_ant" value="'.$w_valor_previsto.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr>');
+    ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início do período de referência do cronograma.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('        <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Término do período de referência do cronograma.">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('        <td><b><u>P</u>revisto:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor previsto para a rubrica no período."></td>');
-    if ($P1!=1) ShowHTML('        <td><b><u>E</u>xecutado:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor executado."></td>');
+    if (nvl($w_sq_unid_med,'')!='') {
+      ShowHTML('        <td><b><u>Q</u>td '.$w_nm_unid_med.':<br></b><input '.$w_Disabled.' accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" style="text-align:right;" onKeyDown="FormataValor(this,10,0,event);" title="Quantidade de unidades previstas."></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_quantidade" value="0">');
+    }
+    ShowHTML('        <td><b><u>P</u>revisto:<br>'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? f($RS_Solic,'sb_moeda') : '').' </b><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor previsto para a rubrica no período."></td>');
+    if ($P1!=1) ShowHTML('        <td><b><u>E</u>xecutado:<br>'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? f($RS_Solic,'sb_moeda') : '').' </b><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor executado."></td>');
     else        ShowHTML('<INPUT type="hidden" name="w_valor_real" value="'.Nvl($w_valor_real,0).'">');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
@@ -2669,9 +2716,9 @@ function AtualizaEtapa() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_ancora     = $_REQUEST['w_ancora'];
   
-  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
-  $w_ige        = f($RS,'ige');
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $w_cabecalho  = f($RS_Solic,'titulo').' ('.$w_chave.')';
+  $w_ige        = f($RS_Solic,'ige');
   // Configura uma variável para testar se as etapas podem ser atualizadas.
   // Projetos concluídos ou cancelados não podem ter permitir a atualização.
   if (Nvl(f($RS,'sg_tramite'),'--') == 'EE') $w_fase = 'S'; else $w_fase = 'N';
@@ -2734,9 +2781,8 @@ function AtualizaEtapa() {
     }
   } elseif (Nvl($w_sq_pessoa,'')=='') {
     // Se a etapa não tiver responsável atribuído, recupera o responsável pelo projeto
-    $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-    $w_sq_pessoa    = f($RS,'solicitante');
-    $w_sq_unidade   = f($RS,'sq_unidade_resp');
+    $w_sq_pessoa    = f($RS_Solic,'solicitante');
+    $w_sq_unidade   = f($RS_Solic,'sq_unidade_resp');
   } 
   cabecalho();
   head();
@@ -2890,7 +2936,7 @@ function AtualizaEtapa() {
     ShowHTML('          <td rowspan=2><b>Responsável</td>');
     ShowHTML('          <td colspan=2><b>Execução Prevista</td>');
     ShowHTML('          <td colspan=2><b>Execução Real</td>');
-    ShowHTML('          <td rowspan=2><b>Orçamento</td>');
+    ShowHTML('          <td rowspan=2><b>Orçam.'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : '').'</td>');
     ShowHTML('          <td rowspan=2><b>Conc.</td>');
     ShowHTML('          <td rowspan=2><b>Peso</td>');
     ShowHTML('          <td rowspan=2><b>Tar.</td>');
@@ -3011,7 +3057,7 @@ function AtualizaEtapa() {
     ShowHTML('          <tr valign="top">');
     ShowHTML('              <td>Previsão início:<b><br>'.FormataDataEdicao(Nvl(f($RS_Etapa,'inicio_previsto'),time())).'</td>');
     ShowHTML('              <td>Previsão término:<b><br>'.FormataDataEdicao(f($RS_Etapa,'fim_previsto')).'</td>');
-    ShowHTML('              <td>Orçamento previsto:<b><br>'.formatNumber(f($RS_Etapa,'orcamento')).'</td>');
+    ShowHTML('              <td>Orçamento previsto:<b><br>'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? f($RS_Solic,'sb_moeda').' ' : ' ').formatNumber(f($RS_Etapa,'orcamento')).'</td>');
     ShowHTML('          <tr valign="top">');
     $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
     ShowHTML('              <td>Responsável pela etapa:<b><br>'.f($RS,'nome_resumido').'</td>');
@@ -3211,8 +3257,8 @@ function InteressadoPacote() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
 
-  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
+  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $w_cabecalho  = f($RS_Solic,'titulo').' ('.$w_chave.')';
 
   // Recupera os dados da unidade
 
@@ -3297,7 +3343,7 @@ function InteressadoPacote() {
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Setor</b></td>');
       ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Execução prevista</b></td>');
       ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Execução real</b></td>');
-      ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Orçamento</b></td>');
+      ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Orçam.'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : '').'</b></td>');
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Conc.</b></td>');
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Tar.</b></td>');
       ShowHTML('          </tr>');
@@ -4550,6 +4596,7 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="w_concluida" value="S">');
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
+  $w_sb_moeda = ((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? f($RS_Solic,'sb_moeda').' ' : '');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   switch (f($RS_Menu,'data_hora')) {
     case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto do projeto.">'.ExibeCalendario('Form','w_fim_real').'</td>'); break;
@@ -4559,7 +4606,7 @@ function Concluir() {
     case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de início previsto do projeto."></td>');
             ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data de término previsto do projeto."></td>'); break;
   } 
-  ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
+  ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:<br>'.$w_sb_moeda.' </b><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
   ShowHTML('          </table>');
   ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -4602,24 +4649,22 @@ function EtapaLinha($l_chave, $l_chave_aux, $l_titulo, $l_resp, $l_setor, $l_ini
       $l_recurso = $l_recurso . chr(13) . '      </tr></td>';
     }
   }
-  if ($l_recurso > '')
-    $l_row = 'rowspan=2'; else
-    $l_row = '';
+  if ($l_recurso > '') $l_row = 'rowspan=2'; else $l_row = '';
   $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
 
   $grupo = MontaOrdemEtapa($l_chave_aux);
+  
   if ($P4 != 1) {
 
-
     if ($l_destaque != '<b>' && $P4 != 1)
-      $imagem = '<td width="10" nowrap>' . montaArvore($l_chave . '_' . $grupo) . '</td>'; else
+      $imagem = '<td width="10" nowrap>' . montaArvore($l_chave . '_' . $grupo) . '</td>'; 
+    else
       $imagem='<td width="10"></td>';
 
     //$fechado = 'style="display:none"';
     $fechado = 'style="display:none"';
 
-    if (strpos($grupo, '.') === false)
-      $fechado = '';
+    if (strpos($grupo, '.') === false) $fechado = '';
 
     $l_html .= chr(13) . '      <tr id="tr-' . $l_chave . '_' . str_replace(".", "-", $grupo) . '" class="arvore" valign="top"  ' . $fechado . ' bgcolor="' . $w_cor . '">';
   } else {
@@ -5412,7 +5457,7 @@ function Grava() {
         foreach($RS as $row) { $RS = $row; break;}
         if(f($row,'qt_filhos')>0) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Exite EAP vinculada a está EAP!\');');
+          ShowHTML('  alert("Exite item vinculada a está etapa!");');
           ShowHTML(' history.back(1);');
           ScriptClose();
           exit();          
@@ -5433,10 +5478,10 @@ function Grava() {
       
       if($erro){
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Número de ordem repetido('.$_REQUEST['w_ordem'].'). Verifique os outros itens de mesma subordinação.\');');
+        ShowHTML('  alert("Número de ordem repetido('.$_REQUEST['w_ordem'].'). Verifique os outros itens de mesma subordinação.");');
         ScriptClose();
-        retornaFormulario('w_ordem');        
-      }else{      
+        retornaFormulario('w_ordem');
+      } else {
         $SQL = new dml_putProjetoEtapa; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_chave_pai'],
             $_REQUEST['w_titulo'],$_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_inicio'],
             $_REQUEST['w_fim'],$_REQUEST['w_perc_conclusao'],$_REQUEST['w_orcamento'],$_REQUEST['w_sq_pessoa'],
@@ -5464,7 +5509,7 @@ function Grava() {
         for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
           if (Nvl($_POST['w_valor_real'][$i],'')>'') {
              $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave_rub'],$_POST['w_chave_aux'][$i],
-                  null, null,null,$_POST['w_valor_real'][$i]);
+                  null, null,null,$_POST['w_valor_real'][$i],null);
           }
         }
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
@@ -5474,7 +5519,7 @@ function Grava() {
         ScriptClose();
       } else {
         if($O=='I') {
-          $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
+          $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,null);
           if(count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não pode haver sobreposição de períodos para a mesma rubrica!\');');
@@ -5485,7 +5530,7 @@ function Grava() {
         } 
         $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave_pai'],null,null,null,null,null,null,null,null);
         foreach($RS as $row) {
-           $w_total_previsto += f($row,'total_previsto');
+           if (f($row,'total_previsto')=='S') $w_total_previsto += f($row,'total_previsto');
         }
         $w_total_previsto += toNumber($_REQUEST['w_valor_previsto']) - toNumber($_REQUEST['w_valor_previsto_ant']); 
         $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave_pai'],'PJGERAL');
@@ -5498,7 +5543,8 @@ function Grava() {
           exit();
         }          
         $SQL = new dml_putCronograma; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
-            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real'],$_REQUEST['w_quantidade']);
+            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real'],
+            $_REQUEST['w_quantidade']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
         $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);

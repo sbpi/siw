@@ -4746,7 +4746,7 @@ function Grava() {
         for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
           if (Nvl($_POST['w_valor_real'][$i],'')>'') {
              $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave_rub'],$_POST['w_chave_aux'][$i],
-                  null, null,null,$_POST['w_valor_real'][$i]);
+                  null, null,null,$_POST['w_valor_real'][$i],null);
           }
         }
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
@@ -4756,7 +4756,7 @@ function Grava() {
         ScriptClose();
       } else {
         if($O=='I') {
-          $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
+          $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,null);
           if(count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não pode haver sobreposição de períodos para a mesma rubrica!\');');
@@ -4780,7 +4780,8 @@ function Grava() {
           exit();
         }          
         $SQL = new dml_putCronograma; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
-            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real'],$_REQUEST['w_quantidade']);
+            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real'],
+            $_REQUEST['w_quantidade']);
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
         $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);

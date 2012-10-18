@@ -179,6 +179,11 @@ A.SS:hover
 {
   TEXT-DECORATION: none
 }
+.BTM
+{
+  font-size: 80%;
+}
+
 .STB
 {
   BORDER-RIGHT: 1px solid;
@@ -243,6 +248,10 @@ table
 TD
 {  
   font-size: 80%;
+}
+.folha
+{  
+FONT-WEIGHT: bold;
 }
 .LH
 {

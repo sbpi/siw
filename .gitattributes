@@ -1205,6 +1205,7 @@ Fontes_PHP_SIW/classes/sp/dml_putConvOutroRep.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvPreposto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCronMeta.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCronograma.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCronogramaApoio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDadosAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDataEspecial.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDcOcorrencia.php -text
@@ -1392,6 +1393,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSiwPesCC.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwPessoaMail.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwTramiteFluxo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicApoio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicCelular.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
@@ -1719,6 +1721,7 @@ Fontes_PHP_SIW/funcoes/selecaoTelefone.php -text
 Fontes_PHP_SIW/funcoes/selecaoTelefoneTT.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAcordo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAfastamento.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoApoio.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivoTab.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAutenticacao.php -text
@@ -2022,6 +2025,7 @@ Fontes_PHP_SIW/mod_pe/relatorios.php -text
 Fontes_PHP_SIW/mod_pe/tabelas.php -text
 Fontes_PHP_SIW/mod_pe/visualprograma.php -text
 Fontes_PHP_SIW/mod_pr/exibeprojeto.php -text
+Fontes_PHP_SIW/mod_pr/fonte.php -text
 Fontes_PHP_SIW/mod_pr/graficos.php -text
 Fontes_PHP_SIW/mod_pr/project.php -text
 Fontes_PHP_SIW/mod_pr/relatorios.php -text
@@ -4120,6 +4124,7 @@ SP_Oracle92/siw/sp_putConvOutroRep.prc -text
 SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putCronMeta.prc -text
 SP_Oracle92/siw/sp_putCronograma.prc -text
+SP_Oracle92/siw/sp_putCronogramaApoio.prc -text
 SP_Oracle92/siw/sp_putDocumentoAnexa.prc -text
 SP_Oracle92/siw/sp_putDocumentoArqCen.prc -text
 SP_Oracle92/siw/sp_putDocumentoArqSet.prc -text

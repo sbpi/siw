@@ -78,6 +78,7 @@ begin
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
+                                      where y.sq_siw_solicitacao = p_chave
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h  on (h.sq_projeto_etapa = a.sq_projeto_etapa)
                 left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
@@ -86,6 +87,7 @@ begin
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
+                                      where y.sq_siw_solicitacao = p_chave
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave

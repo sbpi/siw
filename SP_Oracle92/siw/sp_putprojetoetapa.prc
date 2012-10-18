@@ -96,8 +96,7 @@ begin
           co_uf                 = p_uf,
           sq_cidade             = p_cidade,
           peso                  = p_peso
-      where sq_siw_solicitacao = p_chave
-        and sq_projeto_etapa   = p_chave_aux;
+      where sq_projeto_etapa   = p_chave_aux;
 
       -- Se houve alteração da subordinação, recalcula para o pai anterior
       If coalesce(w_pai,0) <> coalesce(p_chave_pai,0) Then
@@ -139,11 +138,11 @@ begin
       -- e os pesos relativos de cada uma das etapas do projeto
       If w_pai is not null Then sp_calculaPercEtapa(null, w_pai); End If;
 
-    -- Atualiza os pesos das etapas
-    sp_ajustaPesoEtapa(p_chave, null);
+      -- Atualiza os pesos das etapas
+      sp_ajustaPesoEtapa(p_chave, null);
 
-    -- Atualiza as datas de início e término das etapas superiores
-    sp_ajustaDataEtapa(p_chave);
+      -- Atualiza as datas de início e término das etapas superiores
+      sp_ajustaDataEtapa(p_chave);
 
    
    End If;
