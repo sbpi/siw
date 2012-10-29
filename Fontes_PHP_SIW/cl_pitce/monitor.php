@@ -4814,7 +4814,7 @@ function Grava() {
       $SQL = new dml_putProjetoRubrica; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
           $_REQUEST['w_chave_pai'],$_REQUEST['w_unidade_medida'],nvl($_REQUEST['w_ultimo_nivel'],'S'),
           $_REQUEST['w_sq_cc'], $_REQUEST['w_codigo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-          $_REQUEST['w_ativo'],$_REQUEST['w_aplicacao_financeira'], $_REQUEST['w_copia']);
+          $_REQUEST['w_ativo'],$_REQUEST['w_aplicacao_financeira'],$_REQUEST['w_exige_autorizacao'], $_REQUEST['w_copia']);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);

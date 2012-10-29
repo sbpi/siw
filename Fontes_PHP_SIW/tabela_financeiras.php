@@ -14,14 +14,17 @@ include_once('classes/sp/db_getBankHouseData.php');
 include_once('classes/sp/db_getBankList.php');
 include_once('classes/sp/db_getBankData.php');
 include_once('classes/sp/db_getMoeda.php');
+include_once('classes/sp/db_getMoedaCotacao.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_CtCc.php');
 include_once('classes/sp/dml_CoBanco.php');
 include_once('classes/sp/dml_CoAgencia.php');
 include_once('classes/sp/dml_CoMoeda.php');
+include_once('classes/sp/dml_CoMoedaCotacao.php');
 include_once('funcoes/selecaoCCSubordination.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoBanco.php');
+include_once('funcoes/selecaoMoeda.php');
 
 
 // =========================================================================
@@ -73,8 +76,15 @@ $p_ordena       = $_REQUEST['p_ordena'];
 $p_codigo       = $_REQUEST['p_codigo'];
 $p_nome         = trim(upper($_REQUEST['p_nome']));
 $p_ativo        = $_REQUEST['p_ativo'];
+$p_moeda        = $_REQUEST['p_moeda'];
+$p_inicio       = $_REQUEST['p_inicio'];
+$p_fim          = $_REQUEST['p_fim'];
 
-if ($O=='') $O='L';
+if ($O=='' && upper($_REQUEST['par'])=='MOEDACOTACAO') {
+  $O='P';
+} elseif ($O=='') {
+  $O='L';
+} 
 
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão'; break;
@@ -180,7 +190,7 @@ function CentroCusto() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
-      ShowHTML('  if (confirm(\'Confirma herança dos dados da opção selecionada?\')) {');
+      ShowHTML('  if (confirm("Confirma herança dos dados da opção selecionada?")) {');
       ShowHTML('     window.close(); ');
       ShowHTML('     opener.focus(); ');
       ShowHTML('     return true; ');
@@ -413,7 +423,7 @@ function CentroCusto() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -484,7 +494,7 @@ function Agencia() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='P') {
@@ -519,13 +529,9 @@ function Agencia() {
   if ($O=='L') {
     ShowHTML('<tr><td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('<a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_sq_banco='.$p_sq_banco.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     } 
-    if ($p_sq_banco.$p_nome.$p_ativo.$p_ordena>'') {
-      ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_sq_banco='.$p_sq_banco.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
-    } else {
-      ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_sq_banco='.$p_sq_banco.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'"><u>F</u>iltrar (Inativo)</a>');
-    } 
+    ShowHTML('        <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"></u>F</u>iltrar (Ativo)</font>' : '</u>F</u>iltrar (Inativo)').'</a>');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -645,7 +651,7 @@ function Agencia() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -709,7 +715,7 @@ function Banco() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='P') {
@@ -742,13 +748,9 @@ function Banco() {
   if ($O=='L') {
     ShowHTML('<tr><td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('<a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_codigo='.$p_codigo.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     } 
-    if ($p_nome.$p_codigo.$p_ativo.$p_ordena>'') {
-      ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_codigo='.$p_codigo.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
-    } else {
-      ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_codigo='.$p_codigo.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'"><u>F</u>iltrar (Inativo)</a>');
-    } 
+    ShowHTML('        <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"></u>F</u>iltrar (Ativo)</font>' : '</u>F</u>iltrar (Inativo)').'</a>');
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -863,7 +865,7 @@ function Banco() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -936,7 +938,7 @@ function Moeda() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } 
@@ -1058,7 +1060,7 @@ function Moeda() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1068,6 +1070,225 @@ function Moeda() {
   ShowHTML('</table>');
   ShowHTML('</center>');
 }
+// =========================================================================
+// Rotina de cadastramento das cotações
+// -------------------------------------------------------------------------
+function MoedaCotacao() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave  = $_REQUEST['w_chave'];
+
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_moeda            = $_REQUEST['w_moeda'];
+    $w_data             = $_REQUEST['w_data'];
+    $w_taxa_compra      = $_REQUEST['w_taxa_compra'];
+    $w_taxa_venda       = $_REQUEST['w_taxa_venda'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $sql = new db_getMoedaCotacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$p_moeda,$p_inicio,$p_fim,null);
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'data','desc','nm_moeda','asc');
+    } else {
+      $RS = SortArray($RS,'data','desc','nm_moeda','asc');
+    }
+  } elseif (strpos('AEV',$O)!==false) {
+    // Recupera os dados do endereço informado
+    $sql = new db_getMoedaCotacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_moeda            = f($RS,'sq_moeda');
+    $w_nm_moeda         = f($RS,'nm_moeda');
+    $w_data             = formataDataEdicao(f($RS,'data'));
+    $w_taxa_compra      = formatNumber(f($RS,'taxa_compra'),4);
+    $w_taxa_venda       = formatNumber(f($RS,'taxa_venda'),4);
+  } 
+
+  Cabecalho();
+  head();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if (strpos('IAEP',$O)!==false) {
+    ScriptOpen('JavaScript');
+    SaltaCampo();
+    CheckBranco();
+    FormataData();
+    FormataValor();
+    if ($O=='P') {
+      ShowHTML('function hoje() {');
+      ShowHTML('  var obj = document.Form;');
+      ShowHTML('  obj.p_inicio.value = "'.date('d/m/Y',time()).'";');
+      ShowHTML('  obj.p_fim.value    = "'.date('d/m/Y',time()).'";');
+      ShowHTML('}');
+      ShowHTML('function mes() {');
+      ShowHTML('  var obj = document.Form;');
+      ShowHTML('  obj.p_inicio.value = "'.date('01/m/Y',time()).'";');
+      ShowHTML('  obj.p_fim.value    = "'.date('d/m/Y',last_day(time())).'";');
+      ShowHTML('}');
+      ShowHTML('function ano() {');
+      ShowHTML('  var obj = document.Form;');
+      ShowHTML('  obj.p_inicio.value = "'.date('01/01/Y',time()).'";');
+      ShowHTML('  obj.p_fim.value    = "'.date('31/12/Y',time()).'";');
+      ShowHTML('}');
+    }
+    ValidateOpen('Validacao');
+    if (strpos('IA',$O)!==false) {
+      if ($O=='I') {
+        Validate('w_data','Data','DATA','1','10','10','','0123456789/');
+        Validate('w_moeda','Moeda','SELECT','1','1','18','','1');
+      }
+      Validate('w_taxa_compra','Taxa de compra','VALOR','1',6,18,'','0123456789,.');
+      Validate('w_taxa_venda','Taxa de venda','VALOR','1',6,18,'','0123456789,.');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='P') {
+      Validate('p_inicio','Início do período','DATA','','10','10','','0123456789/');
+      Validate('p_fim','Término do período','DATA','','10','10','','0123456789/');
+      ShowHTML('  if ((theForm.p_inicio.value != "" && theForm.p_fim.value == "") || (theForm.p_inicio.value == "" && theForm.p_fim.value != "")) {');
+      ShowHTML('     alert ("Informe ambas as datas de recebimento ou nenhuma delas!");');
+      ShowHTML('     theForm.p_inicio.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_inicio','Início do período','<=','p_fim','Término do período');      
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    if ($O=='P') ShowHTML('  theForm.Botao[2].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='I') {
+    BodyOpen('onLoad=\'document.Form.w_data.focus()\';');
+  } elseif ($O=='A') {
+    BodyOpen('onLoad=\'document.Form.w_taxa_compra.focus()\';');
+  } elseif ($O=='E') {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpenClean(null);
+  } 
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"></u>F</u>iltrar (Ativo)</font>' : '</u>F</u>iltrar (Inativo)').'</a>');
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td>'.linkOrdena('Data','data').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Moeda','nm_moeda').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Taxa Compra','taxa_compra').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Taxa Venda','taxa_venda').'</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row){ 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data')).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_moeda').'</td>');
+        ShowHTML('        <td align="center">'.formatNumber(f($row,'taxa_compra'),4).'</td>');
+        ShowHTML('        <td align="center">'.formatNumber(f($row,'taxa_venda'),4).'</td>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_moeda_cotacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"title="Alterar">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_moeda_cotacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'"title="Excluir">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&p_chave='.$p_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&p_chave='.$p_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    } 
+    ShowHTML('<p>&nbsp;</p></tr>');
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled   = ' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    if ($O!='I') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML(montaFiltro('POST'));
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr valign="top">');
+    if ($O=='A') {
+      ShowHTML('          <td><b>Data:<br>'.$w_data.'</b></td>');
+      ShowHTML('          <td><b>Moeda:<br>'.$w_nm_moeda.'</b></td>');
+      ShowHTML('<INPUT type="hidden" name="w_data" value="'.$w_data.'">');
+      ShowHTML('<INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');
+    } else {
+      ShowHTML('          <td title="Informe a data da cotação."><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_data',$w_dir_volta).'</td>');
+      selecaoMoeda('<u>M</u>oeda:','M','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+    }
+    ShowHTML('          <td title="Informe a taxa de compra."><b><u>C</u>ompra:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_taxa_compra" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_taxa_compra.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);"></td>');
+    ShowHTML('          <td title="Informe a taxa de venda."><b><u>V</u>enda:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_taxa_venda" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_taxa_venda.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);"></td>');
+    ShowHTML('      <tr><td colspan=4 align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } elseif ($O=='P') {
+    AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    ShowHTML(montaFiltro('POST',true));
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="100%" border="0">');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>P</u>eríodo:</b>');
+    ShowHTML('            [<A CLASS="HL" HREF="javascript:hoje()">Hoje</A>]');
+    ShowHTML('            [<A CLASS="HL" HREF="javascript:mes()">Mês</A>]');
+    ShowHTML('            [<A CLASS="HL" HREF="javascript:ano()">Ano</A>]');
+    ShowHTML('            <br><input type="text" name="p_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);"> a <input type="text" name="p_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);"></td>');
+    selecaoMoeda('<u>M</u>oeda:','M','Selecione a moeda na relação.',$p_moeda,null,'p_moeda','ATIVO',null);
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Incluir">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_sq_banco='.$p_sq_banco.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert("Opção não disponível");');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+  Rodape();
+} 
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -1091,7 +1312,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1110,7 +1331,7 @@ function Grava() {
             $SQL = new db_getBankList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_codigo'],null,null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'O código já existe!\');');
+              ShowHTML('  alert("O código já existe!");');
               ScriptClose();
               RetornaFormulario('w_codigo');
               exit();
@@ -1125,7 +1346,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1144,7 +1365,7 @@ function Grava() {
             foreach ($RS as $row) {
               if (($O == 'I' && count($RS) > 0) || ($O == 'A' && count($RS) > 0 && $_REQUEST['w_sq_agencia'] != f($row, 'sq_agencia'))) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'O código da agência informada já existe!\');');
+                ShowHTML('  alert("O código da agência informada já existe!");');
                 ScriptClose();
                 RetornaFormulario('w_codigo');
                 exit();
@@ -1159,7 +1380,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1176,7 +1397,22 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
+      } 
+      break;
+    case 'COMOEDACOT':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $SQL = new dml_CoMoedaCotacao; $SQL->getInstanceOf($dbms,$O,
+            $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_moeda'],$_REQUEST['w_data'],$_REQUEST['w_taxa_compra'],$_REQUEST['w_taxa_venda']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
@@ -1192,11 +1428,12 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'CENTROCUSTO': CentroCusto();  break;
-  case 'AGENCIA':     Agencia();      break;
-  case 'BANCO':       Banco();        break;
-  case 'MOEDA':       Moeda();        break;
-  case 'GRAVA':       Grava();        break;
+  case 'CENTROCUSTO':   CentroCusto();  break;
+  case 'AGENCIA':       Agencia();      break;
+  case 'BANCO':         Banco();        break;
+  case 'MOEDA':         Moeda();        break;
+  case 'MOEDACOTACAO':  MoedaCotacao(); break;
+  case 'GRAVA':         Grava();        break;
   default:
     Cabecalho();
     BodyOpen('onLoad=this.focus();');
@@ -1214,5 +1451,3 @@ function Main() {
   return $function_ret;
 } 
 ?>
-
-

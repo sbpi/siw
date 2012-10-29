@@ -256,7 +256,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     }
   }
   // Rubricas do projeto
-  if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($l_O=='T' || $w_cliente==17305)) {
+  if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($l_O=='T' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI')) {
     $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
     $RSQuery = SortArray($RSQuery,'codigo','asc');
     // Configura indicador de exibição da unidade de medida
@@ -267,7 +267,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         break;
       }
     }
-    if (count($RSQuery)>0 && $w_financeiro=='S' && $w_cliente!='10135' && $w_cliente!=17305) {
+    if (count($RSQuery)>0 && $w_financeiro=='S' && $w_cliente!='10135' && nvl(f($RS_Cliente,'sg_segmento'),'-')!='OI') {
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
@@ -337,22 +337,24 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'         </table></td></tr>';
     } elseif (count($RSQuery)>0) {
       // Descritivo das rubricas
+      $cs = 0;
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td colspan="2"><b>Detalhamento das rubricas</b></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+      $l_html .= chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nome</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição</td>';
+      $cs++; $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
+      $cs++; $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nome</td>';
+      $cs++; $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição</td>';
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') { $cs++; $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>N.O.</td>'; }
       if ($w_unid_med) $l_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Quantitativo</td>';
       $l_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"  align="center"><b>Orçamento'.((nvl(f($RS,'sb_moeda'),'')!='') ? ' ('.f($RS,'sb_moeda').')' : '').'</td>';
       $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>% Realização</td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr align="center" >';
       if ($w_unid_med) {
-        $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>U.M.</td>';
-        $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Quantidade</td>';
+        $cs++; $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>U.M.</td>';
+        $cs++; $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Quantidade</td>';
       }
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Previsto</td>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
@@ -367,6 +369,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         else       $l_html .= chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
         $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $l_html .= chr(13).'          <td>'.f($row,'descricao').' </td>';
+        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') $l_html .= chr(13).'          <td align="center">'.f($row,'nm_exige_autorizacao').' </td>';
         if ($w_unid_med) {
           $l_html .= chr(13).'        <td align="center" title="'.f($row,'nm_unidade').'"'.$w_folha.'>'.nvl(f($row,'sg_unidade'),'&nbsp').'</td>';
           $l_html .= chr(13).'        <td align="center"'.$w_folha.'>'.((nvl(f($row,'quantidade'),'')=='' || nvl(f($row,'sq_unidade_medida'),'')=='') ? '&nbsp;' : formatNumber(f($row,'quantidade'),0)).'</td>';
@@ -382,15 +385,18 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $w_total_real     += f($row,'total_real');
         }
       } 
-      $l_html .= chr(13).'      <tr>';
-      $l_html .= chr(13).'          <td align="right" colspan="'.(($w_unid_med) ? '5' : '3').'" bgColor="#f0f0f0"><b>Totais&nbsp;</td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>';
+      $l_html .= chr(13).'          <tr>';
+      $l_html .= chr(13).'            <td align="right" colspan="'.$cs.'" bgColor="#f0f0f0"><b>Totais&nbsp;</td>';
+      $l_html .= chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
+      $l_html .= chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>';
       $w_perc = 0;
       if ($w_total_previsto > 0) $w_perc = ($w_total_real/$w_total_previsto*100);
-      $l_html .= chr(13).'        <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>';
-      $l_html .= chr(13).'      </tr>';
-      $l_html .= chr(13).'         </table></td></tr>';
+      $l_html .= chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>';
+      $l_html .= chr(13).'          </tr>';
+      $l_html .= chr(13).'        </table></td></tr>';
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI' || $w_unid_med) {
+        $l_html .= chr(13).'      <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Obligation' : '').(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'<br>&nbsp;</td>';
+      }
 
       // Cronograma desembolso
       $l_html .= chr(13).'      <tr><td colspan="2"><b>Cronograma desembolso</b></td></tr>';
@@ -466,7 +472,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   } 
 
   // Fontes de financiamento
-  if ($l_nome_menu['APOIO']!='' && $w_tipo_visao!=2 && ($l_O=='T' || $w_cliente==17305)) {
+  if ($l_nome_menu['APOIO']!='' && $w_tipo_visao!=2 && ($l_O=='T' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI')) {
     $sql = new db_getSolicApoioList; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,null);
     $RSQuery = SortArray($RSQuery,'entidade','asc','sq_tipo_apoio','asc');
     if (count($RSQuery)>0) {

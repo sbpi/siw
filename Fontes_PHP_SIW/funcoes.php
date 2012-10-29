@@ -3878,8 +3878,6 @@ function BodyOpenClean($cProperties) {
   ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
   ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen"/>');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
-//  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/swfobject.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.uploadify.v2.1.0.min.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css"/>');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.

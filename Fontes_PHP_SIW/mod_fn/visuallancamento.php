@@ -9,12 +9,16 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   // Recupera os dados do lançamento
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$v_chave,substr($SG,0,3).'GERAL');
 
-  $w_tramite       = f($RS,'sq_siw_tramite');
-  $w_tramite_ativo = f($RS,'ativo');
-  $w_SG            = f($RS,'sigla');
-  $w_tipo_rubrica  = f($RS,'tipo_rubrica');
-  $w_qtd_rubrica   = nvl(f($RS,'qtd_rubrica'),0);
-  $w_sq_projeto    = nvl(f($RS,'sq_projeto'),0);
+  $w_tramite            = f($RS,'sq_siw_tramite');
+  $w_tramite_ativo      = f($RS,'ativo');
+  $w_SG                 = f($RS,'sigla');
+  $w_tipo_rubrica       = f($RS,'tipo_rubrica');
+  $w_qtd_rubrica        = nvl(f($RS,'qtd_rubrica'),0);
+  $w_sq_projeto         = nvl(f($RS,'sq_projeto'),0);
+  $w_sb_moeda           = nvl(f($RS,'sb_moeda'),'');
+  $w_entidade           = nvl(f($RS,'entidade'),'');
+  $w_data_autorizacao   = formataDataEdicao(f($RS,'data_autorizacao'));
+  $w_texto_autorizacao  = nvl(f($RS,'texto_autorizacao'),'');
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $w_usuario || 
@@ -172,6 +176,11 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       }
     }
+    
+    if (nvl($w_data_autorizacao,'')!='') {
+      $l_html.=chr(13).'      <tr><td><b><i>No obligation</i>: </b></td>';
+      $l_html.=chr(13).'        <td>'.$w_data_autorizacao.(($w_texto_autorizacao!='') ? ' - '.crlf2br($w_texto_autorizacao) : '').'</td></tr>';
+    }
 
     if (substr($w_SG,0,3)=='FNR') {
       if (f($RS,'sg_forma_pagamento')!='ESPECIE')  $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
@@ -190,7 +199,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
       $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td><td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
     }
-    $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
+    $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
 
     if (f($RS_Menu,'sigla')!='FNDFUNDO' ) {
       $l_html.=chr(13).'          <tr><td><b>Data de vencimento:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento')).'</td></tr>';
@@ -274,7 +283,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <td><b>Tipo</b></td>';
       $l_html.=chr(13).'          <td><b>Número</b></td>';
       $l_html.=chr(13).'          <td><b>Emissão</b></td>';
-      $l_html.=chr(13).'          <td><b>Valor</b></td>';
+      $l_html.=chr(13).'          <td><b>Valor'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$w_TrBgColor;
       $w_total=0;
@@ -435,8 +444,8 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Item</b></td>';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Qtd.</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Unitário</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Total</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Unitário'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Total'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$w_TrBgColor;
       $w_total = 0;
@@ -815,13 +824,19 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Rubrica</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor total</b></td>';
+      if ($w_entidade!='') {
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Fonte</b></td>';
+      }
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor total'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$w_TrBgColor;
       $w_total = 0;
       foreach($RS as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="left"><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha1\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'rubrica').'</A>&nbsp</td>';
+        if ($w_entidade!='') {
+          $l_html.=chr(13).'        <td align="left">'.$w_entidade.'</td>';
+        }
         if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
           $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_rubrica'),0)).'&nbsp;&nbsp;</td>';
         else
@@ -834,7 +849,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } 
       if ($w_total>0) {
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td align="right"><b>Total</b></td>';
+        $l_html.=chr(13).'        <td align="right"'.(($w_entidade!='') ? ' colspan=2' : '').'><b>Total</b></td>';
         $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
         $l_html.=chr(13).'      </tr>';
       }      

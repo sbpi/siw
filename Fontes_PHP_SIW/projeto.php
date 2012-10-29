@@ -122,44 +122,6 @@ $w_dir          = '';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = upper($_REQUEST['w_copia']);
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
-// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
-// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
-$w_cliente  = RetornaCliente();
-$w_usuario  = RetornaUsuario();
-if ($SG!='ETAPAREC') {
-  $w_menu = RetornaMenu($w_cliente,$SG);
-} else {
-  $w_menu = RetornaMenu($w_cliente,$_REQUEST['w_SG']);
-} 
-if ($SG=='PJRECURSO' || $SG=='PJETAPA' || $SG=='PJINTERESS' || $SG=='PJAREAS' || $SG=='PJANEXO' || 
-    $SG=='PJBETAPA' || $SG=='PJBINTERES' || $SG=='PJBAREAS' || $SG=='PJBANEXO' || $SG=='PJRUBRICA' || $SG=='PJCRONOGRAMA') {
-  if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';
-} elseif  ($SG=='PJENVIO' || $SG=='PJBENVIO') {             $O='V';
-} elseif  (($SG=='PJVISUAL' || $SG=='PJBVISUAL') && $O=='A') { $O='L';
-} elseif ($O=='') {
-  // Se for acompanhamento, entra na filtragem
-  if ($P1==3) $O='P'; else $O='L';
-} 
-
-// Recupera os dados do cliente
-$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente );
-
-switch ($O) {
-  case 'I': $w_TP=$TP.' - Inclusão'; break;
-  case 'A': $w_TP=$TP.' - Alteração'; break;
-  case 'E': $w_TP=$TP.' - Exclusão'; break;
-  case 'P': $w_TP=$TP.' - Filtragem'; break;
-  case 'C': $w_TP=$TP.' - Cópia'; break;
-  case 'V': $w_TP=$TP.' - Envio'; break;
-  case 'H': $w_TP=$TP.' - Herança'; break;
-  default : $w_TP=$TP.' - Listagem';
-} 
 $p_orprior      = upper($_REQUEST['p_orprior']);
 $p_projeto      = upper($_REQUEST['p_projeto']);
 $p_servico      = upper($_REQUEST['p_servico']);
@@ -192,6 +154,35 @@ $p_palavra      = upper($_REQUEST['p_palavra']);
 $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
+// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
+// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
+$w_cliente  = RetornaCliente();
+$w_usuario  = RetornaUsuario();
+if ($SG!='ETAPAREC') {
+  $w_menu = RetornaMenu($w_cliente,$SG);
+} else {
+  $w_menu = RetornaMenu($w_cliente,$_REQUEST['w_SG']);
+} 
+if ($SG=='PJRECURSO' || $SG=='PJETAPA' || $SG=='PJINTERESS' || $SG=='PJAREAS' || $SG=='PJANEXO' || 
+    $SG=='PJBETAPA' || $SG=='PJBINTERES' || $SG=='PJBAREAS' || $SG=='PJBANEXO' || $SG=='PJRUBRICA' || $SG=='PJCRONOGRAMA') {
+  if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';
+} elseif  ($SG=='PJENVIO' || $SG=='PJBENVIO') {             $O='V';
+} elseif  (($SG=='PJVISUAL' || $SG=='PJBVISUAL') && $O=='A') { $O='L';
+} elseif ($O=='') {
+  // Se for acompanhamento, entra na filtragem
+  if ($P1==3) $O='P'; else $O='L';
+} 
+
+// Recupera os dados do cliente
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente );
+
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 if ($SG!='ETAPAREC') { $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG); }
 else                 { $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']); }
@@ -207,6 +198,18 @@ if (f($RS_Menu,'ultimo_nivel') == 'S') {
   // Se for sub-menu, pega a configuração do pai
   $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+switch ($O) {
+  case 'I': $w_TP=$TP.' - Inclusão'; break;
+  case 'A': $w_TP=$TP.' - Alteração'; break;
+  case 'E': $w_TP=$TP.' - Exclusão'; break;
+  case 'P': $w_TP=$TP.' - Filtragem'; break;
+  case 'C': $w_TP=$TP.' - Cópia'; break;
+  case 'V': $w_TP=$TP.' - Envio'; break;
+  case 'H': $w_TP=$TP.' - Herança'; break;
+  default : $w_TP=$TP.' - Listagem';
+} 
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -1590,6 +1593,7 @@ function Rubrica() {
     $w_descricao            = $_REQUEST['w_descricao'];
     $w_ativo                = $_REQUEST['w_ativo'];
     $w_aplicacao_financeira = $_REQUEST['w_aplicacao_financeira'];
+    $w_exige_autorizacao    = $_REQUEST['w_exige_autorizacao'];
     $w_unidade_medida       = $_REQUEST['w_unidade_medida'];
     $w_filhos               = $_REQUEST['w_filhos'];
 
@@ -1622,6 +1626,7 @@ function Rubrica() {
     $w_descricao            = f($RS,'descricao');
     $w_ativo                = f($RS,'ativo');
     $w_aplicacao_financeira = f($RS,'aplicacao_financeira');
+    $w_exige_autorizacao    = f($RS,'exige_autorizacao');
     $w_chave_pai            = f($RS,'sq_rubrica_pai');
     $w_pacote               = f($RS,'ultimo_nivel');
     $w_unidade_medida       = f($RS,'sq_unidade_medida');
@@ -1687,10 +1692,11 @@ function Rubrica() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     $cs = 0;
-    if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305') { 
+    if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') { 
       $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</td>');
       $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
       $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</td>');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') { $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('N.O.','exige_autorizacao').'</td>'); }
       $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('A.F.','aplicacao_financeira').'</td>');
       $cs++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','ativo').'</td>');
       if ($w_unid_med) ShowHTML('          <td colspan="2"><b>Quantitativo</td>');
@@ -1735,9 +1741,10 @@ function Rubrica() {
         ShowHTML('        <td'.$w_folha.'>'.f($row,'codigo').'</td>');
         ShowHTML('        <td'.$w_folha.'>'.f($row,'nome').'</td>');
         ShowHTML('        <td'.$w_folha.'>'.f($row,'descricao').'</td>');
+        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ShowHTML('        <td align="center"'.$w_folha.'>'.f($row,'nm_exige_autorizacao').'</td>');
         ShowHTML('        <td align="center"'.$w_folha.'>'.f($row,'nm_aplicacao_financeira').'</td>');
         ShowHTML('        <td align="center"'.$w_folha.'>'.f($row,'nm_ativo').'</td>');
-        if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305') {
+        if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
           if ($w_unid_med) {
             ShowHTML('        <td align="center" title="'.f($row,'nm_unidade').'"'.$w_folha.'>'.f($row,'sg_unidade').'</td>');
             ShowHTML('        <td align="center"'.$w_folha.'>'.((nvl(f($row,'quantidade'),'')=='' || nvl(f($row,'sq_unidade_medida'),'')=='') ? '&nbsp;' : formatNumber(f($row,'quantidade'),0)).'</td>');
@@ -1749,13 +1756,13 @@ function Rubrica() {
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar os dados deste registro.">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir este registro." onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_copia='.f($row,'sq_projeto_rubrica').'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Inserir uma nova rubrica a partir dos dados deste registro.">CP</A>&nbsp');
-        if (f($row,'ultimo_nivel')=='S' && ($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305')) {
+        if (f($row,'ultimo_nivel')=='S' && ($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI')) {
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Cronograma&R='.$w_pagina.'Cronograma&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$w_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJCRONOGRAMA'.MontaFiltro('GET').'" title="Cadastrar o cronograma desembolso deste registro." target="CronDes">CD</A>&nbsp');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
-      if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || $w_cliente=='17305') {
+      if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
         ShowHTML('      <tr>');
         ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Totais</td>'); 
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_previsto).'</td>');
@@ -1774,7 +1781,7 @@ function Rubrica() {
       }
     } 
     ShowHTML('    </table>');
-    ShowHTML('      <tr><td>Legenda: [A.F.] Aplicação financeira'.(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'</td>');
+    ShowHTML('    <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Obligation' : '').' [A.F.] Aplicação financeira'.(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'</td>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -1804,23 +1811,25 @@ function Rubrica() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($w_filhos==0) {
-      MontaRadioNS('<b>É rubrica de último nível?</b>',$w_pacote,'w_pacote','Marque SIM para indicar que não haverá rubrica subordinada a esta.',null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cc\'; document.Form.submit();"');
+      MontaRadioNS('<b>É rubrica de último nível?</b>',$w_pacote,'w_pacote','Marque SIM para indicar que não haverá rubrica subordinada a esta.',null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cc\'; document.Form.submit();"',3);
     } else {
       ShowHTML('<INPUT type="hidden" name="w_pacote" value="N">');
     }
     ShowHTML('      <tr>');
-    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$w_sq_cc,null,'w_sq_cc','SIWSOLIC');
-    ShowHTML('      <tr><td><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="STI" SIZE="30" MAXLENGTH="20" VALUE="'.$w_codigo.'" title="Informe um código para a rubrica."></td>'); 
+    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$w_sq_cc,null,'w_sq_cc','SIWSOLIC',null,3);
+    ShowHTML('      <tr><td colspan="3"><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="STI" SIZE="30" MAXLENGTH="20" VALUE="'.$w_codigo.'" title="Informe um código para a rubrica."></td>'); 
     ShowHTML('      <tr>');
-    SelecaoRubrica('Rubrica su<u>p</u>erior:','P','Se necessário, indique a rubrica superior a esta.',$w_chave_pai,$w_chave,$w_chave_aux,'w_chave_pai','ARVORE','onChange="document.Form.action=\''.$w_pagina.$par.'&w_altera_ordem=1\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();"');
-    ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'" title="Informe um nome para a rubrica."></td>');
-    ShowHTML('      <tr><td><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos da etapa e os resultados esperados após sua execução.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('      <tr>');
-    if ($w_pacote=='S') {
-      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoUnidadeMedida('Unidade de <U>m</U>edida:','M','Selecione a unidade de medida do indicador',$w_unidade_medida,null,'w_unidade_medida','REGISTROS','S');
+    SelecaoRubrica('Rubrica su<u>p</u>erior:','P','Se necessário, indique a rubrica superior a esta.',$w_chave_pai,$w_chave,$w_chave_aux,'w_chave_pai','ARVORE','onChange="document.Form.action=\''.$w_pagina.$par.'&w_altera_ordem=1\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();"',3);
+    ShowHTML('      <tr><td colspan="3"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'" title="Informe um nome para a rubrica."></td>');
+    ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos da etapa e os resultados esperados após sua execução.">'.$w_descricao.'</TEXTAREA></td>');
+    if ($w_pacote=='S' && nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+      ShowHTML('      <tr valign="top">');
+      selecaoUnidadeMedida('Unidade de <U>m</U>edida:','M','Selecione a unidade de medida do indicador',$w_unidade_medida,null,'w_unidade_medida','REGISTROS','S');
+      MontaRadioNS('<b>No Obligation?</b>',$w_exige_autorizacao,'w_exige_autorizacao');
     }
-    MontaRadioNS('<b>Aplicação financeira</b>?',$w_aplicacao_financeira,'w_aplicacao_financeira');
-    MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioNS('<b>Aplicação financeira?</b>',$w_aplicacao_financeira,'w_aplicacao_financeira');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="center" colspan=4><hr/>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -2519,7 +2528,7 @@ function Cronograma() {
     $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null);
     $RS = SortArray($RS,'inicio', 'asc', 'fim', 'asc');
   } elseif (strpos('AEV',$O)!==false) {
-    // Recupera os dados do endereço informado
+    // Recupera os dados do cronograma informado
     $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null);
     foreach ($RS as $row) {
       $w_inicio         = FormataDataEdicao(f($row,'inicio'),1);
@@ -5618,7 +5627,7 @@ function Grava() {
       $SQL = new dml_putProjetoRubrica; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
           $_REQUEST['w_chave_pai'],$_REQUEST['w_unidade_medida'],nvl($_REQUEST['w_pacote'],'S'),
           $_REQUEST['w_sq_cc'], $_REQUEST['w_codigo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-          $_REQUEST['w_ativo'],$_REQUEST['w_aplicacao_financeira'], $_REQUEST['w_copia']);
+          $_REQUEST['w_ativo'],$_REQUEST['w_aplicacao_financeira'],$_REQUEST['w_exige_autorizacao'], $_REQUEST['w_copia']);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);

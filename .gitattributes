@@ -918,6 +918,7 @@ Fontes_PHP_SIW/classes/sp/db_getModData.php -text
 Fontes_PHP_SIW/classes/sp/db_getModList.php -text
 Fontes_PHP_SIW/classes/sp/db_getModMaster.php -text
 Fontes_PHP_SIW/classes/sp/db_getMoeda.php -text
+Fontes_PHP_SIW/classes/sp/db_getMoedaCotacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getMtEntItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getMtMovim.php -text
 Fontes_PHP_SIW/classes/sp/db_getMtSituacao.php -text
@@ -1106,6 +1107,7 @@ Fontes_PHP_SIW/classes/sp/dml_CoForm.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoGrDef.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoIdioma.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoMoeda.php -text
+Fontes_PHP_SIW/classes/sp/dml_CoMoedaCotacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoPais.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoRegiao.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoSegmento.php -text
@@ -1701,6 +1703,7 @@ Fontes_PHP_SIW/funcoes/selecaoRecurso.php -text
 Fontes_PHP_SIW/funcoes/selecaoRegiao.php -text
 Fontes_PHP_SIW/funcoes/selecaoRestricao.php -text
 Fontes_PHP_SIW/funcoes/selecaoRubrica.php -text
+Fontes_PHP_SIW/funcoes/selecaoRubricaApoio.php -text
 Fontes_PHP_SIW/funcoes/selecaoSP.php -text
 Fontes_PHP_SIW/funcoes/selecaoSegMercado.php -text
 Fontes_PHP_SIW/funcoes/selecaoSegModulo.php -text

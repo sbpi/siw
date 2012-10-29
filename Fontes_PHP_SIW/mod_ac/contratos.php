@@ -5534,7 +5534,7 @@ function Grava() {
             if(count($RS_Aditivo)>0) {
               $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),
                         f($row,'sq_menu'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                        null,null,null,null,null,null,null,null,null,null,null,null);
+                        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         }       

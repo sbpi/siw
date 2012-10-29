@@ -188,7 +188,7 @@ function Inicial() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } 
@@ -301,7 +301,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -796,7 +796,7 @@ function Aferidor() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?"));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } 
@@ -923,7 +923,7 @@ function Aferidor() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1125,7 +1125,7 @@ function Afericao() {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } 
@@ -1278,7 +1278,7 @@ function Afericao() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1356,7 +1356,7 @@ function Solic() {
       ShowHTML('     if (theForm["w_indicador[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve selecionar pelo menos um indicador!\'); ');
+      ShowHTML('    alert("Você deve selecionar pelo menos um indicador!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
       ShowHTML('  }');
@@ -1486,7 +1486,7 @@ function Solic() {
     } 
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1685,7 +1685,7 @@ function Meta() {
       if ($P1!=1 || nvl($w_plano,'')!='') Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E' && ($P1!=1 || nvl($w_plano,'')!='')) {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } 
@@ -1909,7 +1909,7 @@ function Meta() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -2145,7 +2145,7 @@ function CronMeta() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     //ShowHTML ' history.back(1);'
     ScriptClose();
   } 
@@ -2583,7 +2583,7 @@ function Documentos() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     //ShowHTML ' history.back(1);' 
     ScriptClose();
   } 
@@ -2613,7 +2613,7 @@ function Grava() {
           $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe indicador com este nome!\');');
+            ShowHTML('  alert("Já existe indicador com este nome!");');
             ScriptClose();
             RetornaFormulario('w_nome');
             exit();
@@ -2623,7 +2623,7 @@ function Grava() {
           $sql = new db_getIndicador; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,$_REQUEST['w_sigla'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe indicador com esta sigla!\');');
+            ShowHTML('  alert("Já existe indicador com esta sigla!");');
             ScriptClose();
             RetornaFormulario('w_sigla');
             exit();
@@ -2638,7 +2638,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -2652,7 +2652,7 @@ function Grava() {
           if (count($RS)>0) {
             foreach ($RS as $row) {$RS = $row; break; }
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Período já cadastrado para esta pessoa ('.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).')!\');');
+            ShowHTML('  alert("Período já cadastrado para esta pessoa ('.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).')!");');
             ScriptClose();
             RetornaFormulario('w_nome');
             exit();
@@ -2665,7 +2665,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -2679,7 +2679,7 @@ function Grava() {
           $sql = new db_getIndicador_Aferidor; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_indicador'],null,$w_usuario,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'PERMISSAO');
           if (count($RS)<=0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Suas permissões não abrangem o período de referência informado. Consulte suas permissões!\');');
+            ShowHTML('  alert("Suas permissões não abrangem o período de referência informado. Consulte suas permissões!");');
             ScriptClose();
             RetornaFormulario('w_inicio');
             exit();
@@ -2692,7 +2692,7 @@ function Grava() {
           if (count($RS)>0) {
             foreach ($RS as $row) {$RS = $row; break; }
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe aferição para o indicador no período e base geográfica informada!\');');
+            ShowHTML('  alert("Já existe aferição para o indicador no período e base geográfica informada!");');
             ScriptClose();
             RetornaFormulario('w_inicio');
             exit();
@@ -2705,7 +2705,7 @@ function Grava() {
           if (count($RS)>0) {
             foreach ($RS as $row) {$RS = $row; break; }
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Data de aferição já registrada para o indicador e base geográfica informada!\');');
+            ShowHTML('  alert("Data de aferição já registrada para o indicador e base geográfica informada!");');
             ScriptClose();
             RetornaFormulario('w_afericao');
             exit();
@@ -2720,7 +2720,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -2743,7 +2743,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ShowHTML('  history.back(1);');
         ScriptClose();
       } 
@@ -2755,7 +2755,7 @@ function Grava() {
           $sql = new db_getSolicMeta; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_plano'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica!\');');
+            ShowHTML('  alert("Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica!");');
             ScriptClose();
             RetornaFormulario('w_titulo');
             exit();                                    
@@ -2780,7 +2780,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
@@ -2801,7 +2801,7 @@ function Grava() {
             // Despreza o registro em edição, se for alteração.
             if(f($row,'sq_meta_cronograma') <> $_REQUEST['w_chave_aux']) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Não pode haver sobreposição de períodos para a mesma meta!\');');
+              ShowHTML('  alert("Não pode haver sobreposição de períodos para a mesma meta!");');
               ScriptClose();
               retornaFormulario('w_inicio');
               exit();
@@ -2815,7 +2815,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2829,7 +2829,7 @@ function Grava() {
             if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
@@ -2839,7 +2839,7 @@ function Grava() {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -2866,7 +2866,7 @@ function Grava() {
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
               } elseif(nvl($Field['name'],'')!='') {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
               ScriptClose();
               retornaFormulario('w_caminho');
               exit();
@@ -2883,7 +2883,7 @@ function Grava() {
                $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
           ScriptClose();
           exit();
         } 
@@ -2892,7 +2892,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
@@ -2900,7 +2900,7 @@ function Grava() {
     default:
       exibevariaveis();
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+      ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
       ScriptClose();
       break;
   } 

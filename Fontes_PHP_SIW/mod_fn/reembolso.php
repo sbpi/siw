@@ -2822,7 +2822,9 @@ function Grava() {
           $_REQUEST['w_sq_forma_pagamento'],$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
-          $_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
+          $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
+          &$w_chave_nova,&$w_codigo);
 
       if ($O!='E') {
 
@@ -3019,6 +3021,7 @@ function Grava() {
                 f($RS,'sq_forma_pagamento'),f($RS,'sq_tipo_pessoa'),f($RS,'sq_forma_pagamento'),FormataDataEdicao(f($RS,'fim')),f($RS,'tipo_rubrica'),
                 f($RS,'processo'),((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'],
                 FormataDataEdicao(f($RS,'referencia_fim')),f($RS,'condicoes_pagamento'),null,f($RS,'sq_projeto_rubrica'),
+                f($RS,'sq_solic_apoio'),FormataDataEdicao(f($RS,'data_autorizacao')),f($RS,'texto_autorizacao'),f($RS,'sq_moeda'),
                 &$w_chave_nova,&$w_codigo);
           }
           
@@ -3073,6 +3076,7 @@ function Grava() {
               f($RS,'sq_forma_pagamento'),f($RS,'sq_tipo_pessoa'),f($RS,'sq_forma_pagamento'),FormataDataEdicao(f($RS,'fim')),f($RS,'tipo_rubrica'),
               f($RS,'processo'),((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'],
               FormataDataEdicao(f($RS,'referencia_fim')),f($RS,'condicoes_pagamento'),null,f($RS,'sq_projeto_rubrica'),
+              f($RS,'sq_solic_apoio'),FormataDataEdicao(f($RS,'data_autorizacao')),f($RS,'texto_autorizacao'),f($RS,'sq_moeda'),
               &$w_chave_nova,&$w_codigo);
         }
 
