@@ -11,6 +11,7 @@ create or replace procedure SP_PutProjetoRubrica
     p_descricao            in varchar2  default null,
     p_ativo                in varchar2  default null,
     p_aplicacao_financeira in varchar2  default null,
+    p_exige_autorizacao    in varchar2  default null,
     p_copia                in number    default null
    ) is
    w_chave   number(18);
@@ -22,10 +23,10 @@ begin
       -- Insere registro na tabela de recursos
       Insert Into pj_rubrica
          ( sq_projeto_rubrica, sq_siw_solicitacao, sq_rubrica_pai, sq_unidade_medida, ultimo_nivel,           sq_cc,
-           codigo,             nome,               descricao,      ativo,             aplicacao_financeira)
+           codigo,             nome,               descricao,      ativo,             aplicacao_financeira,   exige_autorizacao)
       Values 
          ( w_chave,            p_chave,            p_chave_pai,    p_unidade_medida,  p_ultimo_nivel,         p_sq_cc,
-           p_codigo,           p_nome,             p_descricao,    p_ativo,           p_aplicacao_financeira);
+           p_codigo,           p_nome,             p_descricao,    p_ativo,           p_aplicacao_financeira, p_exige_autorizacao);
          
       -- Se for cópia, herda o cronograma desembolso
       If p_copia is not null Then
@@ -45,6 +46,7 @@ begin
           descricao            = p_descricao,
           ativo                = p_ativo,
           aplicacao_financeira = p_aplicacao_financeira,
+          exige_autorizacao    = p_exige_autorizacao,
           sq_rubrica_pai       = p_chave_pai,
           sq_unidade_medida    = p_unidade_medida,
           ultimo_nivel         = p_ultimo_nivel

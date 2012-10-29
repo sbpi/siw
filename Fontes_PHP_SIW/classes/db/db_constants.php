@@ -15,15 +15,15 @@ define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
 define("ORA9_SERVER_NAME", "XE");
-define("ORA9_DB_USERID", "ABDI_VENUS");
+define("ORA9_DB_USERID", "SIW_DES");
 define("ORA9_DB_PASSWORD", "eeool22012");
-define("ORA9_DATABASE_NAME", "ABDI_VENUS");
+define("ORA9_DATABASE_NAME", "SIW_DES");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
 //define("ORA10_SERVER_NAME", "mercurio");
 define("ORA10_SERVER_NAME", "XE");
-define("ORA10_DB_USERID", "ABDI_VENUS");
+define("ORA10_DB_USERID", "ABDI");
 define("ORA10_DB_PASSWORD", "eeool22012");
 define("ORA10_DATABASE_NAME", "ABDI_VENUS");
 define("ORA10_VERSION_TEXT", "Oracle Server 10g");

@@ -1005,6 +1005,8 @@ begin
                 m.cd_acordo,          m.obj_acordo,
                 m1.ordem as or_parcela,
                 m2.qtd_nota,
+                mo.sq_moeda,          mo.codigo cd_moeda,            mo.nome nm_moeda,
+                mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nm_solic,           o.nm_resp,
                 p.nome_resumido as nm_exec,
@@ -1168,6 +1170,7 @@ begin
                                           from ac_parcela_nota y
                                          group by y.sq_acordo_parcela
                                   )                         m2 on (m1.sq_acordo_parcela       = m2.sq_acordo_parcela)
+                   left      join co_moeda                  mo on (b.sq_moeda                 = mo.sq_moeda)
                    left      join ct_cc                     n  on (b.sq_cc                    = n.sq_cc)
                    left      join (select w.sq_pessoa, w.nome_resumido as nm_solic, w.nome_resumido||' ('||y.sigla||')' as nm_resp
                                           from co_pessoa                    w

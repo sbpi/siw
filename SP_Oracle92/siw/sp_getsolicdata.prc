@@ -470,9 +470,9 @@ begin
                 b.executor,           b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.opiniao,            b.sq_solic_pai,
+                b.opiniao,            b.sq_solic_pai,                b.valor,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,
+                b.sq_solic_apoio,     b.data_autorizacao,            b.texto_autorizacao,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -507,19 +507,20 @@ begin
                 end as processo,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
+                ba.entidade,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
                 b.codigo_externo,     d.observacao,                  d.sq_projeto_rubrica,
-                d.aviso_prox_conc,
+                d.aviso_prox_conc,    d.tipo as tipo_rubrica,        d.sq_solic_vinculo,
                 d.dias_aviso,         d.sq_forma_pagamento,          d.sq_agencia,
                 d.operacao_conta,     d.numero_conta,                d.sq_pais_estrang,
                 d.aba_code,           d.swift_code,                  d.endereco_estrang,
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.informacoes,        d.codigo_deposito,             d.condicoes_pagamento,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
-                d.tipo as tipo_rubrica,                              d.referencia_inicio,
-                d.referencia_fim,     d.sq_pessoa_conta,             d.sq_solic_vinculo,
+                d.referencia_inicio,  d.referencia_fim,              d.sq_rubrica_cronograma,
+                d.sq_pessoa_conta,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome as nm_tipo_lancamento,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
@@ -551,6 +552,8 @@ begin
                 f.nome nm_cidade,
                 m1.codigo_interno as cd_acordo,
                 coalesce(m4.existe,0) as notas_acordo,
+                mo.sq_moeda,          mo.codigo cd_moeda,            mo.nome nm_moeda,
+                mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic,                         o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
@@ -576,8 +579,9 @@ begin
                      left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                      left         join pa_documento         b9 on (b4.protocolo_siw           = b9.sq_siw_solicitacao)
                      left         join pa_documento         b8 on (b.protocolo_siw            = b8.sq_siw_solicitacao)
+                   left           join siw_solic_apoio      ba on (b.sq_solic_apoio           = ba.sq_solic_apoio)
                    inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                   left          join fn_lancamento_doc    da1  on (b.sq_siw_solicitacao      = da1.sq_siw_solicitacao)
+                   left           join fn_lancamento_doc   da1 on (b.sq_siw_solicitacao       = da1.sq_siw_solicitacao)
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
                      inner        join co_tipo_pessoa       d8 on (d.sq_tipo_pessoa           = d8.sq_tipo_pessoa)
@@ -676,11 +680,12 @@ begin
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                         group by x.sq_siw_solicitacao
                                        )                    m3 on (m2.sq_siw_solicitacao      = m3.sq_siw_solicitacao)
-                     left outer   join (select x.sq_siw_solicitacao, count(*) as existe
+                     left         join (select x.sq_siw_solicitacao, count(*) as existe
                                           from ac_acordo_nota x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                         group by x.sq_siw_solicitacao
                                        )                    m4 on (m.sq_siw_solicitacao       = m4.sq_siw_solicitacao)
+                   left           join co_moeda             mo on (b.sq_moeda                 = mo.sq_moeda)
                    left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                      left         join siw_solicitacao      q2 on (q.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
                      left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) as qtd_rubrica

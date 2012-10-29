@@ -11,13 +11,14 @@ create or replace procedure SP_GetSolicRubrica
     p_result               out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao = 'SUBORDINACAO' Then
+   If p_restricao is null or p_restricao in ('FOLHA','SUBORDINACAO') Then
       open p_result for 
          select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.sq_unidade_medida, a.ultimo_nivel,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
-                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
+                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente, a.exige_autorizacao,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
+                case a.exige_autorizacao when 'S' then 'Sim' else 'Não' end nm_exige_autorizacao,
                 b.nome nm_cc, a.aplicacao_financeira,
                 coalesce((select sum(w.valor_previsto)
                             from pj_rubrica_cronograma w
@@ -79,8 +80,9 @@ begin
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira))
             and (p_inicio               is null or (p_inicio               is not null and c.sq_projeto_rubrica   is not null))
             and (p_restricao            is null or
-                 p_restricao            <> 'SUBORDINACAO' or
-                 (p_restricao           = 'SUBORDINACAO' and a.ultimo_nivel = 'N')
+                 p_restricao            not in ('FOLHA','SUBORDINACAO') or
+                 (p_restricao           = 'SUBORDINACAO' and a.ultimo_nivel = 'N') or
+                 (p_restricao           = 'FOLHA' and a.ultimo_nivel = 'S')
                 );
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das rubricas
@@ -88,8 +90,9 @@ begin
          select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.sq_unidade_medida, a.ultimo_nivel,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
                 a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
-                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo, a.exige_autorizacao,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
+                case a.exige_autorizacao when 'S' then 'Sim' else 'Não' end nm_exige_autorizacao,
                 b.nome nm_cc, a.aplicacao_financeira,
                 c.total_previsto, c.total_real, c.quantidade,
                 coalesce(i.qt_filhos,0) as qt_filhos
@@ -128,9 +131,10 @@ begin
       open p_result for 
          select distinct a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
-                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
+                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente, a.exige_autorizacao,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
+                case a.exige_autorizacao when 'S' then 'Sim' else 'Não' end nm_exige_autorizacao,
                 b.nome nm_cc, a.aplicacao_financeira,
                 c.total_previsto, c.total_real, c.quantidade
            from pj_rubrica                       a
@@ -170,9 +174,10 @@ begin
       open p_result for 
          select distinct a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
-                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
+                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente, a.exige_autorizacao,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
+                case a.exige_autorizacao when 'S' then 'Sim' else 'Não' end nm_exige_autorizacao,
                 b.nome nm_cc, a.aplicacao_financeira,
                 c.total_previsto, c.total_real, c.quantidade
            from pj_rubrica                       a

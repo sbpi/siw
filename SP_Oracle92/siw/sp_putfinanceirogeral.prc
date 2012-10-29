@@ -29,6 +29,10 @@ create or replace procedure SP_PutFinanceiroGeral
     p_condicao            in varchar2 default null,  
     p_vinculo             in number   default null,
     p_rubrica             in number   default null,
+    p_solic_apoio         in number   default null,
+    p_data_autorizacao    in date     default null,
+    p_texto_autorizacao   in varchar2 default null,
+    p_moeda               in number   default null,
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -63,15 +67,17 @@ begin
        
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
-         sq_siw_solicitacao, sq_menu,          sq_siw_tramite,   solicitante, 
-         cadastrador,        descricao,        fim,              inclusao,
-         ultima_alteracao,   valor,            data_hora,        sq_unidade,
-         sq_cc,              sq_cidade_origem, sq_solic_pai)
+         sq_siw_solicitacao,            sq_menu,                sq_siw_tramite,            solicitante, 
+         cadastrador,                   descricao,              fim,                       inclusao,
+         ultima_alteracao,              valor,                  data_hora,                 sq_unidade,
+         sq_cc,                         sq_cidade_origem,       sq_solic_pai,              sq_moeda,
+         sq_solic_apoio,                data_autorizacao,       texto_autorizacao)
       (select 
-         w_Chave,            p_menu,           a.sq_siw_tramite, p_solicitante,
-         p_cadastrador,      p_descricao,      p_vencimento,     sysdate,
-         sysdate,            nvl(p_valor,0),   p_data_hora,      p_sq_unidade,
-         p_sqcc,             p_cidade,         p_projeto
+         w_Chave,                       p_menu,                 a.sq_siw_tramite,          p_solicitante,
+         p_cadastrador,                 p_descricao,            p_vencimento,              sysdate,
+         sysdate,                       coalesce(p_valor,0),    p_data_hora,               p_sq_unidade,
+         p_sqcc,                        p_cidade,               p_projeto,                 p_moeda,
+         p_solic_apoio,                 p_data_autorizacao,     p_texto_autorizacao
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -122,16 +128,20 @@ begin
       -- Atualiza a tabela de solicitações
 
       Update siw_solicitacao set
-         solicitante      = p_solicitante,
-         cadastrador      = p_cadastrador,
-         descricao        = trim(p_descricao), 
-         fim              = p_vencimento,
-         ultima_alteracao = sysdate,
-         valor            = Nvl(p_valor,0),
-         sq_unidade       = p_sq_unidade,
-         sq_cc            = p_sqcc,
-         sq_cidade_origem = p_cidade,
-         sq_solic_pai     = p_projeto
+         solicitante           = p_solicitante,
+         cadastrador           = p_cadastrador,
+         descricao             = trim(p_descricao), 
+         fim                   = p_vencimento,
+         ultima_alteracao      = sysdate,
+         valor                 = Nvl(p_valor,0),
+         sq_unidade            = p_sq_unidade,
+         sq_cc                 = p_sqcc,
+         sq_cidade_origem      = p_cidade,
+         sq_solic_pai          = p_projeto,
+         sq_moeda              = p_moeda,
+         sq_solic_apoio        = p_solic_apoio,
+         data_autorizacao      = p_data_autorizacao,
+         texto_autorizacao     = p_texto_autorizacao
       where sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela de demandas
