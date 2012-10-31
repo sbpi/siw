@@ -172,6 +172,7 @@ function Grava() {
   $w_tipo       ='';
   $w_nome       ='';
   cabecalho();
+  head();
   ShowHTML('</HEAD>');
   BodyOpenClean('onLoad=this.focus();');
 

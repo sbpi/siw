@@ -12,7 +12,7 @@ function selecaoContaBAnco($label,$accesskey,$hint,&$chave,$chaveAux,$campo,$res
   foreach ($l_rs as $row) {
     $w_selected = '';
     if (nvl(f($row,'sq_pessoa_conta'),0)==nvl($chave,0) || count($l_rs)==1) { $w_selected = ' SELECTED'; $chave = f($row,'sq_pessoa_conta'); }
-    ShowHTML('          <option value="'.f($row,'sq_pessoa_conta').'" '.$w_selected.'> '.f($row,'nm_banco').' AG. '.f($row,'cd_agencia').' C/C '.f($row,'numero'));
+    ShowHTML('          <option value="'.f($row,'sq_pessoa_conta').'" '.$w_selected.'> '.f($row,'nm_banco').' AG. '.f($row,'cd_agencia').' C/C '.f($row,'numero').((nvl(f($row,'sg_moeda'),'')!='') ? ' ('.f($row,'sg_moeda').')' : ''));
   } 
   ShowHTML('          </select>');
 }

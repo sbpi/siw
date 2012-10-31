@@ -30,6 +30,7 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_getImpostoIncid.php');
 include_once($w_dir_volta.'classes/sp/db_getImpostoDoc.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
+include_once($w_dir_volta.'classes/sp/db_getContaBancoData.php');
 include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
 include_once($w_dir_volta.'classes/sp/db_getRegionData.php');
 include_once($w_dir_volta.'classes/sp/db_getStateData.php');
@@ -109,9 +110,9 @@ $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = upper($_REQUEST['SG']);
+$SG         = upper(nvl($_REQUEST['SG'],$_REQUEST['f_SG']));
 $R          = $_REQUEST['R'];
-$O          = upper($_REQUEST['O']);
+$O          = upper(nvl($_REQUEST['O'],$_REQUEST['f_O']));
 $w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'lancamento.php?par=';
 $w_Disabled     = 'ENABLED';
@@ -569,6 +570,7 @@ function Inicial() {
                     ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Listagem&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
                   }
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do lançamento.">EX</A>&nbsp');
+                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-la.">AN</A>&nbsp');
                   /*
                   ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                   if (substr($SG,0,3)=='FNR') {
@@ -1393,7 +1395,7 @@ function Geral() {
             ShowHTML('      <tr valign="top">');
             SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
           } else {
-            ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_padrao.'">');
+            ShowHTML('<INPUT type="hidden" name="w_conta_debito" value="'.$w_conta_padrao.'">');
           }
         } else {
           ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
@@ -1412,7 +1414,7 @@ function Geral() {
           if ($w_exige_conta) {
             SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
           } else {
-            ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_padrao.'">');
+            ShowHTML('<INPUT type="hidden" name="w_conta_debito" value="'.$w_conta_padrao.'">');
           }
         } else {
           ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
@@ -3953,7 +3955,7 @@ function Concluir() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
-  // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
+  // Recupera dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
   $w_quitacao           = FormataDataEdicao(f($RS_Solic,'quitacao'));
   $w_observacao         = f($RS_Solic,'observacao');
@@ -3963,12 +3965,25 @@ function Concluir() {
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
   $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
   $w_inicio             = FormataDataEdicao(time());
+  $w_moeda_solic        = f($RS_Solic,'sq_moeda');
+
+  if (nvl(f($RS_Solic,'dados_pai'),'')!='') {
+    // Recupera dados da solicitação
+    $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),piece(f($RS_Solic,'dados_pai'),null,'|@|',6));
+    $w_moeda_pai        = f($RS_Pai,'sq_moeda');
+  }
+
 
   // Se for recarga da página
   if ($w_troca>'') {
     extract($_POST);
   }
 
+  if (nvl($w_conta_debito,'')!='') {
+    $sql = new db_getContaBancoData; $RS_Conta = $sql->getInstanceOf($dbms,$w_conta_debito);
+    $w_moeda_conta  = f($RS_Conta,'sq_moeda');
+  }
+  
   $RS_Rub = array();
   
   // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
@@ -3989,6 +4004,14 @@ function Concluir() {
         break;
       }
     }
+  }
+  
+  // Prepara array com os valores das moedas a serem gravadas
+  if ($w_moeda_solic!=$w_moeda_pai || $w_moeda_solic!=$w_moeda_conta) {
+    unset($w_moedas);
+    if ($w_moeda_solic!=$w_moeda_pai && nvl($w_moeda_pai,'')!='')     $w_moedas[f($RS_Pai,'sq_moeda')]   = f($RS_Pai,'sb_moeda');
+    if ($w_moeda_solic!=$w_moeda_conta && nvl($w_moeda_conta,'')!='') $w_moedas[f($RS_Conta,'sq_moeda')] = f($RS_Conta,'sb_moeda');
+    asort($w_moedas);
   }
   
   // Se pagamento de viagem, recupera os dados da solicitação
@@ -4014,7 +4037,12 @@ function Concluir() {
     Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
-    Validate('w_valor_real','Valor líquido','VALOR','1', 4, 18, '', '0123456789.,');
+    Validate('w_valor_real','Valor líquido'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : ''),'VALOR','1', 4, 18, '', '0123456789.,');
+    if (is_array($w_moedas)) {
+      foreach($w_moedas as $k => $v) {
+        Validate('w_valor_'.$k,'Valor líquido ('.str_replace('&eur;','EURO',$v).')','VALOR','1', 4, 18, '', '0123456789.,');
+      }        
+    }
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta_debito','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
@@ -4042,6 +4070,7 @@ function Concluir() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
+  
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do lançamento, na opção 'Listagem'
   ShowHTML(VisualLancamento($w_chave,'V',$w_usuario,$P1,$P4));
@@ -4053,6 +4082,8 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
   ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
   ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+  ShowHTML('<INPUT type="hidden" name="f_O" value="'.$O.'">');
+  ShowHTML('<INPUT type="hidden" name="f_SG" value="'.$SG.'">');
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -4082,14 +4113,22 @@ function Concluir() {
     }
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>D</u>ata do '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
-    ShowHTML('        <td><b>Valo<u>r</u> líquido:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
+    ShowHTML('        <td><b>Valo<u>r</u> líquido '.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : '').':</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
     if ($w_sg_forma_pagamento=='DEPOSITO') {
       ShowHTML('        <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
     }
     if ($w_exige_conta) {
-      SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
+      SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.f_O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_conta_debito\'; document.Form.submit();"');
     } else {
-      ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta_padrao.'">');
+      ShowHTML('<INPUT type="hidden" name="w_conta_debito" value="'.$w_conta_padrao.'">');
+    }
+    
+    // Exige valor nas moedas da solicitação pai e da conta bancária, se forem diferentes da moeda da solicitação
+    if (is_array($w_moedas)) {
+      foreach($w_moedas as $k => $v) {
+        ShowHTML('<INPUT type="hidden" name="w_moeda[]" value="'.$k.'">');
+        ShowHTML('        <tr><td><td><b>Valo<u>r</u> líquido ('.$v.'):</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_'.$k.'" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor[$k].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do lançamento na moeda informada."></td>');
+      }
     }
 
     if (f($RS_Solic,'lancamento_vinculado')=='N') {
@@ -4462,6 +4501,7 @@ function SolicMail($p_solic,$p_tipo) {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
+  exibevariaveis();
   
   $w_file       = '';
   $w_tamanho    = '';
@@ -4589,7 +4629,7 @@ function Grava() {
           $_REQUEST['w_sq_agencia'],$_REQUEST['w_operacao'],$_REQUEST['w_nr_conta'],$_REQUEST['w_sq_pais_estrang'],
           $_REQUEST['w_aba_code'],$_REQUEST['w_swift_code'],$_REQUEST['w_endereco_estrang'],$_REQUEST['w_banco_estrang'],
           $_REQUEST['w_agencia_estrang'],$_REQUEST['w_cidade_estrang'],$_REQUEST['w_informacoes'],$_REQUEST['w_codigo_deposito'],
-          $_REQUEST['w_tipo_pessoa_atual'],$_REQUEST['w_conta']);
+          $_REQUEST['w_tipo_pessoa_atual'],$_REQUEST['w_conta_debito']);
       ScriptOpen('JavaScript');
       ShowHTML('  parent.location.reload();');
       ScriptClose();
@@ -4764,7 +4804,7 @@ function Grava() {
               $w_file,$w_tamanho,$w_tipo,$w_nome);
           
           //Rotina para gravação da imagem da versão da solicitacão no log.
-          if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
+          if($P1!=1 && nvl($_REQUEST['w_tramite'],0)!=nvl($_REQUEST['w_novo_tramite'],0)) {
             $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_tramite']);
             $w_sg_tramite = f($RS,'sigla');
             if($w_sg_tramite=='CI') {

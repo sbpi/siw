@@ -3779,6 +3779,7 @@ SP_Oracle92/siw/acentos.fnc -text
 SP_Oracle92/siw/acesso.fnc -text
 SP_Oracle92/siw/acesso_lc.fnc -text
 SP_Oracle92/siw/acesso_recurso.fnc -text
+SP_Oracle92/siw/conversao.fnc -text
 SP_Oracle92/siw/criptografia.fnc -text
 SP_Oracle92/siw/criptorev.fnc -text
 SP_Oracle92/siw/dados_ferias.fnc -text
