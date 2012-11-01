@@ -1123,8 +1123,8 @@ function Geral() {
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     if ($w_exibe_ff) Validate('w_solic_apoio','Fonte de financiamento','SELECT',1,1,18,'','0123456789');
     if ($w_exige_autorizacao=='S') {
-      Validate('w_data_autorizacao','Data "No obligation"','DATA',1,10,10,'','0123456789/');
-      Validate('w_texto_autorizacao','Texto "No obligation"','1','','2','500','1','0123456789');
+      Validate('w_data_autorizacao','Data "No objection"','DATA',1,10,10,'','0123456789/');
+      Validate('w_texto_autorizacao','Texto "No objection"','1','','2','500','1','0123456789');
     }
     if (substr($SG,3)!='CONT') Validate('w_pessoa_nm', ((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Receber de:': 'Beneficiário:'), 'HIDDEN', 1, 5, 100, '1', '1');
     Validate('w_sq_tipo_lancamento','Tipo do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'','SELECT',1,1,18,'','0123456789');
@@ -1308,8 +1308,8 @@ function Geral() {
 
       // Trata autorização da despesa
       if ($w_exige_autorizacao=='S') {
-        ShowHTML('      <tr><td colspan="3"><b><u>D</u>ata <i>No obligation</i>:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_autorizacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_data_autorizacao,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_autorizacao').'</td>');
-        ShowHTML('      <tr><td colspan="3"><b><u>T</u>exto <i>No obligation</i>:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_texto_autorizacao" class="sti" ROWS=3 cols=75 title="Texto de autorização da despesa">'.$w_texto_autorizacao.'</TEXTAREA></td>');
+        ShowHTML('      <tr><td colspan="3"><b><u>D</u>ata <i>No objection</i>:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_autorizacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_data_autorizacao,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_autorizacao').'</td>');
+        ShowHTML('      <tr><td colspan="3"><b><u>T</u>exto <i>No objection</i>:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_texto_autorizacao" class="sti" ROWS=3 cols=75 title="Texto de autorização da despesa">'.$w_texto_autorizacao.'</TEXTAREA></td>');
       }
     }
     

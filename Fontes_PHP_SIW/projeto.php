@@ -1781,7 +1781,7 @@ function Rubrica() {
       }
     } 
     ShowHTML('    </table>');
-    ShowHTML('    <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Obligation' : '').' [A.F.] Aplicação financeira'.(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'</td>');
+    ShowHTML('    <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Objection' : '').' [A.F.] Aplicação financeira'.(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'</td>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -1825,7 +1825,7 @@ function Rubrica() {
     if ($w_pacote=='S' && nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
       ShowHTML('      <tr valign="top">');
       selecaoUnidadeMedida('Unidade de <U>m</U>edida:','M','Selecione a unidade de medida do indicador',$w_unidade_medida,null,'w_unidade_medida','REGISTROS','S');
-      MontaRadioNS('<b>No Obligation?</b>',$w_exige_autorizacao,'w_exige_autorizacao');
+      MontaRadioNS('<b>No Objection?</b>',$w_exige_autorizacao,'w_exige_autorizacao');
     }
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>Aplicação financeira?</b>',$w_aplicacao_financeira,'w_aplicacao_financeira');

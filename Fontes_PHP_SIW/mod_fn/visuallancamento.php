@@ -178,7 +178,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
     
     if (nvl($w_data_autorizacao,'')!='') {
-      $l_html.=chr(13).'      <tr><td><b><i>No obligation</i>: </b></td>';
+      $l_html.=chr(13).'      <tr><td><b><i>No objection</i>: </b></td>';
       $l_html.=chr(13).'        <td>'.$w_data_autorizacao.(($w_texto_autorizacao!='') ? ' - '.crlf2br($w_texto_autorizacao) : '').'</td></tr>';
     }
 

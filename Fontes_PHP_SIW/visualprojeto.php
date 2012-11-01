@@ -395,7 +395,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'        </table></td></tr>';
       if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI' || $w_unid_med) {
-        $l_html .= chr(13).'      <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Obligation' : '').(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'<br>&nbsp;</td>';
+        $l_html .= chr(13).'      <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Objection' : '').(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'<br>&nbsp;</td>';
       }
 
       // Cronograma desembolso
