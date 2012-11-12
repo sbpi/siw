@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
@@ -48,6 +49,7 @@ include_once($w_dir_volta.'classes/sp/dml_putLancamentoDoc.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroConc.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicCotacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
@@ -4012,6 +4014,14 @@ function Concluir() {
     if ($w_moeda_solic!=$w_moeda_pai && nvl($w_moeda_pai,'')!='')     $w_moedas[f($RS_Pai,'sq_moeda')]   = f($RS_Pai,'sb_moeda');
     if ($w_moeda_solic!=$w_moeda_conta && nvl($w_moeda_conta,'')!='') $w_moedas[f($RS_Conta,'sq_moeda')] = f($RS_Conta,'sb_moeda');
     asort($w_moedas);
+    
+    $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $w_chave,null,null,null,null);
+    foreach($RS_Moeda_Cot as $row) {
+      if ($w_moeda_solic!=f($row,'sq_moeda_cot') && array_key_exists(f($row,'sq_moeda_cot'),$w_moedas)) {
+        $linha = '$w_valor_'.f($row,'sq_moeda_cot').' = nvl($_REQUEST[\'w_valor_'.f($row,'sq_moeda_cot').'\'],\''.formatNumber(f($row,'vl_cotacao')).'\');';
+        eval($linha);
+      }
+    }
   }
   
   // Se pagamento de viagem, recupera os dados da solicitação
@@ -4127,7 +4137,8 @@ function Concluir() {
     if (is_array($w_moedas)) {
       foreach($w_moedas as $k => $v) {
         ShowHTML('<INPUT type="hidden" name="w_moeda[]" value="'.$k.'">');
-        ShowHTML('        <tr><td><td><b>Valo<u>r</u> líquido ('.$v.'):</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_'.$k.'" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor[$k].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do lançamento na moeda informada."></td>');
+        eval('$valor = $w_valor_'.$k.';');
+        ShowHTML('        <tr><td><td><b>Valo<u>r</u> líquido ('.$v.'):</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_'.$k.'" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do lançamento na moeda informada."></td>');
       }
     }
 
@@ -4501,7 +4512,6 @@ function SolicMail($p_solic,$p_tipo) {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-  exibevariaveis();
   
   $w_file       = '';
   $w_tamanho    = '';
@@ -4907,6 +4917,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
+      $w_moeda_solic = f($RS,'sq_moeda');
       if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou este contrato para outra fase!");');
@@ -4944,6 +4955,19 @@ function Grava() {
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             } 
           } 
+          
+          if (is_array($_REQUEST['w_moeda'])) {
+            // Remove as cotações existentes
+            $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null,null);
+            
+            // Insere a cotação da moeda da solicitação
+            $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$w_moeda_solic,$_REQUEST['w_valor_real']);
+            
+            // Insere as cotações das moedas da solicitação pai e da conta bancária, desde que sejam diferentes da moeda da solicitação
+            foreach($_REQUEST['w_moeda'] as $k=>$v) {
+              $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$v,$_REQUEST['w_valor'.'_'.$v]);
+            }
+          }
           $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_quitacao'],
             $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta_debito'],$_REQUEST['w_sq_tipo_lancamento'],
             $_REQUEST['w_sq_projeto_rubrica'],

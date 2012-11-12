@@ -994,6 +994,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicApoioList.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicAreas.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicCL.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicCotacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicData.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicData_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEV.php -text
@@ -1400,6 +1401,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicCelular.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConcTransp.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicCotacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicDevCelular.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEntCelular.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
@@ -3724,6 +3726,7 @@ SP_Oracle92/siw/SP_PutSgPesUsu.prc -text
 SP_Oracle92/siw/SP_PutSolicCelular.prc -text
 SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text
+SP_Oracle92/siw/SP_PutSolicCotacao.prc -text
 SP_Oracle92/siw/SP_PutSolicDevCelular.prc -text
 SP_Oracle92/siw/SP_PutSolicEntCelular.prc -text
 SP_Oracle92/siw/SP_PutSolicEnvio.prc -text
@@ -3864,6 +3867,7 @@ SP_Oracle92/siw/sp_getRecurso.prc -text
 SP_Oracle92/siw/sp_getRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_getRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_getRestricaoEtapa.prc -text
+SP_Oracle92/siw/sp_getSolicCotacao.prc -text
 SP_Oracle92/siw/sp_getSolicEV.prc -text
 SP_Oracle92/siw/sp_getSolicIndicador.prc -text
 SP_Oracle92/siw/sp_getSolicMeta.prc -text

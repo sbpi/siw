@@ -661,7 +661,6 @@ function Geral() {
     ShowHTML('        <td><b><u>D</u>ata da operação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('        <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="sti" ROWS=3 cols=75 title="Observação sobre a aplicação.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('          </table>');
     
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -677,7 +676,6 @@ function Geral() {
     ShowHTML('          </td>');
     
     ShowHTML('      </tr>');
-    ShowHTML('    </table>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
@@ -689,6 +687,7 @@ function Geral() {
   } 
   ShowHTML('</table>');
   ShowHTML('</center>');
+  ShowHTML('</table>');
   Estrutura_Texto_Fecha();
   Estrutura_Fecha();
   Estrutura_Fecha();

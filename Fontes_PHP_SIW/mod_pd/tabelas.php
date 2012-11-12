@@ -935,8 +935,8 @@ function Parametros() {
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1626,7 +1626,7 @@ function Grava() {
   extract($GLOBALS);
 
   Cabecalho();
-  ShowHTML('</HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');
   

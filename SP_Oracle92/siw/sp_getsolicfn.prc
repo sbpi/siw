@@ -257,6 +257,7 @@ begin
                                                                                        z1.sq_pessoa         <> p_pessoa
                                                                                       )
                                             where w.sq_pessoa = p_pessoa
+                                              and (p_chave    is null or (p_chave is not null and y.sq_siw_solicitacao = p_chave))
                                            group by y.sq_siw_solicitacao
                                           )                    m4  on (d.sq_siw_solicitacao      = m4.sq_siw_solicitacao)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and

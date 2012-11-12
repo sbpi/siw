@@ -599,6 +599,7 @@ function Inicial() {
             $w_destino = 'lancamento';
             $w_acao    = ((substr(f($row,'sigla'),2,1)=='R') ? 'Receber' : 'Pagar');
           }
+          
           if (f($row,'sg_tramite')=='EE' || $P2==2) {
             if (f($row,'sigla')!='FNDFUNDO') {
               if (f($row,'sigla')=='FNDTARIFA' || substr(f($row,'sigla'),0,3)=='FNA' || (f($row,'usuario_logado')=='S' && f($row,'sigla')!='FNDREEMB')) {
@@ -616,6 +617,9 @@ function Inicial() {
                 } else {
                   if (nvl(f($row,'pessoa'),'')=='' || substr(f($row,'sigla'),3)=='REEMB') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                 }
+              }
+              if (f($row,'sigla')=='FNDTARIFA' || substr(f($row,'sigla'),0,3)=='FNA' || (f($row,'usuario_logado')=='S' && f($row,'sigla')!='FNDREEMB')) {
+                ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'">'.$w_acao.'</A>&nbsp');
               }
               if (substr(f($row,'sigla'),0,3)!='FNA' && f($row,'sigla')!='FNDTARIFA' && f($row,'sigla')!='FNDFIXO' && !(f($row,'usuario_logado')=='S' && f($row,'sigla')!='FNDREEMB')) {
                 ShowHTML('          <A class="hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET')).'" title="Envia o lançamento para outro responsável ou fase.">EN</A>&nbsp');
