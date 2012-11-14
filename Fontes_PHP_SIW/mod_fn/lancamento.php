@@ -1002,15 +1002,19 @@ function Geral() {
         
         // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
         $sql = new db_getCronograma; $RS_Fonte = $sql->getInstanceOf($dbms,$w_sq_projeto_rubrica,$w_chave_aux,null,null,null,'RUBFONTES');
-        $w_exibe_ff = true;
-        if (count($RS_Fonte)==1 || nvl($w_solic_apoio,'')!='') {
-          foreach($RS_Fonte as $row) { 
-            if (nvl($w_solic_apoio,f($row,'sq_solic_apoio'))==f($row,'sq_solic_apoio')) {
-              $w_solic_apoio = f($row,'sq_solic_apoio'); 
-              break; 
+        if (count($RS_Fonte)==0) {
+          $w_exibe_ff = false;
+        } else {
+          $w_exibe_ff = true;
+          if (count($RS_Fonte)==1 || nvl($w_solic_apoio,'')!='') {
+            foreach($RS_Fonte as $row) { 
+              if (nvl($w_solic_apoio,f($row,'sq_solic_apoio'))==f($row,'sq_solic_apoio')) {
+                $w_solic_apoio = f($row,'sq_solic_apoio'); 
+                break; 
+              }
             }
+            if (count($RS_Fonte)==1) $w_exibe_ff = false;
           }
-          if (count($RS_Fonte)==1) $w_exibe_ff = false;
         }
       }
     }

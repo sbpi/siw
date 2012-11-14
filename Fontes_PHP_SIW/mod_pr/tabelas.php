@@ -731,7 +731,7 @@ function ConfiguraViagem() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('      <tr valign="top">');
-    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,7);
+    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica','FOLHA',null,7);
     ShowHTML('      <tr valign="top">');
     SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,7);
     ShowHTML('      <tr valign="top">');

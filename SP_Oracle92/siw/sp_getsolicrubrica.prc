@@ -19,6 +19,7 @@ begin
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
                 case a.exige_autorizacao when 'S' then 'Sim' else 'Não' end nm_exige_autorizacao,
+                montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao') ordena,
                 b.nome nm_cc, a.aplicacao_financeira,
                 coalesce((select sum(w.valor_previsto)
                             from pj_rubrica_cronograma w

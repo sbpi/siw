@@ -1602,9 +1602,9 @@ function Rubrica() {
     $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'risco','asc','descricao','asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'ordena','asc','nome','asc','descricao','asc','aplicacao_financeira','asc','ativo','asc');
     } else {
-      $RS = SortArray($RS,'codigo','asc','nome','asc','descricao','asc','aplicacao_financeira','asc','ativo','asc');
+      $RS = SortArray($RS,'ordena','asc','nome','asc','descricao','asc','aplicacao_financeira','asc','ativo','asc');
     }
     // Configura indicador de exibição da unidade de medida
     $w_unid_med = false;
@@ -1725,12 +1725,11 @@ function Rubrica() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$cs.' align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       $sql = new db_getSolicData; $RS2 = $sql->getInstanceOf($dbms,$w_chave,'PJGERAL');
       $w_valor_projeto = f($RS2,'valor');
       $w_total_previsto = 0;
       $w_total_real     = 0;
-      foreach ($RS1 as $row) {
+      foreach ($RS as $row) {
         $w_folha = ((f($row,'ultimo_nivel')=='S') ? ' class="folha"' : '');
         if (f($row,'ultimo_nivel')=='S') {
           $w_total_previsto += nvl(f($row,'total_previsto'),0);
@@ -1783,10 +1782,6 @@ function Rubrica() {
     ShowHTML('    </table>');
     ShowHTML('    <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Objection' : '').' [A.F.] Aplicação financeira'.(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'</td>');
     ShowHTML('  </td>');
-    ShowHTML('<tr><td align="center" colspan=3>');
-    if ($R>'') MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    else       MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
   } elseif (strpos('IAEV',$O)!==false) {
     if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
@@ -1823,9 +1818,12 @@ function Rubrica() {
     ShowHTML('      <tr><td colspan="3"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'" title="Informe um nome para a rubrica."></td>');
     ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos da etapa e os resultados esperados após sua execução.">'.$w_descricao.'</TEXTAREA></td>');
     if ($w_pacote=='S' && nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
-      ShowHTML('      <tr valign="top">');
+      ShowHTML('      <tr }
+      valign="top">');
       selecaoUnidadeMedida('Unidade de <U>m</U>edida:','M','Selecione a unidade de medida do indicador',$w_unidade_medida,null,'w_unidade_medida','REGISTROS','S');
       MontaRadioNS('<b>No Objection?</b>',$w_exige_autorizacao,'w_exige_autorizacao');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_exige_autorizacao" value="N">');
     }
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>Aplicação financeira?</b>',$w_aplicacao_financeira,'w_aplicacao_financeira');

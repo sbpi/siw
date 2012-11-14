@@ -15,7 +15,7 @@ begin
   for crec in c_ordem loop
      If p_retorno is null
         Then Result :=  crec.ordem||'.'||Result;
-        Else Result := substr(100000000000000000000+crec.ordem,2)||Result;
+        Else Result := lpad(crec.ordem,20)||Result;
      End If;
   end loop;
   If p_retorno is null Then Result := substr(Result,1,length(Result)-1); End If;
