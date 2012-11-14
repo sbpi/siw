@@ -258,7 +258,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   // Rubricas do projeto
   if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($l_O=='T' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI')) {
     $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
-    $RSQuery = SortArray($RSQuery,'codigo','asc');
+    $RSQuery = SortArray($RSQuery,'ordena','asc');
     // Configura indicador de exibição da unidade de medida
     $w_unid_med = false;
     foreach($RSQuery as $row) {

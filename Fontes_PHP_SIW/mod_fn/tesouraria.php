@@ -1031,7 +1031,7 @@ if (nvl($w_imposto,'')!='') {
     Validate('w_descricao','Detalhamento','1',1,5,2000,'1','1');
     Validate('w_tipo_pessoa',''.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Recebimento': 'Pagamento').' para pessoa','SELECT',1,1,18,'','0123456789');   
     Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
-    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
+    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789-.,');
     Validate('w_vencimento','Vencimento','DATA',1,10,10,'','0123456789/');
     if ($w_tipo_pessoa==1) Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
     else                   Validate('w_cnpj','CNPJ','CNPJ','1','18','18','','0123456789/-.');
@@ -2176,7 +2176,7 @@ function RubricaDoc() {
     elseif(f($RS1,'tipo_rubrica')==2)  $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
     elseif(f($RS1,'tipo_rubrica')==3)  $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,'S',null,null,null);  
     else                               $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
-    $RS = SortArray($RS,'codigo','asc');
+    $RS = SortArray($RS,'ordena','asc');
     //Rotina de escolha e gravação das parcelas para o lançamento
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');

@@ -411,7 +411,7 @@ function Rel_Progresso() {
 
             // Recupera o plano orçamentário do período
             $sql = new db_getSolicRubrica; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_projeto'),null,'S',null,null,null,null,null,null);
-            $RS1 = SortArray($RS1,'codigo','asc');
+            $RS1 = SortArray($RS1,'ordena','asc');
             if (count($RS1)==0) {
               ShowHTML('      <tr><td align="center" colspan="2"><b>Não há cronograma desembolso cadastrado para o período informado.');
             } else {
@@ -880,7 +880,7 @@ function Rel_Executivo() {
 
             // Recupera o plano orçamentário do período
             $sql = new db_getSolicRubrica; $RS1 = $sql->getInstanceOf($dbms,f($row,'sq_projeto'),null,'S',null,null,null,null,null,null);
-            $RS1 = SortArray($RS1,'codigo','asc');
+            $RS1 = SortArray($RS1,'ordena','asc');
             //print_r($RS1);
             if (count($RS1)==0) {
               ShowHTML('      <tr><td align="center" colspan="2"><b>Não há cronograma desembolso cadastrado para o período informado.');

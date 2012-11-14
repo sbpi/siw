@@ -2616,7 +2616,7 @@ function RubricaDoc() {
     elseif(f($RS1,'tipo_rubrica')==2)  $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
     elseif(f($RS1,'tipo_rubrica')==3)  $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,'S',null,null,null);  
     else                               $RS = $sql->getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
-    $RS = SortArray($RS,'codigo','asc');
+    $RS = SortArray($RS,'ordena','asc');
     //Rotina de escolha e gravação das parcelas para o lançamento
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
@@ -4017,7 +4017,7 @@ function Concluir() {
     unset($w_moedas);
     if ($w_moeda_solic!=$w_moeda_pai && nvl($w_moeda_pai,'')!='')     $w_moedas[f($RS_Pai,'sq_moeda')]   = f($RS_Pai,'sb_moeda');
     if ($w_moeda_solic!=$w_moeda_conta && nvl($w_moeda_conta,'')!='') $w_moedas[f($RS_Conta,'sq_moeda')] = f($RS_Conta,'sb_moeda');
-    asort($w_moedas);
+    if (is_array($w_moedas)) asort($w_moedas);
     
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $w_chave,null,null,null,null);
     foreach($RS_Moeda_Cot as $row) {

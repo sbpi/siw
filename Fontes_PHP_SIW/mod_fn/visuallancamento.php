@@ -1,4 +1,5 @@
 <?php
+include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
 // =========================================================================
 // Rotina de visualização dos dados do lançamento
 // -------------------------------------------------------------------------

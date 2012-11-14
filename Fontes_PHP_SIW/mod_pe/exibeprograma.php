@@ -148,7 +148,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
   // Rubricas do projeto
   if(nvl($_REQUEST['p_rubrica'],'')!='') {
     $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
-    $RS = SortArray($RS,'codigo','asc');
+    $RS = SortArray($RS,'ordena','asc');
     if (count($RS)>0 && $l_nome_menu['RUBRICA']!='' && $w_financeiro=='S' ) {
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
