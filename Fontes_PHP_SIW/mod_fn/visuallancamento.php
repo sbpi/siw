@@ -322,7 +322,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         
         // Verifica se há lançamentos vinculados
         $sql = new db_getImpostoDoc; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
-        $RS2 = SortArray($RS2,'sq_lancamento_doc','asc','calculo','desc','nm_imposto','asc');
+        $RS2 = SortArray($RS2,'calculo','desc','nm_imposto','asc','sq_lancamento_doc','asc','phpdt_inclusao','asc','esfera','asc');
         if (count($RS2)>0) {
           $w_vinculado = false;
           foreach($RS2 as $row2) {
@@ -341,7 +341,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             $l_html.=chr(13).'            <td><b>Finalidade</td>';
             $l_html.=chr(13).'            <td><b>Pagamento</td>';
             $l_html.=chr(13).'            <td><b>Valor</td>';
-            $w_vl_total = 0;
+            $w_vl_total     = 0;
+            $w_vl_acrescimo = 0;
+            
             foreach ($RS2 as $row2) {
               $l_html.=chr(13).'          <tr valign="top">';
               if (f($row2,'calculo')==0) {
@@ -356,10 +358,13 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
               }
               $l_html.=chr(13).'          <td>'.f($row2,'nm_imposto').'</td>';
               $l_html.=chr(13).'          <td align="center">'.formataDataEdicao(f($row2,'quitacao_imposto'),5).'</td>';
-              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.((nvl(f($row2,'sb_moeda'),'')!='') ? f($row2,'sb_moeda').' ' : 'R$ ').formatNumber(f($row2,'vl_total')).'</td>';
               if (f($row2,'calculo')!=0) {
                 // Quando é retenção, abate o valor do total a ser pago ao beneficiário
                 $w_vl_total+=f($row2,'vl_total');
+              } else {
+                // Quando é acréscimo, soma para exibir o valor total do lançamento
+                $w_vl_acrescimo+=f($row2,'vl_total');
               }
             } 
             if (Nvl(f($row,'valor'),0)==0) {
@@ -367,15 +372,28 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             } else {
               $w_valor=Nvl(f($row,'valor'),0);
             }
-            if ($w_vl_total!=0) {
-              $l_html.=chr(13).'          <tr valign="top">';
-              $l_html.=chr(13).'          <td colspan=4 align="right"><b>Total das retenções</td>';
-              $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
+            if ($w_vl_total!=0 || $w_vl_acrescimo!=0) {
+              if ($w_vl_total!=0) {
+                $l_html.=chr(13).'          <tr valign="top">';
+                $l_html.=chr(13).'            <td colspan=4 align="right"><b>Total das retenções</td>';
+                $l_html.=chr(13).'            <td align="right"><b>'.formatNumber($w_vl_total);
+                $l_html.=chr(13).'          </tr>';
+              }
               $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
-              $l_html.=chr(13).'          <td colspan=4 align="right"><b>Valor líquido</td>';
+              $l_html.=chr(13).'            <td colspan=4 align="right"><b>Valor líquido</td>';
               $row['valor'] = $w_valor-$w_vl_total;
-              $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+              $l_html.=chr(13).'            <td align="right"><b>'.formatNumber($w_valor-$w_vl_total);
               $l_html.=chr(13).'          </tr>';
+              if ($w_vl_acrescimo!=0) {
+                $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
+                $l_html.=chr(13).'            <td colspan=4 align="right"><b>Total dos acréscimos</td>';
+                $l_html.=chr(13).'            <td align="right"><b>'.formatNumber($w_vl_acrescimo);
+                $l_html.=chr(13).'          </tr>';
+                $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
+                $l_html.=chr(13).'            <td colspan=4 align="right"><b>Total agregado</td>';
+                $l_html.=chr(13).'            <td align="right"><b>'.formatNumber($w_valor-$w_vl_total+$w_vl_acrescimo);
+                $l_html.=chr(13).'          </tr>';
+              }
             }
           } else {
             $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Impostos</td>';
@@ -402,11 +420,11 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             foreach ($RS2 as $row2) {
               $l_html.=chr(13).'          <tr valign="top">';
               $l_html.=chr(13).'          <td nowrap align="right">'.f($row2,'nm_imposto').'</td>';
-              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_retencao')).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_retencao')).'</td>';
               $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_retencao')).'%</td>';
-              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_normal')).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_normal')).'</td>';
               $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_normal')).'%</td>';
-              $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_total')).'</td>';
               $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_total')).'%</td>';
               $w_vl_total=$w_vl_total+f($row2,'vl_total');
               $w_vl_retencao=$w_vl_retencao+f($row2,'vl_retencao');
@@ -422,14 +440,14 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             $w_al_normal=100-(($w_valor-$w_vl_normal)*100/$w_valor);
             $l_html.=chr(13).'          <tr valign="top">';
             $l_html.=chr(13).'          <td align="center"><b>Totais</td>';
-            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
-            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
-            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
+            $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
+            $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
+            $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
             $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
             $l_html.=chr(13).'          <td align="center"><b>Líquido</td>';
-            $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao);
-            $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
-            $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+            $l_html.=chr(13).'          <td colspan=2 align="center"><b>'.formatNumber($w_valor-$w_vl_retencao);
+            $l_html.=chr(13).'          <td colspan=2 align="center"><b>'.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
+            $l_html.=chr(13).'          <td colspan=2 align="center"><b>'.formatNumber($w_valor-$w_vl_total);
           }
           $l_html.=chr(13).'          </table>';
         }
@@ -582,7 +600,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $RS = SortArray($RS,'data','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $l_html.=chr(13).'      <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'      <tr><td align="center" colspan="2"><table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $l_html.=chr(13).'            <td rowspan=2><b>Número</td>';
     $l_html.=chr(13).'            <td colspan=4><b>Valores da Parcela</td>';
@@ -732,7 +750,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
             }
             $l_html.=chr(13).'          <td>'.f($row2,'nm_imposto').'</td>';
             $l_html.=chr(13).'          <td align="center">'.formataDataEdicao(f($row2,'quitacao_imposto'),5).'</td>';
-            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+            $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_total')).'</td>';
             if (f($row2,'calculo')!=0) {
               // Quando é retenção, abate o valor do total a ser pago ao beneficiário
               $w_vl_total+=f($row2,'vl_total');
@@ -746,11 +764,11 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           if ($w_vl_total!=0) {
             $l_html.=chr(13).'          <tr valign="top">';
             $l_html.=chr(13).'          <td colspan=3 align="right"><b>Subtotal</td>';
-            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total);
+            $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_total);
             $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
             $l_html.=chr(13).'          <td colspan=3 align="right"><b>Líquido</td>';
             $row['valor'] = $w_valor-$w_vl_total;
-            $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+            $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_valor-$w_vl_total);
             $l_html.=chr(13).'          </tr>';
           }
         } else {
@@ -774,11 +792,11 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           foreach ($RS2 as $row2) {
             $l_html.=chr(13).'          <tr valign="top">';
             $l_html.=chr(13).'          <td nowrap align="right">'.f($row2,'nm_imposto').'</td>';
-            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_retencao')).'</td>';
+            $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_retencao')).'</td>';
             $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_retencao')).'%</td>';
-            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_normal')).'</td>';
+            $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_normal')).'</td>';
             $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_normal')).'%</td>';
-            $l_html.=chr(13).'          <td align="right">R$ '.formatNumber(f($row2,'vl_total')).'</td>';
+            $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row2,'vl_total')).'</td>';
             $l_html.=chr(13).'          <td align="center">'.formatNumber(f($row2,'al_total')).'%</td>';
             $w_vl_total=$w_vl_total+f($row2,'vl_total');
             $w_vl_retencao=$w_vl_retencao+f($row2,'vl_retencao');
@@ -794,14 +812,14 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $w_al_normal=100-(($w_valor-$w_vl_normal)*100/$w_valor);
           $l_html.=chr(13).'          <tr valign="top">';
           $l_html.=chr(13).'          <td align="center"><b>Totais</td>';
-          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
-          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
-          $l_html.=chr(13).'          <td align="right"><b>R$ '.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
+          $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_retencao).'<td align="center"><b> '.formatNumber($w_al_retencao).'%';
+          $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_normal).'<td align="center"><b> '.formatNumber($w_al_normal).'%';
+          $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_vl_total).'<td align="center"><b> '.formatNumber($w_al_total).'%';
           $l_html.=chr(13).'          <tr bgcolor="'.$w_cor.'" valign="top">';
           $l_html.=chr(13).'          <td align="center"><b>Líquido</td>';
-          $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao);
-          $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
-          $l_html.=chr(13).'          <td colspan=2 align="center"><b>R$ '.formatNumber($w_valor-$w_vl_total);
+          $l_html.=chr(13).'          <td colspan=2 align="center"><b>'.formatNumber($w_valor-$w_vl_retencao);
+          $l_html.=chr(13).'          <td colspan=2 align="center"><b>'.formatNumber($w_valor-$w_vl_retencao-$w_vl_normal);
+          $l_html.=chr(13).'          <td colspan=2 align="center"><b>'.formatNumber($w_valor-$w_vl_total);
         }
         $l_html.=chr(13).'          </table>';
       } 
@@ -828,8 +846,8 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $RS = SortArray($RS,'rubrica','asc');
     if (count($RS)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RUBRICAS E VALORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'      <tr><td align="center">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'        <table width=100% border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Rubrica</b></td>';
       if ($w_entidade!='') {
@@ -869,7 +887,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $RS = SortArray($RS,'nome','asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'      <tr><td align="center">';
+    $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr align="center">';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Título</b></td>';

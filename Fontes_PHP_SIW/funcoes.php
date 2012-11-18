@@ -66,7 +66,14 @@ function SortArray() {
 function exibeCalendario($form, $campo) {
   extract($GLOBALS);
   return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'calendario.php?form=' . $form . '&field=' . $campo . '&vData=\'+document.' . $form . '.' . $campo . '.value,\'dp\',\'toolbar=0, location=0, directories=0, status=0, menubar=0, scrollbars=0, resizable=0, width=150, height=160, left=500, top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" alt="img" border=0 align=top height=16 width=16 /></a>';
-  //return '   <a class="ss" HREF="javascript:this.status.value;" onClick="javascript:window.open("calendar.php?form=frmMain&field=txtDate","","top=50,left=400,width=200,height=120,menubar=no,toolbar=no,scrollbars=no,resizable=no,status=no"); return false;
+}
+
+// =========================================================================
+// Montagem do link para calcular conversão de moedas
+// -------------------------------------------------------------------------
+function converteMoeda($form, $c_data, $c_campo, $c_valor, $c_origem, $c_destino) {
+  extract($GLOBALS);
+  return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\'' . $conRootSIW . 'funcoes/conversao.php?form=' . $form . '&field=' . $c_campo . '&vData=\'+document.' . $form . '.' . $c_data . '.value+\'&vValor=\'+document.' . $form . '.' . $c_valor . '.value+\'&vOrigem=' . $c_origem . '&vDestino=' . $c_destino . '\',\'cm\',\'toolbar=0, location=0, directories=0, status=0, menubar=0, scrollbars=0, resizable=0, width=450, height=160, left=300, top=200\'); return false;" title="Conversão de moedas"><img src="images/icone/coins.png" alt="img" border=0 align=top height=16 width=16 /></a>';
 }
 
 // =========================================================================
@@ -2272,8 +2279,8 @@ function FormataTempo($p_segundos) {
 // =========================================================================
 // Função que formata valores com separadores de milhar e decimais
 // -------------------------------------------------------------------------
-function FormatNumber($p_valor, $p_decimais=2) {
-  return number_format($p_valor,$p_decimais,',','.');
+function FormatNumber($valor, $decimais=2) {
+  return number_format($valor,$decimais,',','.');
 }
 
 // =========================================================================
@@ -2378,6 +2385,16 @@ function RetornaGestor($p_solicitacao,$p_usuario) {
   include_once($w_dir_volta.'classes/sp/db_getGestor.php');
   $sql = new db_getGestor; $l_acesso = $sql->getInstanceOf($dbms,$p_solicitacao, $p_usuario);
   return $l_acesso;
+}
+
+// =========================================================================
+// Função que retorna o valor da conversão de uma moeda para outra
+// -------------------------------------------------------------------------
+function Conversao($cliente, $data, $origem, $destino, $valor, $taxa) {
+  extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getConversao.php');
+  $sql = new db_getConversao; $l_valor = $sql->getInstanceOf($dbms,$cliente, $data, $origem, $destino, $valor, $taxa);
+  return $l_valor;
 }
 
 // =========================================================================

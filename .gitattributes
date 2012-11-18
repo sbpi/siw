@@ -796,6 +796,7 @@ Fontes_PHP_SIW/classes/sp/db_getContasRegistro.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvOutraParte.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvOutroRep.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvPreposto.php -text
+Fontes_PHP_SIW/classes/sp/db_getConversao.php -text
 Fontes_PHP_SIW/classes/sp/db_getCountryData.php -text
 Fontes_PHP_SIW/classes/sp/db_getCountryList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCronograma.php -text
@@ -1567,6 +1568,7 @@ Fontes_PHP_SIW/funcoes/arquivoWord.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordOR.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordRel.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordSint.php -text
+Fontes_PHP_SIW/funcoes/conversao.php -text
 Fontes_PHP_SIW/funcoes/csshover.htc -text
 Fontes_PHP_SIW/funcoes/envio.php -text
 Fontes_PHP_SIW/funcoes/exibeColaborador.php -text
@@ -1814,6 +1816,7 @@ Fontes_PHP_SIW/images/fancybox-x.png -text
 Fontes_PHP_SIW/images/fancybox-y.png -text
 Fontes_PHP_SIW/images/fancybox.png -text
 Fontes_PHP_SIW/images/icone/GotoTop.gif -text
+Fontes_PHP_SIW/images/icone/coins.png -text
 Fontes_PHP_SIW/images/icone/dollar-green.png -text
 Fontes_PHP_SIW/images/icone/earth_16.png -text
 Fontes_PHP_SIW/images/word.gif -text

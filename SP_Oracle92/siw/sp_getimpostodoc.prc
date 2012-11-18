@@ -27,25 +27,28 @@ begin
              i.aviso_prox_conc as imp_aviso, i.dias_aviso as imp_dias,
              i1.sq_pessoa, i1.nome as nm_pessoa, i1.nome_resumido as nm_pessoa_resumido,
              j.sq_siw_tramite as imp_sq_tramite, j.sigla as imp_sg_tramite,
-             k.sigla as imp_sigla
-        from fn_imposto_doc                    a
-             inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc and
-                                                     (p_chave_aux is null or (p_chave_aux is not null and b.sq_lancamento_doc  = p_chave_aux))
-                                                    )
-               inner   join fn_lancamento      c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao and
-                                                     c.cliente            = p_cliente
-                                                    )
-                 inner join siw_solicitacao    d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao and
-                                                     (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                                    )
-                 inner join fn_tipo_lancamento e on (c.sq_tipo_lancamento = e.sq_tipo_lancamento)
-               inner   join fn_tipo_documento  f on (b.sq_tipo_documento  = f.sq_tipo_documento)
-             inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
-             left      join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
-               left    join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
-                 left  join co_pessoa         i1 on (i.pessoa             = i1.sq_pessoa)
-               left    join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite)
-               left    join siw_menu           k on (h.sq_menu            = k.sq_menu)
+             k.sigla as imp_sigla,
+             l.sq_moeda,          l.codigo cd_moeda,            l.nome nm_moeda,
+             l.sigla sg_moeda,    l.simbolo sb_moeda,           l.ativo at_moeda
+        from fn_imposto_doc                      a
+             inner       join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc and
+                                                       (p_chave_aux is null or (p_chave_aux is not null and b.sq_lancamento_doc  = p_chave_aux))
+                                                      )
+               inner     join fn_lancamento      c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao and
+                                                       c.cliente            = p_cliente
+                                                      )
+                 inner   join siw_solicitacao    d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao and
+                                                       (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
+                                                      )
+                 inner   join fn_tipo_lancamento e on (c.sq_tipo_lancamento = e.sq_tipo_lancamento)
+               inner     join fn_tipo_documento  f on (b.sq_tipo_documento  = f.sq_tipo_documento)
+             inner       join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
+             left        join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
+               left      join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                 left    join co_pessoa         i1 on (i.pessoa             = i1.sq_pessoa)
+               left      join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite)
+               left      join siw_menu           k on (h.sq_menu            = k.sq_menu)
+               left      join co_moeda           l on (h.sq_moeda           = l.sq_moeda)
        where coalesce(j.sigla,'-') <> 'CA';
 End SP_GetImpostoDoc;
 /
