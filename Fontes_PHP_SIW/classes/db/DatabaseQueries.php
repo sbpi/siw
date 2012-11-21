@@ -352,6 +352,28 @@ class OraDatabaseQueries extends DatabaseQueries {
               $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
               array_key_case_change(&$this->resultData);
               oci_execute($this->result);
+              for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
+                if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); }
+                elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
+              }
+              $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+              array_key_case_change(&$this->resultData);
+              if (isset($this->column_datatype)) {
+                for ($i = 0; $i < $this->num_rows; $i++) {
+                  foreach ($this->column_datatype as $key => $val) {
+                    if (nvl($this->resultData[$i][$key],'')>'') { 
+                      if ($val=='DATE') {
+                        $tmp = formatDateTime($this->resultData[$i][$key]);
+                        $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                      } elseif ($val=='DATETIME') {
+                        $this->resultData[$i][$key] = toDate($this->resultData[$i][$key]);
+                      } else {
+                        $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         } else { 
@@ -598,7 +620,28 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                return false; 
              } else {
                if ($function){
+                 for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
+                   if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); }
+                   elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
+                 }
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+                 array_key_case_change(&$this->resultData);
+                 if (isset($this->column_datatype)) {
+                   for ($i = 0; $i < $this->num_rows; $i++) {
+                     foreach ($this->column_datatype as $key => $val) {
+                       if (nvl($this->resultData[$i][$key],'')>'') { 
+                         if ($val=='DATE') {
+                           $tmp = formatDateTime($this->resultData[$i][$key]);
+                           $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                         } elseif ($val=='DATETIME') {
+                           $this->resultData[$i][$key] = toDate($this->resultData[$i][$key]);
+                         } else {
+                           $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                         }
+                       }
+                     }
+                   }
+                 }
                } else {
                  if ($log) {
                    // Registra no servidor syslog

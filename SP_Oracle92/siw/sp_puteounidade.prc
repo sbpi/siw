@@ -22,39 +22,47 @@ create or replace procedure SP_PutEOUnidade
     p_ativo                    in  varchar2 default null
    ) is
    
+   w_chave     number(18);
    w_arq       varchar2(4000) := '';
 cursor c_arquivos is
      select sq_siw_arquivo from eo_unidade_arquivo where sq_unidade = p_chave;
 begin
    If p_operacao = 'I' Then
+      -- Recupera a próxima chave
+      select Nvl(p_Chave, sq_unidade.nextval) into w_chave from dual;
+      
       -- Insere registro
      insert into eo_unidade 
             (sq_unidade, sq_tipo_unidade, sq_area_atuacao, sq_unidade_gestora, sq_unidade_pai,
              sq_unid_pagadora, sq_pessoa_endereco, ordem, email, codigo, sq_pessoa, nome, 
              sigla, informal, vinculada, adm_central, unidade_gestora, unidade_pagadora, externo,ativo
             )
-     (select Nvl(p_Chave, sq_unidade.nextval),
-                 p_sq_tipo_unidade,
-                 p_sq_area_atuacao,
-                 p_sq_unidade_gestora,
-                 p_sq_unidade_pai,
-                 p_sq_unidade_pagadora,
-                 p_sq_pessoa_endereco,
-                 p_ordem,
-                 p_email,
-                 p_codigo,
-                 p_cliente,
-                 trim(p_nome),
-                 trim(p_sigla),
-                 p_informal,
-                 p_vinculada,
-                 p_adm_central,
-                 p_unidade_gestora,
-                 p_unidade_pagadora,
-                 p_externo,
-                 p_ativo
-            from dual
-         );
+     (select w_chave,
+             p_sq_tipo_unidade,
+             p_sq_area_atuacao,
+             p_sq_unidade_gestora,
+             p_sq_unidade_pai,
+             p_sq_unidade_pagadora,
+             p_sq_pessoa_endereco,
+             p_ordem,
+             p_email,
+             p_codigo,
+             p_cliente,
+             trim(p_nome),
+             trim(p_sigla),
+             p_informal,
+             p_vinculada,
+             p_adm_central,
+             p_unidade_gestora,
+             p_unidade_pagadora,
+             p_externo,
+             p_ativo
+        from dual
+     );
+
+     -- Cria localização inicial para a unidade, a ser alterada posteriormente pelo usuário
+     insert into eo_localizacao (sq_localizacao, sq_pessoa_endereco,   sq_unidade, nome,    ativo, cliente)         
+     values             (sq_localizacao.nextval, p_sq_pessoa_endereco, w_chave,    'Unica', 'S',   p_cliente);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update eo_unidade set

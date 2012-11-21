@@ -23,7 +23,9 @@ class db_getConversao {
      else {
        error_reporting($l_error_reporting); 
        if ($l_rs = $l_rs->getResultArray()) {
-         foreach($l_rs as $k => $v) return $v;
+         foreach($l_rs as $k => $v) { 
+           return $v;
+         }
        } else {
          return 0;
        }

@@ -1182,7 +1182,7 @@ function Geral() {
       } elseif ($w_forma_pagamento=='EXTERIOR') {
         Validate('w_banco_estrang','Banco de destino','1','1',1,60,1,1);
         Validate('w_aba_code','Código ABA','1','',1,12,1,1);
-        Validate('w_swift_code','Código SWIFT','1','',1,30,'',1);
+        Validate('w_swift_code','Código SWIFT','1','1',1,30,'',1);
         Validate('w_endereco_estrang','Endereço da agência destino','1','',3,100,1,1);
         ShowHTML('  if (theForm.w_aba_code.value == \'\' && theForm.w_swift_code.value == \'\' && theForm.w_endereco_estrang.value == \'\') {');
         ShowHTML('     alert("Informe código ABA, código SWIFT ou endereço da agência!");');
@@ -1790,7 +1790,7 @@ function OutraParte() {
       } elseif ($w_forma_pagamento=='EXTERIOR') {
         Validate('w_banco_estrang','Banco de destino','1','1',1,60,1,1);
         Validate('w_aba_code','Código ABA','1','',1,12,1,1);
-        Validate('w_swift_code','Código SWIFT','1','',1,30,'',1);
+        Validate('w_swift_code','Código SWIFT','1','1',1,30,'',1);
         Validate('w_endereco_estrang','Endereço da agência destino','1','',3,100,1,1);
         ShowHTML('  if (theForm.w_aba_code.value == \'\' && theForm.w_swift_code.value == \'\' && theForm.w_endereco_estrang.value == \'\') {');
         ShowHTML('     alert("Informe código ABA, código SWIFT ou endereço da agência!");');

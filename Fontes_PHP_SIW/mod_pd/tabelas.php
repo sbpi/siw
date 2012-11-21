@@ -1044,8 +1044,8 @@ function Unidade() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       if ($O=='I') {
-        Validate('w_chave','Unidade','HIDDEN','1','1','50','1','1');
-      } 
+        Validate('w_chave','Unidade','SELECT','1','1','50','1','1');
+      }
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1068,7 +1068,7 @@ function Unidade() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen(null);
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');

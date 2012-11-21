@@ -126,7 +126,8 @@ if ($w_erro) {
 
   if (nvl($w_taxa,'')!='') {
     ShowHTML('  <tr valign="top"><td colspan="2" align="center"><hr>');
-    $w_conversao = formatNumber(floor(str_replace(',','.',str_replace('.','',$w_conversao))*100)/100);
+    // Garante que o valor retornado será truncado em duas decimais, e não arrendondado
+    $w_conversao = formatNumber(floor($w_conversao*100)/100);
     ShowHTML('    <B><font size=2>Valor convertido: '.$w_conversao.'</b>');
     ShowHTML('    <br />Clique <a class="hl" href="javascript:sendToForm(\''.$w_conversao.'\',\''.$w_campo.'\',\''.$w_form.'\');">aqui</a> transferir o valor para o formulário.</font></b>');
     ShowHTML('    </td>');
