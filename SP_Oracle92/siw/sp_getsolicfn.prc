@@ -33,6 +33,7 @@ create or replace procedure SP_GetSolicFN
     p_processo     in varchar2 default null,
     p_result       out sys_refcursor) is
     
+    w_cliente    number(18);
     l_item       varchar2(18);
     l_fase       varchar2(200) := p_fase ||',';
     x_fase       varchar2(200) := '';
@@ -50,6 +51,9 @@ create or replace procedure SP_GetSolicFN
       connect by prior sq_unidade = sq_unidade_pai;
       
 begin
+   -- Recupera a chave do cliente
+   select sq_pessoa_pai into w_cliente from co_pessoa where sq_pessoa = p_pessoa;
+   
    If p_fase is not null Then
       Loop
          l_item  := Trim(substr(l_fase,1,Instr(l_fase,',')-1));
@@ -126,6 +130,8 @@ begin
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
+                a2.sq_tipo_unidade,   a2.nome as nm_unidade_exec,    a2.informal,
+                a2.vinculada,         a2.adm_central,
                 a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
                 a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
@@ -169,8 +175,6 @@ begin
                           end
                      else to_char(b8.numero_documento)||'/'||substr(to_char(b8.ano),3,2) 
                 end as protocolo,
-                c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
-                c.vinculada,          c.adm_central,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
@@ -197,7 +201,6 @@ begin
                 da.numero as conta_debito,
                 d7.sq_forma_pagamento,case substr(a.sigla,3,1) when 'R' then null else d7.nome end as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
-                coalesce(d9.valor,0) as valor_nota,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
@@ -205,60 +208,48 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m3.codigo_interno as cd_acordo, m.objeto as obj_acordo,
                 case when m4.qtd is null then 'S' else 'N' end as usuario_logado, -- Se igual a S, somente o usuário logado participou da tramitação 
-                m1.ordem as or_parcela,
-                m2.qtd_nota,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
                 q1.titulo as nm_projeto,
-                case when q2.sq_siw_solicitacao is null then 'N' else 'S' end as rubrica,
+                coalesce((select sum(valor) from fn_lancamento_doc where sq_acordo_nota is not null and sq_siw_solicitacao = b.sq_siw_solicitacao),0) as valor_nota,
+                case when d.sq_acordo_parcela  is null then null else (select ordem    from ac_acordo_parcela where sq_acordo_parcela = d.sq_acordo_parcela) end or_parcela,
+                case when d.sq_acordo_parcela  is null then null else (select count(*) from ac_parcela_nota   where sq_acordo_parcela = d.sq_acordo_parcela) end qtd_nota,
+                case when q.sq_siw_solicitacao is null then null else (select case count(*) when 0 then 'N' else 'S' end from pj_rubrica where sq_siw_solicitacao = q.sq_siw_solicitacao) end rubrica,
                 r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo
-           from co_pessoa                                      z1
-                inner join siw_cliente_modulo                  z2 on (z1.sq_pessoa_pai           = z2.sq_pessoa)
-                inner join siw_modulo                          a1 on (z2.sq_modulo               = a1.sq_modulo and
-                                                                      a1.sigla                   = 'FN'
+           from siw_modulo                                     a1
+                inner                join siw_menu             a  on (a1.sq_modulo               = a.sq_modulo and
+                                                                      a.sq_pessoa                = w_cliente
                                                                      )
-                inner           join siw_menu                  a  on (a1.sq_modulo               = a.sq_modulo and
-                                                                      z2.sq_pessoa               = a.sq_pessoa
-                                                                     )
-                   inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                   inner             join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join (select y.sq_siw_solicitacao, acesso(y.sq_siw_solicitacao, p_pessoa) as acesso
-                                             from co_pessoa                      w
-                                                  inner     join siw_menu        x on (w.sq_pessoa_pai      = x.sq_pessoa and 
-                                                                                       x.sq_menu            = coalesce(p_menu,x.sq_menu))
-                                                    inner   join siw_solicitacao y on (x.sq_menu            = y.sq_menu)
-                                                      inner join fn_lancamento   z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                            where w.sq_pessoa = p_pessoa
-                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
-                      inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
-                      inner          join (select y.sq_siw_solicitacao, max(z1.sq_siw_solic_log) as chave
-                                             from co_pessoa                      w
-                                                  inner     join siw_menu        x on (w.sq_pessoa_pai      = x.sq_pessoa and 
-                                                                                       x.sq_menu            = coalesce(p_menu,x.sq_menu))
-                                                    inner   join siw_solicitacao y on (x.sq_menu            = y.sq_menu)
-                                                      inner join fn_lancamento   z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                                      inner join siw_solic_log  z1 on (y.sq_siw_solicitacao = z1.sq_siw_solicitacao)
-                                            where w.sq_pessoa = p_pessoa
-                                           group by y.sq_siw_solicitacao
+                      inner          join (select y.sq_siw_solicitacao, acesso(y.sq_siw_solicitacao, p_pessoa) as acesso
+                                             from siw_menu                     x
+                                                  inner   join siw_solicitacao y on (x.sq_menu            = y.sq_menu)
+                                                    inner join fn_lancamento   z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                            where x.sq_pessoa = w_cliente
+                                              and (p_menu    is null or (p_menu is not null and x.sq_menu = p_menu))
+                                          )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                      inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
+                      inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                      inner          join (select z.sq_siw_solicitacao, max(z1.sq_siw_solic_log) as chave
+                                             from fn_lancamento              z
+                                                  inner join siw_solic_log  z1 on (z.sq_siw_solicitacao = z1.sq_siw_solicitacao)
+                                            where z.cliente = w_cliente
+                                           group by z.sq_siw_solicitacao
                                           )                    j  on (d.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-                      left           join (select y.sq_siw_solicitacao, count(z1.sq_siw_solic_log) as qtd
-                                             from co_pessoa                      w
-                                                  inner     join siw_menu        x on (w.sq_pessoa_pai      = x.sq_pessoa and 
-                                                                                       x.sq_menu            = coalesce(p_menu,x.sq_menu))
-                                                    inner   join siw_solicitacao y on (x.sq_menu            = y.sq_menu)
-                                                      inner join fn_lancamento   z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                                      inner join siw_solic_log  z1 on (y.sq_siw_solicitacao = z1.sq_siw_solicitacao and
-                                                                                       z1.sq_pessoa         <> p_pessoa
-                                                                                      )
-                                            where w.sq_pessoa = p_pessoa
-                                              and (p_chave    is null or (p_chave is not null and y.sq_siw_solicitacao = p_chave))
-                                           group by y.sq_siw_solicitacao
+                      left           join (select z.sq_siw_solicitacao, count(z1.sq_siw_solic_log) as qtd
+                                             from fn_lancamento              z
+                                                  inner join siw_solic_log  z1 on (z.sq_siw_solicitacao = z1.sq_siw_solicitacao and
+                                                                                   z1.sq_pessoa         <> p_pessoa
+                                                                                  )
+                                            where z.cliente = w_cliente
+                                              and (p_chave is null or (p_chave is not null and z.sq_siw_solicitacao = p_chave))
+                                           group by z.sq_siw_solicitacao
                                           )                    m4  on (d.sq_siw_solicitacao      = m4.sq_siw_solicitacao)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
                                                                       a3.tipo_respons            = 'T'           and
@@ -268,13 +259,9 @@ begin
                                                                       a4.tipo_respons            = 'S'           and
                                                                       a4.fim                     is null
                                                                      )
-                      left           join pe_plano             b3 on (a.sq_pessoa                = b3.cliente and
-                                                                      b.sq_plano                 = b3.sq_plano
-                                                                     )
+                      left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
-                        left         join pe_plano             b5 on (a.sq_pessoa                = b5.cliente and
-                                                                      b4.sq_plano                = b5.sq_plano
-                                                                     )
+                        left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
                         left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                         left         join pa_documento         b9 on (b4.protocolo_siw           = b9.sq_siw_solicitacao)
                         left         join pa_documento         b8 on (b.protocolo_siw            = b8.sq_siw_solicitacao)
@@ -284,43 +271,30 @@ begin
                           left       join co_pessoa_juridica  d22 on (d2.sq_pessoa               = d22.sq_pessoa)
                         left         join fn_lancamento_doc    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao) 
                           left       join fn_tipo_documento   d31 on (d3.sq_tipo_documento       = d31.sq_tipo_documento)
-                        left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
-                                                                      d4.ativo                   = 'S' and
-                                                                      d4.padrao                  = 'S'
-                                                                     )
+                        left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa)
                         left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                         left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                         left         join co_pessoa_conta      da on (d.sq_pessoa_conta          = da.sq_pessoa_conta)
                           left       join co_agencia           db on (da.sq_agencia              = db.sq_agencia)
                           left       join co_banco             dc on (db.sq_banco                = dc.sq_banco)
-                        left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
-                                             from fn_lancamento_doc          x
-                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                  inner join siw_menu        z on (y.sq_menu            = z.sq_menu)
-                                            where x.sq_acordo_nota is not null
-                                              and z.sq_menu        = coalesce(p_menu, z.sq_menu)
-                                           group by x.sq_siw_solicitacao
-                                          )                    d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
-                        left        join (select d.sq_siw_solicitacao, sum(a.valor_total) as valor
+                        left        join (select b.sq_siw_solicitacao, sum(a.valor_total) as valor
                                             from fn_imposto_doc                    a
                                                  inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                                   inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                                                 inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
+                                                 inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto and g.cliente = w_cliente)
                                                  inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
                                                    inner   join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
                                                    inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
-                                                   inner   join siw_menu           k on (h.sq_menu            = k.sq_menu)
-                                           where g.calculo > 0
-                                             and (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                          group by d.sq_siw_solicitacao
+                                           where g.calculo   > 0
+                                             and (p_chave   is null or (p_chave is not null and b.sq_siw_solicitacao = p_chave))
+                                          group by b.sq_siw_solicitacao
                                          )                     dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
-                        left        join (select d.sq_siw_solicitacao, sum(case g.tipo when 'A' then a.valor else -1*a.valor end) as valor
+                        left        join (select b.sq_siw_solicitacao, sum(case g.tipo when 'A' then a.valor else -1*a.valor end) as valor
                                             from fn_documento_valores              a
                                                  inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                                   inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
                                                  inner     join fn_valores         g on (a.sq_valores         = g.sq_valores)
-                                           where (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                          group by d.sq_siw_solicitacao
+                                           where g.cliente = w_cliente
+                                             and (p_chave    is null or (p_chave is not null and b.sq_siw_solicitacao = p_chave))
+                                          group by b.sq_siw_solicitacao
                                          )                     dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
@@ -332,19 +306,8 @@ begin
                                                                      )
                       left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m3 on (m.sq_siw_solicitacao       = m3.sq_siw_solicitacao)
-                      left           join ac_acordo_parcela    m1 on (d.sq_acordo_parcela        = m1.sq_acordo_parcela and
-                                                                      d.sq_acordo_parcela        is not null
-                                                                     )
-                        left         join (select y.sq_acordo_parcela, count(y.sq_acordo_nota) as qtd_nota
-                                             from ac_parcela_nota y
-                                            group by y.sq_acordo_parcela
-                                          )                    m2 on (m1.sq_acordo_parcela       = m2.sq_acordo_parcela)
                       left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                         left         join siw_solicitacao      q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
-                        left         join (select sq_siw_solicitacao, count(*)
-                                             from pj_rubrica
-                                           group by sq_siw_solicitacao
-                                          )                    q2 on (q.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
                       left           join pj_projeto           r  on (d.sq_solic_vinculo         = r.sq_siw_solicitacao)
                         left         join siw_solicitacao      r1 on (r.sq_siw_solicitacao       = r1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
@@ -352,12 +315,11 @@ begin
                         left         join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           left       join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                   left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                      left            join fn_lancamento_log    k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-          where z1.sq_pessoa = p_pessoa
-            and ((p_tipo = 1 and b1.sigla = 'EE' and (z1.sq_pessoa_pai <> 10135 or (z1.sq_pessoa_pai = 10135 and a.sigla <> 'FNDCONT'))) or
-                 (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(sysdate) and (z1.sq_pessoa_pai <> 10135 or (z1.sq_pessoa_pai = 10135 and a.sigla <> 'FNDCONT'))) or
+          where  a1.sigla                 = 'FN'
+            and ((p_tipo = 1 and b1.sigla = 'EE' and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
+                 (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(sysdate) and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and b2.acesso > 0) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo = 4 and b1.sigla <> 'CA'  and b2.acesso > 0) or

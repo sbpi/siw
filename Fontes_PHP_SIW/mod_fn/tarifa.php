@@ -504,7 +504,6 @@ function Geral() {
     $w_fim                  = $_REQUEST['w_fim'];
     $w_conta_debito         = $_REQUEST['w_conta_debito'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
-
 } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
