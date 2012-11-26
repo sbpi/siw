@@ -465,7 +465,8 @@ begin
                 a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
                 a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
                 a2.adm_central as adm_exec,
-                a3.sq_pessoa as tit_exec,                            a4.sq_pessoa as subst_exec,
+                (select sq_pessoa from eo_unidade_resp where sq_unidade = a2.sq_unidade and tipo_respons = 'T' and fim is null) as tit_exec,
+                (select sq_pessoa from eo_unidade_resp where sq_unidade = a2.sq_unidade and tipo_respons = 'S' and fim is null) as subst_exec,
                 b.sq_siw_solicitacao, b.solicitante,                 b.cadastrador,
                 b.executor,           b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -524,17 +525,25 @@ begin
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome as nm_tipo_lancamento,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
-                coalesce(d3.valor,0) as valor_doc,
                 d4.nome as nm_forma_pagamento, d4.sigla as sg_forma_pagamento, d4.ativo as st_forma_pagamento,
                 di.sq_pessoa_conta as conta_credito,
+                di2.sq_moeda sq_moeda_benef,  di2.codigo cd_moeda_benef,  di2.nome nm_moeda_benef,
+                di2.sigla    sg_moeda_benef,  di2.simbolo sb_moeda_benef, di2.ativo at_moeda_benef,
                 d5.codigo as cd_agencia, d5.nome as nm_agencia,
-                d6.sq_banco,          d6.codigo as cd_banco,            d6.nome as nm_banco,
+                d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
                 d6.exige_operacao,
                 d7.nome as nm_pais,
                 d8.nome as nm_tipo_pessoa,
-                coalesce(d9.valor,0) as valor_nota,
-                coalesce(da.qtd,0) as qtd_nota,
-                coalesce(db.existe,0) as notas_parcela,
+                coalesce((select sum(x.valor) from fn_lancamento_doc x where x.sq_siw_solicitacao = d.sq_siw_solicitacao and x.sq_acordo_nota is null),0) as valor_doc,
+                coalesce((select sum(x.valor) from fn_lancamento_doc x where x.sq_siw_solicitacao = d.sq_siw_solicitacao and x.sq_acordo_nota is not null),0) as valor_nota,
+                coalesce((select count(*)     from fn_lancamento_doc x where x.sq_siw_solicitacao = d.sq_siw_solicitacao and x.sq_acordo_nota is not null),0) as qtd_nota,
+                case when d.sq_acordo_parcela is null then 0
+                     else coalesce((select count(*)
+                                      from ac_acordo_parcela          x
+                                           inner join ac_parcela_nota z on (x.sq_acordo_parcela = z.sq_acordo_parcela)
+                                      where z.sq_acordo_parcela = d.sq_acordo_parcela
+                                   ),0)
+                end as notas_parcela,
                 da1.sq_lancamento_doc,   da1.numero nr_doc, da1.data dt_doc, da1.valor vl_doc,
                 dc.operacao as oper_org, dc.numero as nr_conta_org,
                 dd.codigo as cd_age_org, dd.nome as nm_age_org,
@@ -542,16 +551,34 @@ begin
                 de.exige_operacao as exige_oper_org,
                 df.sq_imposto, df.solic_origem,
                 case coalesce(df.sq_siw_solicitacao,0) when 0 then 'N' else 'S' end as lancamento_vinculado,
-                coalesce(dg.valor,0) as vl_abatimento,
-                coalesce(dh.valor,0) as vl_outros,
+                coalesce((select sum(a.valor_total)
+                            from fn_imposto_doc                    a
+                                 inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                                 inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
+                                 inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
+                                   inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
+                           where g.calculo            > 0
+                             and b.sq_siw_solicitacao = d.sq_siw_solicitacao
+                         ),0) as vl_abatimento,
+                coalesce((select sum(case g.tipo when 'A' then a.valor else -1*a.valor end)
+                            from fn_documento_valores              a
+                                 inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                                   inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                                     inner join siw_tramite        j on (d.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
+                                 inner     join fn_valores         g on (a.sq_valores         = g.sq_valores)
+                           where b.sq_siw_solicitacao = d.sq_siw_solicitacao
+                         ),0) as vl_outros,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
-                e1.sq_pessoa as titular,                             e2.sq_pessoa as substituto,
+                (select sq_pessoa from eo_unidade_resp where sq_unidade = e.sq_unidade and tipo_respons = 'T' and fim is null) as titular,
+                (select sq_pessoa from eo_unidade_resp where sq_unidade = e.sq_unidade and tipo_respons = 'S' and fim is null) as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 f.nome nm_cidade,
                 m1.codigo_interno as cd_acordo,
-                coalesce(m4.existe,0) as notas_acordo,
+                case when m.sq_siw_solicitacao is null then 0
+                     else coalesce((select count(*) from ac_acordo_nota where sq_siw_solicitacao = m.sq_siw_solicitacao),0)
+                end as notas_acordo,
                 mo.sq_moeda,          mo.codigo cd_moeda,            mo.nome nm_moeda,
                 mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
@@ -561,15 +588,7 @@ begin
                 case coalesce(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end as sq_projeto,
                 case coalesce(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end as qtd_rubrica
            from siw_menu                                    a 
-                inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
-                  left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
-                                                                   a3.tipo_respons            = 'T'           and
-                                                                   a3.fim                     is null
-                                                                  )
-                  left       join eo_unidade_resp           a4 on (a2.sq_unidade              = a4.sq_unidade and
-                                                                   a4.tipo_respons            = 'S'           and
-                                                                   a4.fim                     is null
-                                                                  )
+                inner             join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                 inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                 inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
@@ -585,41 +604,10 @@ begin
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
                      inner        join co_tipo_pessoa       d8 on (d.sq_tipo_pessoa           = d8.sq_tipo_pessoa)
-                     left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
-                                          from fn_lancamento_doc          x
-                                               inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
-                                           and x.sq_acordo_nota is null
-                                        group by x.sq_siw_solicitacao
-                                       )                    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao)
                      left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
                      left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                        left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                      left         join co_pais              d7 on (d.sq_pais_estrang          = d7.sq_pais)
-                     left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
-                                          from fn_lancamento_doc          x
-                                               inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
-                                           and x.sq_acordo_nota is not null
-                                        group by x.sq_siw_solicitacao
-                                       )                    d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
-                     left         join (select x.sq_siw_solicitacao, count(x.sq_lancamento_doc) as qtd
-                                          from fn_lancamento_doc          x
-                                               inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
-                                           and x.sq_acordo_nota is not null
-                                        group by x.sq_siw_solicitacao
-                                       )                    da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
-                     left outer   join (select z.sq_acordo_parcela, w.sq_pessoa, count(*) as existe
-                                          from ac_parcela_nota              x
-                                               inner join ac_acordo_parcela z on (x.sq_acordo_parcela  = z.sq_acordo_parcela)
-                                               inner join siw_solicitacao   y on (z.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                               inner join siw_menu          w on (y.sq_menu            = w.sq_menu)
-                                        group by z.sq_acordo_parcela, w.sq_pessoa
-                                       )                    db on (d.cliente                  = db.sq_pessoa and
-                                                                   d.sq_acordo_parcela        = db.sq_acordo_parcela and
-                                                                   d.sq_acordo_parcela        is not null
-                                                                  )
                      left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
                        left       join co_agencia           dd on (dc.sq_agencia              = dd.sq_agencia)
                          left     join co_banco             de on (dd.sq_banco                = de.sq_banco)
@@ -630,6 +618,7 @@ begin
                                                                   )
                        left       join co_agencia          di1 on (di.sq_agencia              = di1.sq_agencia)
                          left     join co_banco           di11 on (di1.sq_banco               = di11.sq_banco)
+                       left       join co_moeda            di2 on (di.sq_moeda                = di2.sq_moeda)
                      left         join (select y.sq_siw_solicitacao, x1.sq_siw_solicitacao as solic_origem, x.sq_imposto
                                           from fn_imposto_doc                x
                                                inner join fn_lancamento_doc x1 on (x.sq_lancamento_doc = x1.sq_lancamento_doc)
@@ -640,36 +629,7 @@ begin
                                                                                    z.sigla          = 'FNDEVENT'
                                                                                   )
                                        )                    df on (d.sq_siw_solicitacao       = df.sq_siw_solicitacao)
-                     left         join (select d.sq_siw_solicitacao, sum(a.valor_total) as valor
-                                          from fn_imposto_doc                    a
-                                               inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                                 inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                                               inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
-                                               inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
-                                                 inner   join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
-                                                 inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
-                                                 inner   join siw_menu           k on (h.sq_menu            = k.sq_menu)
-                                         where g.calculo > 0
-                                           and (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                        group by d.sq_siw_solicitacao
-                                       )                    dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
-                     left         join (select d.sq_siw_solicitacao, sum(case g.tipo when 'A' then a.valor else -1*a.valor end) as valor
-                                          from fn_documento_valores              a
-                                               inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                                 inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                                               inner     join fn_valores         g on (a.sq_valores         = g.sq_valores)
-                                         where (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                        group by d.sq_siw_solicitacao
-                                       )                    dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
-                     left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
-                                                                   e1.tipo_respons            = 'T'           and
-                                                                   e1.fim                     is null
-                                                                  )
-                     left         join eo_unidade_resp      e2 on (e.sq_unidade               = e2.sq_unidade and
-                                                                   e2.tipo_respons            = 'S'           and
-                                                                   e2.fim                     is null
-                                                                  )
                    inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                    left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                      left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
@@ -680,11 +640,6 @@ begin
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                         group by x.sq_siw_solicitacao
                                        )                    m3 on (m2.sq_siw_solicitacao      = m3.sq_siw_solicitacao)
-                     left         join (select x.sq_siw_solicitacao, count(*) as existe
-                                          from ac_acordo_nota x
-                                               inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                        group by x.sq_siw_solicitacao
-                                       )                    m4 on (m.sq_siw_solicitacao       = m4.sq_siw_solicitacao)
                    left           join co_moeda             mo on (b.sq_moeda                 = mo.sq_moeda)
                    left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                      left         join siw_solicitacao      q2 on (q.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
@@ -694,7 +649,7 @@ begin
                                         group by x.sq_siw_solicitacao
                                        )                    q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
                    left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
-                   left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                   inner          join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                      inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                        inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                    left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)

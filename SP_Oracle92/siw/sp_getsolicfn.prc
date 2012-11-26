@@ -271,7 +271,7 @@ begin
                           left       join co_pessoa_juridica  d22 on (d2.sq_pessoa               = d22.sq_pessoa)
                         left         join fn_lancamento_doc    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao) 
                           left       join fn_tipo_documento   d31 on (d3.sq_tipo_documento       = d31.sq_tipo_documento)
-                        left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa)
+                        left         join co_pessoa_conta      d4 on (d.sq_pessoa_conta          = d4.sq_pessoa_conta)
                         left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                         left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                         left         join co_pessoa_conta      da on (d.sq_pessoa_conta          = da.sq_pessoa_conta)

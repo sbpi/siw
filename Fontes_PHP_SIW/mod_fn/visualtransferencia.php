@@ -14,6 +14,8 @@ function VisualTransferencia($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $w_tipo_rubrica  = f($RS,'tipo_rubrica');
   $w_qtd_rubrica   = nvl(f($RS,'qtd_rubrica'),0);
   $w_sq_projeto    = nvl(f($RS,'sq_projeto'),0);
+  $w_sb_moeda           = nvl(f($RS,'sb_moeda'),'');
+
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $w_usuario || 
       Nvl(f($RS,'executor'),0)      == $w_usuario || 
@@ -86,10 +88,17 @@ function VisualTransferencia($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     } else {
       $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     }
-    $l_html.=chr(13).'      <tr><td width="30%"><b>Conta origem: </b></td><td>'.f($RS,'nm_ban_org').' AG. '.f($RS,'cd_age_org').' C/C '.f($RS,'nr_conta_org').' </td></tr>';
-    $l_html.=chr(13).'      <tr><td width="30%"><b>Conta destino: </b></td><td>'.f($RS,'nm_banco').' AG. '.f($RS,'cd_agencia').' C/C '.f($RS,'numero_conta').' </td></tr>';
+    $l_html.=chr(13).'      <tr><td width="30%"><b>Conta origem: </b></td><td>'.f($RS,'nm_ban_org').' AG. '.f($RS,'cd_age_org').' C/C '.f($RS,'nr_conta_org').((nvl(f($RS,'sb_moeda'),'')=='') ? '' : ' ('.f($RS,'sg_moeda').')').'</td></tr>';
+    $l_html.=chr(13).'      <tr><td width="30%"><b>Conta destino: </b></td><td>'.f($RS,'nm_banco').' AG. '.f($RS,'cd_agencia').' C/C '.f($RS,'numero_conta').((nvl(f($RS,'sb_moeda_benef'),'')=='') ? '' : ' ('.f($RS,'sg_moeda_benef').')').'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Data da operação:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Valor:</b></td><td>'.formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Valor:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $v_chave,null,null,null,null);
+    $RS_Moeda_Cot = SortArray($RS_Moeda_Cot,'sb_moeda','asc');
+    foreach($RS_Moeda_Cot as $row) {
+      if ($w_sb_moeda!=f($row,'sb_moeda_cot')) {
+        $l_html.=chr(13).'          <tr><td></td><td>'.f($row,'sb_moeda_cot').' '.formatNumber(f($row,'vl_cotacao')).' </td></tr>';
+      }
+    }
     $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'descricao'),'---')).' </td></tr>';
   }  
   // Encaminhamentos

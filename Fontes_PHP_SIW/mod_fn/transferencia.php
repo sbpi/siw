@@ -26,6 +26,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
 include_once($w_dir_volta.'classes/sp/db_getImpostoIncid.php');
 include_once($w_dir_volta.'classes/sp/db_getImpostoDoc.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
@@ -45,6 +46,7 @@ include_once($w_dir_volta.'classes/sp/dml_putLancamentoDoc.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroConc.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicCotacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
@@ -52,6 +54,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
+include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAcordoParcela.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
@@ -114,37 +117,6 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
 $w_troca        = $_REQUEST['w_troca'];
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
-if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
-  if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
-} elseif (strpos($SG,'ENVIO')!==false) {
-    $O='V';
-} elseif ($O=='') {
-  // Se for acompanhamento, entra na filtragem
-  if ($P1==3) $O='P'; else $O='L';
-} 
-switch ($O) {
-  case 'I': $w_TP=$TP.' - Inclusão';    break;
-  case 'A': $w_TP=$TP.' - Alteração';   break;
-  case 'E': $w_TP=$TP.' - Exclusão';    break;
-  case 'G': $w_TP=$TP.' - Gerar';       break;
-  case 'P': $w_TP=$TP.' - Filtragem';   break;
-  case 'C': $w_TP=$TP.' - Cópia';       break;
-  case 'V': $w_TP=$TP.' - Envio';       break;
-  case 'H': $w_TP=$TP.' - Herança';     break;
-  default:  $w_TP=$TP.' - Listagem';    break;
-}
-// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
-// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
-$w_cliente  = RetornaCliente();
-$w_usuario  = RetornaUsuario();
-$w_menu     = RetornaMenu($w_cliente,$SG);
-
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
 $p_ativo        = upper($_REQUEST['p_ativo']);
@@ -171,6 +143,31 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_sq_orprior   = $_REQUEST['p_sq_orprior'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
+if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
+  if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
+} elseif (strpos($SG,'ENVIO')!==false) {
+    $O='V';
+} elseif ($O=='') {
+  // Se for acompanhamento, entra na filtragem
+  if ($P1==3) $O='P'; else $O='L';
+} 
+
+// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
+// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
+$w_cliente  = RetornaCliente();
+$w_usuario  = RetornaUsuario();
+$w_menu     = RetornaMenu($w_cliente,$SG);
+
+// Recupera os dados do cliente
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente );
+
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -188,6 +185,19 @@ if ($P2>10) {
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
   $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+switch ($O) {
+  case 'I': $w_TP=$TP.' - Inclusão';    break;
+  case 'A': $w_TP=$TP.' - Alteração';   break;
+  case 'E': $w_TP=$TP.' - Exclusão';    break;
+  case 'G': $w_TP=$TP.' - Gerar';       break;
+  case 'P': $w_TP=$TP.' - Filtragem';   break;
+  case 'C': $w_TP=$TP.' - Cópia';       break;
+  case 'V': $w_TP=$TP.' - Envio';       break;
+  case 'H': $w_TP=$TP.' - Herança';     break;
+  default:  $w_TP=$TP.' - Listagem';    break;
+}
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -496,8 +506,12 @@ function Geral() {
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
     $w_descricao            = $_REQUEST['w_descricao'];
     $w_valor                = $_REQUEST['w_valor'];
+    $w_valor_conversao      = $_REQUEST['w_valor_conversao'];
     $w_fim                  = $_REQUEST['w_fim'];
     $w_conta_debito         = $_REQUEST['w_conta_debito'];
+    $w_conta_credito        = $_REQUEST['w_conta_credito'];
+    $w_moeda_debito         = $_REQUEST['w_moeda_debito'];
+    $w_moeda_credito        = $_REQUEST['w_moeda_credito'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
 
 } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
@@ -512,10 +526,23 @@ function Geral() {
       $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
       $w_conta_debito         = f($RS,'sq_pessoa_conta');
       $w_conta_credito        = f($RS,'conta_credito');
+      $w_moeda_debito         = f($RS,'sq_moeda');
+      $w_moeda_credito        = f($RS,'sq_moeda_benef');
       $w_descricao            = f($RS,'descricao');
       $w_fim                  = formataDataEdicao(f($RS,'fim'));
       $w_valor                = formatNumber(f($RS,'valor'));
       $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
+
+      // Recupera valores gravados em outra moeda
+      if (nvl($w_moeda_credito,0)>0 && nvl($w_moeda_debito,0)>0 && nvl($w_moeda_credito,0)!=nvl($w_moeda_debito,0)) {
+        $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $w_chave,null,null,null,null);
+        foreach($RS_Moeda_Cot as $row) {
+          if ($w_moeda_debito!=f($row,'sq_moeda_cot')) {
+            $w_valor_conversao = formatNumber(f($row,'vl_cotacao'));
+            break;
+          }
+        }
+      }
     }
   }
 
@@ -562,6 +589,21 @@ function Geral() {
     if (count($RS)==1) $w_exibe_dc = false;
   }
 
+  
+  // Recupera os dados da conta débito
+  if (nvl($w_conta_debito,'')!='') {
+    $sql = new db_getContaBancoList; $RS_Debito = $sql->getInstanceOf($dbms,$w_cliente,$w_conta_debito,'FINANCEIRO');
+    foreach($RS_Debito as $row) { $RS_Debito = $row; break; }
+    $w_moeda_debito = f($RS_Debito,'sq_moeda');
+  }
+  
+  // Recupera os dados da conta crédito
+  if (nvl($w_conta_credito,'')!='') {
+    $sql = new db_getContaBancoList; $RS_Credito = $sql->getInstanceOf($dbms,$w_cliente,$w_conta_credito,'FINANCEIRO');
+    foreach($RS_Credito as $row) { $RS_Credito = $row; break; }
+    $w_moeda_credito = f($RS_Credito,'sq_moeda');
+  }
+  
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -590,8 +632,12 @@ function Geral() {
     ShowHTML('  }');
     if ($w_exibe_dc) Validate('w_sq_tipo_documento','Tipo de documento','SELECT',1,1,18,'','0123456789');
     Validate('w_fim','Data da operação', 'DATA', '1', '10', '10', '', '0123456789/');
-    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
-    CompValor('w_valor','Valor total do documento','>','0,00','zero');
+    Validate('w_valor','Valor'.((nvl(f($RS_Debito,'sg_moeda'),'')=='') ? '' : ' '.f($RS_Debito,'sb_moeda')),'VALOR','1',4,18,'','0123456789.,');
+    CompValor('w_valor','Valor'.((nvl(f($RS_Debito,'sg_moeda'),'')=='') ? '' : ' '.f($RS_Debito,'sb_moeda')),'>','0,00','zero');
+    if (nvl($w_moeda_credito,0)>0 && nvl($w_moeda_debito,0)>0 && nvl($w_moeda_credito,0)!=nvl($w_moeda_debito,0)) {
+      Validate('w_valor_conversao','Valor '.f($RS_Credito,'sg_moeda'),'VALOR','1',4,18,'','0123456789.,');
+      CompValor('w_valor_conversao','Valor '.f($RS_Credito,'sg_moeda'),'>','0,00','zero');
+    }
     Validate('w_descricao','Observação','1','',5,2000,'1','1');
   } 
   Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -633,6 +679,8 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.$w_tipo.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_doc" value="'.$w_chave_doc.'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="'.$w_tipo_pessoa.'">');
+    ShowHTML('<INPUT type="hidden" name="w_moeda_debito" value="'.$w_moeda_debito.'">');
+    ShowHTML('<INPUT type="hidden" name="w_moeda_credito" value="'.$w_moeda_credito.'">');
     ShowHTML('<INPUT type="hidden" name="w_aviso" value="N">');
     ShowHTML('<INPUT type="hidden" name="w_dias" value="0">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -652,8 +700,13 @@ function Geral() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento" value="'.$w_sq_forma_pagamento.'">');
     }
-    SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,null);
-    SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,null);
+    if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+      SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_conta_credito\'; document.Form.submit();"');
+      SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_fim\'; document.Form.submit();"');
+    } else {
+      SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,null);
+      SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,null);
+    }
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     if ($w_exibe_dc) {
@@ -662,7 +715,10 @@ function Geral() {
       ShowHTML('<INPUT type="hidden" name="w_sq_tipo_documento" value="'.$w_sq_tipo_documento.'">');
     }
     ShowHTML('        <td><b><u>D</u>ata da operação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('        <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+    ShowHTML('        <td><b><u>V</u>alor'.((nvl(f($RS_Debito,'sb_moeda'),'')=='') ? '' : ' '.f($RS_Debito,'sb_moeda')).':</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da transferência."></td>');
+    if (nvl($w_moeda_credito,0)>0 && nvl($w_moeda_debito,0)>0 && nvl($w_moeda_credito,0)!=nvl($w_moeda_debito,0)) {
+      ShowHTML('        <td><b><u>V</u>alor '.f($RS_Credito,'sb_moeda').':</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_conversao" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_conversao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);">'.converteMoeda('Form','w_fim','w_valor_conversao','w_valor',$w_moeda_debito,$w_moeda_credito).'</td>');
+    }
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="sti" ROWS=3 cols=75 title="Observação sobre a aplicação.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('          </table>');
     
@@ -1308,7 +1364,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda_debito'],&$w_chave_nova,&$w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
@@ -1331,6 +1387,17 @@ function Grava() {
 
         } 
   
+        if (nvl($_REQUEST['w_moeda_credito'],'')!='') {
+          // Remove as cotações existentes
+          $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'E',$w_chave_nova,null,null);
+
+          // Insere a cotação da moeda da conta débito
+          $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'I',$w_chave_nova,$_REQUEST['w_moeda_debito'],$_REQUEST['w_valor']);
+
+          // Insere a cotações da moedas da conta crédito
+          $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'I',$w_chave_nova,$_REQUEST['w_moeda_credito'],$_REQUEST['w_valor_conversao']);
+        }
+
         // Recupera os dados da conta crédito
         $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta_credito'],'FINANCEIRO');
         foreach($RS2 as $row) { $RS2 = $row; break; }
