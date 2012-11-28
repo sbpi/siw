@@ -93,7 +93,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'      <tr><td><b>Contrato: </b></td><td>'.f($RS,'cd_acordo').' ('.f($RS,'sq_solic_pai').') </td></tr>';
       }
-    } elseif (f($RS_Menu,'sigla')=='FNDFUNDO' && !$w_exibe_processo) {
+    } elseif (f($RS_Menu,'sigla')=='FNDFUNDO' && !$w_exibe_processo && 1==0) {
       // Recupera dados do fundo fixo
       $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'FNDFIXO');
 
@@ -276,7 +276,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'              <td>'.f($RS,'cd_age_org').' - '.f($RS,'nm_age_org').'</td></tr>';
         if (f($RS,'exige_oper_org')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'oper_org'),'---').'</td>';
         $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td>';
-        $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').'</td></tr>';
+        $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').((nvl(f($RS,'sg_moeda_cc'),'')=='') ? '' : ' ('.f($RS,'sg_moeda_cc').')').'</td></tr>';
       }
     }
 
@@ -881,7 +881,8 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }      
       $l_html.=chr(13).'         </table></td></tr>';
     }
-  }    
+  }
+  
   // Arquivos vinculados
   $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
   $RS = SortArray($RS,'nome','asc');

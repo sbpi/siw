@@ -195,10 +195,11 @@ begin
                 d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
-                da.sq_pessoa_conta as sq_conta_debito, da.operacao as operacao_debito, da.numero as nr_conta_debito,
+                da.sq_pessoa_conta as sq_conta_debito, da.operacao as operacao_debito, da.numero as conta_debito,
+                da1.sq_moeda sq_moeda_cc, da1.codigo  cd_moeda_cc, da1.nome  nm_moeda_cc,
+                da1.sigla    sg_moeda_cc, da1.simbolo sb_moeda_cc, da1.ativo at_moeda_cc,
                 db.sq_agencia as sq_agencia_debito,    db.codigo as cd_agencia_debito, db.nome as nm_agencia_debito,
                 dc.sq_banco as sq_banco_debito,        dc.codigo as cd_banco_debito,   dc.nome as nm_banco_debito,
-                da.numero as conta_debito,
                 d7.sq_forma_pagamento,case substr(a.sigla,3,1) when 'R' then null else d7.nome end as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
@@ -208,6 +209,8 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m3.codigo_interno as cd_acordo, m.objeto as obj_acordo,
                 case when m4.qtd is null then 'S' else 'N' end as usuario_logado, -- Se igual a S, somente o usuário logado participou da tramitação 
+                mo.sq_moeda,          mo.codigo  cd_moeda,           mo.nome  nm_moeda,
+                mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
@@ -271,10 +274,15 @@ begin
                           left       join co_pessoa_juridica  d22 on (d2.sq_pessoa               = d22.sq_pessoa)
                         left         join fn_lancamento_doc    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao) 
                           left       join fn_tipo_documento   d31 on (d3.sq_tipo_documento       = d31.sq_tipo_documento)
-                        left         join co_pessoa_conta      d4 on (d.sq_pessoa_conta          = d4.sq_pessoa_conta)
+                        left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
+                                                                      d.sq_agencia               = d4.sq_agencia and
+                                                                      coalesce(d.operacao_conta,'-') = coalesce(d4.operacao,'-') and
+                                                                      d.numero_conta             = d4.numero
+                                                                     )
                         left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                         left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                         left         join co_pessoa_conta      da on (d.sq_pessoa_conta          = da.sq_pessoa_conta)
+                          left       join co_moeda            da1 on (da.sq_moeda                = da1.sq_moeda)
                           left       join co_agencia           db on (da.sq_agencia              = db.sq_agencia)
                           left       join co_banco             dc on (db.sq_banco                = dc.sq_banco)
                         left        join (select b.sq_siw_solicitacao, sum(a.valor_total) as valor
@@ -306,6 +314,7 @@ begin
                                                                      )
                       left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m3 on (m.sq_siw_solicitacao       = m3.sq_siw_solicitacao)
+                      left           join co_moeda             mo on (b.sq_moeda                 = mo.sq_moeda)
                       left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                         left         join siw_solicitacao      q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
                       left           join pj_projeto           r  on (d.sq_solic_vinculo         = r.sq_siw_solicitacao)

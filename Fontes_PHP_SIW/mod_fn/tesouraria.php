@@ -190,7 +190,7 @@ if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 // Verifica se deve a tela de tesouraria deve ser exibida de forma resumida
 // O teste baseia-se no cliente. Lembrar de criar parâmetro no módulo financeiro
 $w_visao_completa = true;
-if ($_SESSION['P_CLIENTE']==10135) $w_visao_completa = false;
+if ($_SESSION['P_CLIENTE']==10135 || $_SESSION['P_CLIENTE']==17305) $w_visao_completa = false;
 
 if (nvl($SG,'')!='') {
   // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
@@ -439,7 +439,7 @@ function Inicial() {
       if ($w_visao_completa && $P2==1) {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena((($P1==0) ? 'Vencimento' : 'Pagamento'),'dt_pagamento').'</td>');
       } elseif ($P2>1) {
-        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dt. Pagamento','dt_pagamento').'</td>');
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dt. Pag.','dt_pagamento').'</td>');
       }
       if ($w_visao_completa) {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Beneficiário','nm_pessoa_resumido').'</td>');
@@ -465,7 +465,7 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
       ShowHTML('        </tr>');
     } else {
-      $colspan++; ShowHTML('          <td rowspan="2"><b>Dt. Pagamento</td>');
+      $colspan++; ShowHTML('          <td rowspan="2"><b>Dt. Pag.</td>');
       $colspan++; ShowHTML('          <td rowspan="2"><b>Código</td>');
       $colspan++; ShowHTML('          <td rowspan="2"><b>Beneficiário</td>');
       ShowHTML('          <td colspan="3"><b>Documento</td>');
@@ -577,7 +577,7 @@ function Inicial() {
         }
         if ($P2>1) {
           if (nvl(f($row,'conta_debito'),'')!='') {
-            ShowHTML('        <td>'.f($row,'nm_banco_debito').' '.f($row,'conta_debito').'</td>');
+            ShowHTML('        <td>'.f($row,'nm_banco_debito').' '.f($row,'conta_debito').((nvl(f($row,'sg_moeda_cc'),'')=='') ? '' : ' ('.f($row,'sg_moeda_cc').')').'</td>');
           } else {
             ShowHTML('        <td>&nbsp;</td>');
           }

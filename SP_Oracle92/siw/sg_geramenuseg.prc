@@ -57,27 +57,23 @@ for crec in c_Segmento loop
      w_menu_pai(drec.sq_menu) := w_chave;
           
      -- Insere registro no menu do cliente
-     insert into dm_segmento_menu 
-           (sq_segmento_menu,   sq_modulo,                  sq_segmento,       ativo,
-            nome,               finalidade,                 link,              sq_unid_executora,
-            tramite,            ordem,                      ultimo_nivel,      p1, 
-            p2,                 p3,                         p4,                sigla, 
-            imagem,             descentralizado,            externo,           target,
-            emite_os,           consulta_opiniao,           envia_email,       exibe_relatorio,
-            como_funciona,      vinculacao,                 data_hora,
-            envia_dia_util,     descricao,                  justificativa,     controla_ano,
-            libera_edicao
+     insert into dm_segmento_menu
+           (sq_segmento_menu,          sq_modulo,               sq_segmento,            nome,                          link,                    tramite,
+            ordem,                     ultimo_nivel,            p1,                     p2,                            p3,                      p4,
+            sigla,                     imagem,                  descentralizado,        externo,                       target,                  ativo,
+            acesso_geral,              como_funciona,           finalidade,             emite_os,                      consulta_opiniao,        envia_email,
+            exibe_relatorio,           vinculacao,              data_hora,              envia_dia_util,                descricao,               justificativa,
+            destinatario,              controla_ano,            libera_edicao,          numeracao_automatica,          envio_inclusao,          consulta_geral,
+            cancela_sem_tramite
            )
     (select 
-            w_chave,            drec.sq_modulo,             crec.sq_segmento,  drec.ativo,
-            drec.nome,          drec.finalidade,            drec.link,         null,
-            drec.tramite,       drec.ordem,                 drec.ultimo_nivel, drec.p1,
-            drec.p2,            drec.p3,                    drec.p4,           drec.sigla,
-            drec.imagem,        drec.descentralizado,       drec.externo,      drec.target,
-            drec.emite_os,      drec.consulta_opiniao,      drec.envia_email,  drec.exibe_relatorio,
-            drec.como_funciona, drec.vinculacao,            drec.data_hora,
-            drec.envia_dia_util,drec.descricao,             drec.justificativa,drec.controla_ano,
-            drec.libera_edicao
+            w_chave,                   drec.sq_modulo,          a.sq_segmento,          drec.nome,                     drec.link,               drec.tramite,
+            drec.ordem,                drec.ultimo_nivel,       drec.p1,                drec.p2,                       drec.p3,                 drec.p4,
+            drec.sigla,                drec.imagem,             drec.descentralizado,   drec.externo,                  drec.target,             drec.ativo,
+            drec.acesso_geral,         drec.como_funciona,      drec.finalidade,        drec.emite_os,                 drec.consulta_opiniao,   drec.envia_email,
+            drec.exibe_relatorio,      drec.vinculacao,         drec.data_hora,         drec.envia_dia_util,           drec.descricao,          drec.justificativa,
+            drec.destinatario,         drec.controla_ano,       drec.libera_edicao,     drec.numeracao_automatica,     drec.envio_inclusao,     drec.consulta_geral,
+            drec.cancela_sem_tramite
        from siw_mod_seg a
       where a.sq_modulo   = drec.sq_modulo
         and a.sq_segmento = crec.sq_segmento

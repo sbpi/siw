@@ -114,37 +114,6 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
 $w_troca        = $_REQUEST['w_troca'];
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
-if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
-  if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
-} elseif (strpos($SG,'ENVIO')!==false) {
-    $O='V';
-} elseif ($O=='') {
-  // Se for acompanhamento, entra na filtragem
-  if ($P1==3) $O='P'; else $O='L';
-} 
-switch ($O) {
-  case 'I': $w_TP=$TP.' - Inclusão';    break;
-  case 'A': $w_TP=$TP.' - Alteração';   break;
-  case 'E': $w_TP=$TP.' - Exclusão';    break;
-  case 'G': $w_TP=$TP.' - Gerar';       break;
-  case 'P': $w_TP=$TP.' - Filtragem';   break;
-  case 'C': $w_TP=$TP.' - Cópia';       break;
-  case 'V': $w_TP=$TP.' - Envio';       break;
-  case 'H': $w_TP=$TP.' - Herança';     break;
-  default:  $w_TP=$TP.' - Listagem';    break;
-}
-// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
-// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
-$w_cliente  = RetornaCliente();
-$w_usuario  = RetornaUsuario();
-$w_menu     = RetornaMenu($w_cliente,$SG);
-
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
 $p_ativo        = upper($_REQUEST['p_ativo']);
@@ -171,6 +140,31 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_sq_orprior   = $_REQUEST['p_sq_orprior'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
+if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
+  if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
+} elseif (strpos($SG,'ENVIO')!==false) {
+    $O='V';
+} elseif ($O=='') {
+  // Se for acompanhamento, entra na filtragem
+  if ($P1==3) $O='P'; else $O='L';
+} 
+
+// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
+// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
+$w_cliente  = RetornaCliente();
+$w_usuario  = RetornaUsuario();
+$w_menu     = RetornaMenu($w_cliente,$SG);
+
+// Recupera os dados do cliente
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente );
+
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -188,6 +182,19 @@ if ($P2>10) {
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
   $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+switch ($O) {
+  case 'I': $w_TP=$TP.' - Inclusão';    break;
+  case 'A': $w_TP=$TP.' - Alteração';   break;
+  case 'E': $w_TP=$TP.' - Exclusão';    break;
+  case 'G': $w_TP=$TP.' - Gerar';       break;
+  case 'P': $w_TP=$TP.' - Filtragem';   break;
+  case 'C': $w_TP=$TP.' - Cópia';       break;
+  case 'V': $w_TP=$TP.' - Envio';       break;
+  case 'H': $w_TP=$TP.' - Herança';     break;
+  default:  $w_TP=$TP.' - Listagem';    break;
+}
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -495,7 +502,7 @@ function Geral() {
     $w_conta_debito         = $_REQUEST['w_conta_debito'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
 
-} elseif(strpos('AEV',$O)!==false || $w_copia>'') {
+  } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
     $sql = new db_getSolicData; 
@@ -1282,7 +1289,20 @@ function Grava() {
   if (strpos($SG,'FNAAPLICA')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],
+
+        if (nvl($_REQUEST['w_conta_debito'],'')!='') {
+          // Recupera os dados da conta crédito
+          $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta_debito'],'FINANCEIRO');
+          foreach($RS2 as $row) { $RS2 = $row; break; }
+          $w_conta            = null;
+          $w_sq_banco         = f($RS2,'sq_banco');
+          $w_sq_agencia       = f($RS2,'sq_agencia');
+          $w_operacao         = f($RS2,'operacao');
+          $w_nr_conta         = f($RS2,'numero');
+          $w_moeda            = f($RS2,'sq_moeda');
+        }
+
+        $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],
           $_SESSION['LOTACAO'],$_SESSION['SQ_PESSOA'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_sqcc'],
           $_REQUEST['w_descricao'],$_REQUEST['w_fim'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],
           $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],
@@ -1291,7 +1311,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$w_moeda,&$w_chave_nova,&$w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
@@ -1313,15 +1333,6 @@ function Grava() {
           $w_codigo_deposito  = f($RS1,'codigo_deposito');
         } 
   
-        // Recupera os dados da conta crédito
-        $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta_debito'],'FINANCEIRO');
-        foreach($RS2 as $row) { $RS2 = $row; break; }
-        $w_conta            = null;
-        $w_sq_banco         = f($RS2,'sq_banco');
-        $w_sq_agencia       = f($RS2,'sq_agencia');
-        $w_operacao         = f($RS2,'operacao');
-        $w_nr_conta         = f($RS2,'numero');
-
         //Grava os dados da pessoa
         $SQL = new dml_putLancamentoOutra; $SQL->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$w_cliente,f($RS,'cpf'),f($RS,'cnpj'),
             f($RS,'nm_pessoa'),f($RS,'nm_resumido'),$_REQUEST['w_sexo'],null,null,null,null,null,null,null,

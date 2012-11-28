@@ -1294,6 +1294,19 @@ function Grava() {
   if ($SG=='FNDTARIFA') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+
+      if (nvl($_REQUEST['w_conta_debito'],'')!='') {
+        // Recupera os dados da conta
+        $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta_debito'],'FINANCEIRO');
+        foreach($RS2 as $row) { $RS2 = $row; break; }
+        $w_conta            = null;
+        $w_sq_banco         = f($RS2,'sq_banco');
+        $w_sq_agencia       = f($RS2,'sq_agencia');
+        $w_operacao         = f($RS2,'operacao');
+        $w_nr_conta         = f($RS2,'numero');
+        $w_moeda            = f($RS2,'sq_moeda');
+      }
+
       $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],
           $_SESSION['LOTACAO'],$_SESSION['SQ_PESSOA'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_sqcc'],
           $_REQUEST['w_descricao'],$_REQUEST['w_fim'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],
@@ -1303,7 +1316,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$w_moeda,&$w_chave_nova,&$w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
@@ -1311,7 +1324,7 @@ function Grava() {
         foreach ($RS as $row) {$RS=$row; break;}
   
         if (nvl($_REQUEST['w_chave'],'')!='') {
-          // Se a solicitação já existe, recupera os dados bancários
+          // Se o beneficiário já existe, recupera os dados bancários
           $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
           $w_pessoa_atual     = f($RS1,'pessoa');
           $w_sq_pais_estrang  = f($RS1,'sq_pais_estrang');
@@ -1325,15 +1338,6 @@ function Grava() {
           $w_codigo_deposito  = f($RS1,'codigo_deposito');
         } 
   
-        // Recupera os dados da conta crédito
-        $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta_debito'],'FINANCEIRO');
-        foreach($RS2 as $row) { $RS2 = $row; break; }
-        $w_conta            = null;
-        $w_sq_banco         = f($RS2,'sq_banco');
-        $w_sq_agencia       = f($RS2,'sq_agencia');
-        $w_operacao         = f($RS2,'operacao');
-        $w_nr_conta         = f($RS2,'numero');
-
         //Grava os dados da pessoa
         $SQL = new dml_putLancamentoOutra; $SQL->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$w_cliente,f($RS,'cpf'),f($RS,'cnpj'),
             f($RS,'nm_pessoa'),f($RS,'nm_resumido'),$_REQUEST['w_sexo'],null,null,null,null,null,null,null,

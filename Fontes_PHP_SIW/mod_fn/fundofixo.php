@@ -38,6 +38,10 @@ include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/db_getAcordoNota.php');
+include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
+include_once($w_dir_volta.'classes/sp/db_getCronograma.php'); 
+include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
+include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoOutra.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoDoc.php');
@@ -46,8 +50,7 @@ include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
-include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
-include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicCotacao.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
@@ -71,6 +74,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRubrica.php');
+include_once($w_dir_volta.'funcoes/selecaoRubricaApoio.php');
 include_once('visualfundofixo.php');
 include_once('validafundofixo.php');
 // =========================================================================
@@ -111,45 +115,6 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
 $w_troca        = $_REQUEST['w_troca'];
 
-// Verifica se o usuário está autenticado
-if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
-
-// Declaração de variáveis
-$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
-
-if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
-  if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
-} elseif (strpos($SG,'ENVIO')!==false) {
-    $O='V';
-} elseif ($O=='') {
-  // Se for acompanhamento, entra na filtragem
-  if ($P1==3) $O='P'; else $O='L';
-} 
-switch ($O) {
-  case 'I': $w_TP=$TP.' - Inclusão';    break;
-  case 'A': $w_TP=$TP.' - Alteração';   break;
-  case 'E': $w_TP=$TP.' - Exclusão';    break;
-  case 'G': $w_TP=$TP.' - Gerar';       break;
-  case 'P': $w_TP=$TP.' - Filtragem';   break;
-  case 'C': $w_TP=$TP.' - Cópia';       break;
-  case 'V': $w_TP=$TP.' - Envio';       break;
-  case 'H': $w_TP=$TP.' - Herança';     break;
-  default:  $w_TP=$TP.' - Listagem';    break;
-}
-// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
-// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
-$w_cliente  = RetornaCliente();
-$w_usuario  = RetornaUsuario();
-$w_menu     = RetornaMenu($w_cliente,'FNDFUNDO');
-
-// Recupera os parâmetros de funcionamento do módulo
-$sql = new db_getFNParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,null,null);
-foreach($RS_Parametro as $row) { $RS_Parametro = $row; break; }
-
-// Verifica se o cliente tem o módulo de protocolo contratado
-$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
-if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
-
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
 $p_ativo        = upper($_REQUEST['p_ativo']);
@@ -176,6 +141,43 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_sq_orprior   = $_REQUEST['p_sq_orprior'];
+
+// Verifica se o usuário está autenticado
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
+// Declaração de variáveis
+$dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
+
+if (strpos($SG,'ANEXO')!==false || strpos($SG,'PARC')!==false || strpos($SG,'REPR')!==false) {
+  if (strpos('IG',$O)===false && $_REQUEST['w_chave_aux']=='') $O='L';
+} elseif (strpos($SG,'ENVIO')!==false) {
+    $O='V';
+} elseif ($O=='') {
+  // Se for acompanhamento, entra na filtragem
+  if ($P1==3) $O='P'; else $O='L';
+} 
+
+// Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
+// caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
+$w_cliente  = RetornaCliente();
+$w_usuario  = RetornaUsuario();
+$w_menu     = RetornaMenu($w_cliente,'FNDFIXO');
+
+// Recupera os dados do cliente
+$sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente );
+
+// Recupera os parâmetros de funcionamento do módulo
+$sql = new db_getFNParametro; $RS_Parametro = $sql->getInstanceOf($dbms,$w_cliente,null,null);
+foreach($RS_Parametro as $row) { $RS_Parametro = $row; break; }
+
+// Verifica se o cliente tem o módulo de protocolo contratado
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
+if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
+
+// Verifica se o cliente tem o módulo de protocolo contratado
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'CO');
+if (count($RS)>0) $w_mod_cl='S'; else $w_mod_cl='N';
+
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -192,7 +194,20 @@ if ($P2>10) {
 // Se for sub-menu, pega a configuração do pai
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
   $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
-} 
+}
+
+switch ($O) {
+  case 'I': $w_TP=$TP.' - Inclusão';    break;
+  case 'A': $w_TP=$TP.' - Alteração';   break;
+  case 'E': $w_TP=$TP.' - Exclusão';    break;
+  case 'G': $w_TP=$TP.' - Gerar';       break;
+  case 'P': $w_TP=$TP.' - Filtragem';   break;
+  case 'C': $w_TP=$TP.' - Cópia';       break;
+  case 'V': $w_TP=$TP.' - Envio';       break;
+  case 'H': $w_TP=$TP.' - Herança';     break;
+  default:  $w_TP=$TP.' - Listagem';    break;
+}
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -457,7 +472,7 @@ function Inicial() {
           }
         }
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'vencimento'),5),'-').'</td>');
-        ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
+        ShowHTML('        <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
         $w_parcial += Nvl(f($row,'valor'),0);
         if ($w_tipo!='WORD') {
           if ($_SESSION['INTERNO']=='S') {
@@ -636,10 +651,8 @@ function Geral() {
   $w_sq_tipo_lancamento = $_REQUEST['w_sq_tipo_lancamento'];
   $w_readonly           = '';
   $w_erro               = '';
-  // Carrega o segmento do cliente
-  $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente); 
   
-  $w_segmento = f($RS,'segmento');
+  $w_segmento = f($RS_Cliente,'segmento');
   
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -690,6 +703,10 @@ function Geral() {
     $w_per_fim              = $_REQUEST['w_per_fim'];
     $w_texto_pagamento      = $_REQUEST['w_texto_pagamento']; 
     $w_conta                = $_REQUEST['w_conta'];
+    $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];
+    $w_solic_apoio          = $_REQUEST['w_solic_apoio'];
+    $w_data_autorizacao     = $_REQUEST['w_data_autorizacao'];
+    $w_texto_autorizacao    = $_REQUEST['w_texto_autorizacao'];
     
     // Recarrega dados do comprovante
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
@@ -751,6 +768,10 @@ function Geral() {
       $w_per_fim              = FormataDataEdicao(f($RS,'referencia_fim'));
       $w_texto_pagamento      = f($RS,'condicoes_pagamento');
       $w_conta                = f($RS,'sq_pessoa_conta');
+      $w_sq_projeto_rubrica   = f($RS,'sq_projeto_rubrica');
+      $w_solic_apoio          = f($RS,'sq_solic_apoio');
+      $w_data_autorizacao     = FormataDataEdicao(f($RS,'data_autorizacao'));
+      $w_texto_autorizacao    = f($RS,'texto_autorizacao');
     } 
 
     if (nvl($w_copia,'')=='') {
@@ -812,20 +833,66 @@ function Geral() {
     }
   }
   
-  // Se ligado a projeto, recupera rubricas
-  $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,$w_chave_pai,null,'S',null,null,null,null,null,null);
+  if (nvl($w_solic_vinculo,'')!='' || nvl($w_chave_pai,'')!='') {
+    // Se ligado a projeto, recupera rubricas
+    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,nvl($w_solic_vinculo,$w_chave_pai),null,'S',null,null,null,null,null,'FOLHA');
 
-  // Recupera os documentos do lançamento
-  $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
-    
-  if (count($RS_Doc)>0) {
-    foreach($RS_Doc as $row) {
-      $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
-      foreach($RS_Item as $row1) {
-        $w_sq_projeto_rubrica = f($row1,'sq_projeto_rubrica');
+    if (count($RS_Rub)>0) {
+      if (nvl($w_sq_projeto_rubrica,'')=='') {
+        // Recupera os documentos do lançamento
+        $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
+        if (count($RS_Doc)>0) {
+          foreach($RS_Doc as $row) {
+            $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+            foreach($RS_Item as $row1) {
+              $w_sq_projeto_rubrica = f($row1,'sq_projeto_rubrica');
+              break;
+            }
+            break;
+          }
+        }
+      }
+      
+      if (nvl($w_sq_projeto_rubrica,'')!='') {
+        // Recupera dados da rubrica
+        $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,nvl($w_solic_vinculo,$w_chave_pai),$w_sq_projeto_rubrica,null,null,null,null,null,null,null);
+        foreach($RS as $row) { 
+          $w_exige_autorizacao = f($row,'exige_autorizacao'); 
+        }
+        
+        
+        // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
+        $sql = new db_getCronograma; $RS_Fonte = $sql->getInstanceOf($dbms,$w_sq_projeto_rubrica,$w_chave_aux,null,null,null,'RUBFONTES');
+        if (count($RS_Fonte)==0) {
+          $w_exibe_ff = false;
+        } else {
+          $w_exibe_ff = true;
+          if (count($RS_Fonte)==1 || nvl($w_solic_apoio,'')!='') {
+            foreach($RS_Fonte as $row) { 
+              if (nvl($w_solic_apoio,f($row,'sq_solic_apoio'))==f($row,'sq_solic_apoio')) {
+                $w_solic_apoio = f($row,'sq_solic_apoio'); 
+                break; 
+              }
+            }
+            if (count($RS_Fonte)==1) $w_exibe_ff = false;
+          }
+        }
+      }
+    }
+  }
+
+  if (nvl($w_troca,'')=='' && nvl($w_chave,'')!='') {
+    // Recupera os documentos do lançamento
+    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
+    if (count($RS_Doc)>0) {
+      foreach($RS_Doc as $row) {
+        $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+        foreach($RS_Item as $row1) {
+          $w_sq_projeto_rubrica = f($row1,'sq_projeto_rubrica');
+          break;
+        }
         break;
       }
-      break;
     }
   }
 
@@ -845,6 +912,11 @@ function Geral() {
     Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
     Validate('w_chave_pai','Projeto','SELECT','1',1,18,'','0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
+    if ($w_exibe_ff) Validate('w_solic_apoio','Fonte de financiamento','SELECT',1,1,18,'','0123456789');
+    if ($w_exige_autorizacao=='S') {
+      Validate('w_data_autorizacao','Data "No objection"','DATA',1,10,10,'','0123456789/');
+      Validate('w_texto_autorizacao','Texto "No objection"','1','','2','500','1','0123456789');
+    }
     if ($w_mod_pa=='S') {
       Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
     } elseif($w_segmento=='Público') {
@@ -915,35 +987,30 @@ function Geral() {
     // Recupera dados da opção Projetos
     ShowHTML('      <tr>');
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto ao qual o lançamento está vinculado.',$w_cliente,$w_chave_pai,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS,'sigla'),null,null,'<BR />',5);
-    if ($w_chave_pai >'') {
-      $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null,null,null,null);
-      if (count($RS)>0) {
-        if (substr($SG,0,3)=='FNR') {
-          $sql = new db_getLancamentoDoc; $RS2 = $sql->getInstanceOf($dbms,nvl($w_chave,0),null,null,null,null,null,null,null);
-          if(count($RS2)>0) {
-            ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
-            ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
-          } else {
-            if (Nvl($w_tipo_rubrica,0)==1) {
-              ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
-              ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
-            } else {   
-              SelecaoTipoRubrica('<u>T</u>ipo de movimentação:','M','Selecione na lista o tipo de movimentação.',$w_tipo_rubrica,$w_chave_pai,'w_tipo_rubrica',$SG,null);
-            }
-          }
-        } else {
-          ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="5">');
-        }
-      }
-    }
+    SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto ao qual o lançamento está vinculado.',$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"',$w_chave_pai,'<BR />',5);
+
     if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
-      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,$w_chave_pai,null,'w_sq_projeto_rubrica','RUBRICAS',null);
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,nvl($w_solic_vinculo,$w_chave_pai),null,'w_sq_projeto_rubrica','RUBRICAS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_projeto_rubrica\'; document.Form.submit();"');
       ShowHTML('      </tr>');
+      
+      // Trata fonte de financiamento
+      if ($w_exibe_ff) {
+        ShowHTML('      <tr>');
+        SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
+        ShowHTML('      </tr>');
+      } else {
+        ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
+      }
+
+      // Trata autorização da despesa
+      if ($w_exige_autorizacao=='S') {
+        ShowHTML('      <tr><td colspan="3"><b><u>D</u>ata <i>No objection</i>:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_autorizacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_data_autorizacao,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_autorizacao').'</td>');
+        ShowHTML('      <tr><td colspan="3"><b><u>T</u>exto <i>No objection</i>:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_texto_autorizacao" class="sti" ROWS=3 cols=75 title="Texto de autorização da despesa">'.$w_texto_autorizacao.'</TEXTAREA></td>');
+      }
     }
     ShowHTML('      <tr valign="top">');
-    selecaoTipoLancamento('Tipo de lançamento:',null,null,$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',$SG,null,5);
+    SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,5);
     ShowHTML('        <tr valign="top">');
     if ($w_mod_pa=='S') {
       SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo da compra/licitação.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
@@ -1469,6 +1536,14 @@ function Grava() {
   if (strpos($SG,'FIXO')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+
+      if (nvl($_REQUEST['w_conta'],'')!='') {
+        // Recupera os dados da conta
+        $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta'],'FINANCEIRO');
+        foreach($RS2 as $row) { $RS2 = $row; break; }
+        $w_moeda            = f($RS2,'sq_moeda');
+      }
+
       $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],
           $_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_sqcc'],
           $_REQUEST['w_descricao'],$_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],
@@ -1477,7 +1552,7 @@ function Grava() {
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
-          $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
+          $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$w_moeda,
           &$w_chave_nova,&$w_codigo);
 
       if ($O!='E') {
@@ -1486,7 +1561,7 @@ function Grava() {
         foreach ($RS as $row) {$RS=$row; break;}
 
         if (count($RS)) {
-          // Se a solicitação já existe, recupera os dados bancários
+          // Se o beneficiário já existe, recupera os dados bancários
           $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
           $w_pessoa_atual     = f($RS1,'pessoa');
           $w_conta            = f($RS1,'sq_pessoa_conta');

@@ -14,6 +14,7 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $w_tipo_rubrica  = f($RS,'tipo_rubrica');
   $w_qtd_rubrica   = nvl(f($RS,'qtd_rubrica'),0);
   $w_sq_projeto    = nvl(f($RS,'sq_projeto'),0);
+  $w_sb_moeda      = nvl(f($RS,'sb_moeda'),'');
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $w_usuario || 
@@ -129,12 +130,20 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
     }
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Valor do reembolso:</b></td><td>'.formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Valor do reembolso:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
+    $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $v_chave,null,null,null,null);
+    $RS_Moeda_Cot = SortArray($RS_Moeda_Cot,'sb_moeda','asc');
+    foreach($RS_Moeda_Cot as $row) {
+      if ($w_sb_moeda!=f($row,'sb_moeda_cot')) {
+        $l_html.=chr(13).'          <tr><td></td><td>'.f($row,'sb_moeda_cot').' '.formatNumber(f($row,'vl_cotacao')).' </td></tr>';
+      }
+    }
     $l_html.=chr(13).'      <tr><td><b>Data de pagamento:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Mês de referência:</b></td><td>'.FormataDataEdicao(f($RS,'referencia_inicio'),9).'</td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Discriminação das despesas: </b></td><td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Forma de pagamento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
 
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS PARA '.upper(f($RS,'nm_forma_pagamento')).'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS PARA '.upper(f($RS,'nm_forma_pagamento')).'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (substr($w_SG,0,3)!='FNR' || Nvl(f($RS,'numero_conta'),'')!='') {
       if (!(strpos('CREDITO,DEPOSITO',f($RS,'sg_forma_pagamento'))===false)) {
         if (Nvl(f($RS,'cd_banco'),'')>'') {
@@ -189,7 +198,7 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'              <td>'.f($RS,'cd_age_org').' - '.f($RS,'nm_age_org').'</td></tr>';
         if (f($RS,'exige_oper_org')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'oper_org'),'---').'</td>';
         $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td>';
-        $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').'</td></tr>';
+        $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').((nvl(f($RS,'sg_moeda_cc'),'')=='') ? '' : ' ('.f($RS,'sg_moeda_cc').')').'</td></tr>';
       }
     }
     $w_vl_retencao    = Nvl(f($RS,'valor_retencao'),0);

@@ -1145,7 +1145,10 @@ function Geral() {
     }
     if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
     Validate('w_vencimento','Data prevista para '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento'),'DATA',1,10,10,'','0123456789/');
-    if (substr(f($RS_Menu,'sigla'),2,1)=='R' && $w_qtd_nota==0) Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,');
+    if (substr(f($RS_Menu,'sigla'),2,1)=='R' && $w_qtd_nota==0) {
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
+      Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,');
+    }
     if (substr($SG,3)=='CONT') {
       Validate('w_per_ini','Início do período de realização','DATA','1','10','10','','0123456789/');
       CompData('w_per_ini','Início do período de realização','>=','w_inicio','Data de início de vigência do contrato');
@@ -1375,6 +1378,10 @@ function Geral() {
       }
       if (substr(f($RS_Menu,'sigla'),2,1)=='R') {
         if ($w_qtd_nota==0) {
+          if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+            ShowHTML('       <tr valign="top">');
+            selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+          }
           ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
         } else {
           ShowHTML('          <td>Valor:<br><b>'.$w_valor.'</b></td>');

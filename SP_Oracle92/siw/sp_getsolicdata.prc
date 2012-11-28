@@ -546,6 +546,8 @@ begin
                 end as notas_parcela,
                 da1.sq_lancamento_doc,   da1.numero nr_doc, da1.data dt_doc, da1.valor vl_doc,
                 dc.operacao as oper_org, dc.numero as nr_conta_org,
+                dc1.sq_moeda sq_moeda_cc, dc1.codigo  cd_moeda_cc, dc1.nome  nm_moeda_cc,
+                dc1.sigla    sg_moeda_cc, dc1.simbolo sb_moeda_cc, dc1.ativo at_moeda_cc,
                 dd.codigo as cd_age_org, dd.nome as nm_age_org,
                 de.codigo as cd_ban_org, de.nome as nm_ban_org,
                 de.exige_operacao as exige_oper_org,
@@ -579,7 +581,7 @@ begin
                 case when m.sq_siw_solicitacao is null then 0
                      else coalesce((select count(*) from ac_acordo_nota where sq_siw_solicitacao = m.sq_siw_solicitacao),0)
                 end as notas_acordo,
-                mo.sq_moeda,          mo.codigo cd_moeda,            mo.nome nm_moeda,
+                mo.sq_moeda,          mo.codigo  cd_moeda,           mo.nome  nm_moeda,
                 mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic,                         o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
@@ -611,6 +613,7 @@ begin
                      left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
                        left       join co_agencia           dd on (dc.sq_agencia              = dd.sq_agencia)
                          left     join co_banco             de on (dd.sq_banco                = de.sq_banco)
+                       left       join co_moeda            dc1 on (dc.sq_moeda                = dc1.sq_moeda)
                      left         join co_pessoa_conta      di on (d.pessoa                   = di.sq_pessoa and
                                                                    d.sq_agencia               = di.sq_agencia and
                                                                    coalesce(d.operacao_conta,'-') = coalesce(di.operacao,'-') and

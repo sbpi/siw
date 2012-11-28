@@ -514,7 +514,7 @@ function Geral() {
     $w_moeda_credito        = $_REQUEST['w_moeda_credito'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
 
-} elseif(strpos('AEV',$O)!==false || $w_copia>'') {
+  } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
     $sql = new db_getSolicData; 
