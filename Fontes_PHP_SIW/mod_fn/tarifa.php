@@ -587,8 +587,7 @@ function Geral() {
     Validate('w_conta_debito','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     if ($w_exibe_dc) Validate('w_sq_tipo_documento','Tipo de documento','SELECT',1,1,18,'','0123456789');
     Validate('w_fim','Data da operação', 'DATA', '1', '10', '10', '', '0123456789/');
-    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
-    CompValor('w_valor','Valor total do documento','>','0,00','zero');
+    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,-');
     Validate('w_descricao','Observação','1','',5,2000,'1','1');
   } 
   Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -1185,7 +1184,7 @@ function Concluir() {
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
     CompData('w_quitacao','Data do pagamento','<=',FormataDataEdicao(time()),'data atual');
-    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
+    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,-');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
     Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     if ($P1!=1) {

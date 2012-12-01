@@ -1918,7 +1918,7 @@ function Documentos() {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
       */
-      Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
+      Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,-');
     }
     ShowHTML('  disAll();');
     ValidateClose();
@@ -2161,7 +2161,7 @@ function RubricaDoc() {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
       */
-      Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
+      Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,-');
       if(f($RS1,'tipo_rubrica')==1) {
         ShowHTML('       for (i=1; i < document.Form["w_sq_projeto_rubrica[]"].length; i++) {');
         ShowHTML('         if(document.Form["w_sq_projeto_rubrica[]"][i].checked==false) {');
@@ -2438,7 +2438,7 @@ function Itens() {
       Validate('w_quantidade','Quantidade','1','1','1','18','','0123456789');
       if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
         Validate('w_data_cotacao','Data da cotação', 'DATA', '1', 10, 10, '', '0123456789/');
-        Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 6, 18, '', '0123456789.,');
+        Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 6, 18, '', '0123456789.,-');
       }
       Validate('w_valor_unitario','Valor unitário do item', 'VALOR', '1', 4, 18, '', '0123456789.,-');
     }
@@ -2628,7 +2628,7 @@ function Notas() {
   ShowHTML('    tipo = document.Form.elements[ind].type.toLowerCase();');
   ShowHTML('    if (tipo==\'text\' && !document.Form.elements[ind].disabled) {');
   ShowHTML('      for (idx=1; idx < document.Form[document.Form.elements[ind].name].length; idx++) {');
-  Validate('[document.Form.elements[ind].name][idx]','','VALOR','1',4,18,'','0123456789.,');
+  Validate('[document.Form.elements[ind].name][idx]','','VALOR','1',4,18,'','0123456789.,-');
   ShowHTML('      }');
   ShowHTML('    } ');
   ShowHTML('  } ');
@@ -3345,7 +3345,7 @@ function Concluir() {
     Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
-    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
+    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,-');
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');

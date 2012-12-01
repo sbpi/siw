@@ -1147,7 +1147,7 @@ function Geral() {
     Validate('w_vencimento','Data prevista para '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento'),'DATA',1,10,10,'','0123456789/');
     if (substr(f($RS_Menu,'sigla'),2,1)=='R' && $w_qtd_nota==0) {
       if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
-      Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,');
+      Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,-');
     }
     if (substr($SG,3)=='CONT') {
       Validate('w_per_ini','Início do período de realização','DATA','1','10','10','','0123456789/');
@@ -1205,10 +1205,10 @@ function Geral() {
       Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
       Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
       if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
-      if ($w_qtd_nota==0) Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,');
+      if ($w_qtd_nota==0) Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,-');
       if (is_array($w_valores)) {
         ShowHTML('  for (ind=1; ind < theForm["w_valores[]"].length; ind++) {');
-        Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,');
+        Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
         ShowHTML('  }');
       }
     }
@@ -2168,10 +2168,10 @@ function Documentos() {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
       */
-      Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
+      Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,-');
       if (is_array($w_valores)) {
         ShowHTML('  for (ind=1; ind < theForm["w_valores[]"].length; ind++) {');
-        Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,');
+        Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
         ShowHTML('  }');
       }
     }
@@ -2496,7 +2496,7 @@ function RubricaDoc() {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
       */
-      Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
+      Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,-');
       if(f($RS1,'tipo_rubrica')==1) {
         ShowHTML('       for (i=1; i < document.Form["w_sq_projeto_rubrica[]"].length; i++) {');
         ShowHTML('         if(document.Form["w_sq_projeto_rubrica[]"][i].checked==false) {');
@@ -2776,7 +2776,7 @@ function Itens() {
       Validate('w_quantidade','Quantidade','1','1','1','18','','0123456789');
       if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
         Validate('w_data_cotacao','Data da cotação', 'DATA', '1', 10, 10, '', '0123456789/');
-        Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 6, 18, '', '0123456789.,');
+        Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 6, 18, '', '0123456789.,-');
       }
       Validate('w_valor_unitario','Valor unitário do item', 'VALOR', '1', 4, 18, '', '0123456789.,-');
       Validate('w_descricao','Descrição', '1', '1', '1', '500', '1', '1');
@@ -2958,7 +2958,7 @@ function Notas() {
   ShowHTML('    tipo = document.Form.elements[ind].type.toLowerCase();');
   ShowHTML('    if (tipo==\'text\' && !document.Form.elements[ind].disabled) {');
   ShowHTML('      for (idx=1; idx < document.Form[document.Form.elements[ind].name].length; idx++) {');
-  Validate('[document.Form.elements[ind].name][idx]','','VALOR','1',4,18,'','0123456789.,');
+  Validate('[document.Form.elements[ind].name][idx]','','VALOR','1',4,18,'','0123456789.,-');
   ShowHTML('      }');
   ShowHTML('    } ');
   ShowHTML('  } ');
@@ -3216,7 +3216,7 @@ function BuscaParcela() {
         ShowHTML('      alert("Para todas as parcelas selecionadas você deve informar o valor da mesma!"); ');
         ShowHTML('      return false;');
         ShowHTML('    } else if(theForm["w_sq_acordo_parcela[]"][ind].checked) {');
-        Validate('["w_valor[]"][ind]','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
+        Validate('["w_valor[]"][ind]','Valor total do documento','VALOR','1',4,18,'','0123456789.,-');
         ShowHTML('    }');
         ShowHTML('  }');
       } elseif ($O=='A') {
@@ -4059,10 +4059,10 @@ function Concluir() {
     Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
-    Validate('w_valor_real','Valor líquido'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : ''),'VALOR','1', 4, 18, '', '0123456789.,');
+    Validate('w_valor_real','Valor líquido'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : ''),'VALOR','1', 4, 18, '', '0123456789.,-');
     if (is_array($w_moedas)) {
       foreach($w_moedas as $k => $v) {
-        Validate('w_valor_'.$k,'Valor líquido ('.str_replace('&eur;','EURO',$v).')','VALOR','1', 4, 18, '', '0123456789.,');
+        Validate('w_valor_'.$k,'Valor líquido ('.str_replace('&eur;','EURO',$v).')','VALOR','1', 4, 18, '', '0123456789.,-');
       }        
     }
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');

@@ -1000,14 +1000,14 @@ function Geral() {
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
     Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
-    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
+    Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,-');
     CompValor('w_valor','Valor total do documento','>','0,00','zero');
     if (count($RS_FN)>0) {
       CompValor('w_valor','Valor total do documento','<=',formatNumber(f($RS_FN,'fundo_fixo_valor')),formatNumber(f($RS_FN,'fundo_fixo_valor')));
     }
     if (is_array($w_valores)) {
       ShowHTML('  for (ind=1; ind < theForm["w_valores[]"].length; ind++) {');
-      Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,');
+      Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
       ShowHTML('  }');
     }
   } 
@@ -2322,7 +2322,7 @@ function Concluir() {
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
     CompData('w_quitacao','Data do pagamento','<=',FormataDataEdicao(time()),'data atual');
-    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
+    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,-');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
     Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     if ($P1!=1) {

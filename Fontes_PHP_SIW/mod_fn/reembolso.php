@@ -913,8 +913,7 @@ function Geral() {
   Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
   if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de pagamento','SELECT',1,1,18,'','0123456789');
   if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
-  Validate('w_valor','Valor do reembolso','VALOR','1',4,18,'','0123456789.,');
-  CompValor('w_valor','Valor do reembolso','>','0,00','zero');
+  Validate('w_valor','Valor do reembolso','VALOR','1',4,18,'','0123456789.,-');
   if (nvl($w_forma_pagamento,'')!='') {
     if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
       Validate('w_sq_banco','Banco','SELECT',1,1,10,'1','1');
@@ -1758,10 +1757,10 @@ function Documentos() {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
       */
-      Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
+      Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,-');
       if (is_array($w_valores)) {
         ShowHTML('  for (ind=1; ind < theForm["w_valores[]"].length; ind++) {');
-        Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,');
+        Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
         ShowHTML('  }');
       }
     }
@@ -2209,7 +2208,7 @@ function Encaminhamento() {
           ShowHTML('  }');
         } 
         Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
-        Validate('w_valor','Valor do reembolso','VALOR','1',4,18,'','0123456789.,');
+        Validate('w_valor','Valor do reembolso','VALOR','1',4,18,'','0123456789.,-');
       }
       if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
         Validate('w_despacho','Despacho','1','1','1','2000','1','1');
@@ -2508,10 +2507,10 @@ function Concluir() {
     Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
-    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
+    Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,-');
     if (is_array($w_moedas)) {
       foreach($w_moedas as $k => $v) {
-        Validate('w_valor_'.$k,'Valor líquido ('.str_replace('&eur;','EURO',$v).')','VALOR','1', 4, 18, '', '0123456789.,');
+        Validate('w_valor_'.$k,'Valor líquido ('.str_replace('&eur;','EURO',$v).')','VALOR','1', 4, 18, '', '0123456789.,-');
       }        
     }
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
