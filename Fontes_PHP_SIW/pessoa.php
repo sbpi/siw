@@ -1110,7 +1110,7 @@ function Grava() {
               $w_sq_pessoa = f($RS,'sq_pessoa');
               if (count($RS) > 0 && ($O=='I' || ($O!='I' && $w_sq_pessoa!=$_REQUEST['w_sq_pessoa']))) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Nome de usuário já associado a outra pessoa!\');');
+                ShowHTML('  alert("Nome de usuário já associado a outra pessoa!");');
                 ScriptClose();
                 retornaFormulario('w_username');
                 exit;
@@ -1153,7 +1153,7 @@ function Grava() {
                   if (in_array('ACCOUNTDISABLE',$user_attrib)) {
                     // Usuário de rede não pode estar bloqueado.
                     ScriptOpen('JavaScript');
-                    ShowHTML('  alert(\'Usuário de rede bloqueado no '.$w_label.'!\');');
+                    ShowHTML('  alert("Usuário de rede bloqueado no '.$w_label.'!");');
                     ScriptClose();
                     retornaFormulario('w_username_adm');
                     exit;
@@ -1164,7 +1164,7 @@ function Grava() {
                   if ($user[0]['dn']==NULL){
                     // Autenticação fora da aplicação exige que o nome do usuário seja criado previamente.
                     ScriptOpen('JavaScript');
-                    ShowHTML('  alert(\'Nome de usuário não existe no '.$w_label.'!\nEntre em contato com o administrador da rede para criá-lo.\');');
+                    ShowHTML('  alert("Nome de usuário não existe no '.$w_label.'!\nEntre em contato com o administrador da rede para criá-lo.");');
                     ScriptClose();
                     retornaFormulario('w_username');
                     exit;
@@ -1174,7 +1174,7 @@ function Grava() {
                     if (in_array('ACCOUNTDISABLE',$user_attrib)) {
                       // Autenticação fora da aplicação não permite criar usuários com contas bloqueadas.
                       ScriptOpen('JavaScript');
-                      ShowHTML('  alert(\'Usuário bloqueado no '.$w_label.'!\');');
+                      ShowHTML('  alert("Usuário bloqueado no '.$w_label.'!");');
                       ScriptClose();
                       retornaFormulario('w_username');
                       exit;

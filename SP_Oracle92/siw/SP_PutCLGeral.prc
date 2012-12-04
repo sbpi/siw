@@ -113,7 +113,21 @@ begin
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
       );
-      select sq_unidade_pai into w_unidade_pai from cl_unidade where sq_unidade = p_unidade;
+      select sq_unidade_pai into w_unidade_pai 
+        from cl_unidade 
+       where sq_unidade = (select sq_unidade
+                             from (select sq_unidade
+                                     from (select k.sq_unidade, l.sq_unidade cl_unidade, level nivel
+                                             from eo_unidade k
+                                                  left join cl_unidade l on (k.sq_unidade = l.sq_unidade and l.solicita_compra = 'S')
+                                            connect by prior k.sq_unidade_pai = k.sq_unidade
+                                            start with k.sq_unidade = p_unidade
+                                          ) w
+                                    where w.cl_unidade is not null
+                                   order by w.nivel
+                                  )
+                            where rownum = 1
+                          );
       -- Insere registro em cl_solicitacao
       If w_unidade_pai is not null Then
          Insert into cl_solicitacao
@@ -123,10 +137,10 @@ begin
             )
          (select
               w_chave,              p_prioridade,    p_decisao_judicial,   p_numero_original, 
-              p_data_recebimento,   p_aviso,         w_dias,               a.sq_unidade_pai,
+              p_data_recebimento,   p_aviso,         w_dias,               a.sq_unidade,
               p_arp,                p_interno,       p_especie_documento,  w_financeiro
            from cl_unidade a
-          where a.sq_unidade = p_unidade
+          where a.sq_unidade = w_unidade_pai
          );
       Else
          Insert into cl_solicitacao
@@ -236,7 +250,21 @@ begin
              codigo_interno = p_codigo
           where sq_siw_solicitacao = p_chave;
       End If;
-      select sq_unidade_pai into w_unidade_pai from cl_unidade where sq_unidade = p_unidade;
+      select sq_unidade_pai into w_unidade_pai 
+        from cl_unidade 
+       where sq_unidade = (select sq_unidade
+                             from (select sq_unidade
+                                     from (select k.sq_unidade, l.sq_unidade cl_unidade, level nivel
+                                             from eo_unidade k
+                                                  left join cl_unidade l on (k.sq_unidade = l.sq_unidade and l.solicita_compra = 'S')
+                                            connect by prior k.sq_unidade_pai = k.sq_unidade
+                                            start with k.sq_unidade = p_unidade
+                                          ) w
+                                    where w.cl_unidade is not null
+                                   order by w.nivel
+                                  )
+                            where rownum = 1
+                          );
       -- Atualiza a tabela de solicitacoes
       If w_unidade_pai is not null Then
          Update cl_solicitacao set
@@ -247,11 +275,11 @@ begin
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
-              p_data_recebimento, p_aviso,            a.sq_unidade_pai,
+              p_data_recebimento, p_aviso,            a.sq_unidade,
               p_arp,              p_interno,          p_especie_documento,
               p_dias,             w_financeiro
            from cl_unidade a
-          where a.sq_unidade = p_unidade
+          where a.sq_unidade = w_unidade_pai
          )
          where sq_siw_solicitacao = p_chave;
       Else 

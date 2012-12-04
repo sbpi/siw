@@ -4699,6 +4699,7 @@ function Diarias() {
         SelecaoRubrica('<u>R</u>ubrica:', 'R', 'Selecione a rubrica do projeto.', $w_rub_dia, f($RS_Solic, 'sq_solic_pai'), 'D', 'w_rub_dia', 'PDFINANC', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_rub_dia\'; document.Form.submit();"');
         SelecaoTipoLancamento('<u>T</u>ipo de lancamento:', 'T', 'Selecione na lista o tipo de lançamento adequado.', $w_lan_dia, null, $w_cliente, 'w_lan_dia', 'PDSV' . str_pad(f($RS_Solic, 'sq_solic_pai'), 10, '0', STR_PAD_LEFT) . str_pad($w_rub_dia, 10, '0', STR_PAD_LEFT) . 'D', null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+        ShowHTML('          <tr><td colspan="4"><hr></td></tr>');
       } elseif (count($RS_Fin_Dia) == 1) {
         foreach ($RS_Fin_Dia as $row) {
           $RS_Fin_Dia = $row;
@@ -4724,6 +4725,7 @@ function Diarias() {
         SelecaoRubrica('<u>R</u>ubrica:', 'R', 'Selecione a rubrica do projeto.', $w_rub_hsp, f($RS_Solic, 'sq_solic_pai'), 'D', 'w_rub_hsp', 'PDFINANC', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_rub_hsp\'; document.Form.submit();"');
         SelecaoTipoLancamento('<u>T</u>ipo de lancamento:', 'T', 'Selecione na lista o tipo de lançamento adequado.', $w_lan_hsp, null, $w_cliente, 'w_lan_hsp', 'PDSV' . str_pad(f($RS_Solic, 'sq_solic_pai'), 10, '0', STR_PAD_LEFT) . str_pad($w_rub_hsp, 10, '0', STR_PAD_LEFT) . 'D', null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+        ShowHTML('          <tr><td colspan="4"><hr></td></tr>');
       } elseif (count($RS_Fin_Hsp) == 1) {
         foreach ($RS_Fin_Hsp as $row) {
           $RS_Fin_Hsp = $row;

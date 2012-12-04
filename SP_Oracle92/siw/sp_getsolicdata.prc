@@ -539,9 +539,9 @@ begin
                 coalesce((select count(*)     from fn_lancamento_doc x where x.sq_siw_solicitacao = d.sq_siw_solicitacao and x.sq_acordo_nota is not null),0) as qtd_nota,
                 case when d.sq_acordo_parcela is null then 0
                      else coalesce((select count(*)
-                                      from ac_acordo_parcela          x
-                                           inner join ac_parcela_nota z on (x.sq_acordo_parcela = z.sq_acordo_parcela)
-                                      where z.sq_acordo_parcela = d.sq_acordo_parcela
+                                      from ac_acordo_parcela          zx
+                                           inner join ac_parcela_nota zz on (zx.sq_acordo_parcela = zz.sq_acordo_parcela)
+                                      where zz.sq_acordo_parcela = d.sq_acordo_parcela
                                    ),0)
                 end as notas_parcela,
                 da1.sq_lancamento_doc,   da1.numero nr_doc, da1.data dt_doc, da1.valor vl_doc,
@@ -553,22 +553,22 @@ begin
                 de.exige_operacao as exige_oper_org,
                 df.sq_imposto, df.solic_origem,
                 case coalesce(df.sq_siw_solicitacao,0) when 0 then 'N' else 'S' end as lancamento_vinculado,
-                coalesce((select sum(a.valor_total)
-                            from fn_imposto_doc                    a
-                                 inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                 inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
-                                 inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
-                                   inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
-                           where g.calculo            > 0
-                             and b.sq_siw_solicitacao = d.sq_siw_solicitacao
+                coalesce((select sum(za.valor_total)
+                            from fn_imposto_doc                    za
+                                 inner     join fn_lancamento_doc  zb on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
+                                 inner     join fn_imposto         zg on (za.sq_imposto         = zg.sq_imposto)
+                                 inner     join siw_solicitacao    zh on (za.solic_imposto      = zh.sq_siw_solicitacao)
+                                   inner   join siw_tramite        zj on (zh.sq_siw_tramite     = zj.sq_siw_tramite and zj.sigla <> 'CA')
+                           where zg.calculo            > 0
+                             and zb.sq_siw_solicitacao = d.sq_siw_solicitacao
                          ),0) as vl_abatimento,
-                coalesce((select sum(case g.tipo when 'A' then a.valor else -1*a.valor end)
-                            from fn_documento_valores              a
-                                 inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                   inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                                     inner join siw_tramite        j on (d.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
-                                 inner     join fn_valores         g on (a.sq_valores         = g.sq_valores)
-                           where b.sq_siw_solicitacao = d.sq_siw_solicitacao
+                coalesce((select sum(case zg.tipo when 'A' then za.valor else -1*za.valor end)
+                            from fn_documento_valores              za
+                                 inner     join fn_lancamento_doc  zb on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
+                                   inner   join siw_solicitacao    zd on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
+                                     inner join siw_tramite        zj on (zd.sq_siw_tramite     = zj.sq_siw_tramite and zj.sigla <> 'CA')
+                                 inner     join fn_valores         zg on (za.sq_valores         = zg.sq_valores)
+                           where zb.sq_siw_solicitacao = d.sq_siw_solicitacao
                          ),0) as vl_outros,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,

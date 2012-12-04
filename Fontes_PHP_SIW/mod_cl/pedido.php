@@ -415,7 +415,7 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('$ Estimado','valor').'</td>');
       if ($P1!=1) ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
       ShowHTML('        </tr>');
       
     } else {
@@ -1883,7 +1883,7 @@ function Atender() {
   foreach($RS as $row){$RS=$row; break;}
   $w_dados_pai      = explode('|@|',f($RS,'dados_pai'));
   $w_sq_menu_relac  = $w_dados_pai[3];
-  if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
+  $w_sqcc           = f($RS,'sq_cc');
   $w_solic_pai      = f($RS,'sq_solic_pai');
   $w_chave_pai      = f($RS,'sq_solic_pai');
   $w_fundo_fixo     = f($RS,'fundo_fixo');

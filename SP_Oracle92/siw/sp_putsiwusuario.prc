@@ -191,8 +191,8 @@ begin
          Values
             ( w_chave,              coalesce(p_unidade, w_unidade), coalesce(p_localizacao, w_localizacao),
               p_cliente,            p_username,       w_email,
-              w_gestor_seguranca,   w_gestor_sistema, case w_tipo_autenticacao  when 'B' then criptografia(p_username) else 'Externa' end,
-              criptografia(p_username), w_tipo_autenticacao, w_gestor_portal,
+              w_gestor_seguranca,   w_gestor_sistema, case w_tipo_autenticacao  when 'B' then criptografia(upper(p_username)) else 'Externa' end,
+              criptografia(upper(p_username)), w_tipo_autenticacao, w_gestor_portal,
               w_gestor_dashboard,   w_gestor_conteudo
             );
          

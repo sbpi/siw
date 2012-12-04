@@ -1130,26 +1130,26 @@ begin
                                                                                   z.sigla          = 'FNDEVENT'
                                                                                  )
                                   )                         da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
-                     left         join (select d.sq_siw_solicitacao, sum(a.valor_total) as valor
-                                          from fn_imposto_doc                    a
-                                               inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                                 inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                                               inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto)
-                                               inner     join siw_solicitacao    h on (a.solic_imposto      = h.sq_siw_solicitacao)
-                                                 inner   join fn_lancamento      i on (h.sq_siw_solicitacao = i.sq_siw_solicitacao)
-                                                 inner   join siw_tramite        j on (h.sq_siw_tramite     = j.sq_siw_tramite and j.sigla <> 'CA')
-                                                 inner   join siw_menu           k on (h.sq_menu            = k.sq_menu)
-                                         where g.calculo > 0
-                                           and (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                        group by d.sq_siw_solicitacao
+                     left         join (select zd.sq_siw_solicitacao, sum(za.valor_total) as valor
+                                          from fn_imposto_doc                    za
+                                               inner     join fn_lancamento_doc  zb on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
+                                                 inner   join siw_solicitacao    zd on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
+                                               inner     join fn_imposto         zg on (za.sq_imposto         = zg.sq_imposto)
+                                               inner     join siw_solicitacao    zh on (za.solic_imposto      = zh.sq_siw_solicitacao)
+                                                 inner   join fn_lancamento      zi on (zh.sq_siw_solicitacao = zi.sq_siw_solicitacao)
+                                                 inner   join siw_tramite        zj on (zh.sq_siw_tramite     = zj.sq_siw_tramite and zj.sigla <> 'CA')
+                                                 inner   join siw_menu           zk on (zh.sq_menu            = zk.sq_menu)
+                                         where zg.calculo > 0
+                                           and (p_chave     is null or (p_chave     is not null and zd.sq_siw_solicitacao = p_chave))
+                                        group by zd.sq_siw_solicitacao
                                        )                    dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
-                     left         join (select d.sq_siw_solicitacao, sum(case g.tipo when 'A' then a.valor else -1*a.valor end) as valor
-                                          from fn_documento_valores              a
-                                               inner     join fn_lancamento_doc  b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
-                                                 inner   join siw_solicitacao    d on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                                               inner     join fn_valores         g on (a.sq_valores         = g.sq_valores)
-                                         where (p_chave     is null or (p_chave     is not null and d.sq_siw_solicitacao = p_chave))
-                                        group by d.sq_siw_solicitacao
+                     left         join (select zd.sq_siw_solicitacao, sum(case zg.tipo when 'A' then za.valor else -1*za.valor end) as valor
+                                          from fn_documento_valores              za
+                                               inner     join fn_lancamento_doc  zb on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
+                                                 inner   join siw_solicitacao    zd on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
+                                               inner     join fn_valores         zg on (za.sq_valores         = zg.sq_valores)
+                                         where (p_chave     is null or (p_chave     is not null and zd.sq_siw_solicitacao = p_chave))
+                                        group by zd.sq_siw_solicitacao
                                        )                    dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
                      left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and

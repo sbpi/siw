@@ -123,8 +123,8 @@ begin
                   inner    join co_moeda              g1 on (g.sq_moeda                   = g1.sq_moeda)
                 left       join pd_valor_diaria       h  on (h.sq_valor_diaria            = recuperaValorDiaria(a1.cliente,a.destino,'H',a1.diaria))
                   left     join co_moeda              h1 on (h.sq_moeda                   = h1.sq_moeda)
-                inner      join pd_valor_diaria       i  on (i.sq_valor_diaria            = recuperaValorDiaria(a1.cliente,a.destino,'V',a1.diaria))
-                  inner    join co_moeda              i1 on (i.sq_moeda                   = i1.sq_moeda)
+                left       join pd_valor_diaria       i  on (i.sq_valor_diaria            = recuperaValorDiaria(a1.cliente,a.destino,'V',a1.diaria))
+                  left     join co_moeda              i1 on (i.sq_moeda                   = i1.sq_moeda)
           where a.sq_siw_solicitacao = p_chave
             and a.tipo               = p_tipo;
    Elsif p_restricao = 'DF' Then
