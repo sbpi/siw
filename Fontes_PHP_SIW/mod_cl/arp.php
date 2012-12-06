@@ -3217,7 +3217,7 @@ function Grava() {
           $_SESSION['LOTACAO']),Nvl($_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA']),$_SESSION['SQ_PESSOA'],null,
           $_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],$_REQUEST['w_solic_pai'],
           $_REQUEST['w_justificativa'],null,$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],
-          $_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],
+          $_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,null,$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],
           $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',$_REQUEST['w_numero_original'],
           $_REQUEST['w_data_recebimento'],'N',$_REQUEST['w_interno'],$_REQUEST['w_especie_documento'],null,null,null,null,
           &$w_chave_nova,$_REQUEST['w_copia']);

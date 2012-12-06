@@ -16,6 +16,7 @@ create or replace procedure SP_PutCLGeral
     p_observacao          in varchar2  default null,
     p_inicio              in date      default null,
     p_fim                 in date      default null,
+    p_moeda               in number    default null,
     p_valor               in number    default null,
     p_codigo              in varchar2  default null,
     p_prioridade          in number    default null,
@@ -101,14 +102,15 @@ begin
          cadastrador,        executor,           justificativa,       descricao,
          inicio,             fim,                inclusao,            ultima_alteracao,    
          sq_unidade,         sq_cc,              sq_solic_pai,        sq_cidade_origem,    
-         sq_plano,           codigo_interno,     observacao,          valor)
+         sq_plano,           codigo_interno,     observacao,          sq_moeda,
+         valor)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_justificativa,     p_objeto,
          case p_decisao_judicial when 'S' then p_inicio else w_data end,
          p_fim,              w_data,        w_data,              p_unidade,
          p_sqcc,             p_solic_pai,   p_cidade,            p_plano,
-         p_codigo,           p_observacao,  coalesce(p_valor,0)
+         p_codigo,           p_observacao,  p_moeda,             coalesce(p_valor,0)
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -241,6 +243,7 @@ begin
           executor         = p_executor,
           inicio           = p_inicio,
           fim              = p_fim,
+          sq_moeda         = p_moeda,
           valor            = coalesce(p_valor,valor),
           ultima_alteracao = w_data,
           sq_cidade_origem = p_cidade

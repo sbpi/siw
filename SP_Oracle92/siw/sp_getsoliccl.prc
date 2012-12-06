@@ -67,8 +67,8 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
 
- if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' or
-    substr(p_restricao,1,2) = 'GC'   or substr(p_restricao,1,4) = 'GRCL' Then
+   if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' or
+      substr(p_restricao,1,2) = 'GC'   or substr(p_restricao,1,4) = 'GRCL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -106,6 +106,8 @@ begin
                 b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b2.acesso,
+                b6.sq_moeda,             b6.codigo cd_moeda,            b6.nome nm_moeda,
+                b6.sigla sg_moeda,       b6.simbolo sb_moeda,           b6.ativo at_moeda,
                 c.sq_tipo_unidade,       c.nome as nm_unidade_exec,     c.informal,
                 c.sq_tipo_unidade as tp_exec, c.nome as nm_unidade_exec, c.informal as informal_exec,
                 c.vinculada as vinc_exec,c.adm_central as adm_exec,
@@ -176,6 +178,7 @@ begin
                    left           join pe_plano                 b3 on (b.sq_plano                 = b3.sq_plano)
                    left           join pj_projeto               b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
                    left           join pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)
+                   left           join co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)
                      left         join ct_especificacao_despesa d1 on (d.sq_especificacao_despesa = d1.sq_especificacao_despesa)
                      left         join eo_indicador             d2 on (d.sq_eoindicador           = d2.sq_eoindicador)
                      left         join lc_fonte_recurso         d3 on (d.sq_lcfonte_recurso       = d3.sq_lcfonte_recurso)

@@ -53,18 +53,19 @@ begin
    
    If p_operacao = 'I' Then
       select sq_solicitacao_item.nextval into w_item_solic from dual;
-      -- Insere registro em 
+      -- Insere registro em CL_SOLICITACAO_ITEM
       insert into cl_solicitacao_item
         (sq_solicitacao_item, sq_siw_solicitacao, ordem,       sq_material,           quantidade,   cancelado,   motivo_cancelamento,
          valor_unit_est,      sq_unidade_medida,  quantidade_autorizada,              dias_validade_proposta,
-         preco_menor,                             preco_maior,                        preco_medio
+         preco_menor,                             preco_maior,                        preco_medio,  detalhamento
         )
       (select 
          w_item_solic,        p_solic,            p_ordem,     w_material,            p_quantidade, p_cancelado, p_motivo,
          p_valor,             a.sq_unidade_medida,p_quantidade,                       (w_acordo.fim - w_acordo.inicio),
          coalesce(a.pesquisa_preco_menor,p_valor),
          coalesce(a.pesquisa_preco_maior,p_valor),
-         coalesce(a.pesquisa_preco_medio,p_valor)
+         coalesce(a.pesquisa_preco_medio,p_valor),
+         detalhamento
        from cl_material a
        where sq_material = w_material
       );

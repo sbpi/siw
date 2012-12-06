@@ -20,6 +20,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_tramite_ativo  = f($RS,'ativo');
   $w_certame        = f($RS,'certame');
   $w_gera_contrato  = f($RS,'gera_contrato');
+  $w_sb_moeda       = nvl(f($RS,'sb_moeda'),'');
   
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
@@ -71,8 +72,8 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Previsão de conclusão:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
       if (nvl(f($RS,'nm_prioridade'),'')!='') $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
     }
-    if(f($RS,'or_tramite')>1) {
-      $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),2).'</td></tr>';
+    if(f($RS,'valor')>0) {
+      $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(f($RS,'valor'),2).'</td></tr>';
     }
     if ($w_cliente_arp=='S' && nvl(f($RS,'arp'),'')!='') $l_html.=chr(13).'      <tr><td><b>Gera ARP?</b></td><td>'.RetornaSimNao(f($RS,'arp')).' </td></tr>';
     $l_html.=chr(13).'    <tr><td><b>Solicitante:<b></td>';
@@ -316,11 +317,14 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
               $l_html.=chr(13).'        <td align="right">'.formatNumber(($w_item_lic*$w_item_unit),4).'</td>';
             }
           }
-          $l_html.=chr(13).'      <tr align="center">';
+          $l_html.=chr(13).'      <tr align="center" valign="top">';
           $l_html.=chr(13).'        <td>'.nvl(f($row,'ordem'),'---').'</td>';
           $l_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
-          if($l_tipo=='WORD') $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
-          else                $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+          if($l_tipo=='WORD') $l_html.=chr(13).'        <td align="left">'.f($row,'nome');
+          else                $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null);
+          if (nvl(f($row,'det_item'),'')!='') {
+            $l_html.='<hr><b>DETALHAMENTO</b>: '.crLf2Br(f($row,'det_item'));
+          }
           $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
           $w_atual      = f($row,'sq_material');
           $w_exibe      = false;
@@ -533,8 +537,14 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if ($w_atual!=f($row,'sq_material')) {
          $l_html.=chr(13).'      <tr valign="top">';
          $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>';
-         if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
-         else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+         if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome');
+         else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null);
+         if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome');
+         if (nvl(f($row,'fabricante'),'')!=''||nvl(f($row,'marca_modelo'),'')!='') {
+           $l_html.='<hr>';
+           if (nvl(f($row,'fabricante'),'')!='') $l_html.='<b>FABRICANTE</b>: '.f($row,'fabricante').'&nbsp';
+           if (nvl(f($row,'marca_modelo'),'')!='') $l_html.='<b>MARCA/MODELO</b>: '.f($row,'marca_modelo').'&nbsp';
+         }
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
          $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').' title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),2),'---').'</td>';
@@ -542,14 +552,23 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'      <tr valign="top">';
       }
-      // Se a validade da proposta for menor que o exigido, destaca em vermelho
-      if (nvl(f($row,'dias_validade_item'),0)>nvl(f($row,'dias_validade_proposta'),0) ||
-          (f($row,'pesquisa_preco_medio')+f($row,'variacao_valor')<f($row,'valor_unidade')) ||
-          (f($row,'pesquisa_preco_medio')-f($row,'variacao_valor')>f($row,'valor_unidade'))
-         ) {
-        $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed1.'"';
+      if ($w_pede_valor_pedido=='S') {
+        // Se a validade da proposta for menor que o exigido, destaca em vermelho
+        if (nvl(f($row,'dias_validade_item'),0)>nvl(f($row,'dias_validade_proposta'),0)) {
+          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed1.'"';
+        } else {
+          $w_destaque = '';
+        }
       } else {
-        $w_destaque = '';
+        // Se a validade da proposta for menor que o exigido ou o valor fora da faixa aceitável, destaca em vermelho
+        if (nvl(f($row,'dias_validade_item'),0)>nvl(f($row,'dias_validade_proposta'),0) ||
+            (f($row,'pesquisa_preco_medio')+f($row,'variacao_valor')<f($row,'valor_unidade')) ||
+            (f($row,'pesquisa_preco_medio')-f($row,'variacao_valor')>f($row,'valor_unidade'))
+          ) {
+          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed1.'"';
+        } else {
+          $w_destaque = '';
+        }
       }
       if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap '.$w_destaque.'>'.f($row,'nm_fornecedor').'</td>';
       else                $l_html.=chr(13).'        <td nowrap '.$w_destaque.'>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
@@ -569,7 +588,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'      </center>';
     $l_html.=chr(13).'    </table>';
-    $l_html.=chr(13).'<tr><td colspan="2"><b>Observação: propostas com fundo vermelho indicam descumprimento do prazo de validade ou valor fora da faixa aceitável ($ médio +/- '.$w_percentual_acrescimo.'%).';
+    $l_html.=chr(13).'<tr><td colspan="2"><b>Observação: propostas com fundo vermelho indicam descumprimento do prazo de validade'.(($w_pede_valor_pedido=='S') ? '' : ' ou valor fora da faixa aceitável ($ médio +/- '.$w_percentual_acrescimo.'%)');
   }
     
   // Se for listagem dos dados

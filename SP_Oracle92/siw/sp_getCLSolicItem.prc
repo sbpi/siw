@@ -19,7 +19,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, a.dias_validade_proposta as dias_validade_item,
+                a.ordem, a.dias_validade_proposta as dias_validade_item, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -77,7 +77,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, a.dias_validade_proposta as dias_validade_item,
+                a.ordem, a.dias_validade_proposta as dias_validade_item, a.detalhamento det_item,
                 case a.cancelado when 'S' then 'Sim' else 'Não' end as nm_cancelado,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
@@ -159,7 +159,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -353,7 +353,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, 
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -433,7 +433,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -483,7 +483,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -532,7 +532,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -581,7 +581,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -645,7 +645,7 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, a.dias_validade_proposta as dias_validade_item,
+                a.ordem, a.dias_validade_proposta as dias_validade_item, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -669,7 +669,7 @@ begin
                 f.percentual_acrescimo,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
                 g.sq_item_fornecedor, g.fornecedor, g.dias_validade_proposta, g.fator_embalagem,
-                g.vencedor,
+                g.fabricante, g.marca_modelo, g.vencedor,
                 case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
                 h.nome_resumido as nm_fornecedor,
                 i.qtd_proposta,

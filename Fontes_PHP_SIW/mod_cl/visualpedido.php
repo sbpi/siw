@@ -18,6 +18,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_sg_tramite     = f($RS,'sg_tramite');
   $w_fundo_fixo     = f($RS,'fundo_fixo');
   $w_tramite_ativo  = f($RS,'ativo');
+  $w_sb_moeda       = nvl(f($RS,'sb_moeda'),'');
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
@@ -61,7 +62,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     //$l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
     if (nvl(f($RS,'fim'),'')!='' && $w_cliente!=10135) $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(f($RS,'valor'),4).'</td></tr>';
     $l_html.=chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
@@ -162,13 +163,16 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       // Lista os registros selecionados para listagem
       $w_total_preco = 0;
       foreach($RS1 as $row){ 
-        $l_html.=chr(13).'      <tr align="center">';
+        $l_html.=chr(13).'      <tr align="center" valign="top">';
         $l_html.=chr(13).'        <td align="left">'.f($row,'nm_tipo_material').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
         if (!($l_P1==4 || $l_tipo=='WORD')){
-          $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+          $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null);
         } else {
-          $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
+          $l_html.=chr(13).'        <td align="left">'.f($row,'nome');
+        }
+        if (nvl(f($row,'det_item'),'')!='') {
+          $l_html.='<hr><b>DETALHAMENTO</b>: '.crLf2Br(f($row,'det_item'));
         }
         $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';

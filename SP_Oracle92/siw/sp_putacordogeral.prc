@@ -80,7 +80,7 @@ create or replace procedure SP_PutAcordoGeral
              b.nota_conclusao, b.data_abertura,
              c.sq_solicitacao_item, c.sq_material, c.quantidade, c.valor_unit_est, c.preco_menor, c.preco_maior, c.preco_medio, c.quantidade_autorizada, 
              c.cancelado, c.motivo_cancelamento, c.ordem, c.dias_validade_proposta, c.sq_unidade_medida, c.prazo_garantia, c.vistoria_previa, c.catalogo, 
-             c.prazo_manutencao,
+             c.prazo_manutencao, c.detalhamento det_item,
              d.valor_unidade, d.fabricante, d.marca_modelo, d.embalagem, d.fator_embalagem,
              e.sq_pessoa, e.sq_tipo_pessoa,
              f.codigo_interno as codigo_item

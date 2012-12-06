@@ -25,11 +25,11 @@ create or replace procedure SP_PutCLDados
     p_fim                   in date     default null,
     p_prioridade            in number   default null,
     p_nota_conclusao        in varchar2 default null,
-    p_fundo_fixo            in varchar2 default null
+    p_fundo_fixo            in varchar2 default null,
+    p_detalhamento          in varchar2 default null
    ) is
    w_numero_certame cl_solicitacao.numero_certame%type;
    w_sq_modalidade  number(18);
-   w_certame        varchar2(1);
    w_prefixo        siw_menu.prefixo%type;
    w_codigo         siw_solicitacao.codigo_interno%type;
    w_sigla_menu     siw_menu.sigla%type;
@@ -137,7 +137,8 @@ begin
       -- Atualiza a ordem dos itens de uma licitação
       Update cl_solicitacao_item set
          ordem                  = p_ordem,
-         dias_validade_proposta = nvl(p_dias_item,dias_validade_proposta)
+         dias_validade_proposta = nvl(p_dias_item,dias_validade_proposta),
+         detalhamento           = nvl(p_detalhamento,detalhamento)
       Where sq_solicitacao_item = p_chave;
    ElsIf p_restricao = 'VENCEDOR' Then
       -- Registra os vencedores da licitação

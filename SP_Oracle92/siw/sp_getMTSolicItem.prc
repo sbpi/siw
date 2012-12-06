@@ -19,7 +19,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, a.dias_validade_proposta as dias_validade_item,
+                a.ordem, a.dias_validade_proposta as dias_validade_item, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -76,7 +76,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, a.dias_validade_proposta as dias_validade_item,
+                a.ordem, a.dias_validade_proposta as dias_validade_item, a.detalhamento det_item,
                 case a.cancelado when 'S' then 'Sim' else 'Não' end as nm_cancelado,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
@@ -157,7 +157,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -229,7 +229,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -308,7 +308,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -354,7 +354,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -402,7 +402,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -450,7 +450,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,
@@ -513,7 +513,7 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem, a.dias_validade_proposta as dias_validade_item,
+                a.ordem, a.dias_validade_proposta as dias_validade_item, a.detalhamento det_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida,
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo,
                 b.exibe_catalogo, b.vida_util, b.ativo,

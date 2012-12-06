@@ -12,11 +12,11 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
   extract($GLOBALS);
   if ($chaveAux=='CLASSIF') {
     include_once($w_dir_volta.'funcoes/selecaoCC.php');
-    SelecaoCC($label,$accesskey,$hint,$chave,null,$campo,$restricao);
+    SelecaoCC($label,$accesskey,$hint,$chave,null,$campo,$restricao,$atributo,$colspan);
   } elseif ($chaveAux=='PLANOEST') {
     include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
-    //selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
-    selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'SERVICOS', $atributo);
+    //selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo,$colspan);
+    selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'SERVICOS', $atributo,$colspan);
   } elseif ($chaveAux=='COMPRA_FUNDO') {
     $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',5,
         null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,

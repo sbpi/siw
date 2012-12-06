@@ -47,6 +47,9 @@ begin
          gera_contrato                 = p_contrato
        where sq_lcmodalidade           = p_chave;
    Elsif p_operacao = 'E' Then
+      -- Exclui enquadramentos da modalidade
+      delete lc_modalidade_artigo where sq_lcmodalidade = p_chave;
+      
       -- Exclui registro
       delete lc_modalidade where sq_lcmodalidade = p_chave;
    End If;

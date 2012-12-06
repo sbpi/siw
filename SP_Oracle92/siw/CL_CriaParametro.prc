@@ -6,7 +6,8 @@ create or replace procedure CL_CriaParametro
    w_sequencial number(18) := 0;
 
    cursor c_dados is
-      select c.codigo_interno, g.numero_certame, coalesce(g.numero_certame,c.codigo_interno) as codigo, f.sq_unidade, 
+      select a.sq_pessoa cliente, c.codigo_interno, g.numero_certame, f.sq_unidade, 
+             coalesce(g.numero_certame,c.codigo_interno) as codigo,
              h.sq_lcmodalidade, h.sigla as prefixo, i.sq_unidade as existe,
              coalesce(i.sequencial,0) as sequencial, 
              coalesce(i.ano_corrente,1900) as ano_corrente, 
@@ -26,31 +27,36 @@ create or replace procedure CL_CriaParametro
 begin
   p_numero_doc := null;
   For crec in c_dados Loop
-    -- Verifica se há necessidade de reinicializar o sequencial em função da troca do ano
-    If to_char(sysdate,'yyyy') > crec.ano_corrente Then
-       w_ano        := to_char(sysdate,'yyyy');
-       w_sequencial := 1;
+    If crec.cliente = 6881 Then
+       -- UNESCO não controla licitação por modalidade. Vale o código da solicitação
+       p_numero_doc := crec.codigo_interno;
     Else
-       w_ano        := crec.ano_corrente;
-       w_sequencial := crec.sequencial + 1;
+       -- Verifica se há necessidade de reinicializar o sequencial em função da troca do ano
+       If to_char(sysdate,'yyyy') > crec.ano_corrente Then
+          w_ano        := to_char(sysdate,'yyyy');
+          w_sequencial := 1;
+       Else
+          w_ano        := crec.ano_corrente;
+          w_sequencial := crec.sequencial + 1;
+       End If;
+        
+       If crec.existe is null Then
+         insert into cl_unidade_numeracao (sq_unidade, sq_lcmodalidade, sequencial, ano_corrente, sufixo)
+         values (crec.sq_unidade, crec.sq_lcmodalidade, w_sequencial, w_ano, crec.sufixo);
+       Else
+         update cl_unidade_numeracao a
+            set a.sequencial   = w_sequencial,
+                a.ano_corrente = w_ano
+          where a.sq_unidade      = crec.sq_unidade
+            and a.sq_lcmodalidade = crec.sq_lcmodalidade;
+       End If;
+        
+       --  Retorna o sequencial a ser usado no lançamento
+       p_numero_doc := crec.prefixo||'-';
+       p_numero_doc := p_numero_doc || substr(to_char(1000+w_sequencial),2,3)||'/';
+       p_numero_doc := p_numero_doc || to_char(w_ano)||'-';
+       p_numero_doc := p_numero_doc || crec.sufixo;
     End If;
-  
-    If crec.existe is null Then
-      insert into cl_unidade_numeracao (sq_unidade, sq_lcmodalidade, sequencial, ano_corrente, sufixo)
-      values (crec.sq_unidade, crec.sq_lcmodalidade, w_sequencial, w_ano, crec.sufixo);
-    Else
-      update cl_unidade_numeracao a
-         set a.sequencial   = w_sequencial,
-             a.ano_corrente = w_ano
-       where a.sq_unidade      = crec.sq_unidade
-         and a.sq_lcmodalidade = crec.sq_lcmodalidade;
-    End If;
-  
-    --  Retorna o sequencial a ser usado no lançamento
-    p_numero_doc := crec.prefixo||'-';
-    p_numero_doc := p_numero_doc || substr(to_char(1000+w_sequencial),2,3)||'/';
-    p_numero_doc := p_numero_doc || to_char(w_ano)||'-';
-    p_numero_doc := p_numero_doc || crec.sufixo;
   End Loop;
 end CL_CriaParametro;
 /

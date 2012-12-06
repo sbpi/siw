@@ -4,6 +4,7 @@ create or replace procedure SP_PutCLSolicItem
     p_chave                    in  number   default null,
     p_chave_aux2               in  number   default null,
     p_material                 in  number   default null,
+    p_detalhamento             in  varchar2 default null,
     p_quantidade               in  number   default null,
     p_qtd_ant                  in  number   default null,
     p_valor                    in  number   default null,
@@ -34,9 +35,9 @@ begin
       select sq_solicitacao_item.nextval into w_chave from dual;
       -- Insere registro
       insert into cl_solicitacao_item
-        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   cancelado,                 motivo_cancelamento,   sq_unidade_medida)
+        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   detalhamento, cancelado,                 motivo_cancelamento,   sq_unidade_medida)
       (select
-         w_chave,             p_chave,            p_material,  p_quantidade, coalesce(p_cancelado,'N'), p_motivo_cancelamento, a.sq_unidade_medida
+         w_chave,             p_chave,            p_material,  p_quantidade, detalhamento, coalesce(p_cancelado,'N'), p_motivo_cancelamento, a.sq_unidade_medida
          from cl_material a
         where sq_material = p_material
       );
@@ -44,6 +45,7 @@ begin
       -- Altera registro
       update cl_solicitacao_item 
          set quantidade          = p_quantidade,
+             detalhamento        = p_detalhamento,
              cancelado           = coalesce(p_cancelado,'N'),
              motivo_cancelamento = p_motivo_cancelamento
        where sq_solicitacao_item = p_chave_aux;
@@ -162,9 +164,9 @@ begin
 
          -- Insere registro
          insert into cl_solicitacao_item
-           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida)
+           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida,   detalhamento)
          (select 
-            w_chave,             p_chave,            w_material,  w_qtd,      a.sq_unidade_medida
+            w_chave,             p_chave,            w_material,  w_qtd,      a.sq_unidade_medida, detalhamento
             from cl_solicitacao_item a where a.sq_solicitacao_item = p_chave_aux2
          );
       Else
