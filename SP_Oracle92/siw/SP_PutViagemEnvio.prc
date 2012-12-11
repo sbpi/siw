@@ -374,8 +374,8 @@ begin
          -- Calcula as quantidades de diárias
          SP_CalculaDiarias(p_chave,null);
          
-         If w_sg_tramite = 'CI' Then
-            -- Se cadastramento inicial
+         If w_sg_tramite = 'CI' and w_cliente = 10135 Then
+            -- Se cadastramento inicial e ABDI
             select count(*) into w_existe
               from pd_deslocamento        a
                    inner   join co_cidade b on (a.destino = b.sq_cidade)

@@ -786,7 +786,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     } 
   
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>5) {
+    if($l_diaria=='S' && (($w_cliente = 10135 && $w_or_tramite>5) || ($w_cliente = 17305 && $w_or_tramite>1))) {
       unset($w_trechos);
       unset($w_tot_diaria_S);
       $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
@@ -843,9 +843,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $w_trechos[$i][39] = f($row,'calculo_veiculo_texto');
             
             // Cria array para guardar o valor total por moeda
-            if ($w_trechos[$i][13]>'') $w_tot_diaria_S[$w_trechos[$i][13]] = 0;
-            if ($w_trechos[$i][18]>'') $w_tot_diaria_S[$w_trechos[$i][18]] = 0;
-            if ($w_trechos[$i][12]>'') $w_tot_diaria_S[$w_trechos[$i][23]] = 0;
+            if (nvl($w_trechos[$i][13],'')!='') $w_tot_diaria_S[$w_trechos[$i][13]] = 0;
+            if (nvl($w_trechos[$i][18],'')!='') $w_tot_diaria_S[$w_trechos[$i][18]] = 0;
+            if (nvl($w_trechos[$i][23],'')!='') $w_tot_diaria_S[$w_trechos[$i][23]] = 0;
             if ($i==1) {
               // Se a primeira saída for após as 18:00, deduz meia diária
               if (intVal(str_replace(':','',formataDataEdicao(f($row,'phpdt_saida'),2)))>180000) {
@@ -1028,7 +1028,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             // Cria array para guardar o valor total por moeda
             if ($w_trechos[$i][13]>'') $w_tot_diaria_P[$w_trechos[$i][13]] = 0;
             if ($w_trechos[$i][18]>'') $w_tot_diaria_P[$w_trechos[$i][18]] = 0;
-            if ($w_trechos[$i][12]>'') $w_tot_diaria_P[$w_trechos[$i][23]] = 0;
+            if ($w_trechos[$i][23]>'') $w_tot_diaria_P[$w_trechos[$i][23]] = 0;
             if ($i==1) {
               // Se a primeira saída for após as 18:00, deduz meia diária
               if (intVal(str_replace(':','',formataDataEdicao(f($row,'phpdt_saida'),2)))>180000) {
