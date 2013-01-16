@@ -54,7 +54,7 @@ begin
            from pa_tipo_despacho a
           where a.sq_tipo_despacho   <> coalesce(p_chave,0)
             and a.cliente            = p_cliente
-            and ((p_nome             is null) or (p_nome    is not null and upper(a.nome)      like '%'||upper(p_nome)||'%'))
+            and ((p_nome             is null) or (p_nome    is not null and upper(a.nome)      = upper(p_nome)))
             and ((p_sigla            is null) or (p_sigla   is not null and upper(a.sigla)     = upper(p_sigla)))
             and ((p_ativo            is null) or (p_ativo   is not null and a.ativo            = p_ativo));   
    Elsif p_restricao = 'VINCULADO' Then
