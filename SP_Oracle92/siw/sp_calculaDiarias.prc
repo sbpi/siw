@@ -75,6 +75,7 @@ begin
      for crec in c_solic loop
         sp_calculaDiarias(crec.sq_siw_solicitacao);
      end loop;
+     return;
   End If;
   -- Recupera informação sobre viagem internacional
   select internacional, diaria_fim_semana into w_internacional, w_fim_semana from pd_missao where sq_siw_solicitacao = p_chave;
@@ -161,8 +162,8 @@ begin
                -- No último dia:
                --    NACIONAL
                --    Chegada até  as 12h será computada com o 1/2 diária nacional, tendo compromisso ou não
-               --    Chegada após as 12h   com compromisso implica em uma diária nacional
-               --                          sem compromisso implica em 1/2 diária nacional
+               --    Chegada após as 12h com compromisso implica em uma diária nacional
+               --                        sem compromisso implica em 1/2 diária nacional
                --    INTERNACIONAL
                --    Toda e qualquer chegada será computada com o 1/2 diária internacional
                If crec.origem_nacional = 'N' Then

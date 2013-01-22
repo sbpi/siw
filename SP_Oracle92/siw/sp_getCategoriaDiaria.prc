@@ -8,7 +8,7 @@ create or replace procedure SP_GetCategoriaDiaria
 begin
    -- Recupera as categorias de diárias
    open p_result for
-      select a.sq_categoria_diaria as chave, a.cliente, a.nome, a.ativo, a.tramite_especial, 
+      select a.sq_categoria_diaria as chave, a.cliente, a.nome, a.sigla, a.ativo, a.tramite_especial, 
              a.dias_prestacao_contas,        a.valor_complemento,
              case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
              case a.tramite_especial when 'S' then 'Sim' else 'Não' end as nm_tramite_especial

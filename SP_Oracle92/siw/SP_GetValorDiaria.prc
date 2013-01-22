@@ -26,7 +26,7 @@ begin
              c.nome as nm_cidade,
              c.co_uf as nm_uf,
              d.nome as nm_moeda, d.sigla as sg_moeda,
-             e.nome as nm_categoria_diaria
+             e.nome as nm_categoria_diaria, e.sigla as sg_categoria_diaria
        from pd_valor_diaria                 a
             left   join co_pais             b  on (a.sq_pais             = b.sq_pais)
             left   join co_cidade           c  on (a.sq_cidade           = c.sq_cidade)

@@ -1468,10 +1468,11 @@ function CategoriaDiaria() {
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_nome              = $_REQUEST['w_nome'];
+    $w_sigla             = $_REQUEST['w_sigla'];
     $w_ativo             = $_REQUEST['w_ativo'];
     $w_tramite           = $_REQUEST['w_tramite'];
     $w_dias_prest_contas = $_REQUEST['w_dias_prest_contas'];
-    $w_valor_complemento       = $_REQUEST['w_valor_complemento'];
+    $w_valor_complemento = $_REQUEST['w_valor_complemento'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getCategoriaDiaria; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null);
@@ -1487,6 +1488,7 @@ function CategoriaDiaria() {
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave              = f($RS,'chave');
     $w_nome               = f($RS,'nome');
+    $w_sigla              = f($RS,'sigla');
     $w_ativo              = f($RS,'ativo');
     $w_tramite            = f($RS,'tramite_especial');
     $w_dias_prest_contas  = f($RS,'dias_prestacao_contas');
@@ -1500,6 +1502,7 @@ function CategoriaDiaria() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','2','30','1','1');
+      Validate('w_sigla','Sigla','1','1','2','20','1','1');
       Validate('w_dias_prest_contas','Dias para prestação de contas','1',1,1,3,'','0123456789');
       Validate('w_valor_complemento','Valor de complemento de diárias','VALOR','1',4,18,'1','0123456789,.');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1521,7 +1524,7 @@ function CategoriaDiaria() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
+    BodyOpen('onLoad=\'document.Form.w_sigla.focus();\'');
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
@@ -1541,6 +1544,7 @@ function CategoriaDiaria() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Dias Prestação','dias_prestacao_contas').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Trâmite especial','nm_tramite_especial').'</font></td>');
@@ -1558,6 +1562,7 @@ function CategoriaDiaria() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'sigla').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'dias_prestacao_contas').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_tramite_especial').'</td>');
@@ -1584,6 +1589,7 @@ function CategoriaDiaria() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="30" MAXLENGTH="20" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Categoria passa por trâmite especial?</b>',$w_tramite,'w_tramite');
@@ -1746,7 +1752,7 @@ function Grava() {
             }
           }
       }
-      $SQL = new dml_putCategoriaDiaria; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite'],$_REQUEST['w_dias_prest_contas'],$_REQUEST['w_valor_complemento']);
+      $SQL = new dml_putCategoriaDiaria; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite'],$_REQUEST['w_dias_prest_contas'],$_REQUEST['w_valor_complemento']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
