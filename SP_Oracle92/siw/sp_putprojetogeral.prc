@@ -344,10 +344,39 @@ begin
              
              insert into pj_rubrica_cronograma
                (sq_rubrica_cronograma,                sq_projeto_rubrica, inicio, fim, valor_previsto, valor_real, quantidade)
-               (select sq_rubrica_cronograma.nextval, w_chave1, inicio,   fim,    valor_previsto,      0,          quantidade
+               (select sq_rubrica_cronograma.nextval, w_chave1,           inicio, fim, valor_previsto, 0,          quantidade
                   from pj_rubrica_cronograma
                  where sq_projeto_rubrica = crec.sq_projeto_rubrica);
           end loop;
+
+          -- Se a cópia é de outro ano e abrange o mesmo período do projeto original, ajusta as datas do cronograma desembolso
+          select count(*) into i
+            from siw_solicitacao a
+           where a.sq_siw_solicitacao      = p_copia
+             and to_char(a.inicio,'dd/mm') = to_char(p_inicio,'dd/mm')
+             and to_char(a.fim,'dd/mm')    = to_char(p_fim,'dd/mm')
+             and to_char(a.inicio,'yyyy') <> to_char(p_inicio,'yyyy')
+             and to_char(a.inicio,'yyyy')  = to_char(a.fim,'yyyy')
+             and to_char(p_inicio,'yyyy')  = to_char(p_fim,'yyyy');
+          
+          If i > 0 Then
+             update pj_rubrica_cronograma
+                set inicio = to_date(case when to_char(inicio,'dd/mm') = '29/02' and mod(to_char(p_inicio,'yyyy'),4) > 0 then '28'
+                                          when to_char(inicio,'dd/mm') = '28/02' and mod(to_char(p_inicio,'yyyy'),4) = 0 then '29'
+                                          else to_char(inicio,'dd') 
+                                     end||
+                                     to_char(inicio,'/mm/')||
+                                     to_char(p_inicio,'yyyy'),'dd/mm/yyyy'
+                                    ),
+                    fim    = to_date(case when to_char(fim,'dd/mm') = '29/02' and mod(to_char(p_fim,'yyyy'),4) > 0 then '28'
+                                          when to_char(fim,'dd/mm') = '28/02' and mod(to_char(p_fim,'yyyy'),4) = 0 then '29'
+                                          else to_char(fim,'dd') 
+                                     end||
+                                     to_char(fim,'/mm/')||
+                                     to_char(p_fim,'yyyy'),'dd/mm/yyyy'
+                                    )
+             where sq_projeto_rubrica in (select sq_projeto_rubrica from pj_rubrica where sq_siw_solicitacao = w_chave);
+          End If;
 
           -- Acerta o vínculo entre as rubricas
           i := 0;
