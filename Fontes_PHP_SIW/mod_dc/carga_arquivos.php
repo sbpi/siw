@@ -54,7 +54,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'carga_arquivos.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dc/';
@@ -401,7 +401,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -432,7 +432,7 @@ function Grava() {
   switch ($SG) {
     case 'DCINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $cont = 0;
         if ($w_opcao=='links') {
           // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
@@ -541,7 +541,7 @@ function Grava() {
         ShowHTML('Processamento concluído. Clique <a class="hl" href="'.$w_dir.$R.'&O=L&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'">aqui</a> para processar outro diretório.');
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ShowHTML('  history.back(1);');
         ScriptClose();
       } 

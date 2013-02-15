@@ -103,7 +103,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'entrada.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_mt/';
@@ -718,7 +718,7 @@ function Geral() {
   Validate('w_armazenamento','Data de armazenamento', 'DATA', '1', '10', '10', '', '0123456789/');
   CompData('w_armazenamento','Data de armazenamento','<=',formataDataEdicao(time()),'data atual');
   CompData('w_armazenamento','Data de armazenamento','>=','w_efetiva','Data efetiva de recebimento');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1008,7 +1008,7 @@ function Geral() {
           ShowHTML('    </table>');
           if (count($w_classes>1) || !$w_classes[4]) {
             ShowHTML('      <tr><td><b><u>D</u>ata de armazenamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_armazenamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_armazenamento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de armazenamento do material.">'.ExibeCalendario('Form1','w_armazenamento').'</td>');
-            ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+            ShowHTML('      <tr><td colspan=2><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
             ShowHTML('      <tr><td align="center" colspan=2 height="1" bgcolor="#000000"></TD></TR>');
             ShowHTML('      <tr><td align="center" colspan=2>');
             ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -1710,7 +1710,7 @@ function Excluir() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
   if ($P1!=1) {
     // Se não for encaminhamento
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1748,7 +1748,7 @@ function Excluir() {
   ShowHTML('<INPUT type="hidden" name="w_situacao" value="'.$w_situacao.'">');
   ShowHTML('<tr ><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
-  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Excluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
@@ -1782,7 +1782,7 @@ function Estorno() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
   if ($P1!=1) {
     // Se não for encaminhamento
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1822,7 +1822,7 @@ function Estorno() {
   ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
   ShowHTML('      <tr><td colspan=4><b>ATENÇÃO: Para efetivar o estorno da entrada de material, informe sua assinatura eletrônica e clique no botão <i>Estornar</i>. Se não desejar a efetivação do estorno, clique no botão <i>Abandonar</i> para voltar à listagem.</b></td></tr>');
   ShowHTML('      <tr><td colspan=4 height=1 bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Estornar">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
@@ -1854,7 +1854,7 @@ function Grava() {
   switch ($SG) {
     case 'MTENTMAT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         // Se o cliente tem o módulo financeiro, é obrigatório que a entrada esteja vinculada a um lançamento pago
         if ($w_mod_fn=='S' && $O!='E') {
           $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,null,null,$_REQUEST['w_fornecedor'],$_REQUEST['w_sq_tipo_doc_ant'],$_REQUEST['w_numero_ant'],null,null,null);
@@ -1920,14 +1920,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;
     case 'MTENITEM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if (is_array($_REQUEST['w_chave_aux'])) {
           for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
             if ($_REQUEST['w_chave_aux'][$i]>'') {
@@ -1970,14 +1970,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }     
       break;
     case 'MTENANEXO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
@@ -2047,14 +2047,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;      
     case 'MTENTARM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $sql = new db_getMtMovim; $RS_Solic = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
                 $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach($RS_Solic as $row){$RS_Solic=$row; break;}
@@ -2105,7 +2105,7 @@ function Grava() {
         } 
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
         exit();

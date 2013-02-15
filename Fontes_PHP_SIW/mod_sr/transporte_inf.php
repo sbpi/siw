@@ -30,7 +30,7 @@
   ValidateOpen('Validacao');
   Validate('w_executor','Motorista','SELECT',1,1,18,'','0123456789');
   Validate('w_sq_veiculo','Placa','SELECT',1,1,18,'','0123456789');        
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -62,7 +62,7 @@
   ShowHTML('          <tr valign="top">');
   SelecaoPessoa('<u>M</u>otorista:','M','Selecione o motorista responsável pelo atendimento.',$w_executor,null,'w_executor','USUARIOS');
   SelecaoVeiculo('<u>P</u>laca:','P','Selecione o veículo',$w_cliente,$w_sq_veiculo,null,'w_sq_veiculo',null);
-  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');

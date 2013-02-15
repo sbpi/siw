@@ -348,15 +348,16 @@ function TrocaSenha() {
 
   // Recupera os dados do cliente
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $p_cliente);
-  $w_minimo     = f($RS,'tamanho_min_senha');
-  $w_maximo     = f($RS,'tamanho_max_senha');
-  $w_vigencia   = f($RS,'dias_vig_senha');
-  $w_aviso      = f($RS,'dias_aviso_expir');
+  $w_minimo       = f($RS,'tamanho_min_senha');
+  $w_maximo       = f($RS,'tamanho_max_senha');
+  $w_vigencia     = f($RS,'dias_vig_senha');
+  $w_aviso        = f($RS,'dias_aviso_expir');
+  $w_autenticacao = f($RS,'tipo_autenticacao');
 
   // Recupera os dados do usuário
   $sql = new db_getUserData; $RS = $sql->getInstanceOf($dbms, $p_cliente, $_SESSION["USERNAME"]);
   $w_tipo_autenticacao = f($RS,'tipo_autenticacao');
-
+  
   if ($P1==1) { 
     $w_texto='Senha de Acesso';
     $w_dt_troca = f($RS,'dt_ultima_troca_senha');
@@ -368,7 +369,7 @@ function TrocaSenha() {
   head();
   Estrutura_CSS($w_cliente);
 
-  if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
+  if (($P1!=1 && $w_autenticacao==1) || ($P1==1 && $w_tipo_autenticacao=='B')) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
 
@@ -432,7 +433,7 @@ function TrocaSenha() {
   ShowHTML('    <table width="100%" border="0">');
   ShowHTML('      <tr><td valign="top">'.$_SESSION['USUARIO'].': <br><b>'.$_SESSION["NOME"].' ('.$_SESSION["USERNAME"].')</b></td>');
 
-  if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
+  if (($P1!=1 && $w_autenticacao==1) || ($P1==1 && $w_tipo_autenticacao=='B')) {
     // Entra se for troca da assinatura ou se for troca da senha e autenticação no banco
     ShowHTML('      <tr><td valign="top">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate($w_dt_troca)).'</b></td>');
     ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate($w_dt_troca),$w_vigencia)).'</b></td>');
@@ -449,8 +450,12 @@ function TrocaSenha() {
     ShowHTML('            <input class="stb" type="reset" name="Botao" value="Limpar campos" onClick=\'document.Form.w_atual.focus();\'>');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
-  } else {
+  } elseif ($P1==1) {
+    // Senha de acesso validada fora da aplicação
     ShowHTML('      <tr><td valign="top"><br><b>ATENÇÃO: sua senha de acesso é igual à sua senha na rede. Por questões de segurança, não é permitido alterá-la nesta tela.</b></b></td>');
+  } elseif ($P1==2 && $w_autenticacao==2) {
+    // Senha de acesso e assinatura eletrônica integradas
+    ShowHTML('      <tr><td valign="top"><br><b>ATENÇÃO: sua assinatura eletrônica é igual à sua senha de acesso. Use a opção "Troca senha" do menu principal.</b></b></td>');
   }
   ShowHTML('    </table>');
   ShowHTML('    </TD>');
@@ -495,7 +500,7 @@ function Vinculacao() {
       ShowHTML('    return false;');
       ShowHTML('  }');
     } 
-    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 
@@ -579,7 +584,7 @@ function Vinculacao() {
     ShowHTML('      <tr valign="top">');
     selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu_fornec, $w_sq_menu, null, 'w_sq_menu_fornec', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_fornec\'; document.Form.submit();"', null, null, null);
     SelecaoFaseCheck('<u>T</u>râmites','T',null,$w_sq_tramite,$w_sq_menu_fornec,'w_sq_tramite[]','MENURELAC',null);
-    ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td colspan=2><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      </table>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -622,11 +627,11 @@ function Grava() {
     if (VerificaSenhaAcesso($_SESSION['USERNAME'],upper($_REQUEST['w_atual']))) {
        $SQL = new db_updatePassword; $SQL->getInstanceOf($dbms,$w_cliente,$_SESSION["SQ_PESSOA"],$_REQUEST["w_nova"],'PASSWORD');
        ScriptOpen('JavaScript');
-       ShowHTML('  alert(\'Senha de Acesso alterada com sucesso!\');');
+       ShowHTML('  alert("Senha de Acesso alterada com sucesso!");');
        ScriptClose();
     } else {
        ScriptOpen('JavaScript');
-       ShowHTML('  alert(\'Senha de Acesso atual inválida!\');');
+       ShowHTML('  alert("Senha de Acesso atual inválida!");');
        ScriptClose();
        retornaFormulario('w_atual');
     } break;
@@ -634,17 +639,17 @@ function Grava() {
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_atual']))) {
        $SQL = new db_updatePassword; $SQL->getInstanceOf($dbms,$w_cliente,$_SESSION["SQ_PESSOA"],$_REQUEST["w_nova"],'SIGNATURE');
        ScriptOpen('JavaScript');
-       ShowHTML('  alert(\'Assinatura Eletrônica alterada com sucesso!\');');
+       ShowHTML('  alert("Assinatura Eletrônica alterada com sucesso!");');
        ScriptClose();
     } else {
        ScriptOpen('JavaScript');
-       ShowHTML('  alert(\'Assinatura Eletrônica atual inválida!\');');
+       ShowHTML('  alert("Assinatura Eletrônica atual inválida!");');
        ScriptClose();
        retornaFormulario('w_atual');
     } break;
   case "SIWMENURELAC":
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
       // Elimina todas as permissões existentes para depois incluir
       $SQL = new dml_PutMenuRelac; 
       $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_menu'],$_REQUEST['w_sq_menu_fornec'], null);
@@ -656,7 +661,7 @@ function Grava() {
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
       ScriptClose();
      retornaFormulario('w_assinatura');
     } break;

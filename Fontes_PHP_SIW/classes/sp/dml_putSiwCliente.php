@@ -11,8 +11,8 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putSiwCliente {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_inicio_atividade,
         $p_cnpj, $p_sede, $p_inscricao_estadual, $p_cidade, $p_minimo_senha, $p_maximo_senha,
-        $p_dias_vigencia, $p_aviso_expiracao, $p_maximo_tentativas, $p_agencia_padrao, $p_segmento,
-        $p_mail_tramite, $p_mail_alerta, $p_georeferencia, $p_googlemaps,$p_arp) {
+        $p_dias_vigencia, $p_aviso_expiracao, $p_maximo_tentativas, $p_tipo_autenticacao, $p_agencia_padrao, 
+        $p_segmento, $p_mail_tramite, $p_mail_alerta, $p_georeferencia, $p_googlemaps,$p_arp) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliente';
      $params=array('p_operacao'             =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
@@ -29,6 +29,7 @@ class dml_putSiwCliente {
                    'p_dias_vigencia'        =>array($p_dias_vigencia,       B_NUMERIC,     32),
                    'p_aviso_expiracao'      =>array($p_aviso_expiracao,     B_NUMERIC,     32),
                    'p_maximo_tentativas'    =>array($p_maximo_tentativas,   B_NUMERIC,     32),
+                   'p_tipo_autenticacao'    =>array($p_tipo_autenticacao,   B_NUMERIC,     32),
                    'p_agencia_padrao'       =>array($p_agencia_padrao,      B_NUMERIC,     32),
                    'p_segmento'             =>array($p_segmento,            B_NUMERIC,     32),
                    'p_mail_tramite'         =>array($p_mail_tramite,        B_VARCHAR,      1),

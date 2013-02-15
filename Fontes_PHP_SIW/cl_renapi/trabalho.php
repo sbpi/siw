@@ -75,7 +75,7 @@ $p_ordena     = $_REQUEST['p_ordena'];
 $p_descricao   = $_REQUEST['p_descricao'];
 $p_situacao    = $_REQUEST['p_situacao'];
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'trabalho.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_renapi/';
@@ -474,7 +474,7 @@ function Mesa() {
     ShowHTML('</div>');
   } else {
     ScriptOpen("JavaScript");
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -516,7 +516,7 @@ function Alerta() {
     ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, null));
   } else {
     ScriptOpen("JavaScript");
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }

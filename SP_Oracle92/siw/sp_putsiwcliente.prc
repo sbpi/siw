@@ -14,6 +14,7 @@ create or replace procedure SP_PutSiwCliente
     p_dias_vigencia       in number,
     p_aviso_expiracao     in number,
     p_maximo_tentativas   in number,
+    p_tipo_autenticacao   in number,
     p_agencia_padrao      in number,
     p_segmento            in number,
     p_mail_tramite        in varchar2,
@@ -138,7 +139,7 @@ begin
            ) 
         values  
            ( w_chave,             p_cidade,             sysdate,
-             1,                   p_minimo_senha,       p_maximo_senha,
+             p_tipo_autenticacao, p_minimo_senha,       p_maximo_senha,
              p_dias_vigencia,     p_aviso_expiracao,    p_maximo_tentativas,
              p_agencia_padrao,    p_mail_tramite,       p_mail_alerta,
              p_georeferencia,     p_googlemaps_key,     p_arp
@@ -250,6 +251,7 @@ begin
             dias_vig_senha       = p_dias_vigencia,
             dias_aviso_expir     = p_aviso_expiracao,
             maximo_tentativas    = p_maximo_tentativas,
+            tipo_autenticacao    = p_tipo_autenticacao,
             envia_mail_tramite   = p_mail_tramite,
             envia_mail_alerta    = p_mail_alerta,
             georeferencia        = p_georeferencia,

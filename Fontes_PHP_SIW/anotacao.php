@@ -43,7 +43,7 @@ $TP         = $_REQUEST['TP'];
 $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'anotacao.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = '';
@@ -103,7 +103,7 @@ function Inicial() {
   ValidateOpen('Validacao');
   Validate('w_observacao','Anotação','','1','1','2000','1','1');
   Validate('w_caminho','Arquivo','','','5','255','1','1');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
   ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
   ShowHTML('    alert("ATENÇÃO: Foi informado outro arquivo como anexo da anotação.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
   ShowHTML('  }');
@@ -147,7 +147,7 @@ function Inicial() {
     ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" '.$w_Disabled.' name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
   }
   ShowHTML('      </table>');
-  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="'.(($O=='A') ? 'Gravar' : 'Excluir').'">');
   ShowHTML('      <input class="STB" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Abandonar">');
@@ -177,7 +177,7 @@ function Grava() {
   BodyOpenClean('onLoad=this.focus();');
 
   // Verifica se a Assinatura Eletrônica é válida
-  if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+  if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
     // Trata o recebimento de upload ou dados 
     if (UPLOAD_ERR_OK==0) {
       $w_maximo = $_REQUEST['w_upload_maximo'];
@@ -250,7 +250,7 @@ function Grava() {
     ScriptClose();
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+    ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
     ScriptClose();
     retornaFormulario('w_assinatura');
   } 

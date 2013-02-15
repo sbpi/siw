@@ -99,7 +99,7 @@ $P3           = nvl($_REQUEST['P3'],1);
 $P4           = nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
 $R            = $_REQUEST['R'];
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 
 if ($SG=='CLGERAL' && $O=='L') {
   $O='A';
@@ -311,7 +311,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -434,19 +434,23 @@ function Geral() {
     Validate('w_codigo_externo','Código externo','1','','1','30','1','1');
     if ($w_tipo_pessoa==1) {
       Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
+    } elseif ($w_tipo_pessoa==3) {
+      Validate('w_cpf','Cód. Estrangeiro','CPF','1','10','14','','0123456789-.');
+    } elseif ($w_tipo_pessoa==4) {
+      Validate('w_cpf','Cód. Estrangeiro','CNPJ','1','10','18','','0123456789-.');
     } else {
       Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
     }
     Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     Validate('w_tipo_vinculo','Tipo de vínculo','SELECT',1,1,18,'','1');
-    if ($w_tipo_pessoa==1) {
+    if ($w_tipo_pessoa==1 || $w_tipo_pessoa==3) {
       Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
       Validate('w_rg_numero','Identidade','1','',2,30,'1','1');
       Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
       Validate('w_rg_emissor','Órgão expedidor','1','',2,30,'1','1');
-      Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
-      Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
+      Validate('w_passaporte_numero','Passaporte','1',(($w_tipo_pessoa==3) ? '1' : ''),1,20,'1','1');
+      Validate('w_sq_pais_passaporte','País emissor','SELECT',(($w_tipo_pessoa==3) ? '1' : ''),1,10,'1','1');
       ShowHTML('  if ((theForm.w_rg_numero.value+theForm.w_rg_emissao.value+theForm.w_rg_emissor.value)!="" && (theForm.w_rg_numero.value=="" || theForm.w_rg_emissor.value=="")) {');
       ShowHTML('     alert(\'Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.\');');
       ShowHTML('     theForm.w_rg_numero.focus();');
@@ -457,10 +461,10 @@ function Geral() {
       ShowHTML('     theForm.w_passaporte_numero.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
-    } else {
+    } elseif ($w_tipo_pessoa==2) {
       Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
     } 
-    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     if ($O=='I') {
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -505,12 +509,16 @@ function Geral() {
     ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     if ($w_tipo_pessoa==1) {
       ShowHTML('             <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
-    } else {
+    } elseif ($w_tipo_pessoa==2) {
       ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
+    } elseif ($w_tipo_pessoa==3) {
+      ShowHTML('             <td><b>Cód. Estrangeiro:<br><INPUT READONLY TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14">');
+    } elseif ($w_tipo_pessoa==2) {
+      ShowHTML('             <td><b>Cód. Estrangeiro:<br><INPUT READONLY TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18">');
     }
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
-    if ($w_tipo_pessoa==1) {
+    if ($w_tipo_pessoa==1 || $w_tipo_pessoa==3) {
       SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
       ShowHTML('          <td><b>Da<u>t</u>a de nascimento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('        <tr valign="top">');
@@ -520,14 +528,14 @@ function Geral() {
       ShowHTML('        <tr valign="top">');
       ShowHTML('          <td><b>Passapo<u>r</u>te:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_passaporte_numero" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_passaporte_numero.'"></td>');
       SelecaoPais('<u>P</u>aís emissor do passaporte:','P',null,$w_sq_pais_passaporte,null,'w_sq_pais_passaporte',null,null);
-    } else {
+    } elseif ($w_tipo_pessoa==2) {
       ShowHTML('          <td><b><u>I</u>nscrição estadual:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inscricao_estadual" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_inscricao_estadual.'"></td>');
     } 
     ShowHTML('        <tr valign="top">');
     selecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_tipo_vinculo,null,'w_tipo_vinculo','S',$w_nm_tipo_pessoa,'N',null,null,1);
     ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_externo" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_codigo_externo.'"></td>');
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -605,7 +613,7 @@ function Geral() {
     ShowHTML('    </TD>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -677,7 +685,7 @@ function Grava() {
   switch ($SG) {
     case 'CLGERAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_tipo_pessoa']==1) {
             // Verifica se já existe pessoa física com o CPF informado
@@ -759,7 +767,7 @@ function Grava() {
       ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
         exit();

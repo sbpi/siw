@@ -562,7 +562,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'desc');
 
     if (count($RS)>0 && $l_ocorrencia=='S') {
-      $i=0;
+      $i         = 0;
+      $link_guia = '';
       foreach($RS as $row) {
         if ($i==0) {
           $l_html.=chr(13).'     <tr><td colspan="2">Fase Atual: <b>'.f($row,'fase').'</b></td></tr>';
@@ -587,7 +588,15 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
         $l_html.=chr(13).'    <tr valign="top">';
         $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),6).'</td>';
 
-        $l_html.=chr(13).'        <td>'.f($row,'origem').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'origem');
+        if (nvl(f($row,'nu_guia'),'')!='') {
+          if ($link_guia=='') {
+            // Monta a URL base para emissão da guia de remessa
+            $link_guia = '<a class="ss" target="GR" HREF="'.$conRootSIW.'mod_pa/relatorio.php?par=EmitirGR&P1=0&P2=0&P3=1&P4=30&TP=Guia de Remessa&SG=EMITEGR&O=L'.MontaFiltro('GET');
+          }
+          $l_html.=' (guia '.$link_guia.'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'">'.f($row,'nu_guia').'/'.substr(f($row,'ano_guia'),2).')';
+        }
+        $l_html.='</td>';
         if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa_resp'),$TP,f($row,'nm_pessoa_resp')).'</td>';
         else                    $l_html.=chr(13).'        <td>'.f($row,'nm_pessoa_resp').'</td>';
 

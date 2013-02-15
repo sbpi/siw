@@ -66,7 +66,7 @@ $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 $w_troca    = $_REQUEST['w_troca'];
 
-$w_assinatura    = upper($_REQUEST['w_assinatura']);
+$w_assinatura    = $_REQUEST['w_assinatura'];
 $w_pagina        = 'tarifacao.php?par=';
 $w_Disabled      = 'ENABLED';
 $w_cor_fonte     = 'color="#000000';
@@ -197,11 +197,11 @@ function Informar(){
       Validate('w_outra_parte_contato','Outra parte','1','','3','60','1','1');
       Validate('w_assunto','Assunto','1','','4','1000','1','1');
       ShowHTML('   }');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='A') {
       Validate('w_destino','Pessoa','HIDDEN','1','1','18','1','1');
       Validate('w_assunto','Observação','1','1','4','500','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O =='P' || $O =='R'){
       Validate('p_sq_cc','Classificação','SELECT','','1','3','1','1');
       Validate('p_outra_parte_contato','Nome da outra parte','1','','2','50','1','1');
@@ -468,7 +468,7 @@ function Informar(){
         ShowHTML('      <tr><td><b>Assu<U>n</U>to:<br><TEXTAREA ACCESSKEY="N" '.$w_Disabled.' class="sti" name="w_assunto" rows="5" cols=75>'.$w_assunto.'</textarea></td>');
       } 
       if ($O!='E'){
-        ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+        ShowHTML('      <tr><td valign="top"><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
       } 
       ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="3">');
@@ -885,7 +885,7 @@ function Grava() {
   switch ($SG) {
     case 'LIGACAO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new db_putCall; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_ligacao'],$_REQUEST['w_destino'], $_REQUEST['w_sq_cc'], $_REQUEST['w_outra_parte_contato'],
             $_REQUEST['w_assunto'], $w_usuario, $_REQUEST['w_fax'], $_REQUEST['w_trabalho']);
@@ -894,7 +894,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 

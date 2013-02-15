@@ -1603,6 +1603,7 @@ Fontes_PHP_SIW/funcoes/selecaoAssunto.php -text
 Fontes_PHP_SIW/funcoes/selecaoAssuntoRadio.php -text
 Fontes_PHP_SIW/funcoes/selecaoAtendCheck.php -text
 Fontes_PHP_SIW/funcoes/selecaoAtividade.php -text
+Fontes_PHP_SIW/funcoes/selecaoAutenticacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoBanco.php -text
 Fontes_PHP_SIW/funcoes/selecaoBaseGeografica.php -text
 Fontes_PHP_SIW/funcoes/selecaoBaseGeografica_IS.php -text
@@ -1630,6 +1631,7 @@ Fontes_PHP_SIW/funcoes/selecaoDeficiencia.php -text
 Fontes_PHP_SIW/funcoes/selecaoDispRecurso.php -text
 Fontes_PHP_SIW/funcoes/selecaoEOAreaAtuacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoEndereco.php -text
+Fontes_PHP_SIW/funcoes/selecaoEnvioExterno.php -text
 Fontes_PHP_SIW/funcoes/selecaoEsfera.php -text
 Fontes_PHP_SIW/funcoes/selecaoEspecieDocumento.php -text
 Fontes_PHP_SIW/funcoes/selecaoEstado.php -text

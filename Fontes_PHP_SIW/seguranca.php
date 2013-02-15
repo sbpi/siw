@@ -76,7 +76,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $p_localizacao  = upper($_REQUEST['p_localizacao']);
 $p_lotacao      = upper($_REQUEST['p_lotacao']);
 $p_nome         = upper($_REQUEST['p_nome']);
@@ -415,7 +415,7 @@ function Usuarios() {
   } else {
 
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -592,7 +592,7 @@ function Menu() {
         ShowHTML('  }');
       } 
 
-      Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
     } elseif ($O=='H') {
 
       Validate('w_heranca', 'Origem dos dados', 'SELECT', '1', '1', '10', '', '1');
@@ -1284,7 +1284,7 @@ function Menu() {
 
     ShowHTML('      </table>');
     ShowHTML('      </td></tr>');
-    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
@@ -1356,7 +1356,7 @@ function Menu() {
   } else {
 
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1406,7 +1406,7 @@ function Acessos() {
       Validate('w_sq_pessoa_endereco', 'Endereço', 'SELECT', 1, 1, 18, '', 1);
     } 
 
-    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 
@@ -1515,7 +1515,7 @@ function Acessos() {
     selecaoModulo('<u>M</u>ódulo:', 'M', null, $w_sq_modulo, $w_cliente, 'w_sq_modulo', null, null);
     selecaoEndereco('<U>E</U>ndereço:', 'E', null, $w_sq_pessoa_endereco, null, 'w_sq_pessoa_endereco', 'FISICO');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -1579,7 +1579,7 @@ function Visao() {
       ShowHTML('    return false;');
       ShowHTML('  }');
     } 
-    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 
@@ -1751,7 +1751,7 @@ function Visao() {
     } 
 
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td colspan=2><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      </table>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -1802,7 +1802,7 @@ function Unidade() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -1968,7 +1968,7 @@ function Unidade() {
         } 
       }
       ShowHTML('</ul></div>');
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" height="1" bgcolor="#000000">');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><input class="stb" type="submit" name="Botao" value="Gravar">');
       ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
@@ -2073,7 +2073,7 @@ function Email() {
   ShowHTML('  }');  
   ValidateOpen('Validacao');
   if (!(strpos("IAE",$O)===false)) {
-    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
     if($P2!=1) {
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -2252,7 +2252,7 @@ function Email() {
     ShowHTML('  </DL>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan=7>');
     ShowHTML('    <table width="100%" border="0">');
-    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      </table>');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="7" height="1" bgcolor="#000000">');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="7">');
@@ -2287,18 +2287,24 @@ function NovaSenha() {
   $w_tipo     = f($RS,'tipo_autenticacao');
   $w_username = f($RS,'username');
   // Configura texto
-  if ($w_tipo=='B') $w_texto_mail = 'senha'; else $w_texto_mail = 'assinatura eletrônica';
+  if ($w_tipo=='B' && $_SESSION['SENHA']==1) {
+    $w_texto_mail = 'senha de acesso e assinatura eletrônica'; 
+  } elseif ($_SESSION['SENHA']==2) {
+    $w_texto_mail = 'senha de acesso';
+  } else {
+    $w_texto_mail = 'assinatura eletrônica';
+  }
 
   // Cria a nova senha, pegando a hora e o minuto correntes
   $w_senha='nova'.date('is');
 
   // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
   $SQL = new db_updatePassword; 
-  if ($w_tipo=='B') $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
-  $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
+  if ($w_tipo=='B')          $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
+  if ($_SESSION['SENHA']==1) $SQL->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
 
   // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
-  $w_html = '<HTML><HEAD><TITLE>Reinicialização de '.$w_texto_mail.'</TITLE></HEAD>'.chr(13);
+  $w_html = '<HTML><HEAD><TITLE>REINICIALIZAÇÃO DE '.upper($w_texto_mail).'</TITLE></HEAD>'.chr(13);
   $w_html = $w_html.BodyOpenMail().chr(13);
   $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
   $w_html .= '<tr bgcolor="'.$conTrBgcolor.'"><td align="center">'.$crlf;
@@ -2306,10 +2312,18 @@ function NovaSenha() {
   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.upper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
   $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
   $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
-  if ($w_tipo=='B') {
-    $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+  if ($_SESSION['SENHA']==1) {
+    if ($w_tipo=='B') {
+      $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+    } else {
+      $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+    }
   } else {
-    $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+    if ($w_tipo=='B') {
+      $w_html .= '         Sua senha de acesso foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+    } else {
+      $w_html .= '         Sua senha de acesso é igual à da rede local. Troque sua senha na rede local e ela será automaticamente alterada nesta aplicação.<br>'.$crlf;
+    }
   }
   $w_html .= '         <ul>'.$crlf;
   $SQL = new db_getCustomerSite; $RS = $SQL->getInstanceOf($dbms, $w_cliente);
@@ -2321,27 +2335,41 @@ function NovaSenha() {
   } else {
     $w_html .= '         <li>Senha de acesso: <b>igual à senha da rede local</b></li>'.$crlf;
   }
-  $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
+  if ($_SESSION['SENHA']==1) {
+    $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
+  }
   $w_html .= '         </ul>'.$crlf;
   $w_html .= '      </font></td></tr>'.$crlf;
   $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
   $w_html .= '         Orientações e observações:<br>'.$crlf;
   $w_html .= '         <ol>'.$crlf;
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
-  if ($w_tipo=='B'){
-    $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
-    $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-    $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-    $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-    $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-    $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
-    $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+  if ($_SESSION['SENHA']==1) {
+    if ($w_tipo=='B'){
+      $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+      $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+      $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+      $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+      $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+      $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+      $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+    } else {
+      $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
+      $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
+      $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+      $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+      $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
+    }
   } else {
-    $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
-    $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
-    $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-    $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-    $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
+    if ($w_tipo=='B'){
+      $w_html .= '         <li>Troque sua senha de acesso no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+      $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+      $w_html .= '         <li>A senha de acesso têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+      $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+      $w_html .= '         <li>Se sua senha de acesso for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+    } else {
+      $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
+    }
   }
   DesconectaBD();
   $w_html .= '         </ol>'.$crlf;
@@ -2798,7 +2826,7 @@ function Grava() {
       $p_modulo              = upper($_REQUEST['p_modulo']);
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_SiwMenu; $SQL->getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_pai'], $_REQUEST['w_link'], $_REQUEST['w_p1'], 
             $_REQUEST['w_p2'], $_REQUEST['w_p3'], $_REQUEST['w_p4'], $_REQUEST['w_sigla'], $_REQUEST['w_imagem'], 
@@ -2817,14 +2845,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;
     case "ACESSOS":
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_SgPesMod; $SQL->getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_pessoa'], $w_cliente, $_REQUEST['w_sq_modulo'], $_REQUEST['w_sq_pessoa_endereco']);
         ScriptOpen('JavaScript');
@@ -2832,14 +2860,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;
     case "VISAO":
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         // Elimina todas as permissões existentes para depois incluir
         $SQL = new dml_PutSiwPesCC; 
         $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
@@ -2851,14 +2879,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');      
       } 
       break;
     case "UNIDADE":
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_PutSgPesUni; 
         $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], null);
         for ($i=0; $i<=count($_POST['w_sq_unidade'])-1; $i=$i+1)   {
@@ -2869,14 +2897,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
       break;
     case 'EMAIL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         // Elimina todas as configurações existentes para depois incluir
         $SQL = new dml_PutSiwPessoaMail; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], null, null, null, null, null);
         $w_teste = '';
@@ -2903,7 +2931,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 

@@ -55,7 +55,7 @@ $w_chave    = upper($_REQUEST['w_chave']);
 $w_pitce    = upper($_REQUEST['w_pitce']);
 $w_scale    = nvl($_REQUEST['w_scale'],'m');
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 
 $w_pagina       = 'graficos.php?par=';
 $w_Disabled     = 'ENABLED';

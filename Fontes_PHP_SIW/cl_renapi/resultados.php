@@ -79,7 +79,7 @@ $p_conc_atraso = $_REQUEST['p_conc_atraso'];
 $p_descricao   = $_REQUEST['p_descricao'];
 $p_situacao    = $_REQUEST['p_situacao'];
 
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 $w_pagina = 'resultados.php?par=';
 $w_Disabled = 'ENABLED';
 $w_dir = 'cl_renapi/';

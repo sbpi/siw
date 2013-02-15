@@ -487,6 +487,7 @@ begin
                    case when h.sq_documento_log is null then a1.sq_pessoa else n.sq_pessoa end as sq_pessoa_resp,
                    case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
                    h.recebedor, h1.nome_resumido as nm_recebedor,
+                   h.nu_guia, h.ano_guia,
                    case when h.sq_documento_log is null 
                         then case when instr(upper(a.observacao),'AUTUA')>0             then 'AUTUAÇÃO DE PROCESSO'
                                   when instr(upper(a.observacao),'*** NOVA VERSÃO')>0   then 'ALTERAÇÃO DE DADOS'
@@ -556,6 +557,7 @@ begin
                    end as despacho,
                    b2.sq_pessoa as sq_pessoa_resp, b2.nome_resumido as nm_pessoa_resp,
                    b.recebedor, b4.nome_resumido as nm_recebedor,
+                   b.nu_guia, b.ano_guia,
                    'TRAMITAÇÃO' as origem,
                    e.sq_unidade as sq_registro, e.sigla as nm_registro, e.sq_unidade as sq_origem, e.sigla as nm_origem,
                    case when d.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
@@ -597,13 +599,13 @@ begin
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
-                   inner        join siw_tramite     a1 on (a.sq_siw_tramite     = a1.sq_siw_tramite)
+                   inner      join siw_tramite       a1 on (a.sq_siw_tramite     = a1.sq_siw_tramite)
                    inner      join co_pessoa         c  on (a.sq_pessoa          = c.sq_pessoa)
                    inner      join siw_tramite       e  on (a.sq_siw_tramite     = e.sq_siw_tramite)
                    inner      join siw_solicitacao   g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
                      inner    join siw_tramite       f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                   left outer join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                     left outer join siw_arquivo     k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                   left       join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
+                     left     join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_chave_aux is null or (p_chave_aux is not null and a.sq_siw_solic_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and substr(a.observacao,1,13) <> '*** Nova vers' and substr(a.observacao,1,9) <> 'Anotação:') or

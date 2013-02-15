@@ -48,7 +48,7 @@ $TP         = $_REQUEST['TP'];
 $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 $w_pagina     = 'selecao.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_gr/';
@@ -186,7 +186,7 @@ function indica(){
     ShowHTML('  }');
     Validate('w_nome','Nome para exibição','1','1','1','20','1','1'); 
     if (nvl($w_auth,'true')=='true') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1'); 
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1'); 
     }
     ValidateClose();
     ScriptClose();
@@ -232,7 +232,7 @@ function indica(){
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>N</u>ome para exibição:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_nome.'">');
     if (nvl($w_auth,'true')=='true') {
-      ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('      <tr><td align="LEFT" colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     }
     ShowHTML('      <tr><td align="center" colspan=3><hr>'); 
     if ($O=='E') {
@@ -253,7 +253,7 @@ function indica(){
     ShowHTML('</FORM>'); 
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -280,7 +280,7 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad="this.focus();"');
   // Verifica se a Assinatura Eletrônica é válida
-  if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+  if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
     $SQL = new dml_putSiwCoordenada; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_pessoa'],
         $_REQUEST['w_tipo'],$_REQUEST['w_nome'],$_REQUEST['w_latitude'],$_REQUEST['w_longitude'],
         $_REQUEST['w_icone']);
@@ -293,7 +293,7 @@ function Grava() {
     ScriptClose();
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+    ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
     ScriptClose();
     RetornaFormulario('w_assinatura',$SG,$w_menu,$O,$w_dir,$w_pagina,'Indica');
   } 

@@ -64,7 +64,7 @@ $TP = $_REQUEST['TP'];
 $SG = upper($_REQUEST['SG']);
 $R = $_REQUEST['R'];
 $O = upper($_REQUEST['O']);
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 $w_pagina = 'relatorio.php?par=';
 $w_Disabled = 'ENABLED';
 $w_dir = 'mod_pa/';
@@ -170,7 +170,7 @@ function Tramitacao() {
     Validate('p_protocolo', 'Número de protocolo', '1', '', '20', '20', '', '0123456789./-');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Término', 'DATA', '', '10', '10', '', '0123456789/');
-    ShowHTML('  if ((theForm.p_ini.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_ini.value == \'\' && theForm.p_fim.value != \'\')) {');
+    ShowHTML('  if ((theForm.p_ini.value != "" && theForm.p_fim.value == "") || (theForm.p_ini.value == "" && theForm.p_fim.value != "")) {');
     ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
     ShowHTML('     theForm.p_ini.focus();');
     ShowHTML('     return false;');
@@ -283,7 +283,7 @@ function Tramitacao() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -330,7 +330,7 @@ function Transferencia() {
     ValidateOpen('Validacao');
     Validate('p_ini', 'Início', 'DATA', '', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Término', 'DATA', '', '10', '10', '', '0123456789/');
-    ShowHTML('  if ((theForm.p_ini.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_ini.value == \'\' && theForm.p_fim.value != \'\')) {');
+    ShowHTML('  if ((theForm.p_ini.value != "" && theForm.p_fim.value == "") || (theForm.p_ini.value == "" && theForm.p_fim.value != "")) {');
     ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
     ShowHTML('     theForm.p_ini.focus();');
     ShowHTML('     return false;');
@@ -443,7 +443,7 @@ function Transferencia() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');
@@ -541,7 +541,7 @@ function Etiqueta() {
 //     ShowHTML('    alert(\'Indique a posição de impressão da etiqueta!\'); ');
 //     ShowHTML('    return false;');
 //     ShowHTML('  }');
-    ShowHTML('  if (theForm["w_volume"].value != \'\' && theForm["w_volume"].value <= 0) {');
+    ShowHTML('  if (theForm["w_volume"].value != "" && theForm["w_volume"].value <= 0) {');
     ShowHTML('    alert(\'O número de volume não deve ser menor ou igual a 0.\'); ');
     ShowHTML('    return false;');
     ShowHTML('  }');
@@ -710,7 +710,7 @@ function Etiqueta() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ScriptClose();
   }
   ShowHTML('</table>');

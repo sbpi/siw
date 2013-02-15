@@ -56,7 +56,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'tabela_siw.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -140,9 +140,9 @@ function SegmentoVinc() {
       Validate('w_sq_tipo_pessoa','Pessoa','SELECT','1','1','10','','1');
       Validate('w_nome','Nome','1','1','1','20','1','1');
       Validate('w_ordem','Ordem','1','1','1','6','','0123456789');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -249,7 +249,7 @@ function SegmentoVinc() {
     MontaRadioNS('<b>Contratado?',$w_contratado,'w_contratado');
     ShowHTML('          <td valign="top"><b><U>O</U>rdem:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_ordem" size=6 maxlength=6 value="'.$w_ordem.'"></td></tr>');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td valign="top"><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
@@ -284,7 +284,7 @@ function SegmentoVinc() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -326,9 +326,9 @@ function SegmentoMenu() {
         Validate('w_sq_modulo','Módulo','SELECT','1','1','10','','1');
       } 
       Validate('w_nome','Objetivo específico','1','1','1','20','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -424,7 +424,7 @@ function SegmentoMenu() {
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td valign="top"><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
@@ -459,7 +459,7 @@ function SegmentoMenu() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -514,9 +514,9 @@ function SegmentoModulo() {
         Validate('w_sq_modulo','Módulo','SELECT','1','1','10','','1');
       } 
       Validate('w_objetivo_especifico','Objetivo específico','1','1','1','4000','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -614,7 +614,7 @@ function SegmentoModulo() {
     ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td valign="top"><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
@@ -649,7 +649,7 @@ function SegmentoModulo() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -694,10 +694,10 @@ function Modulos() {
       Validate('w_nome','Nome','1','1','1','60','1','1');
       Validate('w_sigla','Sigla','1','1','1','3','1','1');
       Validate('w_objetivo_geral','Objetivo geral','1','1','1','4000','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       Validate('w_ordem','ordem','1','1','1','4','','0123456789');
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -769,7 +769,7 @@ function Modulos() {
     ShowHTML('      <tr><td valign="top"><b><U>S</U>igla:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="STI" type="text" name="w_sigla" size="3" maxlength="3" value="'.$w_sigla.'"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b>O<U>r</U>dem:<br><INPUT ACCESSKEY="R" '.$w_Disabled.' class="STI" type="text" name="w_ordem" size="4" maxlength="4" value="'.$w_ordem.'"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>O</U>bjetivo geral:<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_objetivo_geral" rows=5 cols=75>'.$w_objetivo_geral.'</TEXTAREA></td></tr>');
-    ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td valign="top"><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
@@ -803,7 +803,7 @@ function Modulos() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -851,9 +851,9 @@ function Segmento() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sigla','Sigla','1','1','1','3','1','1');
       Validate('w_nome','Nome','1','1','1','40','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -944,7 +944,7 @@ function Segmento() {
     MontaRadioNS('Padrão?',$w_padrao,'w_padrao');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td colspan="2"><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
@@ -986,7 +986,7 @@ function Segmento() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -1008,7 +1008,7 @@ function Grava() {
   switch ($SG) {
     case 'SEGVINC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_DmSegVinc; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_segmento_vinculo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_sq_tipo_pessoa'],
             $_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_ordem']);
@@ -1017,14 +1017,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
       break;
     case 'SEGMOD':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_SiwModSeg; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_objetivo_especifico'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_comercializar'],
             $_REQUEST['w_ativo']);
@@ -1033,14 +1033,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COTPMODULO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_SiwModulo; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_objetivo_geral'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
@@ -1048,14 +1048,14 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       }  
       break;
     case 'COTPSEG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_CoSegmento; $SQL->getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_segmento'],$_REQUEST['w_sigla'],$_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1063,7 +1063,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 

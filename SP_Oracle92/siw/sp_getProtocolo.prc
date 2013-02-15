@@ -49,7 +49,7 @@ begin
       p_cd_assunto is not null or p_ini is not null or p_unid_autua is not null or p_nu_guia is not null
    Then w_filtro := 'true'; Else w_filtro := 'false'; End If;
    
-   If p_restricao = 'RELPATRAM' or p_restricao = 'RELPAETIQ' Then
+   If p_restricao = 'EMITEGR' or p_restricao = 'RELPATRAM' or p_restricao = 'RELPAETIQ' Then
       -- Recupera guias de tramitação
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.descricao,
@@ -64,7 +64,7 @@ begin
              end as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
-             d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
+             d.nu_guia, d.ano_guia, d.recebimento, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
              to_char(d.nu_guia)||'/'||substr(to_char(d.ano_guia),3)||'-'||d6.sigla as guia_tramite,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
              case d.interno when 'S' then d3.nome else d4.nome end as nm_destino,
@@ -83,6 +83,8 @@ begin
                  left        join pa_documento         c5 on (c.sq_documento_pai     = c5.sq_siw_solicitacao)
                  left        join (select sq_siw_solicitacao, max(sq_documento_log) as sq_documento_log
                                      from pa_documento_log
+                                    where p_restricao <> 'EMITEGR'
+                                       or (p_restricao = 'EMITEGR' and nu_guia = p_nu_guia and ano_guia = p_ano_guia)
                                     group by sq_siw_solicitacao
                                   )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
                    left      join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log)
@@ -97,7 +99,7 @@ begin
                sg_autenticacao                         w
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
-         and (p_restricao = 'RELPAETIQ' or (p_restricao = 'RELPATRAM' and b.sq_solic_pai is null))
+         and (p_restricao = 'RELPAETIQ' or (p_restricao in ('EMITEGR','RELPATRAM') and b.sq_solic_pai is null))
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = to_char(p_prefixo)))
@@ -108,7 +110,10 @@ begin
          and (p_unid_posse is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
          and (p_restricao = 'RELPAETIQ' or 
-              (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null and d7.despacho_arqcentral is null)
+              -- na lista de guias de remessa não pode aparecer as que já foram recebidas
+              (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null and d7.despacho_arqcentral is null) or
+              -- na emissão de uma guia de remessa, não importa se ela já foi recebida
+              (p_restricao = 'EMITEGR'   and d.sq_documento_log is not null                           and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null and d7.despacho_arqcentral is null)
              );
    Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PACLASSIF,PADVINCULA,PADTRANSF,PADELIM,PADEMPREST,PAENVCEN,PADDESM,PADALTREG', p_restricao) > 0 Then
       -- Recupera guias de tramitação

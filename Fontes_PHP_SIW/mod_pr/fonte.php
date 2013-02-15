@@ -56,7 +56,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 $w_pagina     = 'fonte.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pr/';
@@ -202,7 +202,7 @@ function Inicial() {
       }
     } elseif ($O=='E') {
       if ($P1==2) {
-        Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
         ShowHTML('  if (confirm("Confirma a exclusão deste registro?"));');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
@@ -364,7 +364,7 @@ function Inicial() {
     }
     if ($P1!=1){
       ShowHTML('      <tr valign="top">');
-      ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
+      ShowHTML('      <tr><td align="LEFT" colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
     }
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     switch ($O) {
@@ -402,7 +402,7 @@ function Grava() {
   switch ($SG) {
     case 'APOIOSOLIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_putSolicApoio; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''), 
               $_REQUEST['w_tipo_apoio'], $_REQUEST['w_entidade'],$_REQUEST['w_descricao'],$_REQUEST['w_vl_fonte'],$w_usuario); 
         
@@ -432,7 +432,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        fonte.phpShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        fonte.phpShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 

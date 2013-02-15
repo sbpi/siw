@@ -3388,8 +3388,8 @@ function f($rs, $fld) {
 // =========================================================================
 function VerificaSenhaAcesso($Usuario,$Senha) {
    extract($GLOBALS);
-   $db_verificaSenha = new db_verificaSenha; $db_verificaSenha = $db_verificaSenha->getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha);
-   if ($db_verificaSenha==0)
+   $db_verificaSenha = new db_verificaSenha; $result = $db_verificaSenha->getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha);
+   if ($result==0)
       return true;
     else
       return false;
@@ -3401,8 +3401,8 @@ function VerificaSenhaAcesso($Usuario,$Senha) {
 function VerificaAssinaturaEletronica($Usuario,$Senha) {
    extract($GLOBALS);
    if ($Senha>'') {
-      $db_verificaAssinatura = new db_verificaAssinatura; $db_verificaAssinatura = $db_verificaAssinatura->getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha);
-      if ($db_verificaAssinatura==0)
+      $Assinatura = new db_verificaAssinatura; $result = $Assinatura->getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha);
+      if ($result==0)
          return true;
        else
          return false;

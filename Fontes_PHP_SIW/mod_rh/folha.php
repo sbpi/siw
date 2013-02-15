@@ -67,7 +67,7 @@ $R = lower($_REQUEST['R']);
 $O = upper($_REQUEST['O']);
 $p_ordena = lower($_REQUEST['p_ordena']);
 $w_troca = lower($_REQUEST['w_troca']);
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 $w_pagina = 'folha.php?par=';
 $w_dir = 'mod_rh/';
 $w_dir_volta = '../';
@@ -748,7 +748,7 @@ function Inicial() {
   CompHora('["w_trabalhadas[]"][ind]', 'Hora extra diária', '<=', '["w_limite"]', $w_limite_diario_extras);
   //CompHora('w_entrada_manha','Entrada manhã','<','w_saida_manha','Saída manhã');
   ShowHTML('  }');
-  Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -1071,7 +1071,7 @@ function Inicial() {
   }
   ShowHTML('    </table><br>');
   ShowHTML('  </td>');
-  ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td colspan=5><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('      <tr><td align="center" colspan=5><hr>');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
   ShowHTML('          </td>');
@@ -1158,7 +1158,7 @@ function Lista() {
   ShowHTML('  }');
   ValidateClose();
   ValidateOpen('Validacao');
-  Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
   ShowHTML('  var i; ');
   ShowHTML('  var ind; ');
   ShowHTML('  var w_erro=true; ');
@@ -1252,7 +1252,7 @@ function Lista() {
       ShowHTML('        </td>');
       ShowHTML('      </tr>');
     }
-    ShowHTML('      <tr><td colspan=6><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan=6><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=6><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     ShowHTML('          </td>');
@@ -1965,7 +1965,7 @@ function Grava() {
   switch ($SG) {
     case 'COINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $w_mes = $_REQUEST['w_mes'];
         $w_mes = substr($w_mes, 3, 4) . substr($w_mes, 0, 2);
         $SQL = new dml_putGpPontoMensal; $SQL->getInstanceOf($dbms, 'E', $_REQUEST['w_contrato'], $w_mes, null, null, null, null, null);
@@ -1992,14 +1992,14 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }
       break;
     case 'GPFPLISTA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'], upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $w_mes = $_REQUEST['w_mes'];
         $w_mes = substr($w_mes, 3, 4) . substr($w_mes, 0, 2);
         for ($i = 0; $i < count($_REQUEST['w_chave']); $i++) {
@@ -2019,7 +2019,7 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       }

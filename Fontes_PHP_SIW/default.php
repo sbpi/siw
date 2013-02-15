@@ -56,10 +56,11 @@ include_once('classes/sp/db_getCustomerSite.php');
 if (count($_POST) > 0 && nvl($_REQUEST['optsess'],'')=='') {
     $wTipoLogin  = $_POST['tipoLogin'];
     $wNoUsuario  = upper($_POST['Login']);
+    $wDsSenha    = '\o/';
     
     if($wTipoLogin == 1){
         $wDsSenha    = upper($_POST['Password']);
-    }else{
+    } else {
         $wDsSenha    = $_POST['Password'];
     }
     
@@ -100,41 +101,7 @@ function Valida() {
     if ($RS==0) {
       $w_erro=1;
     } else {
-      $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
-      $w_tipo = f($RS,'tipo_autenticacao');
-      if ($w_tipo == 'B' || $par=='Senha') { // O segundo teste evita autenticação da senha no LDAP
-        if ($wDsSenha>'') { $w_erro= new db_verificaSenha; $w_erro = $w_erro->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha); }
-      } else {
-        include_once('classes/ldap/ldap.php');
-        $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);      
-
-        if ($w_tipo=='A') {
-          $array = array(            
-              'domain_controllers'    => f($RS1,'ad_domain_controlers'),
-              'base_dn'               => f($RS1,'ad_base_dn')          ,
-              'account_suffix'        => f($RS1,'ad_account_sufix')    ,               
-          );
-        } else {
-          $array = array(            
-              'domain_controllers'    => f($RS1,'ol_domain_controlers'),
-              'base_dn'               => f($RS1,'ol_base_dn')          ,
-              'account_suffix'        => f($RS1,'ol_account_sufix')    ,               
-          );
-        }
-
-        $adldap = new adLDAP($array);
-                                                                                                                                                         
-        if(!$adldap->authenticate($wNoUsuario,$wDsSenha)){
-          $w_erro=5;
-        } else {
-          // Testa se o usuário de rede existe e se não está bloqueado.
-          $user = $adldap->user_info($wNoUsuario,array("userAccountControl"));
-          $user_attrib = $adldap->account_attrib($user[0]['useraccountcontrol'][0]);
-          if (in_array('ACCOUNTDISABLE',$user_attrib)) {
-            $w_erro=4;
-          }
-        }
-      }
+      $sql = new db_verificaSenha; $w_erro = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha);
     }
 
     if ($w_erro>0) {
@@ -170,9 +137,19 @@ function Valida() {
     } else {
       // Recupera informações do cliente, relativas ao envio de e-mail
       $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-      $_SESSION['SMTP_SERVER']     = f($RS, 'smtp_server');
-      $_SESSION['SIW_EMAIL_CONTA'] = f($RS, 'siw_email_conta');
-      $_SESSION['SIW_EMAIL_SENHA'] = f($RS,'siw_email_senha');
+      $_SESSION['SMTP_SERVER']      = f($RS, 'smtp_server');
+      $_SESSION['SIW_EMAIL_CONTA']  = f($RS, 'siw_email_conta');
+      $_SESSION['SIW_EMAIL_SENHA']  = f($RS,'siw_email_senha');
+      $_SESSION['SENHA']            = f($RS,'tipo_autenticacao');
+      if (f($RS,'tipo_autenticacao')==1) {
+        // Senha de acesso e assinatura eletrônica separadas
+        $_SESSION['LABEL_ALERTA'] = 'Assinatura eletrônica';
+        $_SESSION['LABEL_CAMPO']  = '<u>A</u>ssinatura eletrônica';
+      } else {
+        // Senha de acesso e assinatura eletrônica integradas
+        $_SESSION['LABEL_ALERTA'] = 'Senha de acesso';
+        $_SESSION['LABEL_CAMPO']  = 'Senh<u>a</u> de acesso';
+      }
 
       // Recupera informações a serem usadas na montagem das telas para o usuário
       $sql = new DB_GetUserData; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
@@ -248,7 +225,13 @@ function Valida() {
         }
       } else {
         // Configura texto
-        if ($w_tipo=='B') $w_texto_mail = 'senha de acesso e assinatura eletrônica'; else $w_texto_mail = 'assinatura eletrônica';
+        if ($w_tipo=='B' && $_SESSION['SENHA']==1) {
+          $w_texto_mail = 'senha de acesso e assinatura eletrônica'; 
+        } elseif ($_SESSION['SENHA']==2) {
+          $w_texto_mail = 'senha de acesso';
+        } else {
+          $w_texto_mail = 'assinatura eletrônica';
+        }
 
         // Cria a nova senha, pegando a hora e o minuto correntes
         $w_senha='nova'.date('is');
@@ -262,10 +245,18 @@ function Valida() {
         $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.upper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
         $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
         $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
-        if ($w_tipo=='B') {
-          $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+        if ($_SESSION['SENHA']==1) {
+          if ($w_tipo=='B') {
+            $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+          } else {
+            $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+          }
         } else {
-          $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+          if ($w_tipo=='B') {
+            $w_html .= '         Sua senha de acesso foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+          } else {
+            $w_html .= '         Sua senha de acesso é igual à da rede local. Troque sua senha na rede local e ela será automaticamente alterada nesta aplicação.<br>'.$crlf;
+          }
         }
         $w_html .= '         <ul>'.$crlf;
         $sql = new db_getCustomerSite; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
@@ -277,27 +268,41 @@ function Valida() {
         } else {
           $w_html .= '         <li>Senha de acesso: <b>igual à senha da rede local</b></li>'.$crlf;
         }
-        $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
+        if ($_SESSION['SENHA']==1) {
+          $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
+        }
         $w_html .= '         </ul>'.$crlf;
         $w_html .= '      </font></td></tr>'.$crlf;
         $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
         $w_html .= '         Orientações e observações:<br>'.$crlf;
         $w_html .= '         <ol>'.$crlf;
         $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-        if ($w_tipo=='B'){
-          $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
-          $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-          $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-          $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-          $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-          $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
-          $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+        if ($_SESSION['SENHA']==1) {
+          if ($w_tipo=='B'){
+            $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+            $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+            $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+            $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+            $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+            $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+            $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+          } else {
+            $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
+            $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
+            $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+            $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+            $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
+          }
         } else {
-          $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
-          $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
-          $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-          $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-          $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
+          if ($w_tipo=='B'){
+            $w_html .= '         <li>Troque sua senha de acesso no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+            $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+            $w_html .= '         <li>A senha de acesso têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+            $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+            $w_html .= '         <li>Se sua senha de acesso for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+          } else {
+            $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
+          }
         }
         DesconectaBD();
         $w_html .= '         </ol>'.$crlf;
@@ -326,10 +331,10 @@ function Valida() {
         } else {
           // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
           $db_updatePassword = new db_updatePassword;
-          if ($w_tipo=='B') $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
-          $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
+          if ($w_tipo=='B')          $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
+          if ($_SESSION['SENHA']==1) $db_updatePassword->getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
 
-          ShowHTML('  alert(\'Reinicialização da '.$w_texto_mail.' executada com sucesso e enviada para '.$_SESSION['EMAIL'].'!\');');
+          ShowHTML('  alert("Reinicialização da '.$w_texto_mail.' executada com sucesso e enviada para '.$_SESSION['EMAIL'].'!");');
         }
 
         ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
@@ -448,7 +453,7 @@ function LogOn() {
     ValidateOpen('Validacao');
     Validate('Login1','Nome de usuário','','1','2','60','1','1');
     ShowHTML('  if (theForm.par.value == \'Senha\') {');
-    ShowHTML('     if (confirm(\'Este procedimento irá reinicializar sua senha de acesso e sua assinatura eletrônica, enviando os dados para seu e-mail.\\nConfirma?\')) {');
+    ShowHTML('     if (confirm("Este procedimento irá reinicializar seus dados de acessoao sistema, enviando-os dados para seu e-mail.\\nConfirma?")) {');
     ShowHTML('     } else {');
     ShowHTML('       return false;');
     ShowHTML('     }');
@@ -486,7 +491,7 @@ function LogOn() {
     ShowHTML('            Usuário: <input class="cText" id="Login1" name="Login1" size="14" maxlength="60" value="'.$w_username.'">');
     ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19" onKeyUp="this.value=trim(this.value);" AUTOCOMPLETE="off">');
     ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
-    ShowHTML('            <input class="cButton" type="submit" value="Recriar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu nome de usuário e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');
+    ShowHTML('            <input class="cButton" type="submit" value="Recriar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu nome de usuário e clique aqui para receber os dados para acesso por e-mail!"> ');
     ShowHTML('        </font></td> </tr> ');
     ShowHTML('      </table> ');
     ShowHTML('  </tr> ');

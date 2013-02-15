@@ -94,7 +94,7 @@
     CompData('w_inicio','Início','>=',date('d/m/Y'),'data atual');
     Validate('w_pais','País de destino','SELECT','1','1','18','','1');
     Validate('w_justificativa','Justificativa','1',1,5,2000,'1','1');
-    Validate('w_assinatura','Assinatura Eletrônica','1','','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','','6','30','1','1');
     ShowHTML('  if (theForm.w_envio.value=="S" && theForm.w_assinatura.value=="") {');
     ShowHTML('     alert("Para envio automático a assinatura eletrônica deve ser informada!");');
     ShowHTML('     theForm.w_assinatura.focus();');
@@ -165,7 +165,7 @@
     SelecaoPais('Pa<u>í</u>s de destino:', 'I', null, nvl($w_pais,$w_pais_padrao), null, 'w_pais', null, null);
     
     ShowHTML('      <tr><td colspan=2 valign="top"><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Justifique a necessidade de atendimento da solicitação.">'.$w_justificativa.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica (obrigatório informar se desejar envio automático):<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan=2><b>'.$_SESSION['LABEL_CAMPO'].' (obrigatório informar se desejar envio automático):<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="2">');

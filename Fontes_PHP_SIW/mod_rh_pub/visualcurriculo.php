@@ -330,7 +330,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
     $html.=chr(13).'</table>';
   } else {
       ScriptOpen('JavaScript');
-      $html.=chr(13).' alert(\'Opção não disponível\');';
+      $html.=chr(13).' alert("Opção não disponível");';
       $html.=chr(13).' history.back(1);';
       ScriptClose();
   } 

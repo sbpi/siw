@@ -16,44 +16,49 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('      <tr><td align="center" colspan="2"><font size=3><b>'.f($RS_Cliente,'nome_resumido').' ('.f($RS_Cliente,'cnpj').')</font></b></td></tr>');
 
     // Identificação civil e localização
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação Civil e Localização</td>');
-    ShowHTML('      <tr><td valign="top">Razão Social:<br><b>'.f($RS_Cliente,'nome').' </b></td>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Código interno:<br><b>'.f($RS_Cliente,'sq_pessoa').' </b></td>');
-    ShowHTML('          <td valign="top">Segmento:<br><b>'.f($RS_Cliente,'segmento').' </b></td>');
-    ShowHTML('          <tr>');
-    ShowHTML('          <td valign="top">Inscrição estadual:<br><b>'.Nvl(f($RS_Cliente,'inscricao_estadual'),'Não informada').' </b></td>');
-    ShowHTML('          <td valign="top">Início das atividades:<br><b>'.FormataDataEdicao(f($RS_Cliente,'inicio_atividade')).' </b></td>');
-    ShowHTML('          <td valign="top">Sede (Matriz)?<br><b>'.str_replace('N','Não',str_replace('S','Sim',f($RS_Cliente,'sede'))).' </b></td>');
-    ShowHTML('          </table>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação Civil e Localização</td>');
+    ShowHTML('      <tr><td colspan="2">Razão Social:<br><b>'.f($RS_Cliente,'nome').' </b></td>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td>Código interno:<br><b>'.f($RS_Cliente,'sq_pessoa').' </b></td>');
+    ShowHTML('          <td>Segmento:<br><b>'.f($RS_Cliente,'segmento').' </b></td>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td>Inscrição estadual:<br><b>'.Nvl(f($RS_Cliente,'inscricao_estadual'),'Não informada').' </b></td>');
+    ShowHTML('          <td>Início das atividades:<br><b>'.FormataDataEdicao(f($RS_Cliente,'inicio_atividade')).' </b></td>');
+    ShowHTML('          <td>Sede (Matriz)?<br><b>'.str_replace('N','Não',str_replace('S','Sim',f($RS_Cliente,'sede'))).' </b></td>');
+    ShowHTML('        </table>');
 
     // Cidade e agência padrão
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cidade e Agência Padrão</td>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Cidade:<br><b>'.f($RS_Cliente,'cidade').' </b></td>');
-    ShowHTML('          <td valign="top">Estado:<br><b>'.f($RS_Cliente,'co_uf').' </b></td>');
-    ShowHTML('          <td valign="top">País:<br><b>'.f($RS_Cliente,'pais').' </b></td>');
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Banco:<br><b>'.f($RS_Cliente,'banco').' </b></td>');
-    ShowHTML('          <td valign="top">Agência:<br><b>'.f($RS_Cliente,'codigo').' - '.f($RS_Cliente,'agencia').' </b></td>');
-    ShowHTML('          </table>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cidade e Agência Padrão</td>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td>Cidade:<br><b>'.f($RS_Cliente,'cidade').' </b></td>');
+    ShowHTML('          <td>Estado:<br><b>'.f($RS_Cliente,'co_uf').' </b></td>');
+    ShowHTML('          <td>País:<br><b>'.f($RS_Cliente,'pais').' </b></td>');
+    ShowHTML('        </table>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td>Banco:<br><b>'.f($RS_Cliente,'banco').' </b></td>');
+    ShowHTML('          <td>Agência:<br><b>'.f($RS_Cliente,'codigo').' - '.f($RS_Cliente,'agencia').' </b></td>');
+    ShowHTML('        </table>');
 
     // Parâmetros de segurança
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Segurança</td>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <td valign="top">Tamanho mínimo:<br><b>'.f($RS_Cliente,'TAMANHO_MIN_SENHA').' </b></td>');
-    ShowHTML('          <td valign="top">Tamanho máximo:<br><b>'.f($RS_Cliente,'TAMANHO_MAX_SENHA').' </b></td>');
-    ShowHTML('          <td valign="top">Máximo de tentativas:<br><b>'.f($RS_Cliente,'maximo_tentativas').' </b></td>');
-    ShowHTML('          <tr>');
-    ShowHTML('          <td valign="top">Limite da vigência:<br><b>'.f($RS_Cliente,'DIAS_VIG_SENHA').' </b></td>');
-    ShowHTML('          <td valign="top">Dias para aviso:<br><b>'.f($RS_Cliente,'DIAS_AVISO_EXPIR').' </b></td>');
-    ShowHTML('          </table>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Segurança</td>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td>Tamanho mínimo:<br><b>'.f($RS_Cliente,'TAMANHO_MIN_SENHA').' </b></td>');
+    ShowHTML('          <td>Tamanho máximo:<br><b>'.f($RS_Cliente,'TAMANHO_MAX_SENHA').' </b></td>');
+    ShowHTML('          <td>Máximo de tentativas:<br><b>'.f($RS_Cliente,'maximo_tentativas').' </b></td>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td>Limite da vigência:<br><b>'.f($RS_Cliente,'DIAS_VIG_SENHA').' </b></td>');
+    ShowHTML('          <td>Dias para aviso:<br><b>'.f($RS_Cliente,'DIAS_AVISO_EXPIR').' </b></td>');
+    ShowHTML('          <td>Tipo de autenticação:<br><b>Senha de acesso e assinatura eletrônica '.((f($RS_Cliente,'tipo_autenticacao')==1) ? 'separadas' : 'integradas').' </b></td>');
+    ShowHTML('        </table>');
 
     //Endereços de e-mail e internet
     $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,'EMAILINTERNET',null);
     $RS = SortArray($RS,'tipo_endereco','asc','padrao','desc','endereco','asc');
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços e-Mail e Internet ('.count($RS).')</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços e-Mail e Internet ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -79,23 +84,23 @@ function visualCliente($w_sq_cliente,$O) {
     //Endereços físicos
     $SQL = new db_getAddressList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,'FISICO',null);
     $RS = SortArray($RS,'padrao','desc','logradouro','asc');
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços Físicos ('.count($RS).')</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços Físicos ('.count($RS).')</td>');
     if (count($RS)==0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><b>Não informado.</b></td></tr>');
     } else {
       foreach ($RS as $row) {
         ShowHTML('      <tr><td align="center" colspan="2"><TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">');
         ShowHTML('          <tr><td colspan=2><b>'.f($row,'endereco').'</td>');
-        ShowHTML('          <tr><td width="5%" rowspan=4><td valign="top">Logradouro:<br><b>'.f($row,'logradouro').'</td></tr>');
-        ShowHTML('          <tr><td valign="top"><table border=0 width="100%" cellspacing=0>');
-        ShowHTML('              <tr valign="top">');
-        ShowHTML('              <td valign="top">Complemento:<br><b>'.Nvl(f($row,'complemento'),'---').' </b></td>');
-        ShowHTML('              <td valign="top">Bairro:<br><b>'.Nvl(f($row,'bairro'),'---').' </b></td>');
-        ShowHTML('              <td valign="top">CEP:<br><b>'.Nvl(f($row,'cep'),'---').' </b></td>');
-        ShowHTML('              <tr valign="top">');
-        ShowHTML('              <td valign="top">País:<br><b>'.f($row,'nm_pais').' </b></td>');
+        ShowHTML('          <tr><td width="5%" rowspan=4><td>Logradouro:<br><b>'.f($row,'logradouro').'</td></tr>');
+        ShowHTML('          <tr><td><table border=0 width="100%" cellspacing=0>');
+        ShowHTML('            <tr valign="top">');
+        ShowHTML('              <td>Complemento:<br><b>'.Nvl(f($row,'complemento'),'---').' </b></td>');
+        ShowHTML('              <td>Bairro:<br><b>'.Nvl(f($row,'bairro'),'---').' </b></td>');
+        ShowHTML('              <td>CEP:<br><b>'.Nvl(f($row,'cep'),'---').' </b></td>');
+        ShowHTML('            <tr valign="top">');
+        ShowHTML('              <td>País:<br><b>'.f($row,'nm_pais').' </b></td>');
         ShowHTML('              <td>Padrão?<br><b>'.str_replace('N','Não',str_replace('S','Sim',f($row,'padrao'))).'</td>');
-        ShowHTML('              </table>');
+        ShowHTML('            </table>');
         ShowHTML('          </table></td></tr>');
       } 
     } 
@@ -103,7 +108,7 @@ function visualCliente($w_sq_cliente,$O) {
     //Telefones
     $SQL = new db_getFoneList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null,null);
     $RS = SortArray($RS,'tipo_telefone','asc','cidade','asc','padrao','desc','numero','asc');
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Telefones ('.count($RS).')</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Telefones ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -136,7 +141,7 @@ function visualCliente($w_sq_cliente,$O) {
     $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null);
     $RS = SortArray($RS,'tipo_conta','asc','padrao','desc','banco','asc','numero','asc');
     $cs = 0;
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Contas Bancárias ('.count($RS).')</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Contas Bancárias ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -169,7 +174,7 @@ function visualCliente($w_sq_cliente,$O) {
 
     //Módulos contratados
     $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente,null,null);
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Módulos Contratados ('.count($RS).')</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Módulos Contratados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -193,10 +198,11 @@ function visualCliente($w_sq_cliente,$O) {
     //Usuários cadastrados
     $SQL = new db_getUserList; $RS = $SQL->getInstanceOf($dbms,$w_sq_cliente,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null);
     $RS = SortArray($RS,'nome_resumido_ind','asc');
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Usuários Cadastrados ('.count($RS).')</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Usuários Cadastrados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('            <td><b>Aut.</td>');
     ShowHTML('            <td><b>Username</td>');
     ShowHTML('            <td><b>Nome</td>');
     ShowHTML('            <td><b>Lotação</td>');
@@ -209,6 +215,7 @@ function visualCliente($w_sq_cliente,$O) {
     } else {
       foreach ($RS as $row) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+        ShowHTML('        <td align="center" nowrap>'.f($row,'nm_tipo_autenticacao').'</td>');
         ShowHTML('        <td align="center" nowrap>'.f($row,'username').'</td>');
         ShowHTML('        <td title="'.f($row,'nome').'">'.f($row,'nome_resumido').'</td>');
         ShowHTML('        <td>'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
@@ -221,7 +228,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Configuração da aplicação
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Configuração da Aplicação</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Configuração da Aplicação</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('        <TABLE WIDTH="100%">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" valign="top">');
@@ -248,7 +255,7 @@ function visualCliente($w_sq_cliente,$O) {
 
     //Funcionalidades
     $w_imagemPadrao='images/Folder/SheetLittle.gif';
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Funcionalidades</td>');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Funcionalidades</td>');
     $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
     $cs = 0;
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -369,7 +376,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('</table>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 

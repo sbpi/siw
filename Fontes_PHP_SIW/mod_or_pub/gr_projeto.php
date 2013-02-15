@@ -73,7 +73,7 @@ $TP                 = $_REQUEST['TP'];
 $SG                 = upper($_REQUEST['SG']);
 $R                  = upper($_REQUEST['R']);
 $O                  = upper($_REQUEST['O']);
-$w_assinatura       = upper($_REQUEST['w_assinatura']);
+$w_assinatura       = $_REQUEST['w_assinatura'];
 $w_pagina           = 'gr_projeto.php?par=';
 $w_dir              = 'mod_or_pub/';
 $w_dir_volta        = '../';
@@ -764,7 +764,7 @@ function Gerencial() {
     ShowHTML('</table>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 

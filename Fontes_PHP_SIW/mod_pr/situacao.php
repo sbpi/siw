@@ -52,7 +52,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 
-$w_assinatura = upper($_REQUEST['w_assinatura']);
+$w_assinatura = $_REQUEST['w_assinatura'];
 $w_pagina     = 'situacao.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pr/';
@@ -165,9 +165,9 @@ function Situacao() {
       Validate('w_situacao','Comentários gerais e pontos de atenção.','','1','5','1000','1','1');  
       Validate('w_progressos','Principais progressos','','','5','1000','1','1');
       Validate('w_passos','Próximos passos','','','5','1000','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');        
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');        
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  return(confirm(\'Confirma a exclusão deste registro?\'));');
     }  
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -259,7 +259,7 @@ function Situacao() {
     ShowHTML('      <tr><td colspan="3"><b>P<u>r</u>óximos passos:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_passos" class="STI" ROWS=3 cols=75>'.$w_passos.'</TEXTAREA></td>');
     ShowHTML('      <tr valign="top">');
     if ($P1!=1){
-      ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
+      ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
     }
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     if ($O=='E') {
@@ -278,7 +278,7 @@ function Situacao() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -478,7 +478,7 @@ function Grava() {
   switch ($SG) {
     case 'SITSOLIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_putSolicSituacao; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''), $w_usuario,
               $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_situacao'],$_REQUEST['w_progressos'],$_REQUEST['w_passos']); 
         ScriptOpen('JavaScript');
@@ -486,7 +486,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
         exit();

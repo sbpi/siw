@@ -49,7 +49,7 @@ $R              = lower($_REQUEST['R']);
 $O              = upper($_REQUEST['O']);
 $p_ordena       = $_REQUEST['p_ordena'];
 $w_troca        = $_REQUEST['w_troca'];
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'afastamento.php?par=';
 $w_dir          = 'mod_rh/';
 $w_dir_volta    = '../';
@@ -220,7 +220,7 @@ function Afastamento() {
         } 
       } 
       Validate('w_observacao','Observação','','1','1','300','1','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='P') {
       Validate('p_sq_tipo_afastamento','Tipo de afastamento','SELECT','','1','18','','0123456789');
       Validate('p_sq_contrato_colaborador','Colaborador','SELECT','','1','18','','0123456789');
@@ -228,7 +228,7 @@ function Afastamento() {
       Validate('p_fim_data','Término','DATA','','10','10','','0123456789/');
       CompData('p_inicio_data','Início','<=','p_fim_data','Término');
     } elseif ($O=='E') {
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -382,7 +382,7 @@ function Afastamento() {
       } 
     } 
     ShowHTML('      <tr><td colspan=2><b><u>O</u>bservação:<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="sti" name="w_observacao" rows="5" cols="75">'.$w_observacao.'</textarea></td>');
-    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan=5><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
@@ -422,7 +422,7 @@ function Afastamento() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   } 
@@ -547,7 +547,7 @@ function Grava() {
   switch ($SG) {
     case 'GPAFAST':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if (!(strpos('AI',$O)===false)) {
           $w_erro = ValidaAfastamento($w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_sq_contrato_colaborador'],$_REQUEST['w_inicio_data'],$_REQUEST['w_fim_data'],$_REQUEST['w_inicio_periodo'],$_REQUEST['w_fim_periodo'],$_REQUEST['w_dias']);
           if ($w_erro >'') {
@@ -570,7 +570,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         RetornaFormulario('w_assinatura');
       } 

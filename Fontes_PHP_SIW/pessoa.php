@@ -57,7 +57,7 @@ $TP         = nvl($_REQUEST['TP'],$_REQUEST['p_tp']);
 $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura   = $_REQUEST['w_assinatura'];
 $w_pagina       = 'pessoa.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -298,10 +298,10 @@ function Benef() {
           Validate('w_senha_adm','Senha do usuário da rede','1','1','2','30','1','1');
         }
         if ($SG=='SGUSU' || $SG=='CLUSUARIO') {
-            Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+            Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
         }
     } elseif ($O=='E' || $O=='T' || $O=='D') {
-        Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     }
     ValidateClose();
     ScriptClose();
@@ -504,7 +504,7 @@ function Benef() {
               ShowHTML('          </table>');
             }
             if ($SG=='RHUSU' || $SG=='SGUSU' || $SG=='CLUSUARIO') { // Tela de usuários do RH e do SG
-              ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+              ShowHTML('      <tr><td><b>'.$_SESSION['LABEL_CAMPO'].':<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
             }
             ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
             // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -535,7 +535,7 @@ function Benef() {
         ShowHTML('</FORM>');
     } else {
         ScriptOpen('JavaScript');
-        ShowHTML(' alert(\'Opção não disponível\');');
+        ShowHTML(' alert("Opção não disponível");');
         ShowHTML(' history.back(1);');
         ScriptClose();
     }
@@ -747,7 +747,7 @@ function CadastraPessoa() {
     ShowHTML('     theForm.w_sq_pais.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
-    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
@@ -832,7 +832,7 @@ function CadastraPessoa() {
         }
         ShowHTML('              <td colspan=3 title="Se informar um e-mail institucional, informe-o neste campo."><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="50" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
         ShowHTML('          </table>');
-        ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+        ShowHTML('      <tr><td colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
         ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
         ShowHTML('      <tr><td align="center" colspan="3">');
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
@@ -845,7 +845,7 @@ function CadastraPessoa() {
         ShowHTML('</FORM>');
     } else {
         ScriptOpen('JavaScript');
-        ShowHTML(' alert(\'Opção não disponível\');');
+        ShowHTML(' alert("Opção não disponível");');
         ShowHTML(' history.back(1);');
         ScriptClose();
     }
@@ -1102,7 +1102,7 @@ function Grava() {
     
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
         // Verifica se a Assinatura Eletrônica é válida
-        if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
             if (strlen($_REQUEST['w_username'])<=14 || $SG=='SGUSU') $w_tipo='Física'; else $w_tipo='Jurídica';
             if (strpos('ED',$O)===false) {
               // Se não for exclusão nem desativação de usuários, verifica se o nome de usuário já existe
@@ -1117,7 +1117,6 @@ function Grava() {
               }
               // Se a autenticação não for na aplicação, o nome de usuário deve existir no repositório indicado
               if (($O=='I' || $_REQUEST['w_username_ant']!= $_REQUEST['w_username']) && strpos('AO',$_REQUEST['w_tipo_autenticacao'])!==false) {
-                include_once('classes/ldap/ldap.php');
                 $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
                         
                 if ($_REQUEST['w_tipo_autenticacao']=='A') {
@@ -1137,12 +1136,13 @@ function Grava() {
                       'account_suffix'        => f($RS1,'ol_account_sufix')    ,               
                   );
                 }
-                $adldap = new adLDAP($array);
+                include_once('classes/ldap/ldap.php');
+                $adldap = new adLDAP($array);                
                                                                                                                                                            
                 if(!$adldap->authenticate($_REQUEST['w_username_adm'],$_REQUEST['w_senha_adm'])) {
                   // Autenticação fora da aplicação exige usuário válido e autenticado na rede.
                   ScriptOpen('JavaScript');
-                  ShowHTML('  alert(\'Usuário de rede inexistente ou senha inválida!\');');
+                  ShowHTML('  alert("Usuário de rede inexistente ou senha inválida!");');
                   ScriptClose();
                   retornaFormulario('w_username_adm');
                   exit;
@@ -1306,13 +1306,13 @@ function Grava() {
             DesconectaBD();
         } else {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+            ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
         }
     } elseif ($SG=='PESSOA') {
         // Verifica se a Assinatura Eletrônica é válida
-        if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
             if ($O=='I' || $O=='A') {
                 if ($_REQUEST['w_tipo_pessoa']==1 || $_REQUEST['w_tipo_pessoa']==3) {
                     // Verifica se já existe pessoa física com o CPF informado
@@ -1387,7 +1387,7 @@ function Grava() {
             ScriptClose();
         } else {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+            ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
             ScriptClose();
             retornaFormulario('w_assinatura');
         }
