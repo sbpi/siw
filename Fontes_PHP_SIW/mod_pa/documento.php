@@ -1710,7 +1710,8 @@ function Encaminhamento() {
         ShowHTML('    return false;');
         ShowHTML('  }');
       }
-      if ($w_envia_protocolo == 'N' && $w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $w_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+      if (1==0 && $w_envia_protocolo == 'N' && $w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $w_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+        // Bloco desativado até que seja implementado o tratamento dos alertas
         Validate('w_retorno_limite', 'Prazo de resposta', 'DATA', '', 10, 10, '', '0123456789/');
         CompData('w_retorno_limite', 'Prazo de resposta', '>=', FormataDataEdicao(time()), 'data atual');
         Validate('w_dias', 'Dias para encaminhamento', '1', '', 1, 3, '', '0123456789');
@@ -1794,7 +1795,8 @@ function Encaminhamento() {
     ShowHTML('<INPUT type="hidden" name="w_numero" value="' . f($RS_Solic, 'protocolo_completo') . '">');
   }
   if (nvl($w_tipo_despacho,'')!='') {
-    if ($w_envia_protocolo == 'N' && $w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $w_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+    if (1==0 && $w_envia_protocolo == 'N' && $w_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $w_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+      // Bloco desativado até que seja implementado o tratamento dos alertas
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>NOVO TRÂMITE</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('           <td title="Informe a data limite para que o destinatário encaminhe o documento."><b>Praz<u>o</u> de resposta:</b><br><input ' . $w_Disabled . ' accesskey="O" type="text" name="w_retorno_limite" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $w_retorno_limite . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'w_retorno_limite') . '</td>');
@@ -2706,7 +2708,8 @@ function Tramitacao() {
       ShowHTML('    return false;');
       ShowHTML('  }');
     }
-    if ($w_envia_protocolo == 'N' && $p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $p_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+    if (1==0 && $w_envia_protocolo == 'N' && $p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $p_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+      // Bloco desativado até que seja implementado o tratamento dos alertas
       Validate('w_retorno_limite', 'Prazo de resposta', 'DATA', '', 10, 10, '', '0123456789/');
       CompData('w_retorno_limite', 'Prazo de resposta', '>=', FormataDataEdicao(time()), 'data atual');
       Validate('w_dias', 'Dias para encaminhamento', '1', '', 1, 3, '', '0123456789');
@@ -2977,7 +2980,8 @@ function Tramitacao() {
     if ($w_outra_unidade) ShowHTML('      <tr><td colspan="9"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
     ShowHTML('    </table>');
     ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
-    if ($w_envia_protocolo == 'N' && $p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $p_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+    if (1==0 && $w_envia_protocolo == 'N' && $p_tipo_despacho != f($RS_Parametro, 'despacho_arqsetorial') && $p_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
+      // Bloco desativado até que seja implementado o tratamento dos alertas
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>NOVO TRÂMITE</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('           <td nowrap title="Informe a data limite para que o destinatário encaminhe o documento."><b>Praz<u>o</u> de resposta:</b><br><input ' . $w_Disabled . ' accesskey="O" type="text" name="w_retorno_limite" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $w_retorno_limite . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'w_retorno_limite') . '</td>');
@@ -4593,6 +4597,7 @@ function BuscaProtocolo() {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
+  
   $w_file = '';
   $w_tamanho = '';
   $w_tipo = '';

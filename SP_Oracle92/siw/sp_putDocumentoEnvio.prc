@@ -151,12 +151,30 @@ begin
         w_retorno_unid,          p_pessoa_externa,           p_unidade_externa,         'N',                        p_nu_guia,
         p_ano_guia,              case p_unidade_origem when p_unidade_destino then p_pessoa else null end);
      
-     If p_unidade_origem = p_unidade_destino Then
+     If p_unidade_origem = p_unidade_destino or (p_interno = 'N' and w_parametro.envio_externo = 'T') Then
         -- Se o envio for para a própria unidade, não emite guia de tramitação e já registra o recebimento
+        -- Outra possibilidade é o envio ser externo e todas as unidades poderem executá-lo
         update pa_documento_log set recebimento = w_data where sq_documento_log = w_chave_dem;
         p_nu_guia          := null;
         p_ano_guia         := null;
         p_unidade_autuacao := null;
+        
+        -- Se envio externo e todas as unidades podem executá-lo, executa o recebimento
+        If p_interno = 'N' and w_parametro.envio_externo = 'T' Then
+           -- Atualiza o log com os dados do recebimento
+           update pa_documento_log a set a.recebedor = p_pessoa, a.recebimento = w_data where a.sq_documento_log = w_chave_dem;
+
+           -- Recupera os dados do trâmite de envio para destino externo
+           select b.sq_siw_tramite into w_tramite 
+             from siw_solicitacao         a
+                  inner join siw_tramite  b on (a.sq_menu = b.sq_menu)
+                  inner join pa_documento c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+             where b.sigla              = 'DE'
+               and a.sq_siw_solicitacao = crec.chave;
+             
+           -- Atualiza a tabela de solicitações
+           Update siw_solicitacao set sq_siw_tramite = w_tramite Where sq_siw_solicitacao = crec.chave or sq_solic_pai = crec.chave;
+        End If;
      Else
         -- Recupera o número e o ano da guia de remessa de documentos
         select a.nu_guia, a.ano_guia, coalesce(c.sq_unidade_pai, sq_unidade)

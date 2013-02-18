@@ -18,8 +18,10 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
   $l_html='';
   // Recupera os dados do documento
-  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'PADCAD');
+  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$l_chave,'PADCAD'); 
+  $w_sg_tramite = f($RS,'sg_tramite');
   
+  // Verifica se o protocolo está juntado a outro
   if (nvl(f($RS,'sq_solic_pai'),'')!='') {
     $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PADCAD');
     if (f($RS,'tipo_juntada')=='A') $w_tipo_juntada = 'ANEXO AO PROCESSO ';
@@ -28,11 +30,12 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     else                    $w_tipo_juntada.=f($RS_Pai,'protocolo');
   }
 
+  // Verifica se o protocolo é cópia de outro
   if (nvl(f($RS,'protocolo_siw'),'')!='') {
     $sql = new db_getSolicData; $RS_Vinc = $sql->getInstanceOf($dbms,f($RS,'protocolo_siw'),'PADCAD');
     if (nvl(f($RS,'copias'),0)>0) {
-      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
-      else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+      if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO PROCESSO ';
+      else                             $w_tipo_vinc = 'CÓPIA '.f($RS,'copias').' DO DOCUMENTO ';
     } else {
       if (f($RS_Vinc,'processo')=='S') $w_tipo_vinc = 'VINCULADO AO PROCESSO ';
       else                             $w_tipo_vinc = 'VINCULADO AO DOCUMENTO ';
@@ -66,9 +69,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>CANCELADO</b></font></td>';
   }
   if (nvl($w_tipo_vinc,'')!='') {
-    $l_html.=chr(13).'      <tr><td nowrap colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='' || f($RS,'ativo')=='N') ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><b>'.$w_tipo_vinc.'</b></td>';
-  } 
-  $w_sg_tramite = f($RS,'sg_tramite');
+    $l_html.=chr(13).'      <tr><td nowrap colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='' || (f($RS,'ativo')=='N' && f($RS,'sg_tramite')!='DE')) ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><b>'.$w_tipo_vinc.'</b></td>';
+  }
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
   if ($l_identificacao=='S') {

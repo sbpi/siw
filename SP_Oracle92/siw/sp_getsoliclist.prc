@@ -231,7 +231,8 @@ begin
           where c1.sq_menu            = p_menu
             and c2.prefixo            = p_pais
             and c2.numero_documento   = p_regiao
-            and c2.ano                = p_cidade;
+            and c2.ano                = p_cidade
+            and a.sq_menu             <> c1.sq_menu; -- Evita que sejam recuperadas cópias do protocolo informado
    Elsif substr(p_restricao,1,2) = 'GD'   or 
       substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or 
       p_restricao = 'ORPACOMP'         or substr(p_restricao,1,4) = 'GRORP' Then
