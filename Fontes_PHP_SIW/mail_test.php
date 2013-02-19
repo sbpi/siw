@@ -30,11 +30,11 @@ $w_dir_volta = $conDiretorio.'/';
 //
 
 //Lê os parâmetros de chamada
-$w_cliente = 10135;
+$w_cliente = 6881;
 $w_dbms    = 1;
 $w_esquema = 'SIW';
 $w_opcao   = 'GERA';
-$w_usuario = 10136;
+$w_usuario = 14054;
 
 // Se foi disparado da interface Web, guarda os dados para uso futuro
 if (!isset($_SESSION['P_CLIENTE'])) $w_cliente_old  = $_SESSION['P_CLIENTE'];
@@ -75,11 +75,13 @@ function Principal() {
   $w_msg.='</HTML>'.$crlf;
 
   ShowHTML('<HTML>');
-  BodyOpenMail(null);
+  ShowHTML('<HEAD>');
   ShowHTML('<base href="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
+  BodyOpenMail(null);
   ShowHTML('<PRE>Assunto: '.$w_assunto);
   ShowHTML('Destinatário: '.$w_destinatarios);
-  ShowHTML('Mensagem:<br>'.htmlentities($w_msg));
+  ShowHTML('Mensagem:<br><BLOCKQUOTE>'.htmlentities($w_msg).'</BLOCKQUOTE>');
   ShowHTML('</PRE>');
   $w_resultado = EnviaMail($w_assunto,$w_msg,$w_destinatarios,null);
   if (nvl($w_resultado,'')=='') {

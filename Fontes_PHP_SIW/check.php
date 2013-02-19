@@ -22,6 +22,7 @@ array_push($arrayReq,array(
           );
       
 // Funções específicas
+array_push($arrayFun,array('texto' => 'fsockopen' ,'param' => 'fsockopen','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'imagefilledrectangle' ,'param' => 'imagefilledrectangle','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'ldap_delete' ,'param' => 'ldap_delete','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'oci_new_connect' ,'param' => 'oci_new_connect','funcao'=> true,'test'=> true));
@@ -213,7 +214,7 @@ function checkAmbiente() {
   $saida .= '<tr valign="top"><td>$conRootSIW</td><td>'.$conRootSIW.'</td><td>URL completa para a página de login.</td></tr>';
   $saida .= '<tr valign="top"><td>$conDiretorio</td><td>'.$conDiretorio.'</td><td>Caminho físico completo até o diretório siw</td></tr>';
   $saida .= '<tr valign="top"><td>$conFontPath</td><td>'.$conFontPath.'</td><td>Caminho físico completo do diretório de fontes do sistema operacional. Comentar se Windows.</td></tr>';
-  $saida .= '<tr valign="top"><td>$conFileVirtual</td><td>'.$conFileVirtual.'</td><td>URL relativa para o diretório de upload. (/siw_files/ ou /siw/files/)</td></tr>';
+  $saida .= '<tr valign="top"><td>$conFileVirtual</td><td>'.$conFileVirtual.'</td><td>URL relativa para o diretório de upload. (/sig_files/ ou /sig/files/)</td></tr>';
   $saida .= '<tr valign="top"><td>$conFilePhysical</td><td>'.$conFilePhysical.'</td><td>Caminho físico completo até o diretório de upload.</td></tr>';
   $saida .= '<tr valign="top"><td>$conLog</td><td>'.(($conLog) ? 'true' : 'false').'</td><td>true<br>Indica se deve ser gravado log de acesso à aplicação e de operações de escrita.</td></tr>';
   $saida .= '<tr valign="top"><td>$conLogPath</td><td>'.$conLogPath.'</td><td>Caminho físico completo até o diretório de gravação dos logs.</td></tr>';

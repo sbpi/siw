@@ -173,7 +173,7 @@ function Benef() {
           if (count($RS)>0) {
             if (nvl(f($RS,'username'),'')!='') {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'CPF já associado a outro usuário!\');');
+              ShowHTML('  alert("CPF já associado a outro usuário!");');
               ShowHTML('  history.back(1);');
               ScriptClose();
               exit;
@@ -1117,8 +1117,8 @@ function Grava() {
               }
               // Se a autenticação não for na aplicação, o nome de usuário deve existir no repositório indicado
               if (($O=='I' || $_REQUEST['w_username_ant']!= $_REQUEST['w_username']) && strpos('AO',$_REQUEST['w_tipo_autenticacao'])!==false) {
-                $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
-                        
+                $sql = new db_getCustomerData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+                
                 if ($_REQUEST['w_tipo_autenticacao']=='A') {
                   // Recupera dados para conexão ao MS-AD
                   $w_label = 'Active Directory';
@@ -1137,7 +1137,7 @@ function Grava() {
                   );
                 }
                 include_once('classes/ldap/ldap.php');
-                $adldap = new adLDAP($array);                
+                $adldap = new adLDAP($array);
                                                                                                                                                            
                 if(!$adldap->authenticate($_REQUEST['w_username_adm'],$_REQUEST['w_senha_adm'])) {
                   // Autenticação fora da aplicação exige usuário válido e autenticado na rede.
@@ -1158,7 +1158,6 @@ function Grava() {
                     retornaFormulario('w_username_adm');
                     exit;
                   }
-
                   // Testa se o usuário em inclusão/edição existe e se não está bloqueado.
                   $user = $adldap->user_info($_REQUEST['w_username'],array('cn'));
                   if ($user[0]['dn']==NULL){

@@ -352,7 +352,14 @@ class adLDAP {
     $filter="samaccountname=".$username;
 
     if ($fields==NULL){ $fields=array("userAccountControl","accountExpires","samaccountname","mail","memberof","department","displayname","telephonenumber","primarygroupid"); }
-    $sr=ldap_search($this->_conn,$this->_base_dn,$filter,$fields);
+
+    // Para a consulta funcionar corretamente, o parâmetro "OU=" deve ser removido da string BASE_DN
+    $array = explode(',',upper($this->_base_dn));
+    $string = '';
+    foreach($array as $k => $v) if (strpos($v,'OU=')===false) $string .= ','.$v;
+    $string = substr($string,1);
+
+    $sr=ldap_search($this->_conn,$string,$filter,$fields);
     $entries = ldap_get_entries($this->_conn, $sr);
     
     // AD does not return the primary group in the ldap query, we may need to fudge it
