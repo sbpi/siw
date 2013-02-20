@@ -1749,7 +1749,7 @@ begin
                                              from siw_solicitacao         x
                                                   inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and p_tipo  = 8)
                                                   inner join siw_tramite  z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.ativo = 'N' and z.sigla <> 'CA')
-                                            where sq_menu = p_menu
+                                            where x.sq_menu = p_menu
                                            group by x.sq_siw_solicitacao
                                           )                        b9 on (b.sq_siw_solicitacao       = b9.sq_siw_solicitacao)
                       left           join (/*+ ordered*/ select sq_solic_pai, count(*) as qtd
