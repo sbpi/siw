@@ -1194,7 +1194,7 @@ function Geral() {
         ShowHTML('     return false;');
         ShowHTML('  }');
         Validate('w_agencia_estrang','Nome da agência destino','1','1',1,60,1,1);
-        Validate('w_nr_conta','Número da conta','1',1,1,10,1,1);
+        Validate('w_nr_conta','Número da conta','1',1,1,30,1,1);
         Validate('w_cidade_estrang','Cidade da agência','1','1',1,60,1,1);
         Validate('w_sq_pais_estrang','País da agência','SELECT','1',1,18,1,1);
         Validate('w_informacoes','Informações adicionais','1','',5,200,1,1);
@@ -1808,7 +1808,7 @@ function OutraParte() {
         ShowHTML('     return false;');
         ShowHTML('  }');
         Validate('w_agencia_estrang','Nome da agência destino','1','1',1,60,1,1);
-        Validate('w_nr_conta','Número da conta','1',1,1,10,1,1);
+        Validate('w_nr_conta','Número da conta','1',1,1,30,1,1);
         Validate('w_cidade_estrang','Cidade da agência','1','1',1,60,1,1);
         Validate('w_sq_pais_estrang','País da agência','SELECT','1',1,18,1,1);
         Validate('w_informacoes','Informações adicionais','1','',5,200,1,1);
