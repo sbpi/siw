@@ -3673,7 +3673,6 @@ SP_Oracle92/siw/SP_PutAlmoxarifado.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifadoLocal.prc -text
 SP_Oracle92/siw/SP_PutArquivoLocal_PA.prc -text
 SP_Oracle92/siw/SP_PutArquivo_PA.prc -text
-SP_Oracle92/siw/SP_PutCLDadosAnalise.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
 SP_Oracle92/siw/SP_PutCaixa.prc -text
@@ -4302,7 +4301,6 @@ SP_Oracle92/siw/sp_putlancamentovalor.prc -text
 SP_Oracle92/siw/sp_putlcEnqMod.prc -text
 SP_Oracle92/siw/sp_putlcarquivo.prc -text
 SP_Oracle92/siw/sp_putlccriterio.prc -text
-SP_Oracle92/siw/sp_putlcdadosanalise.prc -text
 SP_Oracle92/siw/sp_putlcfinalidade.prc -text
 SP_Oracle92/siw/sp_putlcfonte.prc -text
 SP_Oracle92/siw/sp_putlcfonterecurso.prc -text

@@ -450,7 +450,7 @@ function Inicial() {
         //ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         //ShowHTML('        <td width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
-        if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%">&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor'),2).'&nbsp;</td>');
+        if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor'),2).'&nbsp;</td>');
         $w_parcial += f($row,'valor');
         if ($P1!=1) ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
         ShowHTML('        <td class="remover" width="1%" nowrap>');
@@ -826,7 +826,7 @@ function Geral() {
       Validate('w_especie_documento','Espécie documental','SELECT',1,1,18,'','0123456789');
     }
     Validate('w_objeto','Objeto','','1',3,2000,'1','1');
-    Validate('w_justificativa','Justificativa','','1',3,2000,'1','1');
+    Validate('w_justificativa','Justificativa','','',3,2000,'1','1');
     Validate('w_observacao','Observação','','',3,2000,'1','1');
     if (count($RS_Financ)>1) {
       Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','0123456789');
@@ -949,7 +949,7 @@ function Geral() {
       ShowHTML('            <td colspan="2"><b><u>V</u>alor estimado:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado para a solicitação."></td>');
     }
     ShowHTML('      <tr><td colspan=3><b>O<u>b</u>jeto:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_objeto" class="STI" ROWS=5 cols=75 title="É obrigatório informar o objeto.">'.$w_objeto.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td colspan=3><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan=3><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Informe a justificativa para a compra.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservações:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     if ($w_solic_pai>'') {
       if (count($RS_Financ)>1) {
@@ -1396,7 +1396,7 @@ function Anexos() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Título','1','1','1','255','1','1');
-      Validate('w_descricao','Descrição','1','1','1','1000','1','1');
+      Validate('w_descricao','Descrição','1','','1','1000','1','1');
       if ($O=='I') {
         Validate('w_caminho','Arquivo','','1','5','255','1','1');
       } 
@@ -2103,9 +2103,13 @@ function Concluir() {
   //Recupera os dados da solicitacao de passagens e diárias
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-  foreach($RS as $row){$RS=$row; break;}  
+  foreach($RS as $row){$RS=$row; break;}
   $w_nota_conclusao = nvl(f($RS,'nota_conclusao'),f($RS,'justificativa'));
   $w_fundo_fixo     = f($RS,'fundo_fixo');
+  
+  // Se não for fundo fixo e o módulo de protocolo e arquivo estiver disponível, 
+  // então será gerado protocolo com assunto igual ao objeto da solicitação.
+  if ($w_fundo_fixo=='N' && $w_pa == 'S') $w_nota_conclusao = f($RS,'objeto');
   
   if (nvl($w_troca,'')!='') {
     $w_nota_conclusao = $_REQUEST['w_nota_conclusao'];
@@ -2435,7 +2439,6 @@ function Grava() {
             if ($_REQUEST['w_sq_material'][$i]>'') {
               $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],null,$_REQUEST['w_sq_material'][$i],
                   null,Nvl($_REQUEST['w_quantidade'][$i],0),null,null,null,null);
-              //Recupera os dados da pessoa associada ao lançamento
             }
           } 
         } else {
@@ -2660,8 +2663,8 @@ function Grava() {
             
           // Grava tipo de pagamento e nota de conclusão
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo'],null);
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo'],null,null);
           /*
           if ($_REQUEST['w_fundo_fixo']=='S') {
             // Conclui a solicitação
@@ -2695,7 +2698,7 @@ function Grava() {
           if ($_REQUEST['w_fundo_fixo']=='N') {
             // Grava o protocolo somente se não for fundo fixo
             $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,$_REQUEST['w_numero_processo'],null,null,null,null,null,
-              null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_protocolo'],null,null,null,null,null);
+              null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_protocolo'],null,null,null,null,null,null);
           }
             
           // Conclui a solicitação

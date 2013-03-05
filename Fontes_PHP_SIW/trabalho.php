@@ -18,6 +18,7 @@ include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
 include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getAfastamento.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getUserResp.php');
@@ -116,6 +117,7 @@ function Mesa() {
         if (f($row,'sigla')=='GP') $w_pessoal    = f($row,'nome');
         if (f($row,'sigla')=='FN') $w_financeiro = f($row,'nome');
         if (f($row,'sigla')=='PD') $w_viagem     = f($row,'nome');
+        if (f($row,'sigla')=='CO') $w_compras    = f($row,'nome');
       }
       $w_user[f($row,'sigla')] = false;
     }
@@ -310,6 +312,30 @@ function Mesa() {
       // Recupera os dados da unidade de lotação do usuário
       include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
       $sql = new db_getUorgData; $RS_Unidade = $sql->getInstanceOf($dbms,$_SESSION['LOTACAO']);
+
+      if (nvl($w_compras,'')!='') {
+        $sql = new db_getLinkData; $RSMenu_Compras = $sql->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
+        $sql = new db_getSolicCL; $RS_Compras = $sql->getInstanceOf($dbms,f($RSMenu_Compras,'sq_menu'),$w_usuario,'CLLCCAD',2,
+            formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null, null, null, 
+            null, null, null, null,null, null, null, null, null, null, null, null, null, null, null);
+        $RS_Compras = SortArray($RS_Compras,'codigo_interno', 'asc');
+
+        // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+        foreach($RS_Compras as $row) {
+          if (nvl(f($row,'data_abertura'),'')!='') retornaArrayDias(f($row,'data_abertura'), f($row,'data_abertura'), &$w_datas, f($row,'codigo_interno').': Recebimento propostas', 'S');
+          if (nvl(f($row,'envelope_1'),'')!='')    retornaArrayDias(f($row,'envelope_1'), f($row,'envelope_1'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 1 ', 'S');
+          if (nvl(f($row,'envelope_2'),'')!='')    retornaArrayDias(f($row,'envelope_2'), f($row,'envelope_2'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 2 ', 'S');
+          if (nvl(f($row,'envelope_3'),'')!='')    retornaArrayDias(f($row,'envelope_3'), f($row,'envelope_3'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 3 ', 'S');
+        }
+        reset($RS_Compras);
+        foreach($RS_Compras as $row) {
+          if (nvl(f($row,'data_abertura'),'')!='') retornaArrayDias(f($row,'data_abertura'), f($row,'data_abertura'), &$w_cores, $conTrBgColorLightBlue2, 'S');
+          if (nvl(f($row,'envelope_1'),'')!='')    retornaArrayDias(f($row,'envelope_1'), f($row,'envelope_1'), &$w_cores, $conTrBgColorLightBlue2, 'S');
+          if (nvl(f($row,'envelope_2'),'')!='')    retornaArrayDias(f($row,'envelope_2'), f($row,'envelope_2'), &$w_cores, $conTrBgColorLightBlue2, 'S');
+          if (nvl(f($row,'envelope_3'),'')!='')    retornaArrayDias(f($row,'envelope_3'), f($row,'envelope_3'), &$w_cores, $conTrBgColorLightBlue2, 'S');
+        }
+      }
+
       if (nvl($w_viagem,'')!='') {
         $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
         $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
@@ -352,7 +378,7 @@ function Mesa() {
       
     // Verifica a quantidade de colunas a serem exibidas
     $w_colunas = 1;
-    if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_pessoal,'')!='') $w_colunas += 1;
+    if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_compras ,'')!='' || nvl($w_pessoal,'')!='') $w_colunas += 1;
 
     // Configura a largura das colunas
     switch ($w_colunas) {
@@ -420,7 +446,7 @@ function Mesa() {
     }
     ShowHTML('          </table>');
     // Final da exibição do calendário e suas ocorrências ==============
-    if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_pessoal,'')!='') {
+    if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_compras ,'')!='' || nvl($w_pessoal,'')!='') {
       ShowHTML('          <td width="'.$width.'" align="center">');
 
       // Exibição de indicadores que tenham alguma aferição ==============
@@ -433,12 +459,75 @@ function Mesa() {
       }
       // Final da exibição de indicadores ================================
 
+      $w_nome_mes1 = upper(mesAno(date('F',toDate('01/'.$w_mes1.'/'.$w_ano1)),'resumido'));
+      $w_nome_mes3 = upper(mesAno(date('F',toDate('01/'.$w_mes3.'/'.$w_ano3)),'resumido').'/'.$w_ano3);
+  
+      // Exibição de datas de licitações ==============
+      if (count($RS_Compras)>0 && nvl($w_compras ,'')!='') {
+        // Cria array ordenado por data, a partir do cursor
+        unset($w_array);
+        foreach($RS_Compras as $row) {
+          if (nvl(f($row,'data_abertura'),'')!='') {
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno')] = $row;
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno')]['data'] = f($row,'data_abertura');
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno')]['evento'] = 'Recebimento das propostas';
+          }
+          if (nvl(f($row,'envelope_1'),'')!='') {
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno')] = $row;
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno')]['data'] = f($row,'envelope_1');
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno')]['evento'] = 'Abertura do envelope 1';
+          }
+          if (nvl(f($row,'envelope_2'),'')!='') {
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno')] = $row;
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno')]['data'] = f($row,'envelope_2');
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno')]['evento'] = 'Abertura do envelope 2';
+          }
+          if (nvl(f($row,'envelope_3'),'')!='') {
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno')] = $row;
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno')]['data'] = f($row,'envelope_3');
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno')]['evento'] = 'Abertura do envelope 3';
+          }
+        }
+        // Ordena o array pela data
+        $w_array = SortArray($w_array,'data','asc','codigo_interno','asc'); 
+
+        ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
+        ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
+        if ($w_ano1!=$w_ano3) {
+          ShowHTML('              <tr><td align="center"><b>LICITAÇÕES ('.$w_nome_mes1.'/'.$w_ano1.' - '.$w_nome_mes3.')</b><br>');
+        } else {
+          ShowHTML('              <tr><td align="center"><b>LICITAÇÕES ('.$w_nome_mes1.'-'.$w_nome_mes3.')</b><br>');
+        }
+        // Exibe as licitações permitidas ao usuário logado
+        ShowHTML('              <tr><td>');
+        ShowHTML('                <table width="100%" border="1" cellspacing=0 bgcolor="'.$conTrBgColor.'">');
+        ShowHTML('                  <tr align="center" valign="middle">');
+        ShowHTML('                    <td><b>Data</td>');
+        ShowHTML('                    <td><b>Evento</td>');
+        ShowHTML('                    <td><b>Número</td>');
+        $w_cor = $w_cor=$conTrBgColor;
+        // Exibe o array com as datas
+        foreach($w_array as $row) {
+          if (nvl(f($row,'data_abertura'),'')!='') {
+            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+            ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
+            ShowHTML('                    <td align="center">'.formataDataEdicao(f($row,'data')).'</td>');
+            ShowHTML('                    <td>'.f($row,'evento').'</td>');
+            ShowHTML('                    <td nowrap>');
+            ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'data_abertura'),f($row,'data_homologacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+            ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Compras,'link'),0,strpos(f($RSMenu_Compras,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Compras,'p1').'&P2='.f($RSMenu_Compras,'p2').'&P3='.f($RSMenu_Compras,'p3').'&P4='.f($RSMenu_Compras,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Compras,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+            ShowHTML('                  </tr>');
+          }
+        }
+        ShowHTML('                </table>');
+        ShowHTML('              </table>');
+      }
+      // Final da exibição de licitações ================================
+
   
       if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
         ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
         ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
-        $w_nome_mes1 = upper(mesAno(date('F',toDate('01/'.$w_mes1.'/'.$w_ano1)),'resumido'));
-        $w_nome_mes3 = upper(mesAno(date('F',toDate('01/'.$w_mes3.'/'.$w_ano3)),'resumido').'/'.$w_ano3);
         if ($w_ano1!=$w_ano3) {
           ShowHTML('              <tr><td align="center"><b>AUSÊNCIAS ('.$w_nome_mes1.'/'.$w_ano1.' - '.$w_nome_mes3.')</b><br>');
         } else {

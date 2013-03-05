@@ -421,7 +421,11 @@ function TrocaSenha() {
     ScriptClose();
   }
   ShowHTML('</HEAD>');
-  if ($w_tipo_autenticacao=='B') BodyOpen('onLoad=\'document.Form.w_atual.focus();\''); else BodyOpen('onLoad=\'document.focus();\''); 
+  if (($P1!=1 && $w_autenticacao==1) || ($P1==1 && $w_tipo_autenticacao=='B')) {
+    BodyOpen('onLoad=\'document.Form.w_atual.focus();\'');
+  } else {
+    BodyOpen('onLoad=\'document.focus();\'');
+  }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();

@@ -1326,6 +1326,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
   $l_imagem = '';
   $l_title  = '';
   $l_tipo = upper($l_tipo);
+  $l_fim  = nvl($l_fim,time()); // Se a data de término não for informada, coloca igual à data corrente.
   if ($l_legenda) {
     if ($l_tipo=='ETAPA') {
       // Etapas de projeto
@@ -3753,7 +3754,11 @@ function retornaArrayDias($p_inicio, $p_fim, $p_array, $p_valor, $p_dia_util=nul
         $i = $l_ano.substr((100+intVal($l_mes)+1),1,2).'01';
       }
     }
-    $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['valor']=$p_valor;
+    if (is_array($p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]) && substr($p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['valor'],0,1)!='#') {
+      $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['valor'].='\n'.$p_valor;
+    } else {
+      $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['valor']=$p_valor;
+    }
     $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['dia_util']=$p_dia_util;
   }
 

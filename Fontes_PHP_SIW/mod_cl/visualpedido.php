@@ -63,6 +63,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
     if (nvl(f($RS,'fim'),'')!='' && $w_cliente!=10135) $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(f($RS,'valor'),4).'</td></tr>';
+    if (f($RS,'valor_alt')>0) $l_html.=chr(13).'      <tr><td></td><td>'.f($RS,'sb_moeda_alt').' '.formatNumber(f($RS,'valor_alt'),4).'</td></tr>';
     $l_html.=chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
@@ -82,7 +83,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
     }
     $l_html.=chr(13).'      <tr valign="top"><td><b>Objeto:</b></td><td>'.crlf2br(f($RS,'objeto')).' </td></tr>';
-    $l_html.=chr(13).'      <tr valign="top"><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Justificativa:</b></td><td>'.crlf2br(nvl(f($RS,'justificativa'),'---')).' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Pagamento por fundo fixo?<b></td><td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
     // Dados da conclusão da solicitação, se ela estiver nessa situação

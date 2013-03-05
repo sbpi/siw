@@ -83,7 +83,7 @@ begin
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao as objeto,
-                b.justificativa,      b.inicio,                      coalesce(b.fim, trunc(sysdate)) as fim,
+                b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
@@ -108,6 +108,12 @@ begin
                 b2.acesso,
                 b6.sq_moeda,             b6.codigo cd_moeda,            b6.nome nm_moeda,
                 b6.sigla sg_moeda,       b6.simbolo sb_moeda,           b6.ativo at_moeda,
+                b7.sq_moeda sq_moeda_alt, b7.codigo cd_moeda_alt,       b7.nome nm_moeda_alt,
+                b7.sigla sg_moeda_alt,   b7.simbolo sb_moeda_alt,       b7.ativo at_moeda_alt,
+                case when b6.sq_moeda is not null and b7.sq_moeda is not null
+                     then conversao(a.sq_pessoa, b.inclusao, b6.sq_moeda, b7.sq_moeda, b.valor, 'V')
+                     else 0
+                end valor_alt,
                 c.sq_tipo_unidade,       c.nome as nm_unidade_exec,     c.informal,
                 c.sq_tipo_unidade as tp_exec, c.nome as nm_unidade_exec, c.informal as informal_exec,
                 c.vinculada as vinc_exec,c.adm_central as adm_exec,
@@ -124,6 +130,7 @@ begin
                 d.prioridade,         d.aviso_prox_conc,             d.dias_aviso,
                 d.sq_especificacao_despesa, d.interno,               d.dias_validade_proposta,
                 d.sq_financeiro,      d.nota_conclusao,              d.data_abertura,
+                d.envelope_1,         d.envelope_2,                  d.envelope_3,
                 d.fundo_fixo,         d.sq_modalidade_artigo,        coalesce(d.data_homologacao, b.conclusao) as data_autorizacao,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
@@ -131,7 +138,10 @@ begin
                      then d.processo
                      else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),3)
                 end as processo,
-                to_char(b5.prefixo)||'.'||substr(1000000+to_char(b5.numero_documento),2,6)||'/'||to_char(b5.ano)||'-'||substr(100+to_char(b5.digito),2,2) as protocolo_completo,
+                case when b5.prefixo is null 
+                     then null
+                     else to_char(b5.prefixo)||'.'||substr(1000000+to_char(b5.numero_documento),2,6)||'/'||to_char(b5.ano)||'-'||substr(100+to_char(b5.digito),2,2)
+                end as protocolo_completo,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 d1.nome as nm_espec_despesa, d1.codigo as cd_espec_despesa,
                 d2.nome as nm_eoindicador,
@@ -179,6 +189,13 @@ begin
                    left           join pj_projeto               b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
                    left           join pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)
                    left           join co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)
+                     left         join co_moeda                 b7 on (b6.ativo                   = b7.ativo and
+                                                                       b7.sigla                   = case coalesce(b6.sigla,'-') 
+                                                                                                         when 'USD' then 'BRL'
+                                                                                                         when 'BRL' then 'USD'
+                                                                                                         else '-'
+                                                                                                    end
+                                                                      )
                      left         join ct_especificacao_despesa d1 on (d.sq_especificacao_despesa = d1.sq_especificacao_despesa)
                      left         join eo_indicador             d2 on (d.sq_eoindicador           = d2.sq_eoindicador)
                      left         join lc_fonte_recurso         d3 on (d.sq_lcfonte_recurso       = d3.sq_lcfonte_recurso)
@@ -232,7 +249,13 @@ begin
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and d.decisao_judicial = p_ativo))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b1.sigla <> 'AT' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and d.data_abertura between p_ini_i and p_ini_f))
+            and (p_ini_i          is null or (p_ini_i       is not null and (d.data_abertura between p_ini_i and p_ini_f or
+                                                                             d.envelope_1    between p_ini_i and p_ini_f or
+                                                                             d.envelope_2    between p_ini_i and p_ini_f or
+                                                                             d.envelope_3    between p_ini_i and p_ini_f
+                                                                            )
+                                             )
+                )
             and (p_fim_i          is null or (p_fim_i       is not null and coalesce(d.data_homologacao, b.conclusao) between p_fim_i and p_fim_f))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and b1.sigla <> 'AT' and cast(b.fim as date)+1<cast(sysdate as date)))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade           = p_unidade))

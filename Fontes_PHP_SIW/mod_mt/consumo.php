@@ -32,7 +32,6 @@ include_once($w_dir_volta.'classes/sp/db_getCLSolicItem.php');
 include_once($w_dir_volta.'classes/sp/db_getCcData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putMtConsumoGeral.php');
-include_once($w_dir_volta.'classes/sp/dml_putCLDados.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putMtSaidaItem.php');

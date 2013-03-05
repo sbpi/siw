@@ -966,7 +966,7 @@ function Parametro() {
   ShowHTML('        <td><b><U>N</U>úmero de dias da pesquisa:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_dias_aviso_pesquisa" size="4" maxlength="2" value="'.$w_dias_aviso_pesquisa.'"></td>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('        <td><b><U>P</U>ercentual:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="w_percentual_acrescimo" size="4" maxlength="18" value="'.$w_percentual_acrescimo.'"></td>');
-  MontaRadioSN('      <b>Atendimento dos pedidos de compra</b>',$w_compra_central,'w_compra_central');
+  MontaRadioSN('      <b>Atendimento centralizado dos pedidos de compra</b>',$w_compra_central,'w_compra_central');
   ShowHTML('      <tr valign="top">');
   MontaRadioSN('    <b>Pesquisa central</b>',$w_pesquisa_central,'w_pesquisa_central');
   MontaRadioSN('    <b>Contrato Central</b>',$w_contrato_central,'w_contrato_central');

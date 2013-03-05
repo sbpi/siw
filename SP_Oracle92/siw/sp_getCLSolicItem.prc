@@ -179,10 +179,7 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                g.item_pedido,
-                g.item_licitacao,
-                h.sq_siw_solicitacao as sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
-                dados_solic(h.sq_siw_solicitacao) as dados_pai,
+                p.item_pedido, p.item_licitacao, p.sq_solic_pai, p.dados_pai,
                 i.qtd_cotacao,
                 j.qtd_proposta,
                 k.sq_siw_solicitacao as solic_filho, dados_solic(k.sq_siw_solicitacao) as dados_filho
@@ -191,16 +188,24 @@ begin
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
-                inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
-                  inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
-                    inner join siw_solicitacao         h1 on (h.sq_siw_solicitacao   = h1.sq_siw_solicitacao)
-                    inner join siw_menu                h2 on (h1.sq_menu             = h2.sq_menu)
-                    inner join siw_modulo              h3 on (h2.sq_modulo           = h3.sq_modulo and
-                                                              h3.sigla               = 'CO'
-                                                             )
-                    inner join siw_tramite             h4 on (h1.sq_siw_tramite      = h4.sq_siw_tramite and
-                                                              h4.sigla              <> 'CA'
-                                                             )
+                left      join (select g.item_pedido, g.item_licitacao,
+                                       h.sq_siw_solicitacao as sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
+                                       dados_solic(h.sq_siw_solicitacao) as dados_pai
+                                  from siw_solicitacao                        h1
+                                       inner     join siw_menu                h2 on (h1.sq_menu             = h2.sq_menu)
+                                       inner     join siw_modulo              h3 on (h2.sq_modulo           = h3.sq_modulo and
+                                                                                     h3.sigla               = 'CO'
+                                                                                    )
+                                       inner     join siw_tramite             h4 on (h1.sq_siw_tramite      = h4.sq_siw_tramite and
+                                                                                     h4.sigla              <> 'CA'
+                                                                                    )
+                                       inner     join cl_solicitacao_item      h on (h.sq_siw_solicitacao   = h1.sq_siw_solicitacao)
+                                         inner   join cl_solicitacao_item_vinc g on (g.item_pedido          = h.sq_solicitacao_item)
+                                           inner join cl_solicitacao_item     g1 on (g.item_licitacao       = g1.sq_solicitacao_item)
+                                 where (p_chave         is null or (p_chave         is not null and g1.sq_solicitacao_item = p_chave))
+                                   and (p_material      is null or (p_material      is not null and g1.sq_material         = p_material))
+                                   and (p_solicitacao   is null or (p_solicitacao   is not null and g1.sq_siw_solicitacao  = p_solicitacao))
+                               )                        p on (a.sq_solicitacao_item  = p.item_licitacao)
                   left    join (select  z.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
                                   from cl_item_fornecedor  z
                                  where 'S' = z.pesquisa
@@ -552,9 +557,7 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                g.item_pedido,
-                h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
-                dados_solic(h.sq_siw_solicitacao) as dados_pai,
+                p.item_pedido, p.sq_solic_pai, p.dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
                 i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
                 i.dias_validade_proposta, i.fator_embalagem, i.origem,
@@ -564,8 +567,23 @@ begin
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
-                inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
-                  inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
+                left      join (select g.item_pedido, g.item_licitacao,
+                                       h.sq_siw_solicitacao as sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
+                                       dados_solic(h.sq_siw_solicitacao) as dados_pai
+                                  from siw_solicitacao                        h1
+                                       inner     join siw_menu                h2 on (h1.sq_menu             = h2.sq_menu)
+                                       inner     join siw_modulo              h3 on (h2.sq_modulo           = h3.sq_modulo and
+                                                                                     h3.sigla               = 'CO'
+                                                                                    )
+                                       inner     join siw_tramite             h4 on (h1.sq_siw_tramite      = h4.sq_siw_tramite and
+                                                                                     h4.sigla              <> 'CA'
+                                                                                    )
+                                       inner     join cl_solicitacao_item      h on (h.sq_siw_solicitacao   = h1.sq_siw_solicitacao)
+                                         inner   join cl_solicitacao_item_vinc g on (g.item_pedido          = h.sq_solicitacao_item)
+                                           inner join cl_solicitacao_item     g1 on (g.item_licitacao       = g1.sq_solicitacao_item)
+                                 where (p_chave         is null or (p_chave         is not null and g1.sq_solicitacao_item = p_chave))
+                                   and (p_solicitacao   is null or (p_solicitacao   is not null and g1.sq_siw_solicitacao  = p_solicitacao))
+                               )                        p on (a.sq_solicitacao_item  = p.item_licitacao)
                 left      join cl_item_fornecedor       i on (a.sq_solicitacao_item  = i.sq_solicitacao_item and
                                                               p_material             = i.fornecedor          and
                                                               ((p_restricao          = 'FORNECEDORC' and 'S' = i.pesquisa) or 

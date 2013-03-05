@@ -4,6 +4,9 @@ create or replace procedure SP_PutCLDados
     p_sq_lcmodalidade       in number   default null,    
     p_numero_processo       in varchar2 default null,
     p_abertura              in date     default null,
+    p_envelope_1            in date     default null,
+    p_envelope_2            in date     default null,
+    p_envelope_3            in date     default null,
     p_numero_certame        in varchar2 default null,
     p_numero_ata            in varchar2 default null,
     p_tipo_reajuste         in number   default null,
@@ -26,6 +29,7 @@ create or replace procedure SP_PutCLDados
     p_prioridade            in number   default null,
     p_nota_conclusao        in varchar2 default null,
     p_fundo_fixo            in varchar2 default null,
+    p_quantidade            in number   default null,
     p_detalhamento          in varchar2 default null
    ) is
    w_numero_certame cl_solicitacao.numero_certame%type;
@@ -78,6 +82,9 @@ begin
          sq_lcmodalidade          = p_sq_lcmodalidade,
          processo                 = coalesce(p_numero_processo,p_protocolo),
          data_abertura            = p_abertura,
+         envelope_1               = p_envelope_1,
+         envelope_2               = p_envelope_2,
+         envelope_3               = p_envelope_3,
          numero_ata               = p_numero_ata,
          tipo_reajuste            = case when p_tipo_reajuste is not null then p_tipo_reajuste else tipo_reajuste end,
          indice_base              = p_indice_base,
@@ -126,6 +133,9 @@ begin
       Update cl_solicitacao set
          sq_lcsituacao            = p_sq_lcsituacao,
          data_abertura            = p_abertura,
+         envelope_1               = p_envelope_1,
+         envelope_2               = p_envelope_2,
+         envelope_3               = p_envelope_3,
          prioridade               = p_prioridade
       Where sq_siw_solicitacao = p_chave;
 
@@ -137,8 +147,9 @@ begin
       -- Atualiza a ordem dos itens de uma licitação
       Update cl_solicitacao_item set
          ordem                  = p_ordem,
-         dias_validade_proposta = nvl(p_dias_item,dias_validade_proposta),
-         detalhamento           = nvl(p_detalhamento,detalhamento)
+         quantidade             = coalesce(p_quantidade,quantidade),
+         dias_validade_proposta = coalesce(p_dias_item,dias_validade_proposta),
+         detalhamento           = coalesce(p_detalhamento,detalhamento)
       Where sq_solicitacao_item = p_chave;
    ElsIf p_restricao = 'VENCEDOR' Then
       -- Registra os vencedores da licitação

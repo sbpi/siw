@@ -100,7 +100,8 @@ function Valida() {
     $sql = new db_verificaUsuario; $RS = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
     if ($RS==0) {
       $w_erro=1;
-    } else {
+    } elseif ($par!='Senha') {
+      // Se recriação da senha, não verifica a senha do usuário
       $sql = new db_verificaSenha; $w_erro = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha);
     }
 
