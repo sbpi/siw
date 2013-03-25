@@ -1428,7 +1428,7 @@ function Grava() {
           $sql = new db_getLCCriterio; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
           if (count($RS)>0 && ($O=='I' || ($O=='A' && f($RS,'w_nome')==$_REQUEST['w_nome']))) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe critério de julgamento com este nome!\');');
+            ShowHTML('  alert("Já existe critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').' com este nome!");');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;

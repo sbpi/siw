@@ -138,7 +138,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA ANÁLISE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (f($RS,'certame')=='S') {
         $l_html.=chr(13).'      <tr><td><b>Mínimo de dias de validade das propostas: </b></td><td>'.f($RS,'dias_validade_proposta').' </td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Critério de julgamento: </b></td><td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').': </b></td><td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
       }
       if (nvl(f($RS,'certame'),'')!='')  {
         $l_html.=chr(13).'      <tr><td><b>Recebimento das propostas:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'data_abertura')),'---').' </td></tr>';

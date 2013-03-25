@@ -2268,7 +2268,7 @@ function PesquisaPreco() {
       ShowHTML('  }');
       if(f($RS_Solic,'nm_lcjulgamento')=='Global') {
         ShowHTML('  if (w_cont!=1 && theForm["w_chave_aux[]"].length!=w_cont) {');
-        ShowHTML('    alert(\'Para licitação de julgamento global, todos os itens deve ser selecionados!\'); ');
+        ShowHTML('    alert("Para licitação de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').' global, todos os itens deve ser selecionados!"); ');
         ShowHTML('    return false;');
         ShowHTML('  } else if (w_cont==1){');
         ShowHTML('    return confirm(\'Nenhum item foi selecionado, deseja continuar?\'); ');
@@ -2333,7 +2333,7 @@ function PesquisaPreco() {
   ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
   ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_solic')).'</td>');
   ShowHTML('            <td>Setor solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_resp'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
-  if (nvl(f($RS_Solic,'nm_lcjulgamento'),'nulo')!='nulo') ShowHTML('            <td>Julgamento:<b><br>'.f($RS_Solic,'nm_lcjulgamento').'</td>');
+  if (nvl(f($RS_Solic,'nm_lcjulgamento'),'nulo')!='nulo') ShowHTML('            <td>'.(($w_cliente==6881) ? 'Avaliação' : 'Julgamento').':<b><br>'.f($RS_Solic,'nm_lcjulgamento').'</td>');
   ShowHTML('      </table>');
   ShowHTML('    </TABLE>');
   ShowHTML('</table>');
@@ -3019,7 +3019,7 @@ function DadosAnalise() {
   ValidateOpen('Validacao');
   Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
   if ($w_pa=='S') {
-    Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
+    Validate('w_protocolo_nm','Número do processo','hidden','','20','20','','0123456789./-');
   } elseif($w_segmento=='Público') {
     Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
   }
@@ -3028,7 +3028,7 @@ function DadosAnalise() {
   Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
   if ($w_certame=='S') {
     //Validate('w_numero_certame','Número do certame','1','1',1,50,'1','1');
-    Validate('w_sq_lcjulgamento','Critério de julgamento','SELECT','1',1,18,'','0123456789');
+    Validate('w_sq_lcjulgamento','Critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento'),'SELECT','1',1,18,'','0123456789');
     Validate('w_abertura','Data de recebimento das propostas','DATA','',10,10,'','0123456789/');
     Validate('w_envelope_1','Data de abertura do envelope 1','DATA','',10,10,'','0123456789/');
     Validate('w_envelope_2','Data de abertura do envelope 2','DATA','',10,10,'','0123456789/');
@@ -3128,7 +3128,7 @@ function DadosAnalise() {
   if ($w_certame=='S') {
     ShowHTML('<tr valign="top">');
     //ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
-    SelecaoLCJulgamento('Critério de <u>j</u>ulgamento:','J','Selecione o critério de julgamento do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
+    SelecaoLCJulgamento('Critério de '.(($w_cliente==6881) ? 'ava<u>l</u>iação' : 'ju<u>l</u>gamento').':','L','Selecione o critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').' do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
     ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
     ShowHTML('<tr valign="top">');
     ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 1:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_1" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_1.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_1').'</td>');

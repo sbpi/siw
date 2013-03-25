@@ -115,12 +115,13 @@ begin
         Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
       End If;
 
-      If p_protocolo is not null Then
-         -- Grava a chave do protocolo na solicitação
-         update siw_solicitacao a
-           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2))
-         where sq_siw_solicitacao = p_chave;
-      End If;
+      -- Grava a chave do protocolo na solicitação
+      update siw_solicitacao a
+         set a.protocolo_siw = case when p_protocolo is null
+                                    then null
+                                    else (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2))
+                               end
+      where sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'CONCLUSAO' Then
       -- Atualiza a tabela da licitação com os dados da conclusão
       Update cl_solicitacao set
