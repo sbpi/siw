@@ -25,7 +25,7 @@ create or replace procedure SP_PutCLDados
     p_dias                  in number   default null,
     p_dias_item             in number   default null,
     p_protocolo             in varchar2 default null,
-    p_fim                   in date     default null,
+    p_inicio                in date     default null,
     p_prioridade            in number   default null,
     p_nota_conclusao        in varchar2 default null,
     p_fundo_fixo            in varchar2 default null,
@@ -100,9 +100,7 @@ begin
       Where sq_siw_solicitacao = p_chave;
 
       -- Grava os dados da solicitação
-      update siw_solicitacao a
-        set a.fim = p_fim
-      where sq_siw_solicitacao = p_chave;
+      update siw_solicitacao a set a.inicio = p_inicio where sq_siw_solicitacao = p_chave;
 
       If w_sq_modalidade is null or 
          w_numero_certame is null or 
@@ -141,9 +139,8 @@ begin
       Where sq_siw_solicitacao = p_chave;
 
       -- Grava os dados da solicitação
-      update siw_solicitacao a
-        set a.fim = p_fim
-      where sq_siw_solicitacao = p_chave;
+      update siw_solicitacao a set a.inicio = p_inicio where sq_siw_solicitacao = p_chave;
+      
    ElsIf p_restricao = 'ORDENACAO' Then
       -- Atualiza a ordem dos itens de uma licitação
       Update cl_solicitacao_item set
