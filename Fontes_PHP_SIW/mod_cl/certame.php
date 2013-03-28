@@ -986,7 +986,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.$w_cidade.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
-    if(nvl($w_decisao_judicial,'N')=='N') {
+    if(nvl($w_decisao_judicial,'N')=='N' && $w_cliente!=6881) {
       ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.FormataDataEdicao(time()).'">');
     }
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -2964,7 +2964,7 @@ function DadosAnalise() {
     $w_envelope_2         = $_REQUEST['w_envelope_2'];
     $w_envelope_3         = $_REQUEST['w_envelope_3'];
     $w_prioridade         = $_REQUEST['w_prioridade'];
-    $w_fim                = $_REQUEST['w_fim'];
+    $w_inicio             = $_REQUEST['w_inicio'];
   } else {
     $w_sq_lcmodalidade    = f($RS_Solic,'sq_lcmodalidade');
     $w_numero_processo    = f($RS_Solic,'processo');
@@ -2990,7 +2990,7 @@ function DadosAnalise() {
     $w_envelope_2         = formataDataEdicao(f($RS_Solic,'envelope_2'));
     $w_envelope_3         = formataDataEdicao(f($RS_Solic,'envelope_3'));
     $w_prioridade         = f($RS_Solic,'prioridade');
-    $w_fim                = FormataDataEdicao(f($RS_Solic,'fim'));
+    $w_inicio             = FormataDataEdicao(f($RS_Solic,'inicio'));
   }
 
   if (nvl($w_sq_lcmodalidade,'')!='') {
@@ -3026,6 +3026,7 @@ function DadosAnalise() {
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
   Validate('w_dias','Mínimo de dias de validade','1','1',1,10,'','0123456789');
   Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
+  Validate('w_inicio','Início da licitação','DATA','',10,10,'','0123456789/');
   if ($w_certame=='S') {
     //Validate('w_numero_certame','Número do certame','1','1',1,50,'1','1');
     Validate('w_sq_lcjulgamento','Critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento'),'SELECT','1',1,18,'','0123456789');
@@ -3034,8 +3035,6 @@ function DadosAnalise() {
     Validate('w_envelope_2','Data de abertura do envelope 2','DATA','',10,10,'','0123456789/');
     Validate('w_envelope_3','Data de abertura do envelope 3','DATA','',10,10,'','0123456789/');
   }
-  Validate('w_fim','Previsão de conclusão','DATA','',10,10,'','0123456789/');
-  CompData('w_fim','Previsão de conclusão','>=',formataDataEdicao(time()),'Data atual');
   if($w_cliente_arp=='S') {
     Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
     Validate('w_sq_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
@@ -3124,7 +3123,7 @@ function DadosAnalise() {
   }
   ShowHTML('          <td><b>Mínimo de <u>d</u>ias de validade das propostas:</b><br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="w_dias" size="4" maxlength="10" value="'.$w_dias.'" title="Número mínimo de dias para a validade das propostas." onBlur="diasValidade(this);"></td>');
   SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta licitação.',$w_prioridade,null,'w_prioridade',null,null);
-  ShowHTML('            <td><b><u>P</u>revisão de conclusão:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para conclusão da licitação.">'.ExibeCalendario('Form','w_fim').'</td>');
+  ShowHTML('            <td><b><u>I</u>nício da licitação:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início dos trabalhos para execução da licitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
   if ($w_certame=='S') {
     ShowHTML('<tr valign="top">');
     //ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
@@ -3226,7 +3225,7 @@ function Informar() {
     $w_envelope_2         = $_REQUEST['w_envelope_2'];
     $w_envelope_3         = $_REQUEST['w_envelope_3'];
     $w_prioridade         = $_REQUEST['w_prioridade'];
-    $w_fim                = $_REQUEST['w_fim'];
+    $w_inicio             = $_REQUEST['w_inicio'];
   } else {
     $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
             null,null,null,null,null,null,null,null,null,null,
@@ -3239,7 +3238,7 @@ function Informar() {
     $w_envelope_2       = formataDataEdicao(f($RS,'envelope_2'));
     $w_envelope_3       = formataDataEdicao(f($RS,'envelope_3'));
     $w_prioridade       = f($RS,'prioridade');
-    $w_fim              = FormataDataEdicao(f($RS,'fim'));
+    $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
   } 
   Cabecalho();
   head();
@@ -3252,8 +3251,7 @@ function Informar() {
   SaltaCampo();
   ValidateOpen('Validacao');
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
-  Validate('w_fim','Previsão de conclusão','DATA','',10,10,'','0123456789/');
-  CompData('w_fim','Previsão de conclusão','>=',formataDataEdicao(time()),'Data atual');
+  Validate('w_inicio','Início da licitação','DATA','',10,10,'','0123456789/');
   Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
   Validate('w_abertura','Data de abertura','DATA','',10,10,'','0123456789/');
   Validate('w_envelope_1','Data de abertura do envelope 1','DATA','',10,10,'','0123456789/');
@@ -3284,7 +3282,7 @@ function Informar() {
   SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
   SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
   ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
-  ShowHTML('            <td><b><u>P</u>revisão de conclusão:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para conclusão da licitação.">'.ExibeCalendario('Form','w_fim').'</td>');
+  ShowHTML('            <td><b><u>I</u>nicio da licitação:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início dos trabalhos para execução da licitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
   ShowHTML('    </tr>');
   ShowHTML('<tr valign="top">');
   ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 1:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_1" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_1.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_1').'</td>');
@@ -4301,7 +4299,7 @@ function Grava() {
         $_REQUEST['w_numero_certame'],$_REQUEST['w_numero_ata'],$_REQUEST['w_tipo_reajuste'],$_REQUEST['w_indice_base'],
         $_REQUEST['w_sq_eoindicador'],nvl($_REQUEST['w_limite_variacao'],0),$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_sq_espec_despesa'],
         $_REQUEST['w_sq_lcjulgamento'],$_REQUEST['w_sq_lcsituacao'],$_REQUEST['w_financeiro_unico'],null,null,null,null,
-        $_REQUEST['w_dias'],null,$_REQUEST['w_protocolo'],$_REQUEST['w_fim'],$_REQUEST['w_prioridade'],null,null,null,null);
+        $_REQUEST['w_dias'],null,$_REQUEST['w_protocolo'],$_REQUEST['w_inicio'],$_REQUEST['w_prioridade'],null,null,null,null);
       
       // Atualiza a ordem dos itens da solicitação
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
@@ -4355,7 +4353,7 @@ function Grava() {
       $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'SITUACAO',$_REQUEST['w_chave'],null,null,
         $_REQUEST['w_abertura'],$_REQUEST['w_envelope_1'],$_REQUEST['w_envelope_2'],$_REQUEST['w_envelope_3'],
         null,null,null,null,null,null,null,null,null,$_REQUEST['w_sq_lcsituacao'],null,null,null,null,null,
-        null,null,null,$_REQUEST['w_fim'],$_REQUEST['w_prioridade'],null,null,null,null);
+        null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_prioridade'],null,null,null,null);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLLCCAD'.MontaFiltro('GET')).'\';');
       ScriptClose();

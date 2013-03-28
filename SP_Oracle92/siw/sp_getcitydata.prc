@@ -5,7 +5,7 @@ create or replace procedure SP_GetCityData
 begin
    -- Recupera os dados da cidade
    open p_result for 
-      select a.sq_cidade, a.sq_pais, a.sq_regiao, a.co_uf, a.nome, a.ddd, a.codigo_ibge, a.capital, a.codigo_externo,a.aeroportos,
+      select a.sq_cidade, a.sq_pais, a.sq_regiao, a.co_uf, a.nome, a.ddd, a.codigo_ibge, a.capital, a.codigo_externo, a.aeroportos,
              a.nome||', '||b.nome||', '||c.nome as google
         from co_cidade a
              inner join co_uf   b on (a.sq_pais = b.sq_pais and a.co_uf = b.co_uf)

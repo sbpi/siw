@@ -508,7 +508,7 @@ function Mesa() {
         $w_cor = $w_cor=$conTrBgColor;
         // Exibe o array com as datas
         foreach($w_array as $row) {
-          if (nvl(f($row,'data_abertura'),'')!='') {
+          if (nvl(f($row,'data_abertura'),'')!='' || nvl(f($row,'envelope_1'),'')!='' || nvl(f($row,'envelope_2'),'')!='' || nvl(f($row,'envelope_3'),'')!='') {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
             ShowHTML('                    <td align="center">'.formataDataEdicao(f($row,'data')).'</td>');

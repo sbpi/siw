@@ -9,7 +9,8 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_CoCidade {
-   function getInstanceOf($dbms, $operacao, $chave, $p_ddd, $p_codigo_ibge, $p_sq_pais, $p_sq_regiao, $p_co_uf, $p_nome, $p_capital, $p_aeroportos) {
+   function getInstanceOf($dbms, $operacao, $chave, $p_ddd, $p_codigo_ibge, $p_sq_pais, $p_sq_regiao, $p_co_uf, $p_nome, 
+           $p_capital, $p_aeroportos, $p_codigo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoCidade';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'p_chave'           =>array($chave,             B_NUMERIC,     32),
@@ -20,7 +21,8 @@ class dml_CoCidade {
                    'p_co_uf'           =>array($p_co_uf,           B_VARCHAR,      3),
                    'p_nome'            =>array($p_nome,            B_VARCHAR,     60),
                    'p_capital'         =>array($p_capital,         B_VARCHAR,      1),
-           'p_aeroportos'      =>array($p_aeroportos,      B_NUMERIC,     32)
+                   'p_aeroportos'      =>array($p_aeroportos,      B_NUMERIC,     32),
+                   'p_codigo'          =>array($p_codigo,          B_VARCHAR,     60)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

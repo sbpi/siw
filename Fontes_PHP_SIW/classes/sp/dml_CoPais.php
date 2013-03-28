@@ -9,7 +9,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_CoPais {
-   function getInstanceOf($dbms, $operacao, $chave, $p_nome, $p_ativo, $p_padrao, $p_ddi, $p_sigla, $p_moeda, $p_continente) {
+   function getInstanceOf($dbms, $operacao, $chave, $p_nome, $p_ativo, $p_padrao, $p_ddi, $p_sigla, $p_moeda, $p_continente, $p_codigo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoPais';
      $params=array('p_operacao'        =>array($operacao,          B_VARCHAR,      1),
                    'p_chave'           =>array($chave,             B_NUMERIC,     32),
@@ -19,7 +19,8 @@ class dml_CoPais {
                    'p_ddi'             =>array($p_ddi,             B_VARCHAR,     10),
                    'p_sigla'           =>array($p_sigla,           B_VARCHAR,      3),
                    'p_moeda'           =>array($p_moeda,           B_NUMERIC,     32),
-                   'p_continente'      =>array($p_continente,      B_NUMERIC,     32)
+                   'p_continente'      =>array($p_continente,      B_NUMERIC,     32),
+                   'p_codigo'          =>array($p_codigo,          B_VARCHAR,     60)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

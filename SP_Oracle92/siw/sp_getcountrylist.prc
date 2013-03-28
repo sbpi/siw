@@ -7,7 +7,7 @@ create or replace procedure SP_GetCountryList
 begin
    -- Recupera os paises existentes
    open p_result for 
-      select a.sq_pais, a.nome, coalesce(a.sigla,'-') as sigla, a.ddi, a.ativo, a.padrao,
+      select a.sq_pais, a.nome, coalesce(a.sigla,'-') as sigla, a.ddi, a.ativo, a.padrao, a.codigo_externo,
              case a.ativo  when 'S' then 'Sim' else 'Não' end as ativodesc, 
              case a.padrao when 'S' then 'Sim' else 'Não' end as padraodesc,
              case a.continente when 1 then 'América'

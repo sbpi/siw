@@ -23,7 +23,7 @@ class db_getCityList {
     $sql = new db_exec; $par = $sql->normalize($params); extract($par, EXTR_OVERWRITE);
 
     $SQL =  " select a.sq_cidade, a.sq_cidade, b.co_uf, c.nome as sq_pais, a.nome, coalesce(a.ddd,'-') as ddd,$crlf" .
-            "      case a.capital when 'S' then 'Sim' else 'Não' end as capital, a.aeroportos,$crlf" .
+            "      case a.capital when 'S' then 'Sim' else 'Não' end as capital, a.aeroportos, a.codigo_externo,$crlf" .
             "      coalesce(a.codigo_ibge,'-') as codigo_ibge,$crlf" .
             "      acentos(a.nome) as ordena$crlf" .
             " from co_cidade            a$crlf" .

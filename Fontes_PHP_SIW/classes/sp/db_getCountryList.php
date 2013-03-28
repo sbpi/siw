@@ -21,7 +21,7 @@ class db_getCountryList {
 
      $sql = new db_exec; $par = $sql->normalize($params); extract($par,EXTR_OVERWRITE);
 
-     $SQL = "select a.sq_pais, a.nome, coalesce(a.sigla,'-') as sigla, a.ddi, a.ativo, a.padrao,$crlf" .
+     $SQL = "select a.sq_pais, a.nome, coalesce(a.sigla,'-') as sigla, a.ddi, a.ativo, a.padrao, a.codigo_externo,$crlf" .
             "             case a.ativo  when 'S' then 'Sim' else 'Não' end as ativodesc,$crlf" .
             "             case a.padrao when 'S' then 'Sim' else 'Não' end as padraodesc,$crlf" .
             "             case a.continente when 1 then 'América'$crlf" .
