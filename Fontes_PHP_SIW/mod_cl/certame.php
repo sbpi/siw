@@ -2060,7 +2060,9 @@ function PesquisaPreco() {
       }
     }
   } elseif ($O=='P') {
-    $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null,null,null,null,null);
+    if (nvl($p_cpf.$p_cnpj.$p_nome,'')!='') {
+      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null,null,null,null,null);
+    }
   } elseif (strpos('L',$O)!==false) {
     // Verifica se é cotação ou proposta
     if ($w_pesquisa=='S') {
