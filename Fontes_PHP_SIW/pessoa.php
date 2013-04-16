@@ -974,7 +974,9 @@ function BuscaPessoa() {
     $p_restricao   = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
     $p_campo       = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
     $p_objeto      = nvl($SG,$_REQUEST['p_objeto']);
-    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null, null, null, null, null);
+    if ($p_nome!='' || $p_cpf!='' || $p_cnpj!='') {
+      $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null, null, null, null, null);
+    }
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
     head();
