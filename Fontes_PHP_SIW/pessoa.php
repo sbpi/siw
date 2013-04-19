@@ -1316,8 +1316,9 @@ function Grava() {
         if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
             if ($O=='I' || $O=='A') {
                 if ($_REQUEST['w_tipo_pessoa']==1 || $_REQUEST['w_tipo_pessoa']==3) {
+                  if (nvl($_REQUEST['w_cpf'],'')!='') {
                     // Verifica se já existe pessoa física com o CPF informado
-                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null);
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$_REQUEST['w_cpf'],null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null);
                     if (count($RS)>0) {
                         ScriptOpen('JavaScript');
                         ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -1325,8 +1326,10 @@ function Grava() {
                         retornaFormulario('w_cpf');
                         exit;
                     }
+                  }
+                  if (nvl($_REQUEST['w_nome'],'')!='') {
                     // Verifica se já existe pessoa física com o mesmo nome.
-                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,$_REQUEST['w_nome'],$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
                     if (count($RS)>0) {
                         foreach ($RS as $row) {
                             if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
@@ -1342,9 +1345,11 @@ function Grava() {
                             }
                         }
                     }
+                  }
                 } else {
+                  if (nvl($_REQUEST['w_cnpj'],'')!='') {
                     // Verifica se já existe pessoa jurídica com o CNPJ informado
-                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
+                    $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,$_REQUEST['w_cnpj'],null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
                     if (count($RS)>0) {
                         ScriptOpen('JavaScript');
                         ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
@@ -1352,7 +1357,9 @@ function Grava() {
                         retornaFormulario('w_cnpj');
                         exit;
                     }
+                  }
 
+                  if (nvl($_REQUEST['w_nome'],'')!='') {
                     // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
                     $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
                     if (count($RS)>0) {
@@ -1370,6 +1377,7 @@ function Grava() {
                             }
                         }
                     }
+                  }
                 }
             }
 
