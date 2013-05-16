@@ -19,18 +19,19 @@ begin
                 c.username,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
            from co_pessoa                       a
-                 left    join co_pessoa_fisica  b on (a.sq_pessoa      = b.sq_pessoa)
-                 left    join sg_autenticacao   c on (a.sq_pessoa      = c.sq_pessoa) 
-                    left join eo_unidade        d on (c.sq_unidade     = d.sq_unidade)
-                    left join eo_localizacao    e on (c.sq_localizacao = e.sq_localizacao)
-          where a.sq_pessoa_pai = p_cliente
-            and (p_nome       is null or (p_nome       is not null and (a.nome_indice like '%'||upper(acentos(p_nome))||'%' or 
-                                                                        a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
-                                                                       )
-                                         )
+                left    join co_pessoa_fisica   b  on (a.sq_pessoa      = b.sq_pessoa)
+                left    join sg_autenticacao    c  on (a.sq_pessoa      = c.sq_pessoa) 
+                   left join eo_unidade         d  on (c.sq_unidade     = d.sq_unidade)
+                   left join eo_localizacao     e  on (c.sq_localizacao = e.sq_localizacao)
+          where a.sq_pessoa_pai  = p_cliente
+            and a.sq_tipo_pessoa in (1,3)
+            and (p_nome          is null or (p_nome       is not null and (a.nome_indice like '%'||upper(acentos(p_nome))||'%' or 
+                                                                           a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                          )
+                                            )
                 )
-            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
-            and (p_restricao  <> 'NOVOUSO' or (p_restricao = 'NOVOUSO' and c.username is null))
+            and (p_sg_unidade    is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
+            and (p_restricao     <> 'NOVOUSO' or (p_restricao = 'NOVOUSO' and c.username is null))
          order by a.nome_indice;
    Elsif p_restricao = 'TODOS' Then
       -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
