@@ -2281,7 +2281,8 @@ function FormataTempo($p_segundos) {
 // Função que formata valores com separadores de milhar e decimais
 // -------------------------------------------------------------------------
 function FormatNumber($valor, $decimais=2) {
-  return number_format($valor,$decimais,',','.');
+  if (is_numeric($valor)) return number_format($valor,$decimais,',','.');
+  else return $valor;
 }
 
 // =========================================================================
