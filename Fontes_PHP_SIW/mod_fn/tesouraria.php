@@ -591,7 +591,7 @@ function Inicial() {
           } elseif (f($row,'sigla')=='FNDFUNDO') {
             $w_destino = 'pagfundo';
             $w_acao    = 'Pagar';
-          } elseif (f($row,'sigla')=='FNDFUNDO') {
+          } elseif (f($row,'sigla')=='FNDFIXO') {
             $w_destino = 'fundofixo';
             $w_acao    = 'Encerrar';
           } elseif (f($row,'sigla')=='FNAAPLICA') {
@@ -3240,7 +3240,7 @@ function Anotar() {
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
-  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.f($RS,'upload_maximo').'/1024. KBytes</b>.</font></td>');
+  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS_Cliente,'upload_maximo')/1024).'KBytes</b>.</font></td>');
   ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
   ShowHTML('      <tr><td><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="sti" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');

@@ -144,7 +144,7 @@ function Inicial() {
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
   if (nvl($w_atual,'')!='') {
     ShowHTML('&nbsp;'.LinkArquivo('HL',$w_cliente,$w_atual,'_blank','Clique para exibir o arquivo em outra janela.','Exibir',null));
-    ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" '.$w_Disabled.' name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
+    ShowHTML('<br><input '.$w_Disabled.' type="checkbox" '.$w_Disabled.' name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
   }
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');

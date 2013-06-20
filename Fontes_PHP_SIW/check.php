@@ -32,6 +32,7 @@ array_push($arrayFun,array('texto' => 'openssl_pkcs7_sign' ,'param' => 'openssl_
       
 // Diretivas INI
 array_push($arrayIni,array('texto' => 'allow_call_time_pass_ reference' ,'param' => 'allow_call_time_pass_reference','funcao'=> false,'test'=> 'On (1)'));
+array_push($arrayIni,array('texto' => 'display_errors' ,'param' => 'display_errors','funcao'=> false,'test'=> 'On (1)'));
 array_push($arrayIni,array('texto' => 'error_reporting' ,'param' => 'error_reporting','funcao'=> false,'test'=> 'E_ALL & ~E_NOTICE'));
 array_push($arrayIni,array('texto' => 'magic_quotes_gpc' ,'param' => 'magic_quotes_gpc','funcao'=> false,'test'=> '0'));
 array_push($arrayIni,array('texto' => 'max_execution_time' ,'param' => 'max_execution_time','funcao'=> false,'test'=> '300'));

@@ -33,6 +33,11 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
   if (count($l_rs_modulo)<=0) $l_financeiro='S'; else $l_financeiro='N';
   $l_erro='';
   $l_tipo='';
+
+  // Recupera os parâmetros de funcionamento do módulo
+  $sql = new db_getFNParametro; $l_rs_parametro = $sql->getInstanceOf($dbms,$p_cliente,null,null);
+  foreach($l_rs_parametro as $row) { $l_rs_parametro = $row; break; }
+
   // Recupera o trâmite atual da solicitação
   $sql = new db_getTramiteData; $l_rs_tramite = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
   //-----------------------------------------------------------------------------
@@ -40,11 +45,16 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
   // um encaminhamento independente da fase e em alguns casos quando a fase for
   // diferente de conclusão.
   // 1 - Verifica se o valor do lançamento é maior que zero
-  // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
+  // 2 - Verifica se o valor do lançamento é menor ou igual ao limite para fundo fixo
   //-----------------------------------------------------------------------------
   // 1 - Verifica se o valor do lançamento é maior que zero
   if (f($l_rs_solic,'valor')==0) {
     $l_erro.='<li>O lançamento não pode ter valor zero.';
+    $l_tipo=0;
+  }
+  // 2 - Verifica se o valor do lançamento é menor ou igual ao limite para fundo fixo
+  if (f($l_rs_solic,'valor')>f($l_rs_parametro,'fundo_fixo_valor')) {
+    $l_erro.='<li>O valor do fundo fixo (<b>R$ '.formatNumber(f($l_rs_solic,'valor')).'</b>) não pode exceder o limite de <b>R$ '.formatNumber(f($l_rs_parametro,'fundo_fixo_valor')).'</b>.';
     $l_tipo=0;
   }
   if (f($l_rs_solic,'ativo')=='S') {
