@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
 include_once('constants.inc');
 $w_dir_volta = $conDiretorio.'/';
 
@@ -30,11 +30,11 @@ $w_dir_volta = $conDiretorio.'/';
 //
 
 //Lê os parâmetros de chamada
-$w_cliente = 6881;
+$w_cliente = 17305;
 $w_dbms    = 1;
 $w_esquema = 'SIW';
 $w_opcao   = 'GERA';
-$w_usuario = 14054;
+$w_usuario = 17306;
 
 // Se foi disparado da interface Web, guarda os dados para uso futuro
 if (!isset($_SESSION['P_CLIENTE'])) $w_cliente_old  = $_SESSION['P_CLIENTE'];

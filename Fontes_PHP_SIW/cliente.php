@@ -702,8 +702,8 @@ function Enderecos() {
       }else{
         Validate('w_cep','Cep','1','','9','9','','0123456789-');
       }      
-      Validate('w_pais','Pais','SELECT','','1','10','','1');
-      Validate('w_uf','UF','SELECT','','1','10','1','1');
+      Validate('w_pais','Pais','SELECT','1','1','10','','1');
+      Validate('w_uf','UF','SELECT','1','1','10','1','1');
       Validate('w_cidade','Cidade','SELECT','1','1','10','','1');
       Validate('w_sq_tipo_endereco','Tipo','SELECT','1','1','10','','1');
       if ($_SESSION['P_PORTAL']=='') {
