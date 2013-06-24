@@ -190,7 +190,7 @@ if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 // Verifica se deve a tela de tesouraria deve ser exibida de forma resumida
 // O teste baseia-se no cliente. Lembrar de criar parâmetro no módulo financeiro
 $w_visao_completa = true;
-if ($_SESSION['P_CLIENTE']==10135 || $_SESSION['P_CLIENTE']==17305) $w_visao_completa = false;
+if ($_SESSION['P_CLIENTE']==10135) $w_visao_completa = false;
 
 if (nvl($SG,'')!='') {
   // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
@@ -437,7 +437,7 @@ function Inicial() {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Protocolo','protocolo').'</font></td>');
       }
       if ($w_visao_completa && $P2==1) {
-        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena((($P1==0) ? 'Vencimento' : 'Pagamento'),'dt_pagamento').'</td>');
+        $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena((($P1==0) ? 'Vencim.' : 'Pagam.'),'dt_pagamento').'</td>');
       } elseif ($P2>1) {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dt. Pag.','dt_pagamento').'</td>');
       }
@@ -451,10 +451,10 @@ function Inicial() {
       if ($w_visao_completa) {
         ShowHTML ('         <td rowspan="2"><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
         ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Forma','sg_forma_pagamento').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('BCO','cd_banco').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AGE','cd_agencia').'</td>');
-        ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('C/C','numero_conta').'</td>');
+        //ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Forma','sg_forma_pagamento').'</td>');
+        //ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('BCO','cd_banco').'</td>');
+        //ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('AGE','cd_agencia').'</td>');
+        //ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('C/C','numero_conta').'</td>');
       }
       if ($P2>1) ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Conta Débito','conta_debito').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan="2"><b>Operações</td>');
@@ -473,10 +473,10 @@ function Inicial() {
       if ($w_visao_completa) {
         ShowHTML('          <td rowspan="2"><b>Vinculação</td>');
         ShowHTML('          <td rowspan="2"><b>Projeto</td>');
-        ShowHTML('          <td rowspan="2"><b>Forma</td>');
-        ShowHTML('          <td rowspan="2"><b>BCO</td>');
-        ShowHTML('          <td rowspan="2"><b>AGE</td>');
-        ShowHTML('          <td rowspan="2"><b>C/C</td>');
+        //ShowHTML('          <td rowspan="2"><b>Forma</td>');
+        //ShowHTML('          <td rowspan="2"><b>BCO</td>');
+        //ShowHTML('          <td rowspan="2"><b>AGE</td>');
+        //ShowHTML('          <td rowspan="2"><b>C/C</td>');
       }
       if ($P2>1) ShowHTML('          <td rowspan="2"><b>Conta Débito</td>');
       ShowHTML('        </tr>');
@@ -566,14 +566,14 @@ function Inicial() {
             }
           }
           
-          if (substr(f($row,'sigla'),2,1)=='R') {
-            ShowHTML('        <td colspan=4>&nbsp;</td>');
-          } else {
-            ShowHTML('        <td'.((Nvl(f($row,'sg_forma_pagamento'),'')!='') ? ' title="'.f($row,'nm_forma_pagamento').'"' : '').'>'.Nvl(f($row,'sg_forma_pagamento'),'&nbsp;').'</td>');
-            ShowHTML('        <td align="center"'.((nvl(f($row,'cd_banco'),'')!='') ? ' title="'.f($row,'nm_banco').'"' : '').'>'.Nvl(f($row,'cd_banco'),'&nbsp;').'</td>');
-            ShowHTML('        <td align="center"'.((nvl(f($row,'cd_agencia'),'')!='') ? ' title="'.f($row,'nm_agencia').'"' : '').'>'.Nvl(f($row,'cd_agencia'),'&nbsp;').'</td>');
-            ShowHTML('        <td>'.Nvl(f($row,'numero_conta'),'&nbsp;').'</td>');
-          }
+          //if (substr(f($row,'sigla'),2,1)=='R') {
+          //  ShowHTML('        <td colspan=4>&nbsp;</td>');
+          //} else {
+          //  ShowHTML('        <td'.((Nvl(f($row,'sg_forma_pagamento'),'')!='') ? ' title="'.f($row,'nm_forma_pagamento').'"' : '').'>'.Nvl(f($row,'sg_forma_pagamento'),'&nbsp;').'</td>');
+          //  ShowHTML('        <td align="center"'.((nvl(f($row,'cd_banco'),'')!='') ? ' title="'.f($row,'nm_banco').'"' : '').'>'.Nvl(f($row,'cd_banco'),'&nbsp;').'</td>');
+          //  ShowHTML('        <td align="center"'.((nvl(f($row,'cd_agencia'),'')!='') ? ' title="'.f($row,'nm_agencia').'"' : '').'>'.Nvl(f($row,'cd_agencia'),'&nbsp;').'</td>');
+          //  ShowHTML('        <td>'.Nvl(f($row,'numero_conta'),'&nbsp;').'</td>');
+          //}
         }
         if ($P2>1) {
           if (nvl(f($row,'conta_debito'),'')!='') {
