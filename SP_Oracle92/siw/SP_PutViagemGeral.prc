@@ -10,6 +10,7 @@ create or replace procedure SP_PutViagemGeral
     p_tipo                in varchar2  default null,
     p_descricao           in varchar2  default null,
     p_agenda              in varchar2  default null,
+    p_observacao          in varchar2  default null,
     p_justif_dia_util     in varchar2  default null,
     p_inicio              in date      default null,
     p_fim                 in date      default null,
@@ -106,16 +107,16 @@ begin
       -- Insere registro em SIW_SOLICITACAO
       insert into siw_solicitacao (
          sq_siw_solicitacao, sq_menu,       sq_siw_tramite,      solicitante, 
-         cadastrador,        descricao,     justificativa,       inicio,
-         fim,                inclusao,      ultima_alteracao,    valor,
-         data_hora,          sq_unidade,    sq_cc,               sq_cidade_origem,
-         sq_solic_pai)
+         cadastrador,        descricao,     justificativa,       observacao,
+         inicio,             fim,           inclusao,            ultima_alteracao,
+         valor,              data_hora,     sq_unidade,          sq_cc, 
+         sq_cidade_origem,   sq_solic_pai)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_cadastrador,
-         p_cadastrador,      p_descricao,   null,                sysdate,
-         sysdate,            sysdate,       sysdate,             0,
-         p_data_hora,        p_unidade,     null,                d.sq_cidade,
-         Nvl(p_tarefa, p_projeto)
+         p_cadastrador,      p_descricao,   null,                p_observacao,
+         sysdate,            sysdate,       sysdate,             sysdate,
+         0,                  p_data_hora,   p_unidade,           null,
+         d.sq_cidade,        Nvl(p_tarefa, p_projeto)
          from siw_tramite                     a,
               sg_autenticacao                 b
                 inner   join eo_localizacao     c on (b.sq_localizacao     = c.sq_localizacao)
@@ -239,31 +240,32 @@ begin
 
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
-      Update siw_solicitacao set
-         solicitante      = p_cadastrador,
-         cadastrador      = p_cadastrador,
-         descricao        = trim(p_descricao),
-         ultima_alteracao = sysdate,
-         sq_unidade       = p_unidade,
-         sq_solic_pai     = Nvl(p_tarefa, p_projeto)
+      Update siw_solicitacao
+         set solicitante      = p_cadastrador,
+             cadastrador      = p_cadastrador,
+             descricao        = p_descricao,
+             observacao       = p_observacao,
+             ultima_alteracao = sysdate,
+             sq_unidade       = p_unidade,
+             sq_solic_pai     = Nvl(p_tarefa, p_projeto)
       where sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela de demandas
-      Update gd_demanda set
-          assunto          = p_agenda,
-          proponente       = p_proponente,
-          sq_unidade_resp  = p_unid_resp
+      Update gd_demanda 
+         set assunto          = p_agenda,
+             proponente       = p_proponente,
+             sq_unidade_resp  = p_unid_resp
       where sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela de demandas
-      Update pd_missao set
-          tipo                   = p_tipo,
-          justificativa_dia_util = nvl(p_justif_dia_util,justificativa_dia_util),
-          passagem               = p_passagem,
-          diaria                 = p_diaria,
-          hospedagem             = p_hospedagem,
-          veiculo                = p_veiculo,
-          sq_pdvinculo_bilhete   = w_financeiro
+      Update pd_missao
+         set tipo                   = p_tipo,
+             justificativa_dia_util = nvl(p_justif_dia_util,justificativa_dia_util),
+             passagem               = p_passagem,
+             diaria                 = p_diaria,
+             hospedagem             = p_hospedagem,
+             veiculo                = p_veiculo,
+             sq_pdvinculo_bilhete   = w_financeiro
       where sq_siw_solicitacao = p_chave;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Recupera os dados do menu

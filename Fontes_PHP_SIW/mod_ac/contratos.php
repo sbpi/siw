@@ -508,14 +508,15 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    $colspan = 0;
     if ($w_embed!='WORD') {    
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</font></td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','nm_acordo').'</font></td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</font></td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','nm_acordo').'</font></td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
-        if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Empenho','processo').'</font></td>');
-        else                        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Processo','processo').'</font></td>');
+        if (substr($SG,0,3)=='GCB') { $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Empenho','processo').'</font></td>'); }
+        else                        { $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Processo','processo').'</font></td>'); }
       }
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinc.','dados_pai').'</td>');
+      if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinc.','dados_pai').'</td>'); }
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Previsto','valor_contrato').'</font></td>');
@@ -531,20 +532,20 @@ function Inicial() {
       if ($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ShowHTML('          <td class="remover" rowspan=2><b>Operações</font></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>'.LinkOrdena('Início','inicio').'</font></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Fim','fim').'</font></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Início','inicio').'</font></td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fim','fim').'</font></td>');
       ShowHTML('          <td><b>'.LinkOrdena('IDEC','idcc').'</font></td>');
       ShowHTML('          <td colspan="2"><b>'.LinkOrdena('IDCC','idcc').'</font></td>');
       ShowHTML('          <td><b>'.LinkOrdena('IGCC','igcc').'</font></td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td rowspan=2><b>Código</font></td>');
-      ShowHTML('          <td rowspan=2><b>Título</font></td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>Código</font></td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>Título</font></td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
-         if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>Empenho</font></td>');
-         else                        ShowHTML('          <td rowspan=2><b>Processo</font></td>');
+         if (substr($SG,0,3)=='GCB') { $colspan++; ShowHTML('          <td rowspan=2><b>Empenho</font></td>'); }
+         else                        { $colspan++; ShowHTML('          <td rowspan=2><b>Processo</font></td>'); }
       }
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>Vinc.</td>');
+      if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td rowspan=2><b>Vinc.</td>'); }
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
         ShowHTML('          <td rowspan=2><b>$ Previsto</font></td>');
@@ -559,8 +560,8 @@ function Inicial() {
       ShowHTML('          <td colspan=4><b>Indicadores</font></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>Início</td>');
-      ShowHTML('          <td><b>Fim</td>');
+      $colspan++; ShowHTML('          <td><b>Início</td>');
+      $colspan++; ShowHTML('          <td><b>Fim</td>');
       ShowHTML('          <td><b>IDEC</td>');
       ShowHTML('          <td colspan="2"><b>IDCC</b></td>');
       ShowHTML('          <td><b>IGCC</td>');
@@ -569,8 +570,8 @@ function Inicial() {
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=14 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $w_parcial=0;
-      $w_atual=0;
+      $w_parcial = array();
+      $w_atual   = array();
       if($w_embed!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       } else   {
@@ -603,10 +604,10 @@ function Inicial() {
         } 
         if (substr($SG,0,3)!='GCA') {
           ShowHTML('        <td align="right">'.number_format(f($row,'valor_contrato'),2,',','.').'&nbsp;</td>');
-          $w_parcial += f($row,'valor_contrato'); 
+          $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor_contrato');
           if (strpos(upper($R),'GR_')!==false) {
             ShowHTML('        <td align="right">'.formatNumber(Nvl(f($row,'valor_contrato')-f($row,'saldo_contrato'),0)).'</td>');
-            $w_atual += (Nvl(f($row,'valor_contrato')-f($row,'saldo_contrato'),0));
+            $w_atual[f($row,'sb_moeda')] = nvl($w_atual[f($row,'sb_moeda')],0) + (Nvl(f($row,'valor_contrato')-f($row,'saldo_contrato'),0));
           } 
         }
         if ($P1!=1) {
@@ -681,25 +682,42 @@ function Inicial() {
         // Se não for cadastramento nem mesa de trabalho
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=6 align="right"><b>Total desta página&nbsp;</font></td>');
-          ShowHTML('          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</font></td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_parcial);
+          foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           if (strpos(upper($R),'GR_')!==false) {
-            ShowHTML('          <td align="right"><b>'.number_format($w_atual,2,',','.').'&nbsp;</font></td>');
+            ShowHTML('          <td align="right" nowrap><b>');
+            $i = 0;
+            ksort($w_atual);
+            foreach($w_atual as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+            echo('</td>');
           } 
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
+          $w_total = array();
           foreach($RS as $row) {
-            $w_real  += (f($row,'valor_contrato')-Nvl(f($row,'saldo_contrato'),0));
-            $w_total += f($row,'valor_contrato');
+            $w_total[f($row,'sb_moeda')] = nvl($w_total[f($row,'sb_moeda')],0) + f($row,'valor_contrato');
+            $w_real[f($row,'sb_moeda')]  = nvl($w_real[f($row,'sb_moeda')],0)  + (f($row,'valor_contrato')-Nvl(f($row,'saldo_contrato'),0));
           } 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=6 align="right"><b>Total da listagem&nbsp;</font></td>');
-          ShowHTML('          <td align="right"><b>'.number_format($w_total,2,',','.').'&nbsp;</font></td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').' da listagem&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_total);
+          foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           if (strpos(upper($R),'GR_')!==false) {
-            ShowHTML('          <td align="right"><b>'.number_format($w_real,2,',','.').'&nbsp;</font></td>');
+            ShowHTML('          <td align="right" nowrap><b>');
+            $i = 0;
+            ksort($w_real);
+            foreach($w_real as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+            echo('</td>');
           } 
           ShowHTML('          <td colspan=6>&nbsp;</font></td>');
           ShowHTML('        </tr>');

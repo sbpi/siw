@@ -248,17 +248,19 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <td>Agência:<b><br>---</td>';
         } 
       } elseif (f($RS,'sg_forma_pagamento')=='EXTERIOR') {
-        $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'          <td>Banco:<b><br>'.f($RS,'banco_estrang').'</td>';
-        $l_html.=chr(13).'          <td>ABA Code:<b><br>'.Nvl(f($RS,'aba_code'),'---').'</td>';
-        $l_html.=chr(13).'          <td>SWIFT Code:<b><br>'.Nvl(f($RS,'swift_code'),'---').'</td>';
-        $l_html.=chr(13).'          <tr><td colspan=3>Endereço da agência:<b><br>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
-        $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'          <td colspan=2>Agência:<b><br>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
-        $l_html.=chr(13).'          <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
-        $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'          <td colspan=2>Cidade:<b><br>'.f($RS,'nm_cidade').'</td>';
-        $l_html.=chr(13).'          <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
+        $l_html.=chr(13).'          <tr valign="top"><table border="0" width="100%">';
+        $l_html.=chr(13).'            <tr valign="top">';
+        $l_html.=chr(13).'              <td>Banco:<b><br>'.f($RS,'banco_estrang').'</td>';
+        $l_html.=chr(13).'              <td>ABA Code:<b><br>'.Nvl(f($RS,'aba_code'),'---').'</td>';
+        $l_html.=chr(13).'              <td>SWIFT Code:<b><br>'.Nvl(f($RS,'swift_code'),'---').'</td>';
+        $l_html.=chr(13).'            <tr><td colspan=3>Endereço da agência:<b><br>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
+        $l_html.=chr(13).'            <tr valign="top">';
+        $l_html.=chr(13).'              <td colspan=2>Agência:<b><br>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
+        $l_html.=chr(13).'              <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
+        $l_html.=chr(13).'            <tr valign="top">';
+        $l_html.=chr(13).'              <td colspan=2>Cidade:<b><br>'.f($RS,'nm_cidade').'</td>';
+        $l_html.=chr(13).'              <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
+        $l_html.=chr(13).'          </tr></table>';
       } 
     } 
     // Conta bancária da organização envolvida com o lançamento financeiro

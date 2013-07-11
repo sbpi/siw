@@ -429,7 +429,7 @@ function Inicial() {
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $w_parcial=0;
+      $w_parcial = array();
       if($w_tipo!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       else                $RS1 = $RS;
       foreach($RS1 as $row) {
@@ -471,7 +471,7 @@ function Inicial() {
         }
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'vencimento'),5),'-').'</td>');
         ShowHTML('        <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
-        $w_parcial += Nvl(f($row,'valor'),0);
+        $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor');
         if ($w_tipo!='WORD') {
           if ($_SESSION['INTERNO']=='S') {
             ShowHTML('        <td align="top" nowrap>');
@@ -481,7 +481,7 @@ function Inicial() {
                   // Se for cadastramento
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do lançamento">AL</A>&nbsp');
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do lançamento.">EX</A>&nbsp');
-                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
+                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">PE</a>&nbsp');
                   /*
                   if (!(strpos($SG,'FNR')===false)) {
                     $sql = new db_getsolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
@@ -501,7 +501,7 @@ function Inicial() {
                 if ($P1==2) {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-la.">AN</A>&nbsp');
                   if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
-                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
+                    ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">PE</a>&nbsp');
                     /*
                     if (!(strpos($SG,'FNR')===false)) {
                       $sql = new db_getsolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null,null,null);
@@ -542,32 +542,34 @@ function Inicial() {
         ShowHTML('      </tr>');
       } 
       if ($P1!=1) {
-        // Se não for cadastramento nem mesa de trabalho
+        // Se não for cadastramento
+        
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          if (strpos('CONT',substr($SG,3))===false && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
-            ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
-          } else {
-            ShowHTML('          <td colspan=5 align="right"><b>Total desta página&nbsp;</td>');
-          }
-          ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial,2).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_parcial);
+          foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
+
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
+          $w_total = array();
           foreach($RS as $row) {
-            if (f($row,'sg_tramite')=='AT') $w_total += f($row,'valor_atual');
-            else                            $w_total += f($row,'valor');
+            $w_total[f($row,'sb_moeda')] = nvl($w_total[f($row,'sb_moeda')],0) + f($row,'valor');
           } 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          if (strpos('CONT',substr($SG,3))===false && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
-            ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
-          } else {
-            ShowHTML('          <td colspan=5 align="right"><b>Total da listagem&nbsp;</td>');
-          }
-          ShowHTML('          <td align="right"><b>'.formatNumber($w_total,2).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').' da listagem&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_total);
+          foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 

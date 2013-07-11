@@ -11,8 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putViagemGeral {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_menu, $p_unidade, $p_unid_resp, $p_solicitante, 
-        $p_cadastrador, $p_tipo, $p_descricao, $p_agenda, $p_justificativa, $p_inicio, $p_fim, $p_data_hora, $p_aviso, 
-        $p_dias, $p_projeto, $p_atividade, $p_inicio_atual, $p_passagem, $p_diaria, $p_hospedagem, $p_veiculo, 
+        $p_cadastrador, $p_tipo, $p_descricao, $p_agenda, $p_observacao, $p_justificativa, $p_inicio, $p_fim, $p_data_hora,
+        $p_aviso, $p_dias, $p_projeto, $p_atividade, $p_inicio_atual, $p_passagem, $p_diaria, $p_hospedagem, $p_veiculo, 
         $p_proponente, $p_financeiro, $p_rubrica, $p_lancamento, $p_chave_nova, $p_copia, $p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putViagemGeral';
      $params=array('p_operacao'              =>array($operacao,                          B_VARCHAR,         1),
@@ -26,6 +26,7 @@ class dml_putViagemGeral {
                    'p_tipo'                  =>array(tvl($p_tipo),                       B_VARCHAR,         1),
                    'p_descricao'             =>array(tvl($p_descricao),                  B_VARCHAR,      2000),
                    'p_agenda'                =>array(tvl($p_agenda),                     B_VARCHAR,      2000),
+                   'p_observacao'            =>array(tvl($p_observacao),                 B_VARCHAR,      2000),
                    'p_justificativa'         =>array(tvl($p_justificativa),              B_VARCHAR,      2000),
                    'p_inicio'                =>array(tvl($p_inicio),                     B_DATE,           32),
                    'p_fim'                   =>array(tvl($p_fim),                        B_DATE,           32),

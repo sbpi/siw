@@ -149,6 +149,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Contato na ausência:</b></td><td colspan="12">'.nvl(f($RS,'proponente'),'---').' </td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Agenda:</b></td><td colspan="12">'.nvl(crLf2Br(f($RS,'assunto')),'---').' </td></tr>';
+      if (Nvl(f($RS,'observacao'),'')>'') {
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Outras fontes de financiamento:</b></td><td colspan="12">'.crLf2Br(f($RS,'observacao')).' </td></tr>';
+      }
       if (Nvl(f($RS,'justificativa_dia_util'),'')>'') {
         // Se o campo de justificativa de dias úteis para estiver preenchido, exibe
         $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Justif. viagem contendo fim de semana/feriado:</b></td><td colspan="12">'.crLf2Br(f($RS,'justificativa_dia_util')).' </td></tr>';

@@ -2779,7 +2779,7 @@ function Tramitacao() {
       ShowHTML('    w_alerta=true; ');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert("As caixas selecionadas ser da mesma unidade arquivadora!"); ');
+      ShowHTML('    alert("As caixas selecionadas devem ser da mesma unidade arquivadora!"); ');
       ShowHTML('    return false;');
       ShowHTML('  } else if (w_alerta) {');
       ShowHTML('    alert("ALERTA: A unidade de destino é diferente da unidade arquivadora das caixas selecionadas!\nO sistema não impedirá o envio mas certifique-se que o destino está correto."); ');
@@ -2888,7 +2888,7 @@ function Tramitacao() {
     ShowHTML('<INPUT type="hidden" name="w_arq_setorial" value="'.(($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) ? 'S' : 'N').'">');
     ShowHTML('<INPUT type="hidden" name="w_descartar" value="'.(($p_tipo_despacho == f($RS_Parametro, 'despacho_eliminar')) ? 'S' : 'N').'">');
     ShowHTML(MontaFiltro('POST'));
-    if (count($RS) <= 0) {
+    if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan="9" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {

@@ -489,7 +489,7 @@ function Inicial() {
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=15 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $w_parcial=0;
+      $w_parcial = array();
       if($w_tipo!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       else                $RS1 = $RS;
       $w_alerta = false;
@@ -533,8 +533,9 @@ function Inicial() {
         }
         ShowHTML('        <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
         $w_valor = nvl(((f($row,'sg_tramite')=='AT') ? f($row,'valor_atual') : f($row,'valor')),0);
-        if     (substr(f($row,'sigla'),2,1)=='R' || f($row,'sigla')=='FNAAPLICA') $w_parcial += Nvl($w_valor,0);
-        elseif (substr(f($row,'sigla'),2,1)=='D') $w_parcial -= Nvl($w_valor,0);
+        if     (substr(f($row,'sigla'),2,1)=='R' || f($row,'sigla')=='FNAAPLICA') $w_valor == $w_valor;
+        elseif (substr(f($row,'sigla'),2,1)=='D') $w_valor = -1 * $w_valor;
+        $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + $w_valor;
 
         if ($w_valor==0 || f($row,'sigla')=='FNATRANSF')                          { ShowHTML('          <td>&nbsp;</td>'); }
         elseif (substr(f($row,'sigla'),2,1)=='R' || f($row,'sigla')=='FNAAPLICA') { ShowHTML('          <td align="center"><b>+</b></td>'); }
@@ -620,10 +621,10 @@ function Inicial() {
               }
               if (substr(f($row,'sigla'),0,3)!='FNA' && f($row,'sigla')!='FNDTARIFA' && f($row,'sigla')!='FNDREEMB') {
                 if ($w_visao_completa) {
-                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
+                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">PE</a>&nbsp');
                   if(nvl(f($row,'qtd_nota'),'')!='') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=Notas&R='.$w_pagina.$par.'&O=L&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Notas'.'&SG=NOTA').'\',\'Nota\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa os valores específicos para cada nota de empenho ligado a parcela.">NE</A>&nbsp');
                 } else {
-                  if (nvl(f($row,'pessoa'),'')=='' || substr(f($row,'sigla'),3)=='REEMB') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
+                  if (nvl(f($row,'pessoa'),'')=='' || substr(f($row,'sigla'),3)=='REEMB') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.nvl($w_menu,f($row,'sq_menu')).'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr(f($row,'sigla'),0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">PE</a>&nbsp');
                 }
               }
               if (f($row,'sigla')=='FNDTARIFA' || substr(f($row,'sigla'),0,3)=='FNA' || (f($row,'usuario_logado')=='S' && f($row,'sigla')!='FNDREEMB')) {
@@ -660,31 +661,43 @@ function Inicial() {
       if ($P2>1||$w_visao_completa) { 
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td align="right" colspan="'.$colspan.'"><b>Subtotal</td>');
-          ShowHTML('          <td align="right"><b>'.formatNumber(abs($w_parcial),2).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td align="right" colspan="'.$colspan.'"><b>Subtota'.((count($w_parcial)==1) ? 'l' : 'is').'</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_parcial);
+          foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber(abs($v),2)); $i++; }
+          echo('</td>');
           
-          if ($w_parcial>0)     ShowHTML('          <td align="center"><b>+</b></td>');
-          elseif ($w_parcial<0) ShowHTML('          <td align="center"><b>-</b></td>');
-          else                  ShowHTML('          <td>&nbsp;</td>');
+          ShowHTML('          <td align="center"><b>');
+          $i = 0;
+          foreach($w_parcial as $k => $v) { echo((($i) ? '<br>' : '').(($v>0) ? '+' : (($v<0) ? '-' : ''))); $i++; }
+          echo('</td>');
 
           ShowHTML('          <td colspan="8">&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
+          $w_total = array();
           foreach($RS as $row) {
             $w_valor = nvl(((f($row,'sg_tramite')=='AT') ? f($row,'valor_atual') : f($row,'valor')),0);
-            if (substr(f($row,'sigla'),2,1)=='R' || f($row,'sigla')=='FNAAPLICA') $w_total += Nvl($w_valor,0);
-            elseif (substr(f($row,'sigla'),2,1)=='D') $w_total -= Nvl($w_valor,0);
+            if (substr(f($row,'sigla'),2,1)=='R' || f($row,'sigla')=='FNAAPLICA') $$w_valor = $w_valor;
+            elseif (substr(f($row,'sigla'),2,1)=='D') $w_valor = -1 * $w_valor;
+            $w_total[f($row,'sb_moeda')] = nvl($w_total[f($row,'sb_moeda')],0) + $w_valor;
           } 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td align="right" colspan="'.$colspan.'"><b>Total</td>');
-          ShowHTML('          <td align="right"><b>'.formatNumber(abs($w_total),2).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td align="right" colspan="'.$colspan.'"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').'</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_total);
+          foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber(abs($v),2)); $i++; }
+          echo('</td>');
           
-          if ($w_total>0)     ShowHTML('          <td align="center"><b>+</b></td>');
-          elseif ($w_total<0) ShowHTML('          <td align="center"><b>-</b></td>');
-          else                ShowHTML('          <td>&nbsp;</td>');
+          ShowHTML('          <td align="center"><b>');
+          $i = 0;
+          foreach($w_total as $k => $v) { echo((($i) ? '<br>' : '').(($v>0) ? '+' : (($v<0) ? '-' : ''))); $i++; }
+          echo('</td>');
 
           ShowHTML('          <td colspan="8">&nbsp;</td>');
           ShowHTML('        </tr>');

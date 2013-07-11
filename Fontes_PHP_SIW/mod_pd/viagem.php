@@ -745,6 +745,7 @@ function Geral() {
     $w_sq_menu_relac = $_REQUEST['w_sq_menu_relac'];
     $w_sq_unidade_resp = $_REQUEST['w_sq_unidade_resp'];
     $w_assunto = $_REQUEST['w_assunto'];
+    $w_observacao = $_REQUEST['w_observacao'];
     $w_proponente = $_REQUEST['w_proponente'];
     $w_prioridade = $_REQUEST['w_prioridade'];
     $w_aviso = $_REQUEST['w_aviso'];
@@ -793,6 +794,7 @@ function Geral() {
       if (count($RS) > 0) {
         $w_sq_unidade_resp = f($RS, 'sq_unidade_resp');
         $w_assunto = f($RS, 'assunto');
+        $w_observacao = f($RS, 'observacao');
         $w_proponente = f($RS, 'proponente');
         $w_prioridade = f($RS, 'prioridade');
         $w_aviso = f($RS, 'aviso_prox_conc');
@@ -914,6 +916,7 @@ function Geral() {
     }
     Validate('w_proponente', 'Contato na ausência', '1', 1, 2, 90, '1', '1');
     Validate('w_assunto', 'Agenda da solicitação', '1', '1', 5, 2000, '1', '1');
+    Validate('w_observacao', 'Observações quanto a diferentes fontes de financiamento', '1', '', 5, 2000, '1', '1');
     ShowHTML('  if (theForm.w_diaria.selectedIndex==0 && (theForm.w_hospedagem[0].checked || theForm.w_veiculo[0].checked)) {');
     ShowHTML('     alert("Se houver despesa com hospedagem, é necessário informar a categoria das diárias!");');
     ShowHTML('     theForm.w_diaria.focus();');
@@ -1064,6 +1067,7 @@ function Geral() {
     }
     ShowHTML('      <tr><td><b>Contato na au<u>s</u>ência:</b><br><input ' . $w_Disabled . ' accesskey="S" type="text" name="w_proponente" class="sti" SIZE="60" MAXLENGTH="90" VALUE="' . $w_proponente . '" title="Indique pessoa para contato durante os dias de ausência."></td>');
     ShowHTML('      <tr><td colspan="4" valign="top"><b>A<u>g</u>enda:</b><br><textarea ' . $w_Disabled . ' accesskey="G" name="w_assunto" class="STI" ROWS=5 cols=75 title="Agenda das atividades durante todos os dias em que estiver ausente.">' . $w_assunto . '</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="4" valign="top"><b><u>O</u>utras fontes de financiamento:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75 title="Se a viagem for financiada por outro(s) projeto(s), além do indicado nesta tela, relacione cada um dos projetos/rubricas/tipos de despesa (bilhetes, diárias, hospedagem, veículo etc.)">' . $w_observacao . '</TEXTAREA></td>');
 
     ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -7932,14 +7936,14 @@ function Grava() {
           }
         }
         $SQL = new dml_putViagemGeral; $SQL->getInstanceOf($dbms, $O, $w_cliente,
-                        $_REQUEST['w_chave'], $_REQUEST['w_menu'], $_SESSION['LOTACAO'], $_REQUEST['w_sq_unidade_resp'],
-                        $_REQUEST['w_sq_prop'], $_SESSION['SQ_PESSOA'], $_REQUEST['w_tipo_missao'], $_REQUEST['w_descricao'],
-                        $_REQUEST['w_assunto'], $_REQUEST['w_justif_dia_util'], $_REQUEST['w_inicio'], $_REQUEST['w_fim'],
-                        $_REQUEST['w_data_hora'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_chave_pai'],
-                        $_REQUEST['w_demanda'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_passagem'],
-                        $_REQUEST['w_diaria'], $_REQUEST['w_hospedagem'], $_REQUEST['w_veiculo'], $_REQUEST['w_proponente'],
-                        $_REQUEST['w_financeiro'], $_REQUEST['w_rubrica'], $_REQUEST['w_lancamento'],
-                        &$w_chave_nova, $w_copia, &$w_codigo);
+                  $_REQUEST['w_chave'], $_REQUEST['w_menu'], $_SESSION['LOTACAO'], $_REQUEST['w_sq_unidade_resp'],
+                  $_REQUEST['w_sq_prop'], $_SESSION['SQ_PESSOA'], $_REQUEST['w_tipo_missao'], $_REQUEST['w_descricao'],
+                  $_REQUEST['w_assunto'], $_REQUEST['w_observacao'], $_REQUEST['w_justif_dia_util'], $_REQUEST['w_inicio'], 
+                  $_REQUEST['w_fim'], $_REQUEST['w_data_hora'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'], 
+                  $_REQUEST['w_chave_pai'], $_REQUEST['w_demanda'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_passagem'],
+                  $_REQUEST['w_diaria'], $_REQUEST['w_hospedagem'], $_REQUEST['w_veiculo'], $_REQUEST['w_proponente'],
+                  $_REQUEST['w_financeiro'], $_REQUEST['w_rubrica'], $_REQUEST['w_lancamento'],
+                  &$w_chave_nova, $w_copia, &$w_codigo);
         if ($O == 'I') {
           // Recupera os dados para montagem correta do menu
           $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms, $w_menu);
