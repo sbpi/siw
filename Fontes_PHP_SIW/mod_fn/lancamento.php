@@ -468,7 +468,7 @@ function Inicial() {
     $colspan = 0;
     if ($w_tipo!='WORD') {
       if (count($RS) && $P1==2) {
-        $colspan++; ShowHTML('          <td rowspan="2" class="remover" align="center"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></td>');
+        $colspan++; ShowHTML('          <td rowspan="2" align="center"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
       $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
@@ -540,6 +540,7 @@ function Inicial() {
       if($w_tipo!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
         if ($P1==2) {
+          ShowHTML('<span class="remover">');
           AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'LOTE', $w_pagina . $par, $O);
           ShowHTML('<INPUT type="hidden" name="p_agrega" value="'.$SG.'">');
           ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -548,6 +549,7 @@ function Inicial() {
           ShowHTML('<input type="hidden" name="w_lista[]" value=""></td>');
           if (nvl($_REQUEST['p_ordena'], '') == '') ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
           ShowHTML(MontaFiltro('POST'));
+          ShowHTML('</span>');
         }
       } else {
         $RS1 = $RS;
@@ -562,7 +564,7 @@ function Inicial() {
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         }
         if ($P1==2) {
-          ShowHTML('        <td class="remover" align="center" width="1%" nowrap>');
+          ShowHTML('        <td align="center" width="1%" nowrap><span class="remover">');
           ShowHTML('          <INPUT type="hidden" name="w_tramite[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'sq_siw_tramite') . '">');
           ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="' . f($row, 'codigo_interno') . '">');
           if (in_array(f($row, 'sq_siw_solicitacao'), $itens)) {
@@ -570,6 +572,7 @@ function Inicial() {
           } else {
             ShowHTML('          <input class="item" type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
           }
+          ShowHTML('        </span>');
         }
         ShowHTML('        <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
@@ -698,7 +701,7 @@ function Inicial() {
         // Se não for cadastramento
          
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
-        if (ceil(count($RS)/$P4)>1) {
+        if (ceil(count($RS)/$P4)>1 || 1==1) {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página&nbsp;</td>');
           ShowHTML('          <td align="right" nowrap><b>');
@@ -706,7 +709,7 @@ function Inicial() {
           ksort($w_parcial);
           foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
           echo('</td>');
-          if ($w_tipo!='WORD') ShowHTML('          <td>&nbsp;</td>');
+          if ($w_tipo!='WORD') ShowHTML('          <td class="remover">&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
 
@@ -723,7 +726,7 @@ function Inicial() {
           ksort($w_total);
           foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
           echo('</td>');
-          if ($w_tipo!='WORD') ShowHTML('          <td>&nbsp;</td>');
+          if ($w_tipo!='WORD') ShowHTML('          <td class="remover">&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 

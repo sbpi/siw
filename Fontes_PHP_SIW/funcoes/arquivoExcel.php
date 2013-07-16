@@ -15,6 +15,7 @@ function montaRelatorioXLS($conteudo = null){
   $conteudo = str_ireplace ('<img', '<x', str_replace ('</img', '</x', $conteudo));
   
   $conteudo = preg_replace("(<td(.class=(\"?)remover(\"?).*?)>(.*?)</td>)Ssi","",$conteudo);
+  $conteudo = preg_replace("(<span(.class=(\"?)remover(\"?).*?)>(.*?)</span>)Ssi","",$conteudo);
 
   header('Content-Type: application/vnd.ms-excel;');                 // This should work for IE & Opera
   header("Content-type: application/x-msexcel");                    // This should work for the rest
@@ -60,7 +61,7 @@ function montaRelatorioXLS($conteudo = null){
   $body.='      <x:ValidPrinterInfo/>'."\r\n";
   $body.='     </x:Print>'."\r\n";
   $body.='     <x:Selected/>'."\r\n";
-  $body.='     <x:ProtectContents>True</x:ProtectContents>'."\r\n";
+  $body.='     <x:ProtectContents>False</x:ProtectContents>'."\r\n";
   $body.='     <x:ProtectObjects>False</x:ProtectObjects>'."\r\n";
   $body.='     <x:ProtectScenarios>False</x:ProtectScenarios>'."\r\n";
   $body.='    </x:WorksheetOptions>'."\r\n";
