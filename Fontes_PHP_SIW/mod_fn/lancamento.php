@@ -738,7 +738,7 @@ function Inicial() {
       ShowHTML('<tr><td colspan=3><b>Observação: linhas na cor vermelha indicam pendência para pagamento.');
     }
     ShowHTML('<tr><td align="center" colspan=3>');
-    if ($w_tipo!='WORD') {
+    if (count($RS) && $w_tipo!='WORD') {
       if ($P1==2) {
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
         ShowHTML('  <table width="97%" border="0">');

@@ -346,7 +346,7 @@ function Inicial() {
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
     ScriptOpen('Javascript');
-      if ($O=='L' && count($RS) && $P1==2) {
+    if ($O=='L' && count($RS) && $P1==2) {
       ShowHTML('  $(document).ready(function() {');
       ShowHTML('    $("#marca_todos").click(function() {');
       ShowHTML('      var checked = this.checked;');
@@ -619,7 +619,7 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    if ($w_tipo!='WORD') {
+    if (count($RS) && $w_tipo!='WORD') {
       if ($P1==2) {
         ShowHTML('<span class="remover">');
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');

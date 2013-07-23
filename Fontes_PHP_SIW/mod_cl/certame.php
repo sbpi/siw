@@ -118,6 +118,7 @@ $w_pagina       = 'certame.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_cl/';
 $w_troca        = $_REQUEST['w_troca'];
+$w_volta        = $_REQUEST['w_volta'];
 
 $w_tipo         = $_REQUEST['w_tipo'];
 $w_copia        = $_REQUEST['w_copia'];
@@ -508,7 +509,7 @@ function Inicial() {
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $w_parcial=0;
+      $w_parcial = array();
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -546,7 +547,7 @@ function Inicial() {
         if ($P1!=1 || $w_pede_valor_pedido=='S') {
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
           if ($P1!=1) {
-            $w_parcial += f($row,'valor');
+            $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor');
             ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
             ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
           }
@@ -604,26 +605,34 @@ function Inicial() {
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
-      $w_colspan=4;
+      $colspan=4;
       if ($P1!=1 && $P1!=2) {
         // Se não for cadastramento nem mesa de trabalho
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total desta página&nbsp;</td>');
-          ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_parcial);
+          foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           ShowHTML('          <td colspan=4>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
-          reset($RS);
+          $w_total = array();
           foreach($RS as $row) {
-            $w_total += f($row,'valor');
+            $w_total[f($row,'sb_moeda')] = nvl($w_total[f($row,'sb_moeda')],0) + f($row,'valor');
           } 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total da listagem&nbsp;</td>');
-          ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').' da listagem&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_total);
+          foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           ShowHTML('          <td colspan=4>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
@@ -2086,7 +2095,7 @@ function PesquisaPreco() {
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - '.(($w_pesquisa=='S') ? 'Pesquisas de preço' : 'Propostas').'</TITLE>');
   Estrutura_CSS($w_cliente);
-  if (strpos('IAP',$O)!==false) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     Modulo();
     FormataCPF();
@@ -2096,7 +2105,7 @@ function PesquisaPreco() {
     FormataData();
     SaltaCampo();
     FormataValor();
-    if ($O=='I' || $O=='A') {
+    if (strpos('IAE',$O)!==false) {
       ShowHTML('  function valor(p_indice) {');
       ShowHTML('    var theForm = document.Form; ');
       ShowHTML('    if (theForm["w_chave_aux[]"][p_indice].checked) { ');
@@ -2169,7 +2178,7 @@ function PesquisaPreco() {
       ShowHTML('  }');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
-    } elseif ($O=='I' || $O=='A') {
+    } elseif (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1',1,2,60,'1','1');
       if ($w_tipo_pessoa==1) {
         if ($w_pesquisa=='S') {
@@ -2206,42 +2215,24 @@ function PesquisaPreco() {
       } else {
         Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
       }
-      if ($w_pesquisa=='S') {
-        Validate('w_ddd','DDD','1','',2,4,'','0123456789');
-        Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
-        Validate('w_nr_fax','Fax','1','',7,25,'1','1');
-        Validate('w_nr_celular','Celular','1','',7,25,'1','1');
-        Validate('w_logradouro','Endereço','1','',4,60,'1','1');
-        Validate('w_complemento','Complemento','1','',2,20,'1','1');
-        Validate('w_bairro','Bairro','1','',2,30,'1','1');
-        Validate('w_sq_pais','País','SELECT','',1,10,'1','1');
-        Validate('w_co_uf','UF','SELECT','',1,10,'1','1');
-        Validate('w_sq_cidade','Cidade','SELECT','',1,10,'','1');
-        if (Nvl($w_pd_pais,'S')=='S') {
-          Validate('w_cep','CEP','1','',9,9,'','0123456789-');
-        } else {
-          Validate('w_cep','CEP','1','',5,9,'','0123456789');
-        }
+      Validate('w_ddd','DDD','1','',2,4,'','0123456789');
+      Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
+      Validate('w_nr_fax','Fax','1','',7,25,'1','1');
+      Validate('w_nr_celular','Celular','1','',7,25,'1','1');
+      Validate('w_logradouro','Endereço','1','',4,60,'1','1');
+      Validate('w_complemento','Complemento','1','',2,20,'1','1');
+      Validate('w_bairro','Bairro','1','',2,30,'1','1');
+      Validate('w_sq_pais','País','SELECT','',1,10,'1','1');
+      Validate('w_co_uf','UF','SELECT','',1,10,'1','1');
+      Validate('w_sq_cidade','Cidade','SELECT','',1,10,'','1');
+      if (Nvl($w_pd_pais,'S')=='S') {
+        Validate('w_cep','CEP','1','',9,9,'','0123456789-');
       } else {
-        Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
-        Validate('w_nr_telefone','Telefone','1','1',7,25,'1','1');
-        Validate('w_nr_fax','Fax','1','',7,25,'1','1');
-        Validate('w_nr_celular','Celular','1','',7,25,'1','1');
-        Validate('w_logradouro','Endereço','1','1',4,60,'1','1');
-        Validate('w_complemento','Complemento','1','',2,20,'1','1');
-        Validate('w_bairro','Bairro','1','',2,30,'1','1');
-        Validate('w_sq_pais','País','SELECT','1',1,10,'1','1');
-        Validate('w_co_uf','UF','SELECT','1',1,10,'1','1');
-        Validate('w_sq_cidade','Cidade','SELECT','1',1,10,'','1');
-        if (Nvl($w_pd_pais,'S')=='S') {
-          Validate('w_cep','CEP','1','1',9,9,'','0123456789-');
-        } else {
-          Validate('w_cep','CEP','1','',5,9,'','0123456789');
-        }
+        Validate('w_cep','CEP','1','',5,9,'','0123456789');
       }
 
-    ShowHTML(' if( (theForm.w_ddd.value.length > 0) || (theForm.w_email.value.length > 0) || (theForm.w_logradouro.value.length > 0) ){');
-    ShowHTML('   if( (theForm.w_sq_pais.value == 0) || (theForm.w_co_uf.value == 0) || (theForm.w_sq_cidade.value == 0)  ){');
+      ShowHTML(' if( (theForm.w_ddd.value.length > 0) || (theForm.w_email.value.length > 0) || (theForm.w_logradouro.value.length > 0) ){');
+      ShowHTML('   if( (theForm.w_sq_pais.value == 0) || (theForm.w_co_uf.value == 0) || (theForm.w_sq_cidade.value == 0)  ){');
       ShowHTML('      alert("Dados do bloco endereço/telefone exigem o campo cidade preenchido!");');
       ShowHTML('      theForm.w_sq_pais.focus();');
       ShowHTML('      return false;');
@@ -2273,7 +2264,7 @@ function PesquisaPreco() {
         ShowHTML('    alert("Para licitação de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').' global, todos os itens deve ser selecionados!"); ');
         ShowHTML('    return false;');
         ShowHTML('  } else if (w_cont==1){');
-        ShowHTML('    return confirm(\'Nenhum item foi selecionado, deseja continuar?\'); ');
+        ShowHTML('    return confirm("Nenhum item foi selecionado, deseja continuar?"); ');
         ShowHTML('  }');
       } else {
         ShowHTML('  if (w_erro) {');
@@ -2306,6 +2297,13 @@ function PesquisaPreco() {
       ShowHTML('  }');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;'); 
+    } elseif ($O=='E') {
+      ShowHTML('  if (confirm("Confirma a exclusão do registro?")) {');
+      ShowHTML('    theForm.Botao[0].disabled=true;');
+      ShowHTML('    theForm.Botao[1].disabled=true;'); 
+      ShowHTML('  } else {'); 
+      ShowHTML('    return false;'); 
+      ShowHTML('  }'); 
     }
     ValidateClose();   
     ScriptClose();
@@ -2342,11 +2340,7 @@ function PesquisaPreco() {
   if ($O=='L') {
     ShowHTML('<tr><td>');
     if (count($RS)>0) {
-      if($w_pesquisa=='S') {
-        ShowHTML('                <a accesskey="C" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>P</u>esquisa de preços</a>&nbsp;');
-      } else {
-        ShowHTML('                <a accesskey="P" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>P</u>roposta</a>&nbsp;');
-      }
+      ShowHTML('                <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     }
     ShowHTML('                <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right">');
@@ -2355,35 +2349,37 @@ function PesquisaPreco() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     // Verifica se é cotação ou proposta
+    $colspan=0;
     if ($w_pesquisa=='S') {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Pedido','dados_pai').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','quantidade').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Pedido','dados_pai').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','quantidade').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
       ShowHTML('          <td colspan=3><b>Última pesquisa</b></td>');
-      ShowHTML('          <td rowspan=2 nowrap><b>'.LinkOrdena('Pesq. preços','qtd_cotacao').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2 nowrap><b>'.LinkOrdena('Pesq. preços','qtd_cotacao').'</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr align="center">');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>');
-      ShowHTML('          <td bgColor="#f0f0f0" nowrap><b>$ Médio</b></td>');
+      $colspan++; ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>');
+      $colspan++; ShowHTML('          <td bgColor="#f0f0f0" nowrap><b>$ Médio</b></td>');
     } else {
-      ShowHTML('          <td><b>Item</td>');
-      ShowHTML('          <td><b>Material</td>');
-      ShowHTML('          <td><b>Qtd.</td>');
-      ShowHTML('          <td><b>U.M.</td>');
-      ShowHTML('          <td><b>Fornecedor</td>');
-      ShowHTML('          <td><b>Dt.Prop.</b></td>');
-      ShowHTML('          <td><b>Dias Valid.</b></td>');
-      ShowHTML('          <td><b>$ Unitário</td>');
-      ShowHTML('          <td><b>Total</td>');
+      $colspan++; ShowHTML('          <td><b>Item</td>');
+      $colspan++; ShowHTML('          <td><b>Material</td>');
+      $colspan++; ShowHTML('          <td><b>Qtd.</td>');
+      $colspan++; ShowHTML('          <td><b>U.M.</td>');
+      $colspan++; ShowHTML('          <td><b>Fornecedor</td>');
+      $colspan++; ShowHTML('          <td><b>Dt.Prop.</b></td>');
+      $colspan++; ShowHTML('          <td><b>Dias Valid.</b></td>');
+      $colspan++; ShowHTML('          <td><b>$ Unitário</td>');
+      $colspan++; ShowHTML('          <td><b>Total</td>');
+      $colspan++; ShowHTML('          <td><b>Operações</td>');
       ShowHTML('        </tr>');
     }
     ShowHTML('        </tr>');    
-    if (count($RS)<=0) {
+    if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$colspan.' align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $w_atual        = 0;
@@ -2425,6 +2421,10 @@ function PesquisaPreco() {
           } else {
             ShowHTML('        <td colspan=5>&nbsp;</td>');
           }
+          ShowHTML('          <td>');
+          ShowHTML('            <a class="HL" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&w_volta=L&O=A&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_sq_pessoa='.f($row,'fornecedor').'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" title="Altera os dados da pesquisa de preços">AL</a>');
+          ShowHTML('            <a class="HL" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&w_volta=L&O=E&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_sq_pessoa='.f($row,'fornecedor').'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" title="Exclusão da pesquisa de preços">EX</a>');
+          ShowHTML('          </td>');
           ShowHTML('        </tr>');
           $w_item_lic   += f($row,'qtd_pedido');
         } else {
@@ -2448,6 +2448,11 @@ function PesquisaPreco() {
           }
           ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
           ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_item'),4),'---').'</td>');
+          ShowHTML('        <td>');
+          ShowHTML('          <a class="HL" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&w_volta=L&O=A&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_sq_pessoa='.f($row,'fornecedor').'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" title="Altera os dados da proposta">AL</a>');
+          ShowHTML('          <a class="HL" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&w_volta=L&O=E&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_sq_pessoa='.f($row,'fornecedor').'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" title="Exclusão da proposta">EX</a>');
+          ShowHTML('        </td>');
+          ShowHTML('      </tr>');
         }
       }
     } 
@@ -2459,7 +2464,8 @@ function PesquisaPreco() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
-  } elseif (strpos('IA',$O)!==false) {
+  } elseif (strpos('IAE',$O)!==false) {
+    if ($O=='E') $w_Disabled=' DISABLED ';
     //Formulário com os dados do fornecedor
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML(MontaFiltro('POST'));
@@ -2491,9 +2497,9 @@ function PesquisaPreco() {
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     if ($w_tipo_pessoa==1) {
-      ShowHTML('             <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+      ShowHTML('             <td><b><u>C</u>PF:<br><INPUT '.$w_Disabled.' ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
     } else {
-      ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
+      ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT '.$w_Disabled.' ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
     }
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
@@ -2566,20 +2572,24 @@ function PesquisaPreco() {
     if (count($RS)==0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      ShowHTML('<tr><td colspan="8" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-      ShowHTML('  Orientação:<ul>');
-      ShowHTML('  <li>Selecione os itens propostos pelo fornecedor e, para cada um deles, informe os dados solicitados.');
-      ShowHTML('  <li>O campo valor deve ser informado com quatro casas decimais. Ex: se valor for "25", informe "25,0000", digitando apenas os números.');
-      ShowHTML('  </ul></b></font></td>');
-
+      if ($O!='E') {
+        ShowHTML('<tr><td colspan="8" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+        ShowHTML('  Orientação:<ul>');
+        ShowHTML('  <li>Selecione os itens propostos pelo fornecedor e, para cada um deles, informe os dados solicitados.');
+        ShowHTML('  <li>O campo valor deve ser informado com quatro casas decimais. Ex: se valor for "25", informe "25,0000", digitando apenas os números.');
+        ShowHTML('  </ul></b></font></td>');
+        ShowHTML('</tr>');
+      }
 
       $w_cor=$conTrAlternateBgColor;
       $w_cont=0;
       ShowHTML('          <tr bgcolor="'.$w_cor.'" align="center">');
-      if (nvl($marca,'')!='') {
-        ShowHTML('            <td NOWRAP><font size="2"><input checked type="checkbox" name="marca" value="x" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
-      } else {
-        ShowHTML('            <td NOWRAP><font size="2"><input type="checkbox" name="marca" value="x" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
+      if ($O!='E') {
+        if (nvl($marca,'')!='') {
+          ShowHTML('            <td NOWRAP><font size="2"><input checked type="checkbox" name="marca" value="x" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
+        } else {
+          ShowHTML('            <td NOWRAP><font size="2"><input type="checkbox" name="marca" value="x" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
+        }
       }
       ShowHTML('            <td><b>Item</td>');
       ShowHTML('            <td><b>Nome</td>');
@@ -2601,12 +2611,14 @@ function PesquisaPreco() {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           $w_cont+= 1;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          if(nvl(f($row,'fornecedor_data'),'')!='' || nvl($w_chave_aux[$i],'')!='') {
-            ShowHTML('        <td align="center" valign="middle" '.((f($row,'classe')==3) ? 'rowspan="2"' : '').'><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');" checked>');
-            $w_Disabled = 'ENABLED';
-          } else {
-            ShowHTML('        <td align="center" valign="middle" '.((f($row,'classe')==3) ? 'rowspan="2"' : '').'><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');">');
-            $w_Disabled = 'DISABLED';
+          if ($O!='E') {
+            if(nvl(f($row,'fornecedor_data'),'')!='' || nvl($w_chave_aux[$i],'')!='') {
+              ShowHTML('        <td align="center" valign="middle" '.((f($row,'classe')==3) ? 'rowspan="2"' : '').'><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');" checked>');
+              $w_Disabled = 'ENABLED';
+            } else {
+              ShowHTML('        <td align="center" valign="middle" '.((f($row,'classe')==3) ? 'rowspan="2"' : '').'><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');">');
+              $w_Disabled = 'DISABLED';
+            }
           }
           ShowHTML('        <INPUT type="hidden" name="w_classe[]" value="'.f($row,'classe').'">');
           ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
@@ -2626,9 +2638,9 @@ function PesquisaPreco() {
             ShowHTML('        <td nowrap align="center"><input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl(nvl($w_dias[$i],f($row,'dias_validade_proposta')),f($row,'dias_validade_certame')).'" title="Dias de validade da proposta."></td>');
           }
           if(nvl(f($row,'fornecedor_valor'),'')!='') {
-            ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor[$i],formatNumber(f($row,'fornecedor_valor'),4)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
+            ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="13" MAXLENGTH="18" VALUE="'.nvl($w_valor[$i],formatNumber(f($row,'fornecedor_valor'),4)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
           } else {
-            ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor[$i],'').'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
+            ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="13" MAXLENGTH="18" VALUE="'.nvl($w_valor[$i],'').'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
           }
           ShowHTML('        </tr>');
           if (f($row,'classe')==3) {
@@ -2668,8 +2680,8 @@ function PesquisaPreco() {
     ShowHTML('</tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
-    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).montaFiltro('GET').'\';" name="Botao"  value="Cancelar">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="'.(($O=='E') ? 'Excluir' : 'Gravar').'">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&O='.((nvl($w_volta,'')!=='') ? $w_volta : 'P').'&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).montaFiltro('GET').'\';" name="Botao"  value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -4220,9 +4232,9 @@ function Grava() {
               if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
                 ScriptOpen('JavaScript');
                 if (nvl(f($row,'identificador_primario'),'')=='') {
-                  ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.\');');
+                  ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.");');
                 } else {
-                  ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CPF.\');');
+                  ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CPF.");');
                 }
                 ScriptClose();
                 retornaFormulario('w_cpf');
@@ -4235,7 +4247,7 @@ function Grava() {
           $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
+            ShowHTML('  alert("Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.");');
             ScriptClose();
             retornaFormulario('w_cnpj');
             exit;
@@ -4247,9 +4259,9 @@ function Grava() {
               if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {
                 ScriptOpen('JavaScript');
                 if (nvl(f($row,'identificador_primario'),'')=='') {
-                  ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.\');');
+                  ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.");');
                 } else {
-                  ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CNPJ.\');');
+                  ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CNPJ.");');
                 }
                 ScriptClose();
                 retornaFormulario('w_cnpj');
@@ -4258,28 +4270,32 @@ function Grava() {
             }
           }
         }
-      }
 
-      $SQL = new dml_putPessoa; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,'FORNECEDOR',
-          $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_tipo_vinculo'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
-          $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
-          $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],
-          $_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],$_REQUEST['w_passaporte_numero'],
-          $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
-          $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
-          $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-          $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,&$w_chave_nova);
-      // Apaga todos os itens cotados dessa solicitação
-      $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],null);
-      
-      // Insere as cotaçoes e atualiza a tabela de materiais
-      $SQL = new dml_putCLItemFornecedor; 
-      for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
-        if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
-          $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
-             $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
-             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa'],$_REQUEST['w_origem'][$i]);
-        } 
+        $SQL = new dml_putPessoa; $SQL->getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,'FORNECEDOR',
+            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_tipo_vinculo'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
+            $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
+            $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],
+            $_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],$_REQUEST['w_passaporte_numero'],
+            $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
+            $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
+            $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
+            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,&$w_chave_nova);
+
+        // Apaga todos os itens cotados dessa solicitação
+        $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],null);
+
+        // Insere as cotaçoes e atualiza a tabela de materiais
+        $SQL = new dml_putCLItemFornecedor; 
+        for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
+          if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
+            $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
+              $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
+              $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa'],$_REQUEST['w_origem'][$i]);
+          } 
+        }
+      } elseif ($O=='E') {
+        // Apaga todos os itens cotados dessa solicitação
+        $SQL = new dml_putCLItemFornecedor; $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$_REQUEST['w_fornecedor'],null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],null);
       }
       
       ScriptOpen('JavaScript');
