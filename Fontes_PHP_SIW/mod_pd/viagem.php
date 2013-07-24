@@ -469,11 +469,11 @@ function Inicial() {
       BodyOpenWord();
     } elseif ($w_troca > '') {
       // Se for recarga da página
-      BodyOpen('onLoad="document.Form.' . $w_troca . '.focus();\'');
+      BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();\'');
     } elseif (strpos('CP', $O) !== false) {
-      BodyOpen('onLoad="document.Form.p_projeto.focus();"');
+      BodyOpenClean('onLoad="document.Form.p_projeto.focus();"');
     } else {
-      BodyOpen('onLoad="this.focus();"');
+      BodyOpenClean('onLoad="this.focus();"');
     }
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
@@ -527,7 +527,7 @@ function Inicial() {
     $colspan = 0;
     if ($w_embed != 'WORD') {
       if (count($RS) && $P1==2) {
-        $colspan++; ShowHTML('          <td align="center"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
+        $colspan++; ShowHTML('          <td align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Nº', 'codigo_interno') . '</td>');
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Vinc.', 'dados_pai') . '</td>');
@@ -580,15 +580,15 @@ function Inicial() {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
         if ($P1==2) {
-          ShowHTML('        <td align="center" width="1%" nowrap><span class="remover">');
+          ShowHTML('        <td align="center"><span class="remover">');
           ShowHTML('          <INPUT type="hidden" name="w_tramite[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'sq_siw_tramite') . '">');
           ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="' . f($row, 'codigo_interno') . '">');
           if (in_array(f($row, 'sq_siw_solicitacao'), $itens)) {
-            ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+            ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
           } else {
-            ShowHTML('          <input class="item" type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+            ShowHTML('          <input class="item" type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
           }
-          ShowHTML('        </span>');
+          ShowHTML('        </span></td>');
         }
         ShowHTML('        <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row, 'sigla'), f($row, 'inicio'), f($row, 'fim'), f($row, 'inicio_real'), f($row, 'fim_real'), f($row, 'aviso_prox_conc'), f($row, 'aviso'), f($row, 'sg_tramite'), null));

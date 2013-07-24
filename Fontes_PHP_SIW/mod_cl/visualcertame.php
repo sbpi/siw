@@ -277,6 +277,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
     //Listagem dos itens da licitação
     $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
+    $RS1 = SortArray($RS1,'ordem','asc','valor_unidade','asc');
     if (count($RS1)>0) {
       $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc','dados_pai','asc'); 
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -303,14 +304,14 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       $l_html.=chr(13).'        </tr>';
       $w_total_preco  = 0;
-      $w_atual        = 0;
+      $w_atual        = 999;
       $w_exibe        = false;
       $w_item_lic     = 0;
       $w_item_comp    = 0;
       $w_item_unit    = 0;
       $w_cor=$conTrBgColor;
       foreach($RS1 as $row) { 
-        if ($w_atual!=f($row,'sq_material')) {
+        if ($w_atual>=f($row,'qtd_proposta')) {
           if ($w_exibe) {
             $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,0).'</td>';
@@ -329,7 +330,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.='<hr><b>DETALHAMENTO</b>: '.crLf2Br(f($row,'det_item'));
           }
           $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
-          $w_atual      = f($row,'sq_material');
+          $w_atual      = 0;
           $w_exibe      = false;
           $w_item_lic   = 0;
           $w_item_comp  = 0;
@@ -339,6 +340,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td colspan=4></td>';
           $w_exibe = true;
         }
+        $w_atual++;
         if($l_tipo!='WORD') $l_html.=chr(13).'        <td align="left" nowrap>'.nvl(exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N'),'---').'</td>';
         else                $l_html.=chr(13).'        <td align="left" nowrap>'.nvl(exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N','S'),'---').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
@@ -390,7 +392,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
   //Listagem das cotações da licitação
   $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'COTACAO');
-  $RS1 = SortArray($RS1,'nome','asc','valor_unidade','asc');
+  $RS1 = SortArray($RS1,'ordem','asc','valor_unidade','asc');
   $exibe=false;
   foreach($RS1 as $row) { 
     if(nvl(f($row,'nm_fornecedor'),'')!='') {
@@ -412,17 +414,18 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Total</td>';
     $l_html.=chr(13).'        </tr>';
     // Lista os registros selecionados para listagem
-    $w_atual        = 0;
+    $w_atual        = 999;
     foreach($RS1 as $row){ 
-      if ($w_atual!=f($row,'sq_material')) {
+      if ($w_atual>=f($row,'qtd_proposta')) {
          $l_html.=chr(13).'      <tr valign="top">';
          if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
          else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
-         $w_atual      = f($row,'sq_material');
+         $w_atual      = 0;
       } else {
         $l_html.=chr(13).'      <tr valign="top">';
       }
+      $w_atual++;
       if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
       else                $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
       $l_html.=chr(13).'        <td>'.f($row,'nm_origem').'</td>';
@@ -537,10 +540,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Proposto</td>';
     $l_html.=chr(13).'        </tr>';
     // Lista os registros selecionados para listagem
-    $w_atual        = 0;
+    $w_atual        = 999;
     foreach($RS1 as $row) { 
       $w_percentual_acrescimo = f($row,'percentual_acrescimo');
-      if ($w_atual!=f($row,'sq_material')) {
+      if ($w_atual>=f($row,'qtd_proposta')) {
          $l_html.=chr(13).'      <tr valign="top">';
          $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>';
          if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome');
@@ -557,10 +560,11 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
            // Exibe preço médio apenas se houver trâmite de pesquisa de preços
            $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),2),'---').'</td>';
          }
-         $w_atual      = f($row,'sq_material');
+         $w_atual = 0;
       } else {
         $l_html.=chr(13).'      <tr valign="top">';
       }
+      $w_atual++;
       if ($w_pede_valor_pedido=='S') {
         // Se a validade da proposta for menor que o exigido, destaca em vermelho
         if (nvl(f($row,'dias_validade_item'),0)>nvl(f($row,'dias_validade_proposta'),0)) {

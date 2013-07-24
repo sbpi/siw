@@ -743,74 +743,6 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   } 
 
   if ($O!='V') {
-    //Listagem dos itens do pedido de compra
-    $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
-    $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
-    if (count($RS1)>0) {  
-      $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-      $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
-      $l_html.=$crlf.'        <table width=100%  border="0" bordercolor="#00000">';
-      if (count($RS1)==0) {
-        // Se não foram selecionados registros, exibe mensagem
-        $l_html.=$crlf.'      <tr><td align="center"><b>Não foram encontrados registros.</b></td></tr>';
-      } else {
-        // Lista os registros selecionados para listagem
-        $w_total_preco = 0;
-        $i             = 0;
-        foreach($RS1 as $row){ 
-          if (f($row,'cancelado')=='S') $w_cor = ' BGCOLOR="'.$conTrBgColorLightRed2.'" '; else $w_cor = '';
-          $l_html.=$crlf.'      <tr valign="top" '.$w_cor.'>';
-          if (f($row,'cancelado')=='S') {
-            $l_html.=$crlf.'        <td rowspan="4"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
-          } else {
-            $l_html.=$crlf.'        <td rowspan="3"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
-          }
-          $l_html.=$crlf.'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
-          if ($l_tipo!='WORD'){
-            $l_html.=$crlf.'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
-          } else {
-            $l_html.=$crlf.'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
-          }
-          $l_html.=$crlf.'      </tr>';
-          $l_html.=$crlf.'      <tr valign="top">';
-          $l_html.=$crlf.'        <td>Fabricante:<br><b>'.f($row,'fabricante').'</b></td>';
-          $l_html.=$crlf.'        <td>Marca/Modelo:<br><b>'.f($row,'marca_modelo').'</b></td>';
-          $l_html.=$crlf.'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
-          $l_html.=$crlf.'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
-          $l_html.=$crlf.'      </tr>';
-          $l_html.=$crlf.'      <tr valign="top">';
-          if ($w_cliente==9614) {
-            $l_html.=$crlf.'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
-          } else {
-            $l_html.=$crlf.'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
-          }
-          $l_html.=$crlf.'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
-          if ($w_cliente==9614) {
-            $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
-          } else {
-            $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
-          }
-          
-          $l_html.=$crlf.'      </tr>';
-          if (f($row,'cancelado')=='S') {
-            $l_html.=$crlf.'      <tr>';
-            $l_html.=$crlf.'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
-            $l_html.=$crlf.'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
-            $l_html.=$crlf.'      </tr>';
-          }
-          $l_html.=$crlf.'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
-          $w_total_preco += f($row,'valor_item');
-        }
-        if ($w_cliente==9634) { // SMSSP trabalha com quantidades mensais
-          $l_html.=$crlf.'      <tr>';
-          $l_html.=$crlf.'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
-          $l_html.=$crlf.'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
-          $l_html.=$crlf.'      </tr>';
-        }
-        $l_html.=$crlf.'    </table></td></tr>';
-      } 
-    }
-  
     // Resumo financeiro do contrato
     $sql = new db_getAcordoParcela; $RS = $sql->getInstanceOf($dbms,$l_chave,null,'RESFIN',null,null,null,null,null,null,null);
     $RS = SortArray($RS,'inicio','asc', 'ini_aditivo', 'asc');
@@ -1132,68 +1064,62 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
     $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
     if (count($RS1)>0) {  
+      $w_total_preco = 0;
+      $i             = 0;
       $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
       $l_html.=$crlf.'        <table width=100%  border="0" bordercolor="#00000">';
-      if (count($RS1)==0) {
-        // Se não foram selecionados registros, exibe mensagem
-        $l_html.=$crlf.'      <tr><td align="center"><b>Não foram encontrados registros.</b></td></tr>';
-      } else {
-        // Lista os registros selecionados para listagem
-        $w_total_preco = 0;
-        $i             = 0;
-        foreach($RS1 as $row){ 
-          if (f($row,'cancelado')=='S') $w_cor = ' BGCOLOR="'.$conTrBgColorLightRed2.'" '; else $w_cor = '';
-          $l_html.=$crlf.'      <tr valign="top" '.$w_cor.'>';
-          if (f($row,'cancelado')=='S') {
-            $l_html.=$crlf.'        <td rowspan="4"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
-          } else {
-            $l_html.=$crlf.'        <td rowspan="3"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
-          }
-          $l_html.=$crlf.'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
-          if ($l_tipo!='WORD'){
-            $l_html.=$crlf.'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
-          } else {
-            $l_html.=$crlf.'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
-          }
-          $l_html.=$crlf.'      </tr>';
-          $l_html.=$crlf.'      <tr valign="top">';
-          $l_html.=$crlf.'        <td>Fabricante:<br><b>'.f($row,'fabricante').'</b></td>';
-          $l_html.=$crlf.'        <td>Marca/Modelo:<br><b>'.f($row,'marca_modelo').'</b></td>';
-          $l_html.=$crlf.'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
-          $l_html.=$crlf.'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
-          $l_html.=$crlf.'      </tr>';
-          $l_html.=$crlf.'      <tr valign="top">';
-          if ($w_cliente==9614) {
-            $l_html.=$crlf.'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
-          } else {
-            $l_html.=$crlf.'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
-          }
-          $l_html.=$crlf.'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
-          if ($w_cliente==9614) {
-            $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
-          } else {
-            $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
-          }
-          
-          $l_html.=$crlf.'      </tr>';
-          if (f($row,'cancelado')=='S') {
-            $l_html.=$crlf.'      <tr>';
-            $l_html.=$crlf.'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
-            $l_html.=$crlf.'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
-            $l_html.=$crlf.'      </tr>';
-          }
-          $l_html.=$crlf.'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
-          $w_total_preco += f($row,'valor_item');
+      foreach($RS1 as $row){ 
+        if (f($row,'cancelado')=='S') $w_cor = ' BGCOLOR="'.$conTrBgColorLightRed2.'" '; else $w_cor = '';
+        $l_html.=$crlf.'      <tr valign="top" '.$w_cor.'>';
+        if (f($row,'cancelado')=='S') {
+          $l_html.=$crlf.'        <td rowspan="4"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
+        } else {
+          $l_html.=$crlf.'        <td rowspan="3"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
         }
-        if ($w_cliente==9634) { // SMSSP trabalha com quantidades mensais
+        $l_html.=$crlf.'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
+        if ($l_tipo!='WORD'){
+          $l_html.=$crlf.'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
+        } else {
+          $l_html.=$crlf.'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
+        }
+        $l_html.=$crlf.'      </tr>';
+        $l_html.=$crlf.'      <tr valign="top">';
+        $l_html.=$crlf.'        <td>Fabricante:<br><b>'.f($row,'fabricante').'</b></td>';
+        $l_html.=$crlf.'        <td>Marca/Modelo:<br><b>'.f($row,'marca_modelo').'</b></td>';
+        $l_html.=$crlf.'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
+        $l_html.=$crlf.'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
+        $l_html.=$crlf.'      </tr>';
+        $l_html.=$crlf.'      <tr valign="top">';
+        if ($w_cliente==9614) {
+          $l_html.=$crlf.'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+        } else {
+          $l_html.=$crlf.'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+        }
+        $l_html.=$crlf.'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
+        if ($w_cliente==9614) {
+          $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+        } else {
+          $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+        }
+
+        $l_html.=$crlf.'      </tr>';
+        if (f($row,'cancelado')=='S') {
           $l_html.=$crlf.'      <tr>';
-          $l_html.=$crlf.'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
-          $l_html.=$crlf.'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
+          $l_html.=$crlf.'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
+          $l_html.=$crlf.'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
           $l_html.=$crlf.'      </tr>';
         }
-        $l_html.=$crlf.'    </table></td></tr>';
-      } 
+        $l_html.=$crlf.'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
+        $w_total_preco += f($row,'valor_item');
+      }
+      if ($w_cliente==9634) { // SMSSP trabalha com quantidades mensais
+        $l_html.=$crlf.'      <tr>';
+        $l_html.=$crlf.'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
+        $l_html.=$crlf.'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
+        $l_html.=$crlf.'      </tr>';
+      }
+      $l_html.=$crlf.'    </table></td></tr>';
     }
   
     if ($w_tipo_visao!=2 && $l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {

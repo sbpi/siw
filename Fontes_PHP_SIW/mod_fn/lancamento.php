@@ -468,7 +468,7 @@ function Inicial() {
     $colspan = 0;
     if ($w_tipo!='WORD') {
       if (count($RS) && $P1==2) {
-        $colspan++; ShowHTML('          <td rowspan="2" align="center"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
+        $colspan++; ShowHTML('          <td rowspan="2" align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
       $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
@@ -564,15 +564,15 @@ function Inicial() {
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         }
         if ($P1==2) {
-          ShowHTML('        <td align="center" width="1%" nowrap><span class="remover">');
+          ShowHTML('        <td align="center"><span class="remover">');
           ShowHTML('          <INPUT type="hidden" name="w_tramite[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'sq_siw_tramite') . '">');
           ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="' . f($row, 'codigo_interno') . '">');
           if (in_array(f($row, 'sq_siw_solicitacao'), $itens)) {
-            ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+            ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
           } else {
-            ShowHTML('          <input class="item" type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '"></td>');
+            ShowHTML('          <input class="item" type="CHECKBOX"  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
           }
-          ShowHTML('        </span>');
+          ShowHTML('        </span></td>');
         }
         ShowHTML('        <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
@@ -701,7 +701,7 @@ function Inicial() {
         // Se não for cadastramento
          
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
-        if (ceil(count($RS)/$P4)>1 || 1==1) {
+        if (ceil(count($RS)/$P4)>1) {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página&nbsp;</td>');
           ShowHTML('          <td align="right" nowrap><b>');

@@ -30,7 +30,7 @@ begin
             select h.sq_demanda_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_demanda_log is null 
                       then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
                    end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
@@ -90,7 +90,7 @@ begin
             select h.sq_projeto_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_projeto_log is null 
                       then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
                    end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
@@ -155,7 +155,7 @@ begin
             select h.sq_programa_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_programa_log is null 
                       then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
                    end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
@@ -220,7 +220,7 @@ begin
             select h.sq_acordo_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_acordo_log is null 
                       then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
                    end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
@@ -286,7 +286,7 @@ begin
             select h.sq_lancamento_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_lancamento_log is null 
                       then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
                    end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
@@ -346,7 +346,10 @@ begin
          -- Recupera os encaminhamentos de uma demanda
          open p_result for
             select h.sq_demanda_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
-                   case when h.sq_demanda_log is null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end as despacho,
+                   case when h.sq_demanda_log is null 
+                      then a.observacao 
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
+                   end as despacho,
                    'TRAMITACAO' as origem,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
@@ -435,7 +438,7 @@ begin
             select h.sq_programa_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_programa_log is null 
                       then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
+                      else a.observacao||case when h.despacho is null then '' else chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end
                    end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
