@@ -158,7 +158,7 @@ function Gerencial() {
       $w_linha++;
       $sql = new db_getSolicEtapa; $RS = $sql->getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
-    }     
+    }
     if ($p_sqcc>'') {
       $w_linha++;
       $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);

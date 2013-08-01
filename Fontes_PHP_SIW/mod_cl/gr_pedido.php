@@ -10,6 +10,7 @@ include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
+include_once($w_dir_volta.'classes/sp/db_getCcData.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
@@ -128,6 +129,10 @@ $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_agrega       = upper($_REQUEST['p_agrega']);
 $p_tamanho      = upper($_REQUEST['p_tamanho']);
 
+// Verifica se o cliente tem o módulo de projetos
+$sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PR');
+if (count($RS)>0) $w_pr='S'; else $w_pr='N'; 
+
 // Verifica se o cliente tem o módulo de protocolo e arquivo
 $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PA');
 if (count($RS)>0) $w_pa='S'; else $w_pa='N'; 
@@ -152,6 +157,11 @@ function Gerencial() {
   
   if ($O=='L' || $O=='V' || $p_tipo == 'WORD' || $p_tipo=='PDF') {
     $w_filtro='';
+    if ($p_sqcc>'') {
+      $w_linha++;
+      $sql = new db_getCCData; $RS = $sql->getInstanceOf($dbms,$p_sqcc);
+      $w_filtro .= '<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+    } 
     if ($p_projeto>'') {
       $w_linha++;
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
@@ -217,7 +227,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por mês de abertura';
         $RS1 = SortArray($RS1,'data_abertura','asc');
         break;
       case 'GRCLAUTORIZ':
@@ -227,7 +236,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por mês de autorização';
         $RS1 = SortArray($RS1,'data_autorizacao','asc');
         break;
       case 'GRCLUNIDADE':
@@ -237,7 +245,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por unidade solicitante';
         $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
         break;
       case 'GRCLPROJ':
@@ -247,7 +254,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por projeto';
         $RS1 = SortArray($RS1,'dados_pai','asc');
         break;
       case 'GRCLMODAL':
@@ -257,7 +263,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por modalidade';
         $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');
         break;
       case 'GRCLENQ':
@@ -267,7 +272,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por enquadramento';
         $RS1 = SortArray($RS1,'nm_enquadramento','asc');
         break;
       case 'GRCLSITUACAO':
@@ -277,7 +281,6 @@ function Gerencial() {
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
             $p_acao_ppa, null, $p_empenho, null);
-        $w_TP = ' - Por situação do certame';
         $RS1 = SortArray($RS1,'nm_lcsituacao','asc');
         break;
     } 
@@ -349,11 +352,9 @@ function Gerencial() {
 
     if ($O=='L') {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');
     } 
   } 
@@ -803,9 +804,16 @@ function Gerencial() {
     ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    // Se o cliente tem o módulo de projetos, permite filtragem por projeto.
     ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
-    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',null);
+    if ($w_pr=='S') {
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+      SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',null);
+    }
+    // Se a opção de menu permite classificação, exibe filtragem por classificação.
+    if (f($RS_Menu,'solicita_cc')=='S') {
+      SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC',null,2);
+    }
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     selecaoTipoMatServSubord('<u>T</u>ipo de material/serviço:','S','Selecione o grupo/subgrupo de material/serviço desejado.',null,$p_pais,'p_pais','SUBTODOS',null);

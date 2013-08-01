@@ -20,8 +20,9 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_tramite_ativo  = f($RS,'ativo');
   $w_certame        = f($RS,'certame');
   $w_gera_contrato  = f($RS,'gera_contrato');
+  $w_participantes  = f($RS,'minimo_participantes');
   $w_sb_moeda       = nvl(f($RS,'sb_moeda'),'');
-  
+
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
       Nvl(f($RS,'executor'),0)      == $l_usuario || 
@@ -191,7 +192,9 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if (nvl(f($RS,'sg_tramite'),'')=='AT') {
       if (f($RS,'sigla')=='CLLCCAD') {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-        if ($w_gera_contrato=='S') {
+        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+          $l_html.=chr(13).'   <tr valign="top"><td><b>Data de homologação:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_homologacao')),'---').'</font></td></tr>';
+        } elseif ($w_gera_contrato=='S') {
           $l_html.=chr(13).'   <tr valign="top"><td><b>Data de homologação:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_homologacao')),'---').'</font></td></tr>';
           $l_html.=chr(13).'   <tr valign="top"><td><b>Data Diário Oficial:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_diario_oficial')),'---').'</font></td></tr>';
           $l_html.=chr(13).'   <tr valign="top"><td><b>Página Diário Oficial:</b></font></td><td>'.nvl(f($RS,'pagina_diario_oficial'),'---').'</font></td></tr>';
@@ -209,7 +212,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           }
         }
 
-        if (nvl(f($RS,'executor'),'')!='') {
+        if (nvl(f($RS,'executor'),'')!='' and $w_participantes > 0) {
           $l_html.=chr(13).'    <tr><td><b>Responsável pelo pagamento:<b></td>';
           if (!($l_P1==4 || $l_tipo=='WORD')){
             $l_html.=chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'executor'),$TP,f($RS,'nm_exec')).'</b></td>';
@@ -227,51 +230,53 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
         }
         
-        $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'VENCEDOR');
-        $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VENCEDORES</b></font></td></tr>';  
-        $l_html.=chr(13).'      <tr><td colspan="2">';
-        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'        <tr valign="top">';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Item</td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Material</td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Qtd.</td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Vencedor</td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Dt.Prop.</b></td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Dias Validade</b></td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Valor</td>';
-        $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Total</td>';
-        $l_html.=chr(13).'        </tr>';
-        // Lista os registros selecionados para listagem
-        $w_total = 0;
-        foreach($RS1 as $row) { 
-          $w_percentual_acrescimo = f($row,'percentual_acrescimo');
-          $l_html.=chr(13).'      <tr valign="top">';
-          $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>';
-          if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
-          else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
-          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
-          if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
-          else                $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
-          $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'proposta_data'),5),'---').'</td>';
-          $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>';
-          if(formatNumber(f($row,'valor_unidade'),4)>formatNumber(0,4)) {
-            $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unidade'),4).'</td>';
-          } else {
-            $l_html.=chr(13).'        <td align="right">---</td>';
+        if ($w_participantes>0) {
+          $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'VENCEDOR');
+          $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
+          $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VENCEDORES</b></font></td></tr>';  
+          $l_html.=chr(13).'      <tr><td colspan="2">';
+          $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+          $l_html.=chr(13).'        <tr valign="top">';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Item</td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Material</td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Qtd.</td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Vencedor</td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Dt.Prop.</b></td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Dias Validade</b></td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Valor</td>';
+          $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Total</td>';
+          $l_html.=chr(13).'        </tr>';
+          // Lista os registros selecionados para listagem
+          $w_total = 0;
+          foreach($RS1 as $row) { 
+            $w_percentual_acrescimo = f($row,'percentual_acrescimo');
+            $l_html.=chr(13).'      <tr valign="top">';
+            $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>';
+            if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
+            else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+            $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
+            if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
+            else                $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
+            $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'proposta_data'),5),'---').'</td>';
+            $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>';
+            if(formatNumber(f($row,'valor_unidade'),4)>formatNumber(0,4)) {
+              $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unidade'),4).'</td>';
+            } else {
+              $l_html.=chr(13).'        <td align="right">---</td>';
+            }
+            if(f($row,'valor_item')>0) {
+              $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_item'),4).'</td>';
+            } else {
+              $l_html.=chr(13).'        <td align="right">---</td>';
+            }
+            $w_total += f($row,'valor_item');
           }
-          if(f($row,'valor_item')>0) {
-            $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_item'),4).'</td>';
-          } else {
-            $l_html.=chr(13).'        <td align="right">---</td>';
-          }
-          $w_total += f($row,'valor_item');
+          $l_html.=chr(13).'      <tr align="center">';
+          $l_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total,4).'</b></td>';
+          $l_html.=chr(13).'      </tr>';
+          $l_html.=chr(13).'    </table>';
         }
-        $l_html.=chr(13).'      <tr align="center">';
-        $l_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total,4).'</b></td>';
-        $l_html.=chr(13).'      </tr>';
-        $l_html.=chr(13).'    </table>';
       }
     } 
 
