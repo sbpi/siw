@@ -40,7 +40,7 @@ create or replace procedure SP_PutCLDados
 begin
    If p_restricao = 'PROT' Then
       -- Recupera a modalidade atual
-      select a.sq_lcmodalidade into w_sq_modalidade from cl_solicitacao a where sq_siw_solicitacao = p_chave;
+      select a.sq_lcmodalidade, a.numero_certame into w_sq_modalidade, w_numero_certame from cl_solicitacao a where sq_siw_solicitacao = p_chave;
       
       -- Recupera a sigla do serviço da solicitação
       select a.sigla into w_sigla_menu
@@ -54,7 +54,7 @@ begin
          processo        = coalesce(p_numero_processo,p_protocolo)
       Where sq_siw_solicitacao = p_chave;
       
-      If substr(w_sigla_menu,1,4) = 'CLLC' and (w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade)) Then
+      If substr(w_sigla_menu,1,4) = 'CLLC' and (coalesce(w_numero_certame,'#') <> p_numero_certame or (coalesce(w_sq_modalidade,0) <> p_sq_lcmodalidade)) Then
         -- Recupera o número do certame
         CL_CriaParametro(p_chave, w_numero_certame);
 

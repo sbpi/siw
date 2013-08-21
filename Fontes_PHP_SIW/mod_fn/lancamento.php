@@ -566,7 +566,7 @@ function Inicial() {
         if ($P1==2) {
           ShowHTML('        <td align="center"><span class="remover">');
           ShowHTML('          <INPUT type="hidden" name="w_tramite[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'sq_siw_tramite') . '">');
-          ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="' . f($row, 'codigo_interno') . '">');
+          ShowHTML('          <INPUT type="hidden" name="w_lista[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'codigo_interno') . '">');
           if (in_array(f($row, 'sq_siw_solicitacao'), $itens)) {
             ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
           } else {
@@ -5038,7 +5038,7 @@ function Grava() {
         if (Nvl($_POST['w_chave'][$i], '') > '') {
           $w_tramite = $_POST['w_tramite'][$_POST['w_chave'][$i]];
           $w_chave   = $_POST['w_chave'][$i];
-          $w_codigo  = $_POST['w_lista'][$i];
+          $w_codigo  = $_POST['w_lista'][$_POST['w_chave'][$i]];
 
           // Recupera dados do trâmite atual
           $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_tramite);

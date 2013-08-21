@@ -586,7 +586,7 @@ function Inicial() {
         if ($P1==2) {
           ShowHTML('        <td align="center"><span class="remover">');
           ShowHTML('          <INPUT type="hidden" name="w_tramite[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'sq_siw_tramite') . '">');
-          ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="' . f($row, 'codigo_interno') . '">');
+          ShowHTML('          <INPUT type="hidden" name="w_lista[' . f($row, 'sq_siw_solicitacao') . ']" value="' . f($row, 'codigo_interno') . '">');
           if (in_array(f($row, 'sq_siw_solicitacao'), $itens)) {
             ShowHTML('          <input class="item" type="CHECKBOX" CHECKED  name="w_chave[]" value="' . f($row, 'sq_siw_solicitacao') . '">');
           } else {
@@ -831,7 +831,7 @@ function Geral() {
     foreach($RS as $row) { $RS = $row; break; }
     if (count($RS)==0 ||(count($RS)>0 && f($RS,'solicita_compra')!='S')) {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para realizar compras/licitações. Entre em contato com os gestores do sistema!\');');
+      ShowHTML('  alert("ATENÇÃO: Sua lotação não tem permissão para realizar compras/licitações. Entre em contato com os gestores do sistema!");');
       ShowHTML('  history.back(1);');
       ScriptClose();
       exit;
@@ -989,7 +989,7 @@ function Geral() {
         ShowHTML('      if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
         ShowHTML('    }');
         ShowHTML('    if (w_erro) {');
-        ShowHTML('      alert(\'Você deve informar pelo menos um objetivo estratégico!\'); ');
+        ShowHTML('      alert("Você deve informar pelo menos um objetivo estratégico!"); ');
         ShowHTML('      return false;');
         ShowHTML('    }');
         ShowHTML('  }');
@@ -1003,11 +1003,11 @@ function Geral() {
           }
         }
         if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
-          ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+          ShowHTML('    alert("Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!");');
           ShowHTML('    theForm.w_plano.focus();');
           ShowHTML('    return false;');
         } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
-          ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+          ShowHTML('    alert("Informe um plano estratégico ou uma vinculação!");');
           ShowHTML('    theForm.w_plano.focus();');
           ShowHTML('    return false;');    
         }
@@ -1053,7 +1053,7 @@ function Geral() {
       Validate('w_dias','Dias de alerta do pedido','1','',1,3,'','0123456789');
       ShowHTML('  if (theForm.w_aviso[0].checked) {');
       ShowHTML('     if (theForm.w_dias.value == \'\') {');
-      ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
+      ShowHTML('        alert("Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!");');
       ShowHTML('        theForm.w_dias.focus();');
       ShowHTML('        return false;');
       ShowHTML('     }');
@@ -1157,7 +1157,7 @@ function Geral() {
     } else {
       if ($w_cadgeral=='N') {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para realizar compras/licitações. Entre em contato com os gestores do sistema!\');');
+        ShowHTML('  alert("ATENÇÃO: Sua lotação não tem permissão para realizar compras/licitações. Entre em contato com os gestores do sistema!");');
         ShowHTML('  history.back(1);');
         ScriptClose();
       } else {
@@ -1305,7 +1305,7 @@ function Itens() {
       ShowHTML('     if (theForm["w_item_pedido[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos um item!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos um item!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
     } elseif($O=='A') {
@@ -1582,8 +1582,8 @@ function ItensContrato() {
       Validate('p_codigo','Código interno','1','','2','30','1','1');
       Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
       Validate('p_sq_cc','Classificação','SELECT','','1','18','','1');
-      ShowHTML('if (theForm.p_nome.value==\'\' && theForm.p_codigo.value==\'\' && theForm.p_tipo_material.value==\'\' && theForm.p_sq_cc.value==\'\') {');
-      ShowHTML(' alert(\'Informe pelo menos um critério de filtragem!\');');
+      ShowHTML('if (theForm.p_nome.value=="" && theForm.p_codigo.value=="" && theForm.p_tipo_material.value=="" && theForm.p_sq_cc.value=="") {');
+      ShowHTML(' alert("Informe pelo menos um critério de filtragem!");');
       ShowHTML(' return false;');
       ShowHTML('}');
     } elseif($O=='Z') {
@@ -1598,16 +1598,16 @@ function ItensContrato() {
       ShowHTML('     if (theForm["w_sq_material[]"].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve informar pelo menos um item!\'); ');
+      ShowHTML('    alert("Você deve informar pelo menos um item!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
       ShowHTML('  for (i=1; i < theForm["w_sq_material[]"].length; i++) {');
       ShowHTML('    if((theForm["w_sq_material[]"][i].checked)&&(theForm["w_quantidade[]"][i].value==\'\')){');
-      ShowHTML('      alert(\'Para todas os itens selecionados você deve informar a quantidade!\'); ');
+      ShowHTML('      alert("Para todas os itens selecionados você deve informar a quantidade!"); ');
       ShowHTML('      return false;');
       ShowHTML('    }');
       ShowHTML('    if((theForm["w_sq_material[]"][i].checked)&&(theForm["w_quantidade[]"][i].value==\'0,00\')){');
-      ShowHTML('      alert(\'Para todas os itens selecionados você deve informar a quantidade maior que zero!\'); ');
+      ShowHTML('      alert("Para todas os itens selecionados você deve informar a quantidade maior que zero!"); ');
       ShowHTML('      return false;');
       ShowHTML('    }');
       ShowHTML('  }');
@@ -1629,11 +1629,11 @@ function ItensContrato() {
       }
       Validate('w_motivo','Motivo indisponibilidade','1','',2,500,'1','1');
       ShowHTML('  if (theForm.w_cancelado[0].checked && theForm.w_motivo.value=="") {');
-      ShowHTML('    alert(\'Informe o motivo da indisponibilidade!\'); ');
+      ShowHTML('    alert("Informe o motivo da indisponibilidade!"); ');
       ShowHTML('    theForm.w_motivo.focus(); ');
       ShowHTML('    return false;');
       ShowHTML('  } else if (theForm.w_cancelado[1].checked && theForm.w_motivo.value!="") {');
-      ShowHTML('    alert(\'Motivo da indisponibilidade só pode ser informado se o item estiver indisponível!\'); ');
+      ShowHTML('    alert("Motivo da indisponibilidade só pode ser informado se o item estiver indisponível!"); ');
       ShowHTML('    theForm.w_motivo.focus(); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
@@ -2303,12 +2303,12 @@ function PesquisaPreco() {
         Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
         Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
         ShowHTML('  if ((theForm.w_rg_numero.value+theForm.w_rg_emissao.value+theForm.w_rg_emissor.value)!="" && (theForm.w_rg_numero.value=="" || theForm.w_rg_emissor.value=="")) {');
-        ShowHTML('     alert(\'Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.\');');
+        ShowHTML('     alert("Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.");');
         ShowHTML('     theForm.w_rg_numero.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
         ShowHTML('  if ((theForm.w_passaporte_numero.value+theForm.w_sq_pais_passaporte[theForm.w_sq_pais_passaporte.selectedIndex].value)!="" && (theForm.w_passaporte_numero.value=="" || theForm.w_sq_pais_passaporte.selectedIndex==0)) {');
-        ShowHTML('     alert(\'Os campos passaporte e país emissor devem ser informados em conjunto!\');');
+        ShowHTML('     alert("Os campos passaporte e país emissor devem ser informados em conjunto!");');
         ShowHTML('     theForm.w_passaporte_numero.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
@@ -2552,7 +2552,7 @@ function PesquisaPreco() {
           ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_item'),4),'---').'</td>');
           ShowHTML('        <td>');
           if (nvl(f($row,'fornecedor'),'')!='') {
-            ShowHTML('          <a class="HL" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&w_volta=L&O=A&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_sq_pessoa='.f($row,'fornecedor').'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" title="Altera os dados da proposta">AL</a>');
+            ShowHTML('          <a class="HL" HREF="'.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&w_volta=L&O=A&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_sq_pessoa='.f($row,'fornecedor').'&w_pesquisa='.$w_pesquisa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" title="Altera ou exclui os dados da proposta.">AL</a>');
           }
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
@@ -3588,12 +3588,12 @@ function Encaminhamento() {
       } else {
         Validate('w_despacho','Despacho','','','1','2000','1','1');
         ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-        ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+        ShowHTML('     alert("Informe o despacho apenas se for devolução para a fase anterior!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-        ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value=="") {');
+        ShowHTML('     alert("Informe um despacho descrevendo o motivo da devolução!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
@@ -3862,7 +3862,7 @@ function Concluir() {
       ShowHTML('    }');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert(\'Você deve indicar o vencedor de cada um dos itens!\'); ');
+      ShowHTML('    alert("Você deve indicar o vencedor de cada um dos itens!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
     }
@@ -4028,17 +4028,17 @@ function SolicMail($p_solic,$p_tipo) {
       $w_file = $conFilePhysical.$w_cliente.'/'.'relatorio_'.str_replace('/','-',$w_nome).'.doc';
       if (!is_writable($conFilePhysical.$w_cliente)) {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: não há permissão de escrita no diretório.\\n'.$conFilePhysical.$w_cliente.'\');');
+        ShowHTML('  alert("ATENÇÃO: não há permissão de escrita no diretório.\\n'.$conFilePhysical.$w_cliente.'");');
         ScriptClose();
       } else {
         if (!$handle = fopen($w_file,'w')) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: não foi possível abrir o arquivo para escrita.\\n'.$w_file.'\');');
+          ShowHTML('  alert("ATENÇÃO: não foi possível abrir o arquivo para escrita.\\n'.$w_file.'");');
           ScriptClose();
         } else {
           if (!fwrite($handle, RelatorioViagem($p_solic))) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: não foi possível inserir o conteúdo do arquivo.\\n'.$w_file.'\');');
+            ShowHTML('  alert("ATENÇÃO: não foi possível inserir o conteúdo do arquivo.\\n'.$w_file.'");');
             ScriptClose();
             fclose($handle);
           } else {
@@ -4205,14 +4205,14 @@ function SolicMail($p_solic,$p_tipo) {
       // Remove o arquivo temporário
       if (!unlink($w_file)) {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: não foi possível remover o arquivo temporário.\\n'.$w_file.'\');');
+        ShowHTML('  alert("ATENÇÃO: não foi possível remover o arquivo temporário.\\n'.$w_file.'");');
         ScriptClose();
       }
     } 
     // Se ocorreu algum erro, avisa da impossibilidade de envio
     if ($w_resultado>'') {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\\n'.$w_resultado.'\');');
+      ShowHTML('  alert("ATENÇÃO: não foi possível proceder o envio do e-mail.\\n'.$w_resultado.'");');
       ScriptClose();
     } 
   } 
@@ -4247,7 +4247,7 @@ function Grava() {
         if ($O!='E') {
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$w_chave_nova,$_REQUEST['w_sq_lcmodalidade'],$_REQUEST['w_numero_processo'],
             $_REQUEST['w_abertura'],$_REQUEST['w_envelope_1'],$_REQUEST['w_envelope_2'],$_REQUEST['w_envelope_3'],
-            $_REQUEST['w_numero_certame'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            $_REQUEST['w_codigo'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
             $_REQUEST['w_protocolo'],null,null,null,null,null,null);
         }
         ScriptOpen('JavaScript');
@@ -4294,7 +4294,7 @@ function Grava() {
         foreach($RS as $row) { $RS = $row; break; }
         if (f($RS,'existe')==0) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Código inexistente!\');');
+          ShowHTML('  alert("Código inexistente!");');
           ScriptClose(); 
           retornaFormulario('w_codigo');
           exit;
@@ -4305,7 +4305,7 @@ function Grava() {
         foreach($RS as $row) { $RS1 = $row; break; }
         if (count($RS)>0 && nvl(f($RS1,'chave'),$_REQUEST['w_chave_aux'])!=$_REQUEST['w_chave_aux']) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Código já cadastrado neste documento!\');');
+          ShowHTML('  alert("Código já cadastrado neste documento!");');
           ScriptClose(); 
           retornaFormulario('w_codigo');
           exit;
@@ -4334,7 +4334,7 @@ function Grava() {
           $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
+            ShowHTML('  alert("Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.");');
             ScriptClose();
             retornaFormulario('w_cpf');
             exit;
@@ -4506,7 +4506,7 @@ function Grava() {
             if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
@@ -4516,7 +4516,7 @@ function Grava() {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -4543,7 +4543,7 @@ function Grava() {
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             }elseif(nvl($Field['name'],'')!=''){
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
               ScriptClose();
               retornaFormulario('w_caminho');
               exit();
@@ -4559,7 +4559,7 @@ function Grava() {
           $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
           ScriptClose();
           exit();
         } 
@@ -4586,7 +4586,7 @@ function Grava() {
               if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -4595,7 +4595,7 @@ function Grava() {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
-                  ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                  ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                   ScriptClose();
                   retornaFormulario('w_observacao');
                   exit();
@@ -4611,7 +4611,7 @@ function Grava() {
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
               } elseif(nvl($Field['name'],'')!='') {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_caminho');
                 exit();
@@ -4621,7 +4621,7 @@ function Grava() {
                 $_REQUEST['w_tramite'],'N',$_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
           } else {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+            ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
             ScriptClose();
           } 
           ScriptOpen('JavaScript');
@@ -4638,7 +4638,7 @@ function Grava() {
           }
           if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite']) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!\');');
+            ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!");');
             ScriptClose();
             exit();
           } else {
@@ -4692,7 +4692,7 @@ function Grava() {
           if (Nvl($_POST['w_chave'][$i], '') > '') {
             $w_tramite = $_POST['w_tramite'][$_POST['w_chave'][$i]];
             $w_chave   = $_POST['w_chave'][$i];
-            $w_codigo  = $_POST['w_lista'][$i];
+            $w_codigo  = $_POST['w_lista'][$_POST['w_chave'][$i]];
 
             // Recupera dados do trâmite atual
             $sql = new db_getTramiteData; $RS = $sql->getInstanceOf($dbms,$w_tramite);
@@ -4799,7 +4799,7 @@ function Grava() {
       break;
     default:
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+      ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
       ShowHTML('  history.back(1);');
       ScriptClose();
       break;
