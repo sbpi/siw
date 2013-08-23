@@ -110,8 +110,8 @@ begin
                 b6.sigla sg_moeda,       b6.simbolo sb_moeda,           b6.ativo at_moeda,
                 b7.sq_moeda sq_moeda_alt, b7.codigo cd_moeda_alt,       b7.nome nm_moeda_alt,
                 b7.sigla sg_moeda_alt,   b7.simbolo sb_moeda_alt,       b7.ativo at_moeda_alt,
-                case when b6.sq_moeda is not null and b7.sq_moeda is not null and b.inicio is not null
-                     then conversao(a.sq_pessoa, b.inicio, b6.sq_moeda, b7.sq_moeda, b.valor, 'V')
+                case when b6.sq_moeda is not null and b7.sq_moeda is not null
+                     then conversao(a.sq_pessoa, coalesce(b.inicio, b.inclusao), b6.sq_moeda, b7.sq_moeda, b.valor, 'V')
                      else 0
                 end valor_alt,
                 c.sq_tipo_unidade,       c.nome as nm_unidade_exec,     c.informal,

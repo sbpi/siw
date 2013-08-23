@@ -140,6 +140,9 @@ if (count($RS)>0) $w_pa='S'; else $w_pa='N';
 // Recupera a configuração do serviço
 $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
+// Variável para identificar a sigla do serviço
+$sigla = 'GRCL';
+
 Main();
 
 FechaSessao($dbms);
@@ -219,70 +222,23 @@ function Gerencial() {
     if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
     if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
+    // Recupera os dados a partir do filtro
+    $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+        $p_unidade,null,$p_ativo,$p_proponente,
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
+        $p_acao_ppa, null, $p_empenho, null);
+
     switch ($p_agrega) {
-      case 'GRCLABERTURA':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'data_abertura','asc');
-        break;
-      case 'GRCLAUTORIZ':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'data_autorizacao','asc');
-        break;
-      case 'GRCLUNIDADE':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
-        break;
-      case 'GRCLPROJ':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'dados_pai','asc');
-        break;
-      case 'GRCLMODAL':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');
-        break;
-      case 'GRCLENQ':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'nm_enquadramento','asc');
-        break;
-      case 'GRCLSITUACAO':
-        $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,null,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-            $p_acao_ppa, null, $p_empenho, null);
-        $RS1 = SortArray($RS1,'nm_lcsituacao','asc');
-        break;
+      case $sigla.'ABERTURA':      $RS1 = SortArray($RS1,'data_abertura','asc');         break;
+      case $sigla.'AUTORIZ':       $RS1 = SortArray($RS1,'data_autorizacao','asc');      break;
+      case $sigla.'UNIDADE':       $RS1 = SortArray($RS1,'nm_unidade_resp','asc');       break;
+      case $sigla.'CC':            $RS1 = SortArray($RS1,'nm_cc','asc');                 break;
+      case $sigla.'PROJ':          $RS1 = SortArray($RS1,'dados_pai','asc');             break;
+      case $sigla.'MODAL':         $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');       break;
+      case $sigla.'ENQ':           $RS1 = SortArray($RS1,'nm_enquadramento','asc');      break;
+      case $sigla.'SITUACAO':      $RS1 = SortArray($RS1,'nm_lcsituacao','asc');         break;
     } 
   } 
 
@@ -316,7 +272,7 @@ function Gerencial() {
       ValidateOpen('Validacao');
       Validate('p_empenho','Código','','','2','60','1','1');
       Validate('p_proponente','Material','','','2','60','1','');
-      if ($SG=='GRCLLIC') {
+      if ($SG==$sigla.'LIC') {
         Validate('p_palavra','Certame','','','2','14','1','1');
         Validate('p_regiao','Sequencial do protocolo','','','1','10','','0123456789');
         Validate('p_cidade','Ano do protocolo','','','4','4','','0123456789');
@@ -355,6 +311,7 @@ function Gerencial() {
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
       ShowHTML('<HR>');
     } 
   } 
@@ -379,27 +336,29 @@ function Gerencial() {
         ShowHTML('  function lista (filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
-          case 'GRCLENQ':       ShowHTML('     document.Form.p_acao_ppa.value=filtro;'); break;
-          case 'GRCLCIDADE':    ShowHTML('     document.Form.p_cidade.value=filtro;');   break;
-          case 'GRCLUNIDADE':   ShowHTML('     document.Form.p_unidade.value=filtro;');  break;
-          case 'GRCLPROJ':      ShowHTML('     document.Form.p_projeto.value=filtro;');  break;
-          case 'GRCLABERTURA':  ShowHTML('     document.Form.p_ini_i.value=filtro;');    break;
-          case 'GRCLAUTORIZ':
+          case $sigla.'ENQ':       ShowHTML('     document.Form.p_acao_ppa.value=filtro;'); break;
+          case $sigla.'CIDADE':    ShowHTML('     document.Form.p_cidade.value=filtro;');   break;
+          case $sigla.'UNIDADE':   ShowHTML('     document.Form.p_unidade.value=filtro;');  break;
+          case $sigla.'PROJ':      ShowHTML('     document.Form.p_projeto.value=filtro;');  break;
+          case $sigla.'CC':        ShowHTML('     document.Form.p_sqcc.value=filtro;');     break;
+          case $sigla.'ABERTURA':  ShowHTML('     document.Form.p_ini_i.value=filtro;');    break;
+          case $sigla.'AUTORIZ':
             ShowHTML('     document.Form.p_fim_i.value="01/"+filtro.substr(5,2)+"/"+filtro.substr(0,4);');
             break;
-          case 'GRCLMODAL':     ShowHTML('     document.Form.p_usu_resp.value=filtro;'); break;
-          case 'GRCLSITUACAO':  ShowHTML('     document.Form.p_uf.value=filtro;');       break;
+          case $sigla.'MODAL':     ShowHTML('     document.Form.p_usu_resp.value=filtro;'); break;
+          case $sigla.'SITUACAO':  ShowHTML('     document.Form.p_uf.value=filtro;');       break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
-          case 'GRCLENQ':       ShowHTML('    else document.Form.p_acao_ppa.value="'.$_REQUEST['p_acao_ppa'].'";'); break;
-          case 'GRCLCIDADE':    ShowHTML('    else document.Form.p_cidade.value="'.$_REQUEST['p_cidade'].'";');     break;
-          case 'GRCLUNIDADE':   ShowHTML('    else document.Form.p_unidade.value="'.$_REQUEST['p_unidade'].'";');   break;
-          case 'GRCLPROJ':      ShowHTML('    else document.Form.p_projeto.value="'.$_REQUEST['p_projeto'].'";');   break;
-          case 'GRCLABERTURA':  ShowHTML('    else document.Form.p_ini_i.value="'.$_REQUEST['p_ini_i'].'";');       break;
-          case 'GRCLAUTORIZ':   ShowHTML('    else document.Form.p_fim_i.value="'.$_REQUEST['p_fim_i'].'";');       break;
-          case 'GRCLMODAL':     ShowHTML('    else document.Form.p_usu_resp.value="'.$_REQUEST['p_usu_resp'].'";'); break;
-          case 'GRCLSITUACAO':  ShowHTML('    else document.Form.p_uf.value="'.$_REQUEST['p_uf'].'";');             break;
+          case $sigla.'ENQ':       ShowHTML('    else document.Form.p_acao_ppa.value="'.$_REQUEST['p_acao_ppa'].'";'); break;
+          case $sigla.'CIDADE':    ShowHTML('    else document.Form.p_cidade.value="'.$_REQUEST['p_cidade'].'";');     break;
+          case $sigla.'UNIDADE':   ShowHTML('    else document.Form.p_unidade.value="'.$_REQUEST['p_unidade'].'";');   break;
+          case $sigla.'PROJ':      ShowHTML('    else document.Form.p_projeto.value="'.$_REQUEST['p_projeto'].'";');   break;
+          case $sigla.'CC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');       break;
+          case $sigla.'ABERTURA':  ShowHTML('    else document.Form.p_ini_i.value="'.$_REQUEST['p_ini_i'].'";');       break;
+          case $sigla.'AUTORIZ':   ShowHTML('    else document.Form.p_fim_i.value="'.$_REQUEST['p_fim_i'].'";');       break;
+          case $sigla.'MODAL':     ShowHTML('    else document.Form.p_usu_resp.value="'.$_REQUEST['p_usu_resp'].'";'); break;
+          case $sigla.'SITUACAO':  ShowHTML('    else document.Form.p_uf.value="'.$_REQUEST['p_uf'].'";');             break;
         } 
         $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
@@ -427,14 +386,15 @@ function Gerencial() {
         ShowHTML(MontaFiltro('POST'));
         ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
         switch ($p_agrega) {
-          case 'GRCLENQ':       if ($_REQUEST['p_acao_ppa']=='') ShowHTML('<input type="Hidden" name="p_acao_ppa" value="">');  break;
-          case 'GRCLCIDADE':    if ($_REQUEST['p_cidade']=='')   ShowHTML('<input type="Hidden" name="p_cidade" value="">');    break;
-          case 'GRCLUNIDADE':   if ($_REQUEST['p_unidade']=='')  ShowHTML('<input type="Hidden" name="p_unidade" value="">');   break;
-          case 'GRCLPROJ':      if ($_REQUEST['p_projeto']=='')  ShowHTML('<input type="Hidden" name="p_projeto" value="">');   break;
-          case 'GRCLABERTURA':  if ($_REQUEST['p_ini_i']=='')    ShowHTML('<input type="Hidden" name="p_ini_i" value="">');     break;
-          case 'GRCLAUTORIZ':   if ($_REQUEST['p_fim_i']=='')    ShowHTML('<input type="Hidden" name="p_fim_i" value="">');     break;
-          case 'GRCLMODAL':     if ($_REQUEST['p_usu_resp']=='') ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');  break;
-          case 'GRCLSITUACAO':  if ($_REQUEST['p_uf']=='')       ShowHTML('<input type="Hidden" name="p_uf" value="">');        break;
+          case $sigla.'ENQ':       if ($_REQUEST['p_acao_ppa']=='') ShowHTML('<input type="Hidden" name="p_acao_ppa" value="">');  break;
+          case $sigla.'CIDADE':    if ($_REQUEST['p_cidade']=='')   ShowHTML('<input type="Hidden" name="p_cidade" value="">');    break;
+          case $sigla.'UNIDADE':   if ($_REQUEST['p_unidade']=='')  ShowHTML('<input type="Hidden" name="p_unidade" value="">');   break;
+          case $sigla.'PROJ':      if ($_REQUEST['p_projeto']=='')  ShowHTML('<input type="Hidden" name="p_projeto" value="">');   break;
+          case $sigla.'CC':        if ($_REQUEST['p_sqcc']=='')     ShowHTML('<input type="Hidden" name="p_sqcc" value="">');      break;
+          case $sigla.'ABERTURA':  if ($_REQUEST['p_ini_i']=='')    ShowHTML('<input type="Hidden" name="p_ini_i" value="">');     break;
+          case $sigla.'AUTORIZ':   if ($_REQUEST['p_fim_i']=='')    ShowHTML('<input type="Hidden" name="p_fim_i" value="">');     break;
+          case $sigla.'MODAL':     if ($_REQUEST['p_usu_resp']=='') ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');  break;
+          case $sigla.'SITUACAO':  if ($_REQUEST['p_uf']=='')       ShowHTML('<input type="Hidden" name="p_uf" value="">');        break;
         } 
       } 
       $w_nm_quebra  = '';
@@ -459,17 +419,17 @@ function Gerencial() {
       $t_totacima   = 0;
       foreach($RS1 as $row) {
         switch ($p_agrega) { 
-          case 'GRCLCIAVIAGEM':
-            if ($w_nm_quebra!=f($row,'nm_cia_viagem')) {
+          case $sigla.'CC':
+            if ($w_nm_quebra!=f($row,'nm_cc')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && ($w_linha+1)<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_cia_viagem'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_cc'));
               } 
-              $w_nm_quebra  = f($row,'nm_cia_viagem');
-              $w_chave      = f($row,'sq_cia_transporte');
+              $w_nm_quebra  = f($row,'nm_cc');
+              $w_chave      = f($row,'sq_cc');
               $w_qt_quebra  = 0;
               $t_solic      = 0;
               $t_cad        = 0;
@@ -483,7 +443,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLABERTURA':
+          case $sigla.'ABERTURA':
             if ($w_nm_quebra!=date('Y/m',f($row,'data_abertura'))) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -507,7 +467,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLAUTORIZ':
+          case $sigla.'AUTORIZ':
             if ($w_nm_quebra!=date('Y/m',f($row,'data_autorizacao'))) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -531,7 +491,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLCIDADE':
+          case $sigla.'CIDADE':
             if ($w_nm_quebra!=f($row,'nm_destino')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -555,7 +515,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLUNIDADE':
+          case $sigla.'UNIDADE':
             if ($w_nm_quebra!=f($row,'nm_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -579,7 +539,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLPROJ':
+          case $sigla.'PROJ':
             if ($w_nm_quebra!=piece(f($row,'dados_pai'),null,'|@|',2)) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -603,7 +563,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLENQ':
+          case $sigla.'ENQ':
             if (Nvl($w_nm_quebra,'')!=f($row,'nm_enquadramento')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -627,7 +587,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLMODAL':
+          case $sigla.'MODAL':
             if (Nvl($w_nm_quebra,'')!=f($row,'nm_lcmodalidade')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -651,7 +611,7 @@ function Gerencial() {
               $w_linha     += 1;
             } 
             break;
-          case 'GRCLSITUACAO':
+          case $sigla.'SITUACAO':
             if ($w_nm_quebra!=f($row,'nm_lcsituacao')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
@@ -693,14 +653,15 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case 'GRCLENQ':         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_enquadramento')); break;
-            case 'GRCLCIDADE':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_destino'));        break;
-            case 'GRCLUNIDADE':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
-            case 'GRCLPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.piece(f($row,'dados_pai'),null,'|@|',2));        break;
-            case 'GRCLABERTURA':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_abertura'));     break;
-            case 'GRCLAUTORIZ':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_autorizacao'));  break;
-            case 'GRCLMODAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcmodalidade'));   break;
-            case 'GRCLSITUACAO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcsituacao'));     break;
+            case $sigla.'ENQ':         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_enquadramento'));  break;
+            case $sigla.'CIDADE':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_destino'));        break;
+            case $sigla.'UNIDADE':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
+            case $sigla.'PROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.piece(f($row,'dados_pai'),null,'|@|',2)); break;
+            case $sigla.'CC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_cc'));            break;
+            case $sigla.'ABERTURA':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_abertura'));     break;
+            case $sigla.'AUTORIZ':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_autorizacao'));  break;
+            case $sigla.'MODAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcmodalidade'));   break;
+            case $sigla.'SITUACAO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_lcsituacao'));     break;
           } 
           $w_linha += 1;
         } 
@@ -737,7 +698,7 @@ function Gerencial() {
         $w_qt_quebra    += 1;
       } 
       ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-      if ($p_agrega!='GRCLCIAVIAGEM' && $p_agrega!='GRCLCIDADE') {
+      if ($p_agrega!=$sigla.'CIAVIAGEM' && $p_agrega!=$sigla.'CIDADE') {
         ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
         ShowHTML('          <td><b>Totais</td>');
         ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1,$p_agrega);
@@ -782,20 +743,23 @@ function Gerencial() {
     ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Apresentação</td>');
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="A" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
+    if (f($RS_Menu,'solicita_cc')=='S') {
+      ShowHTML('          <option value="'.$sigla.'CC" '.($p_agrega==($sigla.'CC') ? 'selected' : '').'>Classificação');
+    } 
     if (f($RS_Menu,'sigla')=='CLLCCAD') {
-      ShowHTML(' <option value="GRCLENQ"'.(($p_agrega=='GRCLENQ') ? ' SELECTED': '').'>Enquadramento');
-      //ShowHTML(' <option value="GRCLCIDADE"'.(($p_agrega=='GRCLCIDADE') ? ' SELECTED': '').'>Cidade destino');
-      ShowHTML(' <option value="GRCLABERTURA"'.(($p_agrega=='GRCLABERTURA') ? ' SELECTED': '').'>Mês de abertura');
+      ShowHTML(' <option value="'.$sigla.'ENQ"'.(($p_agrega==$sigla.'ENQ') ? ' SELECTED': '').'>Enquadramento');
+      //ShowHTML(' <option value="'.$sigla.'CIDADE"'.(($p_agrega==$sigla.'CIDADE') ? ' SELECTED': '').'>Cidade destino');
+      ShowHTML(' <option value="'.$sigla.'ABERTURA"'.(($p_agrega==$sigla.'ABERTURA') ? ' SELECTED': '').'>Mês de abertura');
     }
-    ShowHTML(' <option value="GRCLAUTORIZ"'.(($p_agrega=='GRCLAUTORIZ') ? ' SELECTED': '').'>Mês de autorização');
+    ShowHTML(' <option value="'.$sigla.'AUTORIZ"'.(($p_agrega==$sigla.'AUTORIZ') ? ' SELECTED': '').'>Mês de autorização');
     if (f($RS_Menu,'sigla')=='CLLCCAD') {
-      ShowHTML(' <option value="GRCLMODAL"'.(($p_agrega=='GRCLMODAL') ? ' SELECTED': '').'>Modalidade');
+      ShowHTML(' <option value="'.$sigla.'MODAL"'.(($p_agrega==$sigla.'MODAL') ? ' SELECTED': '').'>Modalidade');
     }
-    ShowHTML(' <option value="GRCLPROJ"'.(($p_agrega=='GRCLPROJ') ? ' SELECTED': '').'>Projeto');
+    if ($w_pr=='S') ShowHTML(' <option value="'.$sigla.'PROJ"'.(($p_agrega==$sigla.'PROJ') ? ' SELECTED': '').'>Projeto');
     if (f($RS_Menu,'sigla')=='CLLCCAD') {
-      ShowHTML(' <option value="GRCLSITUACAO"'.(($p_agrega=='GRCLSITUACAO') ? ' SELECTED': '').'>Situação do certame');
+      ShowHTML(' <option value="'.$sigla.'SITUACAO"'.(($p_agrega==$sigla.'SITUACAO') ? ' SELECTED': '').'>Situação do certame');
     }
-    ShowHTML(' <option value="GRCLUNIDADE"'.(($p_agrega=='' || $p_agrega=='GRCLUNIDADE') ? ' SELECTED': '').'>Unidade solicitante');
+    ShowHTML(' <option value="'.$sigla.'UNIDADE"'.(($p_agrega=='' || $p_agrega==$sigla.'UNIDADE') ? ' SELECTED': '').'>Unidade solicitante');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
     MontaRadioSN('<b>Limita tamanho do detalhamento?</b>',$p_tamanho,'p_tamanho');
@@ -821,15 +785,15 @@ function Gerencial() {
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td><b><U>C</U>ódigo '.(($SG=='GRCLLIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
-    if ($SG=='GRCLLIC') ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
+    ShowHTML('     <td><b><U>C</U>ódigo '.(($SG==$sigla.'LIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
+    if ($SG==$sigla.'LIC') ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
     //ShowHTML('     <td><b><U>D</U>escrição:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     //SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','VIAGEM',null);
     ShowHTML('   <tr valign="top">');
-    if ($SG=='GRCLLIC') {
+    if ($SG==$sigla.'LIC') {
       ShowHTML('     <td><b>Número d<u>o</u> certame:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14">');
       SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$p_usu_resp,null,'p_usu_resp',null,null);
       ShowHTML('<tr valign="top">');
@@ -837,7 +801,7 @@ function Gerencial() {
       //MontaRadioNS('<b>Apenas decisão judicial?</b>',$p_ativo,'p_ativo');
     }
     ShowHTML('   <tr valign="top">');
-    if ($SG=='GRCLLIC') {
+    if ($SG==$sigla.'LIC') {
       ShowHTML('     <td>');
       ShowHTML('       <b>E<u>v</u>entos do certame entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
       ShowHTML('       <br><b>A<u>u</u>torização entre:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
@@ -878,14 +842,15 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case 'GRCLENQ':         ShowHTML('          <td><b>Enquadramento</td>');        break;
-    case 'GRCLCIDADE':      ShowHTML('          <td><b>Cidade destino</td>');       break;
-    case 'GRCLUNIDADE':     ShowHTML('          <td><b>Unidade solicitante</td>');  break;
-    case 'GRCLPROJ':        ShowHTML('          <td><b>Projeto</td>');              break;
-    case 'GRCLABERTURA':    ShowHTML('          <td><b>Mês de abertura</td>');      break;
-    case 'GRCLAUTORIZ':     ShowHTML('          <td><b>Mês de autorizacao</td>');   break;
-    case 'GRCLMODAL':       ShowHTML('          <td><b>Modalidade</td>');           break;
-    case 'GRCLSITUACAO':    ShowHTML('          <td><b>Situação do certame</td>');  break;
+    case $sigla.'ENQ':         ShowHTML('          <td><b>Enquadramento</td>');        break;
+    case $sigla.'CIDADE':      ShowHTML('          <td><b>Cidade destino</td>');       break;
+    case $sigla.'UNIDADE':     ShowHTML('          <td><b>Unidade solicitante</td>');  break;
+    case $sigla.'PROJ':        ShowHTML('          <td><b>Projeto</td>');              break;
+    case $sigla.'CC':          ShowHTML('          <td><b>Classificação</font></td>'); break;
+    case $sigla.'ABERTURA':    ShowHTML('          <td><b>Mês de abertura</td>');      break;
+    case $sigla.'AUTORIZ':     ShowHTML('          <td><b>Mês de autorizacao</td>');   break;
+    case $sigla.'MODAL':       ShowHTML('          <td><b>Modalidade</td>');           break;
+    case $sigla.'SITUACAO':    ShowHTML('          <td><b>Situação do certame</td>');  break;
   } 
   ShowHTML('          <td><b>Total</td>');
   ShowHTML('          <td><b>Cad.</td>');

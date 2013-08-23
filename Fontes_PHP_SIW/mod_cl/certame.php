@@ -488,7 +488,7 @@ function Inicial() {
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
-  if($w_tipo!='WORD') {
+  if($w_embed!='WORD') {
     if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
@@ -501,12 +501,12 @@ function Inicial() {
     ShowHTML('<tr><td>');
     if ($P1==1 && $w_copia=='') {
       // Se for cadastramento e não for resultado de busca para cópia
-      if ($w_tipo!='WORD') { 
+      if ($w_embed!='WORD') { 
         ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;'); 
         ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
       }
     } 
-    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
+    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
       if ($w_copia>'') {
         // Se for cópia
         if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
@@ -533,8 +533,8 @@ function Inicial() {
       }
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Objeto','objeto').'</td>');
+      if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>'); }
       if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Processo','processo').'</td>'); }
-      //if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>'); }
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
       //$colspan++; ShowHTML('          <td><b>'.LinkOrdena('Data limite','fim').'</td>');
       if ($P1!=1 || $w_pede_valor_pedido=='S') {
@@ -550,6 +550,7 @@ function Inicial() {
       $colspan++; ShowHTML('          <td><b>Código</td>');
       $colspan++; ShowHTML('          <td><b>Objeto</td>');
       if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>Vinculação</td>'); }
+      if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td><b>Processo</td>'); }
       $colspan++; ShowHTML('          <td><b>Solicitante</td>');
       //$colspan++; ShowHTML('          <td><b>Data limite</td>');
       if ($P1!=1) {
@@ -563,7 +564,7 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="'.($colspan+4).'" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial = array();
-      if($w_tipo!='WORD') {
+      if($w_embed!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
         if ($P1==2) {
           ShowHTML('<span class="remover">');
@@ -602,6 +603,11 @@ function Inicial() {
           ShowHTML('&nbsp;'.f($row,'codigo_interno').'&nbsp;');
         }
         ShowHTML('        <td>'.f($row,'objeto').'</td>');
+        if ($_SESSION['INTERNO']=='S') {
+          if ($w_cliente==6881)                    ShowHTML('        <td>'.f($row,'sg_cc').'</td>');
+          elseif (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
+          else                                     ShowHTML('        <td>---</td>');
+        } 
         if ($w_pa=='S') {
           if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
             ShowHTML('        <td align="center" nowrap><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'processo').'&nbsp;</a>');
@@ -609,12 +615,6 @@ function Inicial() {
             ShowHTML('        <td align="center" nowrap>'.f($row,'processo'));
           }
         } elseif ($w_segmento=='Público') ShowHTML('        <td align="center">'.f($row,'processo').'</td>');        
-        /*
-        if ($_SESSION['INTERNO']=='S') {
-          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
-          else                                 ShowHTML('        <td>---</td>');
-        } 
-        */
         //ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'&nbsp;</td>');
         
         if ($w_embed!='WORD'){
@@ -632,8 +632,8 @@ function Inicial() {
             ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
           }
         } 
-        ShowHTML('        <td class="remover" width="1%" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6 && $w_embed != 'WORD') {
+          ShowHTML('        <td class="remover" width="1%" nowrap>');
           // Se não for acompanhamento
           if ($w_copia>'') {
             // Se for listagem para cópia
@@ -677,16 +677,18 @@ function Inicial() {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Concluir licitação.">CO</A>&nbsp');
             } 
           } 
+          ShowHTML('        </td>');
         } else {
           if ($w_embed!='WORD'){
+            ShowHTML('        <td class="remover" width="1%" nowrap>');
             if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o pedido para outro responsável.">EN</A>&nbsp');
             } else {
               ShowHTML('          ---&nbsp');
             } 
+            ShowHTML('        </td>');
           } 
         } 
-        ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
       if ($P1!=1) {
@@ -726,7 +728,7 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    if (count($RS) && $w_tipo!='WORD') {
+    if (count($RS) && $w_embed!='WORD') {
       if ($P1==2) {
         ShowHTML('<span class="remover">');
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan=3>');
@@ -2123,7 +2125,7 @@ function PesquisaPreco() {
     $w_marca_modelo         = $_REQUEST['w_marca_modelo'];
     $w_embalagem            = $_REQUEST['w_embalagem'];
     $w_fator                = $_REQUEST['w_fator'];
-  } elseif ($O=='A' || $w_sq_pessoa>'' || $O=='I') {
+  } elseif ($O!='L' && ($O=='A' || $w_sq_pessoa>'' || $O=='I')) {
     // Recupera os dados do fornecedor em co_pessoa
     $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
@@ -2181,12 +2183,12 @@ function PesquisaPreco() {
     }
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc','valor_unidade','asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc','valor_unit_est','asc');
     } else {
       if ($w_pesquisa=='S') {
         $RS = SortArray($RS,'nome','asc','valor_unidade','asc');
       } else {
-        $RS = SortArray($RS,'ordem','asc','nome','asc','valor_unidade','asc');
+        $RS = SortArray($RS,'ordem','asc','nome','asc','valor_unit_est','asc');
       }
     }
   } 
@@ -2483,12 +2485,13 @@ function PesquisaPreco() {
     } else {
       // Lista os registros selecionados para listagem
       $w_atual        = 999;
+      $rowspan        = 1;
       $w_exibe        = false;
       $w_item_lic     = 0;
       foreach($RS as $row){ 
         // Verifica se é cotação ou proposta
         if ($w_pesquisa=='S') {
-          if ($w_atual>=f($row,'qtd_proposta')) {
+          if ($w_atual>=$rowspan) {
             if ($w_exibe) {
               ShowHTML('      <tr bgcolor="'.$w_cor.'"><td colspan=3><td align="right" nowrap><b>Total do item</td>');
               ShowHTML('        <td align="right">'.formatNumber($w_item_lic,0).'</td>');
@@ -2500,6 +2503,7 @@ function PesquisaPreco() {
             ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
             ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
             $w_atual      = 0;
+            $rowspan      = f($row,'qtd_proposta');
             $w_exibe      = false;
             $w_item_lic   = 0;
           } else {
@@ -2529,7 +2533,7 @@ function PesquisaPreco() {
           ShowHTML('        </tr>');
           $w_item_lic   += f($row,'qtd_pedido');
         } else {
-          if ($w_atual>=f($row,'qtd_proposta')) {
+          if ($w_atual>=$rowspan) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
             ShowHTML('        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>');
@@ -2537,6 +2541,7 @@ function PesquisaPreco() {
             ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>');
             ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
             $w_atual = 0;
+            $rowspan = f($row,'qtd_proposta');
           } else {
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           }
@@ -3441,8 +3446,8 @@ function Visual() {
     Cabecalho();
     head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização do certame</TITLE>');
-    ShowHTML('</HEAD>');  
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
     CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
     $w_embed = 'HTML';
@@ -3453,7 +3458,7 @@ function Visual() {
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   ScriptOpen('JavaScript');
   ShowHTML('  var comando, texto;');
-  ShowHTML('  if (window.name!="content") {');
+  ShowHTML('  if (window.name!="content" && window.name!="Lista") {');
   ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
   ShowHTML('  }');
   ScriptClose();

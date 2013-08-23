@@ -1111,7 +1111,7 @@ function ImprimeCabecalho() {
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
     case $sigla.'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');                      break;
-    case $sigla.'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de contrato</font></td>');             break;
+    case $sigla.'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de contrato</font></td>');           break;
     case $sigla.'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');                    break;
     case $sigla.'PROP':        ShowHTML('          <td><font size="1"><b>Outra parte</font></td>');                break;
     case $sigla.'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');                break;
