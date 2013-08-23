@@ -22,6 +22,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_gera_contrato  = f($RS,'gera_contrato');
   $w_participantes  = f($RS,'minimo_participantes');
   $w_sb_moeda       = nvl(f($RS,'sb_moeda'),'');
+  $w_conclusao      = f($RS,'conclui_sem_proposta');
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
@@ -212,7 +213,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           }
         }
 
-        if (nvl(f($RS,'executor'),'')!='' and $w_participantes > 0) {
+        if (nvl(f($RS,'executor'),'')!='' and $w_participantes > 0 && $w_cliente!=6881) {
           $l_html.=chr(13).'    <tr><td><b>Responsável pelo pagamento:<b></td>';
           if (!($l_P1==4 || $l_tipo=='WORD')){
             $l_html.=chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'executor'),$TP,f($RS,'nm_exec')).'</b></td>';
@@ -225,7 +226,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'    <tr><td><b>Enquadramento:<b></td>';
           $l_html.=chr(13).'        <td>'.f($RS,'sg_modalidade_artigo').((nvl(f($RS,'sg_modalidade_artigo'),'')!='') ? ' - '.f($RS,'ds_modalidade_artigo') : '').'</b></td>';
         }
-        if ($w_gera_contrato=='N') {
+        if ($w_gera_contrato=='N' && $w_conclusao=='N') {
           $l_html.=chr(13).'    <tr><td><b>Pagamento por fundo fixo?<b></td>';
           $l_html.=chr(13).'        <td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
         }

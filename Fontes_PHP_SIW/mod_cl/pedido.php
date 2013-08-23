@@ -1213,7 +1213,7 @@ function Itens() {
       Validate('p_nome','Nome','1','','3','30','1','1');
       Validate('p_codigo','Código interno','1','','2','30','1','1');
       Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
-      Validate('p_sq_cc','Classificação','SELECT','','1','18','','1');
+      if ($w_cliente!=6881) Validate('p_sq_cc','Classificação','SELECT','','1','18','','1');
       ShowHTML('if (theForm.p_nome.value=="" && theForm.p_codigo.value=="" && theForm.p_tipo_material.value=="" && theForm.p_sq_cc.value=="") {');
       ShowHTML(' alert("Informe pelo menos um critério de filtragem!");');
       ShowHTML(' return false;');
@@ -1422,8 +1422,12 @@ function Itens() {
     ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$p_Disabled.' accesskey="C" type="text" name="p_codigo" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$p_codigo.'"></td>');
     ShowHTML('      <tr valign="top">');
     selecaoTipoMatServ('T<U>i</U>po:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHA',null);
-    ShowHTML('      <tr valign="top">');
-    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$p_sq_cc,null,'p_sq_cc','SIWSOLIC');
+    if ($w_cliente!=6881) {
+      ShowHTML('      <tr valign="top">');
+      SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$p_sq_cc,null,'p_sq_cc','SIWSOLIC');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="p_sq_cc" value="">');
+    }
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('          </table>');

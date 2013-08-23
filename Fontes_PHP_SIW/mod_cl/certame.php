@@ -3804,7 +3804,23 @@ function Concluir() {
   $w_artigo        = f($RS,'sq_modalidade_artigo');
   $w_fundo_fixo    = f($RS,'fundo_fixo');
   $w_participantes = f($RS,'minimo_participantes');
+  $w_conclusao     = f($RS,'conclui_sem_proposta');
 
+  // Se for recarga da página
+  if ($w_troca>'') {
+    $w_homologacao        = $_REQUEST['w_homologacao'];
+    $w_data_diario        = $_REQUEST['w_data_diario'];    
+    $w_pagina_diario      = $_REQUEST['w_pagina_diario'];
+    $w_executor           = $_REQUEST['w_executor'];
+    $w_nota_conclusao     = $_REQUEST['w_nota_conclusao'];
+    $w_responsavel        = $_REQUEST['w_responsavel'];
+    $w_situacao           = $_REQUEST['w_situacao'];
+    $w_artigo             = $_REQUEST['w_artigo'];
+    $w_fundo_fixo         = $_REQUEST['w_fundo_fixo'];
+    $w_vencedor           = $_REQUEST['w_vencedor'];
+  }
+  
+  // Recupera enquadramentos
   $sql = new db_getLCModEnq; $RS_Enq = $sql->getInstanceOf($dbms, $w_modalidade, null, null, null, null);
 
   // Recupera os itens da solicitação
@@ -3822,8 +3838,12 @@ function Concluir() {
       $w_indica_usuario = 'S';
     }
   }
-  
-  $w_erro = ValidaCertame($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
+
+  // Recupera dados da situação selecionada
+  $sql = new db_getLCSituacao; $RS_Sit = $sql->getInstanceOf($dbms, $w_situacao, $w_cliente, null, null, null, null, null, null);
+  foreach ($RS_Sit as $row) { $RS_Sit = $row; break; }
+  $w_conclusao = f($RS_Sit,'conclui_sem_proposta');
+
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -3837,46 +3857,42 @@ function Concluir() {
   FormataValor();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-    if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
-      Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
-    } elseif ($w_gera_contrato=='S') {
-      Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
-      Validate('w_data_diario','Data de publicação no diário oficial','DATA','',10,10,'','0123456789/');
-      Validate('w_pagina_diario','Página do diário oficial','1','',1,4,'','1');
-    } else {
-      Validate('w_homologacao','Data de autorização','DATA','',10,10,'','0123456789/');
-      Validate('w_executor','Responsável pelo pagamento','HIDDEN',1,1,18,'','0123456789');
-    }
-    Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
-    if ($w_indica_usuario=='S') Validate('w_responsavel','Responsável pelo recebimento','HIDDEN',1,1,18,'','0123456789');
-    Validate('w_situacao','Situação','SELECT',1,1,18,'','1');
-    if (count($RS_Enq)>0) Validate('w_artigo','Artigo','SELECT',1,1,18,'','1');
-    // Se a modalidade não permite participantes, então não valida itens
-    if ($w_participantes>0) {
-      ShowHTML('  var i; ');
-      ShowHTML('  var j; ');
-      ShowHTML('  var w_erro=true; ');
-      ShowHTML('  for (i=1; i <= '.count($RS_Itens).'; i++) {');
-      ShowHTML('    if (theForm["w_vencedor["+i+"]"].length!=undefined) {');
-      ShowHTML('       for (j=0; j < theForm["w_vencedor["+i+"]"].length; j++) {');
-      ShowHTML('         if (theForm["w_vencedor["+i+"]"][j].checked) w_erro=false;');
-      ShowHTML('       }');
-      ShowHTML('    } else {');
-      ShowHTML('       if (theForm["w_vencedor["+i+"]"].checked) w_erro=false;');
-      ShowHTML('    }');
-      ShowHTML('  }');
-      ShowHTML('  if (w_erro) {');
-      ShowHTML('    alert("Você deve indicar o vencedor de cada um dos itens!"); ');
-      ShowHTML('    return false;');
-      ShowHTML('  }');
-    }
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
+  if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+    Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
+  } elseif ($w_gera_contrato=='S') {
+    Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
+    Validate('w_data_diario','Data de publicação no diário oficial','DATA','',10,10,'','0123456789/');
+    Validate('w_pagina_diario','Página do diário oficial','1','',1,4,'','1');
   } else {
-    ShowHTML('  theForm.Botao.disabled=true;');
+    Validate('w_homologacao','Data de autorização','DATA','',10,10,'','0123456789/');
+    Validate('w_executor','Responsável pelo pagamento','HIDDEN',1,1,18,'','0123456789');
   }
+  Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
+  if ($w_indica_usuario=='S') Validate('w_responsavel','Responsável pelo recebimento','HIDDEN',1,1,18,'','0123456789');
+  Validate('w_situacao','Situação','SELECT',1,1,18,'','1');
+  if (count($RS_Enq)>0) Validate('w_artigo','Artigo','SELECT',1,1,18,'','1');
+  // Se a modalidade não permite participantes, então não valida itens
+  if ($w_participantes>0 && $w_conclusao=='N') {
+    ShowHTML('  var i; ');
+    ShowHTML('  var j; ');
+    ShowHTML('  var w_erro=true; ');
+    ShowHTML('  for (i=1; i <= '.count($RS_Itens).'; i++) {');
+    ShowHTML('    if (theForm["w_vencedor["+i+"]"].length!=undefined) {');
+    ShowHTML('       for (j=0; j < theForm["w_vencedor["+i+"]"].length; j++) {');
+    ShowHTML('         if (theForm["w_vencedor["+i+"]"][j].checked) w_erro=false;');
+    ShowHTML('       }');
+    ShowHTML('    } else {');
+    ShowHTML('       if (theForm["w_vencedor["+i+"]"].checked) w_erro=false;');
+    ShowHTML('    }');
+    ShowHTML('  }');
+    ShowHTML('  if (w_erro) {');
+    ShowHTML('    alert("Você deve indicar o vencedor de cada um dos itens!"); ');
+    ShowHTML('    return false;');
+    ShowHTML('  }');
+  }
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  ShowHTML('  theForm.Botao[0].disabled=true;');
+  ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3893,59 +3909,54 @@ function Concluir() {
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualCertame($w_chave,'L',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=CLLCCONC&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
-  ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
-  ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
-  ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
-  ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
-  ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
-  ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+  AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'CLLCCONC', $w_pagina . $par, $O);
   ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-    ShowHTML('  <table width="100%" border="0">');
-    // Se a modalidade não permite participantes, então não exibe mensagem
-    if ($w_participantes>0) {
-      ShowHTML('    <tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-      ShowHTML('      <ul>Orientação:');
-      ShowHTML('      <li>Informe os dados solicitados e indique o vencedor para cada item.');
-      if ($w_indica_usuario=='S') {
-        ShowHTML('<INPUT type="hidden" name="w_financeiro_menu" value="'.f($RS_Fin,'sq_menu').'">');
-        ShowHTML('<INPUT type="hidden" name="w_financeiro_tramite" value="'.f($RS_Tramite,'sq_siw_tramite').'">');
-        ShowHTML('      <li><b>SERÁ GERADO '.upper(f($RS_Fin,'nome')).', NO TRÂMITE DE '.upper(f($RS_Tramite,'nome')).', DISPONÍVEL PARA O RESPONSÁVEL PELO PAGAMENTO, INDICADO NO CAMPO ABAIXO.</b>');
-      }
-      ShowHTML('      </b></font></td>');
-    }
-    ShowHTML('    <tr valign="top">');
-    if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
-      ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
-    } elseif ($w_gera_contrato=='S') {
-      ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
-      ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
-      ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
-    } else {
-      ShowHTML('      <td><b><u>D</u>ata de autorização:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
-      SelecaoPessoa('<u>R</u>esponsável pelo pagamento:','R','Selecione o responsável pelo pagamento ao fornecedor.',$w_executor,null,'w_executor','EXECUTORCO',null,2);
-    }
-    ShowHTML('    <tr><td colspan="3"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
+  ShowHTML('  <table width="100%" border="0">');
+  // Se a modalidade não permite participantes, então não exibe mensagem
+  if ($w_participantes>0) {
+    ShowHTML('    <tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('      <ul>Orientação:');
+    ShowHTML('      <li>Informe os dados solicitados e indique o vencedor para cada item.');
     if ($w_indica_usuario=='S') {
-      ShowHTML('    <tr>');
-      SelecaoPessoa('<u>R</u>esponsável pelo recebimento:','R','Selecione o responsável pelo recebimento do material/serviço na relação.',$w_responsavel,null,'w_responsavel','USUARIOS',null,3);
+      ShowHTML('<INPUT type="hidden" name="w_financeiro_menu" value="'.f($RS_Fin,'sq_menu').'">');
+      ShowHTML('<INPUT type="hidden" name="w_financeiro_tramite" value="'.f($RS_Tramite,'sq_siw_tramite').'">');
+      ShowHTML('      <li><b>SERÁ GERADO '.upper(f($RS_Fin,'nome')).', NO TRÂMITE DE '.upper(f($RS_Tramite,'nome')).', DISPONÍVEL PARA O RESPONSÁVEL PELO PAGAMENTO, INDICADO NO CAMPO ABAIXO.</b>');
     }
-    ShowHTML('    <tr valign="top">');
-    SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_situacao,null,'w_situacao',null,null);
-    if (count($RS_Enq)>0) SelecaoLcModEnq('<u>A</u>rtigo:','A',null,$w_artigo,$w_modalidade,'w_artigo',null,null);
-    if ($w_gera_contrato=='N') {
-      MontaRadioNS('<b>Pagamento por fundo fixo?</b>',$w_fundo_fixo,'w_fundo_fixo');
-    }
-    
-    // Se a modalidade não permite participantes, então não há indicação de vencedores
-      if ($w_participantes>0) {
-      ShowHTML('<tr><td colspan=3><b>Vencedores:</b><br>');
-      $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
+    ShowHTML('      </b></font></td>');
+  }
+  ShowHTML('    <tr valign="top">');
+  if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+    ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+  } elseif ($w_gera_contrato=='S') {
+    ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+    ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
+    ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
+  } else {
+    ShowHTML('      <td><b><u>D</u>ata de autorização:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+    SelecaoPessoa('<u>R</u>esponsável pelo pagamento:','R','Selecione o responsável pelo pagamento ao fornecedor.',$w_executor,null,'w_executor','EXECUTORCO',null,2);
+  }
+  ShowHTML('    <tr><td colspan="3"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
+  if ($w_indica_usuario=='S') {
+    ShowHTML('    <tr>');
+    SelecaoPessoa('<u>R</u>esponsável pelo recebimento:','R','Selecione o responsável pelo recebimento do material/serviço na relação.',$w_responsavel,null,'w_responsavel','USUARIOS',null,3);
+  }
+  ShowHTML('    <tr valign="top">');
+  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_situacao,null,'w_situacao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_situacao\'; document.Form.submit();"');
+  if (count($RS_Enq)>0) SelecaoLcModEnq('<u>A</u>rtigo:','A',null,$w_artigo,$w_modalidade,'w_artigo',null,null);
+  if ($w_gera_contrato=='N') {
+    MontaRadioNS('<b>Pagamento por fundo fixo?</b>',$w_fundo_fixo,'w_fundo_fixo');
+  }
+
+  // Se a modalidade não permite participantes, então não há indicação de vencedores
+  if ($w_participantes>0) {
+    ShowHTML('<tr><td colspan=3><b>Vencedores:</b><br>');
+    $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
+    if (count($RS1)>0) {
       $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
       ShowHTML('    <tr><td colspan=3>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -3968,7 +3979,7 @@ function Concluir() {
         if ($w_atual!=f($row,'sq_material')) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          ShowHTML('        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>');
+          ShowHTML('        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.nvl(f($row,'ordem'),'&nbsp').'</td>');
           ShowHTML('        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
           ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>');
           $w_atual      = f($row,'sq_material');
@@ -3976,18 +3987,28 @@ function Concluir() {
         } else {
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         }
-        ShowHTML('        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>');
-        ShowHTML('        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>');
-        ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unidade'),4).'</td>');
-        ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'chave').'">');
-        ShowHTML('        <td align="center" nowrap><INPUT class="str" type="radio" name="w_vencedor['.$i.']" value="'.f($row,'sq_item_fornecedor').'"></td>');
+        if (nvl(f($row,'fornecedor'),'')=='') {
+          // Se não há proposta para o item
+          ShowHTML('        <td align="center" colspan="4">---<INPUT type="hidden" name="w_vencedor['.$i.']" value=""></td>');
+        } else {
+          ShowHTML('        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>');
+          ShowHTML('        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>');
+          ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
+          ShowHTML('          <INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'chave').'">');
+          if ($w_conclusao=='S') {
+            // Se a situação não exige indicador de vencedor
+            ShowHTML('        <td align="center">---<INPUT type="hidden" name="w_vencedor['.$i.']" value=""></td>');
+          } else {
+            ShowHTML('        <td align="center" nowrap><INPUT class="str" type="radio" name="w_vencedor['.$i.']" value="'.f($row,'sq_item_fornecedor').'"'.((nvl($w_vencedor[$i],'')=='') ? '' : 'CHECKED').'></td>');
+          }
+        }
       } 
       ShowHTML('      </table>');
     }
-    ShowHTML('    <tr><td align="LEFT" colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('    <tr><td align="center" colspan=3><hr>');
-    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   }
+  ShowHTML('    <tr><td align="LEFT" colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('    <tr><td align="center" colspan=3><hr>');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');

@@ -614,6 +614,7 @@ function Situacao() {
     $w_ativo        = $_REQUEST['w_ativo'];
     $w_padrao       = $_REQUEST['w_padrao'];
     $w_publicar     = $_REQUEST['w_publicar'];
+    $w_conclusao    = $_REQUEST['w_conclusao'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
@@ -632,7 +633,8 @@ function Situacao() {
       $w_ativo                = f($row,'ativo');
       $w_padrao               = f($row,'padrao');
       $w_publicar             = f($row,'publicar');
-      
+      $w_conclusao            = f($row,'conclui_sem_proposta');
+      break;
     }
   }
   Cabecalho();
@@ -684,6 +686,7 @@ function Situacao() {
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Publicar no portal','nm_publicar').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Conclui sem proposta','conclui_sem_proposta').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     if ($w_libera_edicao=='S') {
@@ -701,6 +704,7 @@ function Situacao() {
         ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
         ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_publicar').'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_conclui_sem_proposta').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
         if ($w_libera_edicao=='S') {
@@ -729,6 +733,8 @@ function Situacao() {
     ShowHTML('        <tr><td colspan=3><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Publica certames desta situação no portal?</b>', $w_publicar, 'w_publicar');
+    MontaRadioSN( '<b>Permite conclusão sem proposta?</b>', $w_conclusao, 'w_conclusao');
+    ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     MontaRadioNS( '<b>Padrão?</b>',$w_padrao, 'w_padrao');
     ShowHTML('           </table>');
@@ -1462,8 +1468,8 @@ function Grava() {
           } 
         }  
         $SQL = new dml_putLCSituacao; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
-           $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],
-           $_REQUEST['w_padrao'],$_REQUEST['w_publicar']);
+           $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao'],
+           $_REQUEST['w_publicar'],$_REQUEST['w_conclusao']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();        

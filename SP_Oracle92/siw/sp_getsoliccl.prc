@@ -152,7 +152,7 @@ begin
                 d41.sigla as sg_modalidade_artigo, d41.descricao as ds_modalidade_artigo,
                 d4.nome||' - '||d41.sigla as nm_enquadramento,
                 d5.nome as nm_lcjulgamento, d5.item tipo_julgamento,
-                d6.nome as nm_lcsituacao,
+                d6.nome as nm_lcsituacao, d6.conclui_sem_proposta,
                 d7.nome as nm_especie_documento,
                 d8.consumo, d8.permanente, d8.servico, d8.outros,
                 case d8.consumo    when 'S' then 'Sim' else 'Não' end as nm_consumo,

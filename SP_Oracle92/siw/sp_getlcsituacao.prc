@@ -20,10 +20,11 @@ begin
    Else
      open p_result for 
       select a.sq_lcsituacao chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao,
-             a.publicar, 
+             a.publicar, a.conclui_sem_proposta,
              case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo,
              case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao,
-             case a.publicar when 'S' then 'Sim' else 'Não' end nm_publicar
+             case a.publicar when 'S' then 'Sim' else 'Não' end nm_publicar,
+             case a.conclui_sem_proposta when 'S' then 'Sim' else 'Não' end nm_conclui_sem_proposta
         from lc_situacao a
        where a.cliente = p_cliente 
          and ((p_chave is null) or (p_chave is not null and a.sq_lcsituacao = p_chave))

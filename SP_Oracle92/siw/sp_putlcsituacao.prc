@@ -6,15 +6,16 @@ create or replace procedure SP_PutLcSituacao
     p_descricao                in  varchar2  default null,
     p_ativo                    in  varchar2  default null,
     p_padrao                   in  varchar2  default null,
-    p_publicar                 in  varchar2  default null
+    p_publicar                 in  varchar2  default null,
+    p_conclusao                in  varchar2  default null
    ) is
 begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into lc_situacao
-             (sq_lcsituacao,         cliente,   nome,   descricao,   publicar,   ativo,   padrao
+             (sq_lcsituacao,         cliente,   nome,   descricao,   publicar,   conclui_sem_proposta, ativo,   padrao
              )
-      (select sq_lcsituacao.nextval, p_cliente, p_nome, p_descricao, p_publicar, p_ativo, p_padrao
+      (select sq_lcsituacao.nextval, p_cliente, p_nome, p_descricao, p_publicar, p_conclusao,          p_ativo, p_padrao
          from dual
       );
    Elsif p_operacao = 'A' Then
@@ -23,6 +24,7 @@ begin
          nome                  = p_nome,
          descricao             = p_descricao,
          publicar              = p_publicar,
+         conclui_sem_proposta  = p_conclusao,
          ativo                 = p_ativo,
          padrao                = p_padrao
        where sq_lcsituacao = p_chave;
@@ -32,4 +34,3 @@ begin
    End If;
 end SP_PutLcSituacao;
 /
-
