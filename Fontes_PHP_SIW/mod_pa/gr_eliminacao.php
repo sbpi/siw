@@ -362,6 +362,18 @@ function Gerencial() {
         ShowHTML('     return false;');
         ShowHTML('  }');
       }
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) {');
+      ShowHTML('       w_erro=false; ');
+      ShowHTML('       break; ');
+      ShowHTML('    }');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert("Você deve selecionar pelo menos uma das opções do campo \"Recuperar fases\"!"); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
       ValidateClose();
       ScriptClose();
     } else {

@@ -3234,7 +3234,7 @@ function DadosAnalise() {
   } elseif($w_segmento=='Público') {
     ShowHTML('          <td><b>N<u>ú</u>mero do protocolo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
   }
-  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
+  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao','DADOS',null);
   if($w_cliente_arp=='S') {
     ShowHTML('<tr valign="top">');
     selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
@@ -3402,7 +3402,7 @@ function Informar() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
   ShowHTML('    <tr valign="top">');
-  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
+  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao','DADOS',null);
   SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
   ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
   ShowHTML('            <td><b><u>I</u>nicio da licitação:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início dos trabalhos para execução da licitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
@@ -3946,7 +3946,7 @@ function Concluir() {
     SelecaoPessoa('<u>R</u>esponsável pelo recebimento:','R','Selecione o responsável pelo recebimento do material/serviço na relação.',$w_responsavel,null,'w_responsavel','USUARIOS',null,3);
   }
   ShowHTML('    <tr valign="top">');
-  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_situacao,null,'w_situacao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_situacao\'; document.Form.submit();"');
+  SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_situacao,null,'w_situacao','CONCLUSAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_situacao\'; document.Form.submit();"');
   if (count($RS_Enq)>0) SelecaoLcModEnq('<u>A</u>rtigo:','A',null,$w_artigo,$w_modalidade,'w_artigo',null,null);
   if ($w_gera_contrato=='N') {
     MontaRadioNS('<b>Pagamento por fundo fixo?</b>',$w_fundo_fixo,'w_fundo_fixo');

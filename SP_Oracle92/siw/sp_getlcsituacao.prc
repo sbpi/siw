@@ -20,17 +20,25 @@ begin
    Else
      open p_result for 
       select a.sq_lcsituacao chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao,
-             a.publicar, a.conclui_sem_proposta,
+             a.publicar, a.conclui_sem_proposta, a.tela_exibicao,
              case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo,
              case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao,
              case a.publicar when 'S' then 'Sim' else 'Não' end nm_publicar,
-             case a.conclui_sem_proposta when 'S' then 'Sim' else 'Não' end nm_conclui_sem_proposta
+             case a.conclui_sem_proposta when 'S' then 'Sim' else 'Não' end nm_conclui_sem_proposta,
+             case a.tela_exibicao when 'C' then 'Somente conclusão' when 'E' then 'Exceto conclusão' else 'Todas' end nm_tela_exibicao
         from lc_situacao a
-       where a.cliente = p_cliente 
-         and ((p_chave is null) or (p_chave is not null and a.sq_lcsituacao = p_chave))
-         and ((p_nome  is null) or (p_nome  is not null and a.nome  = p_nome))     
-         and ((p_ativo is null) or (p_ativo is not null and a.ativo = p_ativo))
-         and ((p_padrao is null) or (p_padrao is not null and a.padrao = p_padrao));         
+       where a.cliente     = p_cliente 
+         and (p_chave      is null or (p_chave is not null and a.sq_lcsituacao = p_chave))
+         and (p_nome       is null or (p_nome  is not null and a.nome  = p_nome))     
+         and (p_ativo      is null or (p_ativo is not null and a.ativo = p_ativo))
+         and (p_padrao     is null or (p_padrao is not null and a.padrao = p_padrao))
+         and (p_restricao  is null or 
+              (p_restricao is not null and (
+                (p_restricao = 'CONCLUSAO'  and a.tela_exibicao <> 'E') or
+                (p_restricao <> 'CONCLUSAO' and a.tela_exibicao <> 'C')
+               )
+              )
+             );
    End If;
 end SP_GetLcSituacao;
 /

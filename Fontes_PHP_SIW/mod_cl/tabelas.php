@@ -30,6 +30,7 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServSubord.php');
 include_once($w_dir_volta.'funcoes/selecaoClasseMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
+include_once($w_dir_volta.'funcoes/selecaoTelaExibicao.php');
 include_once($w_dir_volta.'funcoes/selecaoLCSituacao.php');
 
 // =========================================================================
@@ -615,6 +616,7 @@ function Situacao() {
     $w_padrao       = $_REQUEST['w_padrao'];
     $w_publicar     = $_REQUEST['w_publicar'];
     $w_conclusao    = $_REQUEST['w_conclusao'];
+    $w_tela         = $_REQUEST['w_tela'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
@@ -634,6 +636,7 @@ function Situacao() {
       $w_padrao               = f($row,'padrao');
       $w_publicar             = f($row,'publicar');
       $w_conclusao            = f($row,'conclui_sem_proposta');
+      $w_tela                 = f($row,'tela_exibicao');
       break;
     }
   }
@@ -643,9 +646,10 @@ function Situacao() {
   If  (!(strpos('IAEP',$O)===false)) {
     ScriptOpen( 'JavaScript');
     ValidateOpen( 'Validacao');
-     if (!(strpos('IA',$O)===false)) {    
+     if (!(strpos('IA',$O)===false)) {
        Validate('w_nome','Nome','1','1','2','60','1','1');
        Validate('w_descricao','Descrição', '1', '', '5', '1000', '1', '1');
+       Validate('w_tela','Tela de exibição','SELECT','1',1,1,'1','');
        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
      } elseif ($O=='E') {
        Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
@@ -687,6 +691,7 @@ function Situacao() {
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Publicar no portal','nm_publicar').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Conclui sem proposta','conclui_sem_proposta').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Tela exibição','tela_exibicao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     if ($w_libera_edicao=='S') {
@@ -705,6 +710,7 @@ function Situacao() {
         ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_publicar').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_conclui_sem_proposta').'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_tela_exibicao').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
         if ($w_libera_edicao=='S') {
@@ -713,7 +719,7 @@ function Situacao() {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
           ShowHTML('        </td>');
         }
-        ShowHTML('      </tr>');       
+        ShowHTML('      </tr>');
       }
     }
     ShowHTML('      </center>');
@@ -734,6 +740,7 @@ function Situacao() {
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Publica certames desta situação no portal?</b>', $w_publicar, 'w_publicar');
     MontaRadioSN( '<b>Permite conclusão sem proposta?</b>', $w_conclusao, 'w_conclusao');
+    selecaoTelaExibicao('<U>T</U>ela de exibição:','T','Indique a tela onde esta situação pode ser exibida',$w_tela,null,'w_tela',null,null);
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     MontaRadioNS( '<b>Padrão?</b>',$w_padrao, 'w_padrao');
@@ -1469,7 +1476,7 @@ function Grava() {
         }  
         $SQL = new dml_putLCSituacao; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao'],
-           $_REQUEST['w_publicar'],$_REQUEST['w_conclusao']);
+           $_REQUEST['w_publicar'],$_REQUEST['w_conclusao'],$_REQUEST['w_tela']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();        
