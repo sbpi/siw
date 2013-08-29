@@ -3108,10 +3108,10 @@ function DadosAnalise() {
     $w_dias_ant           = f($RS_Solic,'dias_validade_proposta');
     $w_protocolo          = f($RS_Solic,'protocolo_completo');
     $w_protocolo_nm       = f($RS_Solic,'protocolo_completo');
-    $w_abertura           = formataDataEdicao(f($RS_Solic,'data_abertura'));
-    $w_envelope_1         = formataDataEdicao(f($RS_Solic,'envelope_1'));
-    $w_envelope_2         = formataDataEdicao(f($RS_Solic,'envelope_2'));
-    $w_envelope_3         = formataDataEdicao(f($RS_Solic,'envelope_3'));
+    $w_abertura           = substr(formataDataEdicao(f($RS_Solic,'phpdt_data_abertura'),3),0,-3);
+    $w_envelope_1         = substr(formataDataEdicao(f($RS_Solic,'phpdt_envelope_1'),3),0,-3);
+    $w_envelope_2         = substr(formataDataEdicao(f($RS_Solic,'phpdt_envelope_2'),3),0,-3);
+    $w_envelope_3         = substr(formataDataEdicao(f($RS_Solic,'phpdt_envelope_3'),3),0,-3);
     $w_prioridade         = f($RS_Solic,'prioridade');
     $w_inicio             = FormataDataEdicao(f($RS_Solic,'inicio'));
   }
@@ -3131,6 +3131,7 @@ function DadosAnalise() {
   SaltaCampo();
   FormataDataMA();
   FormataData();
+  FormataDataHora();
   ShowHTML('function diasValidade(p_campo) { ');
   ShowHTML('  if (document.Form.w_dias_ant.value!=p_campo.value) {');
   ShowHTML('    for (i=1; i < document.Form["w_dias_item[]"].length; i++) {');
@@ -3153,10 +3154,10 @@ function DadosAnalise() {
   if ($w_certame=='S') {
     //Validate('w_numero_certame','Número do certame','1','1',1,50,'1','1');
     Validate('w_sq_lcjulgamento','Critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento'),'SELECT','1',1,18,'','0123456789');
-    Validate('w_abertura','Data de recebimento das propostas','DATA','',10,10,'','0123456789/');
-    Validate('w_envelope_1','Data de abertura do envelope 1','DATA','',10,10,'','0123456789/');
-    Validate('w_envelope_2','Data de abertura do envelope 2','DATA','',10,10,'','0123456789/');
-    Validate('w_envelope_3','Data de abertura do envelope 3','DATA','',10,10,'','0123456789/');
+    Validate('w_abertura','Data de recebimento das propostas','DATAHORA','',17,17,'','0123456789/,: ');
+    Validate('w_envelope_1','Data de abertura do envelope 1','DATAHORA','',17,17,'','0123456789/,: ');
+    Validate('w_envelope_2','Data de abertura do envelope 2','DATAHORA','',17,17,'','0123456789/,: ');
+    Validate('w_envelope_3','Data de abertura do envelope 3','DATAHORA','',17,17,'','0123456789/,: ');
   }
   if($w_cliente_arp=='S') {
     Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
@@ -3251,11 +3252,11 @@ function DadosAnalise() {
     ShowHTML('<tr valign="top">');
     //ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
     SelecaoLCJulgamento('Critério de '.(($w_cliente==6881) ? 'ava<u>l</u>iação' : 'ju<u>l</u>gamento').':','L','Selecione o critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').' do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
-    ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
+    ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_abertura.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
     ShowHTML('<tr valign="top">');
-    ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 1:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_1" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_1.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_1').'</td>');
-    ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 2:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_2" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_2.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_2').'</td>');
-    ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 3:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_3" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_3.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_3').'</td>');
+    ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 1:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_1" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_envelope_1.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_envelope_1').'</td>');
+    ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 2:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_2" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_envelope_2.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_envelope_2').'</td>');
+    ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 3:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_3" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_envelope_3.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_envelope_3').'</td>');
   }
   if ($w_contrato=='S') {
     ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -3356,10 +3357,10 @@ function Informar() {
             null,null,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row){$RS=$row; break;}
     $w_sq_lcsituacao    = f($RS,'sq_lcsituacao');
-    $w_abertura         = formataDataEdicao(f($RS,'data_abertura'));
-    $w_envelope_1       = formataDataEdicao(f($RS,'envelope_1'));
-    $w_envelope_2       = formataDataEdicao(f($RS,'envelope_2'));
-    $w_envelope_3       = formataDataEdicao(f($RS,'envelope_3'));
+    $w_abertura         = substr(formataDataEdicao(f($RS_Solic,'phpdt_data_abertura'),3),0,-3);
+    $w_envelope_1       = substr(formataDataEdicao(f($RS_Solic,'phpdt_envelope_1'),3),0,-3);
+    $w_envelope_2       = substr(formataDataEdicao(f($RS_Solic,'phpdt_envelope_2'),3),0,-3);
+    $w_envelope_3       = substr(formataDataEdicao(f($RS_Solic,'phpdt_envelope_3'),3),0,-3);
     $w_prioridade       = f($RS,'prioridade');
     $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
   } 
@@ -3376,10 +3377,10 @@ function Informar() {
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
   Validate('w_inicio','Início da licitação','DATA','',10,10,'','0123456789/');
   Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
-  Validate('w_abertura','Data de abertura','DATA','',10,10,'','0123456789/');
-  Validate('w_envelope_1','Data de abertura do envelope 1','DATA','',10,10,'','0123456789/');
-  Validate('w_envelope_2','Data de abertura do envelope 2','DATA','',10,10,'','0123456789/');
-  Validate('w_envelope_3','Data de abertura do envelope 3','DATA','',10,10,'','0123456789/');
+  Validate('w_abertura','Data de recebimento das propostas','DATAHORA','',17,17,'','0123456789/,: ');
+  Validate('w_envelope_1','Data de abertura do envelope 1','DATAHORA','',17,17,'','0123456789/,: ');
+  Validate('w_envelope_2','Data de abertura do envelope 2','DATAHORA','',17,17,'','0123456789/,: ');
+  Validate('w_envelope_3','Data de abertura do envelope 3','DATAHORA','',17,17,'','0123456789/,: ');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3404,13 +3405,13 @@ function Informar() {
   ShowHTML('    <tr valign="top">');
   SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao','DADOS',null);
   SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
-  ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
-  ShowHTML('            <td><b><u>I</u>nicio da licitação:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início dos trabalhos para execução da licitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
+  ShowHTML('      <td><b><u>D</u>ata de recebimento das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_abertura.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
+  ShowHTML('      <td><b><u>I</u>nicio da licitação:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início dos trabalhos para execução da licitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
   ShowHTML('    </tr>');
-  ShowHTML('<tr valign="top">');
-  ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 1:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_1" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_1.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_1').'</td>');
-  ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 2:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_2" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_2.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_2').'</td>');
-  ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 3:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_3" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_envelope_3.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_envelope_3').'</td>');
+  ShowHTML('    <tr valign="top">');
+  ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 1:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_1" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_envelope_1.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_envelope_1').'</td>');
+  ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 2:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_2" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_envelope_2.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_envelope_2').'</td>');
+  ShowHTML('      <td><b><u>D</u>ata de abertura do envelope 3:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_envelope_3" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_envelope_3.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);">'.ExibeCalendario('Form','w_envelope_3').'</td>');
   ShowHTML('      <tr><td align="center" colspan="4" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('      <tr><td align="center" colspan="4">');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');

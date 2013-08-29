@@ -322,10 +322,10 @@ function Mesa() {
 
         // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
         foreach($RS_Compras as $row) {
-          if (nvl(f($row,'data_abertura'),'')!='') retornaArrayDias(f($row,'data_abertura'), f($row,'data_abertura'), &$w_datas, f($row,'codigo_interno').': Recebimento propostas', 'S');
-          if (nvl(f($row,'envelope_1'),'')!='')    retornaArrayDias(f($row,'envelope_1'), f($row,'envelope_1'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 1 ', 'S');
-          if (nvl(f($row,'envelope_2'),'')!='')    retornaArrayDias(f($row,'envelope_2'), f($row,'envelope_2'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 2 ', 'S');
-          if (nvl(f($row,'envelope_3'),'')!='')    retornaArrayDias(f($row,'envelope_3'), f($row,'envelope_3'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 3 ', 'S');
+          if (nvl(f($row,'data_abertura'),'')!='') retornaArrayDias(f($row,'phpdt_data_abertura'), f($row,'phpdt_data_abertura'), &$w_datas, f($row,'codigo_interno').': Recebimento propostas'.((date('H:i',f($row,'phpdt_data_abertura'))!='00:00') ? ' ('.date('H:i',f($row,'phpdt_data_abertura')).')' : ''), 'S');
+          if (nvl(f($row,'envelope_1'),'')!='')    retornaArrayDias(f($row,'phpdt_envelope_1'), f($row,'phpdt_envelope_1'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 1 '.((date('H:i',f($row,'phpdt_envelope_1'))!='00:00') ? ' ('.date('H:i',f($row,'phpdt_envelope_1')).')' : ''), 'S');
+          if (nvl(f($row,'envelope_2'),'')!='')    retornaArrayDias(f($row,'phpdt_envelope_2'), f($row,'phpdt_envelope_2'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 2 '.((date('H:i',f($row,'phpdt_envelope_2'))!='00:00') ? ' ('.date('H:i',f($row,'phpdt_envelope_2')).')' : ''), 'S');
+          if (nvl(f($row,'envelope_3'),'')!='')    retornaArrayDias(f($row,'phpdt_envelope_3'), f($row,'phpdt_envelope_3'), &$w_datas, f($row,'codigo_interno').': Abertura envelope 3 '.((date('H:i',f($row,'phpdt_envelope_3'))!='00:00') ? ' ('.date('H:i',f($row,'phpdt_envelope_3')).')' : ''), 'S');
         }
         reset($RS_Compras);
         foreach($RS_Compras as $row) {
@@ -468,24 +468,24 @@ function Mesa() {
         unset($w_array);
         foreach($RS_Compras as $row) {
           if (nvl(f($row,'data_abertura'),'')!='') {
-            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno')] = $row;
-            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno')]['data'] = f($row,'data_abertura');
-            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno')]['evento'] = 'Recebimento das propostas';
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A'] = $row;
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A']['data'] = f($row,'phpdt_data_abertura');
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A']['evento'] = 'Recebimento das propostas';
           }
           if (nvl(f($row,'envelope_1'),'')!='') {
-            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno')] = $row;
-            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno')]['data'] = f($row,'envelope_1');
-            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno')]['evento'] = 'Abertura do envelope 1';
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1'] = $row;
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1']['data'] = f($row,'phpdt_envelope_1');
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1']['evento'] = 'Abertura do envelope 1';
           }
           if (nvl(f($row,'envelope_2'),'')!='') {
-            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno')] = $row;
-            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno')]['data'] = f($row,'envelope_2');
-            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno')]['evento'] = 'Abertura do envelope 2';
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2'] = $row;
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2']['data'] = f($row,'phpdt_envelope_2');
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2']['evento'] = 'Abertura do envelope 2';
           }
           if (nvl(f($row,'envelope_3'),'')!='') {
-            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno')] = $row;
-            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno')]['data'] = f($row,'envelope_3');
-            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno')]['evento'] = 'Abertura do envelope 3';
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3'] = $row;
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3']['data'] = f($row,'phpdt_envelope_3');
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3']['evento'] = 'Abertura do envelope 3';
           }
         }
         // Ordena o array pela data
@@ -511,7 +511,7 @@ function Mesa() {
           if (nvl(f($row,'data_abertura'),'')!='' || nvl(f($row,'envelope_1'),'')!='' || nvl(f($row,'envelope_2'),'')!='' || nvl(f($row,'envelope_3'),'')!='') {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('                    <td align="center">'.formataDataEdicao(f($row,'data')).'</td>');
+            ShowHTML('                    <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'data')).((date('H:i',f($row,'data'))!='00:00') ? ' '.date('H:i',f($row,'data')) : '').'&nbsp;</td>');
             ShowHTML('                    <td>'.f($row,'evento').'</td>');
             ShowHTML('                    <td nowrap>');
             ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'data_abertura'),f($row,'data_homologacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));

@@ -143,10 +143,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr><td><b>Critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').': </b></td><td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
       }
       if (nvl(f($RS,'certame'),'')!='')  {
-        $l_html.=chr(13).'      <tr><td><b>Recebimento das propostas:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'data_abertura')),'---').' </td></tr>';
-        if(nvl(f($RS,'envelope_1'),'')!='') $l_html.=chr(13).'      <tr><td><b>Abertura do envelope 1: </b></td><td>'.formataDataEdicao(f($RS,'envelope_1')).' </td></tr>';
-        if(nvl(f($RS,'envelope_2'),'')!='') $l_html.=chr(13).'      <tr><td><b>Abertura do envelope 2: </b></td><td>'.formataDataEdicao(f($RS,'envelope_2')).' </td></tr>';
-        if(nvl(f($RS,'envelope_3'),'')!='') $l_html.=chr(13).'      <tr><td><b>Abertura do envelope 3: </b></td><td>'.formataDataEdicao(f($RS,'envelope_3')).' </td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Recebimento das propostas:</b></td><td>'.nvl(str_replace(', 00:00','',substr(FormataDataEdicao(f($RS,'phpdt_data_abertura'),3),0,-3)),'---').' </td></tr>';
+        if(nvl(f($RS,'envelope_1'),'')!='') $l_html.=chr(13).'      <tr><td><b>Abertura do envelope 1: </b></td><td>'.substr(str_replace(', 00:00','',formataDataEdicao(f($RS,'phpdt_envelope_1'),3)),0,-3).' </td></tr>';
+        if(nvl(f($RS,'envelope_2'),'')!='') $l_html.=chr(13).'      <tr><td><b>Abertura do envelope 2: </b></td><td>'.substr(str_replace(', 00:00','',formataDataEdicao(f($RS,'phpdt_envelope_2'),3)),0,-3).' </td></tr>';
+        if(nvl(f($RS,'envelope_3'),'')!='') $l_html.=chr(13).'      <tr><td><b>Abertura do envelope 3: </b></td><td>'.substr(str_replace(', 00:00','',formataDataEdicao(f($RS,'phpdt_envelope_3'),3)),0,-3).' </td></tr>';
       }
       if(nvl(f($RS,'numero_ata'),'')!='') $l_html.=chr(13).'      <tr><td><b>Número da ata: </b></td><td>'.f($RS,'numero_ata').' </td></tr>';
       if (nvl(f($RS,'cd_lcfonterecurso'),'')!='') {

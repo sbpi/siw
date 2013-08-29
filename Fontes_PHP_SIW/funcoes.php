@@ -3674,9 +3674,9 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, 
     }
     if (isset($p_datas[$l_data])) {
       if ((fMod($i,7)==0) || (fMod($i-1,7)==0) || isset($x_datas[$l_data])) {
-        if ($p_datas[$l_data]['dia_util']=='N') $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,80).'\r\n';
+        if ($p_datas[$l_data]['dia_util']=='N') $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,380).'\r\n';
       } else {
-        $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,80).'\r\n';
+        $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,380).'\r\n';
       }
     }
     // Trata a cor de fundo da célula

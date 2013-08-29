@@ -3,10 +3,10 @@ create or replace procedure SP_PutCLDados
     p_chave                 in number,
     p_sq_lcmodalidade       in number   default null,    
     p_numero_processo       in varchar2 default null,
-    p_abertura              in date     default null,
-    p_envelope_1            in date     default null,
-    p_envelope_2            in date     default null,
-    p_envelope_3            in date     default null,
+    p_abertura              in varchar2 default null,
+    p_envelope_1            in varchar2 default null,
+    p_envelope_2            in varchar2 default null,
+    p_envelope_3            in varchar2 default null,
     p_numero_certame        in varchar2 default null,
     p_numero_ata            in varchar2 default null,
     p_tipo_reajuste         in number   default null,
@@ -37,7 +37,28 @@ create or replace procedure SP_PutCLDados
    w_prefixo        siw_menu.prefixo%type;
    w_codigo         siw_solicitacao.codigo_interno%type;
    w_sigla_menu     siw_menu.sigla%type;
+   w_abertura       date := null;
+   w_envelope_1     date := null;
+   w_envelope_2     date := null;
+   w_envelope_3     date := null;
 begin
+   -- Tratamento das datas
+   If p_abertura is not null Then
+      If length(p_abertura)=10 Then w_abertura := to_date(p_abertura,'dd/mm/yyyy'); Else w_abertura := to_date(p_abertura,'dd/mm/yyyy, hh24:mi:ss'); End If;
+   End If;
+
+   If p_envelope_1 is not null Then
+      If length(p_envelope_1)=10 Then w_envelope_1 := to_date(p_envelope_1,'dd/mm/yyyy'); Else w_envelope_1 := to_date(p_envelope_1,'dd/mm/yyyy, hh24:mi:ss'); End If;
+   End If;
+
+   If p_envelope_2 is not null Then
+      If length(p_envelope_2)=10 Then w_envelope_2 := to_date(p_envelope_2,'dd/mm/yyyy'); Else w_envelope_2 := to_date(p_envelope_2,'dd/mm/yyyy, hh24:mi:ss'); End If;
+   End If;
+
+   If p_envelope_3 is not null Then
+      If length(p_envelope_3)=10 Then w_envelope_3 := to_date(p_envelope_3,'dd/mm/yyyy'); Else w_envelope_3 := to_date(p_envelope_3,'dd/mm/yyyy, hh24:mi:ss'); End If;
+   End If;
+
    If p_restricao = 'PROT' Then
       -- Recupera a modalidade atual
       select a.sq_lcmodalidade, a.numero_certame into w_sq_modalidade, w_numero_certame from cl_solicitacao a where sq_siw_solicitacao = p_chave;
@@ -81,10 +102,10 @@ begin
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,
          processo                 = coalesce(p_numero_processo,p_protocolo),
-         data_abertura            = p_abertura,
-         envelope_1               = p_envelope_1,
-         envelope_2               = p_envelope_2,
-         envelope_3               = p_envelope_3,
+         data_abertura            = w_abertura,
+         envelope_1               = w_envelope_1,
+         envelope_2               = w_envelope_2,
+         envelope_3               = w_envelope_3,
          numero_ata               = p_numero_ata,
          tipo_reajuste            = case when p_tipo_reajuste is not null then p_tipo_reajuste else tipo_reajuste end,
          indice_base              = p_indice_base,
@@ -131,10 +152,10 @@ begin
       -- Atualiza a situação da licitação
       Update cl_solicitacao set
          sq_lcsituacao            = p_sq_lcsituacao,
-         data_abertura            = p_abertura,
-         envelope_1               = p_envelope_1,
-         envelope_2               = p_envelope_2,
-         envelope_3               = p_envelope_3,
+         data_abertura            = w_abertura,
+         envelope_1               = w_envelope_1,
+         envelope_2               = w_envelope_2,
+         envelope_3               = w_envelope_3,
          prioridade               = p_prioridade
       Where sq_siw_solicitacao = p_chave;
 

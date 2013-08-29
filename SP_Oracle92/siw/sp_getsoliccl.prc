@@ -131,6 +131,10 @@ begin
                 d.sq_especificacao_despesa, d.interno,               d.dias_validade_proposta,
                 d.sq_financeiro,      d.nota_conclusao,              d.data_abertura,
                 d.envelope_1,         d.envelope_2,                  d.envelope_3,
+                to_char(d.data_abertura,'dd/mm/yyyy, hh24:mi:ss') phpdt_data_abertura,
+                to_char(d.envelope_1,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_1,
+                to_char(d.envelope_2,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_2,
+                to_char(d.envelope_3,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_3,
                 d.fundo_fixo,         d.sq_modalidade_artigo,        coalesce(d.data_homologacao, b.conclusao) as data_autorizacao,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
@@ -249,10 +253,10 @@ begin
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and d.decisao_judicial = p_ativo))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b1.sigla <> 'AT' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and (d.data_abertura between p_ini_i and p_ini_f or
-                                                                             d.envelope_1    between p_ini_i and p_ini_f or
-                                                                             d.envelope_2    between p_ini_i and p_ini_f or
-                                                                             d.envelope_3    between p_ini_i and p_ini_f
+            and (p_ini_i          is null or (p_ini_i       is not null and (trunc(d.data_abertura) between p_ini_i and p_ini_f or
+                                                                             trunc(d.envelope_1)    between p_ini_i and p_ini_f or
+                                                                             trunc(d.envelope_2)    between p_ini_i and p_ini_f or
+                                                                             trunc(d.envelope_3)    between p_ini_i and p_ini_f
                                                                             )
                                              )
                 )
