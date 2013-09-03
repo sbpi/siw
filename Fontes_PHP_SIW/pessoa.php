@@ -894,8 +894,8 @@ function BuscaUsuario() {
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="//'.$_SERVER['server_name'].'/siw/">');
   BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
