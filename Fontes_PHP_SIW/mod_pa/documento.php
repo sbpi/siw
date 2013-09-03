@@ -103,6 +103,7 @@ $w_dir = 'mod_pa/';
 $w_troca = $_REQUEST['w_troca'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 $w_SG = upper($_REQUEST['w_SG']);
+$w_embed        = '';
 
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON'] != 'Sim') { EncerraSessao(); }
@@ -255,6 +256,7 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $p_uf;
+  global $w_embed;
   $w_tipo = $_REQUEST['w_tipo'];
   if ($O == 'L') {
     if (!(strpos(upper($R), 'GR_') === false)) {
@@ -372,20 +374,10 @@ function Inicial() {
       $RS = SortArray($RS, 'protocolo_completo', 'asc');
     }
   }
-  if ($w_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 45 : 30);
-    CabecalhoWord($w_cliente, 'Consulta de ' . f($RS_Menu, 'nome'), 0);
-    $w_embed = 'WORD';
-    if ($w_filtro > '')
-      ShowHTML($w_filtro);
-  }elseif ($w_tipo == 'PDF') {
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'], 'PORTRAIT') == 'PORTRAIT') ? 60 : 35);
-    $w_embed = 'WORD';
-    HeaderPdf('Consulta de ' . f($RS_Menu, 'nome'), $w_pag);
-    if ($w_filtro > '')
-      ShowHTML($w_filtro);
-  } else {
+  $w_linha_pag    = 0;
+  headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+  
+  if ($w_embed!='WORD') {
     $w_embed = 'HTML';
     cabecalho();
     head();
@@ -450,9 +442,10 @@ function Inicial() {
   }
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
-    ShowHTML('<tr>');
-    if ($w_embed != 'WORD') {
-      ShowHTML('<td><font size="2">');
+    if ($w_embed == 'WORD') {
+      ShowHTML('<tr><td colspan="2">');
+    } else {
+      ShowHTML('<tr><td>');
       if ($P1 == 1 && $w_copia == '') {
         // Se for cadastramento e não for resultado de busca para cópia
         if ($w_submenu > '') {
@@ -484,9 +477,7 @@ function Inicial() {
         }
       }
     }
-    ShowHTML('    <td align="right">');
-
-    ShowHTML('    '.exportaOffice().'<b>Registros: ' . count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: ' . count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . (($w_embed == 'WORD') ? 1 : $conTableBorder) . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -1496,9 +1487,11 @@ function Anexos() {
 // -------------------------------------------------------------------------
 function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=null, $w_identificacao=null, $w_responsavel=null, $w_assunto_princ=null, $w_orcamentaria=null, $w_indicador=null, $w_recurso=null, $w_interessado=null, $w_anexo=null, $w_meta=null, $w_ocorrencia=null, $w_consulta=null) {
   extract($GLOBALS);
+  global $w_embed;
+  
   $w_chave    = nvl($w_chave, $_REQUEST['w_chave']);
   $w_tipo     = nvl($w_tipo, upper(trim($_REQUEST['w_tipo'])));
-  $w_formato  = nvl($w_formato, upper(trim($_REQUEST['w_formato'])));
+  
   if ($O == 'T') {
     $w_identificacao = upper(nvl($w_identificacao, 'S'));
     $w_responsavel = upper(nvl($w_responsavel, 'S'));
@@ -1524,43 +1517,21 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
     $w_ocorrencia = upper(nvl($w_ocorrencia, 'S'));
     $w_consulta = upper(nvl($w_consulta, 'N'));
   }
-  // Recupera o logo do cliente a ser usado nas listagens
-  $sql = new db_getCustomerData;
-  $RS = $sql->getInstanceOf($dbms, $w_cliente);
-  if (f($RS, 'logo') > '') $w_logo = '/img/logo' . substr(f($RS, 'logo'), (strpos(f($RS, 'logo'), '.') ? strpos(f($RS, 'logo'), '.') + 1 : 0) - 1, 30);
-  if ($w_tipo == 'PDF') {
-    headerpdf(f($RS_Menu, 'nome'), $w_pag);
-    $w_embed = 'WORD';
-  } elseif ($w_tipo=='EXCEL') {
-    HeaderExcel($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0,1,6);
-    $w_embed = 'WORD';
-  } elseif ($w_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente, f($RS_Menu, 'nome'), 0);
-    $w_embed = 'WORD';
-  } else {
-    $sql = new db_getLinkData;
-    $RS_Cab = $sql->getInstanceOf($dbms, $w_cliente, 'PADCAD');
-    Cabecalho();
-    head();
-    ShowHTML('<TITLE>' . $conSgSistema . ' - ' . f($RS_Cab, 'nome') . '</TITLE>');
-    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
-    ShowHTML('</head>');
-    BodyOpenClean('onLoad="this.focus()"; ');
-    if ($w_embed != 'WORD') CabecalhoRelatorio($w_cliente, f($RS_Cab, 'nome'), 4, $w_chave);
-    $w_embed = 'HTML';
-  }
+  
+  headerGeral('V', $w_tipo, $w_chave, 'Visualização de '.f($RS_Menu,'nome'), $w_embed, null, 4, $w_linha_pag,$w_filtro);
+
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML(VisualDocumento($w_chave, $w_o, $w_usuario, $w_p1, $w_embed, $w_identificacao, $w_assunto_princ, $w_orcamentaria, $w_indicador, $w_recurso, $w_interessado, $w_anexo, $w_meta, $w_ocorrencia, $w_consulta));
-  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
-  ScriptOpen('JavaScript');
-  ShowHTML('  var comando, texto;');
-  ShowHTML('  if (window.name!="content") {');
-  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
-  ShowHTML('  }');
-  ScriptClose();
+  if ($w_embed!='WORD') {
+    ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+    ScriptOpen('JavaScript');
+    ShowHTML('  var comando, texto;');
+    ShowHTML('  if (window.name!="content") {');
+    ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+    ShowHTML('  }');
+    ScriptClose();
+  }
   if ($w_tipo=='PDF') RodapePDF();
   else                Rodape();
 }

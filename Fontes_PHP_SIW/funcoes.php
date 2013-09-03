@@ -201,25 +201,6 @@ function montaArvore($string){
 }
 
 // =========================================================================
-// Declaração inicial para páginas OLE com PDF
-// -------------------------------------------------------------------------
-function headerPdf($titulo,$pag=null) {
-  extract($GLOBALS);
-  header("Cache-Control: no-cache, must-revalidate",false);
-  header("Expires: Mon, 26 Jul 2008 05:00:00 GMT");
-  ob_end_clean();
-  ob_start();
-  Cabecalho();
-  head();
-  ShowHTML('<title>'.$titulo.'</title>');
-  ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css"/>');
-  ShowHTML('<base HREF="'.$conRootSIW.'">');
-  ShowHTML('</head>');
-  BodyOpenMail(null);
-  CabecalhoWord($w_cliente, $titulo, $pag);
-}
-
-// =========================================================================
 // Declaração inicial para páginas OLE com Word
 // -------------------------------------------------------------------------
 function headerWord($p_orientation='LANDSCAPE') {
@@ -345,7 +326,7 @@ function headerExcel($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Montagem do cabeçalho de visualização de documentos
 // -------------------------------------------------------------------------
-function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, $l_linha_pag=45,$l_filtro='') {
+function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, &$l_linha_pag=45,$l_filtro='') {
   extract($GLOBALS);
   if ($l_formato=='V') {
     // Visualização de documento
@@ -425,7 +406,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina, $l_cspan=null, $l_rspan=n
 // -------------------------------------------------------------------------
 function exportaOffice() {
   extract($GLOBALS);
-  if ($P1 != '3') {
+  if ($P1!='3' && $P1!='5') {
     return('<form style="vertical-align: bottom; float: right;" method="post" id="temp" action="' . $conRootSIW . '/funcoes/arquivoExcel.php">' .
     '  <img id="botaoExcel" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Excel" SRC="images/excel.gif" style="float: left;" alt="img" />' .
     '  <img id="botaoWord" height="16" width="16" style="cursor:pointer" onclick="exportarArquivo(\'tudo\');" TITLE="Gerar Word" SRC="images/word.gif" style="float: left;" alt="img" />' .
@@ -3018,6 +2999,25 @@ function Rodape() {
   ShowHTML('</body>');
   ShowHTML('</html>');
 
+}
+
+// =========================================================================
+// Declaração inicial para páginas OLE com PDF
+// -------------------------------------------------------------------------
+function headerPdf($titulo,$pag=null) {
+  extract($GLOBALS);
+  header("Cache-Control: no-cache, must-revalidate",false);
+  header("Expires: Mon, 26 Jul 2008 05:00:00 GMT");
+  ob_end_clean();
+  ob_start();
+  Cabecalho();
+  head();
+  ShowHTML('<title>'.$titulo.'</title>');
+  ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css"/>');
+  ShowHTML('<base HREF="'.$conRootSIW.'">');
+  ShowHTML('</head>');
+  BodyOpenMail(null);
+  CabecalhoWord($w_cliente, $titulo, $pag);
 }
 
 // =========================================================================

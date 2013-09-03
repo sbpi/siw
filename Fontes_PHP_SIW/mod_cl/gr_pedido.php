@@ -75,6 +75,7 @@ $w_pagina       = 'gr_pedido.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_cl/';
 $w_troca        = $_REQUEST['w_troca'];
+$w_embed        = '';
 
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
@@ -154,6 +155,7 @@ exit;
 // -------------------------------------------------------------------------
 function Gerencial() {
   extract($GLOBALS);
+  global $w_embed;
   
   $w_pag   = 1;
   $w_linha = 0;
@@ -244,23 +246,11 @@ function Gerencial() {
 
   $w_linha_filtro = $w_linha;
   $w_linha_pag    = 0;
-  $w_embed        = '';
   headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
   
   $w_linha_filtro = $w_linha;
 
-  if ($p_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 40: 25);
-    CabecalhoWord($w_cliente,$w_TP,$w_pag);
-    $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } elseif($p_tipo == 'PDF'){
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 25: 25);
-    $w_embed = 'WORD';
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome').$w_TP,$w_pag);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } else {
+  if ($w_embed!='WORD') {
     $w_embed = 'HTML';
     Cabecalho();
     head();
@@ -302,9 +292,8 @@ function Gerencial() {
     } else {
       ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
     } 
-
-    ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
     if ($w_Troca>'') {
       // Se for recarga da página
       BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
@@ -716,14 +705,15 @@ function Gerencial() {
         ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1,$p_agrega);
       } 
     } 
-    ShowHTML('      </FORM>');
-    ShowHTML('      </center>');
+    if ($w_embed!='WORD') {
+      ShowHTML('      </FORM>');
+      ShowHTML('      </center>');
+    }
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     if (count($RS1)>0 && $p_graf=='N') {
       include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
-      if($p_tipo == 'PDF') $w_embed = 'WORD';
       
       $w_legenda = array('Encerradas','Tramitando','Cadastramento','Total');
       ShowHTML('<tr><td align="center"><br>');
@@ -881,9 +871,6 @@ function ImprimeCabecalho() {
 // -------------------------------------------------------------------------
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave,$l_agrega) {
   extract($GLOBALS);
-  if($p_tipo == 'PDF'){
-    $w_embed = 'WORD';  
-  }
 
   if ($w_embed != 'WORD')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</td>');                else ShowHTML('          <td align="right">'.number_format($l_solic,0,',','.').'&nbsp;</td>');
   if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</td>');                   else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</td>');
