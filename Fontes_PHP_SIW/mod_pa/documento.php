@@ -551,24 +551,14 @@ function Inicial() {
           ShowHTML('        ' . f($row, 'protocolo') . '');
         ShowHTML('        </td>');
         ShowHTML('        <td width="10">&nbsp;' . f($row, 'nm_tipo_protocolo') . '</td>');
-        if ($w_embed != 'WORD')
-          ShowHTML('        <td width="1%" nowrap>&nbsp;' . ExibeUnidade('../', $w_cliente, f($row, 'sg_unidade_posse'), f($row, 'unidade_int_posse'), $TP) . '</td>');
-        else
-          ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'sg_unidade_posse') . '');
-
+        ShowHTML('        <td width="1%" nowrap>&nbsp;' . ExibeUnidade('../', $w_cliente, f($row, 'sg_unidade_posse'), f($row, 'unidade_int_posse'), $TP) . '</td>');
         ShowHTML('        <td>' . f($row, 'nm_especie') . '</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'numero_original') . '</td>');
         ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;' . FormataDataEdicao(f($row, 'inicio'), 5) . '&nbsp;</td>');
         if (f($row, 'interno') == 'S') {
-          if ($w_embed != 'WORD')
-            ShowHTML('        <td width="1%" nowrap>&nbsp;' . ExibeUnidade('../', $w_cliente, f($row, 'nm_origem_resumido'), f($row, 'sq_origem'), $TP) . '</td>');
-          else
-            ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'nm_origem_resumido') . '');
+          ShowHTML('        <td width="1%" nowrap>&nbsp;' . ExibeUnidade('../', $w_cliente, f($row, 'nm_origem_resumido'), f($row, 'sq_origem'), $TP) . '</td>');
         } else {
-          if ($w_embed != 'WORD')
-            ShowHTML('        <td>' . ExibePessoa(null, $w_cliente, f($row, 'sq_origem'), $TP, f($row, 'nm_origem_resumido')) . '</td>');
-          else
-            ShowHTML('        <td width="1%" nowrap>&nbsp;' . f($row, 'nm_origem_resumido') . '');
+          ShowHTML('        <td>' . ExibePessoa(null, $w_cliente, f($row, 'sq_origem'), $TP, f($row, 'nm_origem_resumido')) . '</td>');
         }
         if ($w_embed != 'WORD')
           ShowHTML('        <td width="50" title="' . f($row, 'ds_assunto') . '">&nbsp;' . ExibeAssunto('../', $w_cliente, f($row, 'cd_assunto'), f($row, 'sq_assunto'), $TP) . '</td>');
@@ -703,10 +693,8 @@ function Inicial() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  if ($w_tipo == 'PDF')
-    RodapePdf();
-  else
-    Rodape();
+  if ($w_tipo == 'PDF') RodapePdf();
+  else                  Rodape();
 }
 
 // =========================================================================
@@ -1518,7 +1506,7 @@ function Visual($w_chave=null, $w_o=null, $w_usuario=null, $w_p1=null, $w_tipo=n
     $w_consulta = upper(nvl($w_consulta, 'N'));
   }
   
-  headerGeral('V', $w_tipo, $w_chave, 'Visualização de '.f($RS_Menu,'nome'), $w_embed, null, 4, $w_linha_pag,$w_filtro);
+  headerGeral('V', $w_tipo, $w_chave, 'Visualização de '.f($RS_Menu,'nome'), $w_embed, null, 4, $w_linha_pag, $w_filtro);
 
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'

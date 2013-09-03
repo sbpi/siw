@@ -121,6 +121,7 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = '';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = upper($_REQUEST['w_copia']);
+$w_embed        = '';
 
 $p_orprior      = upper($_REQUEST['p_orprior']);
 $p_projeto      = upper($_REQUEST['p_projeto']);
@@ -219,6 +220,7 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
+  global $w_embed;
   $w_tipo=$_REQUEST['w_tipo'];
 
   // Verifica se o cliente tem o módulo financeiro
@@ -327,25 +329,11 @@ function Inicial() {
       $RS = SortArray($RS,'fim','asc','prioridade','asc');
     }
   }
-  if ($w_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } elseif ($w_tipo=='EXCEL') {
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    $w_embed = 'WORD';
-    HeaderExcel($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } elseif($w_tipo == 'PDF'){
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    $w_embed = 'WORD';
-    HeaderPdf($w_TP,$w_pag);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } else {
-    $w_embed = 'HTML';
+  
+  $w_linha_pag    = 0;
+  headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+  
+  if ($w_embed!='WORD') {
     cabecalho();
     head();
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
@@ -385,40 +373,35 @@ function Inicial() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-  }    
-  if ($w_embed=='WORD') {
-    // Se for Word
-    BodyOpenWord();
-  } elseif ($w_troca > '') {
-    // Se for recarga da página
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  } elseif ($O=='I') {
-    BodyOpenClean('onLoad=\'document.Form.w_smtp_server.focus();\'');
-  } elseif ($O=='A') {
-    BodyOpenClean('onLoad=\'document.Form.w_nome.focus();\'');
-  } elseif ($O=='E') {
-    BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
-  } elseif (strpos('CP',$O)!==false) {
-    if ($P1!=1 || $O=='C') {
-      // Se for cadastramento
-      BodyOpenClean('onLoad=\'document.Form.p_chave.focus()\';');
+    if ($w_troca > '') {
+      // Se for recarga da página
+      BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+    } elseif ($O=='I') {
+      BodyOpenClean('onLoad=\'document.Form.w_smtp_server.focus();\'');
+    } elseif ($O=='A') {
+      BodyOpenClean('onLoad=\'document.Form.w_nome.focus();\'');
+    } elseif ($O=='E') {
+      BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
+    } elseif (strpos('CP',$O)!==false) {
+      if ($P1!=1 || $O=='C') {
+        // Se for cadastramento
+        BodyOpenClean('onLoad=\'document.Form.p_chave.focus()\';');
+      } else {
+        BodyOpenClean('onLoad=\'document.Form.p_ordena.focus()\';');
+      } 
     } else {
-      BodyOpenClean('onLoad=\'document.Form.p_ordena.focus()\';');
+      BodyOpenClean('onLoad=this.focus();');
     } 
-  } else {
-    BodyOpenClean('onLoad=this.focus();');
-  } 
-  Estrutura_Topo_Limpo();
-  Estrutura_Menu();
-  Estrutura_Corpo_Abre();
-  if($w_embed!='WORD') {
+    Estrutura_Topo_Limpo();
+    Estrutura_Menu();
+    Estrutura_Corpo_Abre();
     if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
     }
+    if ($w_filtro > '') ShowHTML($w_filtro);
   }
-  if ($w_filtro > '') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     ShowHTML('<tr><td>');
@@ -488,7 +471,7 @@ function Inicial() {
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $w_parcial=0;
+      $w_parcial = array();
       if($w_embed!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4); else $RS1 = $RS;
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -524,13 +507,10 @@ function Inicial() {
         // Mostra o valor se o usuário for interno e não for cadastramento nem mesa de trabalho
         if ($P1!=1 && $P1!=2) {
           if ($_SESSION['INTERNO']=='S') {
-            if (f($row,'sg_tramite')=='AT') {
-              ShowHTML('        <td align="right">'.formatNumber(f($row,'custo_real')).'&nbsp;</td>');
-              $w_parcial += f($row,'custo_real');
-            } else {
-              ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;</td>');
-              $w_parcial += f($row,'valor');
-            } 
+            if (f($row,'sg_tramite')=='AT') $w_valor = f($row,'custo_real');
+            else $w_valor = f($row,'valor');
+            ShowHTML('        <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber($w_valor).'&nbsp;</td>');
+            $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + $w_valor;
           } 
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
@@ -612,21 +592,31 @@ function Inicial() {
       if ($P1 != 1 && $P1 != 2 && $_SESSION['INTERNO'] == 'S') {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=7 align="right"><b>Total desta página&nbsp;</td>');
-          ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan=7 align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_parcial);
+          foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           ShowHTML('          <td'.(($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ? ' colspan="2"' : '').'>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
+           $w_total = array();
            foreach($RS as $row) {
-            if (f($row,'sg_tramite')=='AT') $w_total += f($row,'custo_real');
-            else                            $w_total += f($row,'valor');
-          } 
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=7 align="right"><b>Total da listagem&nbsp;</td>');
-          ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
+            if (f($row,'sg_tramite')=='AT') $w_valor = f($row,'custo_real');
+            else                            $w_valor = f($row,'valor');
+            $w_total[f($row,'sb_moeda')] = nvl($w_total[f($row,'sb_moeda')],0) + $w_valor;
+         } 
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('          <td colspan=7 align="right"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').' da listagem&nbsp;</td>');
+          ShowHTML('          <td align="right" nowrap><b>');
+          $i = 0;
+          ksort($w_total);
+          foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
+          echo('</td>');
           ShowHTML('          <td'.(($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ? ' colspan="2"' : '').'>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
@@ -4192,29 +4182,14 @@ function PrestacaoContas() {
 // -------------------------------------------------------------------------
 function Visual() {
   extract($GLOBALS);
+  global $w_dir_volta;
+  global $w_embed;
+  
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = upper(trim($_REQUEST['w_tipo'])); 
 
-  global $w_dir_volta;
-  if ($w_tipo=='PDF') {
-    headerPDF('Visualização de '.f($RS_Menu,'nome'),$w_pag);
-    $w_embed = 'WORD';
-  } elseif ($w_tipo=='EXCEL') {
-    HeaderExcel($_REQUEST['orientacao']);
-    $w_embed = 'WORD';
-  } elseif ($w_tipo=='WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-    $w_embed = 'WORD';
-  } else {
-    Cabecalho();
-    head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
-    BodyOpenClean('onLoad=\'this.focus();  \'');
-    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
-    $w_embed = 'HTML';
-  }
+  headerGeral('V', $w_tipo, $w_chave, 'Visualização de '.f($RS_Menu,'nome'), $w_embed, null, 4, $w_linha_pag,$w_filtro);
+
   if ($w_embed!='WORD') {
     if ($_REQUEST['w_volta']=='fecha') {
       ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
@@ -4231,8 +4206,8 @@ function Visual() {
       ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
     }
   }
-  if     ($w_tipo=='PDF')  RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  if ($w_tipo=='PDF')  RodapePDF();
+  else                 Rodape();
 }  
 
 // =========================================================================

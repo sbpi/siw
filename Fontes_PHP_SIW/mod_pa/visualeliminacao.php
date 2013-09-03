@@ -41,38 +41,30 @@ function VisualEliminacao($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
    
   // Identificação do lançamento
   $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-  $l_html .= chr(13).'    <tr><td width="30%"><b>Solicitante:<b></td>';
-  if (!($l_P1==4 || $l_tipo=='WORD')){
-    $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
-  } else {
-    $l_html .= chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
-  }
-    $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
-  if (!($l_P1==4 || $l_tipo=='WORD')){
-    $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
-  } else {
-    $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
-  }
+  $l_html .= chr(13).'    <tr><td width="30%"><b>Solicitante:<b></td><td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
+  $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td><td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
   if ($w_sg_tramite=='AT') $l_html.=chr(13).'      <tr><td><b>Data da eliminação:</b></td><td>'.formataDataEdicao(f($RS,'dt_eliminacao')).' </td></tr>';
   $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.crlf2br(f($RS,'observacao')).' </td></tr>';
   $l_html.=chr(13).'          </table></td></tr>';    
   
-  $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EMISSÃO DE LISTAGENS<hr NOSHADE color=#000000 SIZE=1></b></font><ul>';
-  $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteListElim&R='.$w_pagina.$par.'&O=L&w_chave='.$v_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PAELIM" title="Clique neste link para emitir a listagem.">Listagem de Eliminação de Documentos - Todas as unidades</A>&nbsp';
+  if ($w_embed!='WORD') {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EMISSÃO DE LISTAGENS<hr NOSHADE color=#000000 SIZE=1></b></font><ul>';
+    $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteListElim&R='.$w_pagina.$par.'&O=L&w_chave='.$v_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PAELIM" title="Clique neste link para emitir a listagem.">Listagem de Eliminação de Documentos - Todas as unidades</A>&nbsp';
 
-  // Exibe link para documento de autorização de eliminação pelas unidades que terão protocolos eliminados
-  $sql = new db_getSolicPA; $RS_Unid = $sql->getInstanceOf($dbms,null,$l_usuario,'AUTELIM',5,
-          null,null,null,null,null,null,null,null,null,null,
-          $v_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
-  if (count($RS)) {
-    $l_html.=chr(13).'         <br><br>';
-    $RS_Unid = SortArray($RS_Unid,'sigla','asc'); 
-    foreach($RS_Unid as $row) {
-      $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteListElim&R='.$w_pagina.$par.'&O=L&w_chave='.$v_chave.'&w_unidade='.f($row,'sq_unidade').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PAELIM" title="Clique neste link para emitir a listagem.">Listagem de Eliminação de Documentos - '.f($row,'sigla').'</A>&nbsp';
+    // Exibe link para documento de autorização de eliminação pelas unidades que terão protocolos eliminados
+    $sql = new db_getSolicPA; $RS_Unid = $sql->getInstanceOf($dbms,null,$l_usuario,'AUTELIM',5,
+            null,null,null,null,null,null,null,null,null,null,
+            $v_chave,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null);
+    if (count($RS)) {
+      $l_html.=chr(13).'         <br><br>';
+      $RS_Unid = SortArray($RS_Unid,'sigla','asc'); 
+      foreach($RS_Unid as $row) {
+        $l_html.=chr(13).'         <li><A class="HL" href="'.$w_dir.$w_pagina.'EmiteListElim&R='.$w_pagina.$par.'&O=L&w_chave='.$v_chave.'&w_unidade='.f($row,'sq_unidade').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PAELIM" title="Clique neste link para emitir a listagem.">Listagem de Eliminação de Documentos - '.f($row,'sigla').'</A>&nbsp';
+      }
     }
+    $l_html.=chr(13).'      </ul></td></tr>';
   }
-  $l_html.=chr(13).'      </ul></td></tr>';
 
   if ($l_O!='X') {
     //Listagem dos itens do pedido de compra. Não exibido quando operação igual a X (conclusão do pedido).

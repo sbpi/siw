@@ -77,7 +77,7 @@ function VisualEmprestimo($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'        </tr>';
     if (count($RS1)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $l_html.=chr(13).'      <tr><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS1 as $row){ 

@@ -392,7 +392,6 @@ function Inicial() {
   headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
   
   if ($w_embed!='WORD') {
-    $w_embed = 'HTML';
     Cabecalho();
     head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -460,10 +459,7 @@ function Inicial() {
     ScriptClose();
     ShowHTML('<base HREF="' . $conRootSIW . '">');
     ShowHTML('</HEAD>');
-    if ($w_embed == 'WORD') {
-      // Se for Word
-      BodyOpenWord();
-    } elseif ($w_troca > '') {
+    if ($w_troca > '') {
       // Se for recarga da página
       BodyOpenClean('onLoad="document.Form.' . $w_troca . '.focus();\'');
     } elseif (strpos('CP', $O) !== false) {
@@ -476,12 +472,10 @@ function Inicial() {
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
-    if($w_embed!='WORD') {
-      if ((strpos(upper($R),'GR_'))===false) {
-        Estrutura_Texto_Abre();
-      } else {
-        CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
-      }
+    if ((strpos(upper($R),'GR_'))===false) {
+      Estrutura_Texto_Abre();
+    } else {
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
     }
     if ($w_filtro > '') ShowHTML($w_filtro);
   }
@@ -592,7 +586,7 @@ function Inicial() {
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_embed!='WORD'){
           ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
-        }else{
+        } else {
           ShowHTML('&nbsp;'.f($row,'codigo_interno').'&nbsp;');
         }
         ShowHTML('        <td>'.f($row,'objeto').'</td>');
@@ -607,16 +601,10 @@ function Inicial() {
           } else {
             ShowHTML('        <td align="center" nowrap>'.f($row,'processo'));
           }
-        } elseif ($w_segmento=='Público') ShowHTML('        <td align="center">'.f($row,'processo').'</td>');        
-        //ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'&nbsp;</td>');
-        
-        if ($w_embed!='WORD'){
-          ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
-        }else{
-          ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'sg_unidade_resp').'&nbsp;</td>');
+        } elseif ($w_segmento=='Público') {
+          ShowHTML('        <td align="center">'.f($row,'processo').'</td>');        
         }
-        
-        //ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         if ($P1!=1 || $w_pede_valor_pedido=='S') {
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
           if ($P1!=1) {
@@ -803,10 +791,8 @@ function Inicial() {
   } 
   ShowHTML('</table>');
   
-  if ($w_tipo == 'PDF')
-    RodapePdf();
-  else
-    Rodape();
+  if ($w_tipo == 'PDF') RodapePdf();
+  else                  Rodape();
 } 
 
 // =========================================================================
@@ -3483,8 +3469,8 @@ function Excluir() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {

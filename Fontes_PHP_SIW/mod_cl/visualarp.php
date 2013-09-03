@@ -56,19 +56,8 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td>';
     $l_html.=chr(13).'      <td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
-    $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
-    if (!($l_P1==4 || $l_tipo=='WORD')){
-      $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
-    } else {
-      $l_html .= chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
-    }
-    if (!($l_P1==4 || $l_tipo=='WORD')){
-      $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
-      $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
-    } else {
-      $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
-    }
+    $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td><td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
+    $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td><td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td>';
     $l_html.=chr(13).'         <td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
     $l_html.=chr(13).'      <tr><td><b>Número original: </b></td>';

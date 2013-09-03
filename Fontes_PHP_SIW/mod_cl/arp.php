@@ -103,6 +103,7 @@ $w_pagina       = 'arp.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_cl/';
 $w_troca        = $_REQUEST['w_troca'];
+$w_embed        = '';
 
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
@@ -202,6 +203,8 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
+  global $w_embed;
+  
   if (is_array($_REQUEST['w_chave'])) {
     $itens = $_REQUEST['w_chave'];
   } else {
@@ -276,12 +279,11 @@ function Inicial() {
       $RS = SortArray($RS,'fim', 'desc', 'prioridade', 'asc', 'sq_siw_solicitacao', 'asc');
     }
   }
-  if ($w_tipo=='WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Pedido de ARP</TITLE>');
-  } else {
+  
+  $w_linha_pag    = 0;
+  headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+  
+  if ($w_embed!='WORD') {
     Cabecalho();
     head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -347,41 +349,39 @@ function Inicial() {
     } 
     ValidateClose();
     ScriptClose();
-  }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('</HEAD>');
-  if ($w_Troca>'') {
-    // Se for recarga da página
-    BodyOpenClean('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
-  } elseif (strpos('CP',$O)!==false) {
-    BodyOpenClean('onLoad=\'document.Form.p_codigo.focus()\';');
-  } elseif ($P1==2) {
-    BodyOpenClean(null);
-  } else {
-    BodyOpenClean('onLoad=this.focus();');
-  } 
-  Estrutura_Topo_Limpo();
-  Estrutura_Menu();
-  Estrutura_Corpo_Abre();
-  if($w_tipo!='WORD') {
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('</HEAD>');
+    if ($w_Troca>'') {
+      // Se for recarga da página
+      BodyOpenClean('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
+    } elseif (strpos('CP',$O)!==false) {
+      BodyOpenClean('onLoad=\'document.Form.p_codigo.focus()\';');
+    } elseif ($P1==2) {
+      BodyOpenClean(null);
+    } else {
+      BodyOpenClean('onLoad=this.focus();');
+    } 
+    Estrutura_Topo_Limpo();
+    Estrutura_Menu();
+    Estrutura_Corpo_Abre();
     if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
     }
+    if ($w_filtro > '') ShowHTML($w_filtro);
   }
-  if ($w_filtro > '') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td>');
     if ($P1==1 && $w_copia=='') {
       // Se for cadastramento e não for resultado de busca para cópia
-      if ($w_tipo!='WORD') { 
+      if ($w_embed!='WORD') { 
         ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;'); 
         ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
       }
     } 
-    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
+    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
       if ($w_copia>'') {
         // Se for cópia
         if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
@@ -402,7 +402,7 @@ function Inicial() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     $colspan = 0;
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       if (count($RS) && $P1==2) {
         $colspan++; ShowHTML('          <td rowspan=2 align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
@@ -449,7 +449,7 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="'.($colspan+3).'" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial = array();
-      if($w_tipo!='WORD') {
+      if($w_embed!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
         if ($P1==2) {
           ShowHTML('<span class="remover">');
@@ -555,7 +555,7 @@ function Inicial() {
           ksort($w_parcial);
           foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
           echo('</td>');
-          if ($w_tipo!='WORD') ShowHTML('          <td colspan=2 class="remover">&nbsp;</td>');
+          if ($w_embed!='WORD') ShowHTML('          <td colspan=2 class="remover">&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -571,7 +571,7 @@ function Inicial() {
           ksort($w_total);
           foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
           echo('</td>');
-          if ($w_tipo!='WORD') ShowHTML('          <td colspan=2 class="remover">&nbsp;</td>');
+          if ($w_embed!='WORD') ShowHTML('          <td colspan=2 class="remover">&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 
@@ -581,7 +581,7 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    if (count($RS) && $w_tipo!='WORD') {
+    if (count($RS) && $w_embed!='WORD') {
       if ($P1==2) {
         ShowHTML('<span class="remover">');
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan=3>');
@@ -663,7 +663,8 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Rodape();
+  if ($w_tipo == 'PDF') RodapePdf(); 
+  else                  Rodape();
 } 
 
 // =========================================================================
@@ -2197,38 +2198,25 @@ function Anexos() {
 // -------------------------------------------------------------------------
 function Visual() {
   extract($GLOBALS);
-  global $w_Disabled;
+  global $w_embed;
 
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = upper(trim($_REQUEST['w_tipo']));
 
-  if ($w_tipo=='PDF') {
-    headerPdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
-    $w_embed = 'WORD';
-  } elseif ($w_tipo=='WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-    $w_embed = 'WORD';
-  } else {    
-    Cabecalho();
-    head();
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Pedido de ARP</TITLE>');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpenClean('onLoad=\'this.focus()\';');
-    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
-    $w_embed = 'HTML';
-  }
+  headerGeral('V', $w_tipo, $w_chave, 'Visualização de '.f($RS_Menu,'nome'), $w_embed, null, 4, $w_linha_pag,$w_filtro);
+  
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualARP($w_chave,'L',$w_usuario,$P1,$w_embed));
-  if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
-  ScriptOpen('JavaScript');
-  ShowHTML('  var comando, texto;');
-  ShowHTML('  if (window.name!="content") {');
-  ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
-  ShowHTML('  }');
-  ScriptClose();
+  if ($w_embed!='WORD') {
+    ShowHTML('<center><B><font size=1>Clique <span class="lk"><a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</span></font></b></center>');
+    ScriptOpen('JavaScript');
+    ShowHTML('  var comando, texto;');
+    ShowHTML('  if (window.name!="content") {');
+    ShowHTML('    $(".lk").html(\'<a class="hl" href="javascript:window.close(); opener.focus();">aqui</a> fechar esta janela\');');
+    ShowHTML('  }');
+    ScriptClose();
+  }
   if     ($w_tipo=='PDF')  RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 

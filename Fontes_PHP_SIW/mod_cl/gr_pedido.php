@@ -247,8 +247,6 @@ function Gerencial() {
   $w_linha_filtro = $w_linha;
   $w_linha_pag    = 0;
   headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
-  
-  $w_linha_filtro = $w_linha;
 
   if ($w_embed!='WORD') {
     $w_embed = 'HTML';

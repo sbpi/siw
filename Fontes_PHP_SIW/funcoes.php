@@ -950,7 +950,9 @@ function consultaTelefone($p_cliente) {
 // -------------------------------------------------------------------------
 function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  if ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD' || $l_word=='S'){
+  if (nvl($w_embed,'')!='') {
+    $l_embed = $w_embed;
+  } elseif ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD' || $l_word=='S'){
     $l_embed = 'WORD';
   }
   if (strpos($l_texto,'|@|')!==false) {
@@ -986,7 +988,11 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   if (Nvl($p_nome,'')=='') {
     $l_string='&nbsp;';
   } else {
-    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</a>';
+    if ($w_embed=='WORD') {
+      $l_string .= $p_nome;
+    } else {
+      $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</a>';
+    }
   }
   return $l_string;
 }
@@ -1089,7 +1095,11 @@ function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
   if (Nvl($p_unidade,'')=='') {
     $l_string='&nbsp;';
   } else {
-    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</a>';
+    if ($w_embed=='WORD') {
+      $l_string .= $p_unidade;
+    } else {
+      $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</a>';
+    }
   }
   return $l_string;
 }

@@ -125,18 +125,11 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
 
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2">';
-    $l_html .= chr(13).'          <tr><td width="30%"><b>Local de execução:</b></td><td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').")</b></td>";
-    $l_html .= chr(13).'          <tr><td><b>Proponente externo:<b></td>';
-    $l_html .= chr(13).'        <td>'.nvl(f($RS,'proponente'),'---').' </b></td>';
-    $l_html .= chr(13).'          <tr><td><b>Responsável:<b></td>';
-    if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
-    else                $l_html .= chr(13).'        <td>'.f($RS,'nm_sol').'</b></td>';
-    $l_html .= chr(13).'          <tr><td><b>Unidade responsável:</b></td>';
-    if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
-    else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
-    $l_html .= chr(13).'          <tr><td><b>Unidade de cadastramento:</b></td>';
-    if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade_cad'),$TP).'</b></td>';
-    else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
+    $l_html .= chr(13).'      <tr><td width="30%"><b>Local de execução:</b></td><td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').")</b></td>";
+    $l_html .= chr(13).'      <tr><td><b>Proponente externo:<b></td><td>'.nvl(f($RS,'proponente'),'---').' </b></td>';
+    $l_html .= chr(13).'      <tr><td><b>Responsável:<b></td><td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
+    $l_html .= chr(13).'      <tr><td><b>Unidade responsável:</b></td><td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
+    $l_html .= chr(13).'      <tr><td><b>Unidade de cadastramento:</b></td><td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade_cad'),$TP).'</b></td>';
 
     // Exibe o orçamento disponível para o projeto se for visão completa
     if ($w_tipo_visao==0) { 

@@ -74,6 +74,7 @@ $w_pagina       = 'gr_eliminacao.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pa/';
 $w_troca        = upper($_REQUEST['w_troca']);
+$w_embed        = '';
 
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
@@ -151,6 +152,7 @@ exit;
 // -------------------------------------------------------------------------
 function Gerencial() {
   extract($GLOBALS);
+  global $w_embed;
 
   $w_pag   = 1;
   $w_linha = 0;
@@ -283,20 +285,12 @@ function Gerencial() {
         $RS1  = SortArray($RS1,'nm_demanda_tipo','asc');
         break;
     } 
-  } 
+  }
   $w_linha_filtro = $w_linha;
-  if ($p_tipo == 'WORD') {
-    HeaderWord($_REQUEST['orientacao']);
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($p_tipo == 'PDF'){
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
-    $w_embed = 'WORD';
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
-    if ($w_filtro>'') ShowHTML($w_filtro);
-  } else {
+  $w_linha_pag    = 0;
+  headerGeral('P', $p_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
+  
+  if ($w_embed!='WORD') {
     $w_embed = 'HTML';
     Cabecalho();
     head();
@@ -948,10 +942,8 @@ function Gerencial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  if($p_tipo == 'PDF'){
-    RodapePdf();
-  }
-  Rodape();
+  if($p_tipo == 'PDF') RodapePdf();
+  else                 Rodape();
   
 } 
 
