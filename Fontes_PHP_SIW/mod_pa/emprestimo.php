@@ -1178,7 +1178,7 @@ function Visual() {
     ShowHTML('  }');
     ScriptClose();
   }
-  if ($w_embed=='PDF') RodapePDF();
+  if ($w_tipo=='PDF') RodapePDF();
   else                Rodape();
 }
 // =========================================================================

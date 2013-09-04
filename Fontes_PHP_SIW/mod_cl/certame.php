@@ -482,7 +482,7 @@ function Inicial() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     if ($w_embed == 'WORD') {
-      ShowHTML('<tr>');
+      ShowHTML('<tr><td colspan="2">');
     } else {
       ShowHTML('<tr><td>');
       if ($P1==1 && $w_copia=='') {
@@ -683,7 +683,7 @@ function Inicial() {
           ksort($w_parcial);
           foreach($w_parcial as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
           echo('</td>');
-          ShowHTML('          <td colspan=4>&nbsp;</td>');
+          ShowHTML('          <td colspan='.(($w_embed=='WORD') ? '2' : '3').'>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -699,7 +699,7 @@ function Inicial() {
           ksort($w_total);
           foreach($w_total as $k => $v) { echo((($i) ? '<div></div>' : '').$k.' '.formatNumber($v,2)); $i++; }
           echo('</td>');
-          ShowHTML('          <td colspan=4>&nbsp;</td>');
+          ShowHTML('          <td colspan="'.(($w_embed=='WORD') ? '2' : '3').'">&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 
