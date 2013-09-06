@@ -8,15 +8,16 @@ create or replace procedure SP_PutLcSituacao
     p_padrao                   in  varchar2  default null,
     p_publicar                 in  varchar2  default null,
     p_conclusao                in  varchar2  default null,
-    p_tela                     in  varchar2  default null
+    p_tela                     in  varchar2  default null,
+    p_externo                  in  varchar2  default null
    ) is
 begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into lc_situacao
-             (sq_lcsituacao,         cliente,   nome,   descricao,   publicar,   conclui_sem_proposta, tela_exibicao, ativo,   padrao
+             (sq_lcsituacao,         cliente,   nome,   descricao,   publicar,   conclui_sem_proposta, tela_exibicao, ativo,   padrao,   codigo_externo
              )
-      (select sq_lcsituacao.nextval, p_cliente, p_nome, p_descricao, p_publicar, p_conclusao,          p_tela,        p_ativo, p_padrao
+      (select sq_lcsituacao.nextval, p_cliente, p_nome, p_descricao, p_publicar, p_conclusao,          p_tela,        p_ativo, p_padrao, p_externo
          from dual
       );
    Elsif p_operacao = 'A' Then
@@ -28,7 +29,8 @@ begin
          conclui_sem_proposta  = p_conclusao,
          tela_exibicao         = p_tela,
          ativo                 = p_ativo,
-         padrao                = p_padrao
+         padrao                = p_padrao,
+         codigo_externo        = p_externo
        where sq_lcsituacao = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

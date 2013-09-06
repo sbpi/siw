@@ -180,15 +180,17 @@ function Inicial() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td>');    
-    if ($w_submenu>'') {
-      $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-      foreach($RS1 as $row) {
-        ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-        break;
+    ShowHTML('<tr><td>');
+    if (f($RS_Menu,'libera_edicao')=='S') {
+      if ($w_submenu>'') {
+        $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+        foreach($RS1 as $row) {
+          ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=P&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+          break;
+        }
+      } else {
+        ShowHTML('<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       }
-    } else {
-      ShowHTML('<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     }
     if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
       ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a>');
@@ -204,7 +206,7 @@ function Inicial() {
     ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
-    ShowHTML('          <td class="remover"><b>Operações</td>');
+    if (f($RS_Menu,'libera_edicao')=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS_Benef)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -218,16 +220,18 @@ function Inicial() {
         if(nvl(f($row,'nm_cidade'),'')!='')ShowHTML('        <td>'.f($row,'nm_cidade').((nvl(f($row,'pd_pais'),'N')=='S') ? ' - '.f($row,'co_uf') : ' ('.f($row,'nm_pais').')').'</td>');
         else                               ShowHTML('        <td>---</td>');
         ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
-        ShowHTML('        <td align="center">'.Nvl(f($row,'identificador_primario'),'---').'</td>');
+        ShowHTML('        <td align="center" nowrap>'.Nvl(f($row,'identificador_primario'),'---').'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'codigo_externo'),'&nbsp;').'</td>');
-        ShowHTML('        <td class="remover" align="top" nowrap>');
-        if ($w_submenu>'') {
-          ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
-        } else {
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
-        } 
-        //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
-        ShowHTML('        </td>');
+        if (f($RS_Menu,'libera_edicao')=='S') {
+          ShowHTML('        <td class="remover" align="top" nowrap>');
+          if ($w_submenu>'') {
+            ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor." TARGET="menu">AL</a>&nbsp;');
+          } else {
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
+          } 
+          //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
+          ShowHTML('        </td>');
+        }
         ShowHTML('      </tr>');
       } 
     } 

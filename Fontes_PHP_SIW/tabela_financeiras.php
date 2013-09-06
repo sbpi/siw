@@ -115,8 +115,11 @@ if(nvl($w_menu,'')!=''){
     ShowHTML('</head>');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
-    ShowHTML('<HR>');
-    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><b>Operação não permitida!</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+    ShowHTML('<HR><div align=center><br><br><br><br><br><br><br><br><br><br>');
+    ShowHTML('<b>Operação não permitida!</b>');
+    ShowHTML('<br><br>Clique <A class="HL" HREF="javascript:history.back(1);">aqui</A> para voltar à tela anterior.');
+    ShowHTML('<br><br><br><br><br><br><br><br><br><br></center></div>');
+    ShowHTML('</div>');
     Rodape();
     exit();
   }
@@ -228,7 +231,7 @@ function CentroCusto() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="99%" border="0">');
   if ($O=='L') {
-    ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_CC"><u>I</u>ncluir</a>&nbsp;');
+    if (f($RS_Menu,'libera_edicao')=='S') ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_CC"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
     $SQL = new db_getCcTree; $RS = $SQL->getInstanceOf($dbms,$w_cliente,'IS NULL');

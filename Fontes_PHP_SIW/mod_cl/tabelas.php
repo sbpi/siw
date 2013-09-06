@@ -211,8 +211,8 @@ function TipoMatServ() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='C' || $O=='I' || $O=='A') {
@@ -230,7 +230,7 @@ function TipoMatServ() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="99%" border="0">');
   if ($O=='L') {
-    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Os números entre parênteses indicam a quantidade de itens vinculados ao tipo.</ul></b></font></td>');
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Os números entre parênteses indicam a quantidade de itens vinculados ao tipo.</ul></b></td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     }
@@ -378,7 +378,7 @@ function TipoMatServ() {
     } 
   } elseif (strpos('CIAEDT',$O)!==false) {
     if ($O == 'C' || $O=='I' || $O=='A') {
-      ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Não é permitido subordinar um tipo de material/serviço a outro que já tenha itens vinculados.</ul></b></font></td>');
+      ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Não é permitido subordinar um tipo de material/serviço a outro que já tenha itens vinculados.</ul></b></td>');
       if ($O=='C') ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.</b></font>.</td>');
     } 
     if ($O != 'C' && $O!='I' && $O!='A') $w_Disabled='disabled';
@@ -494,8 +494,8 @@ function Criterio() {
      ValidateClose();
      ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
@@ -513,36 +513,36 @@ function Criterio() {
     //Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('    <td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('    <td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     }
-    ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Vencedor por item','nm_item').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Vencedor por item','nm_item').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','nm_padrao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td class="remover"><font size="1"><b>Operações</font></td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
     }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_item').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_item').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         if ($w_libera_edicao=='S') {
-          ShowHTML('        <td class="remover" align="top" nowrap><font size="1">');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
           ShowHTML('        </td>');
@@ -564,13 +564,13 @@ function Criterio() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0>');
     ShowHTML('        <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('        <tr><td colspan=3><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Vencedor por item?</b>', $w_item, 'w_item');
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     MontaRadioNS( '<b>Padrão?</b>',$w_padrao, 'w_padrao');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
        ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -617,6 +617,7 @@ function Situacao() {
     $w_publicar     = $_REQUEST['w_publicar'];
     $w_conclusao    = $_REQUEST['w_conclusao'];
     $w_tela         = $_REQUEST['w_tela'];
+    $w_externo      = $_REQUEST['w_externo'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
@@ -637,6 +638,7 @@ function Situacao() {
       $w_publicar             = f($row,'publicar');
       $w_conclusao            = f($row,'conclui_sem_proposta');
       $w_tela                 = f($row,'tela_exibicao');
+      $w_externo              = f($row,'codigo_externo');
       break;
     }
   }
@@ -648,6 +650,7 @@ function Situacao() {
     ValidateOpen( 'Validacao');
      if (!(strpos('IA',$O)===false)) {
        Validate('w_nome','Nome','1','1','2','60','1','1');
+       Validate('w_externo','Código externo','1','','1','60','1','1');
        Validate('w_descricao','Descrição', '1', '', '5', '1000', '1', '1');
        Validate('w_tela','Tela de exibição','SELECT','1',1,1,'1','');
        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
@@ -662,8 +665,8 @@ function Situacao() {
      ValidateClose();
      ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
@@ -681,40 +684,42 @@ function Situacao() {
     //Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('<td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('<td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     }
-    ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Publicar no portal','nm_publicar').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Conclui sem proposta','conclui_sem_proposta').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Tela exibição','tela_exibicao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Publicar no portal','nm_publicar').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Conclui sem proposta','conclui_sem_proposta').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tela exibição','tela_exibicao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','nm_padrao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td class="remover"><font size="1"><b>Operações</font></td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
     }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_publicar').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_conclui_sem_proposta').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_tela_exibicao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_publicar').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_conclui_sem_proposta').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_tela_exibicao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'codigo_externo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         if ($w_libera_edicao=='S') {
-          ShowHTML('        <td class="remover" align="top" nowrap><font size="1">');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
           ShowHTML('        </td>');
@@ -735,8 +740,9 @@ function Situacao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0>');
-    ShowHTML('        <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('        <tr><td colspan=3><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=2><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('            <td><b><u>C</u>ódigo externo:<br><INPUT ACCESSKEY="C" TYPE="TEXT" CLASS="sti" NAME="w_externo" SIZE=30 MAXLENGTH=60 VALUE="'.$w_externo.'" '.$w_Disabled.' title="Código da situação em um sistema externo."></td>');
+    ShowHTML('        <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Publica certames desta situação no portal?</b>', $w_publicar, 'w_publicar');
     MontaRadioSN( '<b>Permite conclusão sem proposta?</b>', $w_conclusao, 'w_conclusao');
@@ -745,7 +751,7 @@ function Situacao() {
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     MontaRadioNS( '<b>Padrão?</b>',$w_padrao, 'w_padrao');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
        ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -826,8 +832,8 @@ function Enquadramento() {
      ValidateClose();
      ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
@@ -851,29 +857,29 @@ function Enquadramento() {
   ShowHTML('</table>');
   If ($O=='L') {
     //Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Sigla</font></td>');
-    ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td class="remover"><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Sigla</td>');
+    ShowHTML('          <td><b>Descrição</td>');
+    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'sigla').'</td>');
-        ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td class="remover" align="top" nowrap><font size="1">');
+        ShowHTML('        <td>'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -895,11 +901,11 @@ function Enquadramento() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0>');
     ShowHTML('        <tr><td colspan=3><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_sigla.'"></td>');
-    ShowHTML('        <tr><td colspan=3><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
        ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -964,8 +970,8 @@ function Parametro() {
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=\'document.Form.w_dias_validade_pesquisa.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.str_replace('Listagem','Alteração',$w_TP).'</FONT></B>');
   ShowHTML('<HR>');
@@ -1082,8 +1088,8 @@ function Unidade() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (strpos('I',$O)!==false) {
@@ -1303,8 +1309,8 @@ function Usuario() {
     ScriptClose();
   } 
 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1319,28 +1325,28 @@ function Usuario() {
       ShowHTML('  <tr><td colspan="3"><br><br><br></td></tr>');
     } else {
       // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-      ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      ShowHTML('    <td align="right"><font size="1">'.exportaOffice().'<b>Registros: '.count($RS));
+      ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
       ShowHTML('<tr><td align="center" colspan=3>');
       ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
-      ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
-      ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
-      ShowHTML('          <td class="remover"><font size="1"><b>Operações</font></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Lotação','sg_unidade').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</td>');
+      ShowHTML('          <td class="remover"><b>Operações</td>');
       ShowHTML('        </tr>');
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         // Lista os registros selecionados para listagem
         foreach($RS as $row) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          ShowHTML('        <td><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
-          ShowHTML('        <td><font size="1">'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
-          ShowHTML('        <td align="center"><font size="1">'.Nvl(f($row,'ramal'),'---').'</td>');
-          ShowHTML('        <td align="top" nowrap><font size="1">');
+          ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
+          ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
+          ShowHTML('        <td align="center">'.Nvl(f($row,'ramal'),'---').'</td>');
+          ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
@@ -1358,7 +1364,7 @@ function Usuario() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('<u>P</u>essoa:','p','Selecione a pessoa.',$w_chave,null,'w_chave','USUARIOS');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
     ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
@@ -1384,8 +1390,8 @@ function Usuario() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'CLTIPMATSE':
@@ -1476,7 +1482,7 @@ function Grava() {
         }  
         $SQL = new dml_putLCSituacao; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao'],
-           $_REQUEST['w_publicar'],$_REQUEST['w_conclusao'],$_REQUEST['w_tela']);
+           $_REQUEST['w_publicar'],$_REQUEST['w_conclusao'],$_REQUEST['w_tela'],$_REQUEST['w_externo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();        

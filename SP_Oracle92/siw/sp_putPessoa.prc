@@ -41,6 +41,7 @@ create or replace procedure sp_putPessoa
    w_fornecedor      varchar(1);
    w_cliente         varchar(1);
    w_cpf             varchar2(25) := p_cpf;
+   w_cnpj            varchar2(25) := p_cnpj;
 begin
     
    If p_operacao = 'I' Then
@@ -128,7 +129,13 @@ begin
                 sexo               = coalesce(p_sexo, sexo)
           where sq_pessoa = w_chave_pessoa;
       End If;
-   Elsif p_tipo_pessoa = 2 Then
+   Elsif p_tipo_pessoa in (2,4) Then
+
+      -- Se estrangeiro sem CPF, gera código especial.
+      If w_cnpj is null and p_tipo_pessoa = 4 Then  
+         w_cnpj := geracpfespecial(2);
+      End If;
+   
       -- Verifica se os dados de pessoa jurídica já existem
       select count(*) into w_existe from co_pessoa_juridica where sq_pessoa = w_chave_pessoa;
       
@@ -136,10 +143,10 @@ begin
          insert into co_pessoa_juridica
            (sq_pessoa,      cnpj,   inscricao_estadual,   cliente)
          values
-           (w_chave_pessoa, p_cnpj, p_inscricao_estadual, p_cliente);
+           (w_chave_pessoa, w_cnpj, p_inscricao_estadual, p_cliente);
       Else -- Caso contrário, altera
          update co_pessoa_juridica
-            set cnpj               = p_cnpj,
+            set cnpj               = coalesce(w_cnpj, cnpj),
                 inscricao_estadual = coalesce(p_inscricao_estadual, inscricao_estadual)
           where sq_pessoa = w_chave_pessoa;
       End If;

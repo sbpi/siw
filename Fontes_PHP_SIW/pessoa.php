@@ -689,12 +689,12 @@ function CadastraPessoa() {
       Validate('w_sq_pais_passaporte','País emissor','SELECT','1',1,10,'1','1');
     }
     ShowHTML('  if ((theForm.w_rg_numero.value+theForm.w_rg_emissao.value+theForm.w_rg_emissor.value)!="" && (theForm.w_rg_numero.value=="" || theForm.w_rg_emissor.value=="")) {');
-    ShowHTML('     alert(\'Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.\');');
+    ShowHTML('     alert("Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.");');
     ShowHTML('     theForm.w_rg_numero.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
     ShowHTML('  if ((theForm.w_passaporte_numero.value+theForm.w_sq_pais_passaporte[theForm.w_sq_pais_passaporte.selectedIndex].value)!="" && (theForm.w_passaporte_numero.value=="" || theForm.w_sq_pais_passaporte.selectedIndex==0)) {');
-    ShowHTML('     alert(\'Os campos passaporte e país emissor devem ser informados em conjunto!\');');
+    ShowHTML('     alert("Os campos passaporte e país emissor devem ser informados em conjunto!");');
     ShowHTML('     theForm.w_passaporte_numero.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -717,33 +717,33 @@ function CadastraPessoa() {
     Validate('w_cep','CEP','1','',5,9,'','0123456789');
   }
   ShowHTML('  if ((theForm.w_nr_telefone.value+theForm.w_nr_fax.value+theForm.w_nr_celular.value)!="" && theForm.w_ddd.value=="") {');
-  ShowHTML('     alert(\'O campo DDD é obrigatório quando informar telefone, fax ou celular!\');');
+  ShowHTML('     alert("O campo DDD é obrigatório quando informar telefone, fax ou celular!");');
   ShowHTML('     theForm.w_ddd.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
   ShowHTML('  if (theForm.w_ddd.value!="" && theForm.w_nr_telefone.value=="") {');
-  ShowHTML('     alert(\'Se informar o DDD, então informe obrigatoriamente o telefone!\\nFax e celular são opcionais.\');');
+  ShowHTML('     alert("Se informar o DDD, então informe obrigatoriamente o telefone!\\nFax e celular são opcionais.");');
   ShowHTML('     theForm.w_nr_telefone.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
   ShowHTML('  if (theForm.w_ddd.value!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
-  ShowHTML('     alert(\'Se informar telefone, fax ou celular, então informe o país, estado e cidade!\');');
+  ShowHTML('     alert("Se informar telefone, fax ou celular, então informe o país, estado e cidade!");');
   ShowHTML('     theForm.w_sq_pais.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
   ShowHTML('  if ((theForm.w_complemento.value+theForm.w_bairro.value+theForm.w_cep.value)!="" && theForm.w_logradouro.value=="") {');
-  ShowHTML('     alert(\'O campo logradouro é obrigatório quando informar os campos complemento, bairro ou CEP!\');');
+  ShowHTML('     alert("O campo logradouro é obrigatório quando informar os campos complemento, bairro ou CEP!");');
   ShowHTML('     theForm.w_logradouro.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
   ShowHTML('  if (theForm.w_logradouro.value!="" && theForm.w_cep.value=="") {');
-  ShowHTML('     alert(\'O campo CEP é obrigatório quando informar o endereço da pessoa!\');');
+  ShowHTML('     alert("O campo CEP é obrigatório quando informar o endereço da pessoa!");');
   ShowHTML('     theForm.w_cep.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
   Validate('w_email','E-Mail','1',(($w_exige_email)?'1':''),4,60,'1','1');
   ShowHTML('  if ((theForm.w_ddd.value+theForm.w_logradouro.value+theForm.w_email.value)!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
-  ShowHTML('     alert(\'Se informar algum telefone, o endereço ou o e-mail da pessoa, então informe o país, estado e cidade!\');');
+  ShowHTML('     alert("Se informar algum telefone, o endereço ou o e-mail da pessoa, então informe o país, estado e cidade!");');
   ShowHTML('     theForm.w_sq_pais.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
@@ -1297,7 +1297,7 @@ function Grava() {
       ScriptOpen('JavaScript');
       if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
         if ($w_resultado>'') {
-          ShowHTML('  alert(\'ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+          ShowHTML('  alert("ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'");');
         }
         ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_cliente='.$_REQUEST['w_cliente'].'&w_sq_solicitacao='.$_REQUEST['w_sq_solicitacao'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       } else {
@@ -1335,9 +1335,9 @@ function Grava() {
                     if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
                         ScriptOpen('JavaScript');
                         if (nvl(f($row,'identificador_primario'),'')=='') {
-                            ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.\');');
+                            ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.");');
                         } else {
-                            ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CPF.\');');
+                            ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CPF.");');
                         }
                         ScriptClose();
                         retornaFormulario('w_cpf');
@@ -1352,7 +1352,7 @@ function Grava() {
             $SQL = new db_getBenef; $RS = $SQL->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,$_REQUEST['w_cnpj'],null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null, null, null, null, null,'EXISTE');
             if (count($RS)>0) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
+                ShowHTML('  alert("Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.");');
                 ScriptClose();
                 retornaFormulario('w_cnpj');
                 exit;
@@ -1367,9 +1367,9 @@ function Grava() {
                     if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {
                         ScriptOpen('JavaScript');
                         if (nvl(f($row,'identificador_primario'),'')=='') {
-                            ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.\');');
+                            ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.");');
                         } else {
-                            ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CNPJ.\');');
+                            ShowHTML('  alert("Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CNPJ.");');
                         }
                         ScriptClose();
                         retornaFormulario('w_cnpj');
@@ -1402,7 +1402,7 @@ function Grava() {
     }
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+    ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
     ScriptClose();
     exibeVariaveis();
   }

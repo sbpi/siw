@@ -573,8 +573,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         if($l_tipo!='WORD') $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
         else       $l_html .= chr(13).'  '.f($row,'sq_siw_solicitacao');
         $l_html .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
-        if($l_tipo!='WORD') $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
-        else       $l_html .= chr(13).'     <td>'.f($row,'nm_resp').'</td>';
+        $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
         $l_html .= chr(13).'     <td>'.f($row,'sg_unidade_resp').'</td>';
         $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>';
         $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
@@ -1053,8 +1052,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
               $l_novo = 'S';
             }
             $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
-            if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
-            else       $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+            $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
             $l_html.=chr(13).'           <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
             $l_html.=chr(13).'           <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';    
             $l_html.=chr(13).'      </tr>';
@@ -1073,11 +1071,9 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
             $l_html .= chr(13).'      <tr>';
             if ($l_novo=='S') {
               $l_html .= chr(13).'        <td align="center">*** ALTERAR ***</td>';
-              if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
-              else       $l_html .= chr(13).'        <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+              $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
             } else {
-              if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
-              else       $l_html .= chr(13).'        <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+              $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
               $l_html .= chr(13).'        <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
               $l_html .= chr(13).'        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
             }
@@ -1105,8 +1101,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
             $l_cont = 1;
           }
           $l_html .= chr(13).'      <tr>';
-          if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
-          else       $l_html .= chr(13).'        <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+          $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
           $l_html .= chr(13).'        <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
           $l_html .= chr(13).'        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
           $l_html .= chr(13).'      </tr>';

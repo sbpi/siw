@@ -20,7 +20,7 @@ begin
    Else
      open p_result for 
       select a.sq_lcsituacao chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao,
-             a.publicar, a.conclui_sem_proposta, a.tela_exibicao,
+             a.publicar, a.conclui_sem_proposta, a.tela_exibicao, a.codigo_externo,
              case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo,
              case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao,
              case a.publicar when 'S' then 'Sim' else 'Não' end nm_publicar,

@@ -9,6 +9,7 @@ declare
   w_codigo       siw_solicitacao.codigo_interno%type;
   w_nr_processo  dslicit.scl_lics.nr_processo%type;
   w_nr_lic       dslicit.scl_lics.nr_lic%type;
+  w_situacao     lc_situacao.codigo_externo%type;
   lic            cl_solicitacao%rowtype;
   w_conducao_ubo varchar2(1);
   w_existe       number(2);
@@ -19,12 +20,19 @@ begin
     from cl_solicitacao a, siw_menu b, siw_tramite c, siw_tramite d
    where a.sq_siw_solicitacao = :new.sq_siw_solicitacao and :old.sq_siw_tramite  <> :new.sq_siw_tramite
      and b.sq_menu            = :new.sq_menu            and b.sigla = 'CLLCCAD' -- É licitação
-     and c.sq_siw_tramite     = :old.sq_siw_tramite     and c.sigla = 'CI'      -- Estava em cadastramento
-     and d.sq_siw_tramite     = :new.sq_siw_tramite     and d.sigla = 'EE';     -- Foi para execução
+     and c.sq_siw_tramite     = :old.sq_siw_tramite -- Trâmite anterior
+     and d.sq_siw_tramite     = :new.sq_siw_tramite -- Trâmite atual
+     and ((-- Estava em cadastramento e foi para execução
+           c.sigla = 'CI' and d.sigla = 'EE'
+          ) or
+          (-- Foi concluída, não importando o trâmite anterior
+           d.sigla = 'AT'
+          )
+         );
 
   If w_dispara > 0 Then
      -- Recupera o código da licitação no SIG
-     w_codigo := :new.codigo_interno;
+     w_codigo := upper(:new.codigo_interno);
      
      -- Ajusta valor do campo NR_PROCESSO
      select lpad(replace(substr(w_codigo,1,case instr(w_codigo,'/') when 0 then 50 else instr(w_codigo,'/')-1 end),a.prefixo,''),4,'0')||'/'||
@@ -40,6 +48,13 @@ begin
      
      -- Recupera dados da tabela de licitação
      select * into lic from cl_solicitacao where sq_siw_solicitacao = :new.sq_siw_solicitacao;
+     
+     -- Recupera o código da situação no DSLICIT
+     If lic.sq_lcsituacao is not null Then
+        select codigo_externo into w_situacao from lc_situacao where sq_lcsituacao = lic.sq_lcsituacao;
+     End If;
+     -- Evita que o valor seja nulo
+     w_situacao := nvl(w_situacao,1);
      
      -- Verifica se a condução da licitação é pelo UBO
      If lic.sq_lcmodalidade is not null Then
@@ -83,7 +98,7 @@ begin
                null,                        null,                    null,                        null,
                null,                        null,                    lic.dias_validade_proposta,  0,
                lic.data_abertura,           lic.envelope_1,          null,                        null,
-               null,                        c.handle,                u.cd_usuario,                :new.valor,
+               w_situacao,                  c.handle,                u.cd_usuario,                :new.valor,
                sysdate,                     w_nr_lic,                :new.descricao,              null,
                null,                        null,                    0,                           null,
                null,                        null,                    null,                        'S',
@@ -101,11 +116,11 @@ begin
         update DSLICIT.SCL_LICS a
            set (cd_acordo,                  cd_projeto,              cd_moeda,                    nr_propostavalidadedias,
                 dh_propostarecebimento,     dh_propostaabertura,     cd_projetoinc,               vl_estimativa,
-                sn_conduzidaunesco,         nr_processo,             ds_obs
+                sn_conduzidaunesco,         nr_processo,             ds_obs,                      cd_situacao
                ) = 
         (select c.nivelsuperior,            c.handle,                e1.cd_moeda,                 lic.dias_validade_proposta,
                 lic.data_abertura,          lic.envelope_1,          c.handle,                    :new.valor,
-                w_conducao_ubo,             w_codigo,                :new.descricao
+                w_conducao_ubo,             w_codigo,                :new.descricao,              w_situacao
            from ct_cc                               b
                 inner   join corporativo.ct_cc      c on (b.descricao     = c.handle),
                 co_moeda                            e

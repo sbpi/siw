@@ -404,25 +404,30 @@ function Inicial() {
   }
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
-    ShowHTML('<tr><td>');
-    if ($P1 == 1 && $w_copia == '') {
-      // Se for cadastramento e não for resultado de busca para cópia
-      if ($w_submenu > '') {
-        $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+    if ($w_embed=='WORD') {
+      ShowHTML('<tr><td colspan="2">');
+    } else {
+      ShowHTML('<tr><td>');
+      if ($P1 == 1 && $w_copia == '') {
+        // Se for cadastramento e não for resultado de busca para cópia
+        if ($w_submenu > '') {
+          $sql = new db_getLinkSubMenu; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
 
-        foreach($RS1 as $row) {
-          if ($w_embed!='WORD') ShowHTML('    <a accesskey="I" class="SS" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-          break;
-        }
-        if ($w_embed!='WORD') ShowHTML('    <a accesskey="C" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
-      } else {
-        if ($w_embed!='WORD') ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+          foreach($RS1 as $row) {
+            if ($w_embed!='WORD') ShowHTML('    <a accesskey="I" class="SS" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+            break;
+          }
+          if ($w_embed!='WORD') ShowHTML('    <a accesskey="C" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
+        } else {
+          if ($w_embed!='WORD') ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        } 
       } 
-    } 
-    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
-      ShowHTML('&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.(($w_copia!='') ? 'C' : 'P').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"></u>F</u>iltrar (Ativo)</font>' : '</u>F</u>iltrar (Inativo)').'</a>');
-    } 
-    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
+      if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
+        ShowHTML('&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.(($w_copia!='') ? 'C' : 'P').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.((strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ? '<font color="#BC5100"></u>F</u>iltrar (Ativo)</font>' : '</u>F</u>iltrar (Inativo)').'</a>');
+      } 
+    }
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS).'</td>');
+    ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -631,7 +636,7 @@ function Inicial() {
       else         MontaBarra($dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
       ShowHTML('</tr>');
     } elseif ($w_tipo!='EXCEL') {
-      ShowHTML('<tr><td colspan=2><table border=0>');
+      ShowHTML('<tr><td colspan=3><table border=0>');
       ShowHTML('  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores:</b>'.ExibeImagemSolic(f($RS_Menu,'sigla'),null,null,null,null,null,null,null, null,true));
       ShowHTML('  </table>');
     }
@@ -716,13 +721,15 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Estrutura_Texto_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
+  if ($w_embed!='WORD') {
+    Estrutura_Texto_Fecha();
+    Estrutura_Fecha();
+    Estrutura_Fecha();
+    Estrutura_Fecha();
+  }
 
   if($w_tipo=='PDF') RodapePdf();
-  else Rodape();
+  else               Rodape();
 
   
 } 
