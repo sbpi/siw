@@ -342,6 +342,7 @@ function Inicial() {
         foreach($RS as $row) { $RS = $row; break; }
         $w_filtro .= '<tr valign="top"><td align="right">Modalidade <td>[<b>'.f($RS,'nome').'</b>]';
       } 
+      if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código externo <td>[<b>'.$p_assunto.'</b>]'; }
       if ($p_solicitante>'') {
         $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
         $w_filtro .= '<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
@@ -526,9 +527,10 @@ function Inicial() {
       //$colspan++; ShowHTML('          <td><b>'.LinkOrdena('Data limite','fim').'</td>');
       if ($P1!=1 || $w_pede_valor_pedido=='S') {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
-        if ($P1!=1) {
-          ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-          ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
+        if ($P1!=1) ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
+        if ($P1>2) {
+          if ($w_cliente==6881) ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
+          else                  ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
         }
       }      
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
@@ -540,10 +542,13 @@ function Inicial() {
       if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td><b>Processo</td>'); }
       $colspan++; ShowHTML('          <td><b>Solicitante</td>');
       //$colspan++; ShowHTML('          <td><b>Data limite</td>');
-      if ($P1!=1) {
+      if ($P1!=1 || $w_pede_valor_pedido=='S') {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Valor</td>');
-        ShowHTML('          <td><b>Fase atual</td>');
-        ShowHTML('          <td><b>Situação</td>');
+        if ($P1!=1) ShowHTML('          <td><b>Situação</td>');
+        if ($P1>2) {
+          if ($w_cliente==6881) ShowHTML('          <td><b>Código externo</td>');
+          else                  ShowHTML('          <td><b>Fase atual</td>');
+        }
       }
       ShowHTML('        </tr>');
     }
@@ -606,11 +611,12 @@ function Inicial() {
         }
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         if ($P1!=1 || $w_pede_valor_pedido=='S') {
+          $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor');
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
-          if ($P1!=1) {
-            $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor');
-            ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
-            ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
+          if ($P1!=1) ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
+          if ($P1>2) {
+            if ($w_cliente==6881) ShowHTML('        <td nowrap>'.f($row,'codigo_externo').'</td>');
+            else                  ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
           }
         } 
         if ($P1!=3 && $P1!=5 && $P1!=6 && $w_embed != 'WORD') {

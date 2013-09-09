@@ -21,7 +21,9 @@ function selecaoServico($label,$accesskey,$hint,&$chave,$chaveAux,$modulo,$campo
         }
       }
     }
-  } elseif(Nvl($restricao,'')=='NUMERADOR') {
+  } elseif (Nvl($restricao,'')=='LISTA') {
+    $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
+  } elseif (Nvl($restricao,'')=='NUMERADOR') {
     $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
   } else {
     if (Nvl($chaveAux,'')>'') { $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'XVINC', $chaveAux, $modulo); }
@@ -30,22 +32,30 @@ function selecaoServico($label,$accesskey,$hint,&$chave,$chaveAux,$modulo,$campo
   $l_opcoes = count($RS);
   ShowHTML('          <td'.((isset($hint)) ? ' title="'.$hint.'"' : '').'>'.((isset($label)) ? '<b>'.$label.'</b><br>' : '').'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
-  if (f($RS_Menu,'solicita_cc')=='S') {
-    $w_selected = '';
-    $l_opcoes++;
-    if (nvl($chave,'')=='CLASSIF') { $w_selected = ' SELECTED '; $chave = 'CLASSIF'; }
-    ShowHTML('          <option value="CLASSIF"'.$w_selected.'/>Classificação');
-  }
-  if ($l_mod_pe=='S') {
-    $w_selected = '';
-    $l_opcoes++;
-    if (nvl($chave,'')=='PLANOEST') { $w_selected = ' SELECTED '; $chave = 'PLANOEST'; }
-    ShowHTML('          <option value="PLANOEST"'.$w_selected.'/>Plano Estratégico');
+  if (Nvl($restricao,'')!='LISTA') {
+    if (f($RS_Menu,'solicita_cc')=='S') {
+      $w_selected = '';
+      $l_opcoes++;
+      if (nvl($chave,'')=='CLASSIF') { $w_selected = ' SELECTED '; $chave = 'CLASSIF'; }
+      ShowHTML('          <option value="CLASSIF"'.$w_selected.'/>Classificação');
+    }
+    if ($l_mod_pe=='S') {
+      $w_selected = '';
+      $l_opcoes++;
+      if (nvl($chave,'')=='PLANOEST') { $w_selected = ' SELECTED '; $chave = 'PLANOEST'; }
+      ShowHTML('          <option value="PLANOEST"'.$w_selected.'/>Plano Estratégico');
+    }
   }
   foreach($RS as $row) {
-    $w_selected = '';
-    if (nvl(f($row,'sq_menu'),0)==nvl($chave,0) || $l_opcoes==1) { $w_selected = ' SELECTED '; $chave = f($row,'sq_menu'); }
-    ShowHTML('          <option value="'.f($row,'sq_menu').'"'.$w_selected.'/>'.f($row,'nome'));
+    if (Nvl($restricao,'')!='LISTA' || 
+        (Nvl($restricao,'')=='LISTA' && nvl($P2,f($row,'sq_menu'))==f($row,'sq_menu')) // Se LISTA e P2 informado => somente SQ_MENU = P2 pode ser exibido
+       ) {
+      $w_selected = '';
+      if (nvl(f($row,'sq_menu'),0)==nvl($chave,0) || $l_opcoes==1 || (Nvl($restricao,'')=='LISTA' && nvl($P2,f($row,'sq_menu'))==f($row,'sq_menu'))) { 
+        $w_selected = ' SELECTED '; $chave = f($row,'sq_menu'); 
+      }
+      ShowHTML('          <option value="'.f($row,'sq_menu').'"'.$w_selected.'/>'.f($row,'nome'));
+    }
   }
   ShowHTML('          </select>');
 }

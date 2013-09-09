@@ -49,6 +49,9 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'        <td bgcolor="#f0f0f0" width="50%"><font size="2"><b>'.f($RS,'codigo_interno').' ('.$v_chave.')</b></td>';
     $l_html.=chr(13).'        <td bgcolor="#f0f0f0" width="50%" align="right"><font size="2"><b>'.f($RS,'nm_lcsituacao').'</b></td>';
     $l_html.=chr(13).'      </tr>';
+    if (nvl(f($RS,'codigo_externo'),'')!='') {
+      $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" colspan="2" align="right"><span title="Código externo"><font size="2"><b>'.f($RS,'codigo_externo').'</b></span></td></tr>';
+    }
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
      
     // Identificação do certame

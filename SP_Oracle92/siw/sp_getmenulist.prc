@@ -18,6 +18,18 @@ begin
          where a.sq_pessoa = p_cliente
            and a.externo   = 'N'
            and a.link      is not null;
+   Elsif upper(p_operacao) = 'LISTA' Then
+      -- Recupera os serviços que têm numeração própria
+      open p_result for
+        select sq_menu, sq_modulo, sq_pessoa, nome, sigla
+          from (select  a.sq_menu, a.sq_modulo, a.sq_pessoa, a.nome, a.sigla
+                  from siw_menu a
+                 where a.sq_pessoa = p_cliente
+                   and a.tramite   = 'S'
+                   and a.ativo     = 'S'
+                   and (p_modulo   is null or (p_modulo is not null and a.sq_modulo = p_modulo))
+               ) r
+        where marcado(sq_menu, coalesce(p_chave,0)) > 0;
    Elsif upper(p_operacao) = 'NUMERADOR' Then
       -- Recupera os serviços que têm numeração própria
       open p_result for

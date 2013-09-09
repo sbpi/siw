@@ -179,7 +179,6 @@ function Gerencial() {
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
     if ($p_empenho>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código <td>[<b>'.$p_empenho.'</b>]'; }
-    if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
       $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
@@ -193,6 +192,7 @@ function Gerencial() {
         break;
       }
     } 
+    if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código externo <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_unidade>'') {
       $w_linha++;
       $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
@@ -787,7 +787,6 @@ function Gerencial() {
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>C</U>ódigo '.(($SG==$sigla.'LIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
     if ($SG==$sigla.'LIC') ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
-    //ShowHTML('     <td><b><U>D</U>escrição:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     //SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
@@ -798,6 +797,7 @@ function Gerencial() {
       SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$p_usu_resp,null,'p_usu_resp',null,null);
       ShowHTML('<tr valign="top">');
       SelecaoLCSituacao('<u>S</u>ituação do certame:','S','Selecione a situação do certame.',$p_uf,null,'p_uf',null,null);
+      ShowHTML('     <td><b><U>C</U>ódigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="30" value="'.$p_assunto.'"></td>');
       //MontaRadioNS('<b>Apenas decisão judicial?</b>',$p_ativo,'p_ativo');
     }
     ShowHTML('   <tr valign="top">');

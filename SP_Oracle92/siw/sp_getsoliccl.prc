@@ -156,7 +156,7 @@ begin
                 d41.sigla as sg_modalidade_artigo, d41.descricao as ds_modalidade_artigo,
                 d4.nome||' - '||d41.sigla as nm_enquadramento,
                 d5.nome as nm_lcjulgamento, d5.item tipo_julgamento,
-                d6.nome as nm_lcsituacao, d6.conclui_sem_proposta, d6.tela_exibicao, d6.codigo_externo,
+                d6.nome as nm_lcsituacao, d6.conclui_sem_proposta, d6.tela_exibicao, d6.codigo_externo cd_situacao,
                 d7.nome as nm_especie_documento,
                 d8.consumo, d8.permanente, d8.servico, d8.outros,
                 case d8.consumo    when 'S' then 'Sim' else 'Não' end as nm_consumo,
@@ -246,7 +246,7 @@ begin
             and (p_processo       is null or (p_processo    = 'CLASSIF' and b.sq_cc is not null) or (p_processo <> 'CLASSIF' and m.sq_menu = to_number(p_processo)))
             and (p_uf             is null or (p_uf          is not null and d6.sq_lcsituacao       = to_number(p_uf)))
             and (p_proponente     is null or (p_proponente  is not null and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(y.nome,null) like '%'||acentos(p_proponente,null)||'%')))
-            and (p_assunto        is null or (p_assunto     is not null and acentos(b.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and acentos(b.codigo_externo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(d.numero_certame,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_empenho        is null or (p_empenho     is not null and (acentos(b.codigo_interno,null) like '%'||acentos(p_empenho,null)||'%' or acentos(d.numero_certame,null) like '%'||acentos(p_empenho,null)||'%')))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))

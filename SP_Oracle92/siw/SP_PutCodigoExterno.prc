@@ -34,6 +34,5 @@ begin
   Elsif p_restricao = 'ENDERECO' Then
      update CO_PESSOA_ENDERECO set codigo_externo = p_chave_externa where sq_pessoa_endereco = p_chave and sq_pessoa = p_cliente;
   End If;
-  commit;
 end SP_PutCodigoExterno;
 /

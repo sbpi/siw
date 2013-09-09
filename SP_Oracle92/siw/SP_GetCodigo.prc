@@ -39,6 +39,14 @@ begin
      open p_result for select sq_tipo_endereco codigo_interno, codigo_externo from CO_TIPO_ENDERECO where sq_tipo_endereco = p_chave_interna;
   Elsif p_restricao = 'ENDERECO' Then
      open p_result for select sq_pessoa_endereco codigo_interno, codigo_externo from CO_PESSOA_ENDERECO where sq_pessoa = p_cliente and sq_pessoa_endereco = p_chave_interna;
+  Elsif p_restricao = 'SOLICITACAO' Then
+     open p_result for 
+       select a.sq_siw_solicitacao chave, a.codigo_interno, a.codigo_externo, a.cadastrador,
+              b.nome nm_menu
+         from SIW_SOLICITACAO     a
+              inner join SIW_MENU b on (a.sq_menu = b.sq_menu)
+        where b.sq_menu        = p_chave_aux 
+          and a.codigo_interno = upper(p_chave_interna);
   End If;
 end SP_GetCodigo;
 /
