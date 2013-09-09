@@ -242,23 +242,24 @@ begin
        end
       );
        
-   -- Atualiza a situação da solicitação
-   Update siw_solicitacao set
-      conclusao      = case when length(p_fim) = 10 then to_date(p_fim,'dd/mm/yyyy') else coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate) end,
-      executor       = p_executor,
-      recebedor      = p_financeiro_resp,
-      valor          = coalesce(p_valor,valor),
-      sq_siw_tramite = (select sq_siw_tramite 
-                          from siw_tramite 
-                         where sq_menu = p_menu 
-                           and Nvl(sigla,'z')='AT'
-                       )
-   Where sq_siw_solicitacao = p_chave;
+   -- Se foi informado um arquivo, grava.
+   If p_caminho is not null Then
+      -- Recupera a próxima chave
+      select sq_siw_arquivo.nextval into w_chave_arq from dual;
+       
+      -- Insere registro em SIW_ARQUIVO
+      insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
+      (select w_chave_arq, sq_pessoa_pai, p_chave||' - Anexo', null, sysdate, 
+              p_tamanho,   p_tipo,        p_caminho, p_nome_original
+         from co_pessoa a
+        where a.sq_pessoa = p_pessoa
+      );
+      
+      -- Insere registro em SIW_SOLIC_LOG_ARQ
+      insert into siw_solic_log_arq (sq_siw_solic_log, sq_siw_arquivo)
+      values (w_chave_dem, w_chave_arq);
+   End If;
 
-   if w_sg_modulo <> 'PA' and w_sg_modulo <> 'CO' then 
-      update siw_solicitacao set observacao     = p_nota_conclusao where sq_siw_solicitacao = p_chave;
-   end if;
-   
    if w_sg_modulo = 'CO' then 
       update cl_solicitacao
          set sq_lcsituacao        = p_situacao,
@@ -297,24 +298,23 @@ begin
        where sq_solicitacao_item = crec.sq_solicitacao_item;
    end loop;
    
-   -- Se foi informado um arquivo, grava.
-   If p_caminho is not null Then
-      -- Recupera a próxima chave
-      select sq_siw_arquivo.nextval into w_chave_arq from dual;
-       
-      -- Insere registro em SIW_ARQUIVO
-      insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
-      (select w_chave_arq, sq_pessoa_pai, p_chave||' - Anexo', null, sysdate, 
-              p_tamanho,   p_tipo,        p_caminho, p_nome_original
-         from co_pessoa a
-        where a.sq_pessoa = p_pessoa
-      );
-      
-      -- Insere registro em SIW_SOLIC_LOG_ARQ
-      insert into siw_solic_log_arq (sq_siw_solic_log, sq_siw_arquivo)
-      values (w_chave_dem, w_chave_arq);
-   End If;
+   -- Atualiza a situação da solicitação
+   Update siw_solicitacao set
+      conclusao      = case when length(p_fim) = 10 then to_date(p_fim,'dd/mm/yyyy') else coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate) end,
+      executor       = p_executor,
+      recebedor      = p_financeiro_resp,
+      valor          = coalesce(p_valor,valor),
+      sq_siw_tramite = (select sq_siw_tramite 
+                          from siw_tramite 
+                         where sq_menu = p_menu 
+                           and Nvl(sigla,'z')='AT'
+                       )
+   Where sq_siw_solicitacao = p_chave;
 
+   if w_sg_modulo <> 'PA' and w_sg_modulo <> 'CO' then 
+      update siw_solicitacao set observacao     = p_nota_conclusao where sq_siw_solicitacao = p_chave;
+   end if;
+   
    If w_mod_pa = 'S' and coalesce(p_fundo_fixo,'S') = 'N' Then
       for crec in c_protocolo loop
           -- Cria o documento no sistema de protocolo
