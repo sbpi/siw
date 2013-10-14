@@ -1699,7 +1699,7 @@ begin
                             inner    join pa_tipo_guarda          d52 on (d5.fase_intermed_guarda    = d52.sq_tipo_guarda)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade               e  on (d.unidade_autuacao         = e.sq_unidade)
-                      inner          join (select /*+ ordered*/ x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
+                      inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao x
                                             where x.sq_menu = p_menu
                                            group by x.sq_siw_solicitacao
@@ -1721,44 +1721,44 @@ begin
                                             where z.sq_menu = p_menu
                                           )                        o  on (b.solicitante              = o.sq_pessoa)
 */
-                   left              join (select /*+ ordered*/ s.sq_siw_solicitacao, max(r.sq_documento_log) as chave 
+                   left              join (select s.sq_siw_solicitacao, max(r.sq_documento_log) as chave 
                                              from siw_solicitacao             s
                                                   inner join pa_documento_log r on (s.sq_siw_solicitacao = r.sq_siw_solicitacao)
                                             where s.sq_menu = p_menu
                                            group by s.sq_siw_solicitacao
                                           )                        k1 on (b.sq_siw_solicitacao       = k1.sq_siw_solicitacao)
-                     left            join (select /*+ ordered*/ w.sq_documento_log, w.envio, w.recebimento, w.dias_aviso, 
+                     left            join (select w.sq_documento_log, w.envio, w.recebimento, w.dias_aviso, 
                                                   y.sq_tipo_despacho, y.nome as nm_tipo_despacho
                                              from pa_documento_log            w
                                                   inner join pa_tipo_despacho y on (w.sq_tipo_despacho   = y.sq_tipo_despacho)
                                                   inner join siw_solicitacao  z on (w.sq_siw_solicitacao = z.sq_siw_solicitacao)
                                             where z.sq_menu = p_menu
                                           )                        k  on (k1.chave                   = k.sq_documento_log)
-                      left           join (select /*+ ordered*/ y.protocolo, y.sq_siw_solicitacao, x.fim
+                      left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim
                                              from siw_solicitacao               x
                                                   inner join pa_emprestimo_item y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                   inner join siw_tramite        z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
                                             where y.devolucao is null
                                           )                        b7 on (b.sq_siw_solicitacao       = b7.protocolo)
-                      left           join (select /*+ ordered*/ y.protocolo, y.sq_siw_solicitacao, x.fim, z.sigla, x.conclusao
+                      left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim, z.sigla, x.conclusao
                                              from siw_solicitacao          x
                                                   inner join pa_eliminacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                   inner join siw_tramite   z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
                                           )                        b8 on (b.sq_siw_solicitacao       = b8.protocolo)
-                      left           join (select /*+ ordered*/ x.sq_siw_solicitacao, retornaLimiteProtocolo(x.sq_siw_solicitacao) as prazo_guarda
+                      left           join (select x.sq_siw_solicitacao, retornaLimiteProtocolo(x.sq_siw_solicitacao) as prazo_guarda
                                              from siw_solicitacao         x
                                                   inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and p_tipo  = 8)
                                                   inner join siw_tramite  z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.ativo = 'N' and z.sigla <> 'CA')
                                             where x.sq_menu = p_menu
                                            group by x.sq_siw_solicitacao
                                           )                        b9 on (b.sq_siw_solicitacao       = b9.sq_siw_solicitacao)
-                      left           join (select /*+ ordered*/ sq_solic_pai, count(*) as qtd
+                      left           join (select sq_solic_pai, count(*) as qtd
                                              from siw_solicitacao
                                             where sq_menu = p_menu
                                               and sq_solic_pai is not null
                                            group by sq_solic_pai
                                           )                        ba on (b.sq_siw_solicitacao       = ba.sq_solic_pai)
-                      left           join (select /*+ ordered*/ x.protocolo_siw, count(*) as qtd
+                      left           join (select x.protocolo_siw, count(*) as qtd
                                              from siw_solicitacao         x
                                                   inner join pa_documento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                   inner join siw_tramite  z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
@@ -1810,7 +1810,7 @@ begin
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.ativo = 'S' and trunc(b.fim)+1 < trunc(sysdate)))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))
-            and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%' or 
+            and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao) like '%'||acentos(p_assunto)||'%'/* or 
                                                                              0 < (select count(*)
                                                                                     from siw_menu                     w
                                                                                          inner join siw_solicitacao   z on (w.sq_menu            = z.sq_menu)
@@ -1826,7 +1826,7 @@ begin
                                                                                          inner join siw_solic_log     y on (z.sq_siw_solicitacao = y.sq_siw_solicitacao and y.observacao is not null)
                                                                                    where z.sq_siw_solicitacao = d.sq_siw_solicitacao
                                                                                      and acentos(y.observacao)    like '%'||acentos(p_assunto)||'%'
-                                                                                 )
+                                                                                 )*/
                                                                             )
                                              ) 
                  )  
