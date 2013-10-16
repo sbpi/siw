@@ -1620,7 +1620,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 case when b.protocolo_siw is not null then dados_solic(b.protocolo_siw) end as dados_vinc,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla as sg_unid_origem,
                 b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,
@@ -1652,7 +1652,7 @@ begin
                 d4.sq_assunto,
                 d5.codigo as cd_assunto, d5.provisorio,              d5.descricao as ds_assunto,
                 d51.sigla as sg_final,   d51.descricao as nm_final,
-                d7.nome as nm_especie,   d7.sigla as sg_natureza,    d7.ativo as st_natureza,
+                d7.nome as nm_especie,   d7.sigla as sg_especie,     d7.ativo as st_especie,
                 d8.numero as nr_caixa, d9.sigla as sg_unid_caixa,
                 e.sq_unidade as sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
