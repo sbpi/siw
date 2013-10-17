@@ -1699,11 +1699,6 @@ begin
                             inner    join pa_tipo_guarda          d52 on (d5.fase_intermed_guarda    = d52.sq_tipo_guarda)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade               e  on (d.unidade_autuacao         = e.sq_unidade)
-                      inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao x
-                                            where x.sq_menu = p_menu
-                                           group by x.sq_siw_solicitacao
-                                          )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)
                           left       join co_tipo_pessoa           d3 on (d2.sq_tipo_pessoa          = d3.sq_tipo_pessoa)
@@ -1712,15 +1707,6 @@ begin
                       left           join pa_documento             da on (b.protocolo_siw            = da.sq_siw_solicitacao)
                         left         join eo_unidade               q  on (d.unidade_int_posse        = q.sq_unidade)
                         left         join co_pessoa                r  on (d.pessoa_ext_posse         = r.sq_pessoa)
-/*
-                      left           join (select w.sq_pessoa, w.nome_resumido, y.sigla
-                                             from siw_menu                       z
-                                                  inner     join co_pessoa       w on (z.sq_pessoa  = w.sq_pessoa_pai)
-                                                    inner   join sg_autenticacao x on (w.sq_pessoa  = x.sq_pessoa)
-                                                      inner join eo_unidade      y on (x.sq_unidade = y.sq_unidade)
-                                            where z.sq_menu = p_menu
-                                          )                        o  on (b.solicitante              = o.sq_pessoa)
-*/
                    left              join (select s.sq_siw_solicitacao, max(r.sq_documento_log) as chave 
                                              from siw_solicitacao             s
                                                   inner join pa_documento_log r on (s.sq_siw_solicitacao = r.sq_siw_solicitacao)
@@ -1768,13 +1754,12 @@ begin
                                           )                        bb on (b.sq_siw_solicitacao       = bb.protocolo_siw)
           where a.sq_menu        = p_menu
             and ((p_tipo         = 1     and b1.sigla = 'CI' and b.cadastrador     = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
-                 (p_tipo         = 3     and b2.acesso > 0) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI') or
                  --(p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA') or
                  --(p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         in (5,9)) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI') or
+                 (p_tipo         in (3,5,9)) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b1.sigla <> 'CI') or
                  (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
                  (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null 
                                          and b7.protocolo is null and b8.protocolo is null and d51.Sigla='ELIM'
