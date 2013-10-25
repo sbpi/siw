@@ -10,12 +10,12 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putLancamentoValor {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_Valor) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_valor) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putLancamentoValor';
      $params=array('p_operacao'               =>array($operacao,                                  B_VARCHAR,         1),
                    'p_chave'                  =>array(tvl($p_chave),                              B_INTEGER,        32),
                    'p_chave_aux'              =>array(tvl($p_chave_aux),                          B_INTEGER,        32),
-                   'p_Valor'                  =>array(tvl($p_Valor),                              B_NUMERIC,      18,2),
+                   'p_valor'                  =>array(toNumber(tvl($p_valor)),                    B_NUMERIC,      18,2)
                    );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

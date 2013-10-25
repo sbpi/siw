@@ -625,7 +625,7 @@ function Inicial() {
         } else {
           ShowHTML('        <td align="center">---</td>');
         }
-        ShowHTML('        <td>'.f($row,'sg_doc').'</td>');
+        ShowHTML('        <td title="'.f($row,'nm_tipo_doc').'">'.f($row,'sg_doc').'</td>');
         ShowHTML('        <td>'.f($row,'nr_doc').'</td>');
         //ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'dt_doc'),5).'</td>');
         ShowHTML('        <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
@@ -3854,7 +3854,7 @@ function EncAutomatico() {
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  if (substr(Nvl($w_erro,'nulo'),0,1)!='0' && (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S'))) {
+  if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($w_sg_tramite!='CI') {

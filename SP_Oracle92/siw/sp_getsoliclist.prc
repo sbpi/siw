@@ -982,7 +982,7 @@ begin
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
                 coalesce(d3.valor,0) as valor_doc,                   d3.numero as nr_doc,
-                d31.sigla as sg_doc,                                 d3.data as dt_doc,
+                d31.sigla as sg_doc,  d31.nome as nm_tipo_doc,       d3.data as dt_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.nr_conta,
                 d4.devolucao_valor,   d4.sq_agencia,                 d4.cd_agencia,       d4.nm_agencia,
                 d4.sq_banco,          d4.cd_banco,                   d4.nm_banco,

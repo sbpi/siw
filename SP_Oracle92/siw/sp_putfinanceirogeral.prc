@@ -215,6 +215,9 @@ begin
          -- Atualiza a situação da solicitação
          update siw_solicitacao set sq_siw_tramite = w_chave, conclusao = sysdate where sq_siw_solicitacao = p_chave;
          
+         -- Remove vínculo quando o lançamento é de imposto
+         delete fn_imposto_doc where solic_imposto = p_chave;
+
          -- Remove data da quitação da parcela se o lançamento financeiro for ligado a uma parcela de contrato
          select count(*) into w_existe
            from fn_lancamento
@@ -240,7 +243,7 @@ begin
          delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
          
-         -- Remove os registros vinculados à demanda
+         -- Remove os registros vinculados ao lançamento
          delete fn_documento_valores  where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
          delete fn_imposto_doc        where solic_imposto  = p_chave;
          delete fn_imposto_doc        where solic_retencao = p_chave;

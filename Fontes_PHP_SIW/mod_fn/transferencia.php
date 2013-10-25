@@ -314,7 +314,8 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>'.(($w_tipo=='WORD')? f($row,'codigo_interno') : '<A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>'));
         ShowHTML('        <td>'.f($row,'nm_tipo_lancamento').'</td>');
-        ShowHTML('        <td>'.f($row,'nr_conta').'</td>');
+        ShowHTML('        <td>'.f($row,'ds_conta_debito').'</td>');
+        ShowHTML('        <td>'.f($row,'ds_conta_credito').'</td>');
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim'),5),'-').'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'</td>');
         ShowHTML('        <td>'.crlf2br(f($row,'observacao')).'</td>');
@@ -1386,7 +1387,7 @@ function Grava() {
 
         } 
   
-        if (nvl($_REQUEST['w_moeda_credito'],'')!='') {
+        if (nvl($_REQUEST['w_valor_conversao'],'')!='') {
           // Remove as cotações existentes
           $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'E',$w_chave_nova,null,null);
 
