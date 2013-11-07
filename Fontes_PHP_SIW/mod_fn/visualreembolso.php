@@ -130,7 +130,7 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
     }
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Valor do reembolso:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor')+f($RS,'vl_outros')-f($RS,'vl_abatimento'),0)).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Valor do reembolso:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $v_chave,null,null,null,null);
     $RS_Moeda_Cot = SortArray($RS_Moeda_Cot,'sb_moeda','asc');
     foreach($RS_Moeda_Cot as $row) {

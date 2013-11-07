@@ -1118,9 +1118,9 @@ function Geral() {
     }
   }
   
-  if (nvl($w_troca,'')=='' && nvl($w_chave,'')!='') {
+  if (nvl($w_troca,'')=='' && (nvl($w_copia,'')!='' || nvl($w_chave,'')!='')) {
     // Recupera dados do comprovante
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
     $RS = SortArray($RS,'sq_tipo_documento','asc');
     foreach ($RS as $row) {$RS=$row; break;}
     $w_chave_doc           =  f($RS,'sq_lancamento_doc');
@@ -1128,13 +1128,14 @@ function Geral() {
     $w_numero               = f($RS,'numero');
     $w_data                 = FormataDataEdicao(f($RS,'data'));
     $w_serie                = f($RS,'serie');
+    $w_valor                = formatNumber(f($RS,'valor'));
     $w_valor_doc            = formatNumber(f($RS,'valor'));
     $w_patrimonio           = f($RS,'patrimonio');
     $w_tributo              = f($RS,'calcula_tributo');
     $w_retencao             = f($RS,'calcula_retencao');
   }
   
-// Recupera a sigla do tipo do documento para tratar a Nota Fiscal
+  // Recupera a sigla do tipo do documento para tratar a Nota Fiscal
   if ($w_sq_tipo_documento > '') {
     $sql = new db_getTipoDocumento;
     $RS2 = $sql->getInstanceOf($dbms, $w_sq_tipo_documento, $w_cliente, null,null);
@@ -1145,7 +1146,7 @@ function Geral() {
   }
 
   // Recupera acréscimos e supressões possíveis para o lançamento financeiro
-  $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,$w_chave,$w_sq_lancamento_doc,null,'EDICAO');
+  $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,nvl($w_copia,$w_chave),$w_sq_lancamento_doc,null,'EDICAO');
   $RS_Valores = SortArray($RS_Valores,'tp_valor','desc','ordenacao','asc');
   $i=0;
   unset($w_valores);
@@ -1154,7 +1155,7 @@ function Geral() {
     $w_valores[$i]['chave'] = f($row,'sq_valores');
     $w_valores[$i]['nome']  = f($row,'nome');
     $w_valores[$i]['tipo']  = f($row,'tp_valor');
-    $w_valores[$i]['valor'] = formatNumber(nvl(f($row,'valor'),0));
+    $w_valores[$i]['valor'] = nvl($_POST['w_valores'][$i],formatNumber(nvl(f($row,'valor'),0)));
   }
 
   // Verifica as formas de pagamento possíveis. Se apenas uma, atribui direto
@@ -2306,7 +2307,11 @@ function Documentos() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
     if (count($RS)==0 && strpos(f($RS_Menu,'sigla'),'VIA')===false) ShowHTML('      <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;'); 
-    ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
+    if ($P2==1) {
+      ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="parent.$.fancybox.close();"><u>F</u>echar</a>&nbsp;');
+    } else {
+      ShowHTML('      <a accesskey="F" class="ss" href="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    }
     ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2831,6 +2836,10 @@ function Itens() {
   
   // Recupera os dados do lançamento
   $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+
+  // Define valor padrão para a rubrica
+  if(nvl(f($RS1,'qtd_rubrica'),0)>0)  $w_sq_projeto_rubrica = f($RS1,'sq_projeto_rubrica');
+  
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];
@@ -2856,9 +2865,6 @@ function Itens() {
     $w_data_cotacao         = formataDataEdicao(f($RS,'data_cotacao'));
     $w_valor_cotacao        = formatNumber(f($RS,'valor_cotacao'),4);
   } 
-  
-  // Define valor padrão para a rubrica
-  if(nvl(f($RS1,'qtd_rubrica'),0)>0)  $w_sq_projeto_rubrica = f($RS1,'sq_projeto_rubrica');
   
   Cabecalho();
   head();
@@ -4075,7 +4081,7 @@ function Concluir() {
   $w_observacao         = f($RS_Solic,'observacao');
   $w_tramite            = f($RS_Solic,'sq_siw_tramite');
   $w_conta_debito       = f($RS_Solic,'sq_pessoa_conta');
-  $w_valor_real         = formatNumber(f($RS_Solic,'valor')+f($RS_Solic,'vl_outros')-f($RS_Solic,'vl_abatimento'));
+  $w_valor_real         = formatNumber(f($RS_Solic,'valor_doc')-f($RS_Solic,'vl_abatimento')+f($RS_Solic,'vl_outros'));
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
   $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
   $w_inicio             = FormataDataEdicao(time());
@@ -4685,6 +4691,21 @@ function Grava() {
             } 
           }
         }
+
+        if (nvl($_REQUEST['w_copia'],'')!='') {
+          // Copia os documentos e os itens do lançamento original
+          $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$_REQUEST['w_copia'],null,null,null,null,null,null,'DOCS');
+          $RS_Docs = SortArray($RS_Docs,'data','asc');
+          foreach($RS_Docs as $row) {
+            $SQL = new db_getLancamentoItem; $RS = $SQL->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+            $RS = SortArray($RS,'ordem','asc','rubrica','asc');
+            foreach ($RS as $row1) {
+              $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$w_chave_doc,null,
+                f($row1,'sq_projeto_rubrica'),f($row1,'descricao'),f($row1,'quantidade'),formatNumber(f($row1,'valor_unitario')),
+                f($row1,'ordem'),f($row1,'data_cotacao'),formatNumber(f($row1,'valor_cotacao')),null);
+            }
+          }
+        }
       }
 
       if ($P1==0) {
@@ -4757,7 +4778,8 @@ function Grava() {
           $_REQUEST['w_agencia_estrang'],$_REQUEST['w_cidade_estrang'],$_REQUEST['w_informacoes'],$_REQUEST['w_codigo_deposito'],
           $_REQUEST['w_tipo_pessoa_atual'],$_REQUEST['w_conta_debito']);
       ScriptOpen('JavaScript');
-      ShowHTML('  parent.location.reload();');
+      ShowHTML('  if (window.name.toLowerCase()=="pessoa") {window.close(); opener.location.reload(); }');
+      ShowHTML('  else parent.location.reload();');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
@@ -4787,7 +4809,7 @@ function Grava() {
       ScriptOpen('JavaScript');
       
       if ($P1==0) {
-        if ($P2==1) {
+        if ($P2==1||$P2==3) {
           // Volta para a tela do documento
           //ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=A&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&w_sq_lancamento_doc='.nvl($_REQUEST['w_sq_lancamento_doc'],$w_chave_nova).'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -4869,7 +4891,7 @@ function Grava() {
         $_REQUEST['w_ordem'],$_REQUEST['w_data_cotacao'],$_REQUEST['w_valor_cotacao'],null);
       ScriptOpen('JavaScript');
       if ($P1==0) {
-        if ($P2==1) {
+        if ($P2==1||$P2==3) {
           // Volta para a tela do item
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$conRootSIW.$w_dir.$w_pagina.'documento&O=A&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&w_sq_lancamento_doc='.$_REQUEST['w_sq_lancamento_doc'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         } else {

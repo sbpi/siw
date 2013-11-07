@@ -2538,7 +2538,7 @@ function Concluir() {
   $w_observacao         = f($RS_Solic,'observacao');
   $w_tramite            = f($RS_Solic,'sq_siw_tramite');
   $w_conta_debito       = f($RS_Solic,'sq_pessoa_conta');
-  $w_valor_real         = formatNumber(f($RS_Solic,'valor')+f($RS_Solic,'vl_outros')-f($RS_Solic,'vl_abatimento'));
+  $w_valor_real         = formatNumber(f($RS_Solic,'valor'));
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
   $w_sq_tipo_lancamento = nvl($w_sq_tipo_lancamento,f($RS_Solic,'sq_tipo_lancamento'));
   $w_inicio             = FormataDataEdicao(time());

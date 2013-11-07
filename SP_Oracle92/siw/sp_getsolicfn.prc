@@ -141,7 +141,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.sq_plano,           b.valor+coalesce(dh.valor,0)-coalesce(dg.valor,0) as valor,
+                b.sq_plano,           coalesce(di.valor,0)+coalesce(dh.valor,0)-coalesce(dg.valor,0) as valor,
                 coalesce(b.protocolo_siw, b4.protocolo_siw) as protocolo_siw,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
                 case when b.sq_solic_pai is null 
@@ -304,6 +304,11 @@ begin
                                              and (p_chave    is null or (p_chave is not null and zb.sq_siw_solicitacao = p_chave))
                                           group by zb.sq_siw_solicitacao
                                          )                     dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
+                        left        join (select zb.sq_siw_solicitacao, sum(zb.valor) as valor
+                                            from fn_lancamento_doc  zb
+                                           where (p_chave    is null or (p_chave is not null and zb.sq_siw_solicitacao = p_chave))
+                                          group by zb.sq_siw_solicitacao
+                                         )                     di on (d.sq_siw_solicitacao       = di.sq_siw_solicitacao)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null

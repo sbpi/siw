@@ -4,7 +4,7 @@ create or replace procedure SP_GetLancamentoItem
     p_chave              in number   default null,
     p_sq_projeto         in number   default null,
     p_restricao          in varchar2,
-    p_result    out sys_refcursor) is
+    p_result             out sys_refcursor) is
 begin
    If p_restricao is null Then
       open p_result for 
