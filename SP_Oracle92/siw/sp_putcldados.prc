@@ -1,6 +1,7 @@
 create or replace procedure SP_PutCLDados
    (p_restricao             in varchar2,
     p_chave                 in number,
+    p_executor              in number   default null,
     p_sq_lcmodalidade       in number   default null,    
     p_numero_processo       in varchar2 default null,
     p_abertura              in varchar2 default null,
@@ -121,7 +122,7 @@ begin
       Where sq_siw_solicitacao = p_chave;
 
       -- Grava os dados da solicitação
-      update siw_solicitacao a set a.inicio = p_inicio where sq_siw_solicitacao = p_chave;
+      update siw_solicitacao a set a.executor = p_executor, a.inicio = p_inicio where sq_siw_solicitacao = p_chave;
 
       If w_sq_modalidade is null or 
          w_numero_certame is null or 

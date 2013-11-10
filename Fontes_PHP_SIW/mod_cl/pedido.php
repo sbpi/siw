@@ -2810,7 +2810,7 @@ function Grava() {
             
           // Grava tipo de pagamento e nota de conclusão
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
             $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo'],null,null);
           /*
           if ($_REQUEST['w_fundo_fixo']=='S') {
@@ -2844,8 +2844,9 @@ function Grava() {
         } else {
           if ($_REQUEST['w_fundo_fixo']=='N') {
             // Grava o protocolo somente se não for fundo fixo
-            $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,$_REQUEST['w_numero_processo'],null,null,null,null,null,
-              null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_protocolo'],null,null,null,null,null,null);
+            $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,null,$_REQUEST['w_numero_processo'],
+              null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+              $_REQUEST['w_protocolo'],null,null,null,null,null,null);
           }
             
           // Conclui a solicitação

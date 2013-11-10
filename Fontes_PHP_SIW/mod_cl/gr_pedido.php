@@ -786,7 +786,11 @@ function Gerencial() {
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>C</U>ódigo '.(($SG==$sigla.'LIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
-    if ($SG==$sigla.'LIC') ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
+    if ($SG==$sigla.'LIC') {
+      ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
+      ShowHTML('   <tr valign="top">');
+    }
+    SelecaoPessoa('<u>R</u>esponsável pela execução:','N','Selecione o responsável na relação.',$p_prioridade,null,'p_prioridade','USUARIOS');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     //SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
