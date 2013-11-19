@@ -13,6 +13,7 @@ begin
                 a.conclusao, a.responsabilidade,
                 b.nome as nm_servico, b.sigla as sg_servico, b.envia_email,
                 c.sq_modulo, c.nome as nm_modulo,
+                coalesce(d.ativo,'N') ativo,
                 coalesce(d.email,e.email) as email,
                 f.nome
            from sg_pessoa_mail               a

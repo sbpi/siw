@@ -36,7 +36,7 @@ begin
                                                 where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
-                             and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
+                             and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                              and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and (('N'    = c.consulta_opiniao and d.conclusao is null) or
                                   ('S'    = c.consulta_opiniao and d.opiniao is null)
@@ -47,6 +47,7 @@ begin
                          )          y on (v.sq_menu = y.sq_menu)
               left  join (select /*+ ordered*/ c.sq_menu, count(*) as qtd 
                             from siw_menu                        c
+                                 inner   join siw_modulo        c1 on (c.sq_modulo           = c1.sq_modulo)
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite and e.sigla <> 'CI')
                                    inner join (select /*+ ordered*/ x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
@@ -59,6 +60,7 @@ begin
                                                 where (z.ativo = 'S' or (z.sigla = 'AT' and x.solicitante = p_usuario and y.consulta_opiniao = 'S' and x.opiniao is null))
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
+                             and (c1.sigla   <> 'FN' or (c1.sigla = 'FN' and e.sigla <> 'EE'))
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                              and c.tramite   = 'S'
                              and c.ativo     = 'S'

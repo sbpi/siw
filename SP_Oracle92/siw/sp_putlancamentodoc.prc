@@ -60,15 +60,23 @@ begin
       delete fn_lancamento_doc where sq_lancamento_doc = p_chave_aux;
    End If;
       
-   If p_operacao = 'V' Then
-      update siw_solicitacao set 
-         valor = (select sum(coalesce(valor_inicial,0)) + sum(coalesce(valor_excedente,0)) + sum(coalesce(valor_reajuste,0))
-                    from fn_lancamento_doc
-                   where sq_siw_solicitacao = p_chave
-                     and sq_acordo_nota     is not null
-                 )
-      where sq_siw_solicitacao = p_chave;
-   Else
+   -- Atualiza o valor da solicitação
+   update siw_solicitacao set 
+      valor = (select sum(valor)
+                 from (select sum(a.valor) valor
+                         from fn_lancamento_doc a
+                        where sq_siw_solicitacao = p_chave
+                          and sq_acordo_nota     is null
+                       UNION
+                       select sum(coalesce(valor_inicial,0)) + sum(coalesce(valor_excedente,0)) + sum(coalesce(valor_reajuste,0)) valor
+                         from fn_lancamento_doc a
+                        where sq_siw_solicitacao = p_chave
+                          and sq_acordo_nota     is not null
+                      )
+              )
+   where sq_siw_solicitacao = p_chave;
+ 
+   If p_operacao <> 'V' Then
       -- Atualiza os valores acumulados dos impostos em FN_LANCAMENTO
       update fn_lancamento set (valor_imposto, valor_retencao, valor_liquido) = 
          (select Nvl(sum(d.valor_normal),0)                         valor_imposto, 

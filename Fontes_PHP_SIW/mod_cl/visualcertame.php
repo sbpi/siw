@@ -72,6 +72,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
       else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
     }
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Objeto:</b></td><td>'.crlf2br(nvl(f($RS,'objeto'),'---')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Início da licitação:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'inicio')),'---').' </td></tr>';
     if(f($RS,'or_tramite')>2 || f($RS,'sg_tramite')=='EE') {
       if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Previsão de conclusão:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
@@ -82,6 +83,12 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if (f($RS,'valor_alt')>0) $l_html.=chr(13).'      <tr><td></td><td>'.f($RS,'sb_moeda_alt').' '.formatNumber(f($RS,'valor_alt'),2).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cotação: '.formatNumber(((f($RS,'sg_moeda_alt')=='BRL') ? (f($RS,'valor_alt')/f($RS,'valor')) : (f($RS,'valor')/f($RS,'valor_alt'))),4).' ('.FormataDataEdicao(nvl(f($RS,'inicio'),f($RS,'inclusao'))).')</td></tr>';
     }
     if ($w_cliente_arp=='S' && nvl(f($RS,'arp'),'')!='') $l_html.=chr(13).'      <tr><td><b>Gera ARP?</b></td><td>'.RetornaSimNao(f($RS,'arp')).' </td></tr>';
+    $l_html.=chr(13).'    <tr><td><b>Responsável pela licitação:<b></td>';
+    if (!($l_P1==4 || $l_tipo=='WORD')){
+      $l_html.=chr(13).'        <td>'.str_replace('&nbsp;','---',ExibePessoa(null,$w_cliente,f($RS,'executor'),$TP,f($RS,'nm_exec'))).'</b></td>';
+    } else {
+      $l_html.=chr(13).'        <td>'.nvl(f($RS,'nm_exec'),'---').'</b></td>';
+    }
     $l_html.=chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';

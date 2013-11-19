@@ -1188,8 +1188,8 @@ begin
                    left      join co_pessoa                 p  on (b.executor                 = p.sq_pessoa)
           where a.sq_menu        = p_menu
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b1.sigla <> 'EE' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b1.sigla <> 'EE' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
