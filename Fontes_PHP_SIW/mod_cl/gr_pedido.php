@@ -857,9 +857,9 @@ function ImprimeCabecalho() {
     case $sigla.'SITUACAO':    ShowHTML('          <td><b>Situação do certame</td>');  break;
   } 
   ShowHTML('          <td><b>Total</td>');
-  ShowHTML('          <td><b>Cad.</td>');
-  ShowHTML('          <td><b>Tram.</td>');
-  ShowHTML('          <td><b>Enc.</td>');
+  ShowHTML('          <td><b>Cadastramento</td>');
+  ShowHTML('          <td><b>Tramitação</td>');
+  ShowHTML('          <td><b>Encerradas</td>');
   //ShowHTML('          <td><b>Atraso</td>');
   //ShowHTML('          <td><b>Aviso</td>');
   ShowHTML('          <td><b>Valor</td>');

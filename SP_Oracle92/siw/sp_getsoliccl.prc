@@ -151,7 +151,7 @@ begin
                 d2.nome as nm_eoindicador,
                 d3.nome as nm_lcfonterecurso, d3.codigo as cd_lcfonterecurso,
                 d4.nome as nm_lcmodalidade, d4.certame, d4.minimo_pesquisas, d4.minimo_participantes, d4.minimo_propostas_validas,
-                d4.enquadramento_inicial, d4.enquadramento_final,
+                d4.enquadramento_inicial, d4.enquadramento_final, d4.sigla as sg_lcmodalidade,
                 d4.descricao as ds_lcmodalidade, d4.gera_contrato,
                 d41.sigla as sg_modalidade_artigo, d41.descricao as ds_modalidade_artigo,
                 d4.nome||' - '||d41.sigla as nm_enquadramento,
