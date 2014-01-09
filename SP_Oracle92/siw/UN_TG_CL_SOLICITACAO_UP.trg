@@ -29,7 +29,7 @@ begin
      w_codigo := upper(lic.codigo_interno);
      
      -- Ajusta valor do campo NR_PROCESSO
-     select lpad(replace(substr(w_codigo,1,case instr(w_codigo,'/') when 0 then 50 else instr(w_codigo,'/')-1 end),a.prefixo,''),4,'0')||'/'||
+     select lpad(replace(substr(w_codigo,1,case instr(w_codigo,'/') when 0 then 50 else instr(w_codigo,'/')-1 end),nvl(a.prefixo,'LIC-'),''),4,'0')||'/'||
             substr(w_codigo,-4) -- Ano
        into w_nr_processo
        from siw_menu a
