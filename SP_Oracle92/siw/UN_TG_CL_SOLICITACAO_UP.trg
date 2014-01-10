@@ -123,5 +123,5 @@ begin
         where a.nr_lic = w_nr_lic;
      End If;
   End If;
-end UN_TG_SIW_SOLIC_UP;
+end UN_TG_CL_SOLICITACAO_UP;
 /
