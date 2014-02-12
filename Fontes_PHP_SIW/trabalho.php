@@ -470,22 +470,22 @@ function Mesa() {
           if (nvl(f($row,'data_abertura'),'')!='') {
             $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A'] = $row;
             $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A']['data'] = f($row,'phpdt_data_abertura');
-            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A']['evento'] = 'Recebimento das propostas';
+            $w_array[date(Ymd,f($row,'data_abertura')).'-'.f($row,'codigo_interno').'A']['evento'] = 'Receb.prop.';
           }
           if (nvl(f($row,'envelope_1'),'')!='') {
             $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1'] = $row;
             $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1']['data'] = f($row,'phpdt_envelope_1');
-            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1']['evento'] = 'Abertura do envelope 1';
+            $w_array[date(Ymd,f($row,'envelope_1')).'-'.f($row,'codigo_interno').'E1']['evento'] = 'Abert.env.1';
           }
           if (nvl(f($row,'envelope_2'),'')!='') {
             $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2'] = $row;
             $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2']['data'] = f($row,'phpdt_envelope_2');
-            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2']['evento'] = 'Abertura do envelope 2';
+            $w_array[date(Ymd,f($row,'envelope_2')).'-'.f($row,'codigo_interno').'E2']['evento'] = 'Abert.env.2';
           }
           if (nvl(f($row,'envelope_3'),'')!='') {
             $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3'] = $row;
             $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3']['data'] = f($row,'phpdt_envelope_3');
-            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3']['evento'] = 'Abertura do envelope 3';
+            $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3']['evento'] = 'Abert.env.3';
           }
         }
         // Ordena o array pela data
@@ -505,6 +505,9 @@ function Mesa() {
         ShowHTML('                    <td><b>Data</td>');
         ShowHTML('                    <td><b>Evento</td>');
         ShowHTML('                    <td><b>Número</td>');
+        ShowHTML('                    <td><b>Vinculação</td>');
+        ShowHTML('                    <td><b>Solicitante</td>');
+        ShowHTML('                    <td><b>Executor</td>');
         $w_cor = $w_cor=$conTrBgColor;
         // Exibe o array com as datas
         foreach($w_array as $row) {
@@ -516,6 +519,13 @@ function Mesa() {
             ShowHTML('                    <td nowrap>');
             ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'data_abertura'),f($row,'data_homologacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
             ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Compras,'link'),0,strpos(f($RSMenu_Compras,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Compras,'p1').'&P2='.f($RSMenu_Compras,'p2').'&P3='.f($RSMenu_Compras,'p3').'&P4='.f($RSMenu_Compras,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Compras,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+            if ($_SESSION['INTERNO']=='S') {
+              if ($w_cliente==6881)                    ShowHTML('                    <td>'.f($row,'sg_cc').'</td>');
+              elseif (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('                    <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
+              else                                     ShowHTML('                    <td>---</td>');
+            }
+            ShowHTML('                    <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+            ShowHTML('                    <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
             ShowHTML('                  </tr>');
           }
         }
