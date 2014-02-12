@@ -505,6 +505,7 @@ function Mesa() {
         ShowHTML('                    <td><b>Data</td>');
         ShowHTML('                    <td><b>Evento</td>');
         ShowHTML('                    <td><b>Número</td>');
+        ShowHTML('                    <td width="1">&nbsp;</td>');
         ShowHTML('                    <td><b>Vinculação</td>');
         ShowHTML('                    <td><b>Solicitante</td>');
         ShowHTML('                    <td><b>Executor</td>');
@@ -514,17 +515,19 @@ function Mesa() {
           if (nvl(f($row,'data_abertura'),'')!='' || nvl(f($row,'envelope_1'),'')!='' || nvl(f($row,'envelope_2'),'')!='' || nvl(f($row,'envelope_3'),'')!='') {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('                    <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'data')).((date('H:i',f($row,'data'))!='00:00') ? ' '.date('H:i',f($row,'data')) : '').'&nbsp;</td>');
+            ShowHTML('                    <td nowrap align="center">&nbsp;'.formataDataEdicao(f($row,'data'),5).((date('H:i',f($row,'data'))!='00:00') ? ' '.date('H:i',f($row,'data')) : '').'&nbsp;</td>');
             ShowHTML('                    <td>'.f($row,'evento').'</td>');
-            ShowHTML('                    <td nowrap>');
+            ShowHTML('                    <td nowrap width="1%">');
             ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'data_abertura'),f($row,'data_homologacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
             ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Compras,'link'),0,strpos(f($RSMenu_Compras,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Compras,'p1').'&P2='.f($RSMenu_Compras,'p2').'&P3='.f($RSMenu_Compras,'p3').'&P4='.f($RSMenu_Compras,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Compras,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+            ShowHTML('                    </td>');
+            ShowHTML('                    <td width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
             if ($_SESSION['INTERNO']=='S') {
               if ($w_cliente==6881)                    ShowHTML('                    <td>'.f($row,'sg_cc').'</td>');
               elseif (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('                    <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
               else                                     ShowHTML('                    <td>---</td>');
             }
-            ShowHTML('                    <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+            ShowHTML('                    <td>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
             ShowHTML('                    <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
             ShowHTML('                  </tr>');
           }

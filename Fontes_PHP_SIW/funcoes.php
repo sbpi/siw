@@ -326,7 +326,7 @@ function headerExcel($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Montagem do cabeçalho de visualização de documentos
 // -------------------------------------------------------------------------
-function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, &$l_linha_pag=45,$l_filtro='') {
+function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l_cspan=null, $l_rspan=null, &$l_linha_pag=45,$l_filtro='',$l_exporta='S') {
   extract($GLOBALS);
   if ($l_formato=='V') {
     // Visualização de documento
@@ -351,8 +351,8 @@ function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l
       ShowHTML('<TITLE>'.$conSgSistema.' - '.$l_titulo.'</TITLE>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       ShowHTML('</HEAD>');
-      BodyOpenClean('onLoad="this.focus()"; ');
-      CabecalhoRelatorio($w_cliente,$l_titulo,$l_rspan,$l_chave,((nvl($l_titulo,'')=='') ? 'N' : 'S'));
+      BodyOpenClean('onLoad="this.focus();"');
+      CabecalhoRelatorio($w_cliente,$l_titulo,$l_rspan,$l_chave,((nvl($l_titulo,'')=='') ? 'N' : 'S'),$l_exporta);
     }
   } else {
     // Consulta gerencial
@@ -486,7 +486,7 @@ function LinkOrdena($p_label,$p_campo,$p_form=null) {
 // =========================================================================
 // Montagem do cabeçalho de relatórios
 // -------------------------------------------------------------------------
-function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$titulo='S') {
+function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$titulo='S',$exporta='S') {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   if($titulo == 'S'){
@@ -498,7 +498,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
     ShowHTML('<tr><td ALIGN="RIGHT"><b><font COLOR="#000000">'.DataHora().'</font></b></td></tr>');
     ShowHTML('<tr><td ALIGN="RIGHT"><b><font COLOR="#000000">'.$_SESSION['USUARIO'].': '.$_SESSION['NOME_RESUMIDO'].'</font></b></td></tr>');
   }
-  if (($p_tipo!='WORD' && $w_tipo!='WORD')) {
+  if ($p_tipo!='WORD' && $w_tipo!='WORD' && $exporta=='S') {
     if($titulo == 'S'){
       ShowHTML('<tr><td ALIGN="RIGHT">');
     }
@@ -520,12 +520,14 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
   if($titulo == 'S'){
     ShowHTML('</table>');
   }
-  ShowHTML('<form name="temp" method="POST" action="">');
-  ShowHTML('<input type="hidden" name="word" id="word" value="'.$word_par.'">');
-  ShowHTML('<input type="hidden" name="excel" id="excel" value="'.$excel_par.'">');
-  ShowHTML('<input type="hidden" name="pdf" id="pdf" value="'.$pdf_par.'">');
-  ShowHTML('<input type="hidden" name="opcao" id="opcao" value="">');
-  ShowHTML('</form>');
+  if (($p_tipo!='WORD' && $w_tipo!='WORD' && $exporta=='S')) {
+    ShowHTML('<form name="temp" method="POST" action="">');
+    ShowHTML('<input type="hidden" name="word" id="word" value="'.$word_par.'">');
+    ShowHTML('<input type="hidden" name="excel" id="excel" value="'.$excel_par.'">');
+    ShowHTML('<input type="hidden" name="pdf" id="pdf" value="'.$pdf_par.'">');
+    ShowHTML('<input type="hidden" name="opcao" id="opcao" value="">');
+    ShowHTML('</form>');
+  }
   flush();
 }
 
@@ -1126,6 +1128,19 @@ function ExibeMaterial($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
     $l_string='---';
   } else {
     $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_cl/catalogo.php?par=TELAMATERIAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste material ou serviço!">'.$p_nome.'</a>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Montagem da URL com as anotações de uma solicitação
+// -------------------------------------------------------------------------
+function ExibeAnotacao($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_chave,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'funcoes/exibeAnotacao.php?par=VISUAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaAnotacao\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir as anotações!">'.nvl($p_nome,'<img src="images/Folder/Sheet.gif" border=0 align=top height=15 width=15>').'</a>';
   }
   return $l_string;
 }

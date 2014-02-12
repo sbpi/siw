@@ -530,6 +530,7 @@ function Inicial() {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
         if ($P1!=1) {
           ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
+          ShowHTML('          <td width="1">&nbsp;</td>');
           ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</td>');
         }
         if ($P1>2) {
@@ -550,6 +551,7 @@ function Inicial() {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Valor</td>');
         if ($P1!=1) {
           ShowHTML('          <td><b>Situação</td>');
+          ShowHTML('          <td width="1">&nbsp;</td>');
           ShowHTML('          <td><b>Executor</td>');
         }
         if ($P1>2) {
@@ -623,6 +625,7 @@ function Inicial() {
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
           if ($P1!=1) {
             ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
+            ShowHTML('        <td width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
             ShowHTML('        <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
           }
           if ($P1>2) {
