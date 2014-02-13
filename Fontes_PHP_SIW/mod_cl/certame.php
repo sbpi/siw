@@ -552,7 +552,7 @@ function Inicial() {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Valor</td>');
         if ($P1!=1) {
           ShowHTML('          <td><b>Situação</td>');
-          ShowHTML('          <td width="1">&nbsp;</td>');
+          if ($w_embed!='WORD') ShowHTML('          <td class="remover" width="1">&nbsp;</td>');
           ShowHTML('          <td><b>Executor</td>');
         }
         if ($P1>2) {
