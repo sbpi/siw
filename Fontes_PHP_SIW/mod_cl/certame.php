@@ -530,7 +530,7 @@ function Inicial() {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
         if ($P1!=1) {
           ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
-          ShowHTML('          <td width="1">&nbsp;</td>');
+          if ($w_embed!='WORD') ShowHTML('          <td class="remover" width="1">&nbsp;</td>');
           ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</td>');
         }
         if ($P1>2) {
@@ -544,6 +544,7 @@ function Inicial() {
       $colspan++; ShowHTML('          <td><b>Código</td>');
       $colspan++; ShowHTML('          <td><b>Objeto</td>');
       if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>Vinculação</td>'); }
+      $colspan++; ShowHTML('          <td><b>Modalidade</td>');
       if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td><b>Processo</td>'); }
       $colspan++; ShowHTML('          <td><b>Solicitante</td>');
       //$colspan++; ShowHTML('          <td><b>Data limite</td>');
@@ -612,12 +613,12 @@ function Inicial() {
         ShowHTML('        <td title="'.f($row,'nm_lcmodalidade').'" align="center">'.f($row,'sg_lcmodalidade').'</td>');
         if ($w_pa=='S') {
           if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
-            ShowHTML('        <td align="center" nowrap><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'processo').'&nbsp;</a>');
+            ShowHTML('        <td align="center" nowrap><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'processo').'&nbsp;</a>'.'</td>');
           } else {
-            ShowHTML('        <td align="center" nowrap>'.f($row,'processo'));
+            ShowHTML('        <td align="center" nowrap>'.nvl(f($row,'processo'),'&nbsp;').'</td>');
           }
         } elseif ($w_segmento=='Público') {
-          ShowHTML('        <td align="center">'.f($row,'processo').'</td>');        
+          ShowHTML('        <td align="center">'.f($row,'processo').'</td>');
         }
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         if ($P1!=1 || $w_pede_valor_pedido=='S') {
@@ -625,7 +626,7 @@ function Inicial() {
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
           if ($P1!=1) {
             ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
-            ShowHTML('        <td width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
+            if ($w_embed!='WORD') ShowHTML('        <td class="remover" width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
             ShowHTML('        <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
           }
           if ($P1>2) {
