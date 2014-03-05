@@ -789,7 +789,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     } 
   
     // Pagamento de diárias
-    if($l_diaria=='S' && (($w_cliente = 10135 && $w_or_tramite>5) || ($w_cliente = 17305 && $w_or_tramite>1))) {
+    if($l_diaria=='S' && (($w_cliente==10135 && $w_or_tramite>5) || ($w_cliente==17305 && $w_or_tramite>1))) {
       unset($w_trechos);
       unset($w_tot_diaria_S);
       $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
@@ -1327,7 +1327,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Cotação de passagens
-    if($l_deslocamento=='S' && $w_or_tramite>=2 && $w_internacional=='S') {
+    if($l_deslocamento=='S' && $w_or_tramite>=2 && ($w_cliente==17305 || ($w_cliente!=17305 && $w_internacional=='S'))) {
       $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>COTAÇÃO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
       $l_html.=chr(13).'      <tr><td width="30%"><b>Valor:</b></td><td colspan="12" align="left">R$ '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(crlf2br(f($RS,'cotacao_observacao')),'---').'</td>';
