@@ -168,6 +168,7 @@ begin
                 case b1.sigla when 'AT' then b.valor else 0 end as valor_atual,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
+                b2.acesso,
                 case when b.protocolo_siw is null 
                      then case when b4.protocolo_siw is null
                                then d.processo
@@ -332,7 +333,7 @@ begin
                      left            join fn_lancamento_log    k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where  a1.sigla                 = 'FN'
-            and ((p_tipo = 1 and b1.sigla = 'EE' and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
+            and ((p_tipo = 1 and b1.sigla = 'EE' and b2.acesso > 0 and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(sysdate) and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and b2.acesso > 0) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or

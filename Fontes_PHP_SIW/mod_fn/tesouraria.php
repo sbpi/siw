@@ -598,6 +598,10 @@ function Inicial() {
               $w_acao    = ((substr(f($row,'sigla'),2,1)=='R') ? 'Receber' : 'Pagar');
           }
 
+          if (strpos('FNAAPLICA,FNATRANSF,FNDTARIFA',f($row,'sigla'))===false) {
+            // Aplicações, transferências e tarifas não têm rotinas de registro de anotação
+            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-lo.">AN</A>&nbsp');
+          }
           if (f($row,'sg_tramite')=='EE' || $P2==2) {
             if (f($row,'sigla')!='FNDFUNDO') {
               if (f($row,'sigla')=='FNDTARIFA' || substr(f($row,'sigla'),0,3)=='FNA' || (f($row,'usuario_logado')=='S' && f($row,'sigla')!='FNDREEMB')) {

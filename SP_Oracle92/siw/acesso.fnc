@@ -53,7 +53,7 @@ create or replace function Acesso
   w_sigla                  siw_menu.sigla%type;
   w_destinatario           siw_menu.destinatario%type;
   w_username               sg_autenticacao.sq_pessoa%type;
-  w_sq_unidade_lotacao     sg_autenticacao.sq_unidade%type;
+  w_unidade_lotacao        sg_autenticacao.sq_unidade%type;
   w_gestor_seguranca       sg_autenticacao.gestor_seguranca%type;  
   w_gestor_sistema         sg_autenticacao.gestor_sistema%type;
   w_gestor_financeiro      varchar2(1);
@@ -139,7 +139,7 @@ begin
         h.sq_pessoa_endereco 
    into w_cliente, w_acesso_geral, w_consulta_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
-        w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
+        w_username, w_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
         w_nm_vinculo, w_interno,
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
         w_sq_siw_tramite, w_cadastrador, w_solicitante, w_unidade_solicitante, w_executor, 
@@ -179,7 +179,7 @@ begin
     select count(*) into w_existe
       from pa_documento a
      where a.sq_siw_solicitacao = p_solicitacao
-       and a.unidade_int_posse in (select w_sq_unidade_lotacao from dual
+       and a.unidade_int_posse in (select w_unidade_lotacao from dual
                                    UNION
                                    select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_usuario and fim is null
                                    UNION
@@ -422,10 +422,10 @@ begin
     -- da unidade de CADASTRAMENTO da solicitação 
     -- ou se é da unidade RESPONSÁVEL e o módulo for de protocolo
     If w_interno = 'S' and w_sigla = 'PADCAD' Then 
-       select count(*) into w_existe from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao;
+       select count(*) into w_existe from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_unidade_lotacao;
        If w_existe > 0 Then Result := Result + 1; End If;
-    Elsif w_sq_unidade_lotacao   = w_unidade_solicitante or
-       w_sq_unidade_lotacao   = w_unidade_resp Then
+    Elsif w_unidade_lotacao   = w_unidade_solicitante or
+       w_unidade_lotacao   = w_unidade_resp Then
        Result := Result + 1;
     Elsif w_sq_pessoa_titular    = p_usuario or
           w_sq_pessoa_substituto = p_usuario
@@ -440,7 +440,7 @@ begin
                                                b.fim          is null
                                               )
         where a.sq_siw_solicitacao = p_solicitacao
-          and a.sq_unidade         = w_sq_unidade_lotacao;
+          and a.sq_unidade         = w_unidade_lotacao;
        If w_existe > 0 Then 
           Result := Result + 4; 
        Else
@@ -452,7 +452,7 @@ begin
                                                   b.fim          is null
                                                  )
            where a.sq_siw_solicitacao = p_solicitacao
-             and a.sq_unidade         = w_sq_unidade_lotacao;
+             and a.sq_unidade         = w_unidade_lotacao;
           If w_existe > 0 Then 
              Result := Result + 4; 
           Else
@@ -579,7 +579,7 @@ begin
             and a.sq_siw_tramite     = w_sq_siw_tramite
             and (w_sigla <> 'PADCAD' or
                  (w_sigla = 'PADCAD' and
-                  0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+                  0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_unidade_lotacao)
                  )
                 );
          If w_existe > 0 Then 
@@ -701,9 +701,18 @@ begin
              where a.sq_pessoa          = p_usuario
                and a.sq_pessoa_endereco = w_sq_endereco_unidade 
                and a.sq_siw_tramite     = w_sq_siw_tramite
+               -- Se o usuário cumprir o trâmite, a solicitação deve ser de uma unidade vinculada à sua lotação ou o usuário deve ter visão na unidade solicitante
+               and (w_unidade_lotacao   in (select w.sq_unidade
+                                              from eo_unidade w
+                                            connect by prior w.sq_unidade_pai = w.sq_unidade
+                                            start with w.sq_unidade = w_unidade_solicitante
+                                           )
+                    or
+                    w_unidade_solicitante in (select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_usuario)
+                   )
                and (w_sigla <> 'PADCAD' or
                     (w_sigla = 'PADCAD' and
-                     0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+                     0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_unidade_lotacao)
                     )
                    );
             If w_existe > 0 Then Result := Result + 16; End If;
@@ -739,7 +748,7 @@ begin
          and a.sq_siw_tramite     = coalesce(p_tramite, w_sq_siw_tramite)
          and (w_sigla <> 'PADCAD' or
               (w_sigla = 'PADCAD' and
-               0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+               0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_unidade_lotacao)
               )
              );
       If w_existe > 0 and w_destinatario = 'N' Then 

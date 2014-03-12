@@ -535,8 +535,7 @@ function Inicial() {
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Início', 'inicio') . '</td>');
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Fim', 'fim') . '</td>');
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Objetivo/assunto/evento', 'descricao') . '</td>');
-      if ($P1 > 1)
-        $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Fase atual', 'nm_tramite') . '</td>');
+      if ($P1 > 1) { $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Fase atual', 'nm_tramite') . '</td>'); }
     } else {
       $colspan++; ShowHTML('          <td><b>Nº</td>');
       $colspan++; ShowHTML('          <td><b>Vinc.</td>');
@@ -544,7 +543,7 @@ function Inicial() {
       $colspan++; ShowHTML('          <td><b>Início</td>');
       $colspan++; ShowHTML('          <td><b>Fim</td>');
       $colspan++; ShowHTML('          <td><b>Objetivo/assunto/evento</td>');
-      if ($P1 > 1) $colspan++; ShowHTML('          <td><b>Fase atual</td>');
+      if ($P1 > 1) { $colspan++; ShowHTML('          <td><b>Fase atual</td>'); }
     }
     if ($_SESSION['INTERNO'] == 'S' && $w_embed != 'WORD') {
       ShowHTML('          <td class="remover"><b>Operações</td>');
@@ -622,8 +621,7 @@ function Inicial() {
             ShowHTML('        <td title="' . htmlspecialchars(f($row, 'descricao')) . '">' . $w_descricao . '</td>');
           }
         }
-        if ($P1 > 1)
-          ShowHTML('        <td>' . f($row, 'nm_tramite') . '</td>');
+        if ($P1 > 1) ShowHTML('        <td>' . f($row, 'nm_tramite') . '</td>');
         if ($_SESSION['INTERNO'] == 'S' && $w_embed != 'WORD') {
           ShowHTML('        <td class="remover" nowrap>');
           if ($P1 != 3 && $P1 != 5 && $P1 != 6) {
@@ -960,8 +958,9 @@ function Geral() {
     $sql = new db_getPD_Financeiro;
     $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, 'S', null, null, null);
     $financ = count($RS_Financ);
-    if (count($RS_Financ) == 1) {
-      foreach ($RS_Financ as $row) {
+    foreach ($RS_Financ as $row) {
+      $w_sb_moeda = f($row,'sb_moeda');
+      if (count($RS_Financ) == 1) {
         $RS_Financ = $row;
         break;
       }
@@ -1084,18 +1083,18 @@ function Geral() {
           // Exibe saldos das rubricas
           $sql = new db_getPD_Financeiro; $RS_Fin = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, null, null, 'ORCAM_SIT');
           $RS_Fin = SortArray($RS_Fin, 'cd_rubrica', 'asc', 'nm_rubrica', 'asc', 'nm_lancamento', 'asc');
+          $i = 0;
           ShowHTML('<tr><td colspan=3><b>Disponibilidade orçamentária:</b>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="1" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
           ShowHTML('        <tr bgcolor="' . $conTrAlternateBgColor . '" align="center">');
           ShowHTML('          <td><b>Rubrica</td>');
           ShowHTML('          <td><b>Descrição</td>');
           ShowHTML('          <td><b>% Executado</td>');
-          ShowHTML('         <td><b>Saldo (R$)</td>');
+          ShowHTML('          <td><b>Saldo'.((nvl($w_sb_moeda,'')!='') ? ' ('.$w_sb_moeda.')': '').'</td>');
           ShowHTML('        </tr>');
-          if (count($RS_Fin) <= 0) {
-            ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+          if (count($RS_Fin)==0) {
+            ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan="4" align="center"><b>Não foram encontrados registros.</b></td></tr>');
           } else {
-            $RS_Fin = array_slice($RS_Fin, (($P3 - 1) * $P4), $P4);
             foreach ($RS_Fin as $row) {
               $w_cor = $conTrBgColor;
               ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
@@ -1106,7 +1105,6 @@ function Geral() {
               ShowHTML('      </tr>');
             }
           }
-          ShowHTML('      </center>');
           ShowHTML('    </table>');
           ShowHTML('  </td>');
           ShowHTML('</tr>');

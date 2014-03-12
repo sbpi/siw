@@ -28,11 +28,13 @@ begin
              case a.reembolso      when 'S' then 'Sim' else 'Não' end as nm_reembolso,
              case a.ressarcimento  when 'S' then 'Sim' else 'Não' end as nm_ressarcimento,
              e.codigo as cd_rubrica, e.nome as nm_rubrica, e.ativo as at_rubrica,
-             f.nome   as nm_lancamento, f.descricao as ds_lancamento, f.ativo as at_lancamento
+             f.nome   as nm_lancamento, f.descricao as ds_lancamento, f.ativo as at_lancamento,
+             g.sq_moeda, g.codigo cd_moeda, g.simbolo sb_moeda, g.nome nm_moeda
         from pd_vinculo_financeiro             a
              inner     join siw_solicitacao    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner   join siw_menu           c on (b.sq_menu            = c.sq_menu)
                  inner join siw_modulo         d on (c.sq_modulo          = d.sq_modulo)
+                 left  join co_moeda           g on (b.sq_moeda           = g.sq_moeda)
              left      join pj_rubrica         e on (a.sq_projeto_rubrica = e.sq_projeto_rubrica)
              inner     join fn_tipo_lancamento f on (a.sq_tipo_lancamento = f.sq_tipo_lancamento)
        where a.cliente        = p_cliente

@@ -21,6 +21,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getAfastamento.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
+include_once($w_dir_volta.'classes/sp/db_getLinkDataUser.php');
 include_once($w_dir_volta.'classes/sp/db_getUserResp.php');
 include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
@@ -104,6 +105,9 @@ exit;
 // -------------------------------------------------------------------------
 function Mesa() {
   extract($GLOBALS);
+  
+  // Variável para decidir se exibe link para a rotina de tesouraria
+  $w_tesouraria = false;
 
   // Recupera os dados do cliente
   $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_cliente);
@@ -134,6 +138,12 @@ function Mesa() {
       foreach($RS as $row) {
         $w_user[f($row,'sigla')] = true;
       }
+      
+      if ($w_user['FN']) $w_tesouraria = true;
+      else {
+        $sql = new db_getLinkDataUser; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'TESOURARIA');
+        if (count($RS)) $w_tesouraria = true;
+      }
     }
   }
   Cabecalho();
@@ -147,8 +157,7 @@ function Mesa() {
   
   // Se o módulo financeiro estiver habilitado e o usuário for gestor desse módulo, exibe link para a tela de tesouraria
   if (nvl($w_financeiro,'')!='' && $_SESSION['DBMS']!=8) {
-    if ($w_user['FN']) {
-      //ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_fn/tesouraria.php?par=inicial&O=L&TP='.$TP.' - Tesouraria').'\',\'Tesouraria\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a tela da tesouraria."><img src="'.$conImgFin.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    if ($w_tesouraria) {
       ShowHTML('      <A HREF="mod_fn/tesouraria.php?par=inicial&O=L&TP='.$TP.' - Tesouraria" title="Clique para acessar a tela da tesouraria."><img src="'.$conImgFin.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
     }
   }

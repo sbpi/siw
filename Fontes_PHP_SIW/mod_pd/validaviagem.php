@@ -132,7 +132,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         $l_tipo = 0;
       }
 
-      if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
+      if (strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))!==false) {
         if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
       } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
         if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
@@ -145,8 +145,11 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
            ) $l_erro_banco = 1;
       }
     }
-    
-    if ($l_erro_banco==1) {
+
+    if (nvl(f($l_rs_solic,'sg_forma_pagamento'),'')=='') {
+      $l_erro .= '<li>Dados para pagamento das diárias precisam ser informadados. Acesse a tela do beneficiário e clique no botão "Gravar"';
+      $l_tipo=0;
+    } elseif ($l_erro_banco==1) {
       $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
       $l_tipo=0;
     }
