@@ -2472,6 +2472,7 @@ function AltSolic() {
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
   $w_nm_diaria   = f($RS_Solic, 'nm_diaria');
   $w_fim_semana  = nvl($_REQUEST['w_fim_semana'], f($RS_Solic, 'diaria_fim_semana'));
+  $w_moeda       = nvl($_REQUEST['w_moeda'], f($RS_Solic, 'sq_moeda_complemento'));
   $w_valor_comp  = nvl($_REQUEST['w_valor_comp'], f($RS_Solic, 'valor_complemento'));
   $w_qtd_comp    = nvl($_REQUEST['w_qtd_comp'], f($RS_Solic, 'complemento_qtd'));
   $w_tot_comp    = nvl($_REQUEST['w_tot_comp'], f($RS_Solic, 'complemento_valor'));
@@ -2511,6 +2512,7 @@ function AltSolic() {
       ShowHTML('    });');
       FormataValor();
       ValidateOpen('Validacao');
+      Validate('w_moeda', 'Moeda', 'SELECT', '1', '1', '18', '', '0123456789');
       Validate('w_qtd_comp', 'Quantidade do complemento', 'VALOR', '1', 3, 5, '1', '0123456789,');
       CompValor('w_qtd_comp', 'Quantidade do complemento', '>', '0,0', 'zero');
       //Validate('w_tot_comp', 'Valor total do complemento de diária', 'VALOR', '1', 4, 18, '1', '0123456789,.');
@@ -2540,7 +2542,7 @@ function AltSolic() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="4">');
+  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="5">');
   ShowHTML('      <table border=1 width="100%">');
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
@@ -2556,9 +2558,9 @@ function AltSolic() {
   ShowHTML('          </TABLE></td></tr>');
   ShowHTML('      </table>');
 
-  ShowHTML('<tr><td colspan="4"><br>&nbsp;');
-  ShowHTML('<tr><td colspan="4"><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-  ShowHTML('<tr><td colspan="4"><hr NOSHADE color=#000000 SIZE=1>&nbsp;');
+  ShowHTML('<tr><td colspan="5"><br>&nbsp;');
+  ShowHTML('<tr><td colspan="5"><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+  ShowHTML('<tr><td colspan="5"><hr NOSHADE color=#000000 SIZE=1>&nbsp;');
 
   if (f($RS_Solic, 'internacional') == 'N' || $w_valor_comp > 0) {
     AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'PDDIARIAFS', $w_pagina . $par, 'A');
@@ -2567,13 +2569,21 @@ function AltSolic() {
     if ($w_valor_comp > 0) {
       ShowHTML('        <tr valign="top">');
       MontaRadioNS('<b>Pagar complemento de diária?</b>', $w_complemento, 'w_complemento', null, null, 'onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.submit();"');
+      // Tratamento para desabilitar o campo "moeda".
+      $w_disabled = $w_Disabled;
+      $w_Disabled = $disabled;
+      selecaoMoeda('<u>M</u>oeda:', 'U', 'Selecione a moeda na relação.', $w_moeda, null, 'w_moeda', 'ATIVO', null);
+      $w_Disabled = $w_disabled;
       ShowHTML('          <td width="20%"><b>Valor complemento:</b><br><input ' . $disabled . ' class="STI" value="' . formatNumber($w_valor_comp, 2) . '" readonly maxlength="10" size="10" type="text" id="w_valor_comp" name="w_valor_comp" onKeyDown="FormataValor(this,18,2,event);" /></td>');
       ShowHTML('          <td><b>Quantidade:</b><br><input ' . $disabled . ' class="STI" maxlength="5" size="5" type="text" name="w_qtd_comp" value="' . formatNumber($w_qtd_comp, 1) . '" id="w_qtd_comp" onKeyDown="FormataValor(this,5,1,event);"/></td>');
       ShowHTML('          <td><b>Valor a ser pago:</b><br><input ' . $disabled . ' class="STI" maxlength="10" size="10" type="text" value="' . formatNumber($w_tot_comp, 2) . '" readonly name="w_tot_comp" id="w_tot_comp" onKeyDown="FormataValor(this,18,2,event);" /></td>');
       ShowHTML('        </tr>');
     }
 
-    if (f($RS_Solic, 'internacional') == 'N') {
+    if ($w_cliente==17305) {
+      // OTCA sempre paga diárias em fim de semana
+      ShowHTML('       <input type="hidden" name="w_fim_semana" value="S">');
+    } elseif (f($RS_Solic, 'internacional') == 'N') {
       ShowHTML('        <tr valign="top">');
       MontaRadioNS('<b>Pagar diárias em fim de semana?</b>', $w_fim_semana, 'w_fim_semana');
     } else {
@@ -2585,10 +2595,10 @@ function AltSolic() {
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
     ShowHTML('</FORM>');
   }
-  ShowHTML('<tr><td colspan="4"><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+  ShowHTML('<tr><td colspan="5"><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'trechos&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
   $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, 'S', 'PDTRECHO');
   $RS = SortArray($RS, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
-  ShowHTML('<tr><td colspan="4"><table width="100%" border="0">');
+  ShowHTML('<tr><td colspan="5"><table width="100%" border="0">');
   ShowHTML('  <tr><td colspan="2">');
   ShowHTML('      <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
@@ -6258,6 +6268,7 @@ function InformarCotacao() {
   $w_menu = $_REQUEST['w_menu'];
 
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
+  $w_moeda = nvl($_REQUEST['w_moeda'], f($RS, 'sq_moeda_cotacao'));
   $w_valor = nvl($_REQUEST['w_valor'], formatNumber(f($RS, 'cotacao_valor')));
   $w_observacao = nvl($_REQUEST['w_observacao'], f($RS, 'cotacao_observacao'));
   Cabecalho();
@@ -6268,6 +6279,7 @@ function InformarCotacao() {
   SaltaCampo();
   FormataValor();
   ValidateOpen('Validacao');
+  Validate('w_moeda', 'Moeda', 'SELECT', '1', 1, 18, '', '0123456789');
   Validate('w_valor', 'Valor estimado', 'VALOR', '1', 4, 18, '', '0123456789,.');
   CompValor('w_valor', 'Valor estimado', '>', '0,00', 'zero');
   Validate('w_observacao', 'Observações', '1', '', 2, 2000, '1', '1');
@@ -6304,8 +6316,10 @@ function InformarCotacao() {
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('    <tr bgcolor="' . $conTrBgColor . '"><td>');
   ShowHTML('    <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cotação de Bilhetes</td>');
-  ShowHTML('    <tr><td><b><u>V</u>alor:<br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado dos bilhetes."></td>');
-  ShowHTML('    <tr><td><b><u>O</u>bservação:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75 title="OPCIONAL. Registre observações que julgar relevantes.">' . $w_observacao . '</TEXTAREA></td>');
+  ShowHTML('    <tr valign="top">');
+  selecaoMoeda('<u>M</u>oeda:', 'U', 'Selecione a moeda na relação.', $w_moeda, null, 'w_moeda', 'PDRB', null);
+  ShowHTML('      <td><b><u>V</u>alor:<br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado dos bilhetes."></td>');
+  ShowHTML('    <tr><td colspan="2"><b><u>O</u>bservação:</b><br><textarea ' . $w_Disabled . ' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75 title="OPCIONAL. Registre observações que julgar relevantes.">' . $w_observacao . '</TEXTAREA></td>');
   ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('    <tr><td align="center" colspan="2">');
   ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -6318,153 +6332,6 @@ function InformarCotacao() {
   ShowHTML('</center>');
   Rodape();
 }
-
-/*
-  // =========================================================================
-  // Rotina para informação da cotação dos bilhetes
-  // -------------------------------------------------------------------------
-  function InformarCotacao() {
-  extract($GLOBALS);
-  global $w_Disabled;
-
-  $w_chave  = $_REQUEST['w_chave'];
-  $w_menu   = $_REQUEST['w_menu'];
-
-  $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,'PDGERAL');
-  $w_valor_passagem     = formatNumber(f($RS,'valor_passagem'));
-  $w_pta                = f($RS,'pta');
-  $w_emissao_bilhete    = FormataDataEdicao(f($RS,'emissao_bilhete'));
-  Cabecalho();
-  head();
-  ShowHTML('<title>'.$conSgSistema.' - Informar cotação</title>');
-  ScriptOpen('JavaScript');
-  CheckBranco();
-  FormataData();
-  SaltaCampo();
-  FormataValor();
-  ValidateOpen('Validacao');
-  ShowHTML('  var i,k;');
-  ShowHTML('  for (ind=1; ind < theForm["w_sq_cia_transporte[]"].length; ind++) {');
-  Validate('["w_sq_cia_transporte[]"][ind]','Companhia de transporte','SELECT','1',1,18,'','0123456789');
-  ShowHTML('  }');
-  ShowHTML('  for (ind=1; ind < theForm["w_codigo_voo[]"].length; ind++) {');
-  Validate('["w_codigo_voo[]"][ind]','Código do vôo','','1',3,30,'1','1');
-  ShowHTML('  }');
-  ShowHTML('  w_tot = 0;');
-  ShowHTML('  for (ind=1; ind < theForm["w_valor_trecho[]"].length; ind++) {');
-  Validate('["w_valor_trecho[]"][ind]','Valor estimado','VALOR','1',4,18,'','0123456789,.');
-  ShowHTML('  w_tot = w_tot + parseFloat(replaceAll(replaceAll(theForm["w_valor_trecho[]"][ind].value,".",""),",","."));');
-  ShowHTML('  }');
-  ShowHTML('  if (w_tot==0) {');
-  ShowHTML('    alert("Pelo menos um dos trechos deve ter valor maior que zero!");');
-  ShowHTML('    return false;');
-  ShowHTML('  }');
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</head>');
-  ShowHTML('<base HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad="this.focus();"');
-  ShowHTML('<b><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
-  ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="2">');
-  ShowHTML('      <table border=1 width="100%">');
-  ShowHTML('        <tr><td valign="top" colspan="2">');
-  ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
-  $sql = new db_getBenef; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null, null, null, null, null);
-  foreach($RS1 as $row) { $RS1 = $row; break; }
-  ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
-  ShowHTML('          </TABLE></td></tr>');
-  ShowHTML('      </table>');
-  ShowHTML('  </table>');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
-  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
-  ShowHTML('      <table width="99%" border="0">');
-  ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cotação de Trechos</td>');
-  $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms,$w_chave,null,'S',$SG);
-  $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-  if (count($RS)>0) {
-  $i = 1;
-  foreach($RS as $row) {
-  $w_trechos[$i][1]  = f($row,'sq_deslocamento');
-  $w_trechos[$i][2]  = f($row,'cidade_dest');
-  $w_trechos[$i][10]  = f($row,'nm_origem');
-  $w_trechos[$i][3]  = f($row,'nm_destino');
-  $w_trechos[$i][4]  = substr(FormataDataEdicao(f($row,'phpdt_saida'),6),0,-3);
-  $w_trechos[$i][5]  = substr(FormataDataEdicao(f($row,'phpdt_chegada'),6),0,-3);
-  $w_trechos[$i][6]  = f($row,'sq_cia_transporte');
-  $w_trechos[$i][7]  = f($row,'codigo_voo');
-  $w_trechos[$i][8]  = f($row,'saida');
-  $w_trechos[$i][9]  = f($row,'chegada');
-  $w_trechos[$i][11] = f($row,'nm_meio_transporte');
-  $w_trechos[$i][12] = formatNumber(f($row,'valor_trecho'));
-  $w_trechos[$i][13] = f($row,'sq_meio_transporte');
-  $w_total += f($row,'valor_trecho');
-  $i += 1;
-  }
-  ShowHTML('     <tr><td align="center" colspan="2">');
-  ShowHTML('       <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('         <tr bgcolor="'.$conTrBgColor.'" align="center">');
-  ShowHTML('         <td><b>Origem</td>');
-  ShowHTML('         <td><b>Destino</td>');
-  ShowHTML('         <td><b>Saida</td>');
-  ShowHTML('         <td><b>Chegada</td>');
-  ShowHTML('         <td><b>Meio</td>');
-  ShowHTML('         <td><b>Cia.</td>');
-  ShowHTML('         <td><b>Código vôo</td>');
-  ShowHTML('         <td><b>Valor</td>');
-  ShowHTML('         </tr>');
-  $w_cor=$conTrBgColor;
-  $j = $i;
-  $i = 1;
-  ShowHTML('<INPUT type="hidden" name="w_sq_deslocamento[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_sq_cidade[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_sq_cia_transporte[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_codigo_voo[]" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_valor_trecho[]" value="">');
-  while($i!=$j) {
-  ShowHTML('<INPUT type="hidden" name="w_sq_deslocamento[]" value="'.$w_trechos[$i][1].'">');
-  ShowHTML('<INPUT type="hidden" name="w_sq_cidade[]" value="'.$w_trechos[$i][2].'">');
-  $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  ShowHTML('     <tr valign="middle" bgcolor="'.$w_cor.'">');
-  ShowHTML('       <td>'.$w_trechos[$i][10].'</td>');
-  ShowHTML('       <td>'.$w_trechos[$i][3].'</td>');
-  ShowHTML('       <td align="center">'.$w_trechos[$i][4].'</td>');
-  ShowHTML('       <td align="center">'.$w_trechos[$i][5].'</td>');
-  ShowHTML('       <td align="center">'.$w_trechos[$i][11].'</td>');
-
-  SelecaoCiaTrans('','','Selecione a companhia de transporte para este destino.',$w_cliente,$w_trechos[$i][6],null,'w_sq_cia_transporte[]',$w_trechos[$i][13],null);
-  ShowHTML('       <td align="left"><input type="text" name="w_codigo_voo[]" class="sti" SIZE="10" MAXLENGTH="30" VALUE="'.$w_trechos[$i][7].'"  title="Informe o código do vôo para este destino."></td>');
-  ShowHTML('       <td><input type="text" accesskey="V" name="w_valor_trecho[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_trechos[$i][12].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado do bilhete deste trecho."></td>');
-  ShowHTML('     </tr>');
-  $i += 1;
-  }
-  $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  ShowHTML('     <tr><td align="center" colspan="8" height="1" bgcolor="#000000">');
-  ShowHTML('      <tr valign="top" bgcolor="'.$w_cor.'"><td colspan="7" align="right"><b>Total</b><td><input readonly type="text" name="w_total" class="stih" style="background-color:'.$w_cor.'; border: 0; text-align:right; font-weight: bold;" SIZE="9" MAXLENGTH="18" VALUE="'.formatNumber($w_total).'">');
-  ShowHTML('        </table></td></tr>');
-  }
-  ShowHTML('        <tr><td align="center" colspan="2">');
-  ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
-  ShowHTML('            <input class="STB" type="button" onClick="window.close();" name="Botao" value="Fechar">');
-  ShowHTML('      </table>');
-  ShowHTML('    </td>');
-  ShowHTML('</tr>');
-  ShowHTML('</FORM>');
-  ShowHTML('</table>');
-  ShowHTML('</center>');
-  Rodape();
-  }
- */
 
 // =========================================================================
 // Rotina de preparação para envio de e-mail relativo a missões
@@ -8140,7 +8007,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura == '') {
         $SQL = new dml_putPD_Dados;
-        $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_fim_semana'], nvl($_REQUEST['w_qtd_comp'], '0,0'), nvl($_REQUEST['w_valor_comp'], '0,00'), nvl($_REQUEST['w_tot_comp'], '0,00'));
+        $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_fim_semana'], nvl($_REQUEST['w_qtd_comp'], '0,0'), $_REQUEST['w_moeda'], nvl($_REQUEST['w_valor_comp'], '0,00'), nvl($_REQUEST['w_tot_comp'], '0,00'));
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'AltSolic&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&w_menu=' . $_REQUEST['w_menu'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();
@@ -8268,7 +8135,7 @@ function Grava() {
     case 'COTPASS':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura == '') {
-        $SQL = new dml_putPD_Cotacao; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], Nvl($_POST['w_valor'], 0), $_POST['w_observacao']);
+        $SQL = new dml_putPD_Cotacao; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_POST['w_moeda'], Nvl($_POST['w_valor'], 0), $_POST['w_observacao']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\'' . montaURL_JS($w_dir, $w_pagina . 'InformarCotacao&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&w_menu=' . $_REQUEST['w_menu'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
         ScriptClose();

@@ -1,5 +1,6 @@
 create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varchar2 default null, p_tipo in varchar2 default null) is
   i           number(18);
+  w_cliente   number(18);
   w_cont      number(18) := 0;
   w_desloc    number(18) := 0;
   w_existe    number(18);
@@ -68,15 +69,25 @@ begin
      and a.sq_siw_solicitacao = coalesce(p_chave,0)
      and a.tipo               = coalesce(p_tipo,case d.sigla when 'CI' then 'S' else 'P' end);
      
+  -- Verifica se deve executar cálculo de diárias de um cliente específico
+  If w_existe > 0 Then
+     select cliente into w_cliente from pd_missao where sq_siw_solicitacao = p_chave;
+     If w_cliente = 17305 Then -- OTCA
+        sp_calculadiarias_OTCA(p_chave, p_todos, p_tipo);
+        return;
+     End If;
+  End If;
+
   If w_existe = 0 and coalesce(p_todos,'nulo') <> 'TODOS' Then
      return;
   Elsif coalesce(p_todos,'nulo') = 'TODOS' Then
      -- Atualiza as diárias de todas as viagens
      for crec in c_solic loop
-        sp_calculaDiarias(crec.sq_siw_solicitacao);
+        sp_calculaDiarias(crec.sq_siw_solicitacao, null, p_tipo);
      end loop;
      return;
   End If;
+
   -- Recupera informação sobre viagem internacional
   select internacional, diaria_fim_semana into w_internacional, w_fim_semana from pd_missao where sq_siw_solicitacao = p_chave;
   

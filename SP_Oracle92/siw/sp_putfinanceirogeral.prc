@@ -127,6 +127,9 @@ begin
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
 
+      -- Recupera o código interno  do acordo, gerado por trigger
+      select codigo_interno into p_codigo_interno from siw_solicitacao where sq_siw_solicitacao = w_chave;
+      
       Update siw_solicitacao set
          solicitante           = p_solicitante,
          cadastrador           = p_cadastrador,

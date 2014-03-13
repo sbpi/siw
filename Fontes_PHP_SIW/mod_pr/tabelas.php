@@ -477,9 +477,9 @@ function Vinculacao() {
       ShowHTML('          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>');
       ShowHTML('          <td><input type="CHECKBOX" name="w_servico[]" value="'.f($row,'sq_menu').'" '.$l_marcado.'>');
       if (f($row,'sigla')=='PDINICIAL') {
-        ShowHTML('          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'ConfiguraViagem&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CONFPD').'\',\'Configura\',\'toolbar=no,width=780,height=530,top=30,left=10,resizable=yes,scrollbars=yes\');" title="Informar a cotação das passagens.">'.f($row,'nome').'</A>');
+        ShowHTML('          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'ConfiguraViagem&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CONFPD').'\',\'Configura\',\'toolbar=no,width=780,height=530,top=30,left=10,resizable=yes,scrollbars=yes\');">'.f($row,'nome').'</A>');
       } elseif (f($row,'sigla')=='CLLCCAD' || f($row,'sigla')=='CLPCCAD') {
-        ShowHTML('          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'ConfiguraCompra&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CONFCL').'\',\'Configura\',\'toolbar=no,width=780,height=530,top=30,left=10,resizable=yes,scrollbars=yes\');" title="Informar a cotação das passagens.">'.f($row,'nome').'</A>');
+        ShowHTML('          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'ConfiguraCompra&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CONFCL').'\',\'Configura\',\'toolbar=no,width=780,height=530,top=30,left=10,resizable=yes,scrollbars=yes\');">'.f($row,'nome').'</A>');
       } else { 
         ShowHTML('          <td>'.f($row,'nome').'</td>');
       }

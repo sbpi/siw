@@ -60,7 +60,7 @@ create or replace procedure SP_PutViagemEnvio
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, coalesce(x2.sg_tramite,'-') as sg_tramite,
              x3.sq_tipo_pessoa,
-             x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
+             x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sq_moeda, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
                inner   join co_forma_pagamento w2 on (w1.sq_pessoa          = w2.cliente and w2.sigla = 'CREDITO'),
@@ -73,24 +73,23 @@ create or replace procedure SP_PutViagemEnvio
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
                inner   join (select sq_siw_solicitacao, 
-                                    sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
+                                    sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
                                from (select distinct a.sq_siw_solicitacao, 'CMP' as tp_despesa, null as sq_diaria, a1.complemento_valor as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                                            d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                                            d1.sq_moeda, d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                                        from siw_solicitacao                      a
                                             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
                                             inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao and
                                                                                         a1.complemento_valor         > 0
                                                                                        )
                                               inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_bilhete      = c.sq_pdvinculo_financeiro)
-                                                inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
-                                            co_moeda                             d1
+                                                inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+                                              inner   join co_moeda              d1 on (a1.sq_moeda_complemento      = d1.sq_moeda)
                                       where a.sq_siw_solicitacao = p_chave
-                                        and d1.sigla             =	'BRL'
                                      UNION
                                      select a.sq_siw_solicitacao, 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                                            b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
+                                            b1.sq_moeda, b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                                        from siw_solicitacao                      a
                                             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla = 'EE')
                                             inner     join pd_reembolso          b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
@@ -102,7 +101,7 @@ create or replace procedure SP_PutViagemEnvio
                                      UNION
                                      select a.sq_siw_solicitacao, 'DIA' as tp_despesa, b.sq_diaria, (b.quantidade*b.valor) as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                                            d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                                            d1.sq_moeda, d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                                        from siw_solicitacao                      a
                                             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
                                             inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
@@ -116,7 +115,7 @@ create or replace procedure SP_PutViagemEnvio
                                      UNION
                                      select a.sq_siw_solicitacao, 'VEI' as tp_despesa, b.sq_diaria, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                                            d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                                            d1.sq_moeda, d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                                        from siw_solicitacao                      a
                                             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
                                             inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
@@ -128,7 +127,7 @@ create or replace procedure SP_PutViagemEnvio
                                       where a.sq_siw_solicitacao = p_chave
                                         and b.tipo               = case a2.sigla when 'EE' then 'P' else 'S' end
                                     ) k
-                             group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda
+                             group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc,
                                     b.sigla as sg_tramite
@@ -188,7 +187,7 @@ create or replace procedure SP_PutViagemEnvio
          and x4.valor             > 0;
 
    cursor c_ressarcimento_geral is
-      select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
+      select x.codigo_interno as cd_interno, x.sq_moeda, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
              'Devolução de valores da '||x.codigo_interno||'.' as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
@@ -234,14 +233,14 @@ create or replace procedure SP_PutViagemEnvio
 
 
    cursor c_ressarcimento_item is
-      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
+      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
              case tp_despesa 
                   when 'DEV' then 'Devolução de valores'
                   else 'Não identificado' 
              end as nm_despesa
         from (select 'DEV' as tp_despesa, null as sq_diaria, a1.ressarcimento_valor as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     b.sigla as sg_moeda, b.nome as nm_moeda, b.simbolo as sb_moeda
+                     b.sq_moeda, b.sigla as sg_moeda, b.nome as nm_moeda, b.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao          = a1.sq_siw_solicitacao and
                                                                  a1.ressarcimento              = 'S'
@@ -554,6 +553,7 @@ begin
                                   p_tipo_rubrica       => 5, -- despesas
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,
+                                  p_moeda              => crec.sq_moeda,
                                   p_chave_nova         => w_sq_financ,
                                   p_codigo_interno     => w_cd_financ
                                  );
@@ -663,6 +663,7 @@ begin
                                   p_tipo_rubrica       => 4, -- receitas
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,
+                                  p_moeda              => crec.sq_moeda,
                                   p_chave_nova         => w_sq_financ,
                                   p_codigo_interno     => w_cd_financ
                                  );

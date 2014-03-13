@@ -739,6 +739,8 @@ begin
                 coalesce(d21.ativo,'N') st_prop,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,      d3.interno, d3.contratado,
                 d4.sexo,              d4.cpf,
+                d1.sq_moeda_cotacao,  d10.codigo cd_moeda_cotacao,  d10.sigla sg_moeda_cotacao, d10.simbolo sb_moeda_cotacao,
+                d1.sq_moeda_complemento, d12.codigo cd_moeda_complemento,  d12.sigla sg_moeda_complemento, d12.simbolo sb_moeda_complemento,
                 d22.sq_forma_pagamento, d22.nome as nm_forma_pagamento, d22.sigla as sg_forma_pagamento,
                 d23.nome as pais_estrang,
                 d51.sq_projeto_rubrica, d51.codigo as cd_rubrica,    d51.nome as nm_rubrica,
@@ -786,6 +788,8 @@ begin
                   left               join pa_documento               b4 on (b.protocolo_siw               = b4.sq_siw_solicitacao)
                   inner              join gd_demanda                 d  on (b.sq_siw_solicitacao          = d.sq_siw_solicitacao)
                     inner            join pd_missao                  d1 on (d.sq_siw_solicitacao          = d1.sq_siw_solicitacao)
+                      left           join co_moeda                  d10 on (d1.sq_moeda_cotacao           = d10.sq_moeda)
+                      left           join co_moeda                  d12 on (d1.sq_moeda_complemento       = d12.sq_moeda)
                       inner          join siw_solicitacao           d11 on (d1.sq_siw_solicitacao         = d11.sq_siw_solicitacao)
                       inner          join co_pessoa                  d2 on (d1.sq_pessoa                  = d2.sq_pessoa)
                         left         join sg_autenticacao           d21 on (d2.sq_pessoa                  = d21.sq_pessoa)

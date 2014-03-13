@@ -3826,6 +3826,7 @@ SP_Oracle92/siw/sp_ajustaFasePagamento.prc -text
 SP_Oracle92/siw/sp_ajustaPesoEtapa.prc -text
 SP_Oracle92/siw/sp_ajustaPesquisaMaterial.prc -text
 SP_Oracle92/siw/sp_calculaDiarias.prc -text
+SP_Oracle92/siw/sp_calculaDiarias_OTCA.prc -text
 SP_Oracle92/siw/sp_calculaPercEtapa.prc -text
 SP_Oracle92/siw/sp_enviaProtocoloFinanceiro.prc -text
 SP_Oracle92/siw/sp_geraContrato.prc -text

@@ -62,14 +62,13 @@ begin
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                     inner     join co_moeda              d1 on (a1.sq_moeda_complemento      = d1.sq_moeda)
                      inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
                                                                  c.diaria                     = 'S'
                                                                 )
                        inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
-                       inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
-                     co_moeda                             d1
+                       inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
                where a.sq_siw_solicitacao = p_solic
-                 and d1.sigla             =	'BRL'
               UNION
               select 'RMB' as tp_despesa, b.valor_autorizado as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
@@ -178,13 +177,12 @@ begin
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                       inner   join co_moeda              d1 on (a1.sq_moeda_complemento      = d1.sq_moeda)
                      inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
                                                                  c.diaria                     = 'S'
                                                                 )
-                       inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
-                     co_moeda                             d1
+                       inner   join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
                where a.sq_siw_solicitacao = p_solic
-                 and d1.sigla             =	'BRL'
               UNION
               select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
@@ -255,13 +253,12 @@ begin
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                       inner   join co_moeda              d1 on (a1.sq_moeda_complemento      = d1.sq_moeda)
                      inner     join pd_vinculo_financeiro c  on (a.sq_solic_pai               = c.sq_siw_solicitacao and
                                                                  c.diaria                     = 'S'
                                                                 )
-                       inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
-                     co_moeda                             d1
+                       inner   join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
                where a.sq_siw_solicitacao = p_solic
-                 and d1.sigla             =	'BRL'
               UNION
               select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,

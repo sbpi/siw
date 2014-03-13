@@ -180,6 +180,7 @@ begin
                 end as nm_tramite,
                 calculaIGE(b.sq_siw_solicitacao) as ige, calculaIDE(b.sq_siw_solicitacao,null,null)  as ide,
                 calculaIGC(b.sq_siw_solicitacao) as igc, calculaIDC(b.sq_siw_solicitacao,null,null)  as idc,
+                b3.sq_moeda, b3.codigo cd_moeda, b3.sigla sg_moeda, b3.simbolo sb_moeda,
                 o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind
            from siw_menu                                      a
                 inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
@@ -189,6 +190,7 @@ begin
                     left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
                       inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
                         inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
+                  left         join co_moeda                  b3 on (b.sq_moeda            = b3.sq_moeda)
                   inner        join siw_solicitacao           c  on (b.sq_solic_pai        = c.sq_siw_solicitacao)
                     inner      join siw_menu                  c1 on (c.sq_menu             = c1.sq_menu)
                       inner    join siw_modulo                c2 on (c1.sq_modulo          = c2.sq_modulo)

@@ -25,6 +25,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $w_aditivo           = f($RS,'aditivo');
   $w_forma_pagamento   = f($RS,'sg_forma_pagamento');
   $w_internacional     = f($RS,'internacional');
+  $w_complemento_moeda = f($RS,'sg_moeda_complemento');
   $w_complemento_qtd   = f($RS,'complemento_qtd');
   $w_complemento_base  = f($RS,'complemento_base');
   $w_complemento_valor = f($RS,'complemento_valor');
@@ -956,11 +957,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         }
         if ($w_complemento_qtd>0) {
           $l_html.=chr(13).'     <tr valign="top">';
-          $l_html.=chr(13).'       <td colspan="4" align="right">Complemento de diárias (BRL)&nbsp;&nbsp;&nbsp;</td>';
+          $l_html.=chr(13).'       <td colspan="4" align="right">Complemento de diárias ('.$w_complemento_moeda.')&nbsp;&nbsp;&nbsp;</td>';
           $l_html.=chr(13).'       <td align="right">'.formatNumber($w_complemento_qtd,2).'</td>';
           $l_html.=chr(13).'       <td align="right">'.formatNumber($w_complemento_base).'</td>';
           $l_html.=chr(13).'       <td align="right">'.formatNumber($w_complemento_valor).'</td>';
-          $w_tot_diaria_S['BRL'] += $w_complemento_valor;
+          $w_tot_diaria_S[$w_complemento_moeda] += $w_complemento_valor;
         }
         $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL DIÁRIAS:';
         foreach($w_tot_diaria_S as $k => $v) {
@@ -1136,11 +1137,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         }
         if ($w_complemento_qtd > 0) {
           $l_html.=chr(13) . '     <tr valign="top">';
-          $l_html.=chr(13) . '       <td colspan="4" align="right">Complemento de diárias (BRL)&nbsp;&nbsp;&nbsp;</td>';
+          $l_html.=chr(13) . '       <td colspan="4" align="right">Complemento de diárias ('.$w_complemento_moeda.')&nbsp;&nbsp;&nbsp;</td>';
           $l_html.=chr(13) . '       <td align="right">' . formatNumber($w_complemento_qtd,2) . '</td>';
           $l_html.=chr(13) . '       <td align="right">' . formatNumber($w_complemento_base) . '</td>';
           $l_html.=chr(13) . '       <td align="right">' . formatNumber($w_complemento_valor) . '</td>';
-          $w_tot_diaria_P['BRL'] += $w_complemento_valor;
+          $w_tot_diaria_P[$w_complemento_moeda] += $w_complemento_valor;
         }
         $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL DIÁRIAS:';
         foreach($w_tot_diaria_P as $k => $v) {
@@ -1329,7 +1330,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     // Cotação de passagens
     if($l_deslocamento=='S' && $w_or_tramite>=2 && ($w_cliente==17305 || ($w_cliente!=17305 && $w_internacional=='S'))) {
       $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>COTAÇÃO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor:</b></td><td colspan="12" align="left">R$ '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor:</b></td><td colspan="12" align="left">'.f($RS,'sb_moeda_cotacao').' '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(crlf2br(f($RS,'cotacao_observacao')),'---').'</td>';
     }
 
@@ -1564,12 +1565,28 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $w_total       = 0;
       foreach ($RSF as $row) {
         $soma = false;
-        if (f($row,'sg_tramite')=='AT' || strpos(f($row,'descricao'),'(REAL)')!==false  || strpos(f($row,'descricao'),'(')===false) $soma = true;
+        if ($w_cliente==17305 || f($row,'sg_tramite')=='AT' || strpos(f($row,'descricao'),'(REAL)')!==false  || strpos(f($row,'descricao'),'(')===false) $soma = true;
         if ($soma) {
           if (f($row,'sigla')=='FNREVENT') {
             $w_total       -= f($row,'valor');
           } else {
             $w_total       += f($row,'valor');
+          }
+          if ((nvl(f($row,'sb_moeda'),'')!='')) {
+            if (nvl($w_totais[f($row,'sb_moeda')],'')=='') {
+              // Se nao existe valor para a moeda do lançamento
+              if (f($row,'sigla')=='FNREVENT') {
+                $w_totais[f($row,'sb_moeda')] = -1 * f($row,'valor');
+              } else {
+                $w_totais[f($row,'sb_moeda')] = f($row,'valor');
+              }
+            } else {
+              if (f($row,'sigla')=='FNREVENT') {
+                $w_totais[f($row,'sb_moeda')] -= f($row,'valor');
+              } else {
+                $w_totais[f($row,'sb_moeda')] += f($row,'valor');
+              }
+            }
           }
         }
         $l_html.=chr(13).'        <tr valign="middle">';
@@ -1577,7 +1594,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
         $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
         if ($soma) {
-          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          $l_html.=chr(13).'           <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'</td>';
         } else {
           $l_html.=chr(13).'           <td align="right">&nbsp;</td>';
         }
@@ -1585,11 +1602,22 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'conclusao')),'&nbsp;').'</td>';
         $l_html.=chr(13).'        </tr>';
       } 
-      $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
-      $l_html.=chr(13).'        <td align="right" colspan="2"><b>TOTAL</b></td>';
-      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
-      $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
-      $l_html.=chr(13).'      </tr>';
+      if (is_array($w_totais)) {
+        // Se há mais de uma moeda de pagamento
+        $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="5" align="center"><b>TOTAIS:';
+        foreach($w_totais as $k => $v) {
+          $l_html.=chr(13).'       &nbsp;&nbsp;&nbsp;&nbsp;'.$k.' '.formatNumber($v);
+        }
+        $l_html.=chr(13).'      </tr>';
+        unset($w_totais);
+      } else {
+        // Se há apenas uma moeda de pagamento
+        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+        $l_html.=chr(13).'        <td align="right" colspan="2"><b>TOTAL</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+        $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+      }
       $l_html.=chr(13).'         </table></td></tr>';
     }
 
