@@ -383,9 +383,9 @@ function Inicial() {
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'ord_codigo_interno','asc','inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     } else {
-      $RS = SortArray($RS,'inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
+      $RS = SortArray($RS,'ord_codigo_interno','asc','inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     }
   }
   
