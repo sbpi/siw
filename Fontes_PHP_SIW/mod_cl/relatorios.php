@@ -186,7 +186,7 @@ function Rel_ItensAta() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fim Vigência','fim').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Item','nr_item_ata').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detentor','nm_detentor_ata').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('CMM','quantidade').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Preço','valor_unidade').'</td>');

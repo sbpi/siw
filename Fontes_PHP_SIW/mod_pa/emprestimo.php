@@ -387,7 +387,7 @@ function Inicial() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_embed!='WORD') {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Devolução','fim').'</td>');
       ShowHTML('          <td colspan=2><b>Solicitante</td>');

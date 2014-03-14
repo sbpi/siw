@@ -90,6 +90,7 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 b.titulo as ac_titulo,
                 b1.sq_siw_tramite,    b1.ordem or_tramite,
@@ -176,6 +177,7 @@ begin
                           end
                      else to_char(b8.numero_documento)||'/'||substr(to_char(b8.ano),3,2) 
                 end as protocolo,
+                codigo2numero(b.codigo_interno) ord_codigo_interno,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
@@ -209,6 +211,7 @@ begin
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m3.codigo_interno as cd_acordo, m.objeto as obj_acordo,
+                codigo2numero(m3.codigo_interno) as ord_cd_acordo,
                 case when m4.qtd is null then 'S' else 'N' end as usuario_logado, -- Se igual a S, somente o usuário logado participou da tramitação 
                 mo.sq_moeda,          mo.codigo  cd_moeda,           mo.nome  nm_moeda,
                 mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
@@ -220,7 +223,8 @@ begin
                 case when d.sq_acordo_parcela  is null then null else (select ordem    from ac_acordo_parcela where sq_acordo_parcela = d.sq_acordo_parcela) end or_parcela,
                 case when d.sq_acordo_parcela  is null then null else (select count(*) from ac_parcela_nota   where sq_acordo_parcela = d.sq_acordo_parcela) end qtd_nota,
                 case when q.sq_siw_solicitacao is null then null else (select case count(*) when 0 then 'N' else 'S' end from pj_rubrica where sq_siw_solicitacao = q.sq_siw_solicitacao) end rubrica,
-                r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo
+                r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo,
+                codigo2numero(r1.codigo_interno) as ord_cd_solic_vinculo
            from siw_modulo                                     a1
                 inner                join siw_menu             a  on (a1.sq_modulo               = a.sq_modulo and
                                                                       a.sq_pessoa                = w_cliente

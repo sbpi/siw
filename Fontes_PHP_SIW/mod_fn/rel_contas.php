@@ -237,7 +237,7 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrAlternateBgColor . '" align="center">');
-    ShowHTML('          <td><font size="1"><b>' . LinkOrdena('Código', 'codigo_interno') . '</font></td>');
+    ShowHTML('          <td><font size="1"><b>' . LinkOrdena('Código','ord_codigo_interno') . '</font></td>');
     ShowHTML('          <td><font size="1"><b>' . LinkOrdena('Vencto.', 'vencimento') . '</font></td>');
     ShowHTML('          <td><font size="1"><b>' . LinkOrdena('Quitação', 'quitacao') . '</font></td>');
     ShowHTML('          <td><font size="1"><b>' . LinkOrdena('Conclusão', 'phpdt_conclusao') . '</font></td>');

@@ -406,7 +406,7 @@ function Inicial() {
       if (count($RS) && $P1==2) {
         $colspan++; ShowHTML('          <td rowspan=2 align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
-      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>'); }
       ShowHTML('          <td colspan=2><b>Solicitante</td>');
       if ($P1==1) {

@@ -448,7 +448,7 @@ function Inicial() {
       if (count($RS) && $P1==2) {
         $colspan++; ShowHTML('          <td align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
       $colspan++;
       if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');

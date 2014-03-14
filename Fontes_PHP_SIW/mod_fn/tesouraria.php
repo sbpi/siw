@@ -432,7 +432,7 @@ function Inicial() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     $colspan = 0;
     if ($w_tipo!='WORD') {
-      $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
         $colspan++; ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Protocolo','protocolo').'</font></td>');
       }

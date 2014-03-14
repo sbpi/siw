@@ -221,7 +221,7 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    ShowHTML('          <td><b>' . linkOrdena('Código', 'codigo_interno') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Código','ord_codigo_interno') . '</td>');
     ShowHTML('          <td><b>' . linkOrdena('Vencto.', 'vencimento') . '</td>');
     if (substr($SG, 2, 1) == 'R') {
       ShowHTML('       <td><b>' . linkOrdena('Cliente', 'nm_pessoa_resumido') . '</td>');

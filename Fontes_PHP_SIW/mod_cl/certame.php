@@ -519,7 +519,7 @@ function Inicial() {
       if (count($RS) && $P1==2) {
         $colspan++; ShowHTML('          <td align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Objeto','objeto').'</td>');
       if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>'); }
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Modalidade','sg_lcmodalidade').'</td>');
@@ -1695,7 +1695,7 @@ function ItensContrato() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Item','ordem').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Indisponível','cancelado').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('$ Unit','valor_unit_est').'</td>');

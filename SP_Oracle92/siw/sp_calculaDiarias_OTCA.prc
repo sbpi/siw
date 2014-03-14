@@ -10,7 +10,7 @@ create or replace procedure sp_calculaDiarias_OTCA(p_chave in number, p_todos in
                 inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao);
 
   cursor c_diarias is
-    select t.sq_diaria, floor(u.chegada-v.saida) quantidade
+    select t.sq_diaria, floor(trunc(u.saida)-trunc(v.chegada)) quantidade
       from PD_DIARIA t 
            inner   join pd_deslocamento u on (t.sq_deslocamento_chegada = u.sq_deslocamento)
            inner   join pd_deslocamento v on (t.sq_deslocamento_saida   = v.sq_deslocamento)

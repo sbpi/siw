@@ -397,7 +397,7 @@ function Inicial() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {    
-      ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
       if (strpos($SG,'CONT')!==false)  ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
       else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');

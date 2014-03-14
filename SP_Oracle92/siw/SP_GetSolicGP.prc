@@ -90,6 +90,7 @@ begin
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,           b.sq_cc,                       b.observacao,
                 b.protocolo_siw,      b.recebedor,

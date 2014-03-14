@@ -557,7 +557,7 @@ function Inicial() {
       if (count($RS) && $P1==2) {
         $colspan++; ShowHTML('          <td rowspan=2 align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
-      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</font></td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','ord_codigo_interno').'</font></td>');
       $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','nm_acordo').'</font></td>');
       if ($w_segmento=='Público' || $w_mod_pa=='S') {
         if (substr($SG,0,3)=='GCB') { $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Empenho','processo').'</font></td>'); }

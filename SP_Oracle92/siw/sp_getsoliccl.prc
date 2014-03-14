@@ -88,6 +88,7 @@ begin
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,           b.sq_cc,                       b.observacao,
                 b.protocolo_siw,      b.recebedor,
@@ -292,10 +293,13 @@ begin
       -- Recupera as solicitações que o usuário pode ver
       open p_result for
          select distinct a.sq_siw_solicitacao, a.codigo_interno, a.titulo,
+                codigo2numero(a.codigo_interno) as ord_codigo_interno,
                 b.numero_certame, b.processo,
                 coalesce(b.numero_certame,a.codigo_interno) as cd_certame,
+                codigo2numero(coalesce(b.numero_certame,a.codigo_interno)) as ord_cd_certame,
                 c.ordem,
                 c1.codigo_interno as cd_material, c1.nome as nm_material,
+                codigo2numero(c1.codigo_interno) as ord_cd_material,
                 e.sq_pessoa, e.sq_tipo_pessoa, e.nome as nm_fornecedor,
                 coalesce(e1.cpf, e2.cnpj) as cd_fornecedor
            from siw_solicitacao                           a
@@ -324,7 +328,8 @@ begin
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for
-         select b.codigo_interno, to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao, e.qtd_ite, coalesce(f.qtd_fin,0) qtd_fin
+         select b.codigo_interno, to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao, e.qtd_ite, coalesce(f.qtd_fin,0) qtd_fin,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno
            from siw_solicitacao             b
                 inner   join siw_tramite    b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and
                                                    b1.sigla             = 'AT'
@@ -355,6 +360,7 @@ begin
       -- Recupera as solicitações que o usuário pode ver
       open p_result for
          select b.sq_siw_solicitacao, b.codigo_interno,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 case when d.sq_siw_solicitacao is not null
                      then b.titulo
                      else case when e.sq_siw_solicitacao is not null

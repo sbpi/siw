@@ -529,7 +529,7 @@ function Inicial() {
       if (count($RS) && $P1==2) {
         $colspan++; ShowHTML('          <td align="center" width="15"><span class="remover"><input type="checkbox" id="marca_todos" name="marca_todos" value="" /></span></td>');
       }
-      $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Nº', 'codigo_interno') . '</td>');
+      $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Nº', 'ord_codigo_interno') . '</td>');
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Vinc.', 'dados_pai') . '</td>');
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Beneficiário', 'nm_prop_res') . '</td>');
       $colspan++; ShowHTML('          <td><b>' . LinkOrdena('Início', 'inicio') . '</td>');

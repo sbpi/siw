@@ -88,6 +88,7 @@ begin
                 b.palavra_chave,      b.sq_plano,                    dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 SolicRestricao(b.sq_siw_solicitacao,null) as restricao,
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 b.titulo,
                 b.titulo as ac_titulo,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
@@ -170,6 +171,7 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 coalesce(b.titulo,b.descricao,b.justificativa) as ac_titulo,
                 b1.sq_siw_tramite,    b1.ordem or_tramite,
@@ -219,6 +221,7 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 b.titulo as ac_titulo,
                 b1.sq_siw_tramite,    b1.ordem or_tramite,           b1.nome as nm_tramite,
@@ -422,6 +425,7 @@ begin
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                codigo2numero(coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao))) as ord_codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,
                 case when b.sq_solic_pai is null 
@@ -692,6 +696,7 @@ begin
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio as inicio_real, d.fim as fim_real,          d.duracao,
                 d.valor_inicial,      coalesce(d8.valor,d.valor_atual) as valor_atual, b.codigo_interno,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 b.codigo_externo,     d.objeto,                      d.atividades,
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
@@ -971,6 +976,7 @@ begin
                 case when b6.sq_siw_solicitacao is null then null else to_char(b6.prefixo)||'.'||substr(1000000+to_char(b6.numero_documento),2,6)||'/'||to_char(b6.ano)||'-'||substr(100+to_char(b6.digito),2,2) end as protocolo_completo,
                 q.rubrica, 	
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
                 b.codigo_externo,     d.observacao,                  d.valor_imposto,
@@ -1012,7 +1018,8 @@ begin
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nm_solic,           o.nm_resp,
                 p.nome_resumido as nm_exec,
-                b5.codigo_interno as cd_solic_vinculo, b5.titulo as nm_solic_vinculo
+                b5.codigo_interno as cd_solic_vinculo, b5.titulo as nm_solic_vinculo,
+                codigo2numero(b5.codigo_interno) as ord_cd_solic_vinculo
            from siw_menu                                    a 
                 inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo)
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
@@ -1299,6 +1306,7 @@ begin
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 d.ordem,
                 d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,       d11.codigo_interno,
+                codigo2numero(d11.codigo_interno) as ord_codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complementação' end as nm_tp_missao,
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
@@ -1472,6 +1480,7 @@ begin
                 b8.codigo as cd_unidade_adm,
                 b.codigo_interno,
                 b.codigo_interno as cd_programa,                     d.ln_programa,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 d.exequivel,          d.inicio_real,                 d.fim_real,
                 d.custo_real,
                 d1.nome as nm_horizonte, d1.ativo as st_horizonte, 
@@ -1834,7 +1843,8 @@ begin
    Elsif p_restricao = 'RHCC' Then
       -- Recupera os centros de custo para contratos de trabalho de pessoal
       open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno, b.codigo_externo
+         select b.sq_siw_solicitacao, b.titulo, coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno, b.codigo_externo,
+                codigo2numero(coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao))) as ord_codigo_interno
            from siw_solicitacao               b
                    inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
           where b.sq_menu        = p_menu
@@ -1842,7 +1852,8 @@ begin
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno
            from siw_solicitacao               b
                    inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
                    inner   join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
@@ -1852,7 +1863,8 @@ begin
    Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' or p_restricao = 'PJLISTREL' or p_restricao = 'PJLISTIMP' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno
            from siw_solicitacao                b
                 inner     join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and b1.sigla <> 'CA')
                 inner     join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
@@ -1899,7 +1911,8 @@ begin
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
       -- Recupera os projetos que o usuário pode ver
       open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno
            from siw_solicitacao               b
                 inner   join siw_tramite      b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
                 inner   join pj_projeto       d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
@@ -1912,6 +1925,7 @@ begin
       -- Recupera os programas para montagem da caixa de seleção
       open p_result for 
          select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo, b.inicio, b.fim,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 b1.ordem as or_tramite, b1.ativo as tramite_ativo, b1.sigla as sg_tramite
            from siw_solicitacao            b
                 inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
