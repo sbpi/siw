@@ -1,11 +1,12 @@
 create or replace procedure SP_PutLancamentoDoc
    (p_operacao            in varchar2,
     p_chave               in number,
-    p_chave_aux           in number,
+    p_chave_aux           in number   default null,
     p_sq_tipo_documento   in number   default null,
     p_numero              in varchar2 default null,
     p_data                in date     default null,
     p_serie               in varchar2 default null,
+    p_moeda               in number   default null,
     p_valor               in number   default null,
     p_patrimonio          in varchar2 default null,
     p_retencao            in varchar2 default null,
@@ -62,18 +63,19 @@ begin
       
    -- Atualiza o valor da solicitação
    update siw_solicitacao set 
-      valor = (select sum(valor)
-                 from (select sum(a.valor) valor
-                         from fn_lancamento_doc a
-                        where sq_siw_solicitacao = p_chave
-                          and sq_acordo_nota     is null
-                       UNION
-                       select sum(coalesce(valor_inicial,0)) + sum(coalesce(valor_excedente,0)) + sum(coalesce(valor_reajuste,0)) valor
-                         from fn_lancamento_doc a
-                        where sq_siw_solicitacao = p_chave
-                          and sq_acordo_nota     is not null
-                      )
-              )
+      sq_moeda = p_moeda,
+      valor    = (select sum(valor)
+                    from (select sum(a.valor) valor
+                            from fn_lancamento_doc a
+                           where sq_siw_solicitacao = p_chave
+                             and sq_acordo_nota     is null
+                          UNION
+                          select sum(coalesce(valor_inicial,0)) + sum(coalesce(valor_excedente,0)) + sum(coalesce(valor_reajuste,0)) valor
+                            from fn_lancamento_doc a
+                           where sq_siw_solicitacao = p_chave
+                             and sq_acordo_nota     is not null
+                         )
+                 )
    where sq_siw_solicitacao = p_chave;
  
    If p_operacao <> 'V' Then

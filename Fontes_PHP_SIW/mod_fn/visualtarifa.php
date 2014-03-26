@@ -93,6 +93,7 @@ function VisualTarifa($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td><b>Valor:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'descricao'),'---')).' </td></tr>';
   }  
+
   // Encaminhamentos
   include_once($w_dir_volta.'funcoes/exibeLog.php');
   $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));

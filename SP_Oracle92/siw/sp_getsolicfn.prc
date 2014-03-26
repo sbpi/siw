@@ -125,12 +125,10 @@ begin
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,
+                a.acesso_geral,       a.sq_unid_executora,  
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa,
-                a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
+                a1.nome as nm_modulo, a1.sigla as sg_modulo,
                 a2.sq_tipo_unidade,   a2.nome as nm_unidade_exec,    a2.informal,
                 a2.vinculada,         a2.adm_central,
                 a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
@@ -209,22 +207,12 @@ begin
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
-                f.sq_pais,            f.sq_regiao,                   f.co_uf,
-                m3.codigo_interno as cd_acordo, m.objeto as obj_acordo,
-                codigo2numero(m3.codigo_interno) as ord_cd_acordo,
                 case when m4.qtd is null then 'S' else 'N' end as usuario_logado, -- Se igual a S, somente o usuário logado participou da tramitação 
                 mo.sq_moeda,          mo.codigo  cd_moeda,           mo.nome  nm_moeda,
                 mo.sigla sg_moeda,    mo.simbolo sb_moeda,           mo.ativo at_moeda,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
-                p.nome_resumido as nm_exec,
-                q1.titulo as nm_projeto,
-                coalesce((select sum(valor) from fn_lancamento_doc where sq_acordo_nota is not null and sq_siw_solicitacao = b.sq_siw_solicitacao),0) as valor_nota,
-                case when d.sq_acordo_parcela  is null then null else (select ordem    from ac_acordo_parcela where sq_acordo_parcela = d.sq_acordo_parcela) end or_parcela,
-                case when d.sq_acordo_parcela  is null then null else (select count(*) from ac_parcela_nota   where sq_acordo_parcela = d.sq_acordo_parcela) end qtd_nota,
-                case when q.sq_siw_solicitacao is null then null else (select case count(*) when 0 then 'N' else 'S' end from pj_rubrica where sq_siw_solicitacao = q.sq_siw_solicitacao) end rubrica,
-                r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo,
-                codigo2numero(r1.codigo_interno) as ord_cd_solic_vinculo
+                p.nome_resumido as nm_exec
            from siw_modulo                                     a1
                 inner                join siw_menu             a  on (a1.sq_modulo               = a.sq_modulo and
                                                                       a.sq_pessoa                = w_cliente
@@ -235,15 +223,14 @@ begin
                       inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
-                      inner          join (select y.sq_siw_solicitacao, acesso(y.sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_menu                     x
-                                                  inner   join siw_solicitacao y on (x.sq_menu            = y.sq_menu)
-                                                    inner join fn_lancamento   z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                            where x.sq_pessoa = w_cliente
-                                              and (p_menu    is null or (p_menu is not null and x.sq_menu = p_menu))
+                      inner          join (select z.sq_siw_solicitacao, acesso(z.sq_siw_solicitacao, p_pessoa) as acesso
+                                             from fn_lancamento                z
+                                                  inner   join siw_solicitacao y on (z.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                    inner join siw_menu        x on (y.sq_menu            = x.sq_menu)
+                                            where z.cliente = w_cliente
+                                              and (p_menu   is null or (p_menu is not null and x.sq_menu = p_menu))
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
-                      inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       inner          join (select z.sq_siw_solicitacao, max(z1.sq_siw_solic_log) as chave
                                              from fn_lancamento              z
                                                   inner join siw_solic_log  z1 on (z.sq_siw_solicitacao = z1.sq_siw_solicitacao)
@@ -322,13 +309,7 @@ begin
                                                                       e2.tipo_respons            = 'S'           and
                                                                       e2.fim                     is null
                                                                      )
-                      left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
-                        left         join siw_solicitacao      m3 on (m.sq_siw_solicitacao       = m3.sq_siw_solicitacao)
                       left           join co_moeda             mo on (b.sq_moeda                 = mo.sq_moeda)
-                      left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
-                        left         join siw_solicitacao      q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
-                      left           join pj_projeto           r  on (d.sq_solic_vinculo         = r.sq_siw_solicitacao)
-                        left         join siw_solicitacao      r1 on (r.sq_siw_solicitacao       = r1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                         left         join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
@@ -336,8 +317,7 @@ begin
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                      left            join fn_lancamento_log    k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-          where  a1.sigla                 = 'FN'
-            and ((p_tipo = 1 and b1.sigla = 'EE' and b2.acesso > 0 and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
+          where ((p_tipo = 1 and b1.sigla = 'EE' and b2.acesso > 0 and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(sysdate) and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and b2.acesso > 0) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
@@ -348,6 +328,7 @@ begin
                 )
             and (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
+            and (p_ativo          is null or (p_ativo       is not null and (p_ativo = 'N' or (p_ativo = 'S' and b1.ativo = 'S'))))
             and (p_pais           is null or (p_pais        is not null and d.sq_pessoa_conta    = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and ((b.protocolo_siw is not null and b8.numero_documento = p_regiao) or (b.protocolo_siw is null and b4.protocolo_siw is not null and b9.numero_documento = p_regiao))))
             and (p_cidade         is null or (p_cidade      is not null and ((b.protocolo_siw is not null and b8.ano              = p_cidade) or (b.protocolo_siw is null and b4.protocolo_siw is not null and b9.ano              = p_cidade))))
@@ -378,13 +359,13 @@ begin
                                              )
                 )
             and (p_restricao is null or
-                 (instr(p_restricao,'PROJ')    = 0 and
-                  instr(p_restricao,'ETAPA')   = 0 and
+                 (--instr(p_restricao,'PROJ')    = 0 and
+                  --instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
-                 ((instr(p_restricao,'PROJ')    > 0    and ((substr(a.sigla,4) = 'CONT' and r.sq_siw_solicitacao is not null) or (substr(a.sigla,4) <> 'CONT' and q.sq_siw_solicitacao is not null))) or
+                 (--(instr(p_restricao,'PROJ')    > 0    and ((substr(a.sigla,4) = 'CONT' and r.sq_siw_solicitacao is not null) or (substr(a.sigla,4) <> 'CONT'))) or
                   --(instr(p_restricao,'ETAPA') > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.pessoa       is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or

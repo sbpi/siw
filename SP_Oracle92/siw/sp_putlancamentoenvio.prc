@@ -103,7 +103,7 @@ begin
    
    -- Insere registro na tabela de encaminhamentos da demanda
    Insert into fn_lancamento_log 
-      (sq_lancamento_log,             sq_siw_solicitacao, cadastrador, 
+      (sq_lancamento_log,         sq_siw_solicitacao, cadastrador, 
        destinatario,              data_inclusao,      observacao, 
        despacho,                  sq_siw_solic_log
       )

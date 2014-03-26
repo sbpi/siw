@@ -83,7 +83,7 @@ begin
             and (p_restricao            is null or
                  p_restricao            not in ('FOLHA','SUBORDINACAO') or
                  (p_restricao           = 'SUBORDINACAO' and a.ultimo_nivel = 'N') or
-                 (p_restricao           = 'FOLHA' and a.ultimo_nivel = 'S')
+                 (p_restricao           = 'FOLHA')
                 );
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das rubricas

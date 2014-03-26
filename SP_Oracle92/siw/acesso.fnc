@@ -65,6 +65,7 @@ create or replace function Acesso
   w_sq_siw_tramite         siw_solicitacao.sq_siw_tramite%type;
   w_cadastrador            siw_solicitacao.cadastrador%type;
   w_unidade_solicitante    siw_solicitacao.sq_unidade%type;
+  w_unidade_acesso         varchar2(1);
   w_solic_pai              siw_solicitacao.sq_solic_pai%type;
   w_executor               siw_solicitacao.executor%type;
   w_opiniao_solicitante    siw_solicitacao.opiniao%type;
@@ -136,7 +137,7 @@ begin
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
         d.sq_siw_tramite, d.cadastrador, d.solicitante, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
         e.ordem, e.sigla, e.ativo, e.chefia_imediata, e.assina_tramite_anterior, e.beneficiario_cumpre, e.gestor_cumpre,
-        h.sq_pessoa_endereco 
+        h.sq_pessoa_endereco, case when i.sq_pessoa is null then 'N' else 'S' end
    into w_cliente, w_acesso_geral, w_consulta_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
         w_username, w_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
@@ -145,7 +146,7 @@ begin
         w_sq_siw_tramite, w_cadastrador, w_solicitante, w_unidade_solicitante, w_executor, 
         w_opiniao_solicitante, w_solic_pai,
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata, w_anterior_assina, w_beneficiario_assina, w_gestor_cumpre,
-        w_sq_endereco_unidade
+        w_sq_endereco_unidade, w_unidade_acesso
    from sg_autenticacao                     b
         inner   join co_pessoa              b1 on (b.sq_pessoa              = b1.sq_pessoa)
           inner join co_tipo_vinculo        b2 on (b1.sq_tipo_vinculo       = b2.sq_tipo_vinculo),
@@ -154,6 +155,7 @@ begin
           inner join siw_modulo             a1 on (a.sq_modulo              = a1.sq_modulo)
         inner   join siw_tramite            e  on (e.sq_siw_tramite         = coalesce(p_tramite, d.sq_siw_tramite))
         inner   join eo_unidade             h  on (d.sq_unidade             = h.sq_unidade)
+          left  join sg_pessoa_unidade      i  on (h.sq_unidade             = i.sq_unidade and i.sq_pessoa = p_usuario)
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
 
@@ -425,7 +427,8 @@ begin
        select count(*) into w_existe from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_unidade_lotacao;
        If w_existe > 0 Then Result := Result + 1; End If;
     Elsif w_unidade_lotacao   = w_unidade_solicitante or
-       w_unidade_lotacao   = w_unidade_resp Then
+       w_unidade_lotacao      = w_unidade_resp or
+       w_unidade_acesso       = 'S' Then
        Result := Result + 1;
     Elsif w_sq_pessoa_titular    = p_usuario or
           w_sq_pessoa_substituto = p_usuario

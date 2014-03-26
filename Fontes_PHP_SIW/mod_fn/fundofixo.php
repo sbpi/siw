@@ -833,8 +833,7 @@ function Geral() {
     // Recupera os dados do lançamento
 
     $sql = new db_getSolicData; 
-    if ($w_copia>'') $RS = $sql->getInstanceOf($dbms,$w_copia,$SG);
-    else             $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
+    $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),$SG);
     if (count($RS)>0) {
       $w_sq_unidade           = f($RS,'sq_unidade');
       $w_observacao           = f($RS,'observacao');
@@ -887,21 +886,19 @@ function Geral() {
       $w_texto_autorizacao    = f($RS,'texto_autorizacao');
     } 
 
-    if (nvl($w_copia,'')=='') {
-      // Recupera dados do comprovante
-      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
-      $RS = SortArray($RS,'sq_tipo_documento','asc');
-      foreach ($RS as $row) {$RS=$row; break;}
-      $w_chave_doc           =  f($RS,'sq_lancamento_doc');
-      $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
-      $w_numero               = f($RS,'numero');
-      $w_data                 = FormataDataEdicao(f($RS,'data'));
-      $w_serie                = f($RS,'serie');
-      $w_valor_doc            = formatNumber(f($RS,'valor'));
-      $w_patrimonio           = f($RS,'patrimonio');
-      $w_tributo              = f($RS,'calcula_tributo');
-      $w_retencao             = f($RS,'calcula_retencao');
-    }
+    // Recupera dados do comprovante
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
+    $RS = SortArray($RS,'sq_tipo_documento','asc');
+    foreach ($RS as $row) {$RS=$row; break;}
+    if (nvl($w_copia,'')=='') $w_chave_doc           =  f($RS,'sq_lancamento_doc');
+    $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
+    $w_numero               = f($RS,'numero');
+    $w_data                 = FormataDataEdicao(f($RS,'data'));
+    $w_serie                = f($RS,'serie');
+    $w_valor_doc            = formatNumber(f($RS,'valor'));
+    $w_patrimonio           = f($RS,'patrimonio');
+    $w_tributo              = f($RS,'calcula_tributo');
+    $w_retencao             = f($RS,'calcula_retencao');
   }
   
   if (addDays(time(),f($RS_Parametro,'fundo_fixo_dias_utilizacao')) > toDate('31/12/'.date('Y',time()))) {
@@ -1140,7 +1137,7 @@ function Geral() {
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Documento de despesa</td></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,null);
     if ($w_exige_conta) {
       SelecaoContaBAnco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta,null,'w_conta',null,null);
     } else {
@@ -2079,7 +2076,7 @@ function Grava() {
           &$w_chave_nova,&$w_codigo);
 
       if ($O!='E') {
-        //Fundo fixo sempre é para o usuário logado
+        // Recupera o beneficiário do fundo fixo (chamado de "Suprido")
         $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_solicitante'],null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
         foreach ($RS as $row) {$RS=$row; break;}
 
@@ -2112,7 +2109,7 @@ function Grava() {
 
         //Grava os dados do comprovante de despesa
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
-          $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor'],
+          $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$w_moeda,$_REQUEST['w_valor'],
           'N','N','N',null,null,null,null,&$w_chave_doc);
 
         // Verifica o número de trâmites ativos. Se houver somente um, recupera o trâmite de conclusão
@@ -2120,25 +2117,45 @@ function Grava() {
         $RS = SortArray($RS,'ordem','asc');
         $w_cont = 0;
         foreach ($RS as $row) {
+          // Recupera os trâmites de cadastramento inicial, de execução e de conclusão
           if (f($row,'ativo')=='S')  $w_cont++;
-          if (f($row,'sigla')=='AT') $w_tramite_conc = f($row,'sq_siw_tramite');
+          if     (f($row,'sigla')=='AT') $w_tramite_conc = f($row,'sq_siw_tramite');
+          elseif (f($row,'sigla')=='CI') $w_ci = f($row,'sq_siw_tramite');
+          elseif (f($row,'sigla')=='EE') $w_ee = f($row,'sq_siw_tramite');
         }   
 
-        if ($w_cont==1) {
-          // Encerra a solicitação se houver apenas um trâmite ativo
-          $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave_nova,$w_usuario,$w_tramite_conc,
-            formataDataEdicao(time()),Nvl($_REQUEST['w_valor'],0),null,$_REQUEST['w_conta'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
-            $_REQUEST['w_sq_projeto_rubrica'],'Conclusão automática de pagamento por fundo fixo.',null,null,null,null);
-      
+        if ($w_cont==1 || $P1==0) {
           // Grava versão da solicitação
           $w_html = VisualFundoFixo($_REQUEST['w_chave'],'L',$w_usuario,2,'1');
-          CriaBaseLine($w_chave_nova,$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+          CriaBaseLine($w_chave_nova,$w_html,f($RS_Menu,'nome'),$w_ee);
+
+          if ($w_cont==1) {
+            // Encerra a solicitação se houver apenas um trâmite ativo
+            $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave_nova,$w_usuario,$w_tramite_conc,
+              formataDataEdicao(time()),Nvl($_REQUEST['w_valor'],0),null,$_REQUEST['w_conta'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
+              $_REQUEST['w_sq_projeto_rubrica'],'Conclusão automática de pagamento por fundo fixo.',null,null,null,null);
+          } else {
+            if ($P1==0) {
+              // Envia a solicitação para execução   
+              $SQL = new dml_putLancamentoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_ci,
+                      $w_ee,'N',null,$w_usuario,'Envio automático de lançamento financeiro.',null,null,null,null);
+            }
+          }
         }
       }
       ScriptOpen('JavaScript');
       if ($P1==0) {
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
+        if ($P2==1) {
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'geral&O=A&w_chave='.nvl($_REQUEST['w_chave'],$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+        } else {
+          // Volta para o módulo tesouraria
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
+        }
+      } elseif ($P1==1 && $O!='E') {
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'geral&O=A&w_chave='.nvl($_REQUEST['w_chave'],$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       } else {
+        ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       }
       ScriptClose();

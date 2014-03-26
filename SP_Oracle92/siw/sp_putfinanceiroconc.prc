@@ -58,6 +58,9 @@ begin
                            and Nvl(sigla,'z')='AT'
                        )
    Where sq_siw_solicitacao = p_chave;
+   
+   -- Atualiza o documento vinculado à solicitação (sempre será apenas um)
+   update fn_lancamento_doc set valor = p_valor_real where sq_siw_solicitacao = p_chave;
 
    select sq_acordo_parcela into w_chave from fn_lancamento where sq_siw_solicitacao = p_chave;
    
