@@ -46,9 +46,13 @@ function selecaoServico($label,$accesskey,$hint,&$chave,$chaveAux,$modulo,$campo
       ShowHTML('          <option value="PLANOEST"'.$w_selected.'/>Plano Estratégico');
     }
   }
+  
   foreach($RS as $row) {
+    // Quando P2 é nulo no menu, a rotina passa 0. A linha abaixo é para tratar essa situação.
+    if (nvl($P2,0)==0) $l_p2 = f($row,'sq_menu'); else $l_p2 = $P2;
+
     if (Nvl($restricao,'')!='LISTA' || 
-        (Nvl($restricao,'')=='LISTA' && nvl($P2,f($row,'sq_menu'))==f($row,'sq_menu')) // Se LISTA e P2 informado => somente SQ_MENU = P2 pode ser exibido
+        (Nvl($restricao,'')=='LISTA' && $l_p2==f($row,'sq_menu')) // Se LISTA e P2 informado => somente SQ_MENU = P2 pode ser exibido
        ) {
       $w_selected = '';
       if (nvl(f($row,'sq_menu'),0)==nvl($chave,0) || $l_opcoes==1 || (Nvl($restricao,'')=='LISTA' && nvl($P2,f($row,'sq_menu'))==f($row,'sq_menu'))) { 

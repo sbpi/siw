@@ -22,6 +22,7 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteResp.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteSolic.php');
+include_once($w_dir_volta.'classes/sp/db_getCodigo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
@@ -1090,7 +1091,7 @@ function Geral() {
       $w_Disabled=' DISABLED ';
       if ($O=='V') $w_Erro=Validacao($w_sq_solicitacao,$sg);
     } 
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
@@ -1214,7 +1215,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'inicial&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -4258,6 +4259,19 @@ function Grava() {
     case 'CLLCCAD':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
+        // Se foi informado um código para o registro, impede sua duplicação
+        if (nvl($_REQUEST['w_codigo'],'')!='') {
+          $sql = new db_getCodigo; $RS = $sql->getInstanceOf($dbms,$w_cliente,'SOLICITACAO',$_REQUEST['w_codigo'],f($RS_Menu,'sq_menu'));
+          foreach($RS as $row) {
+            if (f($row,'chave')!=nvl($_REQUEST['w_chave'],0)) {
+              ScriptOpen('JavaScript');
+              ShowHTML('alert("ATENÇÃO: já existe outra licitação com o código '.$_REQUEST['w_codigo'].'!");');
+              ScriptClose();
+              retornaFormulario('w_codigo');
+            }
+          }
+        }
+
         $SQL = new dml_putCLGeral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],
           $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_plano'],
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],$_REQUEST['w_solic_pai'],

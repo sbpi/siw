@@ -113,6 +113,7 @@ function Geral() {
       ShowHTML('alert("'.((count($RS)==0) ? 'Nenhum registro encontrado!' : 'ATENÇÃO: foi encontrado mais de um registro com o código informado!').'!");');
       ShowHTML('history.back(1);');
       ScriptClose();
+      exit;
     } 
   }
 
