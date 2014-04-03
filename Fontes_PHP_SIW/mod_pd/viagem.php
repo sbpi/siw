@@ -6520,6 +6520,7 @@ function relAnexo() {
   
   Cabecalho();
   head();
+  ShowHTML('<script language="javascript" type="text/javascript" src="' . $conRootSIW . 'js/swfobject.js"></script>');
   ScriptOpen('JavaScript');
   ShowHTML('$(document).ready(function() {');
   ShowHTML('  $("#upload").uploadify({');
@@ -6554,11 +6555,7 @@ function relAnexo() {
   ShowHTML('</ul></td></tr>');
   ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr valign="top">');
-  ShowHTML('<tr>');
-  ShowHTML('<td align="center" bgcolor="#f5f5f5"><br>');
-  ShowHTML('<br><input type="file" id="upload"><br>');
-  ShowHTML('</td>');
-  ShowHTML('</tr>');
+  ShowHTML('<tr><td align="center" bgcolor="#f5f5f5"><br><br><input type="file" id="upload"><br></td></tr>');
   ShowHTML('<tr>');
   ShowHTML('<tr>');
   ShowHTML('<td align="center" bgcolor="#f5f5f5">');
