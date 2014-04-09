@@ -324,7 +324,8 @@ begin
                  (p_tipo = 4 and b1.sigla <> 'CA'  and b2.acesso > 0) or
                  (p_tipo = 4 and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo = 5) or
-                 (p_tipo = 6 and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
+                 (p_tipo = 6 and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI') or
+                 (p_tipo = 7 and b1.sigla <> 'CA')
                 )
             and (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))

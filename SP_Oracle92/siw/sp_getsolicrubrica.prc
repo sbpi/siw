@@ -128,6 +128,98 @@ begin
          connect by prior a.sq_projeto_rubrica = a.sq_rubrica_pai
          start with coalesce(a.sq_rubrica_pai,0) = coalesce(p_chave_aux,0)
          order by montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao');
+   Elsif p_restricao = 'PJEXEC' Then
+      open p_result for 
+         select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel,
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao') ordena,
+                coalesce((select sum(w.valor_previsto)
+                            from pj_rubrica_cronograma w
+                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica)
+                           where x.sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
+                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                          from pj_rubrica 
+                                                         where sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
+                                                           and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
+                                                        connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                        start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                       )
+                         ),0) total_previsto,
+                coalesce((select sum(valor)
+                            from vw_projeto_financeiro   w
+                           where w.sq_projeto         = a.sq_siw_solicitacao
+                             and w.sg_fn_moeda        = 'BRL'
+                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                            from pj_rubrica 
+                                                           where sq_siw_solicitacao = a.sq_siw_solicitacao
+                                                             and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
+                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                         )
+                         ),0) total_real,
+                coalesce((select sum(valor)
+                            from vw_projeto_financeiro   w
+                           where w.sq_projeto         = a.sq_siw_solicitacao
+                             and w.sg_fn_moeda        = 'USD'
+                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                            from pj_rubrica 
+                                                           where sq_siw_solicitacao = a.sq_siw_solicitacao
+                                                             and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
+                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                         )
+                         ),0) total_dolar,
+                coalesce((select sum(valor)
+                            from vw_projeto_financeiro   w
+                           where w.sq_projeto         = a.sq_siw_solicitacao
+                             and w.sg_fn_moeda        = 'EUR'
+                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                            from pj_rubrica 
+                                                           where sq_siw_solicitacao = a.sq_siw_solicitacao
+                                                             and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
+                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                         )
+                         ),0) total_euro
+           from pj_rubrica                      a
+          where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
+            and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
+            and (p_ativo                is null or (p_ativo                is not null and a.ativo                = p_ativo))
+            and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
+            and (p_codigo               is null or (p_codigo               is not null and a.codigo               = p_codigo))
+            and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
+   Elsif p_restricao = 'PJEXECL' Then
+      open p_result for 
+         select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
+                a.sq_projeto_rubrica, a.nm_rubrica, b.codigo cd_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
+                a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, codigo2numero(a.cd_financeiro) or_financeiro,
+                c.simbolo sb_moeda,
+                d.descricao, d.inicio, 
+                e.sigla sg_tramite,
+                f.sigla sg_menu,
+                g.aviso_prox_conc, g.quitacao, g.vencimento,
+                cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso
+           from vw_projeto_financeiro        a
+                inner   join pj_rubrica      b on (a.sq_projeto_rubrica = b.sq_projeto_rubrica)
+                inner   join co_moeda        c on (a.sq_fn_moeda        = c.sq_moeda)
+                inner   join siw_solicitacao d on (a.sq_financeiro      = d.sq_siw_solicitacao)
+                  inner join siw_tramite     e on (d.sq_siw_tramite     = e.sq_siw_tramite)
+                  inner join siw_menu        f on (d.sq_menu            = f.sq_menu)
+                  inner join fn_lancamento   g on (d.sq_siw_solicitacao = g.sq_siw_solicitacao)
+          where a.sq_projeto = p_chave
+            and (p_chave_aux  is null or 
+                 (p_chave_aux is not null and a.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                                         from pj_rubrica 
+                                                                        where sq_siw_solicitacao = p_chave
+                                                                       connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                                       start with sq_projeto_rubrica = p_chave_aux
+                                                                      )
+	               )
+                );
    Elsif p_restricao = 'PDFINANC' Then
       open p_result for 
          select distinct a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,

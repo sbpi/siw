@@ -730,8 +730,6 @@ function Inicial() {
 
   if($w_tipo=='PDF') RodapePdf();
   else               Rodape();
-
-  
 } 
 
 // =========================================================================
@@ -2481,7 +2479,6 @@ function Etapas() {
   ShowHTML('</table>');
   Rodape();
 } 
-
 
 // =========================================================================
 // Rotina de cronograma desembolso
