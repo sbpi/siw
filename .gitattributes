@@ -3775,6 +3775,7 @@ SP_Oracle92/siw/TG_SIW_SOLIC_IN.trg -text
 SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/UN_TG_CL_SOLICITACAO_UP.trg -text
+SP_Oracle92/siw/UN_TG_SIW_SOLIC_LOG_IN.trg -text
 SP_Oracle92/siw/UN_TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/VW_ACORDO.sql -text
 SP_Oracle92/siw/VW_ACORDO_PARCELA.sql -text
