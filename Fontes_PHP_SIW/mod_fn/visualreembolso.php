@@ -138,8 +138,12 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'          <tr><td></td><td>'.f($row,'sb_moeda_cot').' '.formatNumber(f($row,'vl_cotacao')).' </td></tr>';
       }
     }
-    $l_html.=chr(13).'      <tr><td><b>Data de pagamento:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).'</td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Mês de referência:</b></td><td>'.FormataDataEdicao(f($RS,'referencia_inicio'),9).'</td></tr>';
+    if (f($RS,'sg_tramite')=='AT') $l_html.=chr(13).'      <tr><td><b>Data de pagamento:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).'</td></tr>';
+    if ($w_cliente==10135) {
+      $l_html.=chr(13).'      <tr><td><b>Mês de referência:</b></td><td>'.FormataDataEdicao(f($RS,'referencia_inicio'),9).'</td></tr>';
+    } else {
+      $l_html.=chr(13).'      <tr><td><b>Data do comprovante:</b></td><td>'.FormataDataEdicao(f($RS,'referencia_inicio')).'</td></tr>';
+    }
     $l_html.=chr(13).'      <tr valign="top"><td><b>Discriminação das despesas: </b></td><td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Forma de pagamento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
 

@@ -62,7 +62,12 @@ $w_dir = 'mod_fn/';
 $w_troca = $_REQUEST['w_troca'];
 $w_embed = '';
 
-$p_ordena       = lower($_REQUEST['p_ordena']);
+$p_projeto = $_REQUEST['p_projeto'];
+$p_inicio = $_REQUEST['p_inicio'];
+$p_fim = $_REQUEST['p_fim'];
+$p_nome = upper(trim($_REQUEST['p_nome']));
+$p_sintetico = upper(trim($_REQUEST['p_sintetico']));
+$p_ordena = lower($_REQUEST['p_ordena']);
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -98,13 +103,7 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   global $w_embed;
-  $w_tipo=$_REQUEST['w_tipo'];
-  $p_projeto = $_REQUEST['p_projeto'];
-  $p_dt_ini = $_REQUEST['p_dt_ini'];
-  $p_dt_fim = $_REQUEST['p_dt_fim'];
-  $p_pg_ini = $_REQUEST['p_pg_ini'];
-  $p_pg_fim = $_REQUEST['p_pg_fim'];
-  $p_nome = upper(trim($_REQUEST['p_nome']));
+  $w_tipo = $_REQUEST['w_tipo'];
   $w_sq_pessoa = upper(trim($_REQUEST['w_sq_pessoa']));
 
   if ($O == 'L') {
@@ -112,7 +111,7 @@ function Inicial() {
     $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
     
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,null,null,null,'PJEXEC');
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,null,$p_inicio,$p_fim,'PJEXEC');
     foreach($RSQuery as $row)  {
       if (f($row,'total_dolar')!='0') { $Moeda['USD']='1';  $Total['USD'] = 0; }
       if (f($row,'total_real')!='0')  { $Moeda['BRL']='1'; $Total['BRL'] = 0; }
@@ -167,20 +166,10 @@ function Inicial() {
       FormataData();
       SaltaCampo();
       ValidateOpen('Validacao');
-      ShowHTML('  if (theForm.Botao.value == "Procurar") {');
-      Validate('p_nome', 'Nome', '', '1', '4', '20', '1', '');
-      ShowHTML('  theForm.Botao.value = "Procurar";');
-      ShowHTML(' }');
-      ShowHTML('else {');
       Validate('p_projeto', 'Projeto', 'SELECT', '1', '1', '18', '', '0123456789');
-      Validate('p_dt_ini', 'Vencimento inicial', 'DATA', '', '10', '10', '', '0123456789/');
-      Validate('p_dt_fim', 'Vencimento final', 'DATA', '', '10', '10', '', '0123456789/');
-      CompData('p_dt_ini', 'Vencimento inicial', '<=', 'p_dt_fim', 'Vencimento final');
-      Validate('p_pg_ini', 'Vencimento inicial', 'DATA', '', '10', '10', '', '0123456789/');
-      Validate('p_pg_fim', 'Vencimento final', 'DATA', '', '10', '10', '', '0123456789/');
-      CompData('p_pg_ini', 'Vencimento inicial', '<=', 'p_pg_fim', 'Vencimento final');
-      Validate('p_ordena', 'Agregar por', 'SELECT', '1', '1', '30', '1', '1');
-      ShowHTML(' }');
+      Validate('p_inicio', 'Pagamento inicial', 'DATA', '', '10', '10', '', '0123456789/');
+      Validate('p_fim', 'Pagamento final', 'DATA', '', '10', '10', '', '0123456789/');
+      CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
       ValidateClose();
       ScriptClose();
     }
@@ -190,7 +179,7 @@ function Inicial() {
       BodyOpenClean('onLoad="this.focus()";');
       CabecalhoRelatorio($w_cliente, 'Execução Orçamentária', 4, $w_chave);
     } else {
-      BodyOpen('onLoad="document.Form.p_projeto.focus()";');
+      BodyOpen('onLoad="document.focus()";');
       ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
     }
     ShowHTML('<HR>');
@@ -199,9 +188,8 @@ function Inicial() {
   if ($O == 'L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro = '';
-    if ($p_dt_ini!='')    $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Vencimento de <td><b>' . $p_dt_ini . '</b> até <b>' . $p_dt_fim . '</b>';
-    if ($p_pg_ini!='')    $w_filtro .= '<tr valign="top"><td align="right"><font size=1>Pagamento realizado entre <td><font size=1><b>' . $p_pg_ini . '</b> e <b>' . $p_pg_fim . '</b>';
-    if ($w_sq_pessoa!='') $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Beneficiário<td>: <b>' . $p_nome . '</b>';
+    if ($p_inicio!='')     $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
+    if ($p_sintetico=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
     ShowHTML('<tr><td align="left" colspan=2>');
     if ($w_filtro > '') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>' . $w_filtro . '</ul></tr></table>');
 
@@ -246,56 +234,69 @@ function Inicial() {
       $l_html.=chr(13).'          <td>'.Nvl(f($RS_Projeto,'nm_tramite'),'-').'</td></tr>';
     }
     $l_html .= chr(13).'</table>';
-    
-    $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
     $l_html.=chr(13).'        <table class="tudo" width=99%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr align="center">';
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição</td>';
-    $l_html.=chr(13).'            <td colspan="'.(count($Moeda)+1).'" bgColor="#f0f0f0"  align="center"><b>Orçamento'.((nvl(f($RS_Projeto,'sg_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sg_moeda').')' : '').'</td>';
-    $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>% Realização'.((nvl(f($RS_Projeto,'sg_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sg_moeda').')' : '').'</td>';
+    $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"  align="center"><b>Orçamento'.((nvl(f($RS_Projeto,'sg_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sg_moeda').')' : '').'</td>';
+    foreach($Ordem as $k=>$v) if ($k>0) $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Realizado '.$v.'</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center" >';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Previsto '.f($RS_Projeto,'sg_moeda').'</td>';
-    foreach($Ordem as $k=>$v) $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Realizado '.$v.'</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Previsto</td>';
+    foreach($Ordem as $k=>$v) if ($k==0) $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Saldo</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>%</td>';
     $l_html.=chr(13).'          </tr>';      
     $w_cor=$conTrBgColor;
     $w_total_previsto  = 0;
-    $w_total_executado = 0;
     foreach ($RSQuery as $row) {
-      $w_folha = ((f($row,'ultimo_nivel')=='N') ? ' class="folha"' : '');
-      $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
-      if($w_embed!='WORD') $l_html.=chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
-      else                 $l_html.=chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
-      $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
-      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
       $Valor['USD'] = f($row,'total_dolar');
       $Valor['BRL'] = f($row,'total_real');
       $Valor['EUR'] = f($row,'total_euro');
       
       // Configura variável que decide se os valores serão impressos
       if ($Valor['USD']!='0' || $Valor['BRL']!='0' || $Valor['EUR']!='0') $w_imprime = true; else $w_imprime = false;
-      foreach($Ordem as $k => $v) $l_html.=chr(13).'          <td align="right">'.(($w_imprime) ? formatNumber($Valor[$v]) : '&nbsp;').'</td>';
-      $w_perc = 0;
-      if (f($row,'total_previsto') > 0) $w_perc = ($Valor[f($RS_Projeto,'sg_moeda')]/f($row,'total_previsto')*100);
-      $l_html.=chr(13).'        <td align="right">'.(($w_imprime) ? formatNumber($w_perc).' %' : '&nbsp;').'</td>';
-      $l_html.=chr(13).'      </tr>';
+      if (f($row,'total_previsto')>0) $w_perc = $Valor[f($RS_Projeto,'sg_moeda')]/f($row,'total_previsto')*100; else $w_perc = 0;
       if (f($row,'ultimo_nivel')=='S') {
         $w_total_previsto += f($row,'total_previsto');
         foreach($Ordem as $k => $v) $Total[$v]+=$Valor[$v];
       }
+
+      $w_folha = ((f($row,'ultimo_nivel')=='N' && $p_sintetico=='N') ? ' class="folha"' : '');
+
+      if ($p_sintetico=='N' || ($p_sintetico=='S' && f($row,'sq_rubrica_pai')=='')) {
+        $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
+        if($w_embed!='WORD') $l_html.=chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
+        else                 $l_html.=chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
+        $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
+
+        if ($w_imprime) {
+          $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+          $l_html.=chr(13).'          <td align="right">'.formatNumber($w_perc).' %</td>';
+          foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
+        } else {
+          $l_html.=chr(13).'          <td>&nbsp;</td>';
+          $l_html.=chr(13).'          <td>&nbsp;</td>';
+          $l_html.=chr(13).'          <td>&nbsp;</td>';
+          foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td>&nbsp;</td>';
+        }
+        $l_html.=chr(13).'      </tr>';
+      }
     } 
-    $l_html.=chr(13).'          <tr>';
-    $l_html.=chr(13).'            <td align="right" colspan="'.$cs.'" bgColor="#f0f0f0"><b>Totais&nbsp;</td>';
-    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
+    $l_html.=chr(13).'          <tr class="folha">';
+    $l_html.=chr(13).'            <td align="right" colspan="'.$cs.'" bgColor="#f0f0f0">Totais&nbsp;</td>';
+    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">'.formatNumber($w_total_previsto).' </td>';
+    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">'.formatNumber($Total[f($RS_Projeto,'sg_moeda')]).'</td>';
+    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">'.formatNumber($w_total_previsto-$Total[f($RS_Projeto,'sg_moeda')]).'</td>';
+    if ($w_total_previsto > 0) $w_perc = ($Total[f($RS_Projeto,'sg_moeda')]/$w_total_previsto*100); else $w_perc = 0;
+    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">'.formatNumber($w_perc).' %</td>';
 
     // Configura variável que decide se os valores serão impressos
-    if ($Total['USD']!='0' || $Total['BRL']!='0' || $Total['EUR']!='0') $w_imprime = true; else $w_imprime = false;
-    foreach($Ordem as $k => $v) $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.(($w_imprime) ? formatNumber($Total[$v]) : '&nbsp;').'</b></td>';
-    $w_perc = 0;
-    if ($w_total_previsto > 0) $w_perc = ($Total[f($RS_Projeto,'sg_moeda')]/$w_total_previsto*100);
-    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.(($w_imprime) ? formatNumber($w_perc).' %' : '&nbsp;').'</td>';
+    foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">'.formatNumber($Total[$v]).'</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'        </table></td></tr>';
 
@@ -307,33 +308,15 @@ function Inicial() {
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', 'Contas', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
-    ShowHTML('    <table border="0">');
+    ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr>');
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td><b><u>V</u>encimento entre:</b><br><input ' . $w_Disabled . ' accesskey="V" type="text" name="p_dt_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_dt_ini . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_dt_ini') . ' e <input ' . $w_Disabled . ' type="text" name="p_dt_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_dt_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_dt_fim') . '</td>');
-    ShowHTML('      <tr><td><br><font size="1"><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="V" type="text" name="p_pg_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_pg_ini . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_pg_ini') . ' e <input ' . $w_Disabled . ' type="text" name="p_pg_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_pg_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_pg_fim') . '</td>');
-    ShowHTML('      <tr><td><br><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="p_nome" VALUE="' . $p_nome . '" SIZE="20" MaxLength="20">');
-    ShowHTML('              <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.O.value=\'P\'; document.Form.target=\'\'; if (Validacao(document.Form)) {document.Form.submit();}">');
-    if ($p_nome > '') {
-      $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms, $w_cliente, null, null, null, null, $p_nome, null, null, null, null, null, null, null, null, null, null, null, null);
-      $RS = SortArray($RS, 'nm_pessoa', 'asc');
-      ShowHTML('      <tr><td><b><u>P</u>essoa:</b><br><SELECT ACCESSKEY="P" CLASS="STS" NAME="w_sq_pessoa">');
-      ShowHTML('          <option value="">---');
-      foreach ($RS as $row) {
-        if (f($row, 'sq_tipo_pessoa') == 1) {
-          ShowHTML('          <option value="' . f($row, 'sq_pessoa') . '">' . f($row, 'nome_resumido') . ' (' . Nvl(f($row, 'cpf'), '---') . ')');
-        } else {
-          ShowHTML('          <option value="' . f($row, 'sq_pessoa') . '">' . f($row, 'nome_resumido') . ' (' . Nvl(f($row, 'cnpj'), '---') . ')');
-        }
-      }
-      ShowHTML('          </select>');
-    }
+    ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
     ShowHTML('      <tr>');
-    SelecaoOrdenaRel('<u>A</u>gregado por:', 'A', null, $w_cliente, $p_ordena, 'p_ordena', $SG, null);
-    ShowHTML('      </table>');
-    ShowHTML('    <table width="99%" border="0">');
+    MontaRadioNS('<b>Exibe apenas a versão sintética do relatório? (apenas rubricas de mais alto nível)</b>',$p_sintetico,'p_sintetico');
+    ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');
@@ -379,7 +362,7 @@ function Detalhe() {
   foreach($RS_Rubrica as $row) { $RS_Rubrica = $row; break; }
 
   // Recupera as rubricas do projeto
-  $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,null,null,'PJEXECL');
+  $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,$p_inicio,$p_fim,'PJEXECL');
 
   cabecalho();
   head();
@@ -395,6 +378,11 @@ function Detalhe() {
   ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify>Projeto:<b> '.$w_projeto.'</b></div></td></tr>');
   ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify>Rubrica:<b> '.f($RS_Rubrica,'codigo').' - '.f($RS_Rubrica,'nome').' </b></div></td></tr>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+
+  $w_filtro = '';
+  if ($p_inicio!='')    $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
+  ShowHTML('<tr><td align="left" colspan=2>');
+  if ($w_filtro > '') ShowHTML('<table border=0>' . $w_filtro . '</table>');
 
   ShowHTML('<tr><td><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
   ShowHTML('        <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));

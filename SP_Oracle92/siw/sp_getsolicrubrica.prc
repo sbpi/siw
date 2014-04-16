@@ -149,6 +149,12 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_inicio     is null or 
+                                  (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
+                                                                (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
+                                                               )
+                                  )
+                                 )
                              and w.sg_fn_moeda        = 'BRL'
                              and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
@@ -162,6 +168,12 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_inicio     is null or 
+                                  (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
+                                                                (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
+                                                               )
+                                  )
+                                 )
                              and w.sg_fn_moeda        = 'USD'
                              and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
@@ -175,6 +187,12 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_inicio     is null or 
+                                  (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
+                                                                (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
+                                                               )
+                                  )
+                                 )
                              and w.sg_fn_moeda        = 'EUR'
                              and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
@@ -210,7 +228,13 @@ begin
                   inner join siw_tramite     e on (d.sq_siw_tramite     = e.sq_siw_tramite)
                   inner join siw_menu        f on (d.sq_menu            = f.sq_menu)
                   inner join fn_lancamento   g on (d.sq_siw_solicitacao = g.sq_siw_solicitacao)
-          where a.sq_projeto = p_chave
+          where a.sq_projeto  = p_chave
+            and (p_inicio     is null or 
+                 (p_inicio    is not null and ((a.sg_tramite =  'AT' and a.quitacao   between p_inicio and p_fim) or 
+                                           	   (a.sg_tramite <> 'AT' and a.vencimento between p_inicio and p_fim)
+                                              )
+                 )
+                )
             and (p_chave_aux  is null or 
                  (p_chave_aux is not null and a.sq_projeto_rubrica in (select sq_projeto_rubrica 
                                                                          from pj_rubrica 

@@ -1240,6 +1240,7 @@ function Geral() {
       Validate('w_texto_autorizacao','Texto "No objection"','1','','2','500','1','0123456789');
     }
     if (substr($SG,3)!='CONT') Validate('w_pessoa_nm', ((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'Receber de:': 'Beneficiário:'), 'HIDDEN', 1, 5, 100, '1', '1');
+    Validate('w_sq_unidade', 'Unidade proponente', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_sq_tipo_lancamento','Tipo do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'','SELECT',1,1,18,'','0123456789');
     Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
     if (strpos('EVENT,VIA',substr($SG,3)!==false)) {
@@ -1357,11 +1358,6 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.$w_cidade.'">');
     ShowHTML('<INPUT type="hidden" name="w_solicitante" value="'.$_SESSION['SQ_PESSOA'].'">');
     ShowHTML(MontaFiltro('POST'));
-    if (substr($SG,3)=='REEMB') {
-      ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.f($RS_Menu,'sq_unid_executora').'">');
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$_SESSION['LOTACAO'].'">');
-    }
     ShowHTML('<INPUT type="hidden" name="w_forma_atual" value="'.$w_forma_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_vencimento_atual" value="'.$w_vencimento_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_acordo_parcela" value="'.$w_sq_acordo_parcela.'">');
@@ -1454,7 +1450,8 @@ function Geral() {
     }
     ShowHTML('      </tr>');
 
-    ShowHTML('      <tr>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoUnidade('<U>U</U>nidade proponente:', 'U', 'Selecione a unidade proponente da solicitação', $w_sq_unidade, null, 'w_sq_unidade', null, null);
     SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
     if (substr($SG,3)=='CONT')      ShowHTML('      <tr><td colspan="3">Finalidade:<br><b>'.$w_descricao.'</b></td>');
     elseif (substr($SG,3)=='REEMB') ShowHTML('      <tr><td colspan="3"><b>Justi<u>f</u>icativa:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.">'.$w_descricao.'</TEXTAREA></td>');

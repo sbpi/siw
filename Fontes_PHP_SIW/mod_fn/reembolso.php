@@ -475,7 +475,11 @@ function Inicial() {
     $colspan++; ShowHTML('          <td><b>'.(($w_tipo=='WORD') ? 'Tipo do Lançamento' : LinkOrdena('Tipo do Lançamento','nm_tipo_lancamento')).'</td>');
     $colspan++; ShowHTML('          <td><b>'.(($w_tipo=='WORD') ? 'Discriminação das despesas' : LinkOrdena('Discriminação das Despesas','nr_doc')).'</td>');
     $colspan++; ShowHTML ('          <td><b>'.(($w_tipo=='WORD') ? 'Vinculação' : LinkOrdena('Vinculação','dados_pai')).'</td>');
-    $colspan++; ShowHTML('          <td><b>'.(($w_tipo=='WORD') ? 'Referência' : LinkOrdena('Referência','referencia_inicio')).'</td>');
+    if ($w_cliente==10135) {
+      $colspan++; ShowHTML('          <td><b>'.(($w_tipo=='WORD') ? 'Referência' : LinkOrdena('Referência','referencia_inicio')).'</td>');
+    } else {
+      $colspan++; ShowHTML('          <td><b>'.(($w_tipo=='WORD') ? 'Dt.Comprov.' : LinkOrdena('Dt.Comprov.','referencia_inicio')).'</td>');
+    }
     ShowHTML('          <td nowrap><b>'.LinkOrdena('Valor','valor_doc').'</td>');
     if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -537,7 +541,7 @@ function Inicial() {
         } else {
           ShowHTML('        <td>---</td>');
         }
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'referencia_inicio'),9).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'referencia_inicio'),(($w_cliente==10135) ? 9 : 1)).'</td>');
         ShowHTML('        <td align="right" nowrap>'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'&nbsp;</td>');
         $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor');
         if ($w_tipo!='WORD') {
@@ -889,7 +893,8 @@ function Geral() {
       $w_protocolo_nm         = f($RS,'processo');
       $w_nm_tipo_rubrica      = f($RS,'nm_tipo_rubrica');
       $w_qtd_nota             = f($RS,'qtd_nota');
-      $w_per_ini              = FormataDataEdicao(f($RS,'referencia_inicio'),9);
+      if ($w_cliente==10135)  $w_per_ini = FormataDataEdicao(f($RS,'referencia_inicio'),9);
+      else                    $w_per_ini = FormataDataEdicao(f($RS,'referencia_inicio'));
       $w_per_fim              = FormataDataEdicao(f($RS,'referencia_fim'));
       $w_texto_pagamento      = f($RS,'condicoes_pagamento');
       $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
@@ -1009,16 +1014,18 @@ function Geral() {
   SaltaCampo();
   FormataDataMA();
   FormataValor();
-  openBox('reload');
-  ShowHTML('  function texto() {');
-  ShowHTML('    obj = document.Form;');
-  ShowHTML('    var tipo_lancamento = obj.w_sq_tipo_lancamento[obj.w_sq_tipo_lancamento.selectedIndex].text;');
-  ShowHTML('    tipo_lancamento = tipo_lancamento.substr(tipo_lancamento.indexOf(". ")+2);');
-  ShowHTML('    var valor = obj.w_valor.value;');
-  ShowHTML('    var beneficiario = obj.w_pessoa[obj.w_pessoa.selectedIndex].text;');
-  ShowHTML('    var mes = obj.w_per_ini.value;');
-  ShowHTML('    obj.w_descricao.value = "Pagamento de reembolso de despesas referente a " + tipo_lancamento + " no valor de " + valor + " para " + beneficiario + " referente ao mês " + mes + ".";');
-  ShowHTML('  }');
+  if ($w_cliente==10135) {
+    openBox('reload');
+    ShowHTML('  function texto() {');
+    ShowHTML('    obj = document.Form;');
+    ShowHTML('    var tipo_lancamento = obj.w_sq_tipo_lancamento[obj.w_sq_tipo_lancamento.selectedIndex].text;');
+    ShowHTML('    tipo_lancamento = tipo_lancamento.substr(tipo_lancamento.indexOf(". ")+2);');
+    ShowHTML('    var valor = obj.w_valor.value;');
+    ShowHTML('    var beneficiario = obj.w_pessoa[obj.w_pessoa.selectedIndex].text;');
+    ShowHTML('    var mes = obj.w_per_ini.value;');
+    ShowHTML('    obj.w_descricao.value = "Pagamento de reembolso de despesas referente a " + tipo_lancamento + " no valor de " + valor + " para " + beneficiario + " referente ao mês " + mes + ".";');
+    ShowHTML('  }');
+  }
   ValidateOpen('Validacao');
   Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
   if(nvl($w_sq_menu_relac,'')!='') {
@@ -1047,7 +1054,11 @@ function Geral() {
   Validate('w_pessoa','Beneficiário','SELECT',1,1,18,'','0123456789');       
   Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
   Validate('w_descricao','Discriminação das despesas','1',1,5,2000,'1','1');
-  Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
+  if ($w_cliente==10135) { 
+    Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
+  } else {
+    Validate('w_per_ini','Data do comprovante de despesa','DATA','1','10','10','','0123456789/');
+  }
   if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de pagamento','SELECT',1,1,18,'','0123456789');
   if ($w_exibe_dc) Validate('w_sq_tipo_documento','Comprovante de despesa','SELECT',1,1,18,'','0123456789');
   if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
@@ -1083,7 +1094,7 @@ function Geral() {
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
-  if ($w_troca>'')                 BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();  texto();\'');
+  if ($w_troca>'')                 BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();'.(($w_cliente==10135) ? ' texto();' : '').'\'');
   elseif (strpos('EV',$O)!==false) BodyOpen('onLoad=\'this.focus()\';');
   else                             BodyOpen('onLoad=\'document.Form.w_valor.focus()\';');
   Estrutura_Topo_Limpo();
@@ -1156,11 +1167,11 @@ function Geral() {
     if (nvl(f($RS_Relac,'sigla'),'')!='') { $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla')); }
     
     ShowHTML('      <tr>');
-    SelecaoPessoa('<u>B</u>eneficiário:','B','Selecione o beneficiário deste lançamento.',$w_pessoa,null,'w_pessoa','CONTRATADOS','onChange="texto(); document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_pessoa\'; document.Form.submit();"');
+    SelecaoPessoa('<u>B</u>eneficiário:','B','Selecione o beneficiário deste lançamento.',$w_pessoa,null,'w_pessoa','CONTRATADOS','onChange="'.(($w_cliente==10135) ? 'texto(); ' : '').'document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_pessoa\'; document.Form.submit();"');
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC', 'onChange="texto();"',1);
+    SelecaoTipoLancamento('<u>T</u>ipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').':','T','Selecione na lista o tipo de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').' adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC', (($w_cliente==10135) ? 'onChange="texto();"' : null),1);
     if ($w_exibe_fp) {
-      SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para este '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null,'onChange="texto(); document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_forma_pagamento\'; document.Form.submit();"');
+      SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para este '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento').'.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null,'onChange="'.(($w_cliente==10135) ? 'texto(); ' : '').'document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_forma_pagamento\'; document.Form.submit();"');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento" value="'.$w_sq_forma_pagamento.'">');
     }
@@ -1173,9 +1184,14 @@ function Geral() {
     if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
       selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
     }
-    ShowHTML('        <td><b><u>V</u>alor do reembolso:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento." onBlur="texto();"></td>');
-    ShowHTML('        <td><b><u>M</u>ês de referência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time(),9)).'" onKeyDown="FormataDataMA(this,event);" onBlur="texto();"></td>');
-    ShowHTML('      <tr><td colspan=2><b><u>D</u>iscriminação das despesas:</b><br><textarea READONLY accesskey="D" name="w_descricao" class="sti" ROWS=3 cols=75 title="Discrimine as despesas para as quais deseja ser reembolsado.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('        <td><b><u>V</u>alor do reembolso:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."'.(($w_cliente==10135) ? ' onBlur="texto();' : '').'></td>');
+    if ($w_cliente==10135) {
+      ShowHTML('        <td><b><u>M</u>ês de referência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time(),9)).'" onKeyDown="FormataDataMA(this,event);" onBlur="texto();></td>');
+      ShowHTML('      <tr><td colspan=2><b><u>D</u>iscriminação das despesas:</b><br><textarea READONLY accesskey="D" name="w_descricao" class="sti" ROWS=3 cols=75 title="Discrimine as despesas para as quais deseja ser reembolsado.">'.$w_descricao.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('        <td><b>Data do co<u>m</u>provante:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('      <tr><td colspan=2><b><u>D</u>iscriminação das despesas:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="sti" ROWS=3 cols=75 title="Discrimine as despesas para as quais deseja ser reembolsado.">'.$w_descricao.'</TEXTAREA></td>');
+    }
     
     if (nvl($w_forma_pagamento,'')!='' && strpos('CREDITO,DEPOSITO,ORDEM,EXTERIOR',$w_forma_pagamento)!==false) {
       ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1966,7 +1982,8 @@ function Encaminhamento() {
     $w_projeto          = $w_dados_avo[11];
     if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
     $w_solic_vinculo    = f($RS_Solic,'sq_solic_vinculo');
-    $w_per_ini          = FormataDataEdicao(f($RS_Solic,'referencia_inicio'),9);
+    if ($w_cliente==10135)  $w_per_ini = FormataDataEdicao(f($RS_Solic,'referencia_inicio'),9);
+    else                    $w_per_ini = FormataDataEdicao(f($RS_Solic,'referencia_inicio'));
     $w_valor            = formatNumber(f($RS_Solic,'valor'));
 
     $w_inicio           = f($RS_Solic,'inicio');
@@ -2030,7 +2047,11 @@ function Encaminhamento() {
           ShowHTML('     return false;');
           ShowHTML('  }');
         } 
-        Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
+        if ($w_cliente==10135) {
+          Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
+        } else {
+          Validate('w_per_ini','Data do comprovante de despesa','DATA','1','10','10','','0123456789/');
+        }
         Validate('w_valor','Valor do reembolso','VALOR','1',4,18,'','0123456789.,-');
       }
       if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
@@ -2106,7 +2127,11 @@ function Encaminhamento() {
           }
         }
         ShowHTML('      <tr><td><b><u>V</u>alor do reembolso:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
-        ShowHTML('      <tr><td><b><u>M</u>ês de referência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time(),9)).'" onKeyDown="FormataDataMA(this,event);"></td>');
+        if ($w_cliente==10135) {
+          ShowHTML('      <tr><td><b><u>M</u>ês de referência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time(),9)).'" onKeyDown="FormataDataMA(this,event);"></td>');
+        } else {  
+          ShowHTML('        <td><b>Data do co<u>m</u>provante:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_per_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_per_ini,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);"></td>');
+        }
       }
 
       ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
@@ -2681,7 +2706,11 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
       // Trata o valor do campo "data"
-      $w_data = ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'];
+      if ($w_cliente==10135) {
+        $w_data = ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'];
+      } else {
+        $w_data = $_REQUEST['w_per_ini'];
+      }
       
       $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],
           $_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_sqcc'],
@@ -2847,7 +2876,11 @@ function Grava() {
           ScriptClose();
         } else {
           // Trata o valor do campo "data"
-          $w_data = ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'];
+          if ($w_cliente==10135) {
+            $w_data = ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'];
+          } else {
+            $w_data = $_REQUEST['w_per_ini'];
+          }
 
           if (Nvl($_REQUEST['w_valor'],0)>0) {
             // Atualiza os dados da solicitação
@@ -2912,7 +2945,11 @@ function Grava() {
           ScriptClose();
         } else {
           // Trata o valor do campo "data"
-          $w_data = ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'];
+          if ($w_cliente==10135) {
+            $w_data = ((nvl($_REQUEST['w_per_ini'],'')=='') ? '' : '01/').$_REQUEST['w_per_ini'];
+          } else {
+            $w_data = $_REQUEST['w_per_ini'];
+          }
 
           if (Nvl($_REQUEST['w_valor'],0)>0) {
             // Atualiza os dados da solicitação
