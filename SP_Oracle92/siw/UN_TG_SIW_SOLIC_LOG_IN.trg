@@ -65,9 +65,10 @@ begin
                   end||chr(13)||chr(10)||
                   'Detalhamento da licitação:'||chr(13)||chr(10)||chr(13)||chr(10)||
                   '  Objeto               : '||nvl(sol.descricao,'---')||chr(13)||chr(10)||
-                  '  Responsável          : '||w_responsavel||chr(13)||chr(10)||
                   '  Modalidade           : '||w_modalidade||chr(13)||chr(10)||
                   '  Situação             : '||nvl(w_situacao,'---')||chr(13)||chr(10)||
+                  '  Solicitante          : '||w_solicitante||chr(13)||chr(10)||
+                  '  Responsável          : '||w_responsavel||chr(13)||chr(10)||
                   '  Recebimento propostas: '||nvl(to_char(lic.data_abertura,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
                   '  Abertura Envelope 1  : '||nvl(to_char(lic.envelope_1,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
                   '  Abertura Envelope 2  : '||nvl(to_char(lic.envelope_2,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
@@ -86,6 +87,7 @@ begin
                   end||'</P>'||chr(13)||chr(10)||
                   'Detalhamento da licitação:<table border=0 style="font: 8pt Verdana, Arial, Helvetica, sans-serif;">'||chr(13)||chr(10)||
                   '<tr><td>Objeto:<td>'||nvl(sol.descricao,'---')||chr(13)||chr(10)||
+                  '<tr><td>Solicitante:<td>'||w_solicitante||chr(13)||chr(10)||
                   '<tr><td>Respons&aacute;vel:<td>'||w_responsavel||chr(13)||chr(10)||
                   '<tr><td>Modalidade:<td>'||w_modalidade||chr(13)||chr(10)||
                   '<tr><td>Situação:<td>'||nvl(w_situacao,'---')||chr(13)||chr(10)||

@@ -170,9 +170,10 @@ begin
         w_corpo   := 'Prezado usuário(a),'||chr(13)||chr(10)||chr(13)||chr(10)||
                      'A '||upper(lic.codigo_interno)||' teve ajuste nos seus dados, conforme detalhamento abaixo:'||chr(13)||chr(10)||chr(13)||chr(10)||
                      '  Objeto               : '||nvl(lic.descricao,'---')||chr(13)||chr(10)||
-                     '  Responsável          : '||w_responsavel||chr(13)||chr(10)||
                      '  Modalidade           : '||w_modalidade||chr(13)||chr(10)||
                      '  Situação             : '||nvl(w_nmsituacao,'---')||chr(13)||chr(10)||
+                     '  Solicitante          : '||w_solicitante||chr(13)||chr(10)||
+                     '  Responsável          : '||w_responsavel||chr(13)||chr(10)||
                      '  Recebimento propostas: '||nvl(to_char(:new.data_abertura,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
                      '  Abertura Envelope 1  : '||nvl(to_char(:new.envelope_1,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
                      '  Abertura Envelope 2  : '||nvl(to_char(:new.envelope_2,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
@@ -186,9 +187,10 @@ begin
                      '<P>A '||upper(lic.codigo_interno)||' '||'teve ajuste nos seus dados, conforme detalhamento abaixo:'||'.'||chr(13)||chr(10)||'</P>'||chr(13)||chr(10)||
                      '<table border=0 style="font: 8pt Verdana, Arial, Helvetica, sans-serif;">'||chr(13)||chr(10)||
                      '<tr><td>Objeto:<td>'||nvl(lic.descricao,'---')||chr(13)||chr(10)||
-                     '<tr><td>Respons&aacute;vel:<td>'||w_responsavel||chr(13)||chr(10)||
                      '<tr><td>Modalidade:<td>'||w_modalidade||chr(13)||chr(10)||
                      '<tr><td>Situação:<td>'||nvl(w_nmsituacao,'---')||chr(13)||chr(10)||
+                     '<tr><td>Solicitante:<td>'||w_solicitante||chr(13)||chr(10)||
+                     '<tr><td>Respons&aacute;vel:<td>'||w_responsavel||chr(13)||chr(10)||
                      '<tr><td nowrap>Recebimento propostas:<td nowrap>'||nvl(to_char(:new.data_abertura,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
                      '<tr><td nowrap>Abertura Envelope 1:<td nowrap>'||nvl(to_char(:new.envelope_1,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
                      '<tr><td nowrap>Abertura Envelope 2:<td nowrap>'||nvl(to_char(:new.envelope_2,'dd/mm/yy, hh24:mi'),'---')||chr(13)||chr(10)||
