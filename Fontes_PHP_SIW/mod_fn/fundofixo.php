@@ -935,7 +935,7 @@ function Geral() {
   
   if (nvl($w_solic_vinculo,'')!='' || nvl($w_chave_pai,'')!='') {
     // Se ligado a projeto, recupera rubricas
-    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,nvl($w_solic_vinculo,$w_chave_pai),null,'S',null,null,null,null,null,'FOLHA');
+    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,nvl($w_solic_vinculo,$w_chave_pai),null,'S',null,null,null,null,null,'SELECAO');
 
     if (count($RS_Rub)>0) {
       if (nvl($w_sq_projeto_rubrica,'')=='') {
@@ -1090,7 +1090,7 @@ function Geral() {
 
     if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
-      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,nvl($w_solic_vinculo,$w_chave_pai),null,'w_sq_projeto_rubrica','RUBRICAS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_projeto_rubrica\'; document.Form.submit();"',5);
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,nvl($w_solic_vinculo,$w_chave_pai),null,'w_sq_projeto_rubrica','SELECAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_projeto_rubrica\'; document.Form.submit();"',5);
       ShowHTML('      </tr>');
       
       // Trata fonte de financiamento
@@ -1744,7 +1744,7 @@ function Concluir() {
   }
   
   // Se ligado a projeto, recupera rubricas
-  $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
+  $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,'SELECAO');
 
   // Recupera os documentos do lançamento
   $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
@@ -1846,7 +1846,7 @@ function Concluir() {
     }
     if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
-      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','RUBRICAS',null);
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','SELECAO',null);
       ShowHTML('      </tr>');
     }
     ShowHTML('      <tr valign="top">');

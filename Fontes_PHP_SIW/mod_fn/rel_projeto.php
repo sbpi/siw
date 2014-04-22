@@ -67,6 +67,7 @@ $p_inicio = $_REQUEST['p_inicio'];
 $p_fim = $_REQUEST['p_fim'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
 $p_sintetico = upper(trim($_REQUEST['p_sintetico']));
+$p_financeiro = upper(trim($_REQUEST['p_financeiro']));
 $p_ordena = lower($_REQUEST['p_ordena']);
 
 // Declaração de variáveis
@@ -111,7 +112,7 @@ function Inicial() {
     $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
     
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,null,$p_inicio,$p_fim,'PJEXEC');
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXEC');
     foreach($RSQuery as $row)  {
       if (f($row,'total_dolar')!='0') { $Moeda['USD']='1';  $Total['USD'] = 0; }
       if (f($row,'total_real')!='0')  { $Moeda['BRL']='1'; $Total['BRL'] = 0; }
@@ -189,6 +190,7 @@ function Inicial() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro = '';
     if ($p_inicio!='')     $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
+    if ($p_financeiro=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Rubricas de aplicação financeira omitidas</b>';
     if ($p_sintetico=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
     ShowHTML('<tr><td align="left" colspan=2>');
     if ($w_filtro > '') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>' . $w_filtro . '</ul></tr></table>');
@@ -266,7 +268,9 @@ function Inicial() {
 
       $w_folha = ((f($row,'ultimo_nivel')=='N' && $p_sintetico=='N') ? ' class="folha"' : '');
 
-      if ($p_sintetico=='N' || ($p_sintetico=='S' && f($row,'sq_rubrica_pai')=='')) {
+      if (($p_sintetico=='N' || ($p_sintetico=='S' && f($row,'sq_rubrica_pai')=='')) ||
+          ($p_financeiro=='S' || ($p_financeiro=='N' && f($row,'aplicacao_financeira')=='N'))
+         ) {
         $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
         if($w_embed!='WORD') $l_html.=chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
         else                 $l_html.=chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
@@ -315,6 +319,8 @@ function Inicial() {
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
     ShowHTML('      <tr>');
+    MontaRadioNS('<b>Omite rubricas de aplicação financeira?</b>',$p_financeiro,'p_financeiro');
+    ShowHTML('      </tr><tr>');
     MontaRadioNS('<b>Exibe apenas a versão sintética do relatório? (apenas rubricas de mais alto nível)</b>',$p_sintetico,'p_sintetico');
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center"><hr>');

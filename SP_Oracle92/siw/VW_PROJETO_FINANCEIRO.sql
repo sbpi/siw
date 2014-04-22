@@ -11,6 +11,7 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
   from siw_solicitacao                      a
        inner         join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner         join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
+       inner         join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNDFIXO')
        inner         join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
        inner         join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          inner       join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
@@ -40,6 +41,7 @@ select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
+       inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNDFIXO')
        inner       join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
          inner     join pj_rubrica        c1 on (c.sq_projeto_rubrica  = c1.sq_projeto_rubrica)
            inner   join siw_solicitacao   b  on (c1.sq_siw_solicitacao = b.sq_siw_solicitacao)
@@ -51,7 +53,8 @@ select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
                                inner join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
                                inner join siw_solicitacao   l on (k.sq_solic_pai       = l.sq_siw_solicitacao)
                                inner join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
-                                                                  l.sq_moeda           = m.sq_moeda
+                                                                  l.sq_moeda           = m.sq_moeda and
+                                                                  m.valor              > 0
                                                                  )
                         )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
  where e.sq_documento_item is null;

@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getLancamentoDoc.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
+include_once($w_dir_volta.'classes/sp/db_getCronograma.php'); 
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
@@ -723,6 +724,10 @@ function Geral() {
     $w_per_ini              = $_REQUEST['w_per_ini'];
     $w_per_fim              = $_REQUEST['w_per_fim'];
     $w_texto_pagamento      = $_REQUEST['w_texto_pagamento'];
+    $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];
+    $w_solic_apoio          = $_REQUEST['w_solic_apoio'];
+    $w_data_autorizacao     = $_REQUEST['w_data_autorizacao'];
+    $w_texto_autorizacao    = $_REQUEST['w_texto_autorizacao'];
 
     $w_prot_numero          = $_REQUEST['w_prot_numero'];
     $w_prot_ano             = $_REQUEST['w_prot_ano'];
@@ -790,6 +795,10 @@ function Geral() {
       $w_per_ini              = FormataDataEdicao(f($RS,'referencia_inicio'));
       $w_per_fim              = FormataDataEdicao(f($RS,'referencia_fim'));
       $w_texto_pagamento      = f($RS,'condicoes_pagamento');
+      $w_sq_projeto_rubrica   = f($RS,'sq_projeto_rubrica');
+      $w_solic_apoio          = f($RS,'sq_solic_apoio');
+      $w_data_autorizacao     = FormataDataEdicao(f($RS,'data_autorizacao'));
+      $w_texto_autorizacao    = f($RS,'texto_autorizacao');
       $w_cpf                  = f($RS,'cpf');
       $w_cnpj                 = f($RS,'cnpj');
       $w_nome                 = f($RS,'nm_pessoa');
@@ -870,48 +879,97 @@ function Geral() {
     }
   }   
   
-  // Recupera dados do fundo fixo
-  $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
-  
-  if (nvl($w_solic_vinculo,'')!='' || (nvl($w_vinc_numero,'')!=''&&nvl($w_vinc_ano,'')!='')) {
-    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
-    $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,
-            null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo,null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null);
-    foreach($RS_Vinculo as $row) {$RS_Vinculo = $row; break; }
-    $w_solic_vinculo = f($RS_Vinculo,sq_siw_solicitacao);
-    $w_justificativa = f($RS_Vinculo,'justificativa');
-    $w_objeto        = f($RS_Vinculo,'objeto');
-    $w_vinc          = f($RS_Vinculo,'codigo_interno');
-    $w_vinc          = substr($w_vinc,strpos($w_vinc,'-')+1);
-    $w_vinc_numero   = substr($w_vinc,0,strpos($w_vinc,'/'));
-    $w_vinc_ano      = substr($w_vinc,strpos($w_vinc,'/')+1);
-    if (nvl($_REQUEST['w_descricao'],'')!='') {
-      if     ($_REQUEST['w_descricao']==$w_descricao)     $w_descricao = nvl($w_objeto,$w_justificativa);
-      elseif ($_REQUEST['w_descricao']==$w_justificativa) $w_descricao = nvl($w_objeto,$w_justificativa);
-    } elseif (nvl($w_descricao,'')=='') {
-      $w_descricao = nvl($w_objeto,$w_justificativa);
+  if (nvl($w_chave_pai,'')!='') {
+    // Recupera dados do fundo fixo
+    $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
+    if (nvl($w_sq_projeto_rubrica,'')=='') {
+      // Se inclusão, a rubrica sugerida é igual à do suprimento de fundos
+      $w_sq_projeto_rubrica = f($RS_Solic,'sq_projeto_rubrica');
     }
-    $w_texto = '';
-    if (f($RS_FN,'fundo_fixo_valor')<f($RS_Vinculo,'valor')) {
-      $w_texto = ' <b><font color="#BC3131">ATENÇÃO: VALOR DA COMPRA ('.formatNumber(f($RS_Vinculo,'valor')).') SUPERA LIMITE DO FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font></b>';
+
+    if (nvl($w_solic_vinculo,'')!='' || (nvl($w_vinc_numero,'')!=''&&nvl($w_vinc_ano,'')!='')) {
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+      $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,
+              null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo,null,null,null,null,null,null,null,
+              null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null);
+      foreach($RS_Vinculo as $row) {$RS_Vinculo = $row; break; }
+      $w_solic_vinculo = f($RS_Vinculo,sq_siw_solicitacao);
+      $w_justificativa = f($RS_Vinculo,'justificativa');
+      $w_objeto        = f($RS_Vinculo,'objeto');
+      $w_vinc          = f($RS_Vinculo,'codigo_interno');
+      $w_vinc          = substr($w_vinc,strpos($w_vinc,'-')+1);
+      $w_vinc_numero   = substr($w_vinc,0,strpos($w_vinc,'/'));
+      $w_vinc_ano      = substr($w_vinc,strpos($w_vinc,'/')+1);
+      if (nvl($_REQUEST['w_descricao'],'')!='') {
+        if     ($_REQUEST['w_descricao']==$w_descricao)     $w_descricao = nvl($w_objeto,$w_justificativa);
+        elseif ($_REQUEST['w_descricao']==$w_justificativa) $w_descricao = nvl($w_objeto,$w_justificativa);
+      } elseif (nvl($w_descricao,'')=='') {
+        $w_descricao = nvl($w_objeto,$w_justificativa);
+      }
+      $w_texto = '';
+      if (f($RS_FN,'fundo_fixo_valor')<f($RS_Vinculo,'valor')) {
+        $w_texto = ' <b><font color="#BC3131">ATENÇÃO: VALOR DA COMPRA ('.formatNumber(f($RS_Vinculo,'valor')).') SUPERA LIMITE DO FUNDO FIXO ('.formatNumber(f($RS_FN,'fundo_fixo_valor')).')</font></b>';
+      }
+    }
+
+    if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
+
+    if (nvl($w_sq_projeto_rubrica,'')!='') {
+      // Recupera dados da rubrica
+      $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),$w_sq_projeto_rubrica,null,null,null,null,null,null,null);
+      foreach($RS as $row) { 
+        $w_exige_autorizacao = f($row,'exige_autorizacao'); 
+      }
+
+
+      // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
+      $sql = new db_getCronograma; $RS_Fonte = $sql->getInstanceOf($dbms,$w_sq_projeto_rubrica,$w_chave_aux,null,null,null,'RUBFONTES');
+      if (count($RS_Fonte)==0) {
+        $w_exibe_ff = false;
+      } else {
+        $w_exibe_ff = true;
+        if (count($RS_Fonte)==1 || nvl($w_solic_apoio,'')!='') {
+          foreach($RS_Fonte as $row) { 
+            if (nvl($w_solic_apoio,f($row,'sq_solic_apoio'))==f($row,'sq_solic_apoio')) {
+              $w_solic_apoio = f($row,'sq_solic_apoio'); 
+              break; 
+            }
+          }
+          if (count($RS_Fonte)==1) $w_exibe_ff = false;
+        }
+      }
     }
   }
 
-  if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
-
-  // Recupera acréscimos e supressões possíveis para o lançamento financeiro
-  $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,$w_chave,$w_sq_lancamento_doc,null,'EDICAO');
-  $RS_Valores = SortArray($RS_Valores,'tp_valor','desc','ordenacao','asc');
-  $i=0;
-  unset($w_valores);
-  foreach ($RS_Valores as $row) {
-    $i++;
-    $w_valores[$i]['chave'] = f($row,'sq_valores');
-    $w_valores[$i]['nome']  = f($row,'nome');
-    $w_valores[$i]['tipo']  = f($row,'tp_valor');
-    $w_valores[$i]['valor'] = formatNumber(nvl(f($row,'valor'),0));
+  if (nvl($w_troca,'')=='' && nvl($w_chave,'')!='') {
+    // Recupera os documentos do lançamento
+    $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
+    if (count($RS_Doc)>0) {
+      foreach($RS_Doc as $row) {
+        $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+        foreach($RS_Item as $row1) {
+          $w_sq_projeto_rubrica = f($row1,'sq_projeto_rubrica');
+          break;
+        }
+        break;
+      }
+    }
   }
+
+ if (nvl($w_chave,'')!='') {
+    // Recupera acréscimos e supressões possíveis para o lançamento financeiro
+    $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,$w_chave,$w_sq_lancamento_doc,null,'EDICAO');
+    $RS_Valores = SortArray($RS_Valores,'tp_valor','desc','ordenacao','asc');
+    $i=0;
+    unset($w_valores);
+    foreach ($RS_Valores as $row) {
+      $i++;
+      $w_valores[$i]['chave'] = f($row,'sq_valores');
+      $w_valores[$i]['nome']  = f($row,'nome');
+      $w_valores[$i]['tipo']  = f($row,'tp_valor');
+      $w_valores[$i]['valor'] = formatNumber(nvl(f($row,'valor'),0));
+    }
+ }
   
   Cabecalho();
   head();
@@ -942,10 +1000,9 @@ function Geral() {
           Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
         }
       }
+      if (nvl($w_sq_projeto_rubrica,'')!='') Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     }
-    if($w_segmento=='Público') {
-      Validate('w_numero_processo','Número do processo','1','',1,30,'1','1');
-    }
+    if($w_segmento=='Público') Validate('w_numero_processo','Número do processo','1','',1,30,'1','1');
     if ($w_mod_co=='S') { 
       Validate('w_vinc_numero', 'Número da compra', '1', '1', '1', '6', '', '0123456789');
       Validate('w_vinc_ano', 'Ano da compra', '1', '1', '4', '4', '', '0123456789');
@@ -961,9 +1018,7 @@ function Geral() {
     Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,-');
     CompValor('w_valor','Valor total do documento','>','0,00','zero');
-    if (count($RS_FN)>0) {
-      CompValor('w_valor','Valor total do documento','<=',formatNumber(f($RS_FN,'fundo_fixo_valor')),formatNumber(f($RS_FN,'fundo_fixo_valor')));
-    }
+    if (count($RS_FN)>0) CompValor('w_valor','Valor total do documento','<=',formatNumber(f($RS_FN,'fundo_fixo_valor')),formatNumber(f($RS_FN,'fundo_fixo_valor')));
     if (is_array($w_valores)) {
       ShowHTML('  for (ind=1; ind < theForm["w_valores[]"].length; ind++) {');
       Validate('["w_valores[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
@@ -1072,9 +1127,49 @@ function Geral() {
             ShowHTML('          </select>');
           } else {
             SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,$w_menu,'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai);
-            if (nvl(f($RS_Relac,'sigla'),'')!='') $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
+            
+            if ($w_chave_pai) {
+              ShowHTML('          '.str_replace(f($RS_Solic,'codigo_interno'),'<b>Exibir</b>',exibeSolic($w_dir,$w_chave_pai,f($RS,'dados_pai'),'N','HTML')));
+              ShowHTML('<tr><td colspan=3>');
+              ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="1" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+              ShowHTML('      <tr bgcolor="' . $conTrAlternateBgColor . '" align="center">');
+              ShowHTML('        <td><b>Vinculação</td>');
+              ShowHTML('        <td><b>Suprido</td>');
+              ShowHTML('        <td><b>Finalidade</td>');
+              ShowHTML('      </tr>');
+              $w_cor = $conTrBgColor;
+              ShowHTML('      <tr bgcolor="' . $w_cor . '" valign="top">');
+              ShowHTML('        <td align="center">' . exibeSolic($w_dir,f($RS_Solic,'sq_solic_pai'),f($RS_Solic,'dados_pai'),'N','HTML') . '</td>');
+              ShowHTML('        <td>' . f($RS_Solic,'nm_pessoa') . '</td>');
+              ShowHTML('        <td>' . CRLF2BR(f($RS_Solic,'descricao')) . '</td>');
+              ShowHTML('      </tr>');
+              ShowHTML('    </table>');
+              ShowHTML('  </td>');
+              ShowHTML('</tr>');
+            }
 
-            if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') ShowHTML('         <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Pai,'processo').'"></td>');
+            if(nvl($w_sq_projeto_rubrica,'')!='') {
+              ShowHTML('      <tr>');
+              SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','SELECAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_projeto_rubrica\'; document.Form.submit();"',5);
+              ShowHTML('      </tr>');
+
+              // Trata fonte de financiamento
+              if ($w_exibe_ff) {
+                ShowHTML('      <tr>');
+                SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
+                ShowHTML('      </tr>');
+              } else {
+                ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
+              }
+
+              // Trata autorização da despesa
+              if ($w_exige_autorizacao=='S') {
+                ShowHTML('      <tr><td colspan="3"><b><u>D</u>ata <i>No objection</i>:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_autorizacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_data_autorizacao,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_autorizacao').'</td>');
+                ShowHTML('      <tr><td colspan="3"><b><u>T</u>exto <i>No objection</i>:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_texto_autorizacao" class="sti" ROWS=3 cols=75 title="Texto de autorização da despesa">'.$w_texto_autorizacao.'</TEXTAREA></td>');
+              }
+            }
+            
+            if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') ShowHTML('         <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Solic,'processo').'"></td>');
           }
         }
       }

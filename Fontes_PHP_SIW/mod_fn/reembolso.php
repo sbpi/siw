@@ -2305,7 +2305,7 @@ function Concluir() {
   // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
   if (substr($SG,3)=='REEMB') {
     // Se ligado a projeto, recupera rubricas
-    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
+    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,'SELECAO');
 
     // Recupera os documentos do lançamento
     $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
@@ -2425,7 +2425,7 @@ function Concluir() {
     ShowHTML('      </tr>');
     if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
-      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','RUBRICAS',null);
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','SELECAO',null);
       ShowHTML('      </tr>');
     }
     ShowHTML('      <tr valign="top">');

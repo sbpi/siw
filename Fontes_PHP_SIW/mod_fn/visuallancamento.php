@@ -14,7 +14,6 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $w_tramite_ativo      = f($RS,'ativo');
   $w_SG                 = f($RS,'sigla');
   $w_tipo_rubrica       = f($RS,'tipo_rubrica');
-  $w_qtd_rubrica        = nvl(f($RS,'qtd_rubrica'),0);
   $w_sq_projeto         = nvl(f($RS,'sq_projeto'),0);
   $w_sb_moeda           = nvl(f($RS,'sb_moeda'),'');
   $w_entidade           = nvl(f($RS,'entidade'),'');
@@ -644,8 +643,8 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   } 
   
   // Rubricas
-  if($w_qtd_rubrica>0) {
-    $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
+  $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
+  if(count($RS)>0) {
     $RS = SortArray($RS,'rubrica','asc');
     if (count($RS)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RUBRICAS E VALORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

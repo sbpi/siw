@@ -1895,7 +1895,9 @@ Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/pagfundo.php -text
 Fontes_PHP_SIW/mod_fn/reembolso.php -text
+Fontes_PHP_SIW/mod_fn/rel_contabil.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text
+Fontes_PHP_SIW/mod_fn/rel_despesa.php -text
 Fontes_PHP_SIW/mod_fn/rel_financeiro.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
 Fontes_PHP_SIW/mod_fn/rel_plano.php -text

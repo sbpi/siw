@@ -11,7 +11,7 @@ create or replace procedure SP_GetSolicRubrica
     p_result               out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao in ('FOLHA','SUBORDINACAO') Then
+   If p_restricao is null or p_restricao in ('FOLHA','SUBORDINACAO','SELECAO') Then
       open p_result for 
          select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.sq_unidade_medida, a.ultimo_nivel,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
@@ -23,29 +23,27 @@ begin
                 b.nome nm_cc, a.aplicacao_financeira,
                 coalesce((select sum(w.valor_previsto)
                             from pj_rubrica_cronograma w
-                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica)
-                           where x.sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
-                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica and x.ultimo_nivel = 'S')
+                           where x.sq_siw_solicitacao = a.sq_siw_solicitacao
+                             and p_restricao          <> 'SELECAO'
+                             and (p_chave_aux is null or (p_chave_aux is not null and w.sq_projeto_rubrica = p_chave_aux))
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
-                                                          from pj_rubrica 
-                                                         where sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
-                                                           and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
-                                                        connect by prior sq_projeto_rubrica = sq_rubrica_pai 
-                                                        start with sq_projeto_rubrica = a.sq_projeto_rubrica
-                                                       )
+                                                            from pj_rubrica 
+                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                         )
                          ),0) total_previsto,
                 coalesce((select sum(w.valor_real)
                             from pj_rubrica_cronograma w
-                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica)
-                           where x.sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
-                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
+                                 inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica and x.ultimo_nivel = 'S')
+                           where x.sq_siw_solicitacao = a.sq_siw_solicitacao
+                             and p_restricao          <> 'SELECAO'
+                             and (p_chave_aux is null or (p_chave_aux is not null and w.sq_projeto_rubrica = p_chave_aux))
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
-                                                          from pj_rubrica 
-                                                         where sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
-                                                           and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
-                                                        connect by prior sq_projeto_rubrica = sq_rubrica_pai 
-                                                        start with sq_projeto_rubrica = a.sq_projeto_rubrica
-                                                       )
+                                                            from pj_rubrica 
+                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                         )
                          ),0) total_real,
                 c.quantidade,
                 coalesce(i.qt_filhos,0) as qt_filhos,
@@ -81,9 +79,8 @@ begin
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira))
             and (p_inicio               is null or (p_inicio               is not null and c.sq_projeto_rubrica   is not null))
             and (p_restricao            is null or
-                 p_restricao            not in ('FOLHA','SUBORDINACAO') or
-                 (p_restricao           = 'SUBORDINACAO' and a.ultimo_nivel = 'N') or
-                 (p_restricao           = 'FOLHA')
+                 p_restricao            <> 'SUBORDINACAO' or
+                 (p_restricao           = 'SUBORDINACAO' and a.ultimo_nivel = 'N')
                 );
    Elsif p_restricao = 'ARVORE' Then
       -- Recupera a árvore das rubricas
@@ -213,21 +210,34 @@ begin
    Elsif p_restricao = 'PJEXECL' Then
       open p_result for 
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
-                a.sq_projeto_rubrica, a.nm_rubrica, b.codigo cd_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
+                a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
                 a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, codigo2numero(a.cd_financeiro) or_financeiro,
+                b.codigo cd_rubrica, b.nome nm_rubrica,
+                b1.codigo cd_rubrica_pai, b1.nome nm_rubrica_pai,
                 c.simbolo sb_moeda,
                 d.descricao, d.inicio, 
                 e.sigla sg_tramite,
                 f.sigla sg_menu,
                 g.aviso_prox_conc, g.quitacao, g.vencimento,
-                cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso
-           from vw_projeto_financeiro        a
-                inner   join pj_rubrica      b on (a.sq_projeto_rubrica = b.sq_projeto_rubrica)
-                inner   join co_moeda        c on (a.sq_fn_moeda        = c.sq_moeda)
-                inner   join siw_solicitacao d on (a.sq_financeiro      = d.sq_siw_solicitacao)
-                  inner join siw_tramite     e on (d.sq_siw_tramite     = e.sq_siw_tramite)
-                  inner join siw_menu        f on (d.sq_menu            = f.sq_menu)
-                  inner join fn_lancamento   g on (d.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso,
+                g1.nome nm_forma_pagamento,
+                g2.sq_pessoa, g2.nome nm_pessoa, coalesce(g3.cpf, g4.cnpj) cd_pessoa,
+                h.data dt_emissao, h.numero, h.valor valor_doc,
+                i.sigla sg_tipo_documento, i.nome nm_tipo_documento
+           from vw_projeto_financeiro              a
+                inner     join pj_rubrica          b on (a.sq_projeto_rubrica = b.sq_projeto_rubrica)
+                  left    join pj_rubrica         b1 on (b.sq_rubrica_pai     = b1.sq_projeto_rubrica)
+                inner     join co_moeda            c on (a.sq_fn_moeda        = c.sq_moeda)
+                inner     join siw_solicitacao     d on (a.sq_financeiro      = d.sq_siw_solicitacao)
+                  inner   join siw_tramite         e on (d.sq_siw_tramite     = e.sq_siw_tramite)
+                  inner   join siw_menu            f on (d.sq_menu            = f.sq_menu)
+                  inner   join fn_lancamento       g on (d.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                    inner join co_forma_pagamento g1 on (g.sq_forma_pagamento = g1.sq_forma_pagamento)
+                    inner join co_pessoa          g2 on (g.pessoa             = g2.sq_pessoa)
+                    left  join co_pessoa_fisica   g3 on (g.pessoa             = g3.sq_pessoa)
+                    left  join co_pessoa_juridica g4 on (g.pessoa             = g4.sq_pessoa)
+                  left    join fn_lancamento_doc   h on (d.sq_siw_solicitacao = h.sq_siw_solicitacao)
+                    left join fn_tipo_documento    i on (h.sq_tipo_documento  = i.sq_tipo_documento)
           where a.sq_projeto  = p_chave
             and (p_inicio     is null or 
                  (p_inicio    is not null and ((a.sg_tramite =  'AT' and a.quitacao   between p_inicio and p_fim) or 
@@ -243,7 +253,8 @@ begin
                                                                        start with sq_projeto_rubrica = p_chave_aux
                                                                       )
 	               )
-                );
+                )
+            and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and b.aplicacao_financeira = p_aplicacao_financeira));
    Elsif p_restricao = 'PDFINANC' Then
       open p_result for 
          select distinct a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
