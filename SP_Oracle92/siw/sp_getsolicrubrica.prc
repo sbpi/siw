@@ -146,6 +146,7 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                              and (p_inicio     is null or 
                                   (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
                                                                 (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
@@ -165,6 +166,7 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                              and (p_inicio     is null or 
                                   (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
                                                                 (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
@@ -184,6 +186,7 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                              and (p_inicio     is null or 
                                   (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
                                                                 (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
