@@ -141,6 +141,9 @@ if (count($RS)>0) $w_pa='S'; else $w_pa='N';
 // Recupera a configuração do serviço
 $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
+// Variável para identificar a sigla do serviço
+$sigla = 'GRCL';
+
 Main();
 
 FechaSessao($dbms);
