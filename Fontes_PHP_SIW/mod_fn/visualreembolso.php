@@ -174,17 +174,19 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <td>Agência:<b><br>---</td>';
         } 
       } elseif (f($RS,'sg_forma_pagamento')=='EXTERIOR') {
-        $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'          <td>Banco:<b><br>'.f($RS,'banco_estrang').'</td>';
-        $l_html.=chr(13).'          <td>ABA Code:<b><br>'.Nvl(f($RS,'aba_code'),'---').'</td>';
-        $l_html.=chr(13).'          <td>SWIFT Code:<b><br>'.Nvl(f($RS,'swift_code'),'---').'</td>';
-        $l_html.=chr(13).'          <tr><td colspan=3>Endereço da agência:<b><br>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
-        $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'          <td colspan=2>Agência:<b><br>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
-        $l_html.=chr(13).'          <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
-        $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'          <td colspan=2>Cidade:<b><br>'.f($RS,'nm_cidade').'</td>';
-        $l_html.=chr(13).'          <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
+        $l_html.=chr(13).'          <tr valign="top"><table border="0" width="100%">';
+        $l_html.=chr(13).'            <tr valign="top">';
+        $l_html.=chr(13).'              <td>Banco:<b><br>'.f($RS,'banco_estrang').'</td>';
+        $l_html.=chr(13).'              <td>ABA Code:<b><br>'.Nvl(f($RS,'aba_code'),'---').'</td>';
+        $l_html.=chr(13).'              <td>SWIFT Code:<b><br>'.Nvl(f($RS,'swift_code'),'---').'</td>';
+        $l_html.=chr(13).'            <tr><td colspan=3>Endereço da agência:<b><br>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
+        $l_html.=chr(13).'            <tr valign="top">';
+        $l_html.=chr(13).'              <td colspan=2>Agência:<b><br>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
+        $l_html.=chr(13).'              <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
+        $l_html.=chr(13).'            <tr valign="top">';
+        $l_html.=chr(13).'              <td colspan=2>Cidade:<b><br>'.f($RS,'nm_cidade').'</td>';
+        $l_html.=chr(13).'              <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
+        $l_html.=chr(13).'          </tr></table>';
       } 
     } 
     // Conta bancária da organização envolvida com o lançamento financeiro
@@ -211,6 +213,76 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $w_valor          = Nvl(f($RS,'valor_liquido'),0);
   }
     
+  // Rubricas
+  $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
+  if(count($RS)>0) {
+    $RS = SortArray($RS,'rubrica','asc');
+    if (count($RS)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RUBRICAS E VALORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'        <table width=100% border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Rubrica</b></td>';
+      if ($w_entidade!='') {
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Fonte</b></td>';
+      }
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor total'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      $w_total = 0;
+      foreach($RS as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="left"><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha1\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'rubrica').'</A>&nbsp</td>';
+        if ($w_entidade!='') {
+          $l_html.=chr(13).'        <td align="left">'.$w_entidade.'</td>';
+        }
+        if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_rubrica'),0)).'&nbsp;&nbsp;</td>';
+        else
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_total'),0)).'&nbsp;&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+        if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
+          $w_total += nvl(f($row,'valor_rubrica'),0);
+        else
+          $w_total += nvl(f($row,'valor_total'),0);
+      } 
+      if ($w_total>0) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="right"'.(($w_entidade!='') ? ' colspan=2' : '').'><b>Total</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+      }      
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
+  }
+  
+  // Arquivos vinculados
+  $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
+  $RS = SortArray($RS,'nome','asc');
+  if (count($RS)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Título</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Descrição</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Tipo</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>KB</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $w_cor=$w_TrBgColor;
+    foreach($RS as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      if (!($l_tipo=='WORD'))
+        $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+      else
+        $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+      $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
+      $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
+      $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
+    } 
+    $l_html.=chr(13).'         </table></td></tr>';
+  } 
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro=ValidaReembolso($w_cliente,$v_chave,substr($w_SG,0,3).'GERAL',null,null,null,Nvl($w_tramite,0));
   if ($w_erro>'') {

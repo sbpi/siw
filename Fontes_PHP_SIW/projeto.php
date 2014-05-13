@@ -1781,13 +1781,17 @@ function Rubrica() {
   } elseif (strpos('IAEV',$O)!==false) {
     if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     if (strpos('IAC',$O)!==false) {
-      ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
-      ShowHTML('        ATENÇÃO:<ul>');
-      if (nvl($w_copia,'')!='') ShowHTML('        <li>Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.');
-      ShowHTML('        <li>Em cada projeto, só é permitida uma rubrica com o campo "Aplicação financeira" igual a sim.');
-      ShowHTML('        <li>A rubrica de aplicação financeira serve apenas para projetos em que essa situação seja necessária, por exemplo, projetos ligados a convênios.');
-      ShowHTML('        </ul></b></font></td>');
-      ShowHTML('      </tr>');
+      if (nvl($w_copia,'')!='' || $w_cliente!='17305') {
+        ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+        ShowHTML('        ATENÇÃO:<ul>');
+        if (nvl($w_copia,'')!='') ShowHTML('        <li>Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.');
+        if ($w_cliente!='17305') {
+          ShowHTML('        <li>Em cada projeto, só é permitida uma rubrica com o campo "Aplicação financeira" igual a sim.');
+          ShowHTML('        <li>A rubrica de aplicação financeira serve apenas para projetos em que essa situação seja necessária, por exemplo, projetos ligados a convênios.');
+        }
+        ShowHTML('        </ul></b></font></td>');
+        ShowHTML('      </tr>');
+      }
     }
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
@@ -5567,15 +5571,17 @@ function Grava() {
   } elseif($SG=='PJRUBRICA'){  
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-      // Garante que há apenas uma rubrica de aplicação financeira para o projeto.
-      if($_REQUEST['w_aplicacao_financeira']=='S') {
-        $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,'S',$_REQUEST['w_chave_aux'],null,'S',null,null,null);
-        if(count($RS)>0) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Cada projeto não pode ter mais de uma rubrica de aplicação financeira!\');');
-          ScriptClose();
-          retornaFormulario('w_descricao');
-          exit();
+      if ($w_cliente!='17305') {
+        // Garante que há apenas uma rubrica de aplicação financeira para o projeto.
+        if($_REQUEST['w_aplicacao_financeira']=='S') {
+          $sql = new db_getsolicRubrica; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,'S',$_REQUEST['w_chave_aux'],null,'S',null,null,null);
+          if(count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("Cada projeto não pode ter mais de uma rubrica de aplicação financeira!");');
+            ScriptClose();
+            retornaFormulario('w_descricao');
+            exit();
+          }
         }
       }
 

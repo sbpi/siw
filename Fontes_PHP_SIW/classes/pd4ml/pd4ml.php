@@ -11,6 +11,7 @@ if (array_key_exists('url', $_POST)) {
   $w_orientation = strtoupper($_POST['orientation']);
   $w_width = (($w_orientation=='PORTRAIT') ? 800 : 1128);
   $w_url = str_replace('HTTP:','http:',str_replace('HTTPS:','https:',$_POST['url']));
+  //if ($_SERVER["HTTPS"]=="on") $w_url = str_replace("http:","https:",$w_url);
   
   //@header('Accept-Ranges: none');
   //header('Content-type: application/pdf');

@@ -2278,7 +2278,7 @@ function Concluir() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
-  // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
+  // Recupera dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
   $w_quitacao           = FormataDataEdicao(f($RS_Solic,'quitacao'));
   $w_observacao         = f($RS_Solic,'observacao');
@@ -2289,6 +2289,13 @@ function Concluir() {
   $w_sq_tipo_lancamento = nvl($w_sq_tipo_lancamento,f($RS_Solic,'sq_tipo_lancamento'));
   $w_inicio             = FormataDataEdicao(time());
   $w_moeda_solic        = f($RS_Solic,'sq_moeda');
+
+  if (nvl(f($RS_Solic,'dados_pai'),'')!='') {
+    // Recupera dados da solicitação
+    $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),piece(f($RS_Solic,'dados_pai'),null,'|@|',6));
+    $w_moeda_pai        = f($RS_Pai,'sq_moeda');
+  }
+
 
   // Se for recarga da página
   if ($w_troca>'') {
@@ -2388,6 +2395,7 @@ function Concluir() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
+  
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados do lançamento, na opção 'Listagem'
   ShowHTML(VisualReembolso($w_chave,'V',$w_usuario,$P1,$P4));
