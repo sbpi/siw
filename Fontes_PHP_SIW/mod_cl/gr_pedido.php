@@ -141,9 +141,6 @@ if (count($RS)>0) $w_pa='S'; else $w_pa='N';
 // Recupera a configuração do serviço
 $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
 
-// Variável para identificar a sigla do serviço
-$sigla = 'GRCL';
-
 Main();
 
 FechaSessao($dbms);
@@ -794,7 +791,7 @@ function Gerencial() {
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     //SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
-    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','VIAGEM',null);
+    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante',$p_unidade,null,'p_unidade','CLCP',null);
     ShowHTML('   <tr valign="top">');
     if ($SG==$sigla.'LIC') {
       ShowHTML('     <td><b>Número d<u>o</u> certame:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14">');
