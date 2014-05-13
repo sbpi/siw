@@ -1625,26 +1625,6 @@ function OutraParte() {
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IA', $O) !== false) {
     if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
-      // Se o beneficiário ainda não foi selecionado
-      ShowHTML('<FORM action="' . $w_dir . $w_pagina . $par . '" method="POST" name="Form" onSubmit="return(Validacao(this));">');
-    } else {
-      ShowHTML('<FORM action="' . $w_dir . $w_pagina . 'Grava" method="POST" name="Form" onSubmit="return(Validacao(this));">');
-    }
-    ShowHTML('<INPUT type="hidden" name="P1" value="' . $P1 . '">');
-    ShowHTML('<INPUT type="hidden" name="P2" value="' . $P2 . '">');
-    ShowHTML('<INPUT type="hidden" name="P3" value="' . $P3 . '">');
-    ShowHTML('<INPUT type="hidden" name="P4" value="' . $P4 . '">');
-    ShowHTML('<INPUT type="hidden" name="TP" value="' . $TP . '">');
-    ShowHTML('<INPUT type="hidden" name="SG" value="' . $SG . '">');
-    ShowHTML('<INPUT type="hidden" name="R" value="' . $w_pagina . $par . '">');
-    ShowHTML('<INPUT type="hidden" name="O" value="' . $O . '">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
-    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="' . $w_cliente . '">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="' . $w_sq_pessoa . '">');
-    ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="' . $w_tipo_pessoa . '">');
-    ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="' . $w_pessoa_atual . '">');
-    if (($w_sq_pessoa == '' && $w_cpf == '' && $w_cnpj == '' && $w_passaporte == '') || strpos($_REQUEST['Botao'], 'Alterar') !== false || strpos($_REQUEST['Botao'], 'Procurar') !== false) {
       $w_nome = $_REQUEST['w_nome'];
       if (strpos($_REQUEST['Botao'], 'Alterar') !== false) {
         $w_cpf = '';
@@ -1655,11 +1635,11 @@ function OutraParte() {
       ShowHTML('    <table border="0">');
       ShowHTML('    <tr>');
       //SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_prop, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, 'onFocus="alert(document.Form.w_sq_prop.value);"', 1, 'w_email');
-      AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
+      AbreForm('Form', $w_dir.$w_pagina.$par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
       ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="">');
       //SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_pessoa, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, 'onFocus="javascript:location.href=\'' . $w_dir . $w_pagina . $par . '&R=' . $R . '&w_sq_pessoa=\'+document.Form.w_sq_prop.value+\'' . '&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&Botao=Selecionar\'";"', 1, 'w_sq_prop');
-      SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_pessoa, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, 'onFocus="javascript:document.Form.submit();"', 1, 'w_sq_prop');
-      ShowHTML('</form>');
+      SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_pessoa, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, null, 1, 'w_sq_prop');
+      ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\'' .$w_dir.$w_pagina.$par.'\'">');
       //SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_prop, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, 'onFocus="alert(\"' . $w_dir . $w_pagina . $par . '&R=' . $R . '&O=A&w_cpf=' . f($row, 'cpf') . '&w_sq_pessoa=' . f($row, 'sq_pessoa') . '&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&Botao=Selecionar")"', 1, 'w_email');
       /*      ShowHTML('        <tr><td colspan=4>Informe os dados abaixo e clique no botão "Selecionar" para continuar.</TD>');
         ShowHTML('        <tr><td colspan=4><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="' . $w_cpf . '" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
@@ -1700,6 +1680,13 @@ function OutraParte() {
         ShowHTML('</tr>');
       }
     } else {
+      AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina.$par, $O);
+      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_chave" value="' . $w_chave . '">');
+      ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="' . $w_cliente . '">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="' . $w_sq_pessoa . '">');
+      ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="' . $w_tipo_pessoa . '">');
+      ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="' . $w_pessoa_atual . '">');
       ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
       ShowHTML('    <table width="97%" border="0">');
       ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
