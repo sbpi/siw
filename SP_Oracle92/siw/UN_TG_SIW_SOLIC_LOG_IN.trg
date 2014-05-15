@@ -17,6 +17,7 @@ declare
   w_em_solic     sg_autenticacao.email%type;
   w_modalidade   lc_modalidade.nome%type;
   w_situacao     lc_situacao.codigo_externo%type;
+  w_sigla        ct_cc.sigla%type;
   lic            cl_solicitacao%rowtype;
   sol            siw_solicitacao%rowtype;
 
@@ -41,21 +42,23 @@ begin
      -- Recupera dados da tabela de licitação
      select * into lic from cl_solicitacao where sq_siw_solicitacao = :new.sq_siw_solicitacao;
      
-     w_assunto := upper(sol.codigo_interno)||' - '||case w_tipo when 'envio' then 'ENVIO' else 'ANOTAÇÃO' end;
-
      -- Recupera dados para montagem do e-mail
-     select solic.nome,    aut1.email, resp.nome,     aut2.email, mod.nome,     sit.nome
-       into w_solicitante, w_em_solic, w_responsavel, w_em_resp, w_modalidade, w_situacao
+     select solic.nome,    aut1.email, resp.nome,     aut2.email, mod.nome,     sit.nome,  prj.sigla
+       into w_solicitante, w_em_solic, w_responsavel, w_em_resp, w_modalidade, w_situacao, w_sigla
        from co_pessoa solic, sg_autenticacao aut1, co_pessoa resp, sg_autenticacao aut2, 
             cl_solicitacao           cl
             inner join lc_modalidade mod on (cl.sq_lcmodalidade = mod.sq_lcmodalidade)
-            left  join lc_situacao   sit on (cl.sq_lcsituacao   = sit.sq_lcsituacao)
+            left  join lc_situacao   sit on (cl.sq_lcsituacao   = sit.sq_lcsituacao),
+            ct_cc                    prj
       where solic.sq_pessoa       = sol.solicitante
         and aut1.sq_pessoa        = sol.solicitante
         and resp.sq_pessoa        = nvl(sol.executor,sol.cadastrador)
         and aut2.sq_pessoa        = nvl(sol.executor,sol.cadastrador)
-        and cl.sq_siw_solicitacao = :new.sq_siw_solicitacao;
+        and cl.sq_siw_solicitacao = :new.sq_siw_solicitacao
+        and prj.sq_cc             = sol.sq_cc;
      
+     w_assunto := w_sigla||' - '||upper(sol.codigo_interno)||' - '||case w_tipo when 'envio' then 'ENVIO' else 'ANOTAÇÃO' end;
+
      w_corpo   := 'Prezado usuário(a),'||chr(13)||chr(10)||chr(13)||chr(10)||
                   'A '||upper(sol.codigo_interno)||' '||
                   case w_tipo

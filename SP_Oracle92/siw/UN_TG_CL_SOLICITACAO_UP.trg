@@ -22,6 +22,7 @@ declare
   w_em_solic     sg_autenticacao.email%type;
   w_modalidade   lc_modalidade.nome%type;
   w_nmsituacao   lc_situacao.codigo_externo%type;
+  w_sigla        ct_cc.sigla%type;
   w_corpo        corporativo.un_mail.corpo%type;
   w_chtml        corporativo.un_mail.corpo_html%type := null;
   w_assunto      corporativo.un_mail.assunto%type;
@@ -148,17 +149,16 @@ begin
      End If;
  
      If w_dispara > 0 Then
-        w_assunto := upper(lic.codigo_interno)||' - ALTERAÇÃO DE STATUS';
- 
         -- Recupera dados para montagem do e-mail
-        select solic.nome,    aut1.email, resp.nome,     aut2.email, mod.nome
-          into w_solicitante, w_em_solic, w_responsavel, w_em_resp, w_modalidade
-          from co_pessoa solic, sg_autenticacao aut1, co_pessoa resp, sg_autenticacao aut2, lc_modalidade mod
+        select solic.nome,    aut1.email, resp.nome,     aut2.email, mod.nome,     prj.sigla
+          into w_solicitante, w_em_solic, w_responsavel, w_em_resp,  w_modalidade, w_sigla
+          from co_pessoa solic, sg_autenticacao aut1, co_pessoa resp, sg_autenticacao aut2, lc_modalidade mod, ct_cc prj
          where solic.sq_pessoa       = lic.solicitante
            and aut1.sq_pessoa        = lic.solicitante
            and resp.sq_pessoa        = nvl(lic.executor,lic.cadastrador)
            and aut2.sq_pessoa        = nvl(lic.executor,lic.cadastrador)
-           and mod.sq_lcmodalidade   = :new.sq_lcmodalidade;
+           and mod.sq_lcmodalidade   = :new.sq_lcmodalidade
+           and prj.sq_cc             = lic.sq_cc;
               
         -- Recupera o nome da situação da licitação
         If :new.sq_lcsituacao is null Then
@@ -167,6 +167,8 @@ begin
            select nome into w_nmsituacao from lc_situacao where sq_lcsituacao = :new.sq_lcsituacao;
         End If;
               
+        w_assunto := w_sigla||' - '||upper(lic.codigo_interno)||' - ALTERAÇÃO DE STATUS';
+ 
         w_corpo   := 'Prezado usuário(a),'||chr(13)||chr(10)||chr(13)||chr(10)||
                      'A '||upper(lic.codigo_interno)||' teve ajuste nos seus dados, conforme detalhamento abaixo:'||chr(13)||chr(10)||chr(13)||chr(10)||
                      '  Objeto               : '||nvl(lic.descricao,'---')||chr(13)||chr(10)||
