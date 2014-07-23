@@ -3706,8 +3706,8 @@ function Grava() {
           $_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_cidade'],  $_REQUEST['w_chave_pai'], 
           $_REQUEST['w_sq_tipo_acordo'], $_REQUEST['w_objeto'], $_REQUEST['w_sq_tipo_pessoa'], 
           $_REQUEST['w_sq_forma_pagamento'], $_REQUEST['w_forma_atual'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_etapa'],
-          $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], $_REQUEST['w_numero_empenho'], $_REQUEST['w_numero_processo'], $_REQUEST['w_data_assinatura'],
-          $_REQUEST['w_data_publicacao'],
+          $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], $_REQUEST['w_numero_empenho'], $_REQUEST['w_numero_processo'], 
+          $_REQUEST['w_data_assinatura'], $_REQUEST['w_data_publicacao'], $_REQUEST['w_moeda'],
           &$w_chave_nova, $w_copia, null, &$w_codigo);
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
@@ -4187,8 +4187,9 @@ function Grava() {
             f($RS,'aviso_prox_conc'),f($RS,'dias_aviso'),f($RS,'sq_cidade_origem'),f($RS,'sq_solic_pai'),
             f($RS,'sq_tipo_acordo'),f($RS,'objeto'),f($RS,'sq_tipo_pessoa'),
             f($RS,'sq_forma_pagamento'), null, null, f($RS,'sq_projeto_etapa'),
-            f($RS,'codigo_interno'), f($RS,'titulo'), f($RS,'empenho'), f($RS,'processo'), FormataDataEdicao(f($RS,'assinatura')),
-            FormataDataEdicao(f($RS,'publicacao')),&$w_chave_nova, $_REQUEST['w_chave'], null, &$w_codigo);
+            f($RS,'codigo_interno'), f($RS,'titulo'), f($RS,'empenho'), f($RS,'processo'), 
+            FormataDataEdicao(f($RS,'assinatura')), FormataDataEdicao(f($RS,'publicacao')),f($RS,'sq_moeda'),
+            &$w_chave_nova, $_REQUEST['w_chave'], null, &$w_codigo);
         } 
         // Envia e-mail comunicando a conclusão
         SolicMail($_REQUEST['w_chave'],3);

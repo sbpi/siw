@@ -155,12 +155,10 @@ function CheckBranco() {
   print "  function checkbranco(elemento){ "."\r\n";
   print "    var flagbranco = true; "."\r\n";
   print "    for (i=0;i < elemento.length;i++){ "."\r\n";
-  print "        //alert('elemento.charat( ' + i + ') = ' + elemento.charAt(i) ) "."\r\n";
   print "        if (elemento.charAt(i) != ' '){ "."\r\n";
   print "            flagbranco = false "."\r\n";
   print "        } "."\r\n";
   print "    } "."\r\n";
-  print "    //alert('valor de flagbranco = ' + flagbranco) "."\r\n";
   print "    return flagbranco "."\r\n";
   print "  } "."\r\n";
 }

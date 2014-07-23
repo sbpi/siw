@@ -193,7 +193,8 @@ function Mesa() {
     ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Georeferenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas georeferenciados."><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
-  if ($_SESSION['DBMS']!=8) {
+  /* Bloco desabilitado para verificação de performance. 10/07/2014 - Alexandre */
+  if ($_SESSION['DBMS']!=8 && 1==0) {
     // Exibe, se necessário, sinalizador para alerta
     $sql = new db_getAlerta; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     if (count($RS)>0) {

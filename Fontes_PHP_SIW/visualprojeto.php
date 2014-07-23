@@ -250,7 +250,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   }
   // Rubricas do projeto
   if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($l_O=='T' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI')) {
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,'VISUAL');
     $RSQuery = SortArray($RSQuery,'ordena','asc');
     // Configura indicador de exibição da unidade de medida
     $w_unid_med = false;
@@ -341,16 +341,13 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       $cs++; $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição</td>';
       if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') { $cs++; $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>N.O.</td>'; }
       if ($w_unid_med) $l_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Quantitativo</td>';
-      $l_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"  align="center"><b>Orçamento'.((nvl(f($RS,'sb_moeda'),'')!='') ? ' ('.f($RS,'sb_moeda').')' : '').'</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>% Realização</td>';
+      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0" align="center"><b>Orçamento'.((nvl(f($RS,'sb_moeda'),'')!='') ? ' ('.f($RS,'sb_moeda').')' : '').'</td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr align="center" >';
       if ($w_unid_med) {
         $cs++; $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>U.M.</td>';
         $cs++; $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Quantidade</td>';
       }
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Previsto</td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
       $l_html .= chr(13).'          </tr>';      
       $w_cor=$conTrBgColor;
       $w_total_previsto  = 0;
@@ -368,100 +365,78 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'        <td align="center"'.$w_folha.'>'.((nvl(f($row,'quantidade'),'')=='' || nvl(f($row,'sq_unidade_medida'),'')=='') ? '&nbsp;' : formatNumber(f($row,'quantidade'),0)).'</td>';
         }
         $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
-        $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'total_real')).' </td>';
-        $w_perc = 0;
-        if (f($row,'total_previsto') > 0) $w_perc = (f($row,'total_real')/f($row,'total_previsto')*100);
-        $l_html .= chr(13).'        <td align="right"><b>'.formatNumber($w_perc).' %</td>';
         $l_html .= chr(13).'      </tr>';
-        if (f($row,'ultimo_nivel')=='S') {
-          $w_total_previsto += f($row,'total_previsto');
-          $w_total_real     += f($row,'total_real');
-        }
+        if (f($row,'ultimo_nivel')=='S') $w_total_previsto += f($row,'total_previsto');
       } 
       $l_html .= chr(13).'          <tr>';
-      $l_html .= chr(13).'            <td align="right" colspan="'.$cs.'" bgColor="#f0f0f0"><b>Totais&nbsp;</td>';
+      $l_html .= chr(13).'            <td align="right" colspan="'.$cs.'" bgColor="#f0f0f0"><b>Total&nbsp;</td>';
       $l_html .= chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
-      $l_html .= chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>';
-      $w_perc = 0;
-      if ($w_total_previsto > 0) $w_perc = ($w_total_real/$w_total_previsto*100);
-      $l_html .= chr(13).'            <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'        </table></td></tr>';
       if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI' || $w_unid_med) {
         $l_html .= chr(13).'      <tr><td>Legenda:'.((nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ? ' [N.O.] No Objection' : '').(($w_unid_med) ? ' [U.M.] Unidade de medida' : '').'<br>&nbsp;</td>';
       }
+      
+      $t_html = '';
+      $w_cont  = 0;
 
       // Cronograma desembolso
-      $l_html .= chr(13).'      <tr><td colspan="2"><b>Cronograma desembolso</b></td></tr>';
-      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Nome</td>';
-      if ($w_unid_med) $l_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Quantitativo</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Período</td>';
-      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><b>Orçamento'.((nvl(f($RS,'sb_moeda'),'')!='') ? ' ('.f($RS,'sb_moeda').')' : '').'</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>% Realização</td>';
-      $l_html .= chr(13).'          </tr>';      
-      $l_html .= chr(13).'          <tr align="center">';
+      $t_html .= chr(13).'      <tr><td colspan="2"><b>Cronograma desembolso</b></td></tr>';
+      $t_html .= chr(13).'      <tr><td align="center" colspan="2">';
+      $t_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+      $t_html .= chr(13).'          <tr align="center">';
+      $t_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
+      $t_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Nome</td>';
+      if ($w_unid_med) $t_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Quantitativo</td>';
+      $t_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Período</td>';
+      $t_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Orçamento'.((nvl(f($RS,'sb_moeda'),'')!='') ? ' ('.f($RS,'sb_moeda').')' : '').'</td>';
+      $t_html .= chr(13).'          </tr>';      
+      $t_html .= chr(13).'          <tr align="center">';
       if ($w_unid_med) {
-        $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>U.M.</td>';
-        $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Quantidade</td>';
+        $t_html .= chr(13).'            <td bgColor="#f0f0f0"><b>U.M.</td>';
+        $t_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Quantidade</td>';
       }
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Previsto</td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
-      $l_html .= chr(13).'          </tr>';      
+      $t_html .= chr(13).'          </tr>';      
       $w_cor=$conTrBgColor;
       foreach ($RSQuery as $row) {
         if (f($row,'ultimo_nivel')=='N') continue;
         $sql = new db_getCronograma; $RSQuery_Cronograma = $sql->getInstanceOf($dbms,f($row,'sq_projeto_rubrica'),null,null,null,null,null);
         $RSQuery_Cronograma = SortArray($RSQuery_Cronograma,'inicio', 'asc', 'fim', 'asc');
         if (count($RSQuery_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RSQuery_Cronograma)+1).'"'; else $w_rowspan = '';
-        $l_html .= chr(13).'      <tr valign="top">';
-        if($l_tipo!='WORD') $l_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
-        else       $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
-        $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'nome').' </td>';
+        $t_html .= chr(13).'      <tr valign="top">';
+        if($l_tipo!='WORD') $t_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
+        else       $t_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
+        $t_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'nome').' </td>';
         if ($w_unid_med) {
-          $l_html .= chr(13).'        <td align="center" title="'.f($row,'nm_unidade').'" '.$w_rowspan.'>'.nvl(f($row,'sg_unidade'),'&nbsp').'</td>';
-          $l_html .= chr(13).'        <td align="center" '.$w_rowspan.'>'.((nvl(f($row,'quantidade'),'')=='' || nvl(f($row,'sq_unidade_medida'),'')=='') ? '&nbsp;' : formatNumber(f($row,'quantidade'),0)).'</td>';
+          $t_html .= chr(13).'        <td align="center" title="'.f($row,'nm_unidade').'" '.$w_rowspan.'>'.nvl(f($row,'sg_unidade'),'&nbsp').'</td>';
+          $t_html .= chr(13).'        <td align="center" '.$w_rowspan.'>'.((nvl(f($row,'quantidade'),'')=='' || nvl(f($row,'sq_unidade_medida'),'')=='') ? '&nbsp;' : formatNumber(f($row,'quantidade'),0)).'</td>';
         }
+        if ($w_cont<2) $w_cont = 0;
         if (count($RSQuery_Cronograma)>0) {
           $w_rubrica_previsto = 0;
-          $w_rubrica_real     = 0;
           foreach ($RSQuery_Cronograma as $row1) {
+            $w_cont++;
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            $l_html .= chr(13).'        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row1,'inicio'),5).' a '.FormataDataEdicao(f($row1,'fim'),5).'</td>';
-            $l_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row1,'valor_previsto')).'</td>';
-            $l_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row1,'valor_real')).'</td>';
-            $w_perc = 0;
-            if (f($row1,'valor_previsto') > 0) $w_perc = (f($row1,'valor_real')/f($row1,'valor_previsto')*100);
-            $l_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber($w_perc).' %</td>';
-            $l_html .= chr(13).'      </tr>';
+            $t_html .= chr(13).'        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row1,'inicio'),5).' a '.FormataDataEdicao(f($row1,'fim'),5).'</td>';
+            $t_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row1,'valor_previsto')).'</td>';
+            $t_html .= chr(13).'      </tr>';
             $w_rubrica_previsto += f($row1,'valor_previsto');
-            $w_rubrica_real     += f($row1,'valor_real');
           } 
-          $l_html .= chr(13).'      <tr>';
-          $l_html .= chr(13).'          <td align="right"><b>Totais da rubrica&nbsp;</td>';
-          $l_html .= chr(13).'          <td align="right"><b>'.formatNumber($w_rubrica_previsto).' </b></td>';
-          $l_html .= chr(13).'          <td align="right"><b>'.formatNumber($w_rubrica_real).' </b></td>';
-          $w_perc = 0;
-          if ($w_rubrica_previsto > 0) $w_perc = ($w_rubrica_real/$w_rubrica_previsto*100);
-          $l_html .= chr(13).'        <td align="right"><b>'.formatNumber($w_perc).' %</td>';
-          $l_html .= chr(13).'      </tr>';
+          $t_html .= chr(13).'      <tr>';
+          $t_html .= chr(13).'          <td align="right"><b>Total da rubrica&nbsp;</td>';
+          $t_html .= chr(13).'          <td align="right"><b>'.formatNumber($w_rubrica_previsto).' </b></td>';
+          $t_html .= chr(13).'      </tr>';
         } else {
-          $l_html .= chr(13).'        <td colspan=4>*** Cronograma desembolso da rubrica não informado';
+          $t_html .= chr(13).'        <td colspan=4>*** Cronograma desembolso da rubrica não informado';
         }
       } 
-      $l_html .= chr(13).'      <tr>';
-      $l_html .= chr(13).'          <td align="right" colspan="'.(($w_unid_med) ? '5' : '3').'" bgColor="#f0f0f0"><b>Totais&nbsp;</td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>';
-      $w_perc = 0;
-      if ($w_total_previsto > 0) $w_perc = ($w_total_real/$w_total_previsto*100);
-      $l_html .= chr(13).'        <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>';
-      $l_html .= chr(13).'      </tr>';
-      $l_html .= chr(13).'         </table></td></tr>';
+      $t_html .= chr(13).'      <tr>';
+      $t_html .= chr(13).'          <td align="right" colspan="'.(($w_unid_med) ? '5' : '3').'" bgColor="#f0f0f0"><b>Total&nbsp;</td>';
+      $t_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
+      $t_html .= chr(13).'      </tr>';
+      $t_html .= chr(13).'         </table></td></tr>';
     }
+    if ($w_cont>1) $l_html .= $t_html;
   } 
 
   // Fontes de financiamento

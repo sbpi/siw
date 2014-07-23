@@ -26,6 +26,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_idcc            = f($RS,'idcc');
   $w_igcc            = f($RS,'igcc');
   $w_exibe_idec      = f($RS,'exibe_idec');
+  $w_sb_moeda        = nvl(f($RS,'sb_moeda'),'');
   
   // Verifica as opções de submenu
   $sql = new db_getLinkSubMenu; $RS_Submenu = $sql->getInstanceOf($dbms, $w_cliente, $w_SG);
@@ -179,7 +180,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=$crlf.'              <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     } 
     $l_html.=$crlf.'          <tr><td valign="top"><b>Valor:</b></td>';
-    $l_html.=$crlf.'              <td>'.formatNumber(f($RS,'valor_contrato')).' </td></tr>';
+    $l_html.=$crlf.'              <td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(f($RS,'valor_contrato')).' </td></tr>';
     if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ') {
       $l_html.=$crlf.'          <tr><td><b>Vigência:</b></td>';
       $l_html.=$crlf.'              <td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).' (contrato e aditivos)</td></tr>';
@@ -213,7 +214,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Dados Adicionais
-      if(($w_segmento=='Público' || $w_segmento=='Agência') && (substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) {
+      if(($w_segmento=='Público' || $w_segmento=='Agência' || Nvl(f($RS,'nm_lcmodalidade'),'')!='') && (substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) {
         $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>DADOS ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
         if ($w_segmento=='Público' && substr($w_sigla,0,3)!='GCZ') {
           $l_html.=$crlf.'      <tr><td><b>Fonte de recurso:</b></td>';
@@ -252,7 +253,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         if (f($RS,'valor_caucao')>0 || $w_segmento=='Público' || $w_segmento=='Agência'){ 
           $l_html.=$crlf.'          <tr valign="top">';
           $l_html.=$crlf.'          <td><b>Valor da caução:</b></td>';
-          $l_html.=$crlf.'          <td>'.formatNumber(f($RS,'valor_caucao')).'</td></tr>';
+          $l_html.=$crlf.'          <td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(f($RS,'valor_caucao')).'</td></tr>';
         }
       }
     } 
@@ -266,7 +267,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=$crlf.'        <td>'.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
       if ($w_tipo_visao==0 && substr($w_sigla,0,3)!='GCA') {
         $l_html.=$crlf.'    <tr><td><b>Valor realizado:</b></td>';
-        $l_html.=$crlf.'      <td>'.formatNumber(f($RS,'saldo_contrato')).'</td></tr>';
+        $l_html.=$crlf.'      <td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(f($RS,'saldo_contrato')).'</td></tr>';
       } 
       if ($w_tipo_visao==0) {
         $l_html.=$crlf.'      <tr><td valign="top"><b>Nota de conclusão:</b></td>';
@@ -296,8 +297,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=$crlf.'          <td rowspan=2><b>Número</td>';
         $l_html.=$crlf.'          <td rowspan=2><b>Outra parte</td>';
         $l_html.=$crlf.'          <td rowspan=2><b>Data</td>';
-        $l_html.=$crlf.'          <td colspan=5><b>Valores</td>';
-        $l_html.=$crlf.'          <td colspan=2><b>Saldos</td>';
+        $l_html.=$crlf.'          <td colspan=5><b>Valores'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</td>';
+        $l_html.=$crlf.'          <td colspan=2><b>Saldos'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</td>';
         $l_html.=$crlf.'        </tr>';
         $l_html.=$crlf.'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
         $l_html.=$crlf.'          <td><b>Emissão</td>';
@@ -753,8 +754,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=$crlf.'          <tr align="center">';
       $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Aditivo</b></td>';
       $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
-      $l_html.=$crlf.'            <td colspan=3 bgColor="'.$conTrBgColor.'"><b>Valores</b></td>';
-      $l_html.=$crlf.'            <td colspan=2 bgColor="'.$conTrBgColor.'"><b>Saldos</b></td>';
+      $l_html.=$crlf.'            <td colspan=3 bgColor="'.$conTrBgColor.'"><b>Valores'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
+      $l_html.=$crlf.'            <td colspan=2 bgColor="'.$conTrBgColor.'"><b>Saldos'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       $l_html.=$crlf.'            <td colspan=2 bgColor="'.$conTrBgColor.'"><b>%</b></td>';
       $l_html.=$crlf.'          </tr>';
       $l_html.=$crlf.'          <tr align="center">';
@@ -782,8 +783,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         if(nvl(f($row,'sq_acordo_aditivo'),'')=='') $l_html.=$crlf.'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
         else                                        $l_html.=$crlf.'        <td align="center">'.FormataDataEdicao(f($row,'ini_aditivo'),5).' a '.FormataDataEdicao(f($row,'fim_aditivo'),5).'</td>';
         $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_previsto')).'</td>';
-        $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_liquidado')).'</td>';
-        $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_pago')).'</td>';
+        $l_html.=$crlf.'        <td align="right">'.formatNumber(nvl(f($row,'valor_liquidado'),0)).'</td>';
+        $l_html.=$crlf.'        <td align="right">'.formatNumber(nvl(f($row,'valor_pago'),0)).'</td>';
         $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_previsto')-f($row,'valor_liquidado')).'</td>';
         $l_html.=$crlf.'        <td align="right">'.formatNumber(f($row,'valor_liquidado')-f($row,'valor_pago')).'</td>';
         if (f($row,'valor_previsto')!=0) {
@@ -836,9 +837,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
       $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Vencimento</b></td>';
       if($w_aditivo>0) {
-        $l_html.=$crlf.'            <td colspan=4 bgColor="'.$conTrBgColor.'"><b>Valor</b></td>';
+        $l_html.=$crlf.'            <td colspan=4 bgColor="'.$conTrBgColor.'"><b>Valor'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       } else {
-        $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Valor</b></td>';
+        $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Valor'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       }
       $l_colspan++; $l_html.=$crlf.'            <td rowspan=2 bgColor="'.$conTrBgColor.'"><b>Observações</b></td>';
       $l_html.=$crlf.'            <td colspan=5 bgColor="'.$conTrBgColor.'"><b>Financeiro</b></td>';
@@ -853,7 +854,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Lançamento</b></td>';
       $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Período</b></td>';
       $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Vencimento</b></td>';
-      $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Valor</b></td>';
+      $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Valor'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'"><b>Quitação</b></td>';
       $l_html.=$crlf.'          </tr>';
       $w_cor=$w_TrBgColor;

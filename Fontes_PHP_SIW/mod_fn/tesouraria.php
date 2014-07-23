@@ -648,7 +648,10 @@ function Inicial() {
               }
             }
           }
-          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=I&w_copia='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Gera novo lançamento a partir dos dados deste.">CP</A>&nbsp');
+          if (f($row,'sigla')!='FNDCONT') {
+            // Pagamento de contrato não pode ser copiado.
+            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=I&w_copia='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Gera novo lançamento a partir dos dados deste.">CP</A>&nbsp');
+          }
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');

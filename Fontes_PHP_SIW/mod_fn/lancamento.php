@@ -876,9 +876,9 @@ function Inicial() {
 // Rotina dos dados gerais
 // -------------------------------------------------------------------------
 function Geral() {
-    
   extract($GLOBALS);
   global $w_Disabled;
+
   $w_chave              = $_REQUEST['w_chave'];
   $w_sq_tipo_lancamento = $_REQUEST['w_sq_tipo_lancamento'];
   $w_readonly           = '';
@@ -948,6 +948,7 @@ function Geral() {
     $w_projeto              = $_REQUEST['w_projeto'];
     $w_chave_doc            = $_REQUEST['w_chave_doc'];
     $w_moeda                = $_REQUEST['w_moeda'];
+    $w_nm_moeda             = $_REQUEST['w_nm_moeda'];
     $w_solic_apoio          = $_REQUEST['w_solic_apoio'];
     $w_data_autorizacao     = $_REQUEST['w_data_autorizacao'];
     $w_texto_autorizacao    = $_REQUEST['w_texto_autorizacao'];
@@ -985,7 +986,6 @@ function Geral() {
     if ($w_copia>'') { $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG); }
     else             { $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG); }
     if (count($RS)>0) {
-
       $RS_Lancamento          = $RS;
       $w_sq_unidade           = f($RS,'sq_unidade');
       $w_observacao           = f($RS,'observacao');
@@ -1041,6 +1041,7 @@ function Geral() {
       $w_solic_vinculo        = f($RS,'sq_solic_vinculo');
       $w_sq_projeto_rubrica   = f($RS,'sq_projeto_rubrica');
       $w_moeda                = f($RS,'sq_moeda');
+      $w_nm_moeda             = f($RS,'nm_moeda');
       $w_solic_apoio          = f($RS,'sq_solic_apoio');
       $w_data_autorizacao     = FormataDataEdicao(f($RS,'data_autorizacao'));
       $w_texto_autorizacao    = f($RS,'texto_autorizacao');
@@ -1129,18 +1130,20 @@ function Geral() {
   if (nvl($w_troca,'')=='' && (nvl($w_copia,'')!='' || nvl($w_chave,'')!='')) {
     // Recupera dados do comprovante
     $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
-    $RS = SortArray($RS,'sq_tipo_documento','asc');
-    foreach ($RS as $row) {$RS=$row; break;}
-    $w_chave_doc           =  f($RS,'sq_lancamento_doc');
-    $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
-    $w_numero               = f($RS,'numero');
-    $w_data                 = FormataDataEdicao(f($RS,'data'));
-    $w_serie                = f($RS,'serie');
-    $w_valor                = formatNumber(f($RS,'valor'));
-    $w_valor_doc            = formatNumber(f($RS,'valor'));
-    $w_patrimonio           = f($RS,'patrimonio');
-    $w_tributo              = f($RS,'calcula_tributo');
-    $w_retencao             = f($RS,'calcula_retencao');
+    if (count($RS)) {
+      $RS = SortArray($RS,'sq_tipo_documento','asc');
+      foreach ($RS as $row) {$RS=$row; break;}
+      $w_chave_doc           =  f($RS,'sq_lancamento_doc');
+      $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
+      $w_numero               = f($RS,'numero');
+      $w_data                 = FormataDataEdicao(f($RS,'data'));
+      $w_serie                = f($RS,'serie');
+      $w_valor                = formatNumber(f($RS,'valor'));
+      $w_valor_doc            = formatNumber(f($RS,'valor'));
+      $w_patrimonio           = f($RS,'patrimonio');
+      $w_tributo              = f($RS,'calcula_tributo');
+      $w_retencao             = f($RS,'calcula_retencao');
+    }
   }
   
   // Recupera a sigla do tipo do documento para tratar a Nota Fiscal
@@ -1366,6 +1369,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_codigo_interno" value="'.$w_codigo_interno.'">');
     ShowHTML('<INPUT type="hidden" name="w_qtd_nota" value="'.$w_qtd_nota.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_doc" value="'.$w_chave_doc.'">');
+    ShowHTML('<INPUT type="hidden" name="w_nm_moeda" value="'.$w_nm_moeda.'">');
     if (substr($SG,3)=='CONT') {
       ShowHTML('<INPUT type="hidden" name="w_descricao" value="'.$w_descricao.'">');
       ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
@@ -1399,9 +1403,14 @@ function Geral() {
       }
       if (nvl(f($RS_Relac,'sigla'),'')!='') { $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla')); }
     } elseif(nvl($w_projeto,'---') == 'PR') {
-      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-      ShowHTML('      <tr>');
-      SelecaoSolic('Projeto para débito:',null,null,$w_cliente,$w_solic_vinculo,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
+      if (substr($SG,3)=='CONT') {
+        ShowHTML('          <tr><td colspan="2">Projeto para débito:<br><b>'.piece(f($RS_Solic,'dados_pai'),null,'|@|',2).' - '.piece(f($RS_Solic,'dados_pai'),null,'|@|',3).'</b>');
+        ShowHTML('          <INPUT type="hidden" name="w_solic_vinculo" value="'.$w_solic_vinculo.'">');
+      } else {
+        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+        ShowHTML('      <tr>');
+        SelecaoSolic('Projeto para débito:',null,null,$w_cliente,$w_solic_vinculo,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
+      }
     }
     
     if(count($RS_Rub)>0) {
@@ -1580,7 +1589,15 @@ function Geral() {
       ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
       ShowHTML('          <td><b><u>E</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
       //if (Nvl($w_tipo,'-')=='NF') ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
-      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+      
+      if (substr($SG,3)=='CONT') {
+        // Se pagamento de contrato, não pode alterar moeda do pagamento.
+        ShowHTML('          <td><b>Moeda:<br>'.$w_nm_moeda.'</b></td>');
+        ShowHTML('          <INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');
+      } else {
+        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+      }
+      
       if ($w_qtd_nota==0) {
         ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
       } else {
@@ -2197,14 +2214,16 @@ function Documentos() {
   $w_sq_lancamento_doc  = $_REQUEST['w_sq_lancamento_doc'];
   // Recupera os dados do lançamento
   $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-  $w_moeda = f($RS1,'sq_moeda'); // Esse dado é recuperado de RS1 (DB_GETSOLICDATA)
+   // Estes dados são recuperados de RS1 (DB_GETSOLICDATA)
+  $w_moeda    = f($RS1,'sq_moeda');
+  $w_nm_moeda = f($RS1,'nm_moeda');
+  
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
     $w_numero               = $_REQUEST['w_numero'];
     $w_data                 = $_REQUEST['w_data'];
     $w_serie                = $_REQUEST['w_serie'];
-    $w_moeda                = $_REQUEST['w_moeda'];
     $w_valor                = $_REQUEST['w_valor'];
     $w_patrimonio           = $_REQUEST['w_patrimonio'];
     $w_tipo                 = $_REQUEST['w_tipo'];
@@ -2380,7 +2399,7 @@ function Documentos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+    SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,null,'w_sq_tipo_documento',null,null);
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
     /*
@@ -2388,7 +2407,14 @@ function Documentos() {
       ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     } 
     */
-    selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+    if (substr(f($RS1,'sigla'),3)=='CONT') {
+      // Se pagamento de contrato, não pode alterar moeda do pagamento.
+      ShowHTML('          <td><b>Moeda:<br>'.$w_nm_moeda.'</b></td>');
+      ShowHTML('          <INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');
+    } else {
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+    }
+
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     if (is_array($w_valores)){
       ShowHTML('<INPUT type="hidden" name="w_sq_valores[]" value="">');
@@ -3436,7 +3462,7 @@ function BuscaParcela() {
     ShowHTML('            <td><b>Valor</b></td>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -3473,7 +3499,7 @@ function BuscaParcela() {
           }
           ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>');
           SelecaoTipoLancamento('','T', 'Selecione na lista o tipo de lançamento adequado.', f($row,'sq_tipo_lancamento'),null, $w_cliente, 'w_sq_tipo_lancamento[]', $SG, 'disabled');
-          ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($row,'valor'),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
+          ShowHTML('        <td>'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').'<input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($row,'valor'),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
         }
         ShowHTML('      </tr>');
       } 
@@ -5255,7 +5281,7 @@ function Grava() {
                 $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],null,
                 $w_tipo,f($RS1,'protocolo_completo'),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
                 $_REQUEST['w_texto_pagamento'],f($RS1,'sq_solic_pai'),$_REQUEST['w_sq_projeto_rubrica'],
-                $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
+                $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],f($RS1,'sq_moeda'),
                 &$w_chave_nova,&$w_codigo);
 
             //Grava os dados da pessoa
@@ -5263,12 +5289,18 @@ function Grava() {
                 null,null,null,null,null,null,null,null,null,null,f($RS,'logradouro'),f($RS,'complemento'),f($RS,'bairro'),f($RS,'sq_cidade'),
                 f($RS,'cep'),f($RS,'ddd'),f($RS,'nr_telefone'),f($RS,'nr_fax'),f($RS,'nr_celular'),f($RS,'email'),$w_agencia,$w_operacao,$w_conta,
                 null,null,null,null,null,null,null,null,null,null,null);
+            
+            // Grava dados do documento de suporte
             $RS_Nota = $sql3->getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_acordo_parcela'][$i],null,null,null,null,null,'PARCELAS');
-            foreach($RS_Nota as $row1) {
-              $SQL3->getInstanceOf($dbms,$O,$w_chave_nova,null,f($row1,'sq_tipo_documento'),
-                 f($row1,'numero'),FormataDataEdicao(f($row1,'data')),null,$_REQUEST['w_moeda'][$i],formatNumber(f($row1,'valor_total'),2),
-                 'N','N','N',f($row1,'sq_acordo_nota'),formatNumber(f($row1,'inicial_parc'),2),formatNumber(f($row1,'excedente_parc'),2),formatNumber(f($row,'reajuste_parc'),2),null);
+            if (count($RS_Nota)) {
+              // Se há nota de empenho
+              foreach($RS_Nota as $row1) {
+                $SQL3->getInstanceOf($dbms,$O,$w_chave_nova,null,f($row1,'sq_tipo_documento'),
+                   f($row1,'numero'),FormataDataEdicao(f($row1,'data')),null,$_REQUEST['w_moeda'][$i],formatNumber(f($row1,'valor_total'),2),
+                   'N','N','N',f($row1,'sq_acordo_nota'),formatNumber(f($row1,'inicial_parc'),2),formatNumber(f($row1,'excedente_parc'),2),formatNumber(f($row,'reajuste_parc'),2),null);
+              }
             }
+            
             if ($P1==0) {
               // Recupera os trâmites de cadastramento inicial e de execução 
               $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null, null,'S');
@@ -5316,8 +5348,8 @@ function Grava() {
             $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave_nova,null,null,null,null,null,null,'DOCS');
 
             //Grava os dados do comprovante de despesa
-            $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,((count($RS_Doc)) ? $O : 'I'),$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
-              $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
+            $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,((count($RS_Doc)) ? $O : 'I'),$w_chave_nova,$_REQUEST['w_chave_doc'],
+              $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
               'N','N','N',null,null,null,null,&$w_chave_doc);
 
             // Grava acréscimos e supressões

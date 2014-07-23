@@ -693,6 +693,8 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,            b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b5.sq_moeda,          b5.codigo cd_moeda,            b5.nome nm_moeda,
+                b5.sigla sg_moeda,    b5.simbolo sb_moeda,           b5.ativo at_moeda,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio as inicio_real, d.fim as fim_real,          d.duracao,
                 d.valor_inicial,      coalesce(d8.valor,d.valor_atual) as valor_atual, b.codigo_interno,
@@ -747,7 +749,6 @@ begin
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
-                      left           join pa_documento         b4  on (b.protocolo_siw           = b4.sq_siw_solicitacao)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner          join (select x.sq_siw_solicitacao, 
@@ -764,6 +765,8 @@ begin
                         inner        join co_forma_pagamento   d7 on (a.sq_pessoa                = d7.cliente and
                                                                       d.sq_forma_pagamento       = d7.sq_forma_pagamento
                                                                      )
+                      left           join pa_documento         b4  on (b.protocolo_siw           = b4.sq_siw_solicitacao)
+                      left           join co_moeda             b5 on (b.sq_moeda                 = b5.sq_moeda)
                      left            join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
                                                                       a3.tipo_respons            = 'T'           and
                                                                       a3.fim                     is null

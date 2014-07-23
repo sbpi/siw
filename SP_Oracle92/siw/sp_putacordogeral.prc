@@ -32,6 +32,7 @@ create or replace procedure SP_PutAcordoGeral
     p_numero_processo     in  varchar2  default null,
     p_assinatura          in  date      default null,
     p_publicacao          in  date      default null,
+    p_moeda               in number     default null,
     p_chave_nova          out number,
     p_codigo_interno      in out varchar2
    ) is
@@ -125,13 +126,15 @@ begin
          cadastrador,        descricao,     justificativa,       inicio,
          fim,                inclusao,      ultima_alteracao,    valor,
          data_hora,          sq_unidade,    sq_cc,               sq_cidade_origem,
-         sq_solic_pai,       titulo,        codigo_interno,      protocolo_siw)
+         sq_solic_pai,       titulo,        codigo_interno,      protocolo_siw,
+         sq_moeda)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_descricao,   p_justificativa,     p_inicio,
          p_fim,              sysdate,       sysdate,             p_valor,
          p_data_hora,        p_unid_resp,   p_sqcc,              p_cidade,
-         p_projeto,          p_titulo,      p_codigo,            w_protocolo_siw
+         p_projeto,          p_titulo,      p_codigo,            w_protocolo_siw,
+         p_moeda
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -346,6 +349,7 @@ begin
          inicio           = p_inicio,
          fim              = p_fim,
          ultima_alteracao = sysdate,
+         sq_moeda         = p_moeda,
          valor            = p_valor,
          sq_unidade       = p_unid_resp,
          sq_cc            = p_sqcc,

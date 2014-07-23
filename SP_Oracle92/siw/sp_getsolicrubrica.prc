@@ -11,7 +11,7 @@ create or replace procedure SP_GetSolicRubrica
     p_result               out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao in ('FOLHA','SUBORDINACAO','SELECAO') Then
+   If p_restricao is null or p_restricao in ('VISUAL','FOLHA','SUBORDINACAO','SELECAO') Then
       open p_result for 
          select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.sq_unidade_medida, a.ultimo_nivel,
                 a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
@@ -25,7 +25,7 @@ begin
                             from pj_rubrica_cronograma w
                                  inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica and x.ultimo_nivel = 'S')
                            where x.sq_siw_solicitacao = a.sq_siw_solicitacao
-                             and p_restricao          <> 'SELECAO'
+                             and (p_restricao is null or (p_restricao is not null and p_restricao          <> 'SELECAO'))
                              and (p_chave_aux is null or (p_chave_aux is not null and w.sq_projeto_rubrica = p_chave_aux))
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
                                                             from pj_rubrica 
@@ -33,11 +33,25 @@ begin
                                                           start with sq_projeto_rubrica = a.sq_projeto_rubrica
                                                          )
                          ),0) total_previsto,
+/*
+                coalesce((select sum(y.valor)
+                            from vw_projeto_financeiro y
+                           where y.sq_projeto = a.sq_siw_solicitacao
+                             and y.sg_tramite = 'AT'
+                             and (p_restricao is null or (p_restricao is not null and p_restricao          <> 'SELECAO'))
+                             and (p_chave_aux is null or (p_chave_aux is not null and y.sq_projeto_rubrica = p_chave_aux))
+                             and y.sq_projeto_rubrica in (select sq_projeto_rubrica 
+                                                            from pj_rubrica 
+                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
+                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
+                                                         )
+                         ),0) total_real,
+*/
                 coalesce((select sum(w.valor_real)
                             from pj_rubrica_cronograma w
                                  inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica and x.ultimo_nivel = 'S')
                            where x.sq_siw_solicitacao = a.sq_siw_solicitacao
-                             and p_restricao          <> 'SELECAO'
+                             and (p_restricao is null or (p_restricao is not null and p_restricao          <> 'SELECAO' and p_restricao <> 'VISUAL'))
                              and (p_chave_aux is null or (p_chave_aux is not null and w.sq_projeto_rubrica = p_chave_aux))
                              and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
                                                             from pj_rubrica 

@@ -123,7 +123,7 @@ begin
                  Nvl(p_email, 'A ser informado')
             from sg_autenticacao a
            where a.cliente = p_cliente
-             and a.username = '000.000.001-91'
+             and (a.username = '000.000.001-91' or a.username = 'suporte')
          );
 
          -- Insere registros de configuração de e-mail
@@ -342,13 +342,10 @@ begin
          -- Insere registro em Representante
          select count(*) into w_existe 
            from ac_acordo_representante
-          where sq_pessoa = w_chave_pessoa
+          where sq_pessoa          = w_chave_pessoa
             and sq_siw_solicitacao = p_chave;
          If w_existe = 0 Then
-            insert into ac_acordo_representante
-               (sq_pessoa      , sq_siw_solicitacao)
-            values
-               ( w_chave_pessoa, p_chave );
+            insert into ac_acordo_representante (sq_pessoa, sq_siw_solicitacao) values (w_chave_pessoa, p_chave );
          End If;
          -- Insere registro em Outra representante
          insert into ac_acordo_outra_rep

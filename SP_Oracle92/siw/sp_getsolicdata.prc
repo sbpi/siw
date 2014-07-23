@@ -309,6 +309,8 @@ begin
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 case when b4.sq_siw_solicitacao is null then null else to_char(b4.numero_documento)||'/'||substr(to_char(b4.ano),3) end as protocolo,
                 case when b4.sq_siw_solicitacao is null then null else to_char(b4.prefixo)||'.'||substr(1000000+to_char(b4.numero_documento),2,6)||'/'||to_char(b4.ano)||'-'||substr(100+to_char(b4.digito),2,2) end as protocolo_completo,
+                b5.sq_moeda,          b5.codigo cd_moeda,            b5.nome nm_moeda,
+                b5.sigla sg_moeda,    b5.simbolo sb_moeda,           b5.ativo at_moeda,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio inicio_real, d.fim fim_real,                d.duracao,
                 d.valor_inicial,      d.valor_atual,                 b.codigo_interno,
@@ -381,6 +383,7 @@ begin
                    left           join pa_documento         b4  on (b.protocolo_siw           = b4.sq_siw_solicitacao)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                    left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
+                   left           join co_moeda             b5 on (b.sq_moeda                 = b5.sq_moeda)
                    inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                      inner        join ac_tipo_acordo       d1 on (d.sq_tipo_acordo           = d1.sq_tipo_acordo)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)

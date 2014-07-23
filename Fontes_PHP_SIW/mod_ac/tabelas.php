@@ -225,8 +225,8 @@ function TipoAcordo() {
     ValidateClose();
     ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
@@ -563,8 +563,8 @@ function FormaPagamento(){
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'')                BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   elseif ($O=='I' || $O=='A')     BodyOpen('onLoad="document.Form.w_nome.focus();"');
   elseif ($O=='L')                BodyOpen(null);
@@ -752,8 +752,8 @@ function Parametros() {
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpenClean('onLoad="document.Form.'.$w_troca.'.focus();"');
   } else {
@@ -891,8 +891,8 @@ function Modalidades() {
      ValidateClose();
      ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
@@ -1079,8 +1079,8 @@ function FonteRecurso() {
      ValidateClose();
      ScriptClose();
   }
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I') {
@@ -1264,8 +1264,8 @@ function EspecDespesa() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
@@ -1571,8 +1571,8 @@ function PrestacaoContas() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='C' || $O=='I' || $O=='A') {
@@ -1799,8 +1799,8 @@ function PrestacaoContas() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'TIPOACORDO':

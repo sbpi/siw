@@ -17,6 +17,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $w_valor_inicial  = f($RS,'valor');
   $w_fim            = f($RS,'fim_real');
   $w_sg_tramite     = f($RS,'sg_tramite');
+  $w_sb_moeda       = nvl(f($RS,'sb_moeda'),'');
+  
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)==$l_usuario || 
     Nvl(f($RS,'executor'),0)==$l_usuario || 
@@ -92,7 +94,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     // Se for visão completa
     if ($w_tipo_visao==0) {
       $l_html.=chr(13).'          <tr><td valign="top"><font size="1"><b>Valor:</b></td>';
-      $l_html.=chr(13).'              <td>'.number_format(f($RS,'valor'),2,',','.').' </b></td>';
+      $l_html.=chr(13).'              <td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').number_format(f($RS,'valor'),2,',','.').' </b></td>';
     } 
     if($w_segmento=='Público') {
       $l_html.=chr(13).'          <tr><td><font size="1"><b>Número do processo:</b></td>';
@@ -128,7 +130,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'          <td><font size="1">Início da vigência:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
       $l_html.=chr(13).'          <td><font size="1">Término da vigência:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
       if ($w_tipo_visao==0) {
-        $l_html.=chr(13).'          <td><font size="1">Valor realizado:<br><b>'.number_format(f($RS,'valor_atual'),2,',','.').' </b></td>';
+        $l_html.=chr(13).'          <td><font size="1">Valor realizado:<br><b>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').number_format(f($RS,'valor_atual'),2,',','.').' </b></td>';
       } 
       $l_html.=chr(13).'          </table>';
       if ($w_tipo_visao==0) {
@@ -300,13 +302,13 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'          <tr align="center">';
     $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Ordem</b></td>';
     $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Vencimento</b></td>';
-    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Valor'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
     $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Observações</b></td>';
     $l_html.=chr(13).'            <td colspan=4 bgColor="#f0f0f0"><b>Financeiro</b></td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr><td bgColor="#f0f0f0" align="center"><b>Lançamento</b></td>';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Vencimento</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Valor</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Valor'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Quitação</b></td>';
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;

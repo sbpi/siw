@@ -144,8 +144,8 @@ begin
       open p_result for
       select distinct e.codigo as cd_rubrica, e.nome as nm_rubrica, e.descricao, e.ativo as at_rubrica,
              f.total_previsto, f.total_real,
-             case coalesce(f.total_previsto,0) when 0 then 0 else (f.total_real/f.total_previsto*100) end as perc_exec,
-             (f.total_previsto-f.total_real) as saldo
+             case coalesce(f.total_previsto,0) when 0 then 0 else (case when f.total_real > 0 then f.total_real else g.total_real end/f.total_previsto*100) end as perc_exec,
+             (f.total_previsto-case when f.total_real > 0 then f.total_real else g.total_real end) as saldo
         from pd_vinculo_financeiro             a
              inner     join siw_solicitacao    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner   join siw_menu           c on (b.sq_menu            = c.sq_menu)
@@ -154,9 +154,14 @@ begin
                 left   join (select sum(x.valor_previsto) as total_previsto, 
                                     sum(x.valor_real) as total_real, 
                                     x.sq_projeto_rubrica
-                               from pj_rubrica_cronograma x
+                               from pj_rubrica_cronograma          x
                              group by x.sq_projeto_rubrica
                             )                  f on (e.sq_projeto_rubrica = f.sq_projeto_rubrica)
+                left   join (select sum(x.valor) as total_real, x.sq_projeto_rubrica
+                               from vw_projeto_financeiro x
+                              where x.sg_tramite = 'AT' 
+                             group by x.sq_projeto_rubrica
+                            )                  g on (e.sq_projeto_rubrica = g.sq_projeto_rubrica)
        where a.cliente = p_cliente
          and (p_chave      is null or (p_chave      is not null and a.sq_pdvinculo_financeiro = p_chave))
          and (p_solic      is null or (p_solic      is not null and a.sq_siw_solicitacao      = p_solic))

@@ -80,6 +80,7 @@ include_once($w_dir_volta.'funcoes/selecaoRegiao.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
+include_once($w_dir_volta.'funcoes/selecaoMoeda.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once($w_dir_volta.'funcoes/selecaoBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAgencia.php');
@@ -673,7 +674,7 @@ function Inicial() {
           ShowHTML('        <td align="center">&nbsp;');
         } 
         if (substr($SG,0,3)!='GCA') {
-          ShowHTML('        <td align="right">'.number_format(f($row,'valor_contrato'),2,',','.').'&nbsp;</td>');
+          ShowHTML('        <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').number_format(f($row,'valor_contrato'),2,',','.').'&nbsp;</td>');
           $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'valor_contrato');
           if (strpos(upper($R),'GR_')!==false) {
             ShowHTML('        <td align="right">'.formatNumber(Nvl(f($row,'valor_contrato')-f($row,'saldo_contrato'),0)).'</td>');
@@ -1098,6 +1099,7 @@ function Geral() {
     $w_inclusao             = $_REQUEST['w_inclusao'];
     $w_ultima_alteracao     = $_REQUEST['w_ultima_alteracao'];
     $w_conclusao            = $_REQUEST['w_conclusao'];
+    $w_moeda                = $_REQUEST['w_moeda'];
     $w_valor                = $_REQUEST['w_valor'];
     $w_opiniao              = $_REQUEST['w_opiniao'];
     $w_data_hora            = $_REQUEST['w_data_hora'];
@@ -1175,6 +1177,7 @@ function Geral() {
         $w_ultima_alteracao     = f($RS,'ultima_alteracao');
         $w_conclusao            = f($RS,'conclusao');
         $w_valor                = number_format(f($RS,'valor'),2,',','.');
+        $w_moeda                = f($RS,'sq_moeda');
         $w_opiniao              = f($RS,'opiniao');
         $w_data_hora            = f($RS,'data_hora');
         $w_sqcc                 = f($RS,'sq_cc');
@@ -1248,6 +1251,7 @@ function Geral() {
     if($w_aditivo==0) {
       Validate('w_inicio','Início vigência','DATA',1,10,10,'','0123456789/');
       Validate('w_fim','Término vigência','DATA',1,10,10,'','0123456789/');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
       CompData('w_inicio','Início vigência','<=','w_fim','Término vigência');
       if (substr($SG,0,3)!='GCA' && nvl($w_herda,'')=='') {
         Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
@@ -1477,6 +1481,7 @@ function Geral() {
       ShowHTML('        <tr valign="top">');
       ShowHTML('              <td><b>Iní<u>c</u>io vigência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
       ShowHTML('              <td><b><u>F</u>im vigência:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
       if (substr($SG,0,3)!='GCA' && nvl($w_herda,'')=='') {
         ShowHTML('              <td><b>Valo<u>r</u>:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total real ou estimado."></td>');
       } else {
@@ -1486,6 +1491,7 @@ function Geral() {
       ShowHTML('        <tr valign="top">');
       ShowHTML('              <td><b>Início vigência:</b><br>'.$w_inicio.'</td>');
       ShowHTML('              <td><b>Fim vigência:</b><br>'.$w_fim.'</td>');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
       ShowHTML('              <td><b>Valor:</b><br>'.$w_valor.'</td>');
       ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.$w_inicio.'">');
       ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
@@ -5506,7 +5512,7 @@ function Grava() {
           $_REQUEST['w_sq_tipo_acordo'], $_REQUEST['w_objeto'], $_REQUEST['w_sq_tipo_pessoa'], 
           $_REQUEST['w_sq_forma_pagamento'], $_REQUEST['w_forma_atual'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_etapa'],
           $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], null,
-          nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),null,null,
+          nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),null,null,$_REQUEST['w_moeda'],
           &$w_chave_nova, $w_copia, $_REQUEST['w_herda'],&$w_codigo);
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
@@ -6139,7 +6145,7 @@ function Grava() {
             f($RS,'sq_tipo_acordo'),f($RS,'objeto'),f($RS,'sq_tipo_pessoa'),
             f($RS,'sq_forma_pagamento'), null, null, f($RS,'sq_projeto_etapa'),
             f($RS,'codigo_interno'), f($RS,'titulo'), f($RS,'empenho'), f($RS,'processo'), FormataDataEdicao(f($RS,'assinatura')),
-            FormataDataEdicao(f($RS,'publicacao')),
+            FormataDataEdicao(f($RS,'publicacao')), f($RS,'sq_moeda'),
             &$w_chave_nova, $_REQUEST['w_chave'], null, &$w_codigo);
         } 
         // Envia e-mail comunicando a conclusão

@@ -12,7 +12,7 @@ class db_getSolicCotacao {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_moeda, $p_inicio, $p_fim, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicCotacao';
      $params=array('p_cliente'    =>array($p_cliente,           B_INTEGER,     32),
-                   'p_chave'      =>array(tvl($p_chave),        B_INTEGER,     32),
+                   'p_chave'      =>array($p_chave,             B_INTEGER,     32),
                    'p_moeda'      =>array(tvl($p_moeda),        B_INTEGER,     32),
                    'p_inicio'     =>array(tvl($p_inicio),       B_DATE,        32),
                    'p_fim'        =>array(tvl($p_fim),          B_DATE,        32),

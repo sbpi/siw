@@ -2053,6 +2053,7 @@ function Encaminhamento() {
           Validate('w_per_ini','Data do comprovante de despesa','DATA','1','10','10','','0123456789/');
         }
         Validate('w_valor','Valor do reembolso','VALOR','1',4,18,'','0123456789.,-');
+        CompValor('w_valor','Valor do reembolso','>','0,00','zero');
       }
       if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
         Validate('w_despacho','Despacho','1','1','1','2000','1','1');
@@ -2335,7 +2336,6 @@ function Concluir() {
     if ($w_moeda_solic!=$w_moeda_pai && nvl($w_moeda_pai,'')!='')     $w_moedas[f($RS_Pai,'sq_moeda')]   = f($RS_Pai,'sb_moeda');
     if ($w_moeda_solic!=$w_moeda_conta && nvl($w_moeda_conta,'')!='') $w_moedas[f($RS_Conta,'sq_moeda')] = f($RS_Conta,'sb_moeda');
     if (is_array($w_moedas)) asort($w_moedas);
-    
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $w_chave,null,null,null,null);
     foreach($RS_Moeda_Cot as $row) {
       if ($w_moeda_solic!=f($row,'sq_moeda_cot') && array_key_exists(f($row,'sq_moeda_cot'),$w_moedas)) {

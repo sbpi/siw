@@ -13,7 +13,7 @@ function selecaoAcordoParcela($label,$accesskey,$hint,$cliente,$chave,$chaveAux,
   ShowHTML('          <td colspan="'.$colspan.'"'.((!isset($hint)) ? '' : ' TITLE="'.$hint.'"').'>'.((!isset($label)) ? '' : '<b>'.$label.'</b><br>').'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'"'.((nvl(f($row,'sq_acordo_parcela'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
+    ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'"'.((nvl(f($row,'sq_acordo_parcela'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').number_format(f($row,'valor'),2,',','.'));
   } 
   ShowHTML('          </select>');
 }

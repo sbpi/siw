@@ -47,7 +47,6 @@ create or replace procedure SP_PutFinanceiroGeral
    w_menu       siw_menu%rowtype;
    w_inicio     date;
    w_fim        date;
-   w_vencimento date := p_vencimento;
    w_parcela    ac_acordo_parcela.sq_acordo_parcela%type;
 
    w_protocolo_siw             number(18);
@@ -282,7 +281,8 @@ begin
    -- O tratamento a seguir é relativo ao código interno do lançamento.
    If p_operacao          in ('I','A') and 
       (p_vencimento_atual is null or
-       to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy')
+       to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') or
+       (to_char(p_vencimento,'yyyy') < to_char(sysdate,'yyyy') and p_codigo_interno like 'FN-0/%')
       )
    Then
       
@@ -292,23 +292,23 @@ begin
             -- Configura o ano do acordo para o ano informado na data de início.
             w_ano := to_number(to_char(p_vencimento,'yyyy'));
            
-            -- Verifica se já há algum acordo no ano informado na data de início.
+            -- Verifica se já há algum lançamento no ano informado na data de início.
             -- Se tiver, verifica o próximo sequencial. Caso contrário, usa 1.
             select count(*) into w_existe 
               from fn_lancamento a 
-             where to_char(a.vencimento,'yyyy') = w_ano
-               and a.sq_siw_solicitacao     <> w_chave
-               and a.cliente                = p_cliente;
+             where to_char(a.vencimento,'yyyy') =  w_ano
+               and a.sq_siw_solicitacao         <> w_chave
+               and a.cliente                    =  p_cliente;
               
             If w_existe = 0 Then
                w_sequencial := 1;
             Else
                select Nvl(max(to_number(translate(replace(replace(replace(upper(b.codigo_interno),'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(null,''),''),'0123456789ABCDEFGHIJKLMNOPQRSTUVWXZ-:. ','0123456789'))),0)+1
                  into w_sequencial
-                 from fn_lancamento a
+                 from fn_lancamento              a
                       inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                 where b.codigo_interno like '%/'||to_char(p_vencimento,'yyyy')
-                  and a.cliente                = p_cliente;
+                  and a.cliente        = p_cliente;
             End If;
            
             p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');

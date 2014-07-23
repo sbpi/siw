@@ -22,8 +22,13 @@ begin
                 b.vencimento as dt_lancamento, b.valor as vl_lancamento, b.sg_tramite as fn_tramite,
                 b.referencia_inicio, b.referencia_fim,
                 coalesce(b1.qtd,0) as qt_financeiro,
-                c.prorrogacao, c.acrescimo, c.supressao, c.revisao
+                c.prorrogacao, c.acrescimo, c.supressao, c.revisao,
+                f.sq_moeda,          f.codigo cd_moeda,            f.nome nm_moeda,
+                f.sigla sg_moeda,    f.simbolo sb_moeda,           f.ativo at_moeda
            from ac_acordo_parcela                  a
+                inner    join ac_acordo            d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                inner    join siw_solicitacao      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  left   join co_moeda             f on (e.sq_moeda           = f.sq_moeda)
                 left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, x.quitacao, y.valor,
                                       y.codigo_interno, x.vencimento, x.referencia_inicio, x.referencia_fim,
                                       z.sigla as sg_tramite
@@ -44,7 +49,6 @@ begin
                 left     join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
                                                         )
-                inner    join ac_acordo            d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
           where (p_chave             is null or (p_chave             is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_aditivo           is null or (p_aditivo           is not null and c.sq_acordo_aditivo  = p_aditivo))
@@ -90,7 +94,11 @@ begin
                 )*/;
    Elsif p_restricao = 'RESFIN' Then
       open p_result for 
-        select a.codigo_interno, a.sq_siw_solicitacao, c.inicio, c.fim, d.sq_acordo_aditivo, d.codigo, d.ini_aditivo, d.fim_aditivo, d.valor valor_previsto, e.liquidado valor_liquidado, e.pago as valor_pago
+        select a.codigo_interno, a.sq_siw_solicitacao, c.inicio, c.fim, 
+               d.sq_acordo_aditivo, d.codigo, d.ini_aditivo, d.fim_aditivo, d.valor valor_previsto, 
+               e.liquidado valor_liquidado, e.pago as valor_pago,
+               f.sq_moeda,          f.codigo cd_moeda,            f.nome nm_moeda,
+               f.sigla sg_moeda,    f.simbolo sb_moeda,           f.ativo at_moeda
           from siw_solicitacao        a
                inner join siw_tramite b on (a.sq_siw_tramite     = b.sq_siw_tramite)
                inner join ac_acordo   c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
@@ -101,6 +109,7 @@ begin
                                   left        join ac_acordo_aditivo l on (k.sq_acordo_aditivo   = l.sq_acordo_aditivo and l.prorrogacao = 'S')
                            group by k.sq_siw_solicitacao, l.sq_acordo_aditivo, l.codigo, l.inicio, l.fim
                           )           d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+               left  join co_moeda    f on (a.sq_moeda           = f.sq_moeda)
                left  join (select k.sq_siw_solicitacao, l.sq_acordo_aditivo, 
                                   nvl(sum(nvl(m1.valor,0) + nvl(p1.valor,0)),0) liquidado, 
                                   nvl(sum(case when m1.conclusao is not null then nvl(m1.valor,0) else 0 end + case when p1.conclusao is not null then nvl(p1.valor,0) else 0 end),0) pago
@@ -178,48 +187,51 @@ begin
                coalesce(c1.existe,0) as notas_parcela,
                g.nome_resumido,
                f.sq_tipo_lancamento,
-               case when h.sq_pessoa is null then i.cnpj else h.cpf end as cnpjcpf
-          from siw_solicitacao                          a
-               inner            join ac_acordo          b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                   left outer   join (select x.sq_siw_solicitacao, count(*) as existe
-                                        from ac_acordo_nota x
-                                      group by x.sq_siw_solicitacao
-                                     )                  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
-                 inner          join co_pessoa          g  on (b.outra_parte        = g.sq_pessoa)
-                   left outer   join co_pessoa_fisica   h  on (g.sq_pessoa          = h.sq_pessoa)
-                   left outer   join co_pessoa_juridica i  on (g.sq_pessoa          = i.sq_pessoa)
-                 inner          join siw_tramite        j  on (a.sq_siw_tramite     = j.sq_siw_tramite and
-                                                               (p_fase              is null or (p_fase is not null and (0 <> InStr(p_fase,Nvl(j.sigla,'-')))))
-                                                              )
-                 inner          join ac_acordo_parcela  c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                   left outer   join (select x.sq_acordo_parcela, count(*) as existe
-                                        from ac_parcela_nota x
-                                      group by x.sq_acordo_parcela
-                                     )                  c1 on (c.sq_acordo_parcela  = c1.sq_acordo_parcela)
-                   left outer   join (select x.sq_acordo_parcela, count(*) as existe
-                                        from fn_lancamento                x
-                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                'CA'                 <> Nvl(z.sigla,'CA')
-                                                                               )
-                                      group by x.sq_acordo_parcela
-                                     )                  d  on (c.sq_acordo_parcela  = d.sq_acordo_parcela)
-                 left outer     join (select w.sq_siw_solicitacao, max(w.sq_acordo_parcela) as sq_acordo_parcela, max(x.sq_siw_solicitacao) as sq_lancamento
-                                        from ac_acordo_parcela            w
-                                             inner join fn_lancamento     x on (w.sq_acordo_parcela = x.sq_acordo_parcela)
-                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                'CA'                 <> Nvl(z.sigla,'CA')
-                                                                               )
-                                      group by w.sq_siw_solicitacao
-                                     )                  e on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                   left outer   join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, x.sq_tipo_lancamento
-                                        from fn_lancamento                x
-                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                'CA'                 <> Nvl(z.sigla,'CA')
-                                                                               )
-                                     )                  f on (e.sq_lancamento      = f.sq_siw_solicitacao)
+               case when h.sq_pessoa is null then i.cnpj else h.cpf end as cnpjcpf,
+               m.sq_moeda,          m.codigo cd_moeda,            m.nome nm_moeda,
+               m.sigla sg_moeda,    m.simbolo sb_moeda,           m.ativo at_moeda
+          from siw_solicitacao                   a
+               left      join co_moeda           m on (a.sq_moeda           = m.sq_moeda)
+               inner     join ac_acordo          b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                   left  join (select x.sq_siw_solicitacao, count(*) as existe
+                                 from ac_acordo_nota x
+                               group by x.sq_siw_solicitacao
+                              )                  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+                 inner   join co_pessoa          g  on (b.outra_parte        = g.sq_pessoa)
+                   left  join co_pessoa_fisica   h  on (g.sq_pessoa          = h.sq_pessoa)
+                   left  join co_pessoa_juridica i  on (g.sq_pessoa          = i.sq_pessoa)
+                 inner   join siw_tramite        j  on (a.sq_siw_tramite     = j.sq_siw_tramite and
+                                                        (p_fase              is null or (p_fase is not null and (0 <> InStr(p_fase,Nvl(j.sigla,'-')))))
+                                                       )
+                 inner   join ac_acordo_parcela  c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                   left  join (select x.sq_acordo_parcela, count(*) as existe
+                                 from ac_parcela_nota x
+                               group by x.sq_acordo_parcela
+                              )                  c1 on (c.sq_acordo_parcela  = c1.sq_acordo_parcela)
+                   left  join (select x.sq_acordo_parcela, count(*) as existe
+                                 from fn_lancamento                x
+                                      inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                        inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                         'CA'                 <> Nvl(z.sigla,'CA')
+                                                                        )
+                               group by x.sq_acordo_parcela
+                              )                  d  on (c.sq_acordo_parcela  = d.sq_acordo_parcela)
+                 left    join (select w.sq_siw_solicitacao, max(w.sq_acordo_parcela) as sq_acordo_parcela, max(x.sq_siw_solicitacao) as sq_lancamento
+                                 from ac_acordo_parcela            w
+                                      inner join fn_lancamento     x on (w.sq_acordo_parcela = x.sq_acordo_parcela)
+                                      inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                        inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                         'CA'                 <> Nvl(z.sigla,'CA')
+                                                                        )
+                               group by w.sq_siw_solicitacao
+                              )                  e on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                   left  join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, x.sq_tipo_lancamento
+                                 from fn_lancamento                x
+                                      inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                        inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                         'CA'                 <> Nvl(z.sigla,'CA')
+                                                                        )
+                              )                  f on (e.sq_lancamento      = f.sq_siw_solicitacao)
          where (b.financeiro_unico = 'N' or (b.financeiro_unico = 'S' and coalesce(d.existe,0) = 0))
            and (p_menu        is null or (p_menu        is not null and a.sq_menu            = p_menu))
            and (p_chave       is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
