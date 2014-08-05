@@ -144,8 +144,8 @@ begin
       open p_result for
       select distinct e.codigo as cd_rubrica, e.nome as nm_rubrica, e.descricao, e.ativo as at_rubrica,
              f.total_previsto, f.total_real,
-             case coalesce(f.total_previsto,0) when 0 then 0 else (case when f.total_real > 0 then f.total_real else g.total_real end/f.total_previsto*100) end as perc_exec,
-             (f.total_previsto-case when f.total_real > 0 then f.total_real else g.total_real end) as saldo
+             case coalesce(f.total_previsto,0) when 0 then 0 else (case when f.total_real > 0 then f.total_real else coalesce(g.total_real,0) end/f.total_previsto*100) end as perc_exec,
+             (f.total_previsto-case when f.total_real > 0 then f.total_real else coalesce(g.total_real,0) end) as saldo
         from pd_vinculo_financeiro             a
              inner     join siw_solicitacao    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner   join siw_menu           c on (b.sq_menu            = c.sq_menu)

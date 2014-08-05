@@ -394,7 +394,7 @@ begin
                   end
         end as sq_cc,
         coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),  
-        coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
+        coalesce(k.sq_unidade_resp, l.sq_unidade_resp,m.sq_unidade_resp,n.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
    into w_solicitante, w_sq_cc, w_sq_pessoa_titular, w_sq_pessoa_substituto, w_unidade_resp
    from siw_solicitacao                     d
         left    join eo_unidade_resp        f  on (d.sq_unidade             = f.sq_unidade and
@@ -408,13 +408,9 @@ begin
         left    join siw_solicitacao        i  on (d.sq_solic_pai           = i.sq_siw_solicitacao)
           left  join siw_solicitacao        j  on (i.sq_solic_pai           = j.sq_siw_solicitacao)
         left    join pj_projeto             k  on (d.sq_siw_solicitacao     = k.sq_siw_solicitacao)
-          left  join eo_unidade             k1 on (k.sq_unidade_resp        = k1.sq_unidade)
         left    join gd_demanda             l  on (d.sq_siw_solicitacao     = l.sq_siw_solicitacao)
-          left  join eo_unidade             l1 on (l.sq_unidade_resp        = l1.sq_unidade)
         left    join pe_programa            m  on (d.sq_siw_solicitacao     = m.sq_siw_solicitacao)
-          left  join eo_unidade             m1 on (m.sq_unidade_resp        = m1.sq_unidade)
         left    join cl_solicitacao         n  on (d.sq_siw_solicitacao     = n.sq_siw_solicitacao)
-          left  join eo_unidade             n1 on (n.sq_unidade             = n1.sq_unidade)
         left    join pd_missao              o  on (d.sq_siw_solicitacao     = o.sq_siw_solicitacao)
   where d.sq_siw_solicitacao     = p_solicitacao;
 
@@ -469,6 +465,26 @@ begin
                 If w_interno = 'S' 
                    Then Result := Result + 4;
                    Else Result := Result + 2;
+                End If;
+             Else
+                -- Verifica se o usuário é titular ou substituto de alguma unidade à qual a solicitação é vinculada
+                select count(*) into w_existe
+                  from eo_unidade_resp a
+                 where a.sq_pessoa = p_usuario
+                   and a.fim       is null
+                   and sq_unidade in (select w.sq_unidade
+                                        from eo_unidade w
+                                      connect by prior w.sq_unidade_pai = w.sq_unidade
+                                      start with w.sq_unidade = w_unidade_solicitante
+                                      UNION
+                                      select w.sq_unidade
+                                        from eo_unidade w
+                                       where w_unidade_solicitante <> w_unidade_resp
+                                      connect by prior w.sq_unidade_pai = w.sq_unidade
+                                      start with w.sq_unidade = w_unidade_resp
+                                     );
+                If w_existe > 0 Then 
+                   Result := Result + 1;
                 End If;
              End If;
           End If;
@@ -629,6 +645,8 @@ begin
                             Result   := Result + 16;
                             w_sair   := 1;
                             /*
+                            Bloco comentado pois solicitações ligadas ao usuário só podem ser autorizadas pelo chefe imediato. Os chefes de unidades acima
+                            da unidade de lotação não são considerados.
                             If crec.sq_unidade_pai is not null Then
                                w_unidade_atual := crec.sq_unidade_pai;
                                w_existe        := 0;

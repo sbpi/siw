@@ -707,7 +707,7 @@ function Geral() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_tipo_documento" value="'.$w_sq_tipo_documento.'">');
     }
-    ShowHTML('        <td><b><u>D</u>ata da operação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
+    ShowHTML('        <td><b><u>D</u>ata da operação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('        <td><b><u>V</u>alor'.((nvl(f($RS_Debito,'sb_moeda'),'')=='') ? '' : ' '.f($RS_Debito,'sb_moeda')).':</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da transferência."></td>');
     if (nvl($w_moeda_credito,0)>0 && nvl($w_moeda_debito,0)>0 && nvl($w_moeda_credito,0)!=nvl($w_moeda_debito,0)) {
       ShowHTML('        <td><b><u>V</u>alor '.f($RS_Credito,'sb_moeda').':</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_conversao" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_conversao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);">'.converteMoeda('Form','w_fim','w_valor_conversao','w_valor',$w_moeda_debito,$w_moeda_credito).'</td>');
@@ -1264,15 +1264,16 @@ function Grava() {
           null,'Conclusão automática de aplicação.',null,null,null,null);
       }
     
-      $w_html = VisualTransferencia(nvl($_REQUEST['w_chave'],&$w_chave_nova),'L',$w_usuario,1,'1');
-      CriaBaseLine(nvl($_REQUEST['w_chave'],&$w_chave_nova),$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+      $w_html = VisualTransferencia(nvl($_REQUEST['w_chave'],$w_chave_nova),'L',$w_usuario,1,'1');
+      CriaBaseLine(nvl($_REQUEST['w_chave'],$w_chave_nova),$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
 
       ScriptOpen('JavaScript');
-      if ($P1==0) {
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
-      } else {
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
-      }
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.$w_chave_nova.'&w_tipo='.$_REQUEST['w_tipo'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+//      if ($P1==0) {
+//        ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
+//      } else {
+//        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+//      }
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

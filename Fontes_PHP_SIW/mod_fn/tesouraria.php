@@ -338,8 +338,7 @@ function Inicial() {
     ShowHTML('                         <a class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2=3&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.(($P2==3) ? '<font color="#BC5100">' : '').'[Relatórios]</font></a>');
     $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms,$w_cliente,'MESA');
     ShowHTML('  &nbsp;&nbsp;&nbsp;&nbsp;<a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">[Voltar para '.f($RS_Volta,'nome').']</a>');
-    ShowHTML('    <td align="right">');
-    ShowHTML('    <b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($RS));
 
     // Filtro
     ShowHTML('<tr><td colspan="2"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -454,7 +453,7 @@ function Inicial() {
         //ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('C/C','numero_conta').'</td>');
       }
       if ($P2>1) ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Conta Débito','conta_debito').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan="2"><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td class="remover" rowspan="2"><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Tipo','sg_doc').'</td>');
@@ -582,7 +581,7 @@ function Inicial() {
         }
 
         if ($w_tipo!='WORD') {
-          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('        <td class="remover" align="top" nowrap>');
           switch (f($row,'sigla')) {
             case 'FNDREEMB':  $w_destino = 'reembolso';     $w_acao = 'Pagar';      break;
             case 'FNDFUNDO':  $w_destino = 'pagfundo';      $w_acao = '';           break;
