@@ -29,6 +29,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $w_complemento_qtd   = f($RS,'complemento_qtd');
   $w_complemento_base  = f($RS,'complemento_base');
   $w_complemento_valor = f($RS,'complemento_valor');
+  $w_passagem          = f($RS,'passagem');
 
   // Execução financeira da viagem
   $sql = new db_getSolicList; $RSF = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
@@ -142,6 +143,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Unidade proponente:</b></td><td colspan="12">'.f($RS,'nm_unidade_resp').'</td></tr>';
       } 
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Período:</b></td><td colspan="12">'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Bilhetes / Passagens:</b></td><td colspan="12">'.Nvl(f($RS,'nm_passagem'),'---').' </td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Categoria da diária:</b></td><td colspan="12">'.Nvl(f($RS,'nm_diaria'),'---').' </td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b></td><td colspan="12">'.Nvl(f($RS,'nm_hospedagem'),'---').'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b></td><td colspan="12">'.Nvl(f($RS,'nm_veiculo'),'---').' </td></tr>';
@@ -1250,10 +1252,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $l_html.=chr(13).'        <td>'.f($row,'sg_moeda').' ('.f($row,'nm_moeda').')</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'</td>';
             $l_html.=chr(13).'        <td>'.crlf2br(f($row,'justificativa')).'</td>';
-            if ($w_or_tramite<=11) {
+            if ($w_or_tramite<=9) {
               // No trâmite de prestação de contas
               $l_html.=chr(13).'        <td align="center" colspan="2">&nbsp;</td>';
-            } elseif ($w_or_tramite==12 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+            } elseif ($w_or_tramite==10 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
               // No trâmite de verificação da prestação de contas mas sem valor informado.
               $l_html.=chr(13).'        <td align="center" colspan="2">Em análise</td>';
             } else {
@@ -1329,9 +1331,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     // Cotação de passagens
     if($l_deslocamento=='S' && $w_or_tramite>=2 && ($w_cliente==17305 || ($w_cliente!=17305 && $w_internacional=='S'))) {
-      $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>COTAÇÃO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor:</b></td><td colspan="12" align="left">'.f($RS,'sb_moeda_cotacao').' '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(crlf2br(f($RS,'cotacao_observacao')),'---').'</td>';
+        $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>COTAÇÃO</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
+      if ($w_passagem=='S') {
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Valor:</b></td><td colspan="12" align="left">'.f($RS,'sb_moeda_cotacao').' '.formatNumber(f($RS,'cotacao_valor')).'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(crlf2br(f($RS,'cotacao_observacao')),'---').'</td>';
+      } else {
+        $l_html.=chr(13).'      <tr><td colspan="2"><b>Foi indicado que esta viagem não terá gastos com bilhetes / passagens.</b></td></tr>';
+      }
     }
 
     if ($w_or_tramite>5) {

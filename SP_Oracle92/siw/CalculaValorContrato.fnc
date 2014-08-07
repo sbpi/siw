@@ -18,9 +18,10 @@ create or replace function CalculaValorContrato(p_chave in number, p_aditivo in 
             inner   join ac_acordo         x on (a.sq_siw_solicitacao  = x.sq_siw_solicitacao)
               inner join ac_tipo_acordo    y on (x.sq_tipo_acordo      = y.sq_tipo_acordo)
               inner join siw_solicitacao   z on (x.sq_siw_solicitacao  = z.sq_siw_solicitacao)
+              inner join ac_parametro      w on (x.cliente             = w.cliente)
       where a.sq_siw_solicitacao = p_chave
         and (y.prazo_indeterm    = 'S' or
-             (w_aditivo          is     null and b.vencimento between z.inicio and z.fim) or
+             (w_aditivo          is     null and b.vencimento between z.inicio and (z.fim+w.dias_pagamento)) or
              (w_aditivo          is not null and b.sq_acordo_aditivo = w_aditivo)
             )
      group by a.sq_siw_solicitacao;

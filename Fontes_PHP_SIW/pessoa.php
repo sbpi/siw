@@ -999,7 +999,7 @@ function BuscaPessoa() {
   CheckBranco();
   ValidateOpen('Validacao');
   Validate('p_nome','Nome','1','','3','100','1','1');
-  if (strpos($p_tipo_pessoa,'NF')!==false) Validate('p_cpf','CPF','CPF','','14','14','','0123456789.-');
+  if (strpos($p_tipo_pessoa,'NF')!==false) Validate('p_cpf','CPF','CPF','','10','14','','0123456789.-');
   if (strpos($p_tipo_pessoa,'NJ')!==false) Validate('p_cnpj','CNPJ','CNPJ','','18','18','','0123456789.-/');
   ShowHTML('  if (theForm.p_nome.value=="" && theForm.p_cpf.value=="" && theForm.p_cnpj.value=="") {');
   ShowHTML('     alert (\'Informe um critério para busca!\');');

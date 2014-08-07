@@ -434,7 +434,7 @@ begin
    End If;
 
    -- Atualiza os dados bancários se o beneficiário não existir em SIW_CLIENTE 
-   If w_chave_pessoa <> p_chave_aux and p_sq_agencia is not null and p_nr_conta is not null Then
+   If w_chave_pessoa <> p_chave_aux and p_nr_conta is not null and (p_banco_estrang is not null or p_sq_agencia is not null) Then
       -- Se foi informado o banco, grava
       select count(*) into w_existe
         from co_pessoa_conta a
@@ -444,13 +444,12 @@ begin
      
       If w_existe = 0 Then
          insert into co_pessoa_conta
-           (sq_pessoa_conta,                  sq_pessoa,      sq_agencia,  operacao, 
-            numero,                           ativo,          padrao,      tipo_conta
+           (sq_pessoa_conta,                  sq_pessoa,      sq_agencia,  operacao,            numero,          ativo,             padrao,           tipo_conta,
+            sq_pais_estrang,                  aba_code,       swift_code,  endereco_estrang,    banco_estrang,   agencia_estrang,   cidade_estrang,   informacoes
            )
          values
-           (sq_pessoa_conta_bancaria.nextval, w_chave_pessoa, p_sq_agencia, p_op_conta, 
-            p_nr_conta,                       'S',            'S',          '1'
-           );
+           (sq_pessoa_conta_bancaria.nextval, w_chave_pessoa, p_sq_agencia, p_op_conta,         p_nr_conta,      'S',               'S',              '1',
+            p_sq_pais_estrang,                p_aba_code,     p_swift_code, p_endereco_estrang, p_banco_estrang, p_agencia_estrang, p_cidade_estrang, p_informacoes);
       Else
          select sq_pessoa_conta into w_chave_conta
            from co_pessoa_conta a
@@ -458,11 +457,25 @@ begin
             and a.ativo      = 'S'
             and a.padrao     = 'S';
             
-         update co_pessoa_conta
-            set sq_agencia = p_sq_agencia,
-                operacao   = p_op_conta,
-                numero     = p_nr_conta
-          where sq_pessoa_conta = w_chave_conta;
+         If p_sq_agencia is not null Then
+            update co_pessoa_conta
+               set sq_agencia = p_sq_agencia,
+                   operacao   = p_op_conta,
+                   numero     = p_nr_conta
+            where sq_pessoa_conta = w_chave_conta;
+         Elsif p_banco_estrang is not null Then
+            update co_pessoa_conta
+               set sq_pais_estrang  = p_sq_pais_estrang,
+                   aba_code         = p_aba_code,
+                   swift_code       = p_swift_code,
+                   endereco_estrang = p_endereco_estrang,
+                   banco_estrang    = p_banco_estrang,
+                   agencia_estrang  = p_agencia_estrang,
+                   cidade_estrang   = p_cidade_estrang,
+                   informacoes      = p_informacoes,
+                   numero           = p_nr_conta
+            where sq_pessoa_conta = w_chave_conta;
+         End If;
       End If;
    End If;
    

@@ -968,6 +968,18 @@ function Geral() {
             $w_operacao     = nvl($_REQUEST['w_operacao'],nvl(f($RS_Benef,'operacao'),$w_operacao));
             $w_nr_conta     = f($RS_Benef,'nr_conta');
           } 
+        }  elseif ($w_forma_pagamento=='EXTERIOR') {
+          if (Nvl($w_banco_estrang,'')=='' || nvl($w_troca,'-')!='w_sq_tipo_lancamento') {
+            $w_nr_conta             = f($RS_Benef,'nr_conta');
+            $w_sq_pais_estrang      = nvl($_REQUEST['w_sq_pais_estrang'],nvl(f($RS_Benef,'sq_pais_estrang'),$w_sq_pais_estrang));
+            $w_aba_code             = nvl($_REQUEST['w_aba_code'],nvl(f($RS_Benef,'aba_code'),$w_aba_code));
+            $w_swift_code           = nvl($_REQUEST['w_swift_code'],nvl(f($RS_Benef,'swift_code'),$w_swift_code));
+            $w_endereco_estrang     = nvl($_REQUEST['w_endereco_estrang'],nvl(f($RS_Benef,'endereco_estrang'),$w_endereco_estrang));
+            $w_banco_estrang        = nvl($_REQUEST['w_banco_estrang'],nvl(f($RS_Benef,'banco_estrang'),$w_banco_estrang));
+            $w_agencia_estrang      = nvl($_REQUEST['w_agencia_estrang'],nvl(f($RS_Benef,'agencia_estrang'),$w_agencia_estrang));
+            $w_cidade_estrang       = nvl($_REQUEST['w_cidade_estrang'],nvl(f($RS_Benef,'cidade_estrang'),$w_cidade_estrang));
+            $w_informacoes          = nvl($_REQUEST['w_informacoes'],nvl(f($RS_Benef,'informacoes'),$w_informacoes));
+          } 
         } 
       } 
     }
@@ -1422,6 +1434,18 @@ function OutraParte() {
           $w_sq_agencia   = f($RS,'sq_agencia');
           $w_operacao     = f($RS,'operacao');
           $w_nr_conta     = f($RS,'nr_conta');
+        } 
+      } elseif ($w_forma_pagamento=='EXTERIOR') {
+        if (Nvl($w_banco_estrang,'')=='' || nvl($w_troca,'-')!='w_sq_tipo_lancamento') {
+          $w_nr_conta             = f($RS_Benef,'nr_conta');
+          $w_sq_pais_estrang      = nvl($_REQUEST['w_sq_pais_estrang'],nvl(f($RS_Benef,'sq_pais_estrang'),$w_sq_pais_estrang));
+          $w_aba_code             = nvl($_REQUEST['w_aba_code'],nvl(f($RS_Benef,'aba_code'),$w_aba_code));
+          $w_swift_code           = nvl($_REQUEST['w_swift_code'],nvl(f($RS_Benef,'swift_code'),$w_swift_code));
+          $w_endereco_estrang     = nvl($_REQUEST['w_endereco_estrang'],nvl(f($RS_Benef,'endereco_estrang'),$w_endereco_estrang));
+          $w_banco_estrang        = nvl($_REQUEST['w_banco_estrang'],nvl(f($RS_Benef,'banco_estrang'),$w_banco_estrang));
+          $w_agencia_estrang      = nvl($_REQUEST['w_agencia_estrang'],nvl(f($RS_Benef,'agencia_estrang'),$w_agencia_estrang));
+          $w_cidade_estrang       = nvl($_REQUEST['w_cidade_estrang'],nvl(f($RS_Benef,'cidade_estrang'),$w_cidade_estrang));
+          $w_informacoes          = nvl($_REQUEST['w_informacoes'],nvl(f($RS_Benef,'informacoes'),$w_informacoes));
         } 
       } 
     } 
@@ -2555,6 +2579,8 @@ function SolicMail($p_solic,$p_tipo) {
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,substr(f($RS_Menu,'sigla'),0,3).'GERAL');
+  $w_sb_moeda  = nvl(f($RSM,'sb_moeda'),'');
+  
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
@@ -2589,7 +2615,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'          <tr valign="top">';
     $w_html.=$crlf.'          <td>Forma de pagamento:<br><b>'.f($RSM,'nm_forma_pagamento').' </b></td>';
     $w_html.=$crlf.'          <td>Vencimento:<br><b>'.FormataDataEdicao(f($RSM,'vencimento')).' </b></td>';
-    $w_html.=$crlf.'          <td>Valor:<br><b>'.formatNumber(Nvl(f($RSM,'valor'),0)).' </b></td>';
+    $w_html.=$crlf.'          <td>Valor:<br><b>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RSM,'valor'),0)).' </b></td>';
     $w_html.=$crlf.'          </table>';
     // Outra parte
     $sql = new db_getBenef; $RSM1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'pessoa'),0),null,null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null, null, null, null, null);
@@ -2682,6 +2708,7 @@ function SolicMail($p_solic,$p_tipo) {
       // Tramitação
       $w_assunto = ' Tramitação - '.$w_nome;
     } 
+
     if ($w_destinatarios>'') {
       // Executa o envio do e-mail
       $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,null);

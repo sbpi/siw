@@ -1408,7 +1408,19 @@ function OutraParte() {
             $w_operacao     = nvl($_REQUEST['w_operacao'],nvl(f($RS_Benef,'operacao'),$w_operacao));
             $w_nr_conta     = f($RS_Benef,'nr_conta');
           } 
-        } 
+        } elseif ($w_forma_pagamento=='EXTERIOR') {
+          if (Nvl($w_banco_estrang,'')=='' || nvl($w_troca,'-')!='w_sq_tipo_lancamento') {
+            $w_nr_conta             = f($RS_Benef,'nr_conta');
+            $w_sq_pais_estrang      = nvl($_REQUEST['w_sq_pais_estrang'],nvl(f($RS_Benef,'sq_pais_estrang'),$w_sq_pais_estrang));
+            $w_aba_code             = nvl($_REQUEST['w_aba_code'],nvl(f($RS_Benef,'aba_code'),$w_aba_code));
+            $w_swift_code           = nvl($_REQUEST['w_swift_code'],nvl(f($RS_Benef,'swift_code'),$w_swift_code));
+            $w_endereco_estrang     = nvl($_REQUEST['w_endereco_estrang'],nvl(f($RS_Benef,'endereco_estrang'),$w_endereco_estrang));
+            $w_banco_estrang        = nvl($_REQUEST['w_banco_estrang'],nvl(f($RS_Benef,'banco_estrang'),$w_banco_estrang));
+            $w_agencia_estrang      = nvl($_REQUEST['w_agencia_estrang'],nvl(f($RS_Benef,'agencia_estrang'),$w_agencia_estrang));
+            $w_cidade_estrang       = nvl($_REQUEST['w_cidade_estrang'],nvl(f($RS_Benef,'cidade_estrang'),$w_cidade_estrang));
+            $w_informacoes          = nvl($_REQUEST['w_informacoes'],nvl(f($RS_Benef,'informacoes'),$w_informacoes));
+          } 
+        }  
       } 
     } 
   } 

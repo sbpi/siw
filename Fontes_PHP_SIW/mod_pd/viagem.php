@@ -655,8 +655,8 @@ function Inicial() {
                 if ($w_cliente==17305 || ($w_cliente!=17305 && f($row, 'internacional')=='S'))
                   ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
               } elseif (f($row, 'sg_tramite') == 'AE' || f($row, 'sg_tramite') == 'AC') {
-                if ($w_cliente==17305 || ($w_cliente!=17305 && f($row, 'internacional')=='S')) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
-                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">BL</A>&nbsp');
+                if (f($row, 'passagem')=='S' && ($w_cliente==17305 || ($w_cliente!=17305 && f($row, 'internacional')=='S'))) ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'InformarCotacao&R=' . $w_pagina . $par . '&O=I&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Informar dados das passagens&SG=COTPASS') . '\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar a cotação das passagens.">CT</A>&nbsp');
+                if (f($row, 'passagem')=='S') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Bilhetes&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Bilhetes&SG=INFBIL') . '\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">BL</A>&nbsp');
                 ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'Diarias_Solic&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Diarias&SG=PDDIARIA') . '\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados das diárias.">DI</A>&nbsp');
               } elseif (f($row, 'sg_tramite') == 'PC') {
                 ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\'' . montaURL_JS(null, $conRootSIW.$w_dir.$w_pagina.'PrestarContas&R=' . $w_pagina . $par . '&O=L&w_menu=' . $w_menu . '&w_chave=' . f($row, 'sq_siw_solicitacao') . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . ' - Prestação de contas&SG=PDCONTAS') . '\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados da prestação de contas.">Prestar contas</A>&nbsp');
@@ -1269,8 +1269,7 @@ function OutraParte() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  if ($O == '')
-    $O = 'P';
+  if ($O == '') $O = 'P';
 
   $w_erro = '';
   $w_chave = $_REQUEST['w_chave'];
@@ -1282,7 +1281,7 @@ function OutraParte() {
   $w_tipo_pessoa = $_REQUEST['w_tipo_pessoa'];
 
   $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $w_chave, $SG);
-
+  
   // Verifica se há necessidade de informar os dados para pagamento das diárias
   if (nvl(f($RS, 'diaria'), '') != '' || f($RS, 'hospedagem') != 'N' || f($RS, 'veiculo') != 'N') {
     $w_dados_pagamento = true;
@@ -1637,6 +1636,7 @@ function OutraParte() {
       //SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_prop, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, 'onFocus="alert(document.Form.w_sq_prop.value);"', 1, 'w_email');
       AbreForm('Form', $w_dir.$w_pagina.$par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, $O);
       ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
       //SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_pessoa, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, 'onFocus="javascript:location.href=\'' . $w_dir . $w_pagina . $par . '&R=' . $R . '&w_sq_pessoa=\'+document.Form.w_sq_prop.value+\'' . '&w_chave=' . $w_chave . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . '&Botao=Selecionar\'";"', 1, 'w_sq_prop');
       SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_pessoa, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, null, 1, 'w_sq_prop');
       ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\'' .$w_dir.$w_pagina.$par.'\'">');
@@ -5139,17 +5139,17 @@ function Diarias_Solic() {
         ShowHTML('      theForm.w_rub_dia.focus();');
         ShowHTML('      return (false);');
         ShowHTML('    }');
-        Validate('w_rub_dia', 'Rubrica para pagamento de diárias', 'SELECT', '', 1, 18, '', '1');
+        Validate('w_rub_dia', 'Rubrica para pagamento de diárias', 'SELECT', '1', 1, 18, '', '1');
         ShowHTML('    if(theForm.w_lan_dia.selectedIndex==0) {');
         ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de diárias!");');
         ShowHTML('      theForm.w_lan_dia.focus();');
         ShowHTML('      return (false);');
         ShowHTML('    }');
-        Validate('w_lan_dia', 'Tipo de lançamento para pagamento de diárias', 'SELECT', '', 1, 18, '', '1');
+        Validate('w_lan_dia', 'Tipo de lançamento para pagamento de diárias', 'SELECT', '1', 1, 18, '', '1');
       }
     }
     if ($w_hospedagem == 'S') {
-      Validate('w_vl_diaria_hospedagem', 'Valor da hospedagem', 'VALOR', '', 4, 10, '', '0123456789,');
+      Validate('w_vl_diaria_hospedagem', 'Valor da hospedagem', 'VALOR', '1', 4, 10, '', '0123456789,');
       Validate('w_hospedagem_qtd', 'Quantidade de hospedagens', 'VALOR', '', 3, 5, '', '0123456789,');
       ShowHTML('    if(theForm.w_vl_diaria_hospedagem.value=="") {');
       ShowHTML('      alert("Favor informar o valor da hospedagem!");');
@@ -5175,13 +5175,13 @@ function Diarias_Solic() {
         ShowHTML('      theForm.w_rub_hsp.focus();');
         ShowHTML('      return (false);');
         ShowHTML('    }');
-        Validate('w_rub_hsp', 'Rubrica para pagamento de diárias', 'SELECT', '', 1, 18, '', '1');
+        Validate('w_rub_hsp', 'Rubrica para pagamento de diárias', 'SELECT', '1', 1, 18, '', '1');
         ShowHTML('    if(theForm.w_lan_hsp.selectedIndex==0) {');
         ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de hospedagens!");');
         ShowHTML('      theForm.w_lan_hsp.focus();');
         ShowHTML('      return (false);');
         ShowHTML('    }');
-        Validate('w_lan_hsp', 'Tipo de lançamento para pagamento de hospedagens', 'SELECT', '', 1, 18, '', '1');
+        Validate('w_lan_hsp', 'Tipo de lançamento para pagamento de hospedagens', 'SELECT', '1', 1, 18, '', '1');
       }
     }
     if ($w_veiculo == 'S') {
@@ -7859,7 +7859,7 @@ function Grava() {
   $w_tipo = '';
   $w_nome = '';
   Cabecalho();
-  ShowHTML('<base HREF="' . $conRootSIW . '">');
+  ShowHTML('<base HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
@@ -8630,7 +8630,7 @@ function Grava() {
             $sql = new db_getTramiteSolic; $RS1 = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], f($RS, 'sq_siw_tramite'), null, null);
             if (count($RS1)==0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'ATENÇÃO: Não há nenhuma pessoa habilitada a cumprir o trâmite "' . f($RS, 'nome') . '"!\');');
+              ShowHTML('  alert("ATENÇÃO: Não há nenhuma pessoa habilitada a cumprir o trâmite \"' . f($RS, 'nome') . '\"!");');
               ScriptClose();
               retornaFormulario('w_assinatura');
             }

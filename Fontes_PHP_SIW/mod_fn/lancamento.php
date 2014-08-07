@@ -1205,6 +1205,18 @@ function Geral() {
             $w_operacao     = nvl($_REQUEST['w_operacao'],nvl(f($RS_Benef,'operacao'),$w_operacao));
             $w_nr_conta     = f($RS_Benef,'nr_conta');
           } 
+        } elseif ($w_forma_pagamento=='EXTERIOR') {
+          if (Nvl($w_banco_estrang,'')=='' || nvl($w_troca,'-')!='w_sq_tipo_lancamento') {
+            $w_nr_conta             = f($RS_Benef,'nr_conta');
+            $w_sq_pais_estrang      = nvl($_REQUEST['w_sq_pais_estrang'],nvl(f($RS_Benef,'sq_pais_estrang'),$w_sq_pais_estrang));
+            $w_aba_code             = nvl($_REQUEST['w_aba_code'],nvl(f($RS_Benef,'aba_code'),$w_aba_code));
+            $w_swift_code           = nvl($_REQUEST['w_swift_code'],nvl(f($RS_Benef,'swift_code'),$w_swift_code));
+            $w_endereco_estrang     = nvl($_REQUEST['w_endereco_estrang'],nvl(f($RS_Benef,'endereco_estrang'),$w_endereco_estrang));
+            $w_banco_estrang        = nvl($_REQUEST['w_banco_estrang'],nvl(f($RS_Benef,'banco_estrang'),$w_banco_estrang));
+            $w_agencia_estrang      = nvl($_REQUEST['w_agencia_estrang'],nvl(f($RS_Benef,'agencia_estrang'),$w_agencia_estrang));
+            $w_cidade_estrang       = nvl($_REQUEST['w_cidade_estrang'],nvl(f($RS_Benef,'cidade_estrang'),$w_cidade_estrang));
+            $w_informacoes          = nvl($_REQUEST['w_informacoes'],nvl(f($RS_Benef,'informacoes'),$w_informacoes));
+          } 
         } 
       } 
     }
@@ -1660,6 +1672,7 @@ function OutraParte() {
   global $w_Disabled;
   if ($O=='') $O='P';
   $w_erro='';
+  $w_botao          = $_REQUEST['w_botao'];
   $w_chave          = $_REQUEST['w_chave'];
   $w_chave_aux      = $_REQUEST['w_chave_aux'];
   $w_cpf            = $_REQUEST['w_cpf'];
@@ -1670,10 +1683,10 @@ function OutraParte() {
   $w_dados_pai      = explode('|@|',f($RS1,'dados_pai'));
   $w_sigla_pai      = $w_dados_pai[5];
   
-  if ($w_sq_pessoa=='' && (strpos($_REQUEST['Botao'],'Selecionar')===false)) {
+  if ($w_sq_pessoa=='' && (strpos($w_botao,'Selecionar')===false)) {
     $w_sq_pessoa    =f($RS1,'pessoa');
     $w_pessoa_atual =f($RS1,'pessoa');
-  } elseif (strpos($_REQUEST['Botao'],'Selecionar')===false) {
+  } elseif (strpos($w_botao,'Selecionar')===false) {
     $w_sq_banco         = f($RS1,'sq_banco');
     $w_sq_agencia       = f($RS1,'sq_agencia');
     $w_operacao         = f($RS1,'operacao_conta');
@@ -1746,7 +1759,7 @@ function OutraParte() {
     $w_sexo                 = $_REQUEST['w_sexo'];
     $w_cnpj                 = $_REQUEST['w_cnpj'];
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
-  } elseif (strpos($_REQUEST['Botao'],'Alterar')===false && strpos($_REQUEST['Botao'],'Procurar')===false && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
+  } elseif (strpos($w_botao,'Alterar')===false && strpos($w_botao,'Procurar')===false && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
     // Recupera os dados do beneficiário em co_pessoa
     $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null, null, null, null, null);
     foreach ($RS as $row) {$RS=$row; break;}
@@ -1794,6 +1807,18 @@ function OutraParte() {
           $w_operacao     = f($RS,'operacao');
           $w_nr_conta     = f($RS,'nr_conta');
         } 
+      } elseif ($w_forma_pagamento=='EXTERIOR') {
+        if (Nvl($w_banco_estrang,'')=='' || nvl($w_troca,'-')!='w_sq_tipo_lancamento') {
+          $w_nr_conta             = f($RS_Benef,'nr_conta');
+          $w_sq_pais_estrang      = nvl($_REQUEST['w_sq_pais_estrang'],nvl(f($RS_Benef,'sq_pais_estrang'),$w_sq_pais_estrang));
+          $w_aba_code             = nvl($_REQUEST['w_aba_code'],nvl(f($RS_Benef,'aba_code'),$w_aba_code));
+          $w_swift_code           = nvl($_REQUEST['w_swift_code'],nvl(f($RS_Benef,'swift_code'),$w_swift_code));
+          $w_endereco_estrang     = nvl($_REQUEST['w_endereco_estrang'],nvl(f($RS_Benef,'endereco_estrang'),$w_endereco_estrang));
+          $w_banco_estrang        = nvl($_REQUEST['w_banco_estrang'],nvl(f($RS_Benef,'banco_estrang'),$w_banco_estrang));
+          $w_agencia_estrang      = nvl($_REQUEST['w_agencia_estrang'],nvl(f($RS_Benef,'agencia_estrang'),$w_agencia_estrang));
+          $w_cidade_estrang       = nvl($_REQUEST['w_cidade_estrang'],nvl(f($RS_Benef,'cidade_estrang'),$w_cidade_estrang));
+          $w_informacoes          = nvl($_REQUEST['w_informacoes'],nvl(f($RS_Benef,'informacoes'),$w_informacoes));
+        } 
       } 
     } 
   } 
@@ -1818,11 +1843,11 @@ function OutraParte() {
   FormataData();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (($w_cpf=='' && $w_cnpj=='') || (!(strpos($_REQUEST['Botao'],'Procurar')===false)) || (!(strpos($_REQUEST['Botao'],'Alterar')===false))) {
+  if (($w_cpf=='' && $w_cnpj=='') || (!(strpos($w_botao,'Procurar')===false)) || (!(strpos($w_botao,'Alterar')===false))) {
     // Se o beneficiário ainda não foi selecionado
-    ShowHTML('  if (theForm.Botao.value == "Procurar") {');
+    ShowHTML('  if (theForm.w_botao.value == "Procurar") {');
     Validate('w_nome','Nome','','1','4','20','1','');
-    ShowHTML('  theForm.Botao.value = "Procurar";');
+    ShowHTML('  theForm.w_botao.value = "Procurar";');
     ShowHTML('}');
     ShowHTML('else {');
     if     ($w_tipo_pessoa==1) Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
@@ -1832,7 +1857,7 @@ function OutraParte() {
     ShowHTML('  theForm.w_sq_pessoa.value = \'\';');
     ShowHTML('}');
   } elseif ($O=='I' || $O=='A') {
-    ShowHTML('  if (theForm.Botao.value.indexOf(\'Alterar\') >= 0) { return true; }');
+    ShowHTML('  if (theForm.w_botao.value.indexOf("Alterar") >= 0) { return true; }');
     if (Nvl($w_sq_pessoa,'')=='') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
@@ -1940,9 +1965,9 @@ function OutraParte() {
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
-  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+  if (($w_cpf=='' && $w_cnpj=='') || strpos($w_botao,'Alterar')!==false || strpos($w_botao,'Procurar')!==false) {
     // Se o beneficiário ainda não foi selecionado
-    if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+    if (strpos($w_botao,'Procurar')!==false) {
       // Se está sendo feita busca por nome
       BodyOpen('onLoad=\'this.focus()\';');
     } else {
@@ -1976,7 +2001,7 @@ function OutraParte() {
   ShowHTML('</TABLE>');
   ShowHTML('  <tr><td colspan="3">&nbsp;');
   if (strpos('IA',$O)!==false) {
-    if (($w_cpf=='' && $w_cnpj=='') || (strpos($_REQUEST['Botao'],'Alterar')!==false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+    if (($w_cpf=='' && $w_cnpj=='') || strpos($w_botao,'Alterar')!==false || strpos($w_botao,'Procurar')!==false) {
       // Se o beneficiário ainda não foi selecionado
       ShowHTML('<FORM action="'.$w_dir.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
     } else {
@@ -1995,14 +2020,15 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
     ShowHTML('<INPUT type="hidden" name="O" value="'.$O.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_botao" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
-    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+    if (($w_cpf=='' && $w_cnpj=='') || strpos($w_botao,'Alterar')!==false || strpos($w_botao,'Procurar')!==false) {
       $w_nome=$_REQUEST['w_nome'];
-      if (!(strpos($_REQUEST['Botao'],'Alterar')===false)) {
+      if (strpos($w_botao,'Alterar')!==false) {
         $w_cpf='';
         $w_cnpj='';
         $w_nome='';
@@ -2015,7 +2041,7 @@ function OutraParte() {
       elseif ($w_tipo_pessoa==3) ShowHTML('        <tr><td colspan=4><b><u>C</u>ód. Estrangeiro:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
       elseif ($w_tipo_pessoa==3) ShowHTML('        <tr><td colspan=4><b><u>C</u>ód. Estrangeiro:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
 
-      ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
+      ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="document.Form.w_botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       if ($P2==1) {
         ShowHTML('            <INPUT class="stb" type="button" onClick="parent.$.fancybox.close();" name="Botao" value="Cancelar">');
       } else {
@@ -2025,7 +2051,7 @@ function OutraParte() {
       ShowHTML('        <tr><td colspan=4 heigth=1 bgcolor="#000000">');
       ShowHTML('        <tr><td colspan=4>');
       ShowHTML('             <b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="w_nome" VALUE="'.$w_nome.'" SIZE="20" MaxLength="20">');
-      ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
+      ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="document.Form.w_botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       if ($w_nome>'') {
         $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,$w_tipo_pessoa,null,null,null,null,null,null,null, null, null, null, null);
         $RS = SortArray($RS,'nm_pessoa','asc');
@@ -2177,10 +2203,10 @@ function OutraParte() {
       } 
       ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
       ShowHTML('      <tr><td align="center" colspan="3">');
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="document.Form.w_botao.value=this.value;">');
       if (strpos(f($RS_Menu,'sigla'),'CONT')===false && strpos(f($RS_Menu,'sigla'),'VIA')===false) {
         // Se não for lançamento para parcela de contrato
-        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Alterar pessoa" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.submit();">');
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Alterar pessoa" onClick="document.Form.w_botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.submit();">');
       } 
       if ($P2==1) {
         ShowHTML('            <INPUT type="button" class="stb" onClick="javascript:parent.$.fancybox.close();" name="Botao" value="Cancelar">');
@@ -4525,6 +4551,8 @@ function SolicMail($p_solic,$p_tipo) {
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,substr(f($RS_Menu,'sigla'),0,3).'GERAL');
+  $w_sb_moeda  = nvl(f($RSM,'sb_moeda'),'');
+  
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
@@ -4557,7 +4585,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'          <tr valign="top">';
     $w_html.=$crlf.'          <td>Forma de pagamento:<br><b>'.f($RSM,'nm_forma_pagamento').' </b></td>';
     $w_html.=$crlf.'          <td>Vencimento:<br><b>'.FormataDataEdicao(f($RSM,'vencimento')).' </b></td>';
-    $w_html.=$crlf.'          <td>Valor:<br><b>'.formatNumber(Nvl(f($RSM,'valor'),0)).' </b></td>';
+    $w_html.=$crlf.'          <td>Valor:<br><b>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RSM,'valor'),0)).' </b></td>';
     $w_html.=$crlf.'          </table>';
 
     // Outra parte
@@ -4652,7 +4680,7 @@ function SolicMail($p_solic,$p_tipo) {
     if (f($RS_Mail, 'ativo')!='N' && nvl(f($RS_Mail, 'email'),'')!='' && (($p_tipo == 2 && f($RS_Mail, 'tramitacao') == 'S') || ($p_tipo == 3 && f($RS_Mail, 'conclusao') == 'S'))) {
         $w_destinatarios .= f($RS_Mail, 'email') . '|' . f($RS_Mail, 'nome') . '; ';
     }
-
+    
     // Executa o envio do e-mail
     if ($w_destinatarios>'') {
       $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,null);

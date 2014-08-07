@@ -186,6 +186,7 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'            <tr valign="top">';
         $l_html.=chr(13).'              <td colspan=2>Cidade:<b><br>'.f($RS,'nm_cidade').'</td>';
         $l_html.=chr(13).'              <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
+        $l_html.=chr(13).'            <tr><td colspan=3>Informações adicionais:<b><br>'.crlf2br(nvl(f($RS,'informacoes'),'---')).'</td>';
         $l_html.=chr(13).'          </tr></table>';
       } 
     } 

@@ -29,6 +29,7 @@ begin
             d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.contratado, d.ativo as vinculo_ativo,
             e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero as nr_conta,
             e.nm_agencia, e.cd_banco, e.nm_banco,  e.devolucao_valor,
+            e.sq_pais_estrang, e.aba_code, e.swift_code, e.endereco_estrang, e.banco_estrang, e.agencia_estrang, e.cidade_estrang, e.informacoes,
             b.sq_pessoa_fax, b.nr_fax,
             f.sq_pessoa_telefone, f.ddd, f.nr_telefone,
             l.sq_pessoa_celular, l.nr_celular,
@@ -63,15 +64,17 @@ begin
               inner join co_pais                 a3 on (a2.sq_pais           = a3.sq_pais)
             left    join co_tipo_vinculo          d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
             left join  (select w.sq_pessoa_conta, w.sq_pessoa, x.sq_banco, w.sq_agencia, 
-                               w.operacao, w.numero,  w.devolucao_valor,
+                               w.operacao, w.numero,  w.devolucao_valor,   w.sq_pais_estrang,
+                               w.aba_code, w.swift_code, w.endereco_estrang, w.banco_estrang,
+                               w.agencia_estrang, w.cidade_estrang, w.informacoes,
                                x.codigo as cd_agencia, x.nome as nm_agencia,
                                y.codigo as cd_banco, y.nome as nm_banco
                           from co_pessoa_conta         w
-                               inner   join co_agencia x on (w.sq_agencia = x.sq_agencia)
-                                 inner join co_banco   y on (x.sq_banco   = y.sq_banco)
+                               -- As ligações abaixo devem ser do tipo LEFT JOIN pois a agência não é obrigatória para dados bancários no exterior
+                               left    join co_agencia x on (w.sq_agencia = x.sq_agencia and x.ativo = 'S')
+                                 left  join co_banco   y on (x.sq_banco   = y.sq_banco)
                          where w.ativo              = 'S'
                            and w.padrao             = 'S'
-                           and x.ativo              = 'S'
                        )                        e on (a.sq_pessoa          = e.sq_pessoa)
             left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax, w.sq_cidade,
                                y.co_uf, y.sq_pais
@@ -184,6 +187,7 @@ begin
             d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.contratado, d.ativo as vinculo_ativo,
             e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero as nr_conta,
             e.nm_agencia, e.cd_banco, e.nm_banco,  e.devolucao_valor,
+            e.sq_pais_estrang, e.aba_code, e.swift_code, e.endereco_estrang, e.banco_estrang, e.agencia_estrang, e.cidade_estrang, e.informacoes,
             b.sq_pessoa_fax, b.nr_fax,
             f.sq_pessoa_telefone, f.ddd, f.nr_telefone,
             l.sq_pessoa_celular, l.nr_celular,
@@ -218,15 +222,17 @@ begin
             left join  co_pais                 a3 on (a2.sq_pais           = a3.sq_pais)
             left join  co_tipo_vinculo          d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
             left join  (select w.sq_pessoa_conta, w.sq_pessoa, x.sq_banco, w.sq_agencia, 
-                               w.operacao, w.numero,  w.devolucao_valor,
+                               w.operacao, w.numero,  w.devolucao_valor,   w.sq_pais_estrang,
+                               w.aba_code, w.swift_code, w.endereco_estrang, w.banco_estrang,
+                               w.agencia_estrang, w.cidade_estrang, w.informacoes,
                                x.codigo as cd_agencia, x.nome as nm_agencia,
                                y.codigo as cd_banco, y.nome as nm_banco
                           from co_pessoa_conta         w
-                               inner   join co_agencia x on (w.sq_agencia = x.sq_agencia)
-                                 inner join co_banco   y on (x.sq_banco   = y.sq_banco)
+                               -- As ligações abaixo devem ser do tipo LEFT JOIN pois a agência não é obrigatória para dados bancários no exterior
+                               left    join co_agencia x on (w.sq_agencia = x.sq_agencia and x.ativo = 'S')
+                                 left  join co_banco   y on (x.sq_banco   = y.sq_banco)
                          where w.ativo              = 'S'
                            and w.padrao             = 'S'
-                           and x.ativo              = 'S'
                        )                        e on (a.sq_pessoa          = e.sq_pessoa)
             left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax, w.sq_cidade,
                                y.co_uf, y.sq_pais

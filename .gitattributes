@@ -1148,7 +1148,6 @@ Fontes_PHP_SIW/classes/sp/dml_putAcordoFornecimento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNota.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNotaCancel.php -text
-Fontes_PHP_SIW/classes/sp/dml_putAcordoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoParc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoPreposto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoRep.php -text

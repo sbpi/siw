@@ -23,6 +23,7 @@ create or replace procedure SP_PutViagemEnvio
    w_ee            number(18);
    w_pp            number(18);
    w_salto         number(4)    := 0;
+   w_passagem      pd_missao.passagem%type;
    w_reembolso     pd_missao.reembolso%type;
    w_ressarcimento pd_missao.ressarcimento%type;
    w_complemento   pd_missao.complemento_valor%type;
@@ -255,11 +256,13 @@ create or replace procedure SP_PutViagemEnvio
    
 begin
    -- Recupera os dados da solicitação. Se for contratado, a unidade solicitante aprova trâmites de chefia imediata. Caso contrário, será a unidade proponente.
-   select a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,    c.contratado,  case c.contratado 
-                                                                                                 when 'S' then coalesce(a2.sq_unidade_exercicio, a1.sq_unidade, d.sq_unidade)
-                                                                                                 else e.sq_unidade_resp 
-                                                                                            end
-     into w_reembolso, w_ressarcimento, w_complemento,       w_beneficiario, w_benef_contr, w_unidade_aprov
+   select a.passagem,   a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,
+          c.contratado, case c.contratado 
+                             when 'S' then coalesce(a2.sq_unidade_exercicio, a1.sq_unidade, d.sq_unidade)
+                             else e.sq_unidade_resp 
+                        end
+     into w_passagem,   w_reembolso, w_ressarcimento, w_complemento,       w_beneficiario, 
+          w_benef_contr, w_unidade_aprov
      from pd_missao                             a
           left    join sg_autenticacao         a1 on (a.sq_pessoa          = a1.sq_pessoa)
           left    join gp_contrato_colaborador a2 on (a.sq_pessoa          = a2.sq_pessoa and a2.fim is null)
@@ -387,10 +390,17 @@ begin
                Then w_salto := 1;
                Else w_salto := w_salto + 2;
             End If;
+         Elsif w_sg_tramite = 'CI' and w_cliente = 17305 Then
+            -- O trãmite após o de cadastramento é o de cotação de passagens (DF).
+            -- Se for indicado que não haverá despesas com passagens, salta esse trâmite.
+            If w_passagem = 'N' 
+               Then w_salto := 2;
+               Else w_salto := 1;
+            End If;
          Else
             w_salto := 1;
          End If;
-      Elsif w_sg_tramite = 'EA' or w_sg_tramite = 'DA' Then
+      Elsif w_cliente = 10135 and (w_sg_tramite = 'EA' or w_sg_tramite = 'DA') Then
          w_especial := 0;
          If w_sg_tramite = 'EA' Then
             -- ABDI: Se viagem internacional, exige trâmite de autorização complementar pela DIREX; caso contrário, salta esse trâmite
@@ -422,7 +432,7 @@ begin
                Else w_salto := w_salto + 2;
             End If;
          End If;
-      Elsif w_sg_tramite = 'VP' Then
+      Elsif w_cliente = 10135 and w_sg_tramite = 'VP' Then
          If w_reembolso = 'S' Then        -- ABDI: Se tiver reembolso, vai para aprovação da GERPE.
             w_salto := w_salto + 1;
          Elsif w_ressarcimento = 'S' Then -- ABDI: Se tiver ressarcimento, vai para envio à GERAF.
@@ -525,7 +535,7 @@ begin
    
    If p_devolucao = 'N' Then
       If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S' or w_complemento > 0)) Then
-         If w_reembolso = 'S' or w_complemento > 0 or w_sg_tramite = 'PC' Then
+         If w_sg_tramite = 'PC' or w_reembolso = 'S' or w_complemento > 0 Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso loop
               w_cd_financ := null;
@@ -583,6 +593,7 @@ begin
                                   p_numero             => nvl(crec.cd_interno,w_cd_financ),
                                   p_data               => trunc(sysdate),
                                   p_serie              => null,
+                                  p_moeda              => crec.sq_moeda,
                                   p_valor              => 0,
                                   p_patrimonio         => 'N',
                                   p_retencao           => 'N',
@@ -711,6 +722,7 @@ begin
                                   p_numero             => nvl(crec.cd_interno,w_cd_financ),
                                   p_data               => trunc(sysdate),
                                   p_serie              => null,
+                                  p_moeda              => crec.sq_moeda,
                                   p_valor              => 0,
                                   p_patrimonio         => 'N',
                                   p_retencao           => 'N',
