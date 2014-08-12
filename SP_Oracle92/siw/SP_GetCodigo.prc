@@ -41,7 +41,9 @@ begin
      open p_result for select sq_pessoa_endereco codigo_interno, codigo_externo from CO_PESSOA_ENDERECO where sq_pessoa = p_cliente and sq_pessoa_endereco = p_chave_interna;
   Elsif p_restricao = 'SOLICITACAO' Then
      open p_result for 
-       select a.sq_siw_solicitacao chave, a.codigo_interno, a.codigo_externo, a.cadastrador,
+       select a.sq_siw_solicitacao chave, a.codigo_interno, a.codigo_externo, a.cadastrador, a.sq_cc,
+              dados_solic(a.sq_siw_solicitacao) dados_reg,
+              dados_solic(coalesce(a.sq_solic_pai,0)) dados_pai,
               b.nome nm_menu,
               c.sigla sg_tramite
          from SIW_SOLICITACAO        a

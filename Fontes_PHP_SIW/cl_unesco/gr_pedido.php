@@ -130,6 +130,13 @@ $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_agrega       = upper($_REQUEST['p_agrega']);
 $p_tamanho      = upper($_REQUEST['p_tamanho']);
 
+// Executar a consulta com os parâmetros abaixo
+$p_graf         = 'S'; // Inibe exibição do gráfico
+$p_agrega       = 'GRCLUNIDADE'; // Agrega por unidade solicitante
+$p_tamanho      = 'S'; // Limita exibição do objeto
+$p_fase         = '3315,3316'; // Em execução e Concluída
+$O              = 'L'; // Executa a consulta ao invés de pedir os critérios de busca
+
 // Verifica se o cliente tem o módulo de projetos
 $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PR');
 if (count($RS)>0) $w_pr='S'; else $w_pr='N'; 
@@ -318,14 +325,14 @@ function Gerencial() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $w_embed == 'WORD') {
-    if ($w_embed != 'WORD') {
-      ShowHTML('<tr><td>');
-      if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
-        ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-      } else {
-        ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-      } 
-    } 
+//    if ($w_embed != 'WORD') {
+//      ShowHTML('<tr><td>');
+//      if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
+//        ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
+//      } else {
+//        ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+//      } 
+//    } 
     ImprimeCabecalho();
     if (count($RS1)<=0) { 
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -399,6 +406,7 @@ function Gerencial() {
         } 
       } 
       $w_nm_quebra  = '';
+      $w_reg        = 0;
       $w_qt_quebra  = 0;
       $t_solic      = 0;
       $t_cad        = 0;
@@ -418,6 +426,10 @@ function Gerencial() {
       $t_totaviso   = 0;
       $t_totvalor   = 0;
       $t_totacima   = 0;
+      $v_totcad     = 0;
+      $v_tottram    = 0;
+      $v_totconc    = 0;
+      $v_totatraso  = 0;
       foreach($RS1 as $row) {
         switch ($p_agrega) { 
           case $sigla.'CC':
@@ -520,11 +532,15 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'sg_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
+                $g_linha[$w_reg]['qtd']  = $t_solic;
+                $g_linha[$w_reg]['vlr']  = $t_valor;
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td align="center"><b>'.f($row,'sg_unidade_resp'));
               } 
+              $w_reg       += 1;
+              $g_linha[$w_reg]['nome'] = f($row,'sg_unidade_resp');
               $w_nm_quebra  = f($row,'sg_unidade_resp');
               $w_chave      = f($row,'sq_unidade');
               $w_qt_quebra  = 0;
@@ -675,9 +691,11 @@ function Gerencial() {
           if (f($row,'or_tramite')==1) {
             $t_cad      += 1;
             $t_totcad   += 1;
+            $v_totcad  += Nvl(f($row,'valor'),0);
           } else {
             $t_tram     += 1;
             $t_tottram  += 1;
+            $v_tottram  += Nvl(f($row,'valor'),0);
           } 
         } else {
           // Para a UNESCO t_atraso significa licitações concluídas com situação "Licitação cancelada", 
@@ -685,9 +703,11 @@ function Gerencial() {
           if (strpos(upper(f($row,'nm_lcsituacao')),'CANCELADA')!==false) {
             $t_atraso    = $t_atraso + 1;
             $t_totatraso = $t_totatraso + 1;
+            $v_totatraso += Nvl(f($row,'valor'),0);
           } else {
             $t_conc=$t_conc+1;
             $t_totconc=$t_totconc+1;
+            $v_totconc += Nvl(f($row,'valor'),0);
             if (Nvl(f($row,'valor'),0)<Nvl(f($row,'custo_real'),0)) {
               $t_acima    += 1;
               $t_totacima += 1;
@@ -704,6 +724,8 @@ function Gerencial() {
         $w_qt_quebra    += 1;
       } 
       ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
+      $g_linha[$w_reg]['qtd']  = $t_solic;
+      $g_linha[$w_reg]['vlr']  = $t_valor;
       if ($p_agrega!=$sigla.'CIAVIAGEM' && $p_agrega!=$sigla.'CIDADE') {
         ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
         ShowHTML('          <td><b>Totais</td>');
@@ -729,17 +751,51 @@ function Gerencial() {
                                  $w_legenda
                                 )
               );
-      /*
-      if (($t_totcad+$t_tottram)>0) {
-        ShowHTML('<tr><td align="center"><br>');
-        ShowHTML(geraGraficoGoogle(f($RS_Menu,'nome').' em andamento',$SG,'pie',
-                                   array(($t_tottram+$t_totcad-$t_totatraso-$t_totaviso)),
-                                   array('Normal','Aviso','Atraso')
-                                  )
-                );
+    }
+    if ($t_totvalor > 0 && $t_totsolic > 0) {
+      // Exibe tabelas com quantitativos
+      $w_filler = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+      ShowHTML('<tr><td align="center"><br>');
+      ShowHTML('<table border="1" width="95%" cellspacing="15">');
+      ShowHTML('  <tr valign="top">');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Status de Licitações por Solicitações</b></font><br><br>');
+      ShowHTML('      <table border="1">');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_tottram.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_tottram/$t_totsolic,1).'%'.$w_filler.'</tr>');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrBgColor.'"><td><font size="2"><b>'.$w_filler.'Cancelada'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totatraso.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_totatraso/$t_totsolic,1).'%'.$w_filler.'</tr>');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Concluída'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totconc.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_totconc/$t_totsolic,1).'%'.$w_filler.'</tr>');
+      ShowHTML('      </table><br>');
+      ShowHTML('    </td>');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Status de Licitações por Valores</b></font><br><br>');
+      ShowHTML('      <table border="1">');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_tottram).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_tottram/$t_totvalor,1).'%'.$w_filler.'</tr>');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrBgColor.'"><td><font size="2"><b>'.$w_filler.'Cancelada'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_totatraso).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_totatraso/$t_totvalor,1).'%'.$w_filler.'</tr>');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Concluída'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_totconc).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_totconc/$t_totvalor,1).'%'.$w_filler.'</tr>');
+      ShowHTML('      </table><br>');
+      ShowHTML('    </td>');
+      ShowHTML('  </tr>');
+      ShowHTML('  <tr valign="top">');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Valores de Licitações por Setor</b></font><br><br>');
+      ShowHTML('      <table border="1">');
+      $w_cor = '';
+      foreach($g_linha as $k=>$v) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.$v['nome'].$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v['vlr']).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(round(100*$v['vlr']/$t_totvalor,1),1).'%'.$w_filler.'</tr>');
       }
-      */
-    }    
+      ShowHTML('      </table><br>');
+      ShowHTML('    </td>');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Número de Licitações por Setor</b></font><br><br>');
+      ShowHTML('      <table border="1">');
+      $w_cor = '';
+      foreach($g_linha as $k=>$v) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.$v['nome'].$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$v['qtd'].$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v['qtd']/$t_totsolic,1).'%'.$w_filler.'</tr>');
+      }
+      ShowHTML('      </table><br>');
+      ShowHTML('    </td>');
+      ShowHTML('  </tr>');
+      ShowHTML('</table>');
+      ShowHTML('</tr>');
+    }
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');

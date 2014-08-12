@@ -101,13 +101,13 @@ function Geral() {
   }
   
   if (nvl($w_interno,'')!='') {
+    // Se recebeu código de solicitação, verifica se existe no banco de dados.
     $sql = new db_getCodigo; $RS = $sql->getInstanceOf($dbms,$w_cliente,'SOLICITACAO',$w_interno,$w_servico);
     if (count($RS)==1) {
-      foreach ($RS as $row) { $RS = $row; break; }   
-      $w_chave       = f($RS,'chave');
-      $w_externo     = f($RS,'codigo_externo');
-      $w_cadastrador = f($RS,'cadastrador');
-      $w_nm_menu     = f($RS,'nm_menu');
+      foreach ($RS as $row) { $RS_Solic = $row; break; }
+      // Guarda o tipo da solicitação e do pai 
+      $w_sg_reg = piece(f($RS_Solic,dados_reg),null,'|@|',6);
+      $w_sg_pai = piece(f($RS_Solic,dados_pai),null,'|@|',6);
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('alert("'.((count($RS)==0) ? 'Nenhum registro encontrado!' : 'ATENÇÃO: foi encontrado mais de um registro com o código informado!').'!");');
@@ -117,11 +117,17 @@ function Geral() {
     } 
   }
 
-  if ($w_troca > '') {
-    $w_chave          = $_REQUEST['w_chave'];
-    $w_externo        = $_REQUEST['w_externo'];
-    $w_cadastrador    = $_REQUEST['w_cadastrador'];
-    $w_observacao     = $_REQUEST['w_observacao'];
+  if ($w_troca!='') {
+    $w_chave                = $_REQUEST['w_chave'];
+    $w_externo              = $_REQUEST['w_externo'];
+    $w_cadastrador          = $_REQUEST['w_cadastrador'];
+    $w_observacao           = $_REQUEST['w_observacao'];
+    $w_sq_projeto_rubrica   = $_REQUEST['w_sq_projeto_rubrica'];
+  } elseif (nvl($w_interno,'')!='') {
+    $w_chave       = f($RS_Solic,'chave');
+    $w_externo     = f($RS_Solic,'codigo_externo');
+    $w_cadastrador = f($RS_Solic,'cadastrador');
+    $w_nm_menu     = f($RS_Solic,'nm_menu');
   }
 
   Cabecalho();
@@ -194,6 +200,7 @@ function Geral() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td>Tipo:<br><b>'.$w_nm_menu.'</b></td>');
     ShowHTML('        <td>Codigo interno:<br><b>'.$w_interno.' ('.$w_chave.')</b></td>');
+    If (nvl(f($RS_Solic,'dados_pai'),'')!='') ShowHTML('        <td>Vinculação:<br><b>'.piece(f($RS_Solic,'dados_pai'),null,'|@|',2).' </b></td>');
     ShowHTML('      </tr>');
 
     ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
