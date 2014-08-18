@@ -242,7 +242,7 @@ function Gerencial() {
     switch ($p_agrega) {
       case $sigla.'ABERTURA':      $RS1 = SortArray($RS1,'data_abertura','asc');         break;
       case $sigla.'AUTORIZ':       $RS1 = SortArray($RS1,'data_autorizacao','asc');      break;
-      case $sigla.'UNIDADE':       $RS1 = SortArray($RS1,'sg_unidade_resp','asc');       break;
+      case $sigla.'UNIDADE':       $RS1 = SortArray($RS1,'or_unidade_resp', 'asc', 'sg_unidade_resp','asc'); break;
       case $sigla.'CC':            $RS1 = SortArray($RS1,'nm_cc','asc');                 break;
       case $sigla.'PROJ':          $RS1 = SortArray($RS1,'dados_pai','asc');             break;
       case $sigla.'MODAL':         $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');       break;
@@ -758,14 +758,14 @@ function Gerencial() {
       ShowHTML('<tr><td align="center"><br>');
       ShowHTML('<table border="1" width="95%" cellspacing="15">');
       ShowHTML('  <tr valign="top">');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Status de Licitações por Solicitações</b></font><br><br>');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Status das Licitações (Quantidade Licitações)</b></font><br><br>');
       ShowHTML('      <table border="1">');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_tottram.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_tottram/$t_totsolic,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrBgColor.'"><td><font size="2"><b>'.$w_filler.'Cancelada'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totatraso.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_totatraso/$t_totsolic,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Concluída'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totconc.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_totconc/$t_totsolic,1).'%'.$w_filler.'</tr>');
       ShowHTML('      </table><br>');
       ShowHTML('    </td>');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Status de Licitações por Valores</b></font><br><br>');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Status das Licitações ( Valores R$ )</b></font><br><br>');
       ShowHTML('      <table border="1">');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_tottram).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_tottram/$t_totvalor,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrBgColor.'"><td><font size="2"><b>'.$w_filler.'Cancelada'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_totatraso).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_totatraso/$t_totvalor,1).'%'.$w_filler.'</tr>');
@@ -774,22 +774,26 @@ function Gerencial() {
       ShowHTML('    </td>');
       ShowHTML('  </tr>');
       ShowHTML('  <tr valign="top">');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Valores de Licitações por Setor</b></font><br><br>');
-      ShowHTML('      <table border="1">');
-      $w_cor = '';
-      foreach($g_linha as $k=>$v) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.$v['nome'].$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v['vlr']).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(round(100*$v['vlr']/$t_totvalor,1),1).'%'.$w_filler.'</tr>');
-      }
-      ShowHTML('      </table><br>');
-      ShowHTML('    </td>');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Número de Licitações por Setor</b></font><br><br>');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Quantidade de Licitações Por Setor</b></font><br><br>');
       ShowHTML('      <table border="1">');
       $w_cor = '';
       foreach($g_linha as $k=>$v) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.$v['nome'].$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$v['qtd'].$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v['qtd']/$t_totsolic,1).'%'.$w_filler.'</tr>');
       }
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.'TOTAL'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totsolic.$w_filler.'<td align="right">&nbsp;</tr>');
+      ShowHTML('      </table><br>');
+      ShowHTML('    </td>');
+      ShowHTML('    <td width="47%" align="center" bgcolor="#00FEF0"><br><font size="3"><b>Valor da Licitações Por Setor (R$)</b></font><br><br>');
+      ShowHTML('      <table border="1">');
+      $w_cor = '';
+      foreach($g_linha as $k=>$v) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.$v['nome'].$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v['vlr']).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(round(100*$v['vlr']/$t_totvalor,1),1).'%'.$w_filler.'</tr>');
+      }
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.'TOTAL'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.formatNumber($t_totvalor).$w_filler.'<td align="right">&nbsp;</tr>');
       ShowHTML('      </table><br>');
       ShowHTML('    </td>');
       ShowHTML('  </tr>');

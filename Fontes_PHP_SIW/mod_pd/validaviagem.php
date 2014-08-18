@@ -155,7 +155,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
     }
 
     if (f($l_rs_solic, 'fim_semana') == 'S' and nvl(f($l_rs_solic, 'justificativa_dia_util'), '') == '') {
-      $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado.';
+      $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado, a ser informada no momento do envio da solicitação.';
       if ($l_tipo == '')
         $l_tipo = 2;
     }
@@ -232,7 +232,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         $l_i++;
       }
       if ($w_cont > 0) {
-        $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
+        $l_erro .= '<li>Você deve indicar as diárias de cada localidade sempre que terminar de incluir os deslocamentos ou se alterar qualquer um deles.';
         $l_tipo = 0;
       }
       if ($w_erro_diaria && $w_erro_hospedagem && $w_destino_nacional) {

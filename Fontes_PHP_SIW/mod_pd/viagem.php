@@ -999,7 +999,6 @@ function Geral() {
       }
     }
     Validate('w_descricao', 'Objetivo/assunto/evento', '1', 1, 5, 2000, '1', '1');
-    Validate('w_veiculo', 'locação de veículos', 'RADIO', 1, 5, 2000, '1', '1');
     if ($w_cadgeral == 'S') {
       Validate('w_sq_unidade_resp', 'Unidade proponente', 'SELECT', 1, 1, 18, '', '0123456789');
     }

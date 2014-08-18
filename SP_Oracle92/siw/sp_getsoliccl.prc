@@ -143,7 +143,7 @@ begin
                      then d.processo
                      else to_char(b5.numero_documento)||'/'||substr(to_char(b5.ano),3)
                 end as processo,
-                case when b5.prefixo is null 
+                case when b5.prefixo is null
                      then null
                      else to_char(b5.prefixo)||'.'||substr(1000000+to_char(b5.numero_documento),2,6)||'/'||to_char(b5.ano)||'-'||substr(100+to_char(b5.digito),2,2)
                 end as protocolo_completo,
@@ -168,6 +168,7 @@ begin
                 d82.sq_tipo_lancamento, d82.nome   as nm_lancamento, d82.descricao as ds_lancamento,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,        e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,     e.sigla sg_unidade_resp,
+                e.ordem or_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m.sq_menu as sq_menu_pai,
@@ -195,7 +196,7 @@ begin
                    left           join pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)
                    left           join co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)
                      left         join co_moeda                 b7 on (b6.ativo                   = b7.ativo and
-                                                                       b7.sigla                   = case coalesce(b6.sigla,'-') 
+                                                                       b7.sigla                   = case coalesce(b6.sigla,'-')
                                                                                                          when 'USD' then 'BRL'
                                                                                                          when 'BRL' then 'USD'
                                                                                                          else '-'
@@ -253,8 +254,8 @@ begin
             and (p_prioridade     is null or (p_prioridade  is not null and b.executor             = p_prioridade))
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and d.decisao_judicial = p_ativo))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or 
-                 (p_prazo         is not null and 
+            and (p_prazo          is null or
+                 (p_prazo         is not null and
                   (a.sq_pessoa    = 6881  and -- Tratamento para UNESCO: p_prazo recupera apenas licitações com situação que NÃO contenha a palavra CANCELADA
                    d6.sq_lcsituacao is not null and upper(d6.nome) not like '%CANCELADA%'
                   ) or
@@ -269,7 +270,7 @@ begin
                                              )
                 )
             and (p_fim_i          is null or (p_fim_i       is not null and coalesce(d.data_homologacao, b.conclusao) between p_fim_i and p_fim_f))
-            and (coalesce(p_atraso,'N') = 'N' or 
+            and (coalesce(p_atraso,'N') = 'N' or
                  (a.sq_pessoa = 6881 and -- Tratamento para UNESCO: p_atraso recupera apenas licitações com situação que contenha a palavra CANCELADA
                   d6.sq_lcsituacao is not null and upper(d6.nome) like '%CANCELADA%'
                  ) or
@@ -365,7 +366,7 @@ begin
                               group by w.sq_solic_vinculo
                              )              f  on (d.sq_siw_solicitacao = f.sq_solic_vinculo)
           where b.sq_menu             = p_menu
-            and ((p_chave is null and coalesce(f.qtd_fin,0) < e.qtd_ite) or 
+            and ((p_chave is null and coalesce(f.qtd_fin,0) < e.qtd_ite) or
                  (p_chave is not null and f.sq_solic_vinculo is not null)
                 );
    Else -- Trata a vinculação entre serviços
