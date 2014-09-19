@@ -921,7 +921,7 @@ function Modalidades() {
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Mínimo pesquisas','minimo_pesquisas').'</td>');
     ShowHTML('          <td colspan="3"><b>'.LinkOrdena('Certame','nm_certame').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Gera contrato','nm_gera_contrato').'</td>');
-    ShowHTML('          <td colspan="2"><b>'.LinkOrdena('Enquadramento','enquadramento_inicial').'</td>');
+    ShowHTML('          <td colspan="2"><b>'.LinkOrdena('Enquadramento'.(($w_cliente==17305) ? ' (US$)' : ''),'enquadramento_inicial').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Padrão','nm_padrao').'</td>');
     if ($w_libera_edicao=='S') {

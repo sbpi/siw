@@ -256,12 +256,12 @@ create or replace procedure SP_PutViagemEnvio
    
 begin
    -- Recupera os dados da solicitação. Se for contratado, a unidade solicitante aprova trâmites de chefia imediata. Caso contrário, será a unidade proponente.
-   select a.passagem,   a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,
+   select a.reembolso, a.ressarcimento, a.complemento_valor, a.sq_pessoa,
           c.contratado, case c.contratado 
                              when 'S' then coalesce(a2.sq_unidade_exercicio, a1.sq_unidade, d.sq_unidade)
                              else e.sq_unidade_resp 
                         end
-     into w_passagem,   w_reembolso, w_ressarcimento, w_complemento,       w_beneficiario, 
+     into w_reembolso, w_ressarcimento, w_complemento,       w_beneficiario, 
           w_benef_contr, w_unidade_aprov
      from pd_missao                             a
           left    join sg_autenticacao         a1 on (a.sq_pessoa          = a1.sq_pessoa)
@@ -274,6 +274,14 @@ begin
    
    -- Recupera a chave do cliente
    select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
+   
+   -- Verifica se é necessária a aquisição de passagens
+   select case count(*) when 0 then 'N' else 'S' end
+     into w_passagem
+     from pd_deslocamento a
+    where sq_siw_solicitacao = p_chave
+      and a.tipo             = 'S'
+      and a.passagem         = 'S';
 
    -- Recupera o trâmite para o qual está sendo enviada a solicitação
    If p_devolucao = 'N' Then
@@ -432,12 +440,12 @@ begin
                Else w_salto := w_salto + 2;
             End If;
          End If;
-      Elsif w_cliente = 10135 and w_sg_tramite = 'VP' Then
-         If w_reembolso = 'S' Then        -- ABDI: Se tiver reembolso, vai para aprovação da GERPE.
+      Elsif w_cliente in (10135, 17305) and w_sg_tramite = 'VP' Then
+         If w_reembolso = 'S' Then        -- ABDI/OTCA: Se tiver reembolso, vai para aprovação da GERPE.
             w_salto := w_salto + 1;
-         Elsif w_ressarcimento = 'S' Then -- ABDI: Se tiver ressarcimento, vai para envio à GERAF.
+         Elsif w_ressarcimento = 'S' Then -- ABDI/OTCA: Se tiver ressarcimento, vai para envio à GERAF.
             w_salto := w_salto + 2;
-         Else                             -- ABDI: Senão, vai para arquivamento.
+         Else                             -- ABDI/OTCA: Senão, vai para arquivamento.
             w_salto := w_salto + 3;
          End If;
 

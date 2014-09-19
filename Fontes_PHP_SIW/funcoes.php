@@ -2980,9 +2980,10 @@ function head() {
   extract($GLOBALS);
   ShowHTML('<head>');
   ShowHTML('<meta NAME="robots" CONTENT="noindex, nofollow, noarchive" />');
+  ShowHTML('<meta NAME="author" CONTENT="SBPI Consultoria Ltda" />');
+  ShowHTML('<meta HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=EmulateIE8" />');
   ShowHTML('<meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />');
   ShowHTML('<meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" />');
-  ShowHTML('<meta NAME="author" CONTENT="SBPI Consultoria Ltda" />');
   ShowHTML('<meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />');
   ShowHTML('<meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');

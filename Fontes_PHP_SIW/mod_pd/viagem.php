@@ -7851,8 +7851,7 @@ function ReembolsoValor() {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-
-
+  
   $w_file = '';
   $w_tamanho = '';
   $w_tipo = '';
@@ -8609,7 +8608,7 @@ function Grava() {
           $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], 'PDINICIAL');
           if (f($RS, 'sq_siw_tramite') != $_REQUEST['w_tramite']) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!\');');
+            ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou a solicitação para outra fase!");');
             ScriptClose();
             retornaFormulario('w_observacao');
             exit();

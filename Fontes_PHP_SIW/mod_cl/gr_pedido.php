@@ -230,7 +230,7 @@ function Gerencial() {
         $p_unidade,null,$p_ativo,$p_proponente,
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-        $p_acao_ppa, null, $p_empenho, null);
+        $p_acao_ppa, null, $p_empenho, null, $p_moeda);
 
     switch ($p_agrega) {
       case $sigla.'ABERTURA':      $RS1 = SortArray($RS1,'data_abertura','asc');         break;

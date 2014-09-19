@@ -1,7 +1,7 @@
 <?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class db_getSolicCL
+* class db_getSolicPA
 *
 * { Description :- 
 *    Recupera as solicitações desejadas

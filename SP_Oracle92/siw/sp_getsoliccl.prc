@@ -31,6 +31,7 @@ create or replace procedure SP_GetSolicCL
     p_sq_orprior   in number   default null,
     p_empenho      in varchar2 default null,
     p_processo     in varchar2 default null,
+    p_moeda        in number   default null,
     p_result       out sys_refcursor) is
 
     l_item       varchar2(18);
@@ -236,6 +237,7 @@ begin
                                                                       )
           where (p_menu           is null or (p_menu        is not null and a.sq_menu              = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao   = p_chave))
+            and (p_moeda          is null or (p_moeda       is not null and b.sq_moeda             = p_moeda))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_modalidade_artigo = to_number(p_sq_acao_ppa)))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano             = p_sq_orprior))
             and (p_pais           is null or (p_pais        is not null and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=p_pais))))
@@ -265,7 +267,12 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and (trunc(d.data_abertura) between p_ini_i and p_ini_f or
                                                                              trunc(d.envelope_1)    between p_ini_i and p_ini_f or
                                                                              trunc(d.envelope_2)    between p_ini_i and p_ini_f or
-                                                                             trunc(d.envelope_3)    between p_ini_i and p_ini_f
+                                                                             trunc(d.envelope_3)    between p_ini_i and p_ini_f or
+                                                                             (instr(p_restricao,'CLCAPA') > 0 and -- Tratamento para consulta especial da UNESCO
+                                                                              (coalesce(d.data_homologacao, b.conclusao) between p_ini_i and p_ini_f or
+                                                                               (b1.sigla in ('EA','EE') and d.data_abertura < p_ini_f)
+                                                                              )
+                                                                             )
                                                                             )
                                              )
                 )
