@@ -141,7 +141,7 @@ foreach($RS as $row) {
 
 // Verifica as datas inicial e final de existência de licitações
 $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-    $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+    null,null,null,null,$p_atraso,$p_solicitante,
     $p_unidade,null,$p_ativo,$p_proponente,
     $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
     $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
@@ -220,6 +220,18 @@ function Gerencial() {
     head();
     ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ScriptOpen('Javascript');
+    ValidateOpen('ValidaBusca');
+    ShowHTML('  if (theForm.p_ano.selectedIndex) {');
+    ShowHTML('    theForm.p_ini_i.value="01/01/"+theForm.p_ano[theForm.p_ano.selectedIndex].value;');
+    ShowHTML('    theForm.p_ini_f.value="31/12/"+theForm.p_ano[theForm.p_ano.selectedIndex].value;');
+    ShowHTML('  } else {');
+    ShowHTML('    theForm.p_ini_i.value=theForm.p_inicio.value');
+    ShowHTML('    theForm.p_ini_f.value=theForm.p_final.value;');
+    ShowHTML('  }');
+    ShowHtml('  theForm.Botao.disabled=true;');
+    ValidateClose();
+    ScriptClose();
     ShowHTML('</HEAD>');
     BodyOpenClean('onLoad=this.focus();');
 
@@ -231,7 +243,7 @@ function Gerencial() {
   if ($w_embed!='WORD') {
     $w_ano_i = substr($p_inicio,6);
     $w_ano_f = substr($p_final,6);
-    AbreForm('FormBusca',$w_dir.$w_pagina.$par,'POST','this.Botao.disabled=true;',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    AbreForm('FormBusca',$w_dir.$w_pagina.$par,'POST','return(ValidaBusca(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
     ShowHTML(montaFiltro('POST'));
     if ($_REQUEST['p_atraso']=='')  ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
     if ($_REQUEST['p_prazo']=='')   ShowHTML('<input type="Hidden" name="p_prazo" value="">');
