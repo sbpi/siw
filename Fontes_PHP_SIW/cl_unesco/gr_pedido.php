@@ -244,16 +244,16 @@ function Gerencial() {
     $w_ano_i = substr($p_inicio,6);
     $w_ano_f = substr($p_final,6);
     AbreForm('FormBusca',$w_dir.$w_pagina.$par,'POST','return(ValidaBusca(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
-    ShowHTML(montaFiltro('POST'));
-    if ($_REQUEST['p_atraso']=='')  ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
-    if ($_REQUEST['p_prazo']=='')   ShowHTML('<input type="Hidden" name="p_prazo" value="">');
-    if ($_REQUEST['p_agrega']=='')  ShowHTML('<input type="Hidden" name="p_agrega" value="'.$p_agrega.'">');
-    if ($_REQUEST['p_fase']=='')    ShowHTML('<input type="Hidden" name="p_fase" value="'.$p_fase.'">');
-    if ($_REQUEST['p_ini_i']=='')   ShowHTML('<input type="Hidden" name="p_ini_i" value="'.$p_ini_i.'">');
-    if ($_REQUEST['p_ini_f']=='')   ShowHTML('<input type="Hidden" name="p_ini_f" value="'.$p_ini_f.'">');
-    if ($_REQUEST['p_inicio']=='')  ShowHTML('<input type="Hidden" name="p_inicio" value="'.$p_inicio.'">');
-    if ($_REQUEST['p_final']=='')   ShowHTML('<input type="Hidden" name="p_final" value="'.$p_final.'">');
-    if ($_REQUEST['p_unidade']=='') ShowHTML('<input type="Hidden" name="p_unidade" value="">');
+    ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
+    ShowHTML('<input type="Hidden" name="p_prazo" value="">');
+    ShowHTML('<input type="Hidden" name="p_agrega" value="'.$p_agrega.'">');
+    ShowHTML('<input type="Hidden" name="p_fase" value="'.$p_fase.'">');
+    ShowHTML('<input type="Hidden" name="p_ini_i" value="'.$p_ini_i.'">');
+    ShowHTML('<input type="Hidden" name="p_ini_f" value="'.$p_ini_f.'">');
+    ShowHTML('<input type="Hidden" name="p_inicio" value="'.$p_inicio.'">');
+    ShowHTML('<input type="Hidden" name="p_final" value="'.$p_final.'">');
+    ShowHTML('<input type="Hidden" name="p_unidade" value="">');
+    ShowHTML(MontaFiltro('POST',true));
     selecaoMoeda('<u>M</u>oeda:','M','Selecione a moeda na relação.',$p_moeda,null,'p_moeda','ATIVO',null,1,'&nbsp;');
     if ($w_ano_f-$w_ano_i || $p_ano=='T') {
       ShowHTML('  <td align="right" TITLE="Se desejar executar a busca em outro período, selecione uma das opções."><b>Buscar em:</b> <SELECT class="STS" NAME="p_ano">');

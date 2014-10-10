@@ -350,7 +350,7 @@ begin
     
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
-    If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
+    If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao not in ('CI','PP') Then
        -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
        -- e se não for gestor do sistema, complementa o resultado para somar 16
        Result := Result + 10;
@@ -575,6 +575,10 @@ begin
  -- Solicitação de celular na fase de ciência pelo beneficiário deve ser cumprida pelo beneficiário
  if w_sigla_situacao in ('CB','TR') and w_sigla = 'SRSOLCEL' and w_solicitante = p_usuario Then
     Result := Result + 16;
+ Elsif w_sigla_situacao = 'PP' Then
+    -- Trâmites com a sigla PP indicam cumprimento vinculado a outro serviço.
+    -- Ex: Pgto diária é liberado quando a viagem tem a prestação de contas registrada.
+    null;
  Elsif w_anterior <> p_usuario and w_beneficiario <> p_usuario Then 
    -- A condição abaixo verifica se:
    -- 1) o trâmite atual pode ser cumprido pelo cumpridor do trâmite anterior
