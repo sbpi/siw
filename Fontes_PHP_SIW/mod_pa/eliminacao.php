@@ -740,7 +740,7 @@ function Itens() {
     } elseif($O=='I') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_protocolo[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_protocolo[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_protocolo[]"].length; i++) {');
       ShowHTML('       if (theForm["w_protocolo[]"][i].checked) w_erro=false;');
       ShowHTML('     }');

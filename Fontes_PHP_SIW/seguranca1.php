@@ -141,13 +141,13 @@ function AcessoTramite() {
     if ($O=='I') {
       if (($p_nome.$p_sq_unidade.$p_sq_menu)>'') {
         ShowHTML('  function MarcaTodos() {');
-        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].value==undefined) ');
+        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].length!=undefined) ');
         ShowHTML('       for (i=0; i < document.Form1["w_sq_pessoa[]"].length; i++) ');
         ShowHTML('         document.Form1["w_sq_pessoa[]"][i].checked=true;');
         ShowHTML('    else document.Form1["w_sq_pessoa[]"].checked=true;');
         ShowHTML('  }');
         ShowHTML('  function DesmarcaTodos() {');
-        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].value==undefined) ');
+        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].length!=undefined) ');
         ShowHTML('       for (i=0; i < document.Form1["w_sq_pessoa[]"].length; i++) ');
         ShowHTML('         document.Form1["w_sq_pessoa[]"][i].checked=false;');
         ShowHTML('    ');
@@ -167,7 +167,7 @@ function AcessoTramite() {
       if ($O=='I') {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
-        ShowHTML('  if (theForm["w_sq_pessoa[]"].value==undefined) {');
+        ShowHTML('  if (theForm["w_sq_pessoa[]"].length!=undefined) {');
         ShowHTML('     for (i=0; i < theForm["w_sq_pessoa[]"].length; i++) {');
         ShowHTML('       if (theForm["w_sq_pessoa[]"][i].checked) w_erro=false;');
         ShowHTML('     }');
@@ -622,13 +622,13 @@ function AcessoMenu() {
     if ($O=='I') {
       if (($p_nome.$p_sq_unidade.$p_sq_menu)>'') {
         ShowHTML('  function MarcaTodos() {');
-        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].value==undefined) ');
+        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].length!=undefined) ');
         ShowHTML('       for (i=0; i < document.Form1["w_sq_pessoa[]"].length; i++) ');
         ShowHTML('         document.Form1["w_sq_pessoa[]"][i].checked=true;');
         ShowHTML('    else document.Form1["w_sq_pessoa[]"].checked=true;');
         ShowHTML('  }');
         ShowHTML('  function DesmarcaTodos() {');
-        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].value==undefined) ');
+        ShowHTML('    if (document.Form1["w_sq_pessoa[]"].length!=undefined) ');
         ShowHTML('       for (i=0; i < document.Form1["w_sq_pessoa[]"].length; i++) ');
         ShowHTML('         document.Form1["w_sq_pessoa[]"][i].checked=false;');
         ShowHTML('    ');
@@ -648,7 +648,7 @@ function AcessoMenu() {
       if ($O=='I') {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
-        ShowHTML('  if (theForm["w_sq_pessoa[]"].value==undefined) {');
+        ShowHTML('  if (theForm["w_sq_pessoa[]"].length!=undefined) {');
         ShowHTML('     for (i=0; i < theForm["w_sq_pessoa[]"].length; i++) {');
         ShowHTML('       if (theForm["w_sq_pessoa[]"][i].checked) w_erro=false;');
         ShowHTML('     }');
@@ -862,7 +862,7 @@ function AcessoMenuPerfil() {
     if ($O=='I') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_tipo_vinculo[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_tipo_vinculo[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_sq_tipo_vinculo[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_tipo_vinculo[]"][i].checked) w_erro=false;');
       ShowHTML('     }');
@@ -874,7 +874,7 @@ function AcessoMenuPerfil() {
       ShowHTML('    return false;');
       ShowHTML('  }');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_pessoa_endereco[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_pessoa_endereco[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_sq_pessoa_endereco[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_pessoa_endereco[]"][i].checked) w_erro=false;');
       ShowHTML('     }');
@@ -967,7 +967,7 @@ function Endereco() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Endereços</TITLE>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  ShowHTML('  if (theForm["w_sq_pessoa_endereco[]"].value==undefined) {');
+  ShowHTML('  if (theForm["w_sq_pessoa_endereco[]"].length!=undefined) {');
   ShowHTML('     for (i=0; i < theForm["w_sq_pessoa_endereco[]"].length; i++) {');
   ShowHTML('       if (theForm["w_sq_pessoa_endereco[]"][i].checked) break;');
   ShowHTML('         if (i == theForm["w_sq_pessoa_endereco[]"].length-1) {');

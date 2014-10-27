@@ -1315,7 +1315,7 @@ function Itens() {
     if($O=='I') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_item_pedido[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_item_pedido[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_item_pedido[]"].length; i++) {');
       ShowHTML('       if (theForm["w_item_pedido[]"][i].checked) w_erro=false;');
       ShowHTML('     }');
@@ -1608,7 +1608,7 @@ function ItensContrato() {
     } elseif($O=='Z') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_material[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_material[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_sq_material[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_material[]"][i].checked) w_erro=false;');
       ShowHTML('     }');
@@ -2361,7 +2361,7 @@ function PesquisaPreco() {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  var w_cont=1; ');
-      ShowHTML('  if (theForm["w_chave_aux[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_chave_aux[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_chave_aux[]"].length; i++) {');
       if(f($RS_Solic,'nm_lcjulgamento')=='Global') {
         ShowHTML('       if (theForm["w_chave_aux[]"][i].checked) {');

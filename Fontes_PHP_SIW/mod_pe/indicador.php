@@ -791,7 +791,7 @@ function Aferidor() {
         Validate('w_fim','Término da responsabilidade','DATA','1','10','10','','0123456789/');
         CompData('w_inicio','Início da responsabilidade','<=','w_fim','Término da responsabilidade');
       ShowHTML('  } else {');
-      ShowHTML('    theForm.w_fim.value=\'\';');
+      ShowHTML('    theForm.w_fim.value="";');
       ShowHTML('  }');
       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -1332,7 +1332,7 @@ function Solic() {
     FormataHora();
     ValidateOpen('Validacao');
     Validate('p_nome','Nome','','','2','60','1','1');
-    ShowHTML('  if (theForm.p_tipo.selectedIndex==0 && theForm.p_nome.value==\'\') {');
+    ShowHTML('  if (theForm.p_tipo.selectedIndex==0 && theForm.p_nome.value=="") {');
     ShowHTML('     alert (\'Você deve informar algum critério de busca!\');');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -1340,20 +1340,15 @@ function Solic() {
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
-    if (Nvl($w_operacao,'')>'') {
+    if (Nvl($w_operacao,'')!='') {
       ValidateOpen('Validacao1');
       ShowHTML('  if (theForm.Botao.value==\'Procurar\') {');
       Validate('p_nome','Nome','','1','2','60','1','1');
       ShowHTML('  } else {');
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_indicador[]"].value==undefined) {');
-      ShowHTML('     for (i=0; i < theForm["w_indicador[]"].length; i++) {');
-      ShowHTML('       if (theForm["w_indicador[]"][i].checked) w_erro=false;');
-      ShowHTML('     }');
-      ShowHTML('  }');
-      ShowHTML('  else {');
-      ShowHTML('     if (theForm["w_indicador[]"].checked) w_erro=false;');
+      ShowHTML('  for (i=1; i < theForm["w_indicador[]"].length; i++) {');
+      ShowHTML('    if (theForm["w_indicador[]"][i].checked) w_erro=false;');
       ShowHTML('  }');
       ShowHTML('  if (w_erro) {');
       ShowHTML('    alert("Você deve selecionar pelo menos um indicador!"); ');
@@ -1660,19 +1655,19 @@ function Meta() {
       }
       if ($w_edita=='N' || ($O!='I' && nvl($w_plano,'')!='')) {
         Validate('w_situacao_atual','Situação atual','','','2','4000','1','1');
-        ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_justificativa.value == \'\') {');
+        ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_justificativa.value == "") {');
         ShowHTML('     alert (\'Justifique porque a meta não será cumprida!\');');
         ShowHTML('     theForm.w_justificativa.focus();');
         ShowHTML('     return false;');
         ShowHTML('  } else { if (theForm.w_exequivel[0].checked) ');
-        ShowHTML('     theForm.w_justificativa.value = \'\';');
+        ShowHTML('     theForm.w_justificativa.value = "";');
         ShowHTML('   }');
-        ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_outras_medidas.value == \'\') {');
+        ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_outras_medidas.value == "") {');
         ShowHTML('     alert (\'Indique quais são as medidas necessárias para o cumprimento da meta!\');');
         ShowHTML('     theForm.w_outras_medidas.focus();');
         ShowHTML('     return false;');
         ShowHTML('  } else { if (theForm.w_exequivel[0].checked) ');
-        ShowHTML('     theForm.w_outras_medidas.value = \'\';');
+        ShowHTML('     theForm.w_outras_medidas.value = "";');
         ShowHTML('   }');
         Validate('w_justificativa','Justificativa','', '','2','1000','1','1');
         Validate('w_outras_medidas','Medidas','','','2','1000','1','1');

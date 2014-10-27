@@ -408,7 +408,7 @@ function Tabela() {
       ShowHTML('    }');
       ShowHTML('  }');
       ShowHTML('  function MarcaTodos() {');
-      ShowHTML('    if (document.Form["w_sq_tabela[]"].value==undefined) ');
+      ShowHTML('    if (document.Form["w_sq_tabela[]"].length!=undefined) ');
       ShowHTML('       for (i=0; i < document.Form["w_sq_tabela[]"].length; i++) {');
       ShowHTML('         document.Form["w_sq_tabela[]"][i].checked=true;');
       ShowHTML('         document.Form["w_ordem[]"][i].disabled=false;');
@@ -417,7 +417,7 @@ function Tabela() {
       ShowHTML('    else document.Form["w_sq_tabela[]"].checked=true;');
       ShowHTML('  }');
       ShowHTML('  function DesmarcaTodos() {');
-      ShowHTML('    if (document.Form["w_sq_tabela[]"].value==undefined) ');
+      ShowHTML('    if (document.Form["w_sq_tabela[]"].length!=undefined) ');
       ShowHTML('       for (i=0; i < document.Form["w_sq_tabela[]"].length; i++) {');
       ShowHTML('         document.Form["w_sq_tabela[]"][i].checked=false;');
       ShowHTML('         document.Form["w_ordem[]"][i].disabled=true;');
@@ -443,7 +443,7 @@ function Tabela() {
       } elseif (!(strpos('I',$O)===false)) {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
-        ShowHTML('  if (theForm["w_sq_tabela[]"].value==undefined) {');
+        ShowHTML('  if (theForm["w_sq_tabela[]"].length!=undefined) {');
         ShowHTML('     for (i=0; i < theForm["w_sq_tabela[]"].length; i++) {');
         ShowHTML('       if (theForm["w_sq_tabela[]"][i].checked) w_erro=false;');
         ShowHTML('     }');
@@ -712,7 +712,7 @@ function Mapeamento() {
     ShowHTML('    }');
     ShowHTML('  }');
     ShowHTML('  function MarcaTodos() {');
-    ShowHTML('    if (document.Form["w_sq_coluna[]"].value==undefined) ');
+    ShowHTML('    if (document.Form["w_sq_coluna[]"].length!=undefined) ');
     ShowHTML('       for (i=0; i < document.Form["w_sq_coluna[]"].length; i++) {');
     ShowHTML('         document.Form["w_sq_coluna[]"][i].checked=true;');
     ShowHTML('         document.Form["w_ordem[]"][i].disabled=false;');
@@ -721,7 +721,7 @@ function Mapeamento() {
     ShowHTML('    else document.Form["w_sq_coluna[]"].checked=true;');
     ShowHTML('  }');
     ShowHTML('  function DesmarcaTodos() {');
-    ShowHTML('    if (document.Form["w_sq_coluna[]"].value==undefined) ');
+    ShowHTML('    if (document.Form["w_sq_coluna[]"].length!=undefined) ');
     ShowHTML('       for (i=0; i < document.Form["w_sq_coluna[]"].length; i++) {');
     ShowHTML('         document.Form["w_sq_coluna[]"][i].checked=false;');
     ShowHTML('         document.Form["w_ordem[]"][i].disabled=true;');
@@ -738,7 +738,7 @@ function Mapeamento() {
     ValidateOpen('Validacao');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
-    ShowHTML('  if (theForm["w_sq_coluna[]"].value==undefined) {');
+    ShowHTML('  if (theForm["w_sq_coluna[]"].length!=undefined) {');
     ShowHTML('     for (i=0; i < theForm["w_sq_coluna[]"].length; i++) {');
     ShowHTML('       if (theForm["w_sq_coluna[]"][i].checked) w_erro=false;');
     ShowHTML('     }');

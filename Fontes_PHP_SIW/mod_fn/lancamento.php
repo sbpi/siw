@@ -2637,7 +2637,7 @@ function RubricaDoc() {
     ShowHTML('    }');
     ShowHTML('  }');
     ShowHTML('  function MarcaTodos() {');
-    ShowHTML('    if (document.Form["w_sq_projeto_rubrica[]"].value==undefined) ');
+    ShowHTML('    if (document.Form["w_sq_projeto_rubrica[]"].length!=undefined) ');
     ShowHTML('       for (i=0; i < document.Form["w_sq_projeto_rubrica[]"].length; i++) {');
     ShowHTML('         document.Form["w_sq_projeto_rubrica[]"][i].checked=true;');
     ShowHTML('         document.Form["w_valor[]"][i].disabled=false;');
@@ -2645,7 +2645,7 @@ function RubricaDoc() {
     ShowHTML('    else document.Form["w_sq_projeto_rubrica[]"].checked=true;');
     ShowHTML('  }');
     ShowHTML('  function DesmarcaTodos() {');
-    ShowHTML('    if (document.Form["w_sq_projeto_rubrica[]"].value==undefined) ');
+    ShowHTML('    if (document.Form["w_sq_projeto_rubrica[]"].length!=undefined) ');
     ShowHTML('       for (i=0; i < document.Form["w_sq_projeto_rubrica[]"].length; i++) {');
     ShowHTML('         document.Form["w_sq_projeto_rubrica[]"][i].checked=false;');
     ShowHTML('         document.Form["w_valor[]"][i].disabled=true;');
@@ -2674,7 +2674,7 @@ function RubricaDoc() {
       } else {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
-        ShowHTML('  if (theForm["w_sq_projeto_rubrica[]"].value==undefined) {');
+        ShowHTML('  if (theForm["w_sq_projeto_rubrica[]"].length!=undefined) {');
         ShowHTML('     for (i=0; i < theForm["w_sq_projeto_rubrica[]"].length; i++) {');
         ShowHTML('       if (theForm["w_sq_projeto_rubrica[]"][i].checked) w_erro=false;');
         ShowHTML('     }');
@@ -3361,13 +3361,8 @@ function BuscaParcela() {
       } elseif ($O=='I') {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
-        ShowHTML('  if (theForm["w_sq_acordo_parcela[]"].value==undefined) {');
-        ShowHTML('     for (i=0; i < theForm["w_sq_acordo_parcela[]"].length; i++) {');
-        ShowHTML('       if (theForm["w_sq_acordo_parcela[]"][i].checked) w_erro=false;');
-        ShowHTML('     }');
-        ShowHTML('  }');
-        ShowHTML('  else {');
-        ShowHTML('     if (theForm["w_sq_acordo_parcela[]"].checked) w_erro=false;');
+        ShowHTML('  for (i=0; i < theForm["w_sq_acordo_parcela[]"].length; i++) {');
+        ShowHTML('    if (theForm["w_sq_acordo_parcela[]"][i].checked) w_erro=false;');
         ShowHTML('  }');
         ShowHTML('  if (w_erro) {');
         ShowHTML('    alert("Você deve informar pelo menos uma parcela!"); ');

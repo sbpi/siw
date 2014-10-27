@@ -3160,7 +3160,7 @@ function Parcelas() {
     } elseif ($O=='V') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_acordo_parcela[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_acordo_parcela[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_sq_acordo_parcela[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_acordo_parcela[]"][i].checked) w_erro=false;');
       ShowHTML('     }');
@@ -4924,7 +4924,7 @@ function Notas() {
       Validate('w_observacao','Observação','1','','1','500','1','1');
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_acordo_parcela[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_acordo_parcela[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_sq_acordo_parcela[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_acordo_parcela[]"][i].checked) w_erro=false;');
       ShowHTML('     }');

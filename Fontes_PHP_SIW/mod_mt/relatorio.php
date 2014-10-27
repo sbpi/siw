@@ -1027,7 +1027,7 @@ function Saida() {
       Validate('p_proponente','Material','','','2','60','1','');
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["p_empenho[]"].value==undefined) {');
+      ShowHTML('  if (theForm["p_empenho[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["p_empenho[]"].length; i++) {');
       ShowHTML('       if (theForm["p_empenho[]"][i].checked) w_erro=false;');
       ShowHTML('     }');

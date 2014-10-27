@@ -1184,7 +1184,7 @@ function Itens() {
       ShowHTML('    }');
       ShowHTML('  }');
       ShowHTML('  function MarcaTodos() {');
-      ShowHTML('    if (document.Form["w_sq_material[]"].value==undefined) ');
+      ShowHTML('    if (document.Form["w_sq_material[]"].length!=undefined) ');
       ShowHTML('       for (i=0; i < document.Form["w_sq_material[]"].length; i++) {');
       ShowHTML('         document.Form["w_sq_material[]"][i].checked=true;');
       ShowHTML('         document.Form["w_quantidade[]"][i].disabled=false;');
@@ -1192,7 +1192,7 @@ function Itens() {
       ShowHTML('    else document.Form["w_sq_material[]"].checked=true;');
       ShowHTML('  }');
       ShowHTML('  function DesmarcaTodos() {');
-      ShowHTML('    if (document.Form["w_sq_material[]"].value==undefined) ');
+      ShowHTML('    if (document.Form["w_sq_material[]"].length!=undefined) ');
       ShowHTML('       for (i=0; i < document.Form["w_sq_material[]"].length; i++) {');
       ShowHTML('         document.Form["w_sq_material[]"][i].checked=false;');
       ShowHTML('         document.Form["w_quantidade[]"][i].disabled=true;');
@@ -1216,7 +1216,7 @@ function Itens() {
     } elseif($O=='I') {
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_material[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_material[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_sq_material[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_material[]"][i].checked) w_erro=false;');
       ShowHTML('     }');

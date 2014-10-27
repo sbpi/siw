@@ -924,7 +924,7 @@ function Objetivo(){
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  if (theForm.w_objetivo==undefined) {');
-      ShowHTML('    if (theForm["w_objetivo[]"].value==undefined) {');
+      ShowHTML('    if (theForm["w_objetivo[]"].length!=undefined) {');
       ShowHTML('      for (i=0; i < theForm["w_objetivo[]"].length; i++) {');
       ShowHTML('        if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
       ShowHTML('      }');
@@ -2705,7 +2705,7 @@ function Grava() {
         $SQL = new dml_putObjetivo_pe; 
         if ($O=='T') {
           for ($i=0; $i<=count($_POST['w_objetivo'])-1; $i=$i+1)   {
-            $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
+            $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null,'S');
           } 
         } else {
           $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);

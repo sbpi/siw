@@ -2245,13 +2245,8 @@ function Bilhetes() {
     Validate('w_observacao', 'Observação', '', '', '1', '500', '1', '1');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
-    ShowHTML('  if (theForm["w_sq_deslocamento[]"].value==undefined) {');
-    ShowHTML('     for (i=0; i < theForm["w_sq_deslocamento[]"].length; i++) {');
-    ShowHTML('       if (theForm["w_sq_deslocamento[]"][i].checked) w_erro=false;');
-    ShowHTML('     }');
-    ShowHTML('  }');
-    ShowHTML('  else {');
-    ShowHTML('     if (theForm["w_sq_deslocamento[]"].checked) w_erro=false;');
+    ShowHTML('  for (i=1; i < theForm["w_sq_deslocamento[]"].length; i++) {');
+    ShowHTML('    if (theForm["w_sq_deslocamento[]"][i].checked) w_erro=false;');
     ShowHTML('  }');
     ShowHTML('  if (w_erro) {');
     ShowHTML('    return confirm("Confirma gravação de bilhete sem trechos vinculados?"); ');
@@ -3317,24 +3312,19 @@ function Vinculacao() {
       ShowHTML('  if (theForm.Botao.value=="Procurar") {');
       Validate('p_assunto', 'Detalhamento', '', '1', '2', '90', '1', '1');
       ShowHTML('  } else {');
-      ShowHTML('  var i; ');
-      ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_demanda[]"].value==undefined) {');
-      ShowHTML('     for (i=0; i < theForm["w_demanda[]"].length; i++) {');
-      ShowHTML('       if (theForm["w_demanda[]"][i].checked) w_erro=false;');
-      ShowHTML('     }');
-      ShowHTML('  }');
-      ShowHTML('  else {');
-      ShowHTML('     if (theForm["w_demanda[]"].checked) w_erro=false;');
-      ShowHTML('  }');
-      ShowHTML('  if (w_erro) {');
+      ShowHTML('    var i; ');
+      ShowHTML('    var w_erro=true; ');
+      ShowHTML('    for (i=0; i < theForm["w_demanda[]"].length; i++) {');
+      ShowHTML('      if (theForm["w_demanda[]"][i].checked) w_erro=false;');
+      ShowHTML('    }');
+      ShowHTML('    if (w_erro) {');
       if ($p_sigla == 'GDPCAD') {
-        ShowHTML('    alert("Você deve selecionar pelo menos uma atividade!"); ');
+        ShowHTML('      alert("Você deve selecionar pelo menos uma atividade!"); ');
       } else {
-        ShowHTML('    alert("Você deve selecionar pelo menos uma demanda eventual!"); ');
+        ShowHTML('      alert("Você deve selecionar pelo menos uma demanda eventual!"); ');
       }
-      ShowHTML('    return false;');
-      ShowHTML('  }');
+      ShowHTML('      return false;');
+      ShowHTML('    }');
       ShowHTML('  }');
       ShowHTML('  theForm.Botao.disabled=true;');
       ValidateClose();

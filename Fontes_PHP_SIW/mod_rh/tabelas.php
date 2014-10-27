@@ -600,7 +600,7 @@ function Tipoafast() {
       Validate('w_perc_pag','Percentual da remuneração','VALOR','1',4,18,'','0123456789.,');
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_sq_modalidade[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_sq_modalidade[]"].length!=undefined || theForm["w_sq_modalidade[]"].value=="") {');
       ShowHTML('     for (i=0; i < theForm["w_sq_modalidade[]"].length; i++) {');
       ShowHTML('       if (theForm["w_sq_modalidade[]"][i].checked) w_erro=false;');
       ShowHTML('     }');

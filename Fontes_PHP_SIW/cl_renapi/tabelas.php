@@ -877,7 +877,7 @@ function Objetivo(){
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  if (theForm.w_objetivo==undefined) {');
-      ShowHTML('    if (theForm["w_objetivo[]"].value==undefined) {');
+      ShowHTML('    if (theForm["w_objetivo[]"].length!=undefined) {');
       ShowHTML('      for (i=0; i < theForm["w_objetivo[]"].length; i++) {');
       ShowHTML('        if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
       ShowHTML('      }');

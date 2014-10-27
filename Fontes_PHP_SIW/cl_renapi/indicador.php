@@ -890,7 +890,7 @@ function Solic() {
       ShowHTML('  } else {');
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
-      ShowHTML('  if (theForm["w_indicador[]"].value==undefined) {');
+      ShowHTML('  if (theForm["w_indicador[]"].length!=undefined) {');
       ShowHTML('     for (i=0; i < theForm["w_indicador[]"].length; i++) {');
       ShowHTML('       if (theForm["w_indicador[]"][i].checked) w_erro=false;');
       ShowHTML('     }');
