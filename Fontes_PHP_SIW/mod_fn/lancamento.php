@@ -4146,6 +4146,10 @@ function Concluir() {
   if (nvl(f($RS_Solic,'dados_pai'),'')!='') {
     // Recupera dados da solicitação
     $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),piece(f($RS_Solic,'dados_pai'),null,'|@|',6));
+    if (f($RS_PAI,'sg_modulo')!='PR') {
+      // Se não está ligado a projeto, pega os dados do avô.
+      $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Pai,'sq_solic_pai'),piece(f($RS_Pai,'dados_pai'),null,'|@|',6));
+    }
     $w_moeda_pai        = f($RS_Pai,'sq_moeda');
   }
 
