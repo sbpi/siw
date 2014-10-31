@@ -4739,11 +4739,22 @@ function Grava() {
             $_REQUEST['w_agencia_estrang'],$_REQUEST['w_cidade_estrang'],$_REQUEST['w_informacoes'],$_REQUEST['w_codigo_deposito'],
             $_REQUEST['w_pessoa_atual'],$_REQUEST['w_conta_debito']);
           
-        if (nvl($_REQUEST['w_sq_tipo_documento'],'')!='') {
-          //Grava os dados do comprovante de despesa
-          $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
-            $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
-            'N','N','N',null,null,null,null,&$w_chave_doc);
+        if (nvl($_REQUEST['w_sq_tipo_documento'],'')!='' || nvl($_REQUEST['w_copia'],'')!='') {
+          if (nvl($_REQUEST['w_sq_tipo_documento'],'')!='') {
+            //Grava os dados do comprovante de despesa
+            $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
+              $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
+              'N','N','N',null,null,null,null,&$w_chave_doc);
+          } else {
+            // Copia os documentos e os itens do lançamento original
+            $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$_REQUEST['w_copia'],null,null,null,null,null,null,'DOCS');
+            $RS_Docs = SortArray($RS_Docs,'data','asc');
+            foreach($RS_Docs as $row) {
+              $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,'I',$w_chave_nova,null,f($row,'sq_tipo_documento'),
+                f($row,'numero'),$_REQUEST['w_vencimento'],f($row,'serie'),$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
+                'N','N','N',null,null,null,null,&$w_chave_doc);
+            }
+          }
 
           // Grava acréscimos e supressões
           $SQL = new dml_putLancamentoValor;  $SQL->getInstanceOf($dbms,'E',$w_chave_doc,null,null);
@@ -4756,7 +4767,7 @@ function Grava() {
           }
         }
 
-        if (nvl($_REQUEST['w_copia'],'')!='') {
+        if (nvl($_REQUEST['w_copia'],'')!='' && nvl($_REQUEST['w_sq_tipo_documento'],'')!='') {
           // Copia os documentos e os itens do lançamento original
           $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$_REQUEST['w_copia'],null,null,null,null,null,null,'DOCS');
           $RS_Docs = SortArray($RS_Docs,'data','asc');
