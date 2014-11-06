@@ -211,7 +211,7 @@ function Inicial() {
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Categoria (Usos)</td>';
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Item de Custo</td>';
     $cs++; $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Comprovante de Pagamento</td>';
-    $cs++; $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Pagamento</td>';
+    $cs++; $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Pagamento ('.f($RS_Projeto,'sb_moeda').')</td>';
     $cs++; $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Fornecedor</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center" >';
@@ -241,7 +241,7 @@ function Inicial() {
         $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
         $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
         $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
-        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor_doc')).' </td>';
+        $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
         $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
         $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
         $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
@@ -250,8 +250,10 @@ function Inicial() {
         $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
         $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
         $l_html.=chr(13).'      </tr>';
+        $w_total_previsto += f($row,'valor');
       }
     } 
+    $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'><td colspan=11 align="right"><b>Total: </b></td><td align="right"><b>'.formatNumber($w_total_previsto).' </b></td><td colspan=3>&nbsp;</td>';
     $l_html.=chr(13).'        </table></td></tr>';
 
     ShowHTML($l_html);

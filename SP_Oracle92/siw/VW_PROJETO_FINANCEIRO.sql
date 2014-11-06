@@ -3,9 +3,11 @@ create or replace view VW_PROJETO_FINANCEIRO as
 select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
        e.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,
+       a.descricao||' - '||e.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then e.valor_total else e.valor_total*f.fator end valor, 
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.sigla      else b2.sigla              end sg_fn_moeda, 
+       case when f.sq_siw_solicitacao is null then a2.simbolo    else b2.simbolo            end sb_fn_moeda, 
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
        c.vencimento, c.quitacao
   from siw_solicitacao                      a
@@ -19,7 +21,7 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
              inner   join siw_solicitacao   b  on (e1.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
        left      join (select k.sq_siw_solicitacao, m.valor,
-                              case when k.valor > m.valor then m.valor/k.valor else k.valor/m.valor end fator
+                              case when k.valor <= m.valor then m.valor/k.valor else k.valor/m.valor end fator
                          from siw_solicitacao                    k
                               inner       join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
                               inner       join siw_solicitacao   l on (k.sq_solic_pai       = l.sq_siw_solicitacao)
@@ -31,14 +33,15 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
                                                                        m.valor              > 0
                                                                       )
                       )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
-UNION
+UNION ALL
 -- Pagamentos sem detalhamento de itens
 select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
-       c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,
+       c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, 
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.sigla      else b2.sigla              end sg_fn_moeda, 
+       case when f.sq_siw_solicitacao is null then a2.simbolo    else b2.simbolo            end sb_fn_moeda, 
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
        c.vencimento, c.quitacao
   from siw_solicitacao                    a

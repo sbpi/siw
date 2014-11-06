@@ -228,11 +228,12 @@ begin
       open p_result for 
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
-                a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, codigo2numero(a.cd_financeiro) or_financeiro,
+                a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
+                codigo2numero(a.cd_financeiro) or_financeiro,
                 b.codigo cd_rubrica, b.nome nm_rubrica,
                 b1.codigo cd_rubrica_pai, b1.nome nm_rubrica_pai,
                 c.simbolo sb_moeda,
-                d.descricao, d.inicio, 
+                a.ds_financeiro descricao, d.inicio, 
                 e.sigla sg_tramite,
                 f.sigla sg_menu,
                 g.aviso_prox_conc, g.quitacao, g.vencimento,
@@ -246,6 +247,7 @@ begin
                   left    join pj_rubrica         b1 on (b.sq_rubrica_pai     = b1.sq_projeto_rubrica)
                 inner     join co_moeda            c on (a.sq_fn_moeda        = c.sq_moeda)
                 inner     join siw_solicitacao     d on (a.sq_financeiro      = d.sq_siw_solicitacao)
+                  inner   join co_moeda           d1 on (d.sq_moeda           = d1.sq_moeda)
                   inner   join siw_tramite         e on (d.sq_siw_tramite     = e.sq_siw_tramite)
                   inner   join siw_menu            f on (d.sq_menu            = f.sq_menu)
                   inner   join fn_lancamento       g on (d.sq_siw_solicitacao = g.sq_siw_solicitacao)
