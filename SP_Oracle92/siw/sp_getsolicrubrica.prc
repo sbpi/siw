@@ -139,7 +139,7 @@ begin
          connect by prior a.sq_projeto_rubrica = a.sq_rubrica_pai
          start with coalesce(a.sq_rubrica_pai,0) = coalesce(p_chave_aux,0)
          order by montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao');
-   Elsif p_restricao = 'PJEXEC' Then
+   Elsif p_restricao = 'PJEXECS' or p_restricao = 'PJEXECN' Then
       open p_result for 
          select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
@@ -160,6 +160,7 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
                              and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                              and (p_inicio     is null or 
                                   (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
@@ -180,6 +181,7 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
                              and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                              and (p_inicio     is null or 
                                   (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
@@ -200,6 +202,7 @@ begin
                 coalesce((select sum(valor)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
+                             and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
                              and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                              and (p_inicio     is null or 
                                   (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
@@ -217,14 +220,14 @@ begin
                                                           start with sq_projeto_rubrica = a.sq_projeto_rubrica
                                                          )
                          ),0) total_euro
-           from pj_rubrica                      a
+           from pj_rubrica                   a
           where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
             and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
             and (p_ativo                is null or (p_ativo                is not null and a.ativo                = p_ativo))
             and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
             and (p_codigo               is null or (p_codigo               is not null and a.codigo               = p_codigo))
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
-   Elsif p_restricao = 'PJEXECL' Then
+   Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' Then
       open p_result for 
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
@@ -258,6 +261,7 @@ begin
                   left    join fn_lancamento_doc   h on (d.sq_siw_solicitacao = h.sq_siw_solicitacao)
                     left join fn_tipo_documento    i on (h.sq_tipo_documento  = i.sq_tipo_documento)
           where a.sq_projeto  = p_chave
+            and (p_restricao  = 'PJEXECLN' or (p_restricao = 'PJEXECLS' and a.sg_tramite = 'AT'))
             and (p_inicio     is null or 
                  (p_inicio    is not null and ((a.sg_tramite =  'AT' and a.quitacao   between p_inicio and p_fim) or 
                                            	   (a.sg_tramite <> 'AT' and a.vencimento between p_inicio and p_fim)

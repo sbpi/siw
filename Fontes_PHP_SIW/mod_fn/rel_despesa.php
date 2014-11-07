@@ -111,7 +111,7 @@ function Inicial() {
     $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
     
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECL');
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECLS');
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RSQuery = SortArray($RSQuery,$lista[0],$lista[1],'or_rubrica','asc','or_financeiro','asc');
@@ -230,28 +230,25 @@ function Inicial() {
     $w_total_previsto  = 0;
     $i = 0;
     foreach ($RSQuery as $row) {
-      
-      if (f($row,'sg_tramite')=='AT') {
-        $i++;
-        $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
-        $l_html.=chr(13).'          <td align="center">'.$i.' </td>';
-        $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
-        $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').' </td>';
-        $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica_pai').' </td>';
-        $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
-        $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
-        $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
-        $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
-        $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
-        $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
-        $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
-        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
-        $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
-        $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
-        $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
-        $l_html.=chr(13).'      </tr>';
-        $w_total_previsto += f($row,'valor');
-      }
+      $i++;
+      $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
+      $l_html.=chr(13).'          <td align="center">'.$i.' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica_pai').' </td>';
+      $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
+      $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
+      $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
+      $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
+      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
+      $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
+      $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
+      $l_html.=chr(13).'      </tr>';
+      $w_total_previsto += f($row,'valor');
     } 
     $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'><td colspan=11 align="right"><b>Total: </b></td><td align="right"><b>'.formatNumber($w_total_previsto).' </b></td><td colspan=3>&nbsp;</td>';
     $l_html.=chr(13).'        </table></td></tr>';

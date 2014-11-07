@@ -68,6 +68,7 @@ $p_fim = $_REQUEST['p_fim'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
 $p_sintetico = upper(trim($_REQUEST['p_sintetico']));
 $p_financeiro = upper(trim($_REQUEST['p_financeiro']));
+$p_concluido = $_REQUEST['p_concluido'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 
 // Declaração de variáveis
@@ -112,7 +113,7 @@ function Inicial() {
     $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
     
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXEC');
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXEC'.$p_concluido);
     foreach($RSQuery as $row)  {
       if (f($row,'total_dolar')!='0') { $Moeda['USD']='1';  $Total['USD'] = 0; }
       if (f($row,'total_real')!='0')  { $Moeda['BRL']='1'; $Total['BRL'] = 0; }
@@ -189,9 +190,14 @@ function Inicial() {
   if ($O == 'L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro = '';
-    if ($p_inicio!='')     $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
+    if ($p_inicio!='')      $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
+
+    if ($p_concluido=='S')  $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Relatório considera apenas lançamentos concluídos</b>';
+    else                    $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Relatório considera lançamentos concluídos e na fase de pagamento</b>';
+    
     if ($p_financeiro=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Rubricas de aplicação financeira omitidas</b>';
-    if ($p_sintetico=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
+    if ($p_sintetico=='S')  $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
+    
     ShowHTML('<tr><td align="left" colspan=2>');
     if ($w_filtro > '') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>' . $w_filtro . '</ul></tr></table>');
 
@@ -319,6 +325,8 @@ function Inicial() {
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
     ShowHTML('      <tr>');
+    MontaRadioNS('<b>Considerar apenas lançamentos concluídos? <font color="red">("Sim" para computar apenas lançamentos concluídos. "Não" para computar lançamentos concluídos e/ou autorizados)</font>.</b>',$p_concluido,'p_concluido');
+    ShowHTML('      <tr>');
     MontaRadioNS('<b>Omite rubricas de aplicação financeira?</b>',$p_financeiro,'p_financeiro');
     ShowHTML('      </tr><tr>');
     MontaRadioNS('<b>Exibe apenas a versão sintética do relatório? (apenas rubricas de mais alto nível)</b>',$p_sintetico,'p_sintetico');
@@ -368,7 +376,7 @@ function Detalhe() {
   foreach($RS_Rubrica as $row) { $RS_Rubrica = $row; break; }
 
   // Recupera as rubricas do projeto
-  $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,$p_inicio,$p_fim,'PJEXECL');
+  $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,$p_inicio,$p_fim,'PJEXECL'.$p_concluido);
 
   cabecalho();
   head();
