@@ -20,8 +20,7 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
            inner     join pj_rubrica        e1 on (e.sq_projeto_rubrica  = e1.sq_projeto_rubrica)
              inner   join siw_solicitacao   b  on (e1.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
-       left      join (select k.sq_siw_solicitacao, m.valor,
-                              case when k.valor <= m.valor then m.valor/k.valor else k.valor/m.valor end fator
+       left      join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator
                          from siw_solicitacao                    k
                               inner       join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
                               inner       join siw_solicitacao   l on (k.sq_solic_pai       = l.sq_siw_solicitacao)
