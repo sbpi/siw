@@ -41,22 +41,26 @@ begin
              valor_cotacao       = coalesce(p_valor_cotacao,0),
              sq_solicitacao_item = p_solic_item
        where sq_documento_item = p_chave_aux;
+   Elsif p_operacao = 'J' Then -- Ajuste da rubrica
+      update fn_documento_item
+         set sq_projeto_rubrica  = p_sq_projeto_rubrica
+       where sq_documento_item = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_item where sq_documento_item = p_chave_aux;
    End If;
    
-   If p_operacao in ('I','A') Then
+   If p_operacao in ('I','A','J') Then
       If p_sq_projeto_rubrica is not null Then
          -- Se recebeu rubrica e for única para todos os itens, atualiza o lançamento
-         select count(distinct sq_projeto_rubrica) into w_reg from fn_documento_item where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+         select count(distinct sq_projeto_rubrica) into w_reg from fn_documento_item where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = (select sq_siw_solicitacao from fn_lancamento_doc where sq_lancamento_doc = p_chave));
          If w_reg < 2 Then
-            update fn_lancamento set sq_projeto_rubrica = p_sq_projeto_rubrica where sq_siw_solicitacao = p_chave;
+            update fn_lancamento set sq_projeto_rubrica = p_sq_projeto_rubrica where sq_siw_solicitacao = (select sq_siw_solicitacao from fn_lancamento_doc where sq_lancamento_doc = p_chave);
          End If;
       Else
-         select count(*) into w_reg from fn_lancamento where sq_projeto_rubrica is not null and sq_siw_solicitacao = p_chave;
+         select count(*) into w_reg from fn_lancamento where sq_projeto_rubrica is not null and sq_siw_solicitacao = (select sq_siw_solicitacao from fn_lancamento_doc where sq_lancamento_doc = p_chave);
          If w_reg > 0 Then 
             -- Se não recebeu rubrica mas o lancamento tem uma indicada, atribui ao item
-            select sq_projeto_rubrica into w_reg from fn_lancamento where sq_siw_solicitacao = p_chave;
+            select sq_projeto_rubrica into w_reg from fn_lancamento where sq_siw_solicitacao = (select sq_siw_solicitacao from fn_lancamento_doc where sq_lancamento_doc = p_chave);
             If w_reg is not null Then
                update fn_documento_item set sq_projeto_rubrica = w_reg where sq_documento_item = w_chave_aux;
             End If;

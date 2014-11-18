@@ -16,7 +16,7 @@ class dml_putPDDiaria {
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_sq_diaria'                 =>array($p_sq_diaria,                                     B_INTEGER,        32),
                    'p_sq_cidade'                 =>array($p_sq_cidade,                                     B_INTEGER,        32),
-                   'p_quantidade'                =>array(toNumber(tvl($p_quantidade)),                     B_NUMERIC,       5,1),
+                   'p_quantidade'                =>array(toNumber(tvl($p_quantidade)),                     B_NUMERIC,       9,2),
                    'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

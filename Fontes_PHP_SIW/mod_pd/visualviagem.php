@@ -1340,10 +1340,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
     }
 
-    if ($w_or_tramite>5) {
-      // Bilhete de passagem
-      $sql = new db_getPD_Bilhete; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
-      $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
+    // Bilhete de passagem
+    $sql = new db_getPD_Bilhete; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
+    $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
+    if ($w_or_tramite>5 || count($RS1)>0) {
       if (count($RS1)>0) {
         $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>BILHETES EMITIDOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
         $l_html.=chr(13).'      <tr><td colspan="14">';
@@ -1403,7 +1403,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $l_html.=chr(13).'           <td align="right">'.((nvl(f($row,'nr_fatura'),'')=='') ? '&nbsp;' : formatNumber(f($row,'valor_desconto'))).'</td>';
           $l_html.=chr(13).'           <td align="right">'.((nvl(f($row,'nr_fatura'),'')=='') ? '&nbsp;' : formatNumber(f($row,'vl_bilhete_fatura'))).'</td>';
           $l_html.=chr(13).'        </tr>';
-          if (nvl(f($row,'observacao'),'')!='') $l_html.=chr(13).'        <tr><td colspan=7>Observação: '.crlf2br(f($row,'observacao')).'</td></tr>';
+          if (nvl(f($row,'observacao'),'')!='') $l_html.=chr(13).'        <tr><td colspan=8>Observação: '.crlf2br(f($row,'observacao')).'</td></tr>';
         } 
         $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
         $l_html.=chr(13).'        <td align="right" colspan="6"><b>TOTAIS</b></td>';

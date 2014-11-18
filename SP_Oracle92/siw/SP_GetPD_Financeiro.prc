@@ -248,6 +248,7 @@ begin
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_solic
              )
+       where valor > 0
       group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda;
    Elsif p_restricao = 'FINANC_PREV' Then
       -- Recupera a previsão financeira da viagem
@@ -323,6 +324,7 @@ begin
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_solic
              )
+       where valor > 0
       group by sq_tipo_lancamento, nm_lancamento, sg_moeda, nm_moeda, sb_moeda;
    End If;
 end SP_GetPD_Financeiro;

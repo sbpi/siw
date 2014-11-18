@@ -93,9 +93,14 @@ begin
 
         -- Insere o item
         insert into fn_documento_item
-          (sq_documento_item,         sq_lancamento_doc, sq_projeto_rubrica, ordem, descricao,              quantidade, valor_unitario, valor_total,  valor_cotacao)
-        values
-          (sq_documento_item.nextval, w_chave_doc,       p_rubrica,          1,     'Suprimento de fundos', 1,          p_valor_real,   p_valor_real, 0);
+               (sq_documento_item,         sq_lancamento_doc, sq_projeto_rubrica, ordem,        descricao,
+                quantidade,                valor_unitario,    valor_total,        valor_cotacao)
+        (select sq_documento_item.nextval, w_chave_doc,       p_rubrica,          1,            x.nome,
+                1,                         p_valor_real,      p_valor_real,       0
+           from siw_solicitacao     w
+                inner join siw_menu x on (w.sq_menu = x.sq_menu)
+          where w.sq_siw_solicitacao = p_chave
+        );
       Else
          for crec in (select x.sq_lancamento_doc, x.valor from fn_lancamento_doc x where x.sq_siw_solicitacao = p_chave) loop
            select count(*) into w_cont from fn_documento_item a where a.sq_lancamento_doc = crec.sq_lancamento_doc;
@@ -104,9 +109,14 @@ begin
               update fn_documento_item set sq_projeto_rubrica = p_rubrica where sq_lancamento_doc = crec.sq_lancamento_doc;
            Else
               insert into fn_documento_item
-                (sq_documento_item,         sq_lancamento_doc,      sq_projeto_rubrica, ordem, descricao,   quantidade, valor_unitario, valor_total, valor_cotacao)
-              values
-                (sq_documento_item.nextval, crec.sq_lancamento_doc, p_rubrica,          1,     'Reembolso', 1,          crec.valor,     crec.valor,  0);
+                     (sq_documento_item,         sq_lancamento_doc,      sq_projeto_rubrica, ordem,        descricao,   
+                      quantidade,                valor_unitario,         valor_total,        valor_cotacao)
+              (select sq_documento_item.nextval, crec.sq_lancamento_doc, p_rubrica,          1,            x.nome,
+                      1,                         crec.valor,             crec.valor,         0
+                 from siw_solicitacao     w
+                      inner join siw_menu x on (w.sq_menu = x.sq_menu)
+                where w.sq_siw_solicitacao = p_chave
+              );
            End If;
          End Loop;
       End If;

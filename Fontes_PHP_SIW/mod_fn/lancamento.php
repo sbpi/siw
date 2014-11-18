@@ -4128,8 +4128,11 @@ function Anotar() {
 // -------------------------------------------------------------------------
 function Concluir() {
   extract($GLOBALS);
-  $w_chave      = $_REQUEST['w_chave'];
-  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  global $w_Disabled;
+  $w_chave              = $_REQUEST['w_chave'];
+  $w_chave_aux          = $_REQUEST['w_chave_aux'];
+  $w_sq_lancamento_doc  = $_REQUEST['w_sq_lancamento_doc'];
+  $w_sq_documento_item  = $_REQUEST['w_sq_documento_item'];
 
   // Recupera dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
@@ -4153,11 +4156,8 @@ function Concluir() {
     $w_moeda_pai        = f($RS_Pai,'sq_moeda');
   }
 
-
   // Se for recarga da página
-  if ($w_troca>'') {
-    extract($_POST);
-  }
+  if (nvl($w_troca,'')!='') extract($_POST);
 
   if (nvl($w_conta_debito,'')!='') {
     $sql = new db_getContaBancoData; $RS_Conta = $sql->getInstanceOf($dbms,$w_conta_debito);
@@ -4165,24 +4165,27 @@ function Concluir() {
   }
   
   $RS_Rub = array();
-  
-  // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
-  if (substr($SG,3)=='REEMB') {
-    // Se ligado a projeto, recupera rubricas
-    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,'SELECAO');
+  if (f($RS_Pai,'sg_modulo')=='PR') {
+    $sql = new db_getSolicRubrica; $RS_Rub = $sql->getInstanceOf($dbms,f($RS_Pai,'sq_siw_solicitacao'),null,'S',null,null,null,null,null,'SELECAO');
 
-    // Recupera os documentos do lançamento
+    // Recupera o documento do lançamento. Se existir, há apenas um.
     $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     
     if (count($RS_Doc)>0) {
       foreach($RS_Doc as $row) {
+        $RS_Doc1 = $row;
         $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
-        foreach($RS_Item as $row1) {
-          $w_sq_projeto_rubrica = f($row1,'sq_projeto_rubrica');
-          break;
-        }
-        break;
+        if (count($RS_Item)==1) {
+          foreach($RS_Item as $row1) {
+            $w_sq_documento_item[1]  = nvl($w_sq_documento_item[1],f($row1,'sq_documento_item'));
+            $w_sq_projeto_rubrica[1] = nvl($w_sq_projeto_rubrica[1],f($row1,'sq_projeto_rubrica'));
+          }
+        } elseif (count($RS_Item)==0) {
+            $w_sq_documento_item[1]  = '';
+            $w_sq_projeto_rubrica[1] = nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica'));
+          }
       }
+      $RS_Doc = $RS_Doc1;
     }
   }
   
@@ -4223,7 +4226,11 @@ function Concluir() {
     FormataValor();
     ValidateOpen('Validacao');
     Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
-    if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
+    if (count($RS_Rub)>0) {
+      ShowHTML('  for (ind=1; ind < theForm["w_sq_projeto_rubrica[]"].length; ind++) {');
+      Validate('["w_sq_projeto_rubrica[]"][ind]','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
+      ShowHTML('  }');
+    }
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
     Validate('w_valor_real','Valor líquido'.((nvl(f($RS_Solic,'sb_moeda'),'')!='') ? ' ('.f($RS_Solic,'sb_moeda').')' : ''),'VALOR','1', 4, 18, '', '0123456789.,-');
     if (is_array($w_moedas)) {
@@ -4272,6 +4279,10 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
   ShowHTML('<INPUT type="hidden" name="f_O" value="'.$O.'">');
   ShowHTML('<INPUT type="hidden" name="f_SG" value="'.$SG.'">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_documento_item[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_projeto_rubrica[]" value="">');
+
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -4295,9 +4306,37 @@ function Concluir() {
     SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,3);
     ShowHTML('      </tr>');
     if(count($RS_Rub)>0) {
-      ShowHTML('      <tr>');
-      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','SELECAO',null);
-      ShowHTML('      </tr>');
+      If (count($RS_Item)>1) {
+        ShowHTML('      <tr><td>Projeto: <b>'.f($RS_Pai,'codigo_interno').' - '.f($RS_Pai,'titulo').'</b>');
+        ShowHTML('      <tr><td colspan="3"><table border="1">');
+        ShowHTML('        <tr valign="top">');
+        ShowHTML('          <td><b>Item</b></td>');
+        ShowHTML('          <td><b>Rubrica</b></td>');
+        ShowHTML('        </tr>');
+        $i = 1;
+        foreach($RS_Item as $row) {
+          ShowHTML('        <tr valign="top">');
+          ShowHTML('          <td>'.f($row,'descricao'));
+          ShowHTML('<INPUT type="hidden" name="w_sq_documento_item[]" value="'.f($row,'sq_documento_item').'">');
+          ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc[]" value="'.f($row,'sq_lancamento_doc').'">');
+          SelecaoRubrica('','', null, nvl($w_sq_projeto_rubrica[$i++],f($row,'sq_projeto_rubrica')),f($RS_Pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null);
+        }
+        
+        ShowHTML('      </table></td></tr>');
+      } else {
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('<INPUT type="hidden" name="w_sq_documento_item[]" value="'.$w_sq_documento_item[1].'">');
+        ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc[]" value="'.f($RS_Doc,'sq_lancamento_doc').'">');
+        if (piece(f($RS_Solic,'dados_pai'),null,'|@|',6)=='PDINICIAL') {
+          ShowHTML('<INPUT type="hidden" name="w_sq_projeto_rubrica[]" value="'.nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')).'">');
+          $l_disabled = $w_Disabled;
+          $w_Disabled = ' DISABLED ';
+          SelecaoRubrica('<u>R</u>ubrica (Projeto: <b>'.f($RS_Pai,'codigo_interno').' - '.f($RS_Pai,'titulo').')<br><font color="red">Lançamentos ligados a viagens não podem ter alteração de rubrica. Se necessário, altere as rubricas na solicitação de viagem.</font>','R', 'Selecione a rubrica para pagamento.', nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')),f($RS_Pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null,3);
+          $w_Disabled = $l_disabled;
+        } else {
+          SelecaoRubrica('<u>R</u>ubrica (Projeto: <b>'.f($RS_Pai,'codigo_interno').' - '.f($RS_Pai,'titulo').')','R', 'Selecione a rubrica para pagamento.', nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')),f($RS_Pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null,3);
+        }
+      }
     }
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>D</u>ata do '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_quitacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
@@ -5236,7 +5275,6 @@ function Grava() {
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             } 
           } 
-          
           if (is_array($_REQUEST['w_moeda'])) {
             // Remove as cotações existentes
             $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null,null);
@@ -5251,9 +5289,18 @@ function Grava() {
           }
           $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_quitacao'],
             $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta_debito'],$_REQUEST['w_sq_tipo_lancamento'],
-            $_REQUEST['w_sq_projeto_rubrica'],
+            $_REQUEST['w_sq_projeto_rubrica'][1], // O índice é para pegar a rubrica do primeiro item, caso exista mais de um.
             $_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
           
+          if (is_array($_REQUEST['w_sq_projeto_rubrica'])) {
+            // Grava a rubrica de cada item do lançamento
+            for ($i = 0; $i < count($_REQUEST['w_sq_projeto_rubrica']); $i++) {
+              if (Nvl($_REQUEST['w_sq_projeto_rubrica'][$i], '')!='') {
+                $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,'J',$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_documento_item'][$i],
+                  $_REQUEST['w_sq_projeto_rubrica'][$i],null,null,null,null,null,null,null);
+              }
+            }
+          }
           $w_html = VisualLancamento($_REQUEST['w_chave'],'L',$w_usuario,'2','1');
           CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
           // Envia e-mail comunicando a conclusão

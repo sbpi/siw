@@ -877,6 +877,7 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
       if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
         if (is_array($_POST[$l_Item])) {
           foreach($_POST[$l_Item] as $k => $v) $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'['.$k.']" VALUE="'.$v.'">';
+          //$l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'[]" VALUE="'.explodeArray($_POST[$l_Item]).'">';
         } else {
           $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
         }
