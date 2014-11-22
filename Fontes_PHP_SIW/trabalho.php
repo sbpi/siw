@@ -327,7 +327,7 @@ function Mesa() {
         $sql = new db_getLinkData; $RSMenu_Compras = $sql->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
         $sql = new db_getSolicCL; $RS_Compras = $sql->getInstanceOf($dbms,f($RSMenu_Compras,'sq_menu'),$w_usuario,'CLLCCAD',2,
             formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null, null, null, 
-            null, null, null, null,null, null, null, null, null, null, null, null, null, null, null, null);
+            null, null, null, null,null, null, null, null, null, null, null, null, null, null, null, null,null,null,null,null);
         $RS_Compras = SortArray($RS_Compras,'codigo_interno', 'asc');
 
         // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário

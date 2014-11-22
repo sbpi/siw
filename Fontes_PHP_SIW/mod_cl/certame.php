@@ -167,6 +167,10 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_moeda        = $_REQUEST['p_moeda'];
+$p_vencedor     = $_REQUEST['p_vencedor'];
+$p_externo      = $_REQUEST['p_externo'];
+$p_cnpj         = $_REQUEST['p_cnpj'];
+$p_fornecedor   = $_REQUEST['p_fornecedor'];
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -301,11 +305,9 @@ function Inicial() {
 
       if (nvl($p_solic_pai,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-            $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda);
+            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+            $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
           if($w_tipo=='WORD') $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S','S').'</b>]';
           else                $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
       } elseif ($p_sqcc>'') {
@@ -334,11 +336,9 @@ function Inicial() {
       } 
       if (nvl($p_chave,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
-                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-                  $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-                  $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-                  $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-                  $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda);
+                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+                  $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+                  $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
         $w_filtro.='<tr valign="top"><td align="right">Pedido <td>[<b>'.f($RS,'codigo_interno').'</b>]';
       } 
       //if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
@@ -358,6 +358,10 @@ function Inicial() {
         $w_linha++;
         $w_filtro .= '<tr valign="top"><td align="right">Moeda <td>[<b>'.$w_nm_moeda.'</b>]';
       } 
+      if ($p_cnpj>'')       { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">CPF/CNPJ <td>[<b>'.$p_cnpj.'</b>]'; }
+      if ($p_fornecedor>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Fornecedor <td>[<b>'.$p_fornecedor.'</b>] (busca em qualquer parte do nome)'; }
+      if ($p_vencedor>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Apenas certames com indicação de vencedor <td>[<b>Sim</b>]'; }
+      if ($p_externo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Código '.(($w_cliente==6881) ? 'SA' : 'externo').' <td>[<b>'.$p_externo.'</b>]'; }
       if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código externo <td>[<b>'.$p_assunto.'</b>]'; }
       if ($p_solicitante>'') {
         $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
@@ -384,18 +388,14 @@ function Inicial() {
     if ($w_copia>'') {
       // Se for cópia, aplica o filtro sobre todas as PCDs visíveis pelo usuário
       $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
-          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-          $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-          $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda);
+          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+          $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
     } else {
       $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
-          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-          $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-          $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda);
+          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante, $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+          $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -904,15 +904,11 @@ function Geral() {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
       if ($w_copia>'') {
-        $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
-            null,null,null,null,null,null,null,null,null,null,
-            $w_chave,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       } else {
-        $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
-            null,null,null,null,null,null,null,null,null,null,
-            $w_chave,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null);
+        $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       }
       if (count($RS)>0) {
         foreach($RS as $row){$RS=$row; break;}
@@ -1258,10 +1254,8 @@ function Itens() {
   $w_solic_pai          = $_REQUEST['w_solic_pai'];
 
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
 
   if ($w_troca>'' && $O <> 'E') {
@@ -1509,10 +1503,8 @@ function ItensContrato() {
   $p_ordena             = $_REQUEST['p_ordena'];
 
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
 
   if ($w_troca>'' && $O <> 'E') {
@@ -1911,10 +1903,8 @@ function Anexos() {
   $w_troca      = $_REQUEST['w_troca'];
 
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
 
   if ($w_troca>'' && $O!='E') {
@@ -2089,10 +2079,8 @@ function PesquisaPreco() {
   $p_campo          = $_REQUEST['p_campo'];
 
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
 
   if ($w_troca>'') {
@@ -2908,10 +2896,8 @@ function DadosPrevios() {
   $w_segmento    = f($RS,'segmento');
   $w_cliente_arp = f($RS,'ata_registro_preco');
 
-  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
-        null,null,null,null,null,null,null,null,null,null,
-        $w_chave,null,null,null,null,null,null,
-        null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,null,null,null,null,null,null,null,null,null,null,
+        $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
   
   // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -3065,10 +3051,8 @@ function DadosAnalise() {
   $w_segmento    = f($RS,'segmento');
   $w_cliente_arp = f($RS,'ata_registro_preco');
   
-  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Solic as $row){$RS_Solic=$row; break;}
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -3372,10 +3356,8 @@ function Informar() {
     $w_prioridade         = $_REQUEST['w_prioridade'];
     $w_inicio             = $_REQUEST['w_inicio'];
   } else {
-    $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
-            null,null,null,null,null,null,null,null,null,null,
-            $w_chave,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row){$RS=$row; break;}
     $w_sq_lcsituacao    = f($RS,'sq_lcsituacao');
     $w_abertura         = substr(formataDataEdicao(f($RS_Solic,'phpdt_data_abertura'),3),0,-3);
@@ -3569,10 +3551,8 @@ function Encaminhamento() {
     $w_justificativa    = $_REQUEST['w_justificativa'];
   } else {
     // Recupera os dados da solicitacao
-    $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,5,
-            null,null,null,null,null,null,null,null,null,null,
-            $w_chave,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row){$RS=$row; break;}
     $w_inicio        = f($RS,'inicio');
     $w_fim           = f($RS,'fim');
@@ -3763,10 +3743,8 @@ function Anotar() {
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -3804,9 +3782,8 @@ function Concluir() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
   //Recupera os dados da solicitação
-  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,$w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_gera_contrato = f($RS,'gera_contrato');
@@ -4050,7 +4027,7 @@ function SolicMail($p_solic,$p_tipo) {
   $sql = new db_getSolicCL; $RSM = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],f($RS_Menu,'sigla'),5,
           null,null,null,null,null,null,null,null,null,null,
           $p_solic,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null);
+          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
@@ -4684,7 +4661,7 @@ function Grava() {
           $sql = new db_getSolicCL;
           $RS = $sql->getInstanceOf($dbms, null, $w_usuario, $SG, 3, null, null, null, null, null, null, null, null, null,
                           null, $_REQUEST['w_chave'], null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                          null, null, null,null);
+                          null, null, null,null,null,null,null,null);
           foreach ($RS as $row) {
             $RS = $row;
             break;
@@ -4810,7 +4787,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,
                 null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                null,null,null,null);
+                null,null,null,null,null,null,null,null);
         foreach($RS as $row){$RS=$row; break;}
         if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
           ScriptOpen('JavaScript');

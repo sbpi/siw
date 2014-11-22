@@ -25,6 +25,7 @@ include_once($w_dir_volta.'classes/sp/db_getLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/db_getCronograma.php'); 
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
@@ -890,7 +891,8 @@ function Geral() {
       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
       $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,
               null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo,null,null,null,null,null,null,null,
-              null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null,null);
+              null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null,null,
+              null,null,null,null);
       foreach($RS_Vinculo as $row) {$RS_Vinculo = $row; break; }
       $w_solic_vinculo = f($RS_Vinculo,sq_siw_solicitacao);
       $w_justificativa = f($RS_Vinculo,'justificativa');

@@ -10,14 +10,15 @@ include_once($w_dir_volta.'classes/sp/db_exec.php');
 //include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 //include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
-//include_once($w_dir_volta.'classes/sp/db_getCcData.php');
+include_once($w_dir_volta.'classes/sp/db_getCcData.php');
+include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 //include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 //include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 //include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 //include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
-//include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 //include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 //include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 //include_once($w_dir_volta.'classes/sp/db_getTramiteResp.php');
@@ -45,7 +46,7 @@ include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 //include_once($w_dir_volta.'funcoes/selecaoServico.php');
 //include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
 //include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
-//include_once($w_dir_volta.'funcoes/selecaoSolic.php');
+include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 //include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 //include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
 //include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
@@ -156,6 +157,10 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_moeda        = $_REQUEST['p_moeda'];
+$p_vencedor     = $_REQUEST['p_vencedor'];
+$p_externo      = $_REQUEST['p_externo'];
+$p_cnpj         = $_REQUEST['p_cnpj'];
+$p_fornecedor   = $_REQUEST['p_fornecedor'];
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -167,7 +172,10 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
-if ($O=='') $O='P';
+if ($O=='') {
+  $p_vencedor = 'S';
+  $O='P';
+}
 
 // Recupera a configuração do serviço
 if ($P2>0) {
@@ -230,16 +238,14 @@ function Inicial() {
   $w_tipo     = $_REQUEST['w_tipo'];
 
   if ($O=='L') {
-    if ((strpos(upper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
+    if ((strpos(upper($R),'REL_')!==false) || ($w_tipo=='WORD')) {
       $w_filtro='';
 
       if (nvl($p_solic_pai,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-            $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda);
+            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+            $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null);
           if($w_tipo=='WORD') $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S','S').'</b>]';
           else                $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
       } elseif ($p_sqcc>'') {
@@ -268,11 +274,9 @@ function Inicial() {
       } 
       if (nvl($p_chave,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
-                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-                  $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-                  $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-                  $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-                  $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda);
+                  $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+                  $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+                  $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null);
         $w_filtro.='<tr valign="top"><td align="right">Pedido <td>[<b>'.f($RS,'codigo_interno').'</b>]';
       } 
       //if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
@@ -311,32 +315,13 @@ function Inicial() {
       }
       if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Eventos do certame <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
       if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_cnpj>'')       $w_filtro.='<tr valign="top"><td align="right">CPF/CNPJ <td>[<b>'.$p_cnpj.'</b>]';
+      if ($p_fornecedor>'') $w_filtro.='<tr valign="top"><td align="right">Fornecedor <td>[<b>'.$p_fornecedor.'</b>] (busca em qualquer parte do nome)';
+      if ($p_vencedor>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Apenas certames com indicação de vencedor <td>[<b>Sim</b>]'; }
+      if ($p_externo>'')    $w_filtro.='<tr valign="top"><td align="right">Código '.(($w_cliente==6881) ? 'SA' : 'externo').' <td>[<b>Sim</b>]';
       if ($w_filtro>'')     $w_filtro  ='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
  
-    $SQL = "select --case when g.cgccpf is not null and g.cgccpf <> e1.cnpj then 'X' end erro," .$crlf.
-           "       codigo2numero(a.codigo_interno) ord_codigo_interno, ".$crlf.
-           "       a.codigo_interno, d.fornecedor, d.vencedor, e1.cnpj lic_cnpj, e.nome nm_fornecedor," .$crlf.
-           //"       g.cgccpf cnpj_fabs, g.nome fb_fornecedor," .$crlf.
-           //"       g.automatico_sa, g.certificacao, g.ds_sa," .$crlf.
-           "       a.descricao objeto, f.nome nm_material," .$crlf.
-           "       c.quantidade_autorizada qtd, d.valor_unidade unitario, d.valor_item valor" .$crlf.
-           "  from siw_solicitacao                        a" .$crlf.
-           "       inner         join siw_menu           a1 on (a.sq_menu             = a1.sq_menu and" .$crlf.
-           "                                                        a1.sigla              = 'CLLCCAD'" .$crlf.
-           "                                                       )" .$crlf.
-           "       inner         join cl_solicitacao      b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)" .$crlf.
-           "         inner       join cl_solicitacao_item c on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)" .$crlf.
-           "           inner     join cl_item_fornecedor  d on (c.sq_solicitacao_item = d.sq_solicitacao_item)" .$crlf.
-           "             inner   join co_pessoa           e on (d.fornecedor          = e.sq_pessoa)" .$crlf.
-           "               inner join co_pessoa_juridica e1 on (e.sq_pessoa           = e1.sq_pessoa)" .$crlf.
-           "           inner     join cl_material         f on (c.sq_material         = f.sq_material)" .$crlf.
-           //"       left          join (select w.automatico_sa, w.certificacao, x.handle, x.cgccpf, x.nome, y.ds_sa" .$crlf.
-           //"                             from corporativo.un_solicitacaoadministrativa w" .$crlf.
-           //"                                  inner join corporativo.gn_pessoas        x on (w.contratado   = x.handle)" .$crlf.
-           //"                                  inner join corporativo.vw_permissao_web  y on (w.certificacao = y.ordem)" .$crlf.
-           //"                          )                   g on (a.codigo_externo      = g.automatico_sa)" .$crlf.
-           " where d.pesquisa = 'N'";
     $SQL = "select a.sq_menu,            a.sq_modulo,                   a.nome," .$crlf.
            "       a.tramite,            a.ultimo_nivel,                a.p1," .$crlf.
            "       a.p2,                 a.p3,                          a.p4," .$crlf.
@@ -350,8 +335,8 @@ function Inicial() {
            "       b.valor,              b.palavra_chave,               b.sq_solic_pai," .$crlf.
            "       b.sq_unidade,         b.sq_cidade_origem," .$crlf.
            "       coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno," .$crlf.
-           "       unesco.codigo2numero(coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao))) as ord_codigo_interno," .$crlf.
-           "       b.codigo_externo,     b.titulo,                      unesco.acentos(b.titulo) as ac_titulo," .$crlf.
+           "       codigo2numero(coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao))) as ord_codigo_interno," .$crlf.
+           "       b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo," .$crlf.
            "       b.sq_plano,           b.sq_cc,                       b.observacao," .$crlf.
            "       b.protocolo_siw,      b.recebedor," .$crlf.
            "       to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao," .$crlf.
@@ -364,7 +349,7 @@ function Inicial() {
            "                           end" .$crlf.
            "                      else 'Plano: '||b3.titulo" .$crlf.
            "                 end" .$crlf.
-           "            else unesco.dados_solic(b.sq_solic_pai)" .$crlf.
+           "            else dados_solic(b.sq_solic_pai)" .$crlf.
            "       end as dados_pai," .$crlf.
            "       b1.nome as nm_tramite,   b1.ordem as or_tramite," .$crlf.
            "       b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail," .$crlf.
@@ -374,7 +359,7 @@ function Inicial() {
            "       b7.sq_moeda sq_moeda_alt, b7.codigo cd_moeda_alt,       b7.nome nm_moeda_alt," .$crlf.
            "       b7.sigla sg_moeda_alt,   b7.simbolo sb_moeda_alt,       b7.ativo at_moeda_alt," .$crlf.
            "       case when b6.sq_moeda is not null and b7.sq_moeda is not null" .$crlf.
-           "            then unesco.conversao(a.sq_pessoa, coalesce(b.inicio, b.inclusao), b6.sq_moeda, b7.sq_moeda, b.valor, 'V')" .$crlf.
+           "            then conversao(a.sq_pessoa, coalesce(b.inicio, b.inclusao), b6.sq_moeda, b7.sq_moeda, b.valor, 'V')" .$crlf.
            "            else 0" .$crlf.
            "       end valor_alt," .$crlf.
            "       c.informal,                c.sq_tipo_unidade as tp_exec," .$crlf.
@@ -428,82 +413,92 @@ function Inicial() {
            "       o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind," .$crlf.
            "       p.nome_resumido as nm_exec,  p.nome_resumido_ind as nm_exec_ind," .$crlf.
            "       q.nome_resumido as nm_recebedor,  p.nome_resumido_ind as nm_recebedor_ind," .$crlf.
-//           "       s.cgccpf cnpj_fabs, s.nome fb_fornecedor," .$crlf.
-//           "       s.automatico_sa, s.certificacao, s.ds_sa," .$crlf.
-//           "       case when s.cgccpf is not null and s.cgccpf <> d31.cnpj and d2.vencedor = 'S' then 'X' end erro," .$crlf.
-           "       d2.fornecedor, d2.vencedor, d31.cnpj lic_cnpj, d3.nome nm_fornecedor," .$crlf.
+           "       s.cgccpf cnpj_fabs, s.nome fb_fornecedor," .$crlf.
+           "       s.automatico_sa, s.certificacao, s.ds_sa, s.link," .$crlf.
+           "       case when s.cgccpf is not null and s.cgccpf <> nvl(d31.cnpj,d32.cpf) and d2.vencedor = 'S' then 'X' end erro," .$crlf.
+           "       d2.fornecedor, d2.vencedor, nvl(d31.cnpj,d32.cpf) lic_cnpj, d3.nome nm_fornecedor," .$crlf.
            "       d11.nome nm_material," .$crlf.
-           "       d1.quantidade_autorizada qtd, d2.valor_unidade vl_unit_item, d2.valor_item vl_total_item" .$crlf.
-           "  from unesco.siw_menu                                        a" .$crlf.
-           "       inner             join unesco.siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)" .$crlf.
-           "       inner             join unesco.eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)" .$crlf.
-           "       inner             join unesco.siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)" .$crlf.
-           "          inner          join (select x.sq_siw_solicitacao, unesco.acesso(x.sq_siw_solicitacao,".$w_usuario.",null) as acesso" .$crlf.
-           "                                 from unesco.siw_solicitacao             x" .$crlf.
-           "                                      inner  join unesco.cl_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)" .$crlf.
-           "                                      inner join unesco.siw_menu         y on (x.sq_menu        = y.sq_menu and" .$crlf.
+           "       d1.ordem or_item, d1.quantidade_autorizada qtd, d2.valor_unidade vl_unit_item, d2.valor_item vl_total_item" .$crlf.
+           "  from siw_menu                                        a" .$crlf.
+           "       inner             join siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)" .$crlf.
+           "       inner             join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)" .$crlf.
+           "       inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)" .$crlf.
+           "          inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao,".$w_usuario.",null) as acesso" .$crlf.
+           "                                 from siw_solicitacao             x" .$crlf.
+           "                                      inner  join cl_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)" .$crlf.
+           "                                      inner join siw_menu         y on (x.sq_menu        = y.sq_menu and" .$crlf.
            "                                                                        y.sq_menu        = coalesce(".$P2.", y.sq_menu)" .$crlf.
            "                                                                       )" .$crlf.
            "                              )                            b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)" .$crlf.
-           "          inner          join unesco.siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)" .$crlf.
-           "          inner          join unesco.cl_solicitacao           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)" .$crlf.
-           "          inner          join unesco.cl_solicitacao_item      d1 on (b.sq_siw_solicitacao       = d1.sq_siw_solicitacao)" .$crlf.
-           "            inner        join unesco.cl_item_fornecedor       d2 on (d1.sq_solicitacao_item     = d2.sq_solicitacao_item and" .$crlf.
+           "          inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)" .$crlf.
+           "          inner          join cl_solicitacao           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)" .$crlf.
+           "          inner          join cl_solicitacao_item      d1 on (b.sq_siw_solicitacao       = d1.sq_siw_solicitacao)" .$crlf.
+           "            inner        join cl_item_fornecedor       d2 on (d1.sq_solicitacao_item     = d2.sq_solicitacao_item and" .$crlf.
            "                                                                  d2.pesquisa                = 'N'" .$crlf.
            "                                                                 )" .$crlf.
-           "              inner      join unesco.co_pessoa                d3 on (d2.fornecedor              = d3.sq_pessoa)" .$crlf.
-           "                inner    join unesco.co_pessoa_juridica      d31 on (d3.sq_pessoa               = d31.sq_pessoa)" .$crlf.
-           "            inner        join unesco.cl_material             d11 on (d1.sq_material             = d11.sq_material)" .$crlf.
-           "          inner          join unesco.eo_unidade               e  on (b.sq_unidade               = e.sq_unidade)" .$crlf.
-           "          inner          join unesco.co_cidade                f  on (b.sq_cidade_origem         = f.sq_cidade)" .$crlf.
-           "          left           join unesco.pe_plano                 b3 on (b.sq_plano                 = b3.sq_plano)" .$crlf.
-           "          left           join unesco.pj_projeto               b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)" .$crlf.
-           "          left           join unesco.pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)" .$crlf.
-           "          left           join unesco.co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)" .$crlf.
-           "            left         join unesco.co_moeda                 b7 on (b6.ativo                   = b7.ativo and" .$crlf.
+           "              inner      join co_pessoa                d3 on (d2.fornecedor              = d3.sq_pessoa)" .$crlf.
+           "                left     join co_pessoa_juridica      d31 on (d3.sq_pessoa               = d31.sq_pessoa)" .$crlf.
+           "                left     join co_pessoa_fisica        d32 on (d3.sq_pessoa               = d32.sq_pessoa)" .$crlf.
+           "            inner        join cl_material             d11 on (d1.sq_material             = d11.sq_material)" .$crlf.
+           "          inner          join eo_unidade               e  on (b.sq_unidade               = e.sq_unidade)" .$crlf.
+           "          inner          join co_cidade                f  on (b.sq_cidade_origem         = f.sq_cidade)" .$crlf.
+           "          left           join pe_plano                 b3 on (b.sq_plano                 = b3.sq_plano)" .$crlf.
+           "          left           join pj_projeto               b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)" .$crlf.
+           "          left           join pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)" .$crlf.
+           "          left           join co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)" .$crlf.
+           "            left         join co_moeda                 b7 on (b6.ativo                   = b7.ativo and" .$crlf.
            "                                                              b7.sigla                   = case coalesce(b6.sigla,'-')" .$crlf.
            "                                                                                                when 'USD' then 'BRL'" .$crlf.
            "                                                                                                when 'BRL' then 'USD'" .$crlf.
            "                                                                                                else '-'" .$crlf.
            "                                                                                           end" .$crlf.
            "                                                             )" .$crlf.
-           "            left         join unesco.lc_modalidade            d4 on (d.sq_lcmodalidade          = d4.sq_lcmodalidade)" .$crlf.
-           "            left         join unesco.lc_modalidade_artigo    d41 on (d.sq_modalidade_artigo     = d41.sq_modalidade_artigo)" .$crlf.
-           "            left         join unesco.lc_julgamento            d5 on (d.sq_lcjulgamento          = d5.sq_lcjulgamento)" .$crlf.
-           "            left         join unesco.lc_situacao              d6 on (d.sq_lcsituacao            = d6.sq_lcsituacao)" .$crlf.
-           "            left         join unesco.pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)" .$crlf.
-           "              left       join unesco.eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and" .$crlf.
+           "            left         join lc_modalidade            d4 on (d.sq_lcmodalidade          = d4.sq_lcmodalidade)" .$crlf.
+           "            left         join lc_modalidade_artigo    d41 on (d.sq_modalidade_artigo     = d41.sq_modalidade_artigo)" .$crlf.
+           "            left         join lc_julgamento            d5 on (d.sq_lcjulgamento          = d5.sq_lcjulgamento)" .$crlf.
+           "            left         join lc_situacao              d6 on (d.sq_lcsituacao            = d6.sq_lcsituacao)" .$crlf.
+           "            left         join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)" .$crlf.
+           "              left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and" .$crlf.
            "                                                              e1.tipo_respons            = 'T'           and" .$crlf.
            "                                                              e1.fim                     is null" .$crlf.
            "                                                             )" .$crlf.
-           "              left       join unesco.eo_unidade_resp          e2 on (e.sq_unidade               = e2.sq_unidade and" .$crlf.
+           "              left       join eo_unidade_resp          e2 on (e.sq_unidade               = e2.sq_unidade and" .$crlf.
            "                                                              e2.tipo_respons            = 'S'           and" .$crlf.
            "                                                              e2.fim                     is null" .$crlf.
            "                                                             )" .$crlf.
-           "          left           join unesco.siw_solicitacao          m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)" .$crlf.
-           "          left           join unesco.ct_cc                    n  on (b.sq_cc                    = n.sq_cc)" .$crlf.
-           "          left           join unesco.co_pessoa                o  on (b.solicitante              = o.sq_pessoa)" .$crlf.
-           "          left           join unesco.co_pessoa                p  on (b.executor                 = p.sq_pessoa)" .$crlf.
-           "          left           join unesco.co_pessoa                q  on (b.recebedor                = q.sq_pessoa)" .$crlf.
-           "          left           join unesco.eo_unidade_resp          a3 on (c.sq_unidade               = a3.sq_unidade and" .$crlf.
+           "          left           join siw_solicitacao          m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)" .$crlf.
+           "          left           join ct_cc                    n  on (b.sq_cc                    = n.sq_cc)" .$crlf.
+           "          left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)" .$crlf.
+           "          left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)" .$crlf.
+           "          left           join co_pessoa                q  on (b.recebedor                = q.sq_pessoa)" .$crlf.
+           "          left           join eo_unidade_resp          a3 on (c.sq_unidade               = a3.sq_unidade and" .$crlf.
            "                                                              a3.tipo_respons            = 'T'           and" .$crlf.
            "                                                              a3.fim                     is null" .$crlf.
            "                                                             )" .$crlf.
-           "          left           join unesco.eo_unidade_resp          a4 on (c.sq_unidade               = a4.sq_unidade and" .$crlf.
+           "          left           join eo_unidade_resp          a4 on (c.sq_unidade               = a4.sq_unidade and" .$crlf.
            "                                                              a4.tipo_respons            = 'S'           and" .$crlf.
            "                                                              a4.fim                     is null" .$crlf.
-           "                                                             )" .$crlf.
-//           "          left          join (select w.automatico_sa, w.certificacao, x.handle, x.cgccpf, x.nome, y.ds_sa" .$crlf.
-//           "                                from corporativo.un_solicitacaoadministrativa w" .$crlf.
-//           "                                     inner join corporativo.gn_pessoas        x on (w.contratado   = x.handle)" .$crlf.
-//           "                                     inner join corporativo.vw_permissao_web  y on (w.certificacao = y.ordem)" .$crlf.
-//           "                             )                         s  on (b.codigo_externo      = s.automatico_sa)" .$crlf.
-           " where a.sq_menu              = ".$P2.$crlf.
+           "                                                             )" .$crlf;
+    if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) {
+      $SQL.="          left          join (select w.automatico_sa, w.certificacao, x.handle, x.cgccpf, x.nome, y.ds_sa," .$crlf.
+            "                                     seguranca.FCLinkWeb(w.automatico_sa,1,1,167) link" .$crlf.
+            "                                from corporativo.un_solicitacaoadministrativa     w" .$crlf.
+            "                                     inner join corporativo.gn_pessoas            x on (w.contratado   = x.handle)" .$crlf.
+            "                                     inner join corporativo.vw_permissao_web      y on (w.certificacao = y.ordem)" .$crlf.
+            "                             )                         s  on (b.codigo_externo      = s.automatico_sa)" .$crlf;
+    } else {
+      $SQL.="          left          join (select null automatico_sa, null certificacao, null handle, null cgccpf, null nome, null ds_sa, null link from dual where 1=0) s on (b.codigo_externo = s.automatico_sa)" .$crlf;
+    }
+    $SQL.= " where a.sq_menu              = ".$P2.$crlf.
            "   and b1.sigla               <> 'CA'";
+    if (nvl($p_vencedor,'')=='S')   $SQL.="   and d2.vencedor            = '".$p_vencedor."'".$crlf;
+    if (nvl($p_externo,'')=='S')    $SQL.="   and b.codigo_esterno       is not null and acentos(b.codigo_externo) like '%'||acentos(".$p_externo."')||'%'".$crlf;
+    if (nvl($p_fornecedor,'')!='')  $SQL.="   and (acentos(d3.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%' or acentos(s.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%')".$crlf;
+    if (nvl($p_cnpj,'')!='')        $SQL.="   and (nvl(d31.cnpj,d32.cpf) = '".$p_cnpj."' or s.cgccpf = '".$p_cnpj."')".$crlf;
     if (nvl($p_moeda,'')!='')       $SQL.="   and b.sq_moeda             = ".$p_moeda.$crlf;
     if (nvl($p_sq_acao_ppa,'')!='') $SQL.="   and d.sq_modalidade_artigo = ".$p_sq_acao_ppa.$crlf;
     if (nvl($p_sq_orprior,'')!='')  $SQL.="   and b.sq_plano             = ".$p_sq_orprior.$crlf;
-    if (nvl($p_pais,'')!='')        $SQL.="   and 0 < (select count(*) from unesco.cl_solicitacao_item x inner join unesco.cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from unesco.cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=".$p_pais."))".$crlf;
+    if (nvl($p_pais,'')!='')        $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=".$p_pais."))".$crlf;
     if (nvl($p_regiao,'')!='')      $SQL.="   and d.processo             like '%".$p_regiao."%'))".$crlf;
     if (nvl($p_cidade,'')!='')      $SQL.="   and d.processo             like '%".$p_cidade."%'".$crlf;
     if (nvl($p_usu_resp,'')!='')    $SQL.="   and d4.sq_lcmodalidade     = ".$p_usu_resp.$crlf;
@@ -512,10 +507,10 @@ function Inicial() {
     if (nvl($p_projeto,'')!='')     $SQL.="   and b.sq_solic_pai         = ".$p_projeto.$crlf;
     if (nvl($p_processo,'')!='')    $SQL.="   and (('".$p_processo."'    = 'CLASSIF' and b.sq_cc is not null) or ('".$p_processo."' <> 'CLASSIF' and m.sq_menu = to_number(".$p_processo.")))".$crlf;
     if (nvl($p_uf,'')!='')          $SQL.="   and d6.sq_lcsituacao       = ".$p_uf.$crlf;
-    if (nvl($p_proponente,'')!='')  $SQL.="   and 0 < (select count(*) from unesco.cl_solicitacao_item x inner join unesco.cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and unesco.acentos(y.nome,null) like '%'||unesco.acentos('".$p_proponente."',null)||'%')".$crlf;
-    if (nvl($p_assunto,'')!='')     $SQL.="   and unesco.acentos(b.codigo_externo,null) like '%'||unesco.acentos('".$p_assunto."',null)||'%'".$crlf;
-    if (nvl($p_palavra,'')!='')     $SQL.="   and unesco.acentos(d.numero_certame,null) like '%'||unesco.acentos('".$p_palavra."',null)||'%'".$crlf;
-    if (nvl($p_empenho,'')!='')     $SQL.="   and (unesco.acentos(b.codigo_interno,null) like '%'||unesco.acentos('".$p_empenho."',null)||'%' or unesco.acentos(d.numero_certame,null) like '%'||unesco.acentos('".$p_empenho."',null)||'%')".$crlf;
+    if (nvl($p_proponente,'')!='')  $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(y.nome,null) like '%'||acentos('".$p_proponente."',null)||'%')".$crlf;
+    if (nvl($p_assunto,'')!='')     $SQL.="   and acentos(b.codigo_externo,null) like '%'||acentos('".$p_assunto."',null)||'%'".$crlf;
+    if (nvl($p_palavra,'')!='')     $SQL.="   and acentos(d.numero_certame,null) like '%'||acentos('".$p_palavra."',null)||'%'".$crlf;
+    if (nvl($p_empenho,'')!='')     $SQL.="   and (acentos(b.codigo_interno,null) like '%'||acentos('".$p_empenho."',null)||'%' or acentos(d.numero_certame,null) like '%'||acentos('".$p_empenho."',null)||'%')".$crlf;
     if (nvl($p_prioridade,'')!='')  $SQL.="   and b.executor             = ".$p_prioridade.$crlf;
     if (nvl($p_ativo,'')!='')       $SQL.="   and d.decisao_judicial = '".$p_ativo."'".$crlf;
     if (nvl($p_prazo,'')!='')       $SQL.="   and (d6.sq_lcsituacao is not null and upper(d6.nome) not like '%CANCELADA%')".$crlf;
@@ -592,7 +587,7 @@ function Inicial() {
     } else {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
     }
-    if ($w_filtro > '') ShowHTML($w_filtro);
+    if ($w_filtro > '') ShowHTML('<div align="left">'.$w_filtro.'</div>');
   }
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -613,53 +608,62 @@ function Inicial() {
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     $colspan = 0;
+    $rowspan = 1;
+    if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) $rowspan = 2;
     if ($w_embed!='WORD') {
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Vencedor','vencedor').'</td>');
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('CNPJ','lic_cnpj').'</td>');
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fornecedor','nm_fornecedor').'</td>');
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Objeto','objeto').'</td>');
-      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Item','nm_material').'</td>');
-//      if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>'); }
-//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Modalidade','sg_lcmodalidade').'</td>');
-//      if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td><b>'.LinkOrdena('Processo','processo').'</td>'); }
-//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
-//      //$colspan++; ShowHTML('          <td><b>'.LinkOrdena('Data limite','fim').'</td>');
-//      if ($P1!=1 || $w_pede_valor_pedido=='S') {
-        ShowHTML('          <td><b>'.LinkOrdena('Valor'.(($w_sb_moeda>'') ? ' ('.$w_sb_moeda.')' : ''),'valor').'</td>');
+      if (nvl($p_vencedor,'')=='') { $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Vencedor','vencedor').'</td>'); }
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('CPF/CNPJ','lic_cnpj').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Fornecedor','nm_fornecedor').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Código','ord_codigo_interno').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Objeto','objeto').'</td>');
+      $colspan++; ShowHTML ('         <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Modalidade','sg_lcmodalidade').'</td>');
+//      if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Processo','processo').'</td>'); }
+//      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
+//      //$colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Data limite','fim').'</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Item','nm_material').'</td>');
+      ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Valor'.(($w_sb_moeda>'') ? ' ('.$w_sb_moeda.')' : ''),'valor').'</td>');
 //        if ($P1!=1) {
-//          ShowHTML('          <td><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
-//          if ($w_embed!='WORD') ShowHTML('          <td class="remover" width="1">&nbsp;</td>');
-//          ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</td>');
+//          ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Situação','nm_lcsituacao').'</td>');
+//          if ($w_embed!='WORD') ShowHTML('          <td rowspan="'.$rowspan.'" class="remover" width="1">&nbsp;</td>');
+//          ShowHTML('          <td rowspan="'.$rowspan.'"><b>'.LinkOrdena('Executor','nm_exec').'</td>');
 //        }
-//        if ($P1>2) {
-//          if ($w_cliente==6881) ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
-//          else                  ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-//        }
-//      }      
+      if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) ShowHTML('          <td colspan="2"><b>SA</td>');
       ShowHTML('        </tr>');
+      if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) {
+        ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('          <td><b>'.LinkOrdena('Código','automatico_sa').'</td>');
+        ShowHTML('          <td><b>'.LinkOrdena('Fase','ds_sa').'</td>');
+        ShowHTML('        </tr>');
+      }
     } else {
-      $colspan++; ShowHTML('          <td><b>Código</td>');
-      $colspan++; ShowHTML('          <td><b>Objeto</td>');
-//      if ($_SESSION['INTERNO']=='S') { $colspan++; ShowHTML ('          <td><b>Vinculação</td>'); }
-//      $colspan++; ShowHTML('          <td><b>Modalidade</td>');
-//      if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td><b>Processo</td>'); }
-//      $colspan++; ShowHTML('          <td><b>Solicitante</td>');
-//      //$colspan++; ShowHTML('          <td><b>Data limite</td>');
-//      if ($P1!=1 || $w_pede_valor_pedido=='S') {
-        ShowHTML('          <td><b>Valor'.(($w_sb_moeda>'') ? ' ('.$w_sb_moeda.')' : '').'</td>');
+      if (nvl($p_vencedor,'')=='') { $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Vencedor</td>'); }
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>CPF/CNPJ</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Fornecedor</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Código</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Objeto</td>');
+      $colspan++; ShowHTML ('          <td rowspan="'.$rowspan.'"><b>Vinculação</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Modalidade</td>');
+//      if ($w_pa=='S' || $w_segmento=='Público') { $colspan++; ShowHTML ('          <td rowspan="'.$rowspan.'"><b>Processo</td>'); }
+//      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Solicitante</td>');
+//      //$colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Data limite</td>');
+      $colspan++; ShowHTML('          <td rowspan="'.$rowspan.'"><b>Item</td>');
+      ShowHTML('          <td rowspan="'.$rowspan.'"><b>Valor'.(($w_sb_moeda>'') ? ' ('.$w_sb_moeda.')' : '').'</td>');
 //        if ($P1!=1) {
-//          ShowHTML('          <td><b>Situação</td>');
-//          if ($w_embed!='WORD') ShowHTML('          <td class="remover" width="1">&nbsp;</td>');
-//          ShowHTML('          <td><b>Executor</td>');
+//          ShowHTML('          <td rowspan="'.$rowspan.'"><b>Situação</td>');
+//          if ($w_embed!='WORD') ShowHTML('          <td rowspan="'.$rowspan.'" class="remover" width="1">&nbsp;</td>');
+//          ShowHTML('          <td rowspan="'.$rowspan.'"><b>Executor</td>');
 //        }
-//        if ($P1>2) {
-//          if ($w_cliente==6881) ShowHTML('          <td><b>Código externo</td>');
-//          else                  ShowHTML('          <td><b>Fase atual</td>');
-//        }
-//      }
+      if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) ShowHTML('          <td colspan="2"><b>SA</td>');
       ShowHTML('        </tr>');
+      if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) {
+        ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('          <td><b>Código</td>');
+        ShowHTML('          <td><b>Fase</td>');
+        ShowHTML('        </tr>');
+      }
     }
+    $w_erro = false;
     if (count($RS)==0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="'.($colspan+4).'" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -683,25 +687,24 @@ function Inicial() {
       }
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center" nowrap>'.((f($row,'vencedor')=='S') ? 'X' : '').'</td>');
-        ShowHTML('        <td align="center" nowrap>'.f($row,'lic_cnpj').'</td>');
-        ShowHTML('        <td>' . ExibePessoa('../', $w_cliente, f($row, 'fornecedor'), $TP, f($row, 'nm_fornecedor')) . '</td>');
+        if (f($row,'erro')=='X') {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColorLightYellow2.'" valign="top">'); 
+          $w_erro = true;
+        } else {
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        }
+        if (nvl($p_vencedor,'')=='') ShowHTML('        <td align="center" nowrap>'.((f($row,'vencedor')=='S') ? 'X' : '').'</td>');
+        ShowHTML('        <td align="center" nowrap'.((f($row,'erro')=='X') ? ' title="'.f($row,'cnpj_fabs').' - '.f($row,'fb_fornecedor').'"' : '').'>'.f($row,'lic_cnpj').'</td>');
+        ShowHTML('        <td width="20%">' . ExibePessoa('../', $w_cliente, f($row, 'fornecedor'), $TP, f($row, 'nm_fornecedor')) . '</td>');
         ShowHTML('        <td width="1%" nowrap>');
-        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_embed!='WORD'){
-          ShowHTML('        <A class="HL" HREF="mod_cl/certame.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+          ShowHTML('        <A class="HL" target="_blank" HREF="mod_cl/certame.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
         } else {
           ShowHTML('&nbsp;'.f($row,'codigo_interno').'&nbsp;');
         }
-        ShowHTML('        <td>'.f($row,'objeto').'</td>');
-        ShowHTML('        <td>'.f($row,'nm_material').'</td>');
-//        if ($_SESSION['INTERNO']=='S') {
-//          if ($w_cliente==6881)                    ShowHTML('        <td>'.f($row,'sg_cc').'</td>');
-//          elseif (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
-//          else                                     ShowHTML('        <td>---</td>');
-//        } 
-//        ShowHTML('        <td title="'.f($row,'nm_lcmodalidade').'" align="center">'.f($row,'sg_lcmodalidade').'</td>');
+        ShowHTML('        <td width="20%">'.f($row,'objeto').'</td>');
+        ShowHTML('        <td'.((f($row,'sg_cc')!='') ? ' title="'.f($row,'dados_pai').'"' : '').'>'.f($row,'sg_cc').'</td>');
+        ShowHTML('        <td title="'.f($row,'nm_lcmodalidade').'" align="center">'.f($row,'sg_lcmodalidade').'</td>');
 //        if ($w_pa=='S') {
 //          if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
 //            ShowHTML('        <td align="center" nowrap><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'processo').'&nbsp;</a>'.'</td>');
@@ -712,19 +715,27 @@ function Inicial() {
 //          ShowHTML('        <td align="center">'.f($row,'processo').'</td>');
 //        }
 //        ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
-//        if ($P1!=1 || $w_pede_valor_pedido=='S') {
-          if (f($row,'vencedor')=='S') $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'vl_total_item');
-          ShowHTML('        <td align="right" width="1%" nowrap>'.((nvl($w_sb_moeda,'')=='' && nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'vl_total_item')).'</td>');
+        ShowHTML('        <td>'.f($row,'or_item').' - '.f($row,'nm_material').'</td>');
+        if (f($row,'vencedor')=='S') $w_parcial[f($row,'sb_moeda')] = nvl($w_parcial[f($row,'sb_moeda')],0) + f($row,'vl_total_item');
+        ShowHTML('        <td align="right" width="1%" nowrap>'.((nvl($w_sb_moeda,'')=='' && nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'vl_total_item')).'</td>');
 //          if ($P1!=1) {
 //            ShowHTML('        <td>'.Nvl(f($row,'nm_lcsituacao'),'---').'</td>');
 //            if ($w_embed!='WORD') ShowHTML('        <td class="remover" width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
 //            ShowHTML('        <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
 //          }
-//          if ($P1>2) {
-//            if ($w_cliente==6881) ShowHTML('        <td nowrap>'.f($row,'codigo_externo').'</td>');
-//            else                  ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
-//          }
-//        } 
+        if (strpos($_SERVER['HTTP_HOST'],'unesco')!==false) {
+          if (f($row,'vencedor')=='S' && nvl(f($row,'automatico_sa'),'')!='') {
+            // Bloco exibido apenas se a rotina estiver rodando no servidor da UNESCO.
+            if (nvl(f($row,'automatico_sa'),'')!='') {
+              ShowHTML('        <td nowrap><a class="HL" target="_blank" href="'.f($row,'link').'">'.f($row,'automatico_sa').'</a>');
+            } else {
+              ShowHTML('        <td>&nbsp;</td>');
+            }
+            ShowHTML('        <td>'.f($row,'ds_sa').'</td>');
+          } else {
+            ShowHTML('        <td colspan="2">&nbsp;</td>');
+          }
+        }
         ShowHTML('      </tr>');
       } 
       if ($P1!=1) {
@@ -732,7 +743,7 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página (apenas vencedores)&nbsp;</td>');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_parcial)==1) ? 'l' : 'is').' desta página '.((nvl($p_vencedor,'')=='') ? '(apenas vencedores)': '').'&nbsp;</td>');
           ShowHTML('          <td align="right" nowrap><b>');
           $i = 0;
           ksort($w_parcial);
@@ -748,7 +759,7 @@ function Inicial() {
             $w_total[$k] = nvl($w_total[$k],0) + $v;
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').' da listagem (apenas vencedores)&nbsp;</td>');
+          ShowHTML('          <td colspan="'.$colspan.'" align="right"><b>Tota'.((count($w_total)==1) ? 'l' : 'is').' da listagem '.((nvl($p_vencedor,'')=='') ? '(apenas vencedores)': '').'&nbsp;</td>');
           ShowHTML('          <td align="right" nowrap><b>');
           $i = 0;
           ksort($w_total);
@@ -759,10 +770,10 @@ function Inicial() {
         } 
       } 
     } 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
+    if ($w_erro) ShowHTML('<tr><td colspan=3><b>ATENÇÃO: Linhas na cor amarela indicam divergência entre o vencedor do certame e o beneficiário da SA. Passe o mouse sobre o CPF/CNPJ para ver os dados informados na SA.</td></tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if (count($RS) && $w_embed!='WORD') {
       if ($P1==2) {
@@ -811,15 +822,18 @@ function Inicial() {
       ShowHTML('     <td><b><U>C</U>ódigo da licitação:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
       SelecaoPessoa('<u>R</u>esponsável pela execução:','N','Selecione o executor na relação.',$p_prioridade,null,'p_prioridade','USUARIOS');
       ShowHTML('   <tr valign="top">');
+      SelecaoSolic('Classificação:',null,null,$w_cliente,$p_sqcc,'CLASSIF',null,'p_sqcc','SIWSOLIC',null,null,'<BR />',2);
+      ShowHTML('   <tr valign="top">');
       SelecaoPessoa('<u>S</u>olicitante:','N','Selecione o solicitante na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
       SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,null,'p_unidade','CLCP',null);
-      ShowHTML('   <tr>');
-      ShowHTML('     <td><b><u>D</u>ata de recebimento e limite para atendimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
-      if ($O!='C') {
-        // Se não for cópia
-        ShowHTML('<tr>');
-        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase',null,null);
-      } 
+      ShowHTML('   <tr valign="top">');
+      ShowHTML('     <td><b>C<U>P</U>F/CNPJ: (insira pontos, barras e traços)<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_cnpj" size="20" maxlength="20" value="'.$p_cnpj.'"></td>');
+      ShowHTML('     <td><b><U>F</U>ornecedor: (qualquer parte do nome)<br><INPUT ACCESSKEY="F" '.$w_Disabled.' class="STI" type="text" name="p_fornecedor" size="40" maxlength="60" value="'.$p_fornecedor.'"></td>');
+      //ShowHTML('   <tr valign="top">');
+      //ShowHTML('     <td><b><u>D</u>ata de recebimento e limite para atendimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('   <tr valign="top">');
+      ShowHTML('     <td><input type="checkbox" class="stc" name="p_vencedor" value="S"'.((nvl($p_vencedor,'')!='') ? ' checked' : '').'> Recuperar apenas certames com vencedores indicados');
+      ShowHTML('     <td><b>Có<u>d</u>igo '.(($w_cliente==6881) ? 'SA': 'externo').': (qualquer parte do código)<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="p_externo" size="20" maxlength="60" value="'.$p_externo.'"></td>');
     } 
     ShowHTML('      <tr>');
     ShowHTML('        <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');

@@ -145,7 +145,7 @@ $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agr
     $p_unidade,null,$p_ativo,$p_proponente,
     $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
     $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-    $p_acao_ppa, null, $p_empenho, null, null);
+    $p_acao_ppa, null, $p_empenho, null, null,null,null,null,null);
 
 foreach($RS1 as $row) {
   if (nvl($p_inicio,'')=='') {
@@ -202,11 +202,9 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $p_tipo == 'WORD' || $p_tipo=='PDF') {
     // Recupera os dados a partir do filtro
     $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-        $p_unidade,null,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-        $p_acao_ppa, null, $p_empenho, null, $p_moeda);
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,null,$p_ativo,$p_proponente,
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
     $RS1 = SortArray($RS1,'or_unidade_resp', 'asc', 'sg_unidade_resp','asc');
   } 
 

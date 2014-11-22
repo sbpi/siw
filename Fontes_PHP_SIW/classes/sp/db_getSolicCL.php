@@ -13,8 +13,9 @@ class db_getSolicCL {
         $p_ini_i,       $p_ini_f,       $p_fim_i,       $p_fim_f,       $p_atraso,      $p_solicitante,     $p_unidade,
         $p_prioridade,  $p_ativo,       $p_proponente,  $p_chave,       $p_assunto,     $p_pais,            $p_regiao, 
         $p_uf,          $p_cidade,      $p_usu_resp,    $p_uorg_resp,   $p_palavra,     $p_prazo,           $p_fase, 
-        $p_sqcc,        $p_projeto,     $p_atividade,   $p_acao_ppa,    $p_orprior,     $p_empenho=null,    $p_processo=null, 
-        $p_moeda=null) {
+        $p_sqcc,        $p_projeto,     $p_atividade,   $p_acao_ppa,    $p_orprior,     $p_empenho,         $p_processo,
+        $p_moeda,       $p_vencedor,    $p_externo,     $p_cnpj,        $p_fornecedor) {
+
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicCL';
      $params=array('p_menu'                     =>array($p_menu,                B_INTEGER,        32),
                    'p_pessoa'                   =>array($p_pessoa,              B_INTEGER,        32),
@@ -48,7 +49,11 @@ class db_getSolicCL {
                    'p_orprior'                  =>array(tvl($p_orprior),        B_INTEGER,        32),
                    'p_empenho'                  =>array(tvl($p_empenho),        B_VARCHAR,        30),
                    'p_processo'                 =>array(tvl($p_processo),       B_VARCHAR,        30),
-                   'p_moeda'                    =>array(tvl($p_moeda),          B_INTEGER,        32),                                      
+                   'p_moeda'                    =>array(tvl($p_moeda),          B_INTEGER,        32), 
+                   'p_vencedor'                 =>array(tvl($p_vencedor),       B_VARCHAR,         1),
+                   'p_externo'                  =>array(tvl($p_externo),        B_VARCHAR,        60),
+                   'p_cnpj'                     =>array(tvl($p_cnpj),           B_VARCHAR,        20),
+                   'p_fornecedor'               =>array(tvl($p_fornecedor),     B_VARCHAR,        60),                                     
                    'p_result'                   =>array(null,                   B_CURSOR,         -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

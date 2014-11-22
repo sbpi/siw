@@ -129,6 +129,10 @@ $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_agrega       = upper($_REQUEST['p_agrega']);
 $p_tamanho      = upper($_REQUEST['p_tamanho']);
+$p_vencedor     = $_REQUEST['p_vencedor'];
+$p_externo      = $_REQUEST['p_externo'];
+$p_cnpj         = $_REQUEST['p_cnpj'];
+$p_fornecedor   = $_REQUEST['p_fornecedor'];
 
 // Verifica se o cliente tem o módulo de projetos
 $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PR');
@@ -198,6 +202,10 @@ function Gerencial() {
       $sql = new db_getUorgData; $RS = $sql->getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade solicitante <td>[<b>'.f($RS,'nome').'</b>]';
     } 
+    if ($p_cnpj>'')       { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">CPF/CNPJ <td>[<b>'.$p_cnpj.'</b>]'; }
+    if ($p_fornecedor>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Fornecedor <td>[<b>'.$p_fornecedor.'</b>] (busca em qualquer parte do nome)'; }
+    if ($p_vencedor>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Apenas certames com indicação de vencedor <td>[<b>Sim</b>]'; }
+    if ($p_externo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Código '.(($w_cliente==6881) ? 'SA' : 'externo').' <td>[<b>'.$p_externo.'</b>]'; }
     if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Material<td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Número do certame <td>[<b>'.$p_palavra.'</b>]'; }
     if ($p_pais>'') {
@@ -226,11 +234,9 @@ function Gerencial() {
 
     // Recupera os dados a partir do filtro
     $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-        $p_unidade,null,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-        $p_acao_ppa, null, $p_empenho, null, $p_moeda);
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,null,$p_ativo,$p_proponente,
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
 
     switch ($p_agrega) {
       case $sigla.'ABERTURA':      $RS1 = SortArray($RS1,'data_abertura','asc');         break;
@@ -791,6 +797,10 @@ function Gerencial() {
       ShowHTML('   <tr valign="top">');
     }
     SelecaoPessoa('<u>R</u>esponsável pela execução:','N','Selecione o responsável na relação.',$p_prioridade,null,'p_prioridade','USUARIOS');
+    ShowHTML('     <td><b>Có<u>d</u>igo '.(($w_cliente==6881) ? 'SA': 'externo').': (qualquer parte do código)<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="p_externo" size="20" maxlength="60" value="'.$p_externo.'"></td>');
+    ShowHTML('   <tr valign="top">');
+    ShowHTML('     <td><b>C<U>P</U>F/CNPJ: (insira pontos, barras e traços)<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_cnpj" size="20" maxlength="20" value="'.$p_cnpj.'"></td>');
+    ShowHTML('     <td><b><U>F</U>ornecedor: (qualquer parte do nome)<br><INPUT ACCESSKEY="F" '.$w_Disabled.' class="STI" type="text" name="p_fornecedor" size="40" maxlength="60" value="'.$p_fornecedor.'"></td>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>M</U>aterial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     //SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
@@ -813,6 +823,7 @@ function Gerencial() {
       ShowHTML('     <td><b>A<u>u</u>torização entre:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
     }
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
+    ShowHTML('   <tr valign="top"><td colspan="2"><input type="checkbox" class="stc" name="p_vencedor" value="S"'.((nvl($p_vencedor,'')!='') ? ' checked' : '').'> Recuperar apenas certames com vencedores indicados');
     ShowHTML('    </table>');
     ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('    <tr><td align="center" colspan="3">');
