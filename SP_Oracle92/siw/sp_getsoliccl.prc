@@ -32,6 +32,10 @@ create or replace procedure SP_GetSolicCL
     p_empenho      in varchar2 default null,
     p_processo     in varchar2 default null,
     p_moeda        in number   default null,
+    p_vencedor     in varchar2 default null,
+    p_externo      in varchar2 default null,
+    p_cnpj         in varchar2 default null,
+    p_fornecedor   in varchar2 default null,
     p_result       out sys_refcursor) is
 
     l_item       varchar2(18);
@@ -116,8 +120,8 @@ begin
                      then conversao(a.sq_pessoa, coalesce(b.inicio, b.inclusao), b6.sq_moeda, b7.sq_moeda, b.valor, 'V')
                      else 0
                 end valor_alt,
-                c.sq_tipo_unidade,       c.nome as nm_unidade_exec,     c.informal,
-                c.sq_tipo_unidade as tp_exec, c.nome as nm_unidade_exec, c.informal as informal_exec,
+                c.informal,              c.sq_tipo_unidade as tp_exec,
+                c.nome as nm_unidade_exec,                              c.informal as informal_exec,
                 c.vinculada as vinc_exec,c.adm_central as adm_exec,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
                 c.vinculada,             c.adm_central,
@@ -241,6 +245,35 @@ begin
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_modalidade_artigo = to_number(p_sq_acao_ppa)))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano             = p_sq_orprior))
             and (p_pais           is null or (p_pais        is not null and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=p_pais))))
+            and (p_cnpj           is null or 
+                 (p_cnpj          is not null and 0 < (select count(*) 
+                                                         from cl_solicitacao_item             w 
+                                                              inner   join cl_item_fornecedor x on (w.sq_solicitacao_item = x.sq_solicitacao_item and
+                                                                                                    x.pesquisa            = 'N'
+                                                                                                   )
+                                                                left  join co_pessoa_fisica   y on (x.fornecedor          = y.sq_pessoa)
+                                                                left  join co_pessoa_juridica z on (x.fornecedor          = z.sq_pessoa)
+                                                        where w.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                          and nvl(y.cpf,z.cnpj)    = p_cnpj
+                                                          and (p_vencedor          is null or (p_vencedor is not null and b1.sigla = 'AT' and x.pesquisa = 'N' and x.vencedor = 'S'))
+                                                      )
+                 )
+                )
+            and (p_fornecedor     is null or 
+                 (p_fornecedor    is not null and 0 < (select count(*) 
+                                                         from cl_solicitacao_item             x 
+                                                              inner   join cl_item_fornecedor y on (x.sq_solicitacao_item = y.sq_solicitacao_item and
+                                                                                                    y.pesquisa            = 'N'
+                                                                                                   )
+                                                                inner join co_pessoa          z on (y.fornecedor          = z.sq_pessoa)
+                                                        where x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                          and (z.nome_indice like '%'||acentos(p_fornecedor)||'%' or z.nome_resumido_ind like '%'||acentos(p_fornecedor)||'%')
+                                                          and (p_vencedor is null or (p_vencedor is not null and b1.sigla = 'AT' and y.pesquisa = 'N' and y.vencedor = 'S'))
+                                                      )
+                 )
+                )
+            and (p_vencedor       is null or (p_vencedor    is not null and b1.sigla = 'AT' and 0 < (select count(*) from cl_solicitacao_item x inner join cl_item_fornecedor y on (x.sq_solicitacao_item = y.sq_solicitacao_item) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.pesquisa = 'N' and y.vencedor = 'S')))
+            and (p_externo        is null or (p_externo     is not null and  b.codigo_externo is not null and acentos(b.codigo_externo) like '%'||acentos(p_externo)||'%'))
             and (p_regiao         is null or (p_regiao      is not null and d.processo             like '%'||p_regiao||'%'))
             and (p_cidade         is null or (p_cidade      is not null and d.processo             like '%'||p_cidade||'%'))
             and (p_usu_resp       is null or (p_usu_resp    is not null and d4.sq_lcmodalidade     = p_usu_resp))
