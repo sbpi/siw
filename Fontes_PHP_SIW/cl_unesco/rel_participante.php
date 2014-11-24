@@ -318,7 +318,7 @@ function Inicial() {
       if ($p_cnpj>'')       $w_filtro.='<tr valign="top"><td align="right">CPF/CNPJ <td>[<b>'.$p_cnpj.'</b>]';
       if ($p_fornecedor>'') $w_filtro.='<tr valign="top"><td align="right">Fornecedor <td>[<b>'.$p_fornecedor.'</b>] (busca em qualquer parte do nome)';
       if ($p_vencedor>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Apenas certames com indicação de vencedor <td>[<b>Sim</b>]'; }
-      if ($p_externo>'')    $w_filtro.='<tr valign="top"><td align="right">Código '.(($w_cliente==6881) ? 'SA' : 'externo').' <td>[<b>Sim</b>]';
+      if ($p_externo>'')    $w_filtro.='<tr valign="top"><td align="right">Código '.(($w_cliente==6881) ? 'SA' : 'externo').' <td>[<b>'.$p_externo.'</b>]';
       if ($w_filtro>'')     $w_filtro  ='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
  
@@ -492,7 +492,7 @@ function Inicial() {
     $SQL.= " where a.sq_menu              = ".$P2.$crlf.
            "   and b1.sigla               <> 'CA'";
     if (nvl($p_vencedor,'')=='S')   $SQL.="   and d2.vencedor            = '".$p_vencedor."'".$crlf;
-    if (nvl($p_externo,'')=='S')    $SQL.="   and b.codigo_esterno       is not null and acentos(b.codigo_externo) like '%'||acentos(".$p_externo."')||'%'".$crlf;
+    if (nvl($p_externo,'')!='')     $SQL.="   and b.codigo_externo       is not null and acentos(b.codigo_externo) like '%'||acentos('".$p_externo."')||'%'".$crlf;
     if (nvl($p_fornecedor,'')!='')  $SQL.="   and (acentos(d3.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%' or acentos(s.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%')".$crlf;
     if (nvl($p_cnpj,'')!='')        $SQL.="   and (nvl(d31.cnpj,d32.cpf) = '".$p_cnpj."' or s.cgccpf = '".$p_cnpj."')".$crlf;
     if (nvl($p_moeda,'')!='')       $SQL.="   and b.sq_moeda             = ".$p_moeda.$crlf;
