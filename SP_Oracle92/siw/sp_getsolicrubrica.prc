@@ -278,6 +278,27 @@ begin
 	               )
                 )
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and b.aplicacao_financeira = p_aplicacao_financeira));
+   Elsif p_restricao = 'FNREXECMP' Then
+      open p_result for 
+         select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel,
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao') ordena,
+                c.mes, c.valor
+           from pj_rubrica                 a
+                left  join (select w.sq_projeto_rubrica, to_char(w.quitacao,'yyyymm') mes,sum(w.valor) valor 
+                              from siw_solicitacao                  x
+                                   inner join VW_PROJETO_FINANCEIRO w on (w.sq_projeto = x.sq_siw_solicitacao)
+                             where x.sq_siw_solicitacao = p_chave 
+                               and w.sq_projeto_rubrica = coalesce(p_chave_aux,w.sq_projeto_rubrica)
+                               and w.sq_fn_moeda        = x.sq_moeda 
+                               and w.sg_tramite         = 'AT'
+                               and w.quitacao           between p_inicio and p_fim
+                            group by w.sq_projeto_rubrica, to_char(w.quitacao,'yyyymm')
+                           )              c on (a.sq_projeto_rubrica = c.sq_projeto_rubrica)
+          where a.sq_siw_solicitacao   = p_chave
+            and a.ativo                = 'S'
+            and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
+            and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
    Elsif p_restricao = 'PDFINANC' Then
       open p_result for 
          select distinct a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,

@@ -1903,6 +1903,7 @@ Fontes_PHP_SIW/mod_fn/rel_financeiro.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
 Fontes_PHP_SIW/mod_fn/rel_plano.php -text
 Fontes_PHP_SIW/mod_fn/rel_projeto.php -text
+Fontes_PHP_SIW/mod_fn/rel_projeto_mensal.php -text
 Fontes_PHP_SIW/mod_fn/rel_reembolso.php -text
 Fontes_PHP_SIW/mod_fn/tabelas.php -text
 Fontes_PHP_SIW/mod_fn/tarifa.php -text
