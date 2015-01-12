@@ -182,7 +182,7 @@ function Inicial() {
       ShowHTML('          <tr valign="top"><td>');
       
       // verifica se o diretório informado atende aos requisitos de existência, leitura e escrita
-      if (!testFile(&$l_erro, $w_raiz, true, true)) {
+      if (!testFile($l_erro, $w_raiz, true, true)) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: diretório '.$l_erro.'!\');');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';');
@@ -368,7 +368,7 @@ function Grava() {
           if ($w_opcao=='nomes') {
           // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
           $lista = retrieveTree($_REQUEST['w_raiz'],true, true);
-          array_walk_recursive($lista,'flatArray',&$base);
+          array_walk_recursive($lista,'flatArray',$base);
           }
           ShowHTML('<b>Processando a lista de diretórios selecionados</b>');
           ShowHTML('<DL>');
@@ -428,7 +428,7 @@ function retrieveTree($l_raiz, $recursive = false) {
 // =========================================================================
 // Retorna array unidimensional a partir de array multidimensional
 // -------------------------------------------------------------------------
-function flatArray($item, $key, $base) {
+function flatArray($item, $key, &$base) {
   global $w_raiz;
   $base[str_replace($w_raiz,'',$item)] = '';
 }

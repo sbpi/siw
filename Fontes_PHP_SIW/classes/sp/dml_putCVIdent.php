@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putCVIdent {
-   function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_nome_resumido, $p_nascimento, $p_sexo, $p_sq_estado_civil, $p_sq_formacao, $p_sq_etnia, $p_sq_deficiencia, $p_cidade, $p_rg_numero, $p_rg_emissor, $p_rg_emissao, $p_cpf, $p_passaporte_numero, $p_sq_pais_passaporte, $p_foto, $p_tamanho, $p_tipo, $p_nome_original, $p_chave_nova) {
+   function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_nome_resumido, $p_nascimento, $p_sexo, $p_sq_estado_civil, $p_sq_formacao, $p_sq_etnia, $p_sq_deficiencia, $p_cidade, $p_rg_numero, $p_rg_emissor, $p_rg_emissao, $p_cpf, $p_passaporte_numero, $p_sq_pais_passaporte, $p_foto, $p_tamanho, $p_tipo, $p_nome_original, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'SP_PUTCVIDENT';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),

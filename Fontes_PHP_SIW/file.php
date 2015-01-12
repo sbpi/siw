@@ -102,7 +102,7 @@ function DownloadFile($strFileName,$blnForceDownload) {
   //----------------------
   //third step: check whether file is binary or not and get content type of the file. (according to its extension)
   //----------------------
-  $blnBinary  = GetExtension($w_tipo,&$strExtension);
+  $blnBinary  = GetExtension($w_tipo,$strExtension);
   $strAllFile = '';
   if (strpos($w_filename,'.')===false) $w_filename = $w_filename.$strExtension;
 

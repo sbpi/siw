@@ -116,7 +116,7 @@ function Inicial() {
     $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
     
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),'01/01/'.$p_ano,$p_fim,$SG);
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),'01/01/'.$p_ano,'31/12/'.$p_ano,$SG);
     foreach($RSQuery as $row)  {
       if (f($row,'total_dolar')!='0') { $Moeda['USD']='1';  $Total['USD'] = 0; }
       if (f($row,'total_real')!='0')  { $Moeda['BRL']='1'; $Total['BRL'] = 0; }
@@ -181,7 +181,7 @@ function Inicial() {
     ShowHTML('</HEAD>');
     if ($O == 'L') {
       BodyOpenClean('onLoad="this.focus()";');
-      CabecalhoRelatorio($w_cliente, 'Execução Orçamentária', 4, $w_chave);
+      CabecalhoRelatorio($w_cliente, f($RS_Menu,'nome'), 4, $w_chave);
     } else {
       BodyOpen('onLoad="document.focus()";');
       ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
@@ -190,12 +190,32 @@ function Inicial() {
   }
   ShowHTML('<div align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
+    // Prepara o array de totais e o do nome do mês
+    for ($i=1; $i<=13; $i++) {
+      $Totais[$i] = 0;
+      switch ($i) {
+        case  1: $Mes[$i] = 'Jan'; break;
+        case  2: $Mes[$i] = 'Fev'; break;
+        case  3: $Mes[$i] = 'Mar'; break;
+        case  4: $Mes[$i] = 'Abr'; break;
+        case  5: $Mes[$i] = 'Mai'; break;
+        case  6: $Mes[$i] = 'Jun'; break;
+        case  7: $Mes[$i] = 'Jul'; break;
+        case  8: $Mes[$i] = 'Ago'; break;
+        case  9: $Mes[$i] = 'Set'; break;
+        case 10: $Mes[$i] = 'Out'; break;
+        case 11: $Mes[$i] = 'Nov'; break;
+        case 12: $Mes[$i] = 'Dez'; break;
+        default: $Mes[$i] = 'Total'; break;
+      }
+    }
+    
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro = '';
-    if ($p_inicio!='')      $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>01/01/' . $p_ano . '</b> até <b>' . $p_fim . '</b>';
+    $w_filtro.='<tr valign="top"><td align="right">'.(($p_sintetico=='N') ? 'Despesas pagas no mês' : 'Mês selecionado:').' <td><b>' . $p_mes . '/' . $p_ano . '</b>';
 
-    if ($p_financeiro=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right" colspan="2"><b>Rubricas de aplicação financeira omitidas</b>';
-    if ($p_sintetico=='S')  $w_filtro = $w_filtro . '<tr valign="top"><td align="right" colspan="2"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
+    if ($p_financeiro=='S') $w_filtro.='<tr valign="top"><td align="right" colspan="2"><b>Rubricas de aplicação financeira omitidas</b>';
+    if ($p_sintetico=='S')  $w_filtro.='<tr valign="top"><td align="right" colspan="2"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
     
     ShowHTML('<tr><td align="left" colspan=2>');
     if ($w_filtro > '') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>' . $w_filtro . '</ul></tr></table>');
@@ -243,50 +263,20 @@ function Inicial() {
     $l_html .= chr(13).'</table>';
     $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
-    $l_html.=chr(13).'        <table class="tudo" width=99%  border="'.($p_sintetico=='N' ? '0' : '1').'" bordercolor="#00000">';
+    $l_html.=chr(13).'        <table'.(($p_sintetico=='S') ? ' class="tudo"' : '').' width=99%  border="'.($p_sintetico=='N' ? '0' : '1').'" bordercolor="#00000">';
     if ($p_sintetico=='S') {
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
       $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição</td>';
-      $l_html.=chr(13).'            <td colspan="13" bgColor="#f0f0f0"  align="center"><b>Execução Orçamentária'.((nvl(f($RS_Projeto,'sg_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sg_moeda').')' : '').'</td>';
+      $l_html.=chr(13).'            <td colspan="13" bgColor="#f0f0f0"  align="center"><b>Execução Orçamentária de '.$p_ano.' '.((nvl(f($RS_Projeto,'sg_moeda'),'')!='') ? ' ('.f($RS_Projeto,'sg_moeda').')' : '').'</td>';
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center" >';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Jan</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Fev</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Mar</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Abr</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Mai</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Jun</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Jul</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Ago</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Set</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Out</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Nov</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Dez</td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Total</td>';
+      for ($i=1; $i<=13; $i++) {
+        $l_html.=chr(13).'            <td bgColor="'.(($i==(0+$p_mes)) ? $conTrBgColorLightBlue1 : '#f0f0f0').'"><b>'.$Mes[$i].'</b></td>';
+      }
       $l_html.=chr(13).'          </tr>';      
     }
     $w_cor=$conTrBgColor;
-    
-    // Prepara o array de totais e o do nome do mês
-    for ($i=1; $i<=13; $i++) {
-      $Totais[$i] = 0;
-      switch ($i) {
-        case  1: $Mes[$i] = 'Jan'; break;
-        case  2: $Mes[$i] = 'Fev'; break;
-        case  3: $Mes[$i] = 'Mar'; break;
-        case  4: $Mes[$i] = 'Abr'; break;
-        case  5: $Mes[$i] = 'Mai'; break;
-        case  6: $Mes[$i] = 'Jun'; break;
-        case  7: $Mes[$i] = 'Jul'; break;
-        case  8: $Mes[$i] = 'Ago'; break;
-        case  9: $Mes[$i] = 'Set'; break;
-        case 10: $Mes[$i] = 'Out'; break;
-        case 11: $Mes[$i] = 'Nov'; break;
-        case 12: $Mes[$i] = 'Dez'; break;
-        default: $Mes[$i] = 'Total'; break;
-      }
-    }
     
     // Carrega vetor com os valores mensais da rubrica
     $w_atual = 0;
@@ -323,12 +313,15 @@ function Inicial() {
         $w_folha = ((f($row,'ultimo_nivel')=='N') ? ' class="folha"' : '');
 
         $l_html.=chr(13).'      <tr valign="top"'.$w_folha.(($p_sintetico=='N') ? ' height="40px"' : '').'>';
-        if($w_embed!='WORD') $l_html.=chr(13).'          <td'.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
+        if($w_embed!='WORD') $l_html.=chr(13).'          <td'.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Clique para detalhar as despesas da rubrica no mês selecionado.">'.f($row,'codigo').'</A>&nbsp;';
         else                 $l_html.=chr(13).'          <td'.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
         $l_html.=chr(13).'          <td'.((f($row,'ultimo_nivel')=='N') ? ' colspan="14"' : '').'>'.f($row,'descricao').' </td>';
         
         if (f($row,'ultimo_nivel')=='S') {
-          for ($i=1; $i<=13; $i++) $l_html.=chr(13).'          <td'.(($p_sintetico=='N') ? ' width="6%" nowrap>'.$Mes[$i].': ' : ' align="right">').formatNumber($Valor[$w_atual][$i]).' </td>';
+          for ($i=1; $i<=13; $i++) {
+            if ($p_sintetico=='S') $l_html.=chr(13).'          <td width="6%" nowrap align="right"'.(($i==(0+$p_mes)) ? ' bgColor="'.$conTrBgColorLightBlue1.'">' : '>').formatNumber($Valor[$w_atual][$i]).' </td>';
+            else                   $l_html.=chr(13).'          <td width="6%" nowrap>'.(($i==(0+$p_mes)) ? '<b>' : '').$Mes[$i].': '.formatNumber($Valor[$w_atual][$i]).' </td>';
+          }
         }
         if (f($row,'ultimo_nivel')=='S' && $p_sintetico=='N' && $Valor[$w_atual][(0+$p_mes)]>0) {
           // Recupera despesas da rubrica no mês
@@ -339,7 +332,7 @@ function Inicial() {
           $i_html.=chr(13).'        <table class="tudo" width="100%"  border="1" bordercolor="#00000">';
           $i_html.=chr(13).'          <tr align="center">';
           $csl++; $i_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="5%"><b>Nr</td>';
-          $csl++; $i_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="25%"><b>Descrição da despesa</td>';
+          $csl++; $i_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="25%"><b>Despesas do mês '.$p_mes.'/'.$p_ano.'</td>';
           $csl++; $i_html.=chr(13).'            <td colspan="3" bgColor="#f0f0f0"><b>Comprovante de Pagamento</td>';
           $csl++; $i_html.=chr(13).'            <td colspan="3" bgColor="#f0f0f0"><b>Pagamento ('.f($RS_Projeto,'sb_moeda').')</td>';
           $csl++; $i_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="25%"><b>Fornecedor</td>';
@@ -383,7 +376,9 @@ function Inicial() {
     } 
     $l_html.=chr(13).'          <tr class="folha"'.(($p_sintetico=='N') ? ' height="40px"' : '').'>';
     $l_html.=chr(13).'            <td align="right" colspan="2" bgColor="#f0f0f0">Totais&nbsp;</td>';
-    for ($i=1; $i<=13; $i++) $l_html.=chr(13).'          <td bgColor="#f0f0f0"'.(($p_sintetico=='N') ? ' width="6%" nowrap>'.$Mes[$i].': ' : ' align="right">').formatNumber($Totais[$i]).' </td>';
+    for ($i=1; $i<=13; $i++) {
+      $l_html.=chr(13).'          <td bgColor="'.(($i==(0+$p_mes)) ? $conTrBgColorLightBlue1 : '#f0f0f0"').'"'.(($p_sintetico=='N') ? ' width="6%" nowrap>'.$Mes[$i].': ' : ' align="right">').formatNumber($Totais[$i]).' </td>';
+    }
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'        </table></td></tr>';
 
@@ -402,8 +397,8 @@ function Inicial() {
     SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo,1,2);
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
-    SelecaoAno('<u>A</u>no:','A','Informe o ano para emissão.',$p_ano,$w_cliente,'p_ano',null,null);
-    SelecaoMes('<u>M</u>ês:','M','Informe o mês para emissão.',$w_cliente,$p_mes,'p_mes',null,null);
+    SelecaoAno('<u>A</u>no de emissão do relatório','A','Informe o ano para emissão.',$p_ano,$w_cliente,'p_ano',null,null);
+    SelecaoMes('<u>M</u>ês para detalhamento das despesas','M','Informe o mês para emissão.',$w_cliente,$p_mes,'p_mes',null,null);
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Omite rubricas de aplicação financeira?</b>',$p_financeiro,'p_financeiro',null,null,null,2);
     ShowHTML('      </tr><tr>');
@@ -473,7 +468,7 @@ function Detalhe() {
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
 
   $w_filtro = '';
-  if ($p_inicio!='')    $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
+  if ($p_inicio!='')    $w_filtro.='<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
   ShowHTML('<tr><td align="left" colspan=2>');
   if ($w_filtro > '') ShowHTML('<table border=0>' . $w_filtro . '</table>');
 

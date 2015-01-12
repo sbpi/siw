@@ -2073,7 +2073,7 @@ function Grava() {
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
           $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$w_moeda,
-          &$w_chave_nova,&$w_codigo);
+          $w_chave_nova, $w_codigo);
 
       if ($O!='E') {
         // Recupera o beneficiário do fundo fixo (chamado de "Suprido")
@@ -2110,7 +2110,7 @@ function Grava() {
         //Grava os dados do comprovante de despesa
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
           $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$w_moeda,$_REQUEST['w_valor'],
-          'N','N','N',null,null,null,null,&$w_chave_doc);
+          'N','N','N',null,null,null,null, $w_chave_doc);
 
         // Verifica o número de trâmites ativos. Se houver somente um, recupera o trâmite de conclusão
         $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null,null,null);

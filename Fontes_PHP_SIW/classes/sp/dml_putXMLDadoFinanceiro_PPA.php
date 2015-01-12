@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLDadoFinanceiro_PPA {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao_ppa, $p_cd_localizador_ppa, $p_cd_fonte, $p_cd_natureza, $p_cd_tipo_despesa, $p_valor_ano_1, $p_valor_ano_2, $p_valor_ano_3, $p_valor_ano_4, $p_valor_ano_5, $p_valor_ano_6, $p_observacao) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao_ppa, $p_cd_localizador_ppa, $p_cd_fonte, $p_cd_natureza, $p_cd_tipo_despesa, $p_valor_ano_1, $p_valor_ano_2, $p_valor_ano_3, $p_valor_ano_4, $p_valor_ano_5, $p_valor_ano_6, $p_observacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLDADOFINANCEIRO_PPA';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

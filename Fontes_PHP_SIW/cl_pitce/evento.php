@@ -1557,7 +1557,7 @@ function Grava() {
             $_REQUEST['w_indicador1'],$_REQUEST['w_indicador2'],$_REQUEST['w_indicador3'],
             $_REQUEST['w_observacao'],$_REQUEST['w_titulo'],$_REQUEST['w_motivo'],
             $_REQUEST['w_justificativa'],$_REQUEST['w_descricao'],$w_inicio,$w_fim,
-            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $w_copia, &$w_chave_nova);
+            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $w_copia, $w_chave_nova);
       // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
       if ($O=='E') {
         $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);

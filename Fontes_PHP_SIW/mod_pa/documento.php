@@ -4593,7 +4593,7 @@ function Grava() {
               $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'], $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
               null, $_REQUEST['w_natureza_documento'], $_REQUEST['w_fim'], $_REQUEST['w_data_recebimento'],
               $_REQUEST['w_interno'], $_REQUEST['w_pessoa_origem'], $_REQUEST['w_pessoa_interes'], $_REQUEST['w_cidade'],
-              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], &$w_chave_nova, &$w_codigo);      
+              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], $w_chave_nova, $w_codigo);      
       } else {
         $SQL->getInstanceOf($dbms, $O, $_REQUEST['w_chave'], $w_copia, $_REQUEST['w_menu'],
               nvl($_REQUEST['w_sq_unidade'], $_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'], $_SESSION['LOTACAO']),
@@ -4602,7 +4602,7 @@ function Grava() {
               $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'], $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
               1, $_REQUEST['w_natureza_documento'], $_REQUEST['w_fim'], $_REQUEST['w_data_recebimento'],
               $_REQUEST['w_interno'], $_REQUEST['w_pessoa_origem'], $_REQUEST['w_pessoa_interes'], $_REQUEST['w_cidade'],
-              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], &$w_chave_nova, &$w_codigo);
+              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], $w_chave_nova, $w_codigo);
         $w_chave_nova = $w_copia;
       }
       // Grava cópias
@@ -4616,7 +4616,7 @@ function Grava() {
                   $_REQUEST['w_doc_original'], $_REQUEST['w_data_documento'], $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
                   $i, $_REQUEST['w_natureza_documento'], $_REQUEST['w_fim'], $_REQUEST['w_data_recebimento'],
                   $_REQUEST['w_interno'], $_REQUEST['w_pessoa_origem'], $_REQUEST['w_pessoa_interes'], $_REQUEST['w_cidade'],
-                  $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], &$w_nova_chave, &$w_codigo_interno);
+                  $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], $w_nova_chave, $w_codigo_interno);
         }
       }
 
@@ -4800,7 +4800,7 @@ function Grava() {
                   $_REQUEST['w_interno'], $_REQUEST['w_unidade_posse'], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
                   $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
                   $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'], $_REQUEST['w_unidade_externa'],
-                  &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+                  $w_nu_guia, $w_ano_guia, $w_unidade_autuacao);
 
           $SQL = new dml_putDocumentoArqSet; $SQL->getInstanceOf($dbms, $_REQUEST['w_chave'], $_SESSION['SQ_PESSOA'], $_REQUEST['w_despacho']);
           ScriptOpen('JavaScript');
@@ -4858,7 +4858,7 @@ function Grava() {
                 $_REQUEST['w_interno'], $_REQUEST['w_unidade_posse'], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
                 $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
                 $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'], $_REQUEST['w_unidade_externa'],
-                &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+                $w_nu_guia, $w_ano_guia, $w_unidade_autuacao);
 
         // Grava baseline
         $sql = new db_getSolicData;
@@ -4900,7 +4900,7 @@ function Grava() {
             $SQL->getInstanceOf($dbms, f($RS_Menu, 'sq_menu'), $_POST['w_chave'][$i], $w_usuario,
                     $_REQUEST['w_interno'], $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],
                     $_REQUEST['w_tipo_despacho'], $_REQUEST['w_despacho'],
-                    &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+                    $w_nu_guia, $w_ano_guia, $w_unidade_autuacao);
           }
         }
         ScriptOpen('JavaScript');
@@ -4989,7 +4989,7 @@ function Grava() {
                     $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'], $_REQUEST['w_pessoa_destino'],
                     $_REQUEST['w_tipo_despacho'], $w_prefixo, $w_numero, $w_ano, $_REQUEST['w_despacho'], $_REQUEST['w_aviso'],
                     $_REQUEST['w_dias'], $_REQUEST['w_retorno_limite'], $_REQUEST['w_pessoa_destino_nm'],
-                    $_REQUEST['w_unidade_externa'], &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+                    $_REQUEST['w_unidade_externa'], $w_nu_guia, $w_ano_guia, $w_unidade_autuacao);
           }
         }
         ScriptOpen('JavaScript');
@@ -5031,7 +5031,7 @@ function Grava() {
         if ($_REQUEST['w_caixa'] === '0') {
           $SQL = new dml_putCaixa;
           $SQL->getInstanceOf($dbms, 'I', $w_cliente, null, $_REQUEST['p_unid_posse'], null, null, null,
-                  null, null, null, null, null, null, null, null, null, null, &$w_caixa);
+                  null, null, null, null, null, null, null, null, null, null, $w_caixa);
         }
 
         $SQL = new dml_putDocumentoCaixa;

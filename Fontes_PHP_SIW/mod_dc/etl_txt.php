@@ -46,7 +46,7 @@ if (nvl($w_dbms,'')=='') {
 
 // verifica se o diretório informado atende aos requisitos de existência, leitura e escrita
 $l_erro = '';
-if (!testFile(&$l_erro, $conFilePhysical.$w_cliente.'/etl_conf/', true, true)) {
+if (!testFile($l_erro, $conFilePhysical.$w_cliente.'/etl_conf/', true, true)) {
   echo 'ATENÇÃO: diretório de configuração '.$l_erro.'!'.$crlf;
   exit();
 }
@@ -85,7 +85,7 @@ function Principal() {
         $arq_conf['nome'] = $w_arq_conf;
 
         // Verifica se é possível abrir o arquivo de configuração
-        if (!testFile(&$l_erro, $w_arq_conf, true, true)) {
+        if (!testFile($l_erro, $w_arq_conf, true, true)) {
           $arq_conf['status'] = '[ERRO] Arquivo de configuração '.$l_erro.'!';;
           $w_erro = true;
           continue;

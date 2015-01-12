@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putEtapaProject {
    function getInstanceOf($dbms, $p_operacao, $p_chave, $p_pai, $p_titulo, $p_descricao, $p_ordem, 
         $p_inicio, $p_fim, $p_perc_conclusao, $p_sq_pessoa, $p_sq_unidade, $p_usuario, 
-        $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_peso, $p_chave_nova) {
+        $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_peso, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putEtapaProject';
      $params=array('p_operacao'             =>array(tvl($p_operacao),                     B_VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                        B_INTEGER,        32),

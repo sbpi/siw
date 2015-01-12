@@ -4761,7 +4761,7 @@ function Grava() {
               $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
               $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
               $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
-              &$w_chave_nova,&$w_codigo);
+              $w_chave_nova, $w_codigo);
 
       if ($O!='E') {
 
@@ -4783,7 +4783,7 @@ function Grava() {
             //Grava os dados do comprovante de despesa
             $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
               $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
-              'N','N','N',null,null,null,null,&$w_chave_doc);
+              'N','N','N',null,null,null,null, $w_chave_doc);
           } else {
             // Copia os documentos e os itens do lançamento original
             $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$_REQUEST['w_copia'],null,null,null,null,null,null,'DOCS');
@@ -4791,7 +4791,7 @@ function Grava() {
             foreach($RS_Docs as $row) {
               $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,'I',$w_chave_nova,null,f($row,'sq_tipo_documento'),
                 f($row,'numero'),$_REQUEST['w_vencimento'],f($row,'serie'),$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
-                'N','N','N',null,null,null,null,&$w_chave_doc);
+                'N','N','N',null,null,null,null, $w_chave_doc);
             }
           }
 
@@ -4907,7 +4907,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
       $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_lancamento_doc'],$_REQUEST['w_sq_tipo_documento'],
         $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],$_REQUEST['w_patrimonio'],$_REQUEST['w_retencao'],
-        $_REQUEST['w_tributo'],null,null,null,null,&$w_chave_nova);
+        $_REQUEST['w_tributo'],null,null,null,null,$w_chave_nova);
 
       $SQL = new dml_putLancamentoValor; 
       
@@ -4950,13 +4950,13 @@ function Grava() {
         if (Nvl($_REQUEST['w_sq_acordo_nota'][$i],'')>'') {
           $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_tipo_documento'][$i],
              $_REQUEST['w_numero'][$i],$_REQUEST['w_data'][$i],null,null,null,
-             'N','N','N',$_REQUEST['w_sq_acordo_nota'][$i],$_REQUEST['w_inicial'][$i],$_REQUEST['w_excedente'][$i],$_REQUEST['w_reajuste'][$i],&$w_chave_nova);
+             'N','N','N',$_REQUEST['w_sq_acordo_nota'][$i],$_REQUEST['w_inicial'][$i],$_REQUEST['w_excedente'][$i],$_REQUEST['w_reajuste'][$i],$w_chave_nova);
         } 
       }
       if ($i>0) {
         // Atualiza o valor de SIW_SOLICITACAO a partir da soma dos valores das notas ligadas ao lançamento
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,'V',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
-            null,null,null,null,null,null,null,&$w_chave_nova);
+            null,null,null,null,null,null,null,$w_chave_nova);
       }
       ScriptOpen('JavaScript');
       if ($P1==0) {
@@ -4975,7 +4975,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
      $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_sq_tipo_documento'],
-        $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor_doc'],'N','N','N',null,null,null,null,&$w_chave_nova);
+        $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor_doc'],'N','N','N',null,null,null,null,$w_chave_nova);
       $SQL = new dml_putLancamentoRubrica; 
       $SQL->getInstanceOf($dbms,'E',$w_chave_nova,null,null,null);
       for ($i=0; $i<=count($_POST['w_sq_projeto_rubrica'])-1; $i=$i+1) {
@@ -5367,7 +5367,7 @@ function Grava() {
                 $w_tipo,f($RS1,'protocolo_completo'),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
                 $_REQUEST['w_texto_pagamento'],f($RS1,'sq_solic_pai'),$_REQUEST['w_sq_projeto_rubrica'],
                 $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],f($RS1,'sq_moeda'),
-                &$w_chave_nova,&$w_codigo);
+                $w_chave_nova, $w_codigo);
 
             //Grava os dados da pessoa
             $SQL2->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_outra_parte'][$i],f($RS,'cpf'),f($RS,'cnpj'),
@@ -5411,7 +5411,7 @@ function Grava() {
             $_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),Nvl($_REQUEST['w_sq_forma_pagamento'],''),
             $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
             $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],$_REQUEST['w_sq_projeto_rubrica'],
-            $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],&$w_chave_nova,&$w_codigo);
+            $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$w_chave_nova, $w_codigo);
 
         if ($O!='E') {
 
@@ -5435,7 +5435,7 @@ function Grava() {
             //Grava os dados do comprovante de despesa
             $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,((count($RS_Doc)) ? $O : 'I'),$w_chave_nova,$_REQUEST['w_chave_doc'],
               $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
-              'N','N','N',null,null,null,null,&$w_chave_doc);
+              'N','N','N',null,null,null,null, $w_chave_doc);
 
             // Grava acréscimos e supressões
             $SQL = new dml_putLancamentoValor;  $SQL->getInstanceOf($dbms,'E',$w_chave_doc,null,null);

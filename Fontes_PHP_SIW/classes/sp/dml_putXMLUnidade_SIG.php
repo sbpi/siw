@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLUnidade_SIG {
-   function getInstanceOf($dbms, $p_resultado, $p_ano, $p_chave, $p_tipo_unid, $p_orgao, $p_tipo_org, $p_nome) {
+   function getInstanceOf($dbms, &$p_resultado, $p_ano, $p_chave, $p_tipo_unid, $p_orgao, $p_tipo_org, $p_nome) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLUNIDADE_SIG';
      $params=array('p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_VARCHAR,         5),

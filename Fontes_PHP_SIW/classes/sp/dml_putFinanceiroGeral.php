@@ -14,7 +14,7 @@ class dml_putFinanceiroGeral {
           $p_descricao, $p_vencimento, $p_valor, $p_data_hora, $p_aviso, $p_dias, $p_cidade, $p_projeto, $p_sq_acordo_parcela, 
           $p_observacao, $p_sq_tipo_lancamento, $p_sq_forma_pagamento, $p_sq_tipo_pessoa, $p_forma_atual, $p_vencimento_atual, 
           $p_tipo_rubrica, $p_numero_processo, $p_per_ini, $p_per_fim, $p_condicao, $p_vinculo, $p_rubrica, $p_solic_apoio,
-          $p_data_autorizacao, $p_texto_autorizacao, $p_moeda, $p_chave_nova, $p_codigo_interno) {
+          $p_data_autorizacao, $p_texto_autorizacao, $p_moeda, &$p_chave_nova, &$p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putFinanceiroGeral';
      $params=array('p_operacao'                 =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                  =>array($p_cliente,                                       B_INTEGER,        32),

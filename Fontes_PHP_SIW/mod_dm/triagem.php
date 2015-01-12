@@ -2489,11 +2489,11 @@ function Grava() {
             $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_assunto'], $_REQUEST['w_prioridade'], $_REQUEST['w_aviso'],
             $_REQUEST['w_dias'],$_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, 
             null,$_REQUEST['w_chave_pai'], null, null, null, null, $_REQUEST['w_sq_demanda_tipo'],
-            $_REQUEST['w_recebimento'], $w_limite, $_REQUEST['w_responsavel'], &$w_chave_nova,$w_copia);
+            $_REQUEST['w_recebimento'], $w_limite, $_REQUEST['w_responsavel'], $w_chave_nova,$w_copia);
         if(nvl($_REQUEST['w_envio'],'')=='S' && $O=='I') {
-          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,&$w_chave_nova,'GDTGERAL');
+          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_nova,'GDTGERAL');
           $w_tramite = f($RS,'sq_siw_tramite');
-          $SQL = new dml_putDemandaEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],&$w_chave_nova,$w_usuario,$w_tramite,
+          $SQL = new dml_putDemandaEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_tramite,
               $_REQUEST['w_novo_tramite'],'N',null,$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
               null,null,null,null);
           if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
@@ -2537,7 +2537,7 @@ function Grava() {
             $_REQUEST['w_chave'],null,null,null,null,null,null,$_REQUEST['w_sqcc'],null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
             $_REQUEST['w_valor'],null,$_REQUEST['w_sq_unidade_resp'],null,$_REQUEST['w_prioridade'],null,null,null,$_REQUEST['w_palavra_chave'],
             null,null,null,null,null,null,null,$_REQUEST['w_chave_pai'],null,null,null,null,$_REQUEST['w_sq_demanda_tipo'],
-            null,null,$_REQUEST['w_responsavel'],&$w_chave_nova,null);
+            null,null,$_REQUEST['w_responsavel'],$w_chave_nova,null);
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
         $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],'GDTCAD');
         ScriptOpen('JavaScript');

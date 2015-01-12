@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLLocalizador_PPA {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao_ppa, $p_chave, $p_cd_localizador, $p_cd_regiao, $p_cd_municipio, $p_nome, $p_valor_total, $p_valor_ano_ant, $p_qtd_ano_ant, $p_valor_ano_cor, $p_qtd_ano_cor, $p_reperc_financ, $p_vr_reperc_financ, $p_mes_ini, $p_ano_ini, $p_mes_fim, $p_ano_fim, $p_nome_alterado, $p_observacao, $p_qtd_total, $p_cd_sof_ref) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao_ppa, $p_chave, $p_cd_localizador, $p_cd_regiao, $p_cd_municipio, $p_nome, $p_valor_total, $p_valor_ano_ant, $p_qtd_ano_ant, $p_valor_ano_cor, $p_qtd_ano_cor, $p_reperc_financ, $p_vr_reperc_financ, $p_mes_ini, $p_ano_ini, $p_mes_fim, $p_ano_fim, $p_nome_alterado, $p_observacao, $p_qtd_total, $p_cd_sof_ref) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLLOCALIZADOR_PPA';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

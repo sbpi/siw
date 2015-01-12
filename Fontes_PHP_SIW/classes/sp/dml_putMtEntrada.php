@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putMtEntrada {
    function getInstanceOf($dbms, $p_operacao,$p_cliente,$p_usuario,$p_chave,$p_copia,$p_executor, $p_fornecedor,$p_tipo_movimentacao,$p_situacao,
            $p_solicitacao,$p_documento,$p_previsto,$p_efetivo,$p_tipo_doc,$p_numero_doc,$p_data_doc,$p_valor_doc,$p_armazenamento,
-           $p_numero_empenho,$p_data_empenho,$p_chave_nova) {
+           $p_numero_empenho,$p_data_empenho, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMtEntrada';
      $params=array('p_operacao'               =>array($p_operacao,                                B_VARCHAR,        30),
                    'p_cliente'                =>array(tvl($p_cliente),                            B_INTEGER,        32),

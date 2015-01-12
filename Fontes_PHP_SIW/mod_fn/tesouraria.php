@@ -2207,7 +2207,7 @@ function Grava() {
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$w_chave_nova, $w_codigo);
 
 
       if ($O!='E') {
@@ -2246,7 +2246,7 @@ function Grava() {
         //Grava os dados do comprovante de despesa
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
           $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],
-          'N','N','N',null,null,null,null,&$w_chave_doc);
+          'N','N','N',null,null,null,null, $w_chave_doc);
 
         //Grava os dados da vinculação
         $SQL = new dml_putImpostoDoc; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_documento'], $_REQUEST['w_imposto'],null,

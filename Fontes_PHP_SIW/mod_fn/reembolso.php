@@ -2756,7 +2756,7 @@ function Grava() {
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $w_data,$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
           $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
-          &$w_chave_nova,&$w_codigo);
+          $w_chave_nova, $w_codigo);
 
       if ($O!='E') {
 
@@ -2777,7 +2777,7 @@ function Grava() {
         //Grava os dados do comprovante de despesa
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,((nvl($w_chave_doc,'')=='') ? 'I' : 'A'),$w_chave_nova,
           $w_chave_doc,$_REQUEST['w_sq_tipo_documento'],nvl($_REQUEST['w_numero'],'s/n'),$w_data,null,
-          $_REQUEST['w_moeda'],$_REQUEST['w_valor'],'N','N','N',null,null,null,null,&$w_chave_doc);
+          $_REQUEST['w_moeda'],$_REQUEST['w_valor'],'N','N','N',null,null,null,null, $w_chave_doc);
 
       }
           
@@ -2927,7 +2927,7 @@ function Grava() {
                 f($RS,'processo'),$w_data,
                 FormataDataEdicao(f($RS,'referencia_fim')),f($RS,'condicoes_pagamento'),null,f($RS,'sq_projeto_rubrica'),
                 f($RS,'sq_solic_apoio'),FormataDataEdicao(f($RS,'data_autorizacao')),f($RS,'texto_autorizacao'),f($RS,'sq_moeda'),
-                &$w_chave_nova,&$w_codigo);
+                $w_chave_nova, $w_codigo);
           }
           
           $SQL = new dml_putLancamentoEnvio;
@@ -2996,7 +2996,7 @@ function Grava() {
                 f($RS,'processo'),$w_data,
                 FormataDataEdicao(f($RS,'referencia_fim')),f($RS,'condicoes_pagamento'),null,f($RS,'sq_projeto_rubrica'),
                 f($RS,'sq_solic_apoio'),FormataDataEdicao(f($RS,'data_autorizacao')),f($RS,'texto_autorizacao'),f($RS,'sq_moeda'),
-                &$w_chave_nova,&$w_codigo);
+                $w_chave_nova, $w_codigo);
 
             // Recupera dados do comprovante
             $sql = new db_getLancamentoDoc; $RSC = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,null,null,null,'DOCS');
@@ -3006,7 +3006,7 @@ function Grava() {
             // Atualiza os dados do comprovante de despesa
             $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,'A',
               $_REQUEST['w_chave'], $w_chave_doc, f($RSC,'sq_tipo_documento'),f($RSC,'numero'),$w_data,null,f($RS,'sq_moeda'),
-              $_REQUEST['w_valor'],'N','N','N',null,null,null,null,&$w_chave_doc);
+              $_REQUEST['w_valor'],'N','N','N',null,null,null,null, $w_chave_doc);
 
           }
 

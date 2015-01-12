@@ -5530,7 +5530,7 @@ function Grava() {
           $_REQUEST['w_sq_forma_pagamento'], $_REQUEST['w_forma_atual'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_etapa'],
           $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], null,
           nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),null,null,$_REQUEST['w_moeda'],
-          &$w_chave_nova, $w_copia, $_REQUEST['w_herda'],&$w_codigo);
+          $w_chave_nova, $w_copia, $_REQUEST['w_herda'], $w_codigo);
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
         $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms,$w_menu);
@@ -5594,7 +5594,7 @@ function Grava() {
           $_REQUEST['w_sq_acordo_outra_parte'],$_REQUEST['w_sq_acordo_aditivo'],$_REQUEST['w_numero'],$_REQUEST['w_data'],
           $_REQUEST['w_valor'],$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_espec_despesa'],$_REQUEST['w_observacao'],
           $_REQUEST['w_abrange_inicial'],$_REQUEST['w_abrange_acrescimo'],$_REQUEST['w_abrange_reajuste'],null,
-          &$w_chave_nova);
+          $w_chave_nova);
       for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
           $SQL->getInstanceOf($dbms,'PARCELA',$w_chave_nova,null,null,null,null,null,null,null,null,null,null,
@@ -5675,7 +5675,7 @@ function Grava() {
             $_REQUEST['w_prorrogacao'],$_REQUEST['w_revisao'],$w_acrescimo,$w_supressao,
             $_REQUEST['w_observacao'],nvl($_REQUEST['w_valor_inicial'],0),nvl($_REQUEST['w_parcela_inicial'],0),
             nvl($_REQUEST['w_valor_reajuste'],0),nvl($_REQUEST['w_parcela_reajustada'],0),nvl($_REQUEST['w_valor_acrescimo'],0),
-            nvl($_REQUEST['w_parcela_acrescida'],0),$_REQUEST['w_sq_cc'],&$w_chave_nova);
+            nvl($_REQUEST['w_parcela_acrescida'],0),$_REQUEST['w_sq_cc'],$w_chave_nova);
       
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
@@ -6163,7 +6163,7 @@ function Grava() {
             f($RS,'sq_forma_pagamento'), null, null, f($RS,'sq_projeto_etapa'),
             f($RS,'codigo_interno'), f($RS,'titulo'), f($RS,'empenho'), f($RS,'processo'), FormataDataEdicao(f($RS,'assinatura')),
             FormataDataEdicao(f($RS,'publicacao')), f($RS,'sq_moeda'),
-            &$w_chave_nova, $_REQUEST['w_chave'], null, &$w_codigo);
+            $w_chave_nova, $_REQUEST['w_chave'], null, $w_codigo);
         } 
         // Envia e-mail comunicando a conclusão
         SolicMail($_REQUEST['w_chave'],3);

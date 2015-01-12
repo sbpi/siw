@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putCaixaEnvio {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa,$p_interno, $p_unidade_origem, $p_unidade_destino,
-        $p_tipo_despacho,$p_despacho,$p_nu_guia, $p_ano_guia, $p_unidade_autuacao) {
+        $p_tipo_despacho,$p_despacho,&$p_nu_guia, &$p_ano_guia, &$p_unidade_autuacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCaixaEnvio';
      $params=array('p_menu'                     =>array($p_menu,                                    B_INTEGER,        32),
                    'p_chave'                    =>array($p_chave,                                   B_INTEGER,        32),

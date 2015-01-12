@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLPrograma_SIG {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_chave, $p_tipo_org, $p_orgao, $p_nome, $p_tipo_prog, $p_macro, $p_mes_ini, $p_ano_ini, $p_mes_fim, $p_ano_fim, $p_objetivo, $p_publico_alvo, $p_justificativa, $p_estrategia, $p_ln_programa, $p_valor_estimado, $p_valor_ppa, $p_temporario, $p_estruturante, $p_contexto, $p_atual_contexto, $p_estagio, $p_andamento, $p_cronograma, $p_perc_execucao, $p_comentario_sit, $p_atual_sit, $p_situacao_atual, $p_resultados_obt, $p_atual_sit_atual, $p_coment_execucao) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_chave, $p_tipo_org, $p_orgao, $p_nome, $p_tipo_prog, $p_macro, $p_mes_ini, $p_ano_ini, $p_mes_fim, $p_ano_fim, $p_objetivo, $p_publico_alvo, $p_justificativa, $p_estrategia, $p_ln_programa, $p_valor_estimado, $p_valor_ppa, $p_temporario, $p_estruturante, $p_contexto, $p_atual_contexto, $p_estagio, $p_andamento, $p_cronograma, $p_perc_execucao, $p_comentario_sit, $p_atual_sit, $p_situacao_atual, $p_resultados_obt, $p_atual_sit_atual, $p_coment_execucao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLPROGRAMA_SIG';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

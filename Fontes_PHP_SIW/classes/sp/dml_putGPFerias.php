@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putGPFerias {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_cadastrador, 
         $p_descricao, $p_justificativa, $p_contrato_colaborador, $p_inicio, $p_inicio_periodo, $p_fim, $p_fim_periodo, 
-        $p_inicio_aquisitivo, $p_fim_aquisitivo, $p_abono_pecuniario, $p_data_hora, $p_cidade, $p_chave_nova) {
+        $p_inicio_aquisitivo, $p_fim_aquisitivo, $p_abono_pecuniario, $p_data_hora, $p_cidade, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putGPFerias';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

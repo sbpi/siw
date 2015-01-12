@@ -708,13 +708,13 @@ function Calendario() {
       foreach($RS_ResultCal as $row) {
         $w_saida   = f($row,'mes_ano');
         $w_chegada = f($row,'mes_ano');
-        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? 'Item da agenda de ação.' : f($row, 'nm_tipo_evento')), 'N');
+        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), $w_datas, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? 'Item da agenda de ação.' : f($row, 'nm_tipo_evento')), 'N');
       }
       reset($RS_ResultCal);
       foreach($RS_ResultCal as $row) {
         $w_saida   = f($row,'mes_ano');
         $w_chegada = f($row,'mes_ano');
-        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? $conTrBgColorLightYellow2 : ((f($row, 'sg_tipo_evento')=='REUNIAO') ? $conTrBgColorLightGreen2 : $conTrBgColorLightBlue1)), 'N');
+        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), $w_cores, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? $conTrBgColorLightYellow2 : ((f($row, 'sg_tipo_evento')=='REUNIAO') ? $conTrBgColorLightGreen2 : $conTrBgColorLightBlue1)), 'N');
       }
     }
 
@@ -744,12 +744,12 @@ function Calendario() {
     $w_detalhe6 = false;
     
     ShowHTML('            <tr valign="top">');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano2],$w_mes2.$w_ano2,$w_datas,$w_cores,&$w_detalhe2).' </td>');    
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano4],$w_mes4.$w_ano4,$w_datas,$w_cores,&$w_detalhe4).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano5],$w_mes5.$w_ano5,$w_datas,$w_cores,&$w_detalhe5).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano6],$w_mes6.$w_ano6,$w_datas,$w_cores,&$w_detalhe6).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores, $w_detalhe1).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano2],$w_mes2.$w_ano2,$w_datas,$w_cores, $w_detalhe2).' </td>');    
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores, $w_detalhe3).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano4],$w_mes4.$w_ano4,$w_datas,$w_cores, $w_detalhe4).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano5],$w_mes5.$w_ano5,$w_datas,$w_cores, $w_detalhe5).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano6],$w_mes6.$w_ano6,$w_datas,$w_cores, $w_detalhe6).' </td>');
 
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3 || $w_detalhe4 || $w_detalhe5 || $w_detalhe6) {
       ShowHTML('            <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">');

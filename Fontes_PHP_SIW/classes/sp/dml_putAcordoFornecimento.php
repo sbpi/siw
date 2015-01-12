@@ -14,7 +14,7 @@ class dml_putAcordoFornecimento {
           $p_agendamento, $p_mail, $p_numero_processo, $p_nota_empenho, $p_valor_empenho, $p_data_prevista,
           $p_autorizador_nome, $p_autorizador_funcao, $p_solicitante, $p_responsavel_nome, $p_responsavel_funcao,
           $p_responsavel_rg, $p_responsavel_data, $p_situacao, $p_sq_item, $p_quantidade, $p_valor_item, 
-          $p_chave_nova) {
+          &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putAcordoFornecimento';
      $params=array('p_operacao'             =>array($operacao,                                B_VARCHAR,        30),
                    'p_chave_aux'            =>array(tvl($p_chave_aux),                        B_INTEGER,        32),

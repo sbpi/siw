@@ -3282,7 +3282,7 @@ function Grava() {
           $_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,null,$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],
           $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',$_REQUEST['w_numero_original'],
           $_REQUEST['w_data_recebimento'],'N',$_REQUEST['w_interno'],$_REQUEST['w_especie_documento'],null,null,null,null,
-          &$w_chave_nova,$_REQUEST['w_copia']);
+          $w_chave_nova,$_REQUEST['w_copia']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -3387,7 +3387,7 @@ function Grava() {
             $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
             $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,&$w_chave_nova);
+            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,$w_chave_nova);
 
         // Apaga todos os itens cotados dessa solicitação
         $SQL = new dml_putCLItemFornecedor; 
@@ -3737,7 +3737,7 @@ function Grava() {
           $_REQUEST['w_valor_empenho'],$_REQUEST['w_data_prevista'],$_REQUEST['w_autorizador_nome'],
           $_REQUEST['w_autorizador_funcao'],$_REQUEST['w_solicitante'],$_REQUEST['w_responsavel_nome'],
           $_REQUEST['w_responsavel_funcao'],$_REQUEST['w_responsavel_rg'],$_REQUEST['w_responsavel_data'],
-          $_REQUEST['w_situacao'],null,null,null,&$w_chave_nova);
+          $_REQUEST['w_situacao'],null,null,null,$w_chave_nova);
 
         // Grava os itens
         for ($i=0; $i<=count($_POST['w_sq_solic_item'])-1; $i=$i+1) {
@@ -3774,7 +3774,7 @@ function Grava() {
           $_REQUEST['w_valor_empenho'],$_REQUEST['w_data_prevista'],$_REQUEST['w_autorizador_nome'],
           $_REQUEST['w_autorizador_funcao'],$_REQUEST['w_solicitante'],$_REQUEST['w_responsavel_nome'],
           $_REQUEST['w_responsavel_funcao'],$_REQUEST['w_responsavel_rg'],$_REQUEST['w_responsavel_data'],
-          $_REQUEST['w_situacao'],null,null,null,&$w_chave_nova);
+          $_REQUEST['w_situacao'],null,null,null,$w_chave_nova);
 
         // Grava os itens
         for ($i=0; $i<=count($_POST['w_sq_solic_item'])-1; $i=$i+1) {

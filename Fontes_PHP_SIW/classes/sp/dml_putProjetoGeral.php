@@ -14,7 +14,7 @@ class dml_putProjetoGeral {
         $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_unid_resp, $p_codigo, $p_assunto, $p_prioridade, 
         $p_aviso, $p_dias, $p_aviso_pacote, $p_dias_pacote, $p_cidade, $p_palavra_chave, $p_vincula_contrato, 
         $p_vincula_viagem, $p_sq_acao_ppa, $p_sq_orprioridade, $p_selecionada_mpog, $p_selecionada_relev, 
-        $p_sq_tipo_pessoa, $p_moeda, $p_chave_nova, $p_copia) {
+        $p_sq_tipo_pessoa, $p_moeda, &$p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
      $sql=$strschema.'sp_putProjetoGeral';
      $params=array('p_operacao'             =>array($operacao,                    B_VARCHAR,         1),

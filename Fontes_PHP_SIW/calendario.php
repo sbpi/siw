@@ -113,10 +113,10 @@ $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
     //$RS_Ano[$w_ano] = SortArray($RS_Ano[$i],'data_formatada','asc');
    
     ShowHTML('            <tr valign="top">');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], $w_mes.$w_ano, $w_datas, $w_cores, & $w_detalhe1, $w_form, $w_campo).' </td>');
-    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
-    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
-    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], $w_mes.$w_ano, $w_datas, $w_cores, $w_detalhe1, $w_form, $w_campo).' </td>');
+    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,$w_detalhe1).' </td>');
+    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores,$w_detalhe2).' </td>');
+    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,$w_detalhe3).' </td>');
 
     ShowHTML('          </table>');
     ShowHTML('  </table>');

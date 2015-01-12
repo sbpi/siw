@@ -3978,7 +3978,7 @@ function Grava() {
         $_REQUEST['w_cidade'],$_REQUEST['w_palavra_chave'],
         null,null,null,null,null,null,null,
         $w_ano,$w_cliente,substr($_REQUEST['w_sq_acao_ppa'],0,4),substr($_REQUEST['w_sq_acao_ppa'],4,4),substr($_REQUEST['w_sq_acao_ppa'],8,4),substr($_REQUEST['w_sq_acao_ppa'],12,5),$_REQUEST['w_sq_isprojeto'],$_REQUEST['w_selecao_mp'],$_REQUEST['w_selecao_se'],
-        null,null,&$w_chave_nova,$w_copia,$_REQUEST['w_sq_unidade_adm'],null);
+        null,null,$w_chave_nova,$w_copia,$_REQUEST['w_sq_unidade_adm'],null);
       ScriptOpen('JavaScript');
       if ($O=='I') {
         // Exibe mensagem de gravação com sucesso

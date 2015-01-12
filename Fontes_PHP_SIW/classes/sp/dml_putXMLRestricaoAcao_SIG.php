@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLRestricaoAcao_SIG {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao, $p_cd_subacao, $p_cd_tipo_restricao, $p_cd_restricao_acao, $p_cd_tipo_inclusao, $p_cd_competencia, $p_inclusao, $p_descricao, $p_providencia, $p_relatorio, $p_tempo_habil, $p_observacao_monitor, $p_observacao_controle) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao, $p_cd_subacao, $p_cd_tipo_restricao, $p_cd_restricao_acao, $p_cd_tipo_inclusao, $p_cd_competencia, $p_inclusao, $p_descricao, $p_providencia, $p_relatorio, $p_tempo_habil, $p_observacao_monitor, $p_observacao_controle) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLRESTRICAOACAO_SIG';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

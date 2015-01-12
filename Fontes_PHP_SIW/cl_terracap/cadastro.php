@@ -236,7 +236,7 @@ if (count($_POST) > 0) {
                     $w_solicitante,$w_unid_resp,$w_horizonte,$w_natureza,
                     $w_inicio,$w_fim,$w_parcerias,$w_ln_programa,
                     $w_usuario,null,$w_solic_pai,$w_valor,f($RS_Menu,'data_hora'),
-                    $w_aviso,$w_dias,&$w_chave);
+                    $w_aviso,$w_dias, $w_chave);
 
                 if ($w_novo_tramite==$tramites['AT']) {
                   // Envia para execução antes de concluir
@@ -254,7 +254,7 @@ if (count($_POST) > 0) {
                       $w_solicitante,$w_unid_resp,$w_horizonte,$w_natureza,
                       $w_inicio,$w_fim,$w_parcerias,$w_ln_programa,
                       $w_usuario,null,$w_solic_pai,$w_valor,f($RS_Menu,'data_hora'),
-                      $w_aviso,$w_dias,&$w_chave_nova);
+                      $w_aviso,$w_dias,$w_chave_nova);
                 } else {
                   // Registra a atualização ou envio do programa
                   $SQL = new dml_putProgramaEnvio; $SQL->getInstanceOf($dbms,$w_menu,$w_chave,$w_usuario,$w_tramite,$w_novo_tramite,'N',$w_observacao,$w_destinatario,$w_despacho,null,null,null,null);
@@ -339,7 +339,7 @@ if (count($_POST) > 0) {
               $w_solicitante,$w_unid_resp,$w_horizonte,$w_natureza,
               $w_inicio,$w_fim,$w_parcerias,$w_ln_programa,
               $w_usuario,null,$w_solic_pai,$w_valor,f($RS_Menu,'data_hora'),
-              $w_aviso,$w_dias,&$w_chave_nova);
+              $w_aviso,$w_dias,$w_chave_nova);
 
           
           if ($w_novo_tramite==$tramites['AT'] && $w_tramite!=$w_novo_tramite) {

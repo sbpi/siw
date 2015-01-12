@@ -2178,7 +2178,7 @@ function DiretorioCliente($p_cliente) {
 // Verifica se um arquivo ou diretório existe, se é possível a leitura
 // e se é possível a escrita
 // -------------------------------------------------------------------------
-function testFile($l_erro, $l_raiz, $l_leitura = false, $l_escrita = false) {
+function testFile(&$l_erro, $l_raiz, $l_leitura = false, $l_escrita = false) {
   if (!file_exists($l_raiz)) {
     $l_erro = 'inexistente';
     return false;
@@ -3622,7 +3622,7 @@ function mesAno($l_data, $l_formato=null) {
 // =========================================================================
 // Monta string html para montagem de calendário do mês informado
 // -------------------------------------------------------------------------
-function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, $p_form=FALSE, $p_campo=FALSE, $p_valor=FALSE) {
+function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, &$p_detalhe=FALSE, $p_form=FALSE, $p_campo=FALSE, $p_valor=FALSE) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'ex_');
   $p_detalhe = false;
   // Atribui nomes dos meses
@@ -3761,7 +3761,7 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, 
 // Recebe o início e o fim do período no formato data
 // Todos os elementos do array recebem o valor definido em p_valor
 // -------------------------------------------------------------------------
-function retornaArrayDias($p_inicio, $p_fim, $p_array, $p_valor, $p_dia_util=null) {
+function retornaArrayDias($p_inicio, $p_fim, &$p_array, $p_valor, $p_dia_util=null) {
   $l_inicio = date(Ymd,$p_inicio);
   $l_fim    = date(Ymd,$p_fim);
   // Atribui quantidade de dias em cada mês

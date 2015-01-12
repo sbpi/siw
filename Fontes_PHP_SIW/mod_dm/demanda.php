@@ -2144,11 +2144,11 @@ function Grava() {
             $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],'0',$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_assunto'], $_REQUEST['w_prioridade'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
             $_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, null,
-            $_REQUEST['w_chave_pai'], null, null, null, null, null, null, null, null, &$w_chave_nova, $w_copia);
+            $_REQUEST['w_chave_pai'], null, null, null, null, null, null, null, null, $w_chave_nova, $w_copia);
         if(nvl($_REQUEST['w_envio'],'')=='S' && $O=='I') {
-          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,&$w_chave_nova,'GDTGERAL');
+          $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_nova,'GDTGERAL');
           $w_tramite = f($RS,'sq_siw_tramite');
-          $SQL = new dml_putDemandaEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],&$w_chave_nova,$w_usuario,$w_tramite,
+          $SQL = new dml_putDemandaEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_tramite,
               $_REQUEST['w_novo_tramite'],'N',null,$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
               null,null,null,null);
           if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {

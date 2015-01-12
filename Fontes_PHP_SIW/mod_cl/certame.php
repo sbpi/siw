@@ -4271,7 +4271,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],$_REQUEST['w_codigo'],
           $_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',null,null,
           $_REQUEST['w_arp'],'N',null,$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
-          null,&$w_chave_nova,$_REQUEST['w_copia']);        
+          null,$w_chave_nova,$_REQUEST['w_copia']);        
 
         if ($O!='E') {
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$w_chave_nova,null,$_REQUEST['w_sq_lcmodalidade'],$_REQUEST['w_numero_processo'],
@@ -4422,7 +4422,7 @@ function Grava() {
             $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
             $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,&$w_chave_nova);
+            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,$w_chave_nova);
 
         // Apaga todos os itens cotados dessa solicitação
         $SQL = new dml_putCLItemFornecedor; 

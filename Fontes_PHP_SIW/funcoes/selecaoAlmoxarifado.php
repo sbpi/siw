@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getAlmoxarifado.php');
 // =========================================================================
 // Montagem da seleção de almoxarifado
 // -------------------------------------------------------------------------
-function selecaoAlmoxarifado($label, $accesskey, $hint, $chave, $campo, $restricao, $atributo, $colspan=1) {
+function selecaoAlmoxarifado($label, $accesskey, $hint, &$chave, $campo, $restricao, $atributo, $colspan=1) {
   extract($GLOBALS);
 
   // Recupera todos os registros para a listagem

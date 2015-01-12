@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putCaixa {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave,$p_sq_unidade ,$p_sq_arquivo_local,$p_assunto,$p_descricao ,
            $p_data_limite,$p_numero,$p_intermediario,$p_destinacao_final,$p_arquivo_data,$p_arquivo_guia_numero,$p_arquivo_guia_ano,
-           $p_elimin_data,$p_elimin_guia_numero,$p_elimin_guia_ano, $p_chave_nova) {
+           $p_elimin_data,$p_elimin_guia_numero,$p_elimin_guia_ano, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCaixa';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),

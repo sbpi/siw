@@ -4627,7 +4627,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],$_REQUEST['w_codigo_interno'],
           $_REQUEST['w_titulo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_aviso_pacote'],$_REQUEST['w_dias_pacote'],$_REQUEST['w_cidade'],
           $_REQUEST['w_palavra_chave'],$_REQUEST['w_vincula_contrato'],$_REQUEST['w_vincula_viagem'],null,null,
-          null,null,null,$_REQUEST['w_moeda'],&$w_chave_nova,$_REQUEST['w_copia']);
+          null,null,null,$_REQUEST['w_moeda'],$w_chave_nova,$_REQUEST['w_copia']);
       if ($O == 'I') {
         // Recupera os dados para montagem correta do menu
         $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms,$w_menu);

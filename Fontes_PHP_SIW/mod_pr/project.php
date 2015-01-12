@@ -389,7 +389,7 @@ function Grava() {
                 // Se for gravar etapa, apaga todas as etapas existentes
                 $i = 1;
                 $SQL = new dml_putEtapaProject; $SQL->getInstanceOf($dbms,'E',$_REQUEST['p_projeto'],null,
-                    null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,&$w_chave_nova);
+                    null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_nova);
                 ShowHTML('<br><br><b>Fase 2/4 - Remoção das etapas do projeto: completada');
                 flush();
               }
@@ -397,7 +397,7 @@ function Grava() {
                   $w_titulo,nvl($w_descricao,$w_titulo),$w_ordem,$w_inicio,$w_fim,$w_perc,
                   $_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_unidade'],$w_usuario,
                   $_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'],$_REQUEST['w_cidade'],
-                  null,&$w_chave_nova);
+                  null,$w_chave_nova);
             
               $w_chave[$w_codigo] = $w_chave_nova;
             }
@@ -407,7 +407,7 @@ function Grava() {
             flush();
             // Se processou algum registro, ajusta os pacotes de trabalho
             $SQL = new dml_putEtapaProject; $SQL->getInstanceOf($dbms,'A',$_REQUEST['p_projeto'],null,
-                null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_peso'],&$w_chave_nova);
+                null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_peso'],$w_chave_nova);
             ShowHTML('<br><br><b>Fase 4/4 - Indicação dos pacotes de trbalho: completada');
             flush();
           }

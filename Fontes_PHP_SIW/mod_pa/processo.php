@@ -2264,7 +2264,7 @@ function Grava() {
               $_REQUEST['w_volumes'], $_REQUEST['w_dt_autuacao'],
               $_REQUEST['w_copias'], $_REQUEST['w_natureza_documento'], $_REQUEST['w_fim'], $_REQUEST['w_data_recebimento'],
               $_REQUEST['w_interno'], $_REQUEST['w_pessoa_origem'], $_REQUEST['w_pessoa_interes'], $_REQUEST['w_cidade'],
-              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], &$w_chave_nova, &$w_codigo);
+              $_REQUEST['w_assunto'], $_REQUEST['w_descricao'], $_REQUEST['w_observacao'], $w_chave_nova, $w_codigo);
 
       ScriptOpen('JavaScript');
       // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link

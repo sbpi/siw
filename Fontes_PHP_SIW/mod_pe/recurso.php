@@ -1102,22 +1102,22 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
     $sql = new db_getRecurso_Disp; $l_rs_Disp = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
     $l_rs_Disp = SortArray($l_rs_Disp,'inicio','desc','fim','desc');
     // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-    foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Recurso disponível neste dia', f($row,'dia_util'));
-    foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightBlue2, f($row,'dia_util'));
+    foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'),$w_datas, 'Recurso disponível neste dia', f($row,'dia_util'));
+    foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), $w_cores, $conTrBgColorLightBlue2, f($row,'dia_util'));
   }
 
   // Recupera os períodos de disponibilidade do recurso, se ele tiver controle de períodos
   $sql = new db_getRecurso_Indisp; $l_rs_Indisp = $sql->getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
   $l_rs_Indisp = SortArray($l_rs_Indisp,'inicio','desc','fim','desc');
   // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-  foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, f($row,'justificativa'), f($row,'dia_util'));
-  foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightRed1, f($row,'dia_util'));
+  foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), $w_datas, f($row,'justificativa'), f($row,'dia_util'));
+  foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), $w_cores, $conTrBgColorLightRed1, f($row,'dia_util'));
 
   $sql = new db_getSolicRecursos; $l_rs_Aloc = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_solic,$l_chave,null,null,null,null,null,null,null,null,null,'ALOCACAO');
   $l_rs_Aloc = SortArray($l_rs_Aloc,'inicio','desc','fim','desc');
   // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-  foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Alocado', 'S');
-  foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, 'yellow', 'S');
+  foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), $w_datas, 'Alocado', 'S');
+  foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), $w_cores, 'yellow', 'S');
 
   // Exibe o cronograma do recurso
   $l_html .= chr(13).'      <tr valign="top">';
@@ -1731,7 +1731,7 @@ function Grava() {
         $SQL = new dml_putRecurso; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_copia'],
             $_REQUEST['w_tipo_recurso'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_gestora'],$_REQUEST['w_nome'],
             $_REQUEST['w_codigo'],$_REQUEST['w_descricao'],$_REQUEST['w_finalidade'],$_REQUEST['w_disponibilidade'],
-            $_REQUEST['w_tp_vinculo'], $_REQUEST['w_ch_vinculo'], $_REQUEST['w_ativo'],&$w_chave_nova);
+            $_REQUEST['w_tp_vinculo'], $_REQUEST['w_ch_vinculo'], $_REQUEST['w_ativo'],$w_chave_nova);
 
         if ($_REQUEST['w_disponibilidade']==1) {
           $w_o = $O;

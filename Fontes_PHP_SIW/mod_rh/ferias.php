@@ -1867,7 +1867,7 @@ function Grava() {
           $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_contrato_colaborador'],$_REQUEST['w_inicio_data'],
           'M',$_REQUEST['w_fim_data'],'T',
           $_REQUEST['w_inicio_pa'],$_REQUEST['w_fim_pa'],$_REQUEST['w_abono'],
-          $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], &$w_chave_nova);
+          $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $w_chave_nova);
           
       
       /*if (nvl($_REQUEST['w_recurso'],'')!='') {

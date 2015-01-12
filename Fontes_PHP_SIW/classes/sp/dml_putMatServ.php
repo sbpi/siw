@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putMatServ {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_usuario, $p_chave, $p_copia, $p_tipo_material, 
         $p_unidade_medida, $p_nome, $p_descricao, $p_detalhamento, $p_apresentacao, $p_codigo_interno, 
-        $p_codigo_externo, $p_exibe_catalogo, $p_vida_util, $p_ativo, $p_chave_nova) {
+        $p_codigo_externo, $p_exibe_catalogo, $p_vida_util, $p_ativo, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMatServ';
      $params=array('p_operacao'         =>array($operacao,                      B_VARCHAR,         1),
                    'p_cliente'          =>array(tvl($p_cliente),                B_INTEGER,        32),

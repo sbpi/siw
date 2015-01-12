@@ -350,14 +350,14 @@ class OraDatabaseQueries extends DatabaseQueries {
               $this->num_rows = oci_num_rows($this->result);
             } else {
               $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-              array_key_case_change(&$this->resultData);
+              array_key_case_change($this->resultData);
               oci_execute($this->result);
               for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
                 if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); }
                 elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
               }
               $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-              array_key_case_change(&$this->resultData);
+              array_key_case_change($this->resultData);
               if (isset($this->column_datatype)) {
                 for ($i = 0; $i < $this->num_rows; $i++) {
                   foreach ($this->column_datatype as $key => $val) {
@@ -525,10 +525,11 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            $exibe = false;
            foreach($this->params as $paramName=>$value) {
                foreach($value as $paramValue=>$paramType) {
-                   if($value[1]!=B_CURSOR)
+                   if($value[1]!=B_CURSOR) {
                       oci_bind_by_name($this->stmt, $paramName, $value[0], $value[2]); 
-                   else {
-                      oci_bind_by_name($this->stmt, $paramName, &$this->result, $value[2], OCI_B_CURSOR);
+                   } else {
+                      oci_bind_by_name($this->stmt, $paramName, $this->result, $value[2], OCI_B_CURSOR);
+                      
                    }
                    break;
                }
@@ -541,17 +542,19 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
              return false; 
            } else {
               oci_execute($this->result);
-              if(is_resource($this->result)) { 
+              if(is_resource($this->result)) {
                  for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
-                   if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); }
+                   if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { 
+                     $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); 
+                   }
                    elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
                  }
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-                 array_key_case_change(&$this->resultData);
+                 array_key_case_change($this->resultData);
                  if (isset($this->column_datatype)) {
                    for ($i = 0; $i < $this->num_rows; $i++) {
                      foreach ($this->column_datatype as $key => $val) {
-                       if (nvl($this->resultData[$i][$key],'')>'') { 
+                       if (nvl($this->resultData[$i][$key],'')>'') {
                          if ($val=='DATE') {
                            $tmp = formatDateTime($this->resultData[$i][$key]);
                            $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
@@ -625,7 +628,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                    elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
                  }
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-                 array_key_case_change(&$this->resultData);
+                 array_key_case_change($this->resultData);
                  if (isset($this->column_datatype)) {
                    for ($i = 0; $i < $this->num_rows; $i++) {
                      foreach ($this->column_datatype as $key => $val) {

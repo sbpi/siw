@@ -2538,13 +2538,13 @@ function Grava() {
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],
             $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $_REQUEST['w_destino'],$_REQUEST['w_sq_veiculo'],$_REQUEST['w_qtd_pessoas'],
-            $_REQUEST['w_procedimento'], $_REQUEST['w_carga'], &$w_chave_nova, $w_copia);
+            $_REQUEST['w_procedimento'], $_REQUEST['w_carga'], $w_chave_nova, $w_copia);
       } elseif ($SG=='SRSOLCEL') {
         include_once($w_dir_volta.'classes/sp/dml_putSolicCelular.php');
         $SQL = new dml_putSolicCelular; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],
             $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
-            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $_REQUEST['w_pais'], &$w_chave_nova, $w_copia);
+            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $_REQUEST['w_pais'], $w_chave_nova, $w_copia);
       } else {
         include_once($w_dir_volta.'classes/sp/dml_putSolicGeral.php');
         if (nvl($_REQUEST['w_solic_recurso'],'')!='' && $O=='E') {
@@ -2555,7 +2555,7 @@ function Grava() {
         $SQL = new dml_putSolicGeral; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],
             $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
-            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], &$w_chave_nova, $w_copia);
+            $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $w_chave_nova, $w_copia);
         
         if (nvl($_REQUEST['w_recurso'],'')!='') {
           // Grava o cabeçalho da alocação

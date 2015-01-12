@@ -7661,7 +7661,7 @@ function Grava() {
                   $_REQUEST['w_chave_pai'], $_REQUEST['w_demanda'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_passagem'],
                   $_REQUEST['w_diaria'], $_REQUEST['w_hospedagem'], $_REQUEST['w_veiculo'], $_REQUEST['w_proponente'],
                   $_REQUEST['w_financeiro'], $_REQUEST['w_rubrica'], $_REQUEST['w_lancamento'],
-                  &$w_chave_nova, $w_copia, &$w_codigo);
+                  $w_chave_nova, $w_copia, $w_codigo);
         if ($O == 'I') {
           // Recupera os dados para montagem correta do menu
           $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms, $w_menu);

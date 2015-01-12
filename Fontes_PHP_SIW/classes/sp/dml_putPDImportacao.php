@@ -14,7 +14,7 @@ class dml_putPDImportacao {
           $p_arquivo_recebido, $p_caminho_recebido, $p_tamanho_recebido, $p_tipo_recebido, 
           $p_arquivo_registro, $p_caminho_registro, $p_tamanho_registro, $p_tipo_registro, 
           $p_registros, $p_importados, $p_rejeitados, $p_nome_recebido, $p_nome_registro, 
-          $p_chave_nova) {
+          &$p_chave_nova) {
 
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPDImportacao';
      $params=array('p_operacao'          => array($operacao,                      B_VARCHAR,         1),

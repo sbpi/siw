@@ -13,7 +13,7 @@ class dml_putDocumentoGeral {
         $p_cadastrador, $p_solic_pai, $p_vinculo, $p_processo, $p_circular, $p_especie_documento, $p_doc_original, 
         $p_inicio, $p_volumes, $p_dt_autuacao, $p_copias, $p_natureza_documento, $p_fim, $p_data_recebimento, 
         $p_interno, $p_pessoa_origem, $p_pessoa_interes, $p_cidade, $p_assunto, $p_descricao, $p_observacao,
-        $p_chave_nova, $p_codigo_interno) {
+        &$p_chave_nova, &$p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoGeral';
      $params=array('p_operacao'                 =>array($operacao,                                  B_VARCHAR,         1),
                    'p_chave'                    =>array(tvl($p_chave),                              B_INTEGER,        32),

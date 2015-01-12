@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putPD_Fatura {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_arquivo, $p_agencia, $p_tipo, $p_numero, $p_inicio, $p_fim, $p_emissao, 
-          $p_vencimento, $p_valor, $p_registros, $p_importados, $p_rejeitados, $p_chave_nova) {
+          $p_vencimento, $p_valor, $p_registros, $p_importados, $p_rejeitados, &$p_chave_nova) {
 
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPD_Fatura';
      $params=array('p_operacao'         => array($operacao,                     B_VARCHAR,         1),

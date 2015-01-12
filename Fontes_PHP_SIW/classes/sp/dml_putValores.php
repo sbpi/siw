@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putValores {
-   function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_tipo, $p_codigo_externo, $p_ativo, $p_chave_nova) {
+   function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_tipo, $p_codigo_externo, $p_ativo, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putValores';
      $params=array('p_operacao'                  =>array($operacao,                                   B_VARCHAR,         1),
                    'p_cliente'                   =>array(tvl($p_cliente),                             B_INTEGER,        32),

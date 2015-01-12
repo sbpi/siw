@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLIndicador_PPA {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_programa, $p_chave, $p_unidade_med, $p_periodicidade, $p_base_geo, $p_nome, $p_fonte, $p_formula, $p_valor_ano_1, $p_valor_ano_2, $p_valor_ano_3, $p_valor_ano_4, $p_valor_ano_5, $p_valor_ano_6, $p_valor_ref, $p_valor_final, $p_apurado_ano_1, $p_apurado_ano_2, $p_apurado_ano_3, $p_apurado_ano_4, $p_apurado_ano_5, $p_apurado_ano_6, $p_apurado_ref, $p_apurado_final, $p_apuracao, $p_observacao) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_programa, $p_chave, $p_unidade_med, $p_periodicidade, $p_base_geo, $p_nome, $p_fonte, $p_formula, $p_valor_ano_1, $p_valor_ano_2, $p_valor_ano_3, $p_valor_ano_4, $p_valor_ano_5, $p_valor_ano_6, $p_valor_ref, $p_valor_final, $p_apurado_ano_1, $p_apurado_ano_2, $p_apurado_ano_3, $p_apurado_ano_4, $p_apurado_ano_5, $p_apurado_ano_6, $p_apurado_ref, $p_apurado_final, $p_apuracao, $p_observacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLINDICADOR_PPA';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

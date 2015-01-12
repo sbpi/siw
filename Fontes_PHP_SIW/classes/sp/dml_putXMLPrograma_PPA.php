@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLPrograma_PPA {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_chave, $p_orgao, $p_tipo_org, $p_orgao_siorg, $p_tipo_prog, $p_nome, $p_mes_ini, $p_ano_ini, $p_mes_fim, $p_ano_fim, $p_objetivo, $p_publico_alvo, $p_justificativa, $p_estrategia, $p_valor_estimado, $p_temporario, $p_padronizado, $p_observacao) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_chave, $p_orgao, $p_tipo_org, $p_orgao_siorg, $p_tipo_prog, $p_nome, $p_mes_ini, $p_ano_ini, $p_mes_fim, $p_ano_fim, $p_objetivo, $p_publico_alvo, $p_justificativa, $p_estrategia, $p_valor_estimado, $p_temporario, $p_padronizado, $p_observacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLPROGRAMA_PPA';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

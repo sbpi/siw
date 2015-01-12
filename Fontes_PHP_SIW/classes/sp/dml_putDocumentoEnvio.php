@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putDocumentoEnvio {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_interno, $p_unidade_origem, $p_unidade_destino,
         $p_pessoa_destino,$p_tipo_despacho,$p_prefixo,$p_numero,$p_ano,$p_despacho,$p_aviso,$p_dias_aviso,$p_retorno_limite, 
-        $p_pessoa_externa,$p_unidade_externa, $p_nu_guia, $p_ano_guia, $p_unidade_autuacao) {
+        $p_pessoa_externa,$p_unidade_externa, &$p_nu_guia, &$p_ano_guia, &$p_unidade_autuacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoEnvio';
      $params=array('p_menu'                     =>array($p_menu,                                    B_INTEGER,        32),
                    'p_chave'                    =>array($p_chave,                                   B_INTEGER,        32),

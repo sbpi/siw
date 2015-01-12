@@ -1405,7 +1405,7 @@ function Grava() {
             $_REQUEST['w_tipo_material'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_nome'],
             $_REQUEST['w_descricao'],$_REQUEST['w_detalhamento'],$_REQUEST['w_apresentacao'],$_REQUEST['w_codigo_interno'],
             $_REQUEST['w_codigo_externo'], $_REQUEST['w_exibe_catalogo'], $_REQUEST['w_vida_util'], $_REQUEST['w_ativo'],
-            &$w_chave_nova);
+            $w_chave_nova);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1486,7 +1486,7 @@ function Grava() {
             $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
             $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,&$w_chave_nova);
+            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],null,$w_chave_nova);
       
         // Inseri as cotaçoes e atualiza a tabela de materiais
         $SQL = new dml_putCLPesqFornecedor; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave_aux'],null,$w_chave_nova,

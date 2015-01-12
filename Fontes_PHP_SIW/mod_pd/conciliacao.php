@@ -1471,7 +1471,7 @@ function Grava() {
                 $w_nome_recebido,$w_caminho_recebido,$w_tamanho_recebido,$w_tipo_recebido,
                 $w_arquivo_registro,$w_caminho_registro,$w_tamanho_registro,$w_tipo_registro,
                 $w_registros,$w_importados,$w_rejeitados,$w_nome_recebido,$w_arquivo_registro,
-                &$w_chave_arq);
+                $w_chave_arq);
           
           foreach($fatura_grava as $row1) {
             //Grava cada uma das faturas sem erro
@@ -1480,7 +1480,7 @@ function Grava() {
               $SQL = new dml_putPD_Fatura; $SQL->getInstanceOf($dbms,'I',
                   null,$w_chave_arq,$_REQUEST['w_agencia'],$_REQUEST['w_tipo'],f($row1,'fatura'),f($row1,'inicio'),f($row1,'fim'),
                   f($row1,'emissao'),f($row1,'vencimento'),f($row1,'valor'),nvl(f($row1,'aceitos'),0)+nvl(f($row1,'rejeitados'),0),
-                  nvl(f($row1,'aceitos'),0),nvl(f($row1,'rejeitados'),0),&$w_chave_fatura);
+                  nvl(f($row1,'aceitos'),0),nvl(f($row1,'rejeitados'),0), $w_chave_fatura);
                     
               foreach($bilhete_grava[$w_fatura] as $row2) {
                 if ($_REQUEST['w_tipo']==0) {

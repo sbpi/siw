@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putRecurso {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_usuario, $p_chave, $p_copia, $p_tipo_recurso, 
         $p_unidade_medida, $p_gestora, $p_nome, $p_codigo, $p_descricao, $p_finalidade, $p_disponibilidade, 
-        $p_tp_vinculo, $p_ch_vinculo, $p_ativo, $p_chave_nova) {
+        $p_tp_vinculo, $p_ch_vinculo, $p_ativo, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTRECURSO';
      $params=array('p_operacao'         =>array($operacao,                      B_VARCHAR,         1),
                    'p_cliente'          =>array(tvl($p_cliente),                B_INTEGER,        32),

@@ -1844,7 +1844,7 @@ function Grava() {
           $_REQUEST['w_solicitante'],$_REQUEST['w_unid_resp'],$_REQUEST['w_horizonte'],$_REQUEST['w_natureza'],
           $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_parcerias'],$_REQUEST['w_ln_programa'],
           $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_solic_pai'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],
-          $_REQUEST['w_aviso'],$_REQUEST['w_dias'],&$w_chave_nova);
+          $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$w_chave_nova);
 
       ScriptOpen('JavaScript');
       if ($O=='I' || $_REQUEST['w_codigo']!=$_REQUEST['w_codigo_atual']) {

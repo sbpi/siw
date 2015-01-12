@@ -1133,7 +1133,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$w_moeda,&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$w_moeda,$w_chave_nova, $w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
@@ -1166,7 +1166,7 @@ function Grava() {
         //Grava os dados do comprovante de despesa
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
           nvl($_REQUEST['w_numero'],'s/n'),$_REQUEST['w_fim'],$_REQUEST['w_serie'],$w_moeda,$_REQUEST['w_valor'],
-          'N','N','N',null,null,null,null,&$w_chave_doc);
+          'N','N','N',null,null,null,null, $w_chave_doc);
 
         // Grava acréscimos e supressões
         $SQL = new dml_putLancamentoValor;  $SQL->getInstanceOf($dbms,'E',$w_chave_doc,null,null);
@@ -1183,8 +1183,8 @@ function Grava() {
           null,'Conclusão automática de aplicação.',null,null,null,null);
       }
     
-      $w_html = VisualAplicacao(nvl($_REQUEST['w_chave'],&$w_chave_nova),'L',$w_usuario,1,'1');
-      CriaBaseLine(nvl($_REQUEST['w_chave'],&$w_chave_nova),$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+      $w_html = VisualAplicacao(nvl($_REQUEST['w_chave'],$w_chave_nova),'L',$w_usuario,1,'1');
+      CriaBaseLine(nvl($_REQUEST['w_chave'],$w_chave_nova),$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
       
       ScriptOpen('JavaScript');
       if ($P1==0) {

@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putLancamentoDoc {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_sq_tipo_documento, $p_numero, $p_data, $p_serie, 
            $p_moeda, $p_valor, $p_patrimonio, $p_retencao, $p_tributo, $p_nota, $p_inicial, $p_excedente, $p_reajuste, 
-           $p_chave_nova) {
+           &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTLANCAMENTODOC';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

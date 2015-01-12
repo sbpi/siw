@@ -2498,7 +2498,7 @@ function Grava() {
           $_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],$_REQUEST['w_moeda'],$_REQUEST['w_valor'],$_REQUEST['w_codigo'],
           $_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],
           $_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N','N',$_REQUEST['w_especie_documento'],$_REQUEST['w_financeiro'],
-          $_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,$_REQUEST['w_copia']);
+          $_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,$w_chave_nova,$_REQUEST['w_copia']);
         
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
@@ -2807,7 +2807,7 @@ function Grava() {
           $SQL = new dml_putCLGeral; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],$_REQUEST['w_menu'],null,
             null,null,null,$_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
             $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,null);
+            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,$w_chave_nova,null);
             
           // Grava tipo de pagamento e nota de conclusão
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,

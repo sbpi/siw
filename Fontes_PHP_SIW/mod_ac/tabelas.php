@@ -1845,7 +1845,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {  
         $SQL = new dml_putFormaPagamento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
-             $_REQUEST['w_sigla'],$_REQUEST['w_ativo'],&$w_chave_nova);
+             $_REQUEST['w_sigla'],$_REQUEST['w_ativo'],$w_chave_nova);
 
         if ($O!='E') { 
            // Elimina todas as permissões existentes para depois incluir

@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLIndicador_SIG {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_programa, $p_chave, $p_unidade_medida, $p_periodicidade, $p_base_geo, $p_nome, $p_fonte, $p_formula, $p_valor_apurado, $p_valor_ppa, $p_valor_programa, $p_valor_mes_1, $p_valor_mes_2, $p_valor_mes_3, $p_valor_mes_4, $p_valor_mes_5, $p_valor_mes_6, $p_valor_mes_7, $p_valor_mes_8, $p_valor_mes_9, $p_valor_mes_10, $p_valor_mes_11, $p_valor_mes_12, $p_apuracao) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_programa, $p_chave, $p_unidade_medida, $p_periodicidade, $p_base_geo, $p_nome, $p_fonte, $p_formula, $p_valor_apurado, $p_valor_ppa, $p_valor_programa, $p_valor_mes_1, $p_valor_mes_2, $p_valor_mes_3, $p_valor_mes_4, $p_valor_mes_5, $p_valor_mes_6, $p_valor_mes_7, $p_valor_mes_8, $p_valor_mes_9, $p_valor_mes_10, $p_valor_mes_11, $p_valor_mes_12, $p_apuracao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLINDICADOR_SIG';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

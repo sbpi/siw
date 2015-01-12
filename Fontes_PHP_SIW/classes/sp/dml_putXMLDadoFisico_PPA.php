@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLDadoFisico_PPA {
-   function getInstanceOf($dbms, $p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao_ppa, $p_cd_localizador_ppa, $p_qtd_ano_1, $p_qtd_ano_2, $p_qtd_ano_3, $p_qtd_ano_4, $p_qtd_ano_5, $p_qtd_ano_6, $p_observacao, $p_cumulativa) {
+   function getInstanceOf($dbms, &$p_resultado, $p_cliente, $p_ano, $p_cd_programa, $p_cd_acao_ppa, $p_cd_localizador_ppa, $p_qtd_ano_1, $p_qtd_ano_2, $p_qtd_ano_3, $p_qtd_ano_4, $p_qtd_ano_5, $p_qtd_ano_6, $p_observacao, $p_cumulativa) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLDADOFISICO_PPA';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

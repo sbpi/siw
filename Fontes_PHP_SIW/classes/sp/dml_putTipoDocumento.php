@@ -11,7 +11,7 @@ include_once($w_dir_volta . 'classes/db/DatabaseQueriesFactory.php');
  */
 class dml_putTipoDocumento {
 
-  function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_detalha_item, $p_codigo_externo, $p_especie_documento, $p_ativo, $p_chave_nova) {
+  function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_detalha_item, $p_codigo_externo, $p_especie_documento, $p_ativo, &$p_chave_nova) {
     extract($GLOBALS, EXTR_PREFIX_SAME, 'strchema'); $sql = $strschema . 'sp_putTipoDocumento';
     $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                   'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

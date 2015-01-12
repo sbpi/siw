@@ -12,7 +12,7 @@ class dml_putSolicEvento {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_pai, $p_menu, $p_unidade, $p_solicitante, 
         $p_cadastrador, $p_tipo_evento, $p_indicador1, $p_indicador2, $p_indicador3, $p_observacao, 
         $p_titulo, $p_motivo, $p_justificativa, $p_descricao, $p_inicio, $p_fim, $p_data_hora, $p_cidade, 
-        $p_copia, $p_chave_nova) {
+        $p_copia, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSolicEvento';
      $params=array('p_operacao'             =>array($operacao,                      VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                  INTEGER,        32),

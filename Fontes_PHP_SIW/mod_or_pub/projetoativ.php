@@ -1919,7 +1919,7 @@ function Grava() {
           $_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],$_REQUEST['w_assunto'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$w_dias,
           $_REQUEST['w_cidade'],$_REQUEST['w_palavra_chave'],null,null,null,null,null,null,null,
           $_REQUEST['w_projeto'],$_REQUEST['w_atividade'],$_REQUEST['w_projeto_ant'],$_REQUEST['w_atividade_ant'],
-          null, null, null, null, &$w_chave_nova,$w_copia);
+          null, null, null, null, $w_chave_nova,$w_copia);
         ScriptOpen('JavaScript');
         if ($O=='I') {
           // Envia e-mail comunicando a inclusão

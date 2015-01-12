@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLFonte_PPA {
-   function getInstanceOf($dbms, $p_resultado, $p_chave, $p_nome, $p_desc, $p_total) {
+   function getInstanceOf($dbms, &$p_resultado, $p_chave, $p_nome, $p_desc, $p_total) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLFONTE_PPA';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_VARCHAR,         5),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        60),

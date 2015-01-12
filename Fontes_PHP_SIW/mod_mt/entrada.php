@@ -1914,7 +1914,7 @@ function Grava() {
                 $_REQUEST['w_fornecedor'],$_REQUEST['w_tipo'],$w_situacao,$_REQUEST['w_solicitacao'],$_REQUEST['w_documento'],
                 nvl($_REQUEST['w_prevista'],$_REQUEST['w_efetiva']),$_REQUEST['w_efetiva'],
                 $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
-                $_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],&$w_chave_nova);
+                $_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],$w_chave_nova);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.(($O=='E') ? 'inicial&O=L' : 'geral&O=A&w_chave='.$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
         ScriptClose();
@@ -2097,7 +2097,7 @@ function Grava() {
 
           // Registra o armazenamento
           $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,'V',$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,
-            null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_armazenamento'],null,null,&$w_chave_nova);
+            null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_armazenamento'],null,null,$w_chave_nova);
 
           ScriptOpen('JavaScript');
           ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');

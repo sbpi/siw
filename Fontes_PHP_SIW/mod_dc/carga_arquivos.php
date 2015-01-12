@@ -254,7 +254,7 @@ function Inicial() {
       ShowHTML('          <tr valign="top"><td>');
       
       // verifica se o diretório informado atende aos requisitos de existência, leitura e escrita
-      if (!testFile(&$l_erro, $w_raiz, true, true)) {
+      if (!testFile($l_erro, $w_raiz, true, true)) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: diretório '.$l_erro.'!\');');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';');
@@ -437,7 +437,7 @@ function Grava() {
         if ($w_opcao=='links') {
           // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
           $lista = retrieveTree($_REQUEST['w_raiz'],true, true);
-          array_walk_recursive($lista,'flatArray',&$base);
+          array_walk_recursive($lista,'flatArray', $base);
 
           // Recupera os itens do menu
           $sql = new db_getMenuList; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'L', null, null);
@@ -464,7 +464,7 @@ function Grava() {
               if ($w_opcao=='nomes') {
                 // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
                 $lista = retrieveTree($_REQUEST['w_raiz'],true, true);
-                array_walk_recursive($lista,'flatArray',&$base);
+                array_walk_recursive($lista,'flatArray',$base);
               }
               ShowHTML('<b>Processando a lista de diretórios selecionados</b>');
               if ($w_opcao!='nomes') ShowHTML('<form name="Form"><b>Arquivos Processados:</b><INPUT TYPE=TEXT name="contador" VALUE="" style="text-align=right; border=0; background-color='.$conBodyBgColor.'" SIZE=3>/<INPUT TYPE=TEXT name="total" VALUE="" style="border=0; background-color='.$conBodyBgColor.'" SIZE=3></form>');
@@ -577,7 +577,7 @@ function retrieveTree($l_raiz, $recursive = false) {
 // =========================================================================
 // Retorna array unidimensional a partir de array multidimensional
 // -------------------------------------------------------------------------
-function flatArray($item, $key, $base) {
+function flatArray($item, $key, &$base) {
   global $w_raiz;
   $base[str_replace($w_raiz,'',$item)] = '';
 }
@@ -718,7 +718,7 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
 
           if (nvl($sp,'') > '') {
             $comando = 'select count(*) qtd from all_objects where owner = \'SIWGP\' and object_name = \''.$sp.'\'';
-            $sql = new db_exec; $RS = $sql->getInstanceOf($dbms, $comando, &$numRows);
+            $sql = new db_exec; $RS = $sql->getInstanceOf($dbms, $comando, $numRows);
             $existe = false;
             foreach($RS as $row) {
                foreach ($row as $key => $val) {

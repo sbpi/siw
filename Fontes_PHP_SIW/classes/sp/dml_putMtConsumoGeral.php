@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putMtConsumoGeral {
   function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante,$p_cadastrador, 
-        $p_justificativa, $p_observacao,$p_fim, $p_codigo, $p_copia, $p_obs_log, $p_chave_nova) {
+        $p_justificativa, $p_observacao,$p_fim, $p_codigo, $p_copia, $p_obs_log, &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMtConsumoGeral';
      $params=array('p_operacao'             =>array($operacao,                    B_VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                B_INTEGER,        32),

@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putXMLMunicipio {
-   function getInstanceOf($dbms, $p_resultado, $p_chave, $p_regiao, $p_nome) {
+   function getInstanceOf($dbms, &$p_resultado, $p_chave, $p_regiao, $p_nome) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTXMLMUNICIPIO';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_VARCHAR,         7),
                    'p_regiao'                    =>array(tvl($p_regiao),                                   B_VARCHAR,         2),

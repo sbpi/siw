@@ -2093,7 +2093,7 @@ function Grava() {
               $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_sq_etnia'],
               $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissor'],
               $_REQUEST['w_rg_emissao'],$_REQUEST['w_cpf'],$_REQUEST['w_passaporte_numero'],$_REQUEST['w_sq_pais_passaporte'],
-              $w_file,$w_tamanho,$w_tipo,$w_nome,&$w_chave_nova);    
+              $w_file,$w_tamanho,$w_tipo,$w_nome,$w_chave_nova);    
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');

@@ -1841,7 +1841,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_putMtConsumoGeral; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],
           $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],
-          $_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_copia'],null,&$w_chave_nova);
+          $_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_copia'],null,$w_chave_nova);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,(($O=='E') ? f($RS_Menu,'link').'&O=L' : $w_pagina.'geral&O=A&w_chave='.$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');

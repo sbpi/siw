@@ -1266,7 +1266,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         // Grava o registro
         $SQL = new dml_putTipoDocumento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
-          $_REQUEST['w_sigla'],$_REQUEST['w_item'],$_REQUEST['w_codigo_externo'], $_REQUEST['w_especie_documento'], $_REQUEST['w_ativo'],&$w_chave_nova);
+          $_REQUEST['w_sigla'],$_REQUEST['w_item'],$_REQUEST['w_codigo_externo'], $_REQUEST['w_especie_documento'], $_REQUEST['w_ativo'],$w_chave_nova);
 
         if ($O!='E') {
           // Elimina todas as permissões existentes para depois incluir
@@ -1291,7 +1291,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_putValores;
         $SQL->getInstanceOf($dbms, $O, $w_cliente, Nvl($_REQUEST['w_chave'], ''), $_REQUEST['w_nome'], $_REQUEST['w_tipo'], 
-          $_REQUEST['w_codigo_externo'], $_REQUEST['w_ativo'],&$w_chave_nova);
+          $_REQUEST['w_codigo_externo'], $_REQUEST['w_ativo'],$w_chave_nova);
 
         if ($O!='E') {
           // Elimina todas as permissões existentes para depois incluir
@@ -1315,7 +1315,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         $SQL = new dml_putTipoLancamento;
-        $SQL->getInstanceOf($dbms, $O, Nvl($_REQUEST['w_chave'], ''), $_REQUEST['w_pai'], $_REQUEST['w_cliente'], $_REQUEST['w_nome'], $_REQUEST['w_descricao'], $_REQUEST['w_receita'], $_REQUEST['w_despesa'], $_REQUEST['w_reembolso'], $_REQUEST['w_codigo_externo'], $_REQUEST['w_ativo'], &$w_chave_nova);
+        $SQL->getInstanceOf($dbms, $O, Nvl($_REQUEST['w_chave'], ''), $_REQUEST['w_pai'], $_REQUEST['w_cliente'], $_REQUEST['w_nome'], $_REQUEST['w_descricao'], $_REQUEST['w_receita'], $_REQUEST['w_despesa'], $_REQUEST['w_reembolso'], $_REQUEST['w_codigo_externo'], $_REQUEST['w_ativo'], $w_chave_nova);
         if ($O!='E') {
           // Elimina todas as permissões existentes para depois incluir
           $SQL = new dml_PutLancamentoVinc; $SQL->getInstanceOf($dbms, 'E', $w_chave_nova, null);

@@ -13,7 +13,7 @@ class dml_putDemandaGeral {
         $p_sqcc, $p_descricao, $p_justificativa, $p_ordem, $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_unid_resp, $p_assunto, 
         $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_palavra_chave, $p_inicio_real, $p_fim_real, $p_concluida, $p_data_conclusao, 
         $p_nota_conclusao, $p_custo_real, $p_opiniao, $p_projeto, $p_atividade, $p_projeto_ant, $p_atividade_ant, $p_restricao,
-        $p_demanda_tipo, $p_recebimento, $p_limite_conclusao, $p_responsavel, $p_chave_nova, $p_copia) {
+        $p_demanda_tipo, $p_recebimento, $p_limite_conclusao, $p_responsavel, &$p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTDEMANDAGERAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
