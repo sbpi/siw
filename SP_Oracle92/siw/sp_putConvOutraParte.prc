@@ -107,7 +107,8 @@ begin
          select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where nome = 'Física';
          select count(*)       into w_existe         from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
          If w_existe > 0 Then
-            select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+            select sq_pessoa      into w_chave_pessoa   from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+            select sq_tipo_pessoa into w_sq_tipo_pessoa from co_pessoa        where sq_pessoa = w_chave_pessoa;
          Else
             w_chave_pessoa := 0;
          End If;
@@ -115,7 +116,8 @@ begin
          select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa     where nome = 'Jurídica';
          select count(*)       into w_existe         from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
          If w_existe > 0 Then
-            select sq_pessoa into w_chave_pessoa from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj and rownum = 1;
+            select sq_pessoa      into w_chave_pessoa   from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj and rownum = 1;
+            select sq_tipo_pessoa into w_sq_tipo_pessoa from co_pessoa          where sq_pessoa = w_chave_pessoa;
          Else
             w_chave_pessoa := 0;
          End If;

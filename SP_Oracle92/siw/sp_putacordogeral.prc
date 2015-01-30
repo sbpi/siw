@@ -21,6 +21,7 @@ create or replace procedure SP_PutAcordoGeral
     p_projeto             in  number    default null,
     p_sq_tipo_acordo      in  number    default null,
     p_objeto              in  varchar2  default null,
+    p_pessoa              in  varchar2  default null,
     p_sq_tipo_pessoa      in  number    default null,
     p_sq_forma_pagamento  in  number    default null,
     p_forma_atual         in  number    default null,
@@ -464,6 +465,28 @@ begin
          delete siw_solicitacao where sq_siw_solicitacao = p_chave;
       End If;
    End If;
+   
+   -- Grava a outra parte do acordo
+   If p_pessoa is not null Then
+      update ac_acordo
+         set outra_parte    = p_pessoa,
+             sq_tipo_pessoa = (select sq_tipo_pessoa from co_pessoa where sq_pessoa = p_pessoa)
+      where sq_siw_solicitacao = w_chave;
+
+      -- Atualiza na tabela de outras partes
+      select count(*) into w_cont from ac_acordo_outra_parte where tipo = 3 and sq_siw_solicitacao = w_chave;
+      
+      If w_cont = 0 Then
+         insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
+         values (sq_acordo_outra_parte.nextval, w_chave, p_pessoa, 3);
+      Else
+         update ac_acordo_outra_parte 
+            set outra_parte = p_pessoa
+         where tipo               = 3 
+           and sq_siw_solicitacao = w_chave;
+      End If;
+   End If;
+      
    
    -- O tratamento a seguir é relativo ao código interno do acordo.
    If p_codigo is not null Then
