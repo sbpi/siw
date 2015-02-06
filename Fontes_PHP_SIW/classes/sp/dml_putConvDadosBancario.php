@@ -2,10 +2,10 @@
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class dml_putConvOutroRep
+* class dml_putConvDadosBancarios
 *
 * { Description :- 
-*    Mantém a tabela de tipos de documento
+*    Mantém a tabela de conta bancária associada a um convênio
 * }
 */
 

@@ -16,11 +16,11 @@ function selecaoAgencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   }
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
-    if (nvl(f($row,'sq_agencia'),-1)==nvl($chave,-1)) {
-      ShowHTML('          <option value="'.f($row,'sq_agencia').'" SELECTED>'.f($row,'codigo').' - '.f($row,'nome'));
-    } else {
-      ShowHTML('          <option value="'.f($row,'sq_agencia').'">'.f($row,'codigo').' - '.f($row,'nome'));
-    }
+    ShowHTML('          <option value="'.f($row,'sq_agencia').'"'.
+            ((nvl(f($row,'sq_agencia'),-1)==nvl($chave,-1)) ? ' SELECTED' : '').
+            ((f($row,'nm_ativo')!='Sim') ? ' DISABLED' : '').'>'.
+            f($row,'codigo').' - '.f($row,'nome').
+            ((f($row,'nm_ativo')!='Sim') ? ' (INATIVA)' : ''));
   }
   ShowHTML('          </select>');
 }

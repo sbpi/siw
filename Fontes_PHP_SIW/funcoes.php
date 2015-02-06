@@ -662,6 +662,25 @@ function RetornaExpediente($p_data, $p_cliente, $p_pais, $p_uf, $p_cidade) {
 // =========================================================================
 // Retorna o tipo de recurso a partir do código
 // -------------------------------------------------------------------------
+function RetornaTitulo($l_titulo, $l_operacao) {
+  
+  switch ($l_operacao) {
+    case 'I': $l_texto = 'Inclusão';    break;
+    case 'A': $l_texto = 'Alteração';   break;
+    case 'E': $l_texto = 'Exclusão';    break;
+    case 'G': $l_texto = 'Gerar';       break;
+    case 'P': $l_texto = 'Filtragem';   break;
+    case 'C': $l_texto = 'Cópia';       break;
+    case 'V': $l_texto = 'Envio';       break;
+    case 'H': $l_texto = 'Herança';     break;
+    default:  $l_texto = 'Listagem';    break;
+  } 
+  return $l_titulo.' - '.$l_texto;
+}
+
+// =========================================================================
+// Retorna o tipo de recurso a partir do código
+// -------------------------------------------------------------------------
 function RetornaTipoRecurso($l_chave) {
   extract($GLOBALS);
 

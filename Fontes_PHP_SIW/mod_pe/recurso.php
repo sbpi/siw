@@ -1712,7 +1712,7 @@ function Grava() {
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe recurso com este código!\');');
+              ShowHTML('  alert("Já existe recurso com este código!");');
               ScriptClose(); 
               retornaFormulario('w_codigo');
               break;

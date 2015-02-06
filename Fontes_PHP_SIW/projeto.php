@@ -899,7 +899,7 @@ function Geral() {
         ShowHTML('      if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
         ShowHTML('    }');
         ShowHTML('    if (w_erro) {');
-        ShowHTML('      alert(\'Você deve informar pelo menos um objetivo estratégico!\'); ');
+        ShowHTML('      alert("Você deve informar pelo menos um objetivo estratégico!"); ');
         ShowHTML('      return false;');
         ShowHTML('    }');
         ShowHTML('  }');
@@ -914,11 +914,11 @@ function Geral() {
       }
     }
     if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
-      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+      ShowHTML('    alert("Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!");');
       ShowHTML('    theForm.w_plano.focus();');
       ShowHTML('    return false;');
     } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
-      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+      ShowHTML('    alert("Informe um plano estratégico ou uma vinculação!");');
       ShowHTML('    theForm.w_plano.focus();');
       ShowHTML('    return false;');    
     }
@@ -949,7 +949,7 @@ function Geral() {
     Validate('w_dias','Dias de alerta de projeto','1','',1,3,'','0123456789');
     ShowHTML('  if (theForm.w_aviso[0].checked) {');
     ShowHTML('     if (theForm.w_dias.value == \'\') {');
-    ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
+    ShowHTML('        alert("Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!");');
     ShowHTML('        theForm.w_dias.focus();');
     ShowHTML('        return false;');
     ShowHTML('     }');
@@ -960,7 +960,7 @@ function Geral() {
     Validate('w_dias_pacote','Dias de alerta de atraso de pacotes','1','',1,3,'','0123456789');
     ShowHTML('  if (theForm.w_aviso_pacote[0].checked) {');
     ShowHTML('     if (theForm.w_dias_pacote.value == \'\') {');
-    ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite dos pacotes você deseja ser avisado de sua proximidade!\');');
+    ShowHTML('        alert("Informe a partir de quantos dias antes da data limite dos pacotes você deseja ser avisado de sua proximidade!");');
     ShowHTML('        theForm.w_dias_pacote.focus();');
     ShowHTML('        return false;');
     ShowHTML('     }');
@@ -1033,7 +1033,7 @@ function Geral() {
     if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
       if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');
     } else {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');    
+      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');
     }
     ShowHTML('          </td></tr></table></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
@@ -1648,7 +1648,7 @@ function Rubrica() {
       Validate('w_nome','Nome','','1','2','60','1','1');
       if (nvl($w_copia,'')!='') {
         ShowHTML('  if (theForm.w_codigo.value==theForm.w_codigo_ant.value || theForm.w_nome.value==theForm.w_nome_ant.value) {');
-        ShowHTML('    alert(\'Antes de incluir esta rubrica, altere o código e o nome da rubrica de origem!\');');
+        ShowHTML('    alert("Antes de incluir esta rubrica, altere o código e o nome da rubrica de origem!");');
         ShowHTML('    if (theForm.w_codigo.value==theForm.w_codigo_ant.value) theForm.w_codigo.focus();');
         ShowHTML('    else if (theForm.w_nome.value==theForm.w_nome_ant.value) theForm.w_nome.focus();');
         ShowHTML('    return false;');
@@ -4575,7 +4575,7 @@ function Concluir() {
   } 
   if ($w_cont > 0) {
     ScriptOpen('JavaScript');
-    ShowHTML('  alert(\'ATENÇÃO: das '.count($RS).' etapas deste projeto, '.$w_cont.' não têm 100% de conclusão!\n\nAinda assim você poderá concluir este projeto.\');');
+    ShowHTML('  alert("ATENÇÃO: das '.count($RS).' etapas deste projeto, '.$w_cont.' não têm 100% de conclusão!\n\nAinda assim você poderá concluir este projeto.");');
     ScriptClose();
   } 
   if($SG=='PJCADBOLSA') AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJBCONC',$w_pagina.$par,$O);
@@ -5186,7 +5186,7 @@ function SolicMail($p_solic,$p_tipo) {
     // Se ocorreu algum erro, avisa da impossibilidade de envio
     if ($w_resultado > '') {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+      ShowHTML('  alert("ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'");');
       ScriptClose();
     }
   }
@@ -5334,7 +5334,7 @@ function EtapaMail($p_solic) {
     // Se ocorreu algum erro, avisa da impossibilidade de envio
     if ($w_resultado > '') {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+      ShowHTML('  alert("ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'");');
       ScriptClose();
     }
   }
@@ -5388,7 +5388,7 @@ function Grava() {
       } elseif ($O=='A') {
         if(nvl($_REQUEST['w_solic_pai'],0)!=nvl($_REQUEST['w_chave_pai'],0)) {
           //ScriptOpen('JavaScript');
-          //ShowHTML('  alert(\'Se houver alguma prestação de contas informada, ela será apagada!\');');
+          //ShowHTML('  alert("Se houver alguma prestação de contas informada, ela será apagada!");');
           //ScriptClose();
           $SQL = new dml_putContasCronograma; $SQL->getInstanceOf($dbms,'F',null,$_REQUEST['w_chave'],null,null,null,null);          
         }
@@ -5512,7 +5512,7 @@ function Grava() {
           $sql = new db_getCronograma; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,null);
           if(count($RS)>0) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Não pode haver sobreposição de períodos para a mesma rubrica!\');');
+            ShowHTML('  alert("Não pode haver sobreposição de períodos para a mesma rubrica!");');
             ScriptClose();
             retornaFormulario('w_inicio');
             exit();
@@ -5527,7 +5527,7 @@ function Grava() {
         $w_valor_projeto = f($RS,'valor');
         if($w_total_previsto>$w_valor_projeto) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'O orçamento das rubricas não pode ultrapassar o orçamento do projeto!\');');
+          ShowHTML('  alert("O orçamento das rubricas não pode ultrapassar o orçamento do projeto!");');
           ScriptClose();
           retornaFormulario('w_valor_previsto');
           exit();
@@ -5590,15 +5590,16 @@ function Grava() {
       if(count($RS)>0) {
         foreach($RS as $row) {
           if (f($row,'sq_projeto_rubrica')!=nvl($_REQUEST['w_chave_aux'],0) && f($row,'sq_rubrica_pai')==nvl($_REQUEST['w_chave_pai'],0)) {
-            if (f($row,'codigo')==$_REQUEST['w_codigo']) {
+            if (f($row,'codigo')===$_REQUEST['w_codigo']) {
+              // O teste acima precisou ficar com o operador "===" pois o "==" estava dando como true o teste 8.1==8.10
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe rubrica com este código!\');');
+              ShowHTML('  alert("Já existe rubrica com este código!");');
               ScriptClose();
               retornaFormulario('w_codigo');
               exit();
             } elseif (f($row,'nome')==$_REQUEST['w_nome']) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe rubrica com este nome!\');');
+              ShowHTML('  alert("Já existe rubrica com este nome!");');
               ScriptClose();
               retornaFormulario('w_nome');
               exit();
@@ -5707,7 +5708,7 @@ function Grava() {
         foreach ($RS as $row) {
           if (f($row,'sq_unidade')== $_REQUEST['w_chave_aux']) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Área/Instituição já cadastrada!\');');
+            ShowHTML('  alert("Área/Instituição já cadastrada!");');
             ScriptClose();
             retornaFormulario('w_chave_aux');
             exit;
@@ -5758,7 +5759,7 @@ function Grava() {
           if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+            ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
             ScriptClose();
             retornaFormulario('w_observacao');
             exit();
@@ -5768,7 +5769,7 @@ function Grava() {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             if ($Field['size'] > $w_maximo) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
@@ -5795,7 +5796,7 @@ function Grava() {
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
           } elseif (nvl($Field['name'], '') != '') {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+            ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
             ScriptClose();
             retornaFormulario('w_caminho');
             exit();
@@ -5811,7 +5812,7 @@ function Grava() {
         $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+        ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
         ScriptClose();
         exit();
       } 
@@ -5835,7 +5836,7 @@ function Grava() {
           if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+            ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
             ScriptClose();
             retornaFormulario('w_observacao');
             exit();
@@ -5844,7 +5845,7 @@ function Grava() {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             if ($Field['size'] > $w_maximo) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
@@ -5872,7 +5873,7 @@ function Grava() {
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
           } elseif (nvl($Field['name'], '') != '') {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+            ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
             ScriptClose();
             retornaFormulario('w_observacao');
             exit();
@@ -5890,7 +5891,7 @@ function Grava() {
           $w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+        ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
         ScriptClose();
         exit();
       } 
@@ -5916,7 +5917,7 @@ function Grava() {
             if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
@@ -5926,7 +5927,7 @@ function Grava() {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -5942,7 +5943,7 @@ function Grava() {
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             } elseif (nvl($Field['name'], '') != '') {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+                ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
                 ScriptClose();
                 retornaFormulario('w_observacao');
                 exit();
@@ -5953,7 +5954,7 @@ function Grava() {
               $w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
           ScriptClose();
         } 
         ScriptOpen('JavaScript');
@@ -5964,7 +5965,7 @@ function Grava() {
         else                        { $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],'PJGERAL'); }
         if (f($RS,'sq_siw_tramite') != $_REQUEST['w_tramite']) {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!\');');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!");');
           ScriptClose();
         } else {
           $SQL = new dml_putProjetoEnvio; $SQL->getInstanceOf($dbms, $_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
@@ -6015,7 +6016,7 @@ function Grava() {
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],'PJGERAL');
       if (f($RS,'sq_siw_tramite') != $_REQUEST['w_tramite']){
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!\');');
+        ShowHTML('  alert("ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!");');
         ScriptClose();
       } else {
         $SQL = new dml_putProjetoConc; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
@@ -6032,11 +6033,10 @@ function Grava() {
       ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
       ScriptClose();
       retornaFormulario('w_assinatura');
-    } 
-    break;
+    }
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
+    ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
     ShowHTML('  history.back(1);');
     ScriptClose();
   }

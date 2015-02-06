@@ -903,7 +903,6 @@ function Geral() {
     $w_pessoa               = $_REQUEST['w_pessoa'];
     $w_pessoa_atual         = $_REQUEST['w_pessoa_atual'];
     $w_tipo_pessoa          = $_REQUEST['w_tipo_pessoa'];
-    $w_nm_tipo_pessoa       = $_REQUEST['w_nm_tipo_pessoa'];
     $w_sq_acordo_parcela    = $_REQUEST['w_sq_acordo_parcela'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
     $w_forma_atual          = $_REQUEST['w_forma_atual'];
@@ -997,7 +996,6 @@ function Geral() {
       $w_pessoa               = f($RS,'pessoa');
       $w_pessoa_atual         = f($RS,'pessoa');
       $w_tipo_pessoa          = f($RS,'sq_tipo_pessoa');
-      $w_nm_tipo_pessoa       = f($RS,'nm_tipo_pessoa');
       $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
       $w_forma_atual          = f($RS,'sq_forma_pagamento');
       $w_codigo_interno       = f($RS,'codigo_interno');
@@ -1714,7 +1712,6 @@ function OutraParte() {
     $w_nome                 = $_REQUEST['w_nome'];
     $w_nome_resumido        = $_REQUEST['w_nome_resumido'];
     $w_sq_pessoa_pai        = $_REQUEST['w_sq_pessoa_pai'];
-    $w_nm_tipo_pessoa       = $_REQUEST['w_nm_tipo_pessoa'];
     $w_sq_tipo_vinculo      = $_REQUEST['w_sq_tipo_vinculo'];
     $w_nm_tipo_vinculo      = $_REQUEST['w_nm_tipo_vinculo'];
     $w_sq_banco             = $_REQUEST['w_sq_banco'];
@@ -1768,7 +1765,6 @@ function OutraParte() {
       $w_nome                 = f($RS,'nm_pessoa');
       $w_nome_resumido        = f($RS,'nome_resumido');
       $w_sq_pessoa_pai        = f($RS,'sq_pessoa_pai');
-      $w_nm_tipo_pessoa       = f($RS,'nm_tipo_pessoa');
       $w_sq_tipo_vinculo      = f($RS,'sq_tipo_vinculo');
       $w_nm_tipo_vinculo      = f($RS,'nm_tipo_vinculo');
       $w_interno              = f($RS,'interno');

@@ -4,16 +4,17 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 * class db_getConvOutroRep
 *
 * { Description :- 
-*    Recupera os dados de uma solicitacao
+*    Recupera os representantes de uma solicitacao
 * }
 */
 
 class db_getConvOutroRep {
-   function getInstanceOf($dbms, $p_chave, $p_sq_pessoa, $p_chave_aux ) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETCONVOUTROREP';
+   function getInstanceOf($dbms, $p_chave, $p_sq_pessoa, $p_chave_aux, $p_tipo ) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GetConvOutroRep';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_sq_pessoa'                 =>array(tvl($p_sq_pessoa),                                B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

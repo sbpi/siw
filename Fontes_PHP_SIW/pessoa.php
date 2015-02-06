@@ -657,8 +657,6 @@ function CadastraPessoa() {
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
-  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
-  // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
   Modulo();
   FormataCPF();
@@ -681,18 +679,13 @@ function CadastraPessoa() {
     Validate('w_rg_numero','Identidade','1','',2,30,'1','1');
     Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
     Validate('w_rg_emissor','Órgão expedidor','1','',2,30,'1','1');
-    if ($w_tipo_pessoa==1) {
-      Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
-      Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
-    } else {
-      Validate('w_passaporte_numero','Passaporte','1','1',1,20,'1','1');
-      Validate('w_sq_pais_passaporte','País emissor','SELECT','1',1,10,'1','1');
-    }
     ShowHTML('  if ((theForm.w_rg_numero.value+theForm.w_rg_emissao.value+theForm.w_rg_emissor.value)!="" && (theForm.w_rg_numero.value=="" || theForm.w_rg_emissor.value=="")) {');
     ShowHTML('     alert("Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.");');
     ShowHTML('     theForm.w_rg_numero.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
+    Validate('w_passaporte_numero','Passaporte','1',(($w_tipo_pessoa==1) ? '' : '1'),1,20,'1','1');
+    Validate('w_sq_pais_passaporte','País emissor','SELECT',(($w_tipo_pessoa==1) ? '' : '1'),1,10,'1','1');
     ShowHTML('  if ((theForm.w_passaporte_numero.value+theForm.w_sq_pais_passaporte[theForm.w_sq_pais_passaporte.selectedIndex].value)!="" && (theForm.w_passaporte_numero.value=="" || theForm.w_sq_pais_passaporte.selectedIndex==0)) {');
     ShowHTML('     alert("Os campos passaporte e país emissor devem ser informados em conjunto!");');
     ShowHTML('     theForm.w_passaporte_numero.focus();');
@@ -1002,7 +995,7 @@ function BuscaPessoa() {
   if (strpos($p_tipo_pessoa,'NF')!==false) Validate('p_cpf','CPF','CPF','','10','14','','0123456789.-');
   if (strpos($p_tipo_pessoa,'NJ')!==false) Validate('p_cnpj','CNPJ','CNPJ','','18','18','','0123456789.-/');
   ShowHTML('  if (theForm.p_nome.value=="" && theForm.p_cpf.value=="" && theForm.p_cnpj.value=="") {');
-  ShowHTML('     alert (\'Informe um critério para busca!\');');
+  ShowHTML('     alert ("Informe um critério para busca!");');
   ShowHTML('     theForm.p_nome.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');

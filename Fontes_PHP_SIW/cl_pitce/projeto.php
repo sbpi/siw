@@ -4832,9 +4832,9 @@ function Grava() {
       if(count($RS)>0) {
         foreach($RS as $row) {
           if (f($row,'sq_projeto_rubrica')!=nvl($_REQUEST['w_chave_aux'],0) && f($row,'sq_rubrica_pai')==nvl($_REQUEST['w_chave_pai'],0)) {
-            if (f($row,'codigo')==$_REQUEST['w_codigo']) {
+            if (f($row,'codigo')===$_REQUEST['w_codigo']) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe rubrica com este código!\');');
+              ShowHTML('  alert("Já existe rubrica com este código!");');
               ScriptClose();
               retornaFormulario('w_codigo');
               exit();

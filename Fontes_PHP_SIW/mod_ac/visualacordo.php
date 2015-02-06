@@ -655,91 +655,58 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             } 
           } 
         } 
-        // Preposto
+        // Representantes legais e contatos
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==2 && $l_P1==4) {
           if ($w_tipo_visao!=2) {
-            $sql = new db_getConvPreposto; $RSQuery1 = $sql->getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
-            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Representantes legais</td>';
-            if (count($RSQuery1)==0) {
-              $l_html.=$crlf.'      <tr><td colspan=2><font size=1><b>Representantes legais não informados</b></font></td></tr>';
-            } else {
-              $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
-              $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';              
-              $l_html.=$crlf.'          <tr><td bgColor="'.$conTrBgColor.'" align="center"><b>Nome</b></td>';
-              $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>CPF</b></td>';
-              $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Sexo</b></td>';
-              $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Identidade</b></td>';
-              $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Orgão emissão</b></td>';
-              $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>E-mail</b></td>';
-              $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Cargo</b></td>';
-              foreach($RSQuery1 as $row1) {
-                $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-                $l_html.=$crlf.'      <tr>';
-                $l_html.=$crlf.'        <td >'.f($row1,'nm_pessoa').'</td>';
-                $l_html.=$crlf.'        <td align="center">'.f($row1,'cpf').'</td>';
-                $l_html.=$crlf.'        <td>'.f($row1,'nm_sexo').'</td>';
-                $l_html.=$crlf.'        <td>'.Nvl(f($row1,'rg_numero'),'---').'</td>';
-                $l_html.=$crlf.'        <td>'.Nvl(f($row1,'rg_emissor'),'---').'</td>';
-                if (Nvl(f($row1,'email'),'nulo')!='nulo') {
-                  if ($l_tipo!='WORD') {
-                    $l_html.=$crlf.'        <td><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>';
+            // i==1: exibe representantes legais; i==2: contatos
+            for ($i=1; $i<=2; $i++) {
+              $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'),$i);
+              $RSQuery = SortArray($RSQuery,'nome_indice','asc');
+              $label = (($i==1) ? 'Representantes legais' : 'Contatos');
+              $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>'.$label.'</b></td>';
+              if (count($RSQuery)==0) {
+                $l_html.=$crlf.'      <tr><td colspan=2><font size=1><b>'.$label.' não informados</b></font></td></tr>';
+              } else {
+                $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
+                $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';              
+                $l_html.=$crlf.'          <tr><td bgColor="'.$conTrBgColor.'" align="center"><b><b>Nome</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>CPF</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Sexo</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Identidade</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Orgão emissão</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>DDD</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>Telefone</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>Celular</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>e-Mail</b></td>';
+                $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>Cargo</b></td>';
+                $l_html.=$crlf.'          </tr>';
+                $w_cor=$w_TrBgColor;
+                foreach($RSQuery as $row2) {
+                  $l_html.=$crlf.'      <tr><td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nm_pessoa')).'</td>';
+                  $l_html.=$crlf.'        <td align="center">'.f($row2,'cpf').'</td>';
+                  $l_html.=$crlf.'        <td>'.f($row2,'nm_sexo').'</td>';
+                  $l_html.=$crlf.'        <td>'.Nvl(f($row2,'rg_numero'),'---').'</td>';
+                  $l_html.=$crlf.'        <td>'.Nvl(f($row2,'rg_emissor'),'---').'</td>';
+                  $l_html.=$crlf.'        <td align="center" >'.Nvl(f($row2,'ddd'),'---').'</td>';
+                  $l_html.=$crlf.'        <td>'.Nvl(f($row2,'nr_telefone'),'---').'</td>';
+                  $l_html.=$crlf.'        <td>'.Nvl(f($row2,'nr_celular'),'---').'</td>';
+                  if (Nvl(f($row2,'email'),'nulo')!='nulo') {
+                    if ($l_tipo!='WORD') {
+                      $l_html.=$crlf.'        <td><a class="hl" href="mailto:'.f($row2,'email').'">'.f($row2,'email').'</a></td>';
+                    } else {
+                      $l_html.=$crlf.'        <td>'.f($row2,'email').'</td>';
+                    } 
                   } else {
-                    $l_html.=$crlf.'        <td>'.f($row1,'email').'</td>';
+                    $l_html.=$crlf.'        <td>---</td>';
                   } 
-                } else {
-                  $l_html.=$crlf.'        <td>---</td>';
-                } 
-                $l_html.=$crlf.'        <td>'.Nvl(f($row1,'cargo'),'---').'</td>';
+                  $l_html.=$crlf.'        <td>'.Nvl(f($row2,'cargo'),'---').'</td>';
+                }
+                $l_html.=$crlf.'        </table></td></tr>';      
               }
-              $l_html.=$crlf.'        </table></td></tr>';              
             }
           }
-          // Representantes
-          $sql = new db_getAcordoRep; //$RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
-          $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
-          $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
-          $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Contatos</td>';
-          if (count($RSQuery)==0) {
-            $l_html.=$crlf.'      <tr><td colspan=2><font size=1><b>Contatos não informados</b></font></td></tr>';
-          } else {
-            $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
-            $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';              
-            $l_html.=$crlf.'          <tr><td bgColor="'.$conTrBgColor.'" align="center"><b><b>Nome</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>CPF</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Sexo</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Identidade</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b>Orgão emissão</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>DDD</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>Telefone</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>Celular</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>e-Mail</b></td>';
-            $l_html.=$crlf.'            <td bgColor="'.$conTrBgColor.'" align="center"><b><b>Cargo</b></td>';
-            $l_html.=$crlf.'          </tr>';
-            $w_cor=$w_TrBgColor;
-            foreach($RSQuery as $row2) {
-              $l_html.=$crlf.'      <tr><td>'.f($row2,'nm_pessoa').'</td>';
-              $l_html.=$crlf.'        <td align="center">'.f($row2,'cpf').'</td>';
-              $l_html.=$crlf.'        <td>'.f($row1,'nm_sexo').'</td>';
-              $l_html.=$crlf.'        <td>'.Nvl(f($row1,'rg_numero'),'---').'</td>';
-              $l_html.=$crlf.'        <td>'.Nvl(f($row1,'rg_emissor'),'---').'</td>';
-              $l_html.=$crlf.'        <td align="center" >'.Nvl(f($row2,'ddd'),'---').'</td>';
-              $l_html.=$crlf.'        <td>'.Nvl(f($row2,'nr_telefone'),'---').'</td>';
-              $l_html.=$crlf.'        <td>'.Nvl(f($row2,'nr_celular'),'---').'</td>';
-              if (Nvl(f($row2,'email'),'nulo')!='nulo') {
-                if ($l_tipo!='WORD') {
-                  $l_html.=$crlf.'        <td><a class="hl" href="mailto:'.f($row2,'email').'">'.f($row2,'email').'</a></td>';
-                } else {
-                  $l_html.=$crlf.'        <td>'.f($row2,'email').'</td>';
-                } 
-              } else {
-                $l_html.=$crlf.'        <td>---</td>';
-              } 
-              $l_html.=$crlf.'        <td>'.Nvl(f($row2,'cargo'),'---').'</td>';
-            }
-            $l_html.=$crlf.'        </table></td></tr>';      
-          } 
         }
-      } 
+      }
     }
   } 
 

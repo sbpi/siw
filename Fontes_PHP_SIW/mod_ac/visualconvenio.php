@@ -235,7 +235,6 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           }
         }             
         // Representantes
-        $sql = new db_getAcordoRep; //$RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
         $sql = new db_getConvOutroRep; $RSQuery = $sql->getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
         $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
         $l_html.=chr(13).'      <tr><td colspan="7"><font size="1"><b>Contatos</td>';

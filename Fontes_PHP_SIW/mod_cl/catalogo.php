@@ -1384,7 +1384,7 @@ function Grava() {
               foreach ($RS as $row) { $RS = $row; break; }
               if (f($RS,'existe')>0) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Já existe material ou serviço com este código!\');');
+                ShowHTML('  alert("Já existe material ou serviço com este código!");');
                 ScriptClose(); 
                 retornaFormulario('w_codigo_interno');
                 break;

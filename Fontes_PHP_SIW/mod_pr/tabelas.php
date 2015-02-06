@@ -1547,7 +1547,7 @@ function Grava() {
             $sql = new db_getTipoRestricao; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,$_REQUEST['w_codigo'],null,'EXISTE');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe registro com este código externo!\');');
+              ShowHTML('  alert("Já existe registro com este código externo!");');
               ScriptClose();
               RetornaFormulario('w_codigo');
               break;
