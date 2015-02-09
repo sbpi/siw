@@ -78,6 +78,7 @@ begin
             and outra_parte        = w_outra_parte;
       End If;
       
+      delete ac_acordo_outra_rep    where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
       delete ac_acordo_outra_parte  where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
       
       select count(*) into w_existe
@@ -86,8 +87,8 @@ begin
       
       If w_existe > 0 Then
          select nvl(a.outra_parte,0), nvl(b.sq_pessoa,0) into w_outra_parte, w_preposto
-           from ac_acordo_outra_parte        a
-                left join ac_acordo_preposto b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte)
+           from ac_acordo_outra_parte         a
+                left join ac_acordo_outra_rep b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte and b.tipo = 1)
           where a.sq_siw_solicitacao = w_sq_siw_solicitacao
             and rownum = 1;
          
@@ -521,7 +522,6 @@ begin
          
          If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
             update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
-            delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
          End If;
         
          If w_forma_pagamento in ('CREDITO','DEPOSITO') Then

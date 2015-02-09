@@ -499,7 +499,6 @@ begin
       
       If coalesce(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
          update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
-         delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
       End If;
      
       If w_forma_pagamento in ('CREDITO','DEPOSITO') Then

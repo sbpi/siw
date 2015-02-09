@@ -197,34 +197,16 @@ begin
             (select outra_parte, preposto, atividades, produtos, requisitos from ac_acordo where sq_siw_solicitacao = p_copia)
          where sq_siw_solicitacao = w_chave;
          
-         -- Copia os representantes do acordo original
-         Insert Into ac_acordo_representante (sq_pessoa, sq_siw_solicitacao)
-         (Select sq_pessoa, w_chave
-           from ac_acordo_representante a
-          where a.sq_siw_solicitacao = p_copia
-         );
-         
          for crec in c_outra_parte loop
             -- Copia as outras partes existentes no contrato de origem
             select sq_acordo_outra_parte.nextval into w_outra_parte from dual;
             insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
             values (w_outra_parte, w_chave, crec.outra_parte, crec.tipo);
             
-            -- Copia os prepostos de cada outra parte
-            insert into ac_acordo_preposto
-              (sq_siw_solicitacao, sq_acordo_outra_parte, sq_pessoa, cargo)
-            (select distinct w_chave, w_outra_parte, a.sq_pessoa, a.cargo 
-               from ac_acordo_preposto               a
-                    inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte and
-                                                           b.outra_parte           = crec.outra_parte
-                                                          )
-              where a.sq_siw_solicitacao    = p_copia
-            );
-            
             -- Copia os representantes de cada outra parte
             insert into ac_acordo_outra_rep
-              (sq_acordo_outra_parte, sq_pessoa, sq_siw_solicitacao, cargo)
-            (select distinct w_outra_parte, a.sq_pessoa, w_chave, a.cargo 
+              (sq_acordo_outra_parte, sq_pessoa, sq_siw_solicitacao, cargo, tipo)
+            (select distinct w_outra_parte, a.sq_pessoa, w_chave, a.cargo, a.tipo
                from ac_acordo_outra_rep              a
                     inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte and
                                                            b.outra_parte           = crec.outra_parte
@@ -383,7 +365,6 @@ begin
       
       If Nvl(p_sq_tipo_pessoa,0) = 1 Then
          update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
-         delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
       End If;
 
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then
@@ -451,7 +432,6 @@ begin
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
          delete pj_etapa_contrato where sq_siw_solicitacao = p_chave;
          -- Remove os registros vinculados à demanda
-         delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
          delete ac_acordo_log           where sq_siw_solicitacao = p_chave;
          delete ac_acordo_parcela       where sq_siw_solicitacao = p_chave;
 

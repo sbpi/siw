@@ -213,10 +213,6 @@ begin
  select count(*) into w_existe from pj_projeto_representante a where a.sq_pessoa = p_usuario and a.sq_siw_solicitacao = p_solicitacao;
  If w_existe > 0 Then Result := 1; End If;
  
- -- Verifica se o usuário é representante de acordo
- select count(*) into w_existe from ac_acordo_representante a where a.sq_pessoa = p_usuario and a.sq_siw_solicitacao = p_solicitacao;
- If w_existe > 0 Then Result := 1; End If;
- 
  -- Verifica se o usuário é coordenador de macroprograma da pdp
  If w_solic_pai is not null Then
    select count(*) into w_existe 
