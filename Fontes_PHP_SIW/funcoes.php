@@ -673,6 +673,9 @@ function RetornaTitulo($l_titulo, $l_operacao) {
     case 'C': $l_texto = 'Cópia';       break;
     case 'V': $l_texto = 'Envio';       break;
     case 'H': $l_texto = 'Herança';     break;
+    case 'R': $l_texto = 'Acessos'; break;
+    case 'D': $l_texto = 'Desativar'; break;
+    case 'T': $l_texto = 'Ativar'; break;
     default:  $l_texto = 'Listagem';    break;
   } 
   return $l_titulo.' - '.$l_texto;
