@@ -1600,13 +1600,7 @@ function Geral() {
       ShowHTML('          <td><b><u>E</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
       //if (Nvl($w_tipo,'-')=='NF') ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
       
-      if (substr($SG,3)=='CONT') {
-        // Se pagamento de contrato, não pode alterar moeda do pagamento.
-        ShowHTML('          <td><b>Moeda:<br>'.$w_nm_moeda.'</b></td>');
-        ShowHTML('          <INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');
-      } else {
-        if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
-      }
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
       
       if ($w_qtd_nota==0) {
         ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');

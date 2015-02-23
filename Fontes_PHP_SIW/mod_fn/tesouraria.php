@@ -108,7 +108,7 @@ include_once('validalancamento.php');
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
-$P2         = nvl($_REQUEST['P2'],1);
+$P2         = nvl($_REQUEST['P2'],3);
 $P3         = nvl($_REQUEST['P3'],1);
 
 if ($P2>2)  {

@@ -1252,7 +1252,7 @@ function Geral() {
       Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
     }
     if($w_sq_menu_relac!='CLASSIF') { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
-    if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135') {
+    if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135' && $w_cliente != '17305') {
        if (substr($SG,0,3)=='GCB') {
          Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
        } else {
@@ -1480,7 +1480,7 @@ function Geral() {
       if ($w_sq_menu_relac=='CLASSIF') {
         SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
       } else {
-        if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135') {
+        if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135' && $w_cliente != '17305') {
           SelecaoSolic('Vinculação:', null, null, $w_cliente, $w_chave_pai, $w_sq_menu_relac, f($RS_Menu, 'sq_menu'), 'w_chave_pai', f($RS_Relac, 'sigla'), 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
           ShowHTML('      <tr>');
           if (substr(f($RS_Menu, 'sigla'), 2) == 'B')
@@ -1562,7 +1562,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr>');
-    MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
+    MontaRadioSN('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
     ShowHTML('              <td><b>Quantos <U>d</U>ias antes do fim da vigência?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade do final da vigência."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
