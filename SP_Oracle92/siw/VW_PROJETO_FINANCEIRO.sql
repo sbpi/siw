@@ -4,12 +4,16 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
        e.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,
        a.descricao||' - '||e.descricao ds_financeiro,
-       case when f.sq_siw_solicitacao is null then e.valor_total else e.valor_total*f.fator end valor, 
+       case when f.sq_siw_solicitacao is null then e.valor_total else e.valor_total*f.fator end valor,  -- Valor convertido na moeda do projeto
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.sigla      else b2.sigla              end sg_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.simbolo    else b2.simbolo            end sb_fn_moeda, 
+       e.valor_total fn_valor,    -- Valor na moeda do pagamento
+       a2.sq_moeda   fn_sq_moeda, -- Chave da moeda do pagamento
+       a2.sigla      fn_sg_moeda, -- Sigla da moeda do pagamento
+       a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao
+       c.vencimento, c.quitacao, e.ordem
   from siw_solicitacao                      a
        inner         join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner         join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
@@ -37,12 +41,16 @@ UNION ALL
 select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
        c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.descricao ds_financeiro,
-       case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, 
-       case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda, 
+       case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, -- Valor convertido na moeda do projeto
+       case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda,
        case when f.sq_siw_solicitacao is null then a2.sigla      else b2.sigla              end sg_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.simbolo    else b2.simbolo            end sb_fn_moeda, 
+       a.valor       fn_valor,    -- Valor na moeda do pagamento
+       a2.sq_moeda   fn_sq_moeda, -- Chave da moeda do pagamento
+       a2.sigla      fn_sg_moeda, -- Sigla da moeda do pagamento
+       a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao
+       c.vencimento, c.quitacao, 1 ordem
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)

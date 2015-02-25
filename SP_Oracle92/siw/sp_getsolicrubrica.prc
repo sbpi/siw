@@ -232,6 +232,7 @@ begin
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
                 a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
+                a.fn_valor, a.fn_sq_moeda, a.fn_sg_moeda, a.fn_sb_moeda, a.ordem or_item,
                 codigo2numero(a.cd_financeiro) or_financeiro,
                 b.codigo cd_rubrica, b.nome nm_rubrica,
                 b1.codigo cd_rubrica_pai, b1.nome nm_rubrica_pai,

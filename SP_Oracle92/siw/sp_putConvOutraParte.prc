@@ -46,17 +46,13 @@ create or replace procedure SP_PutConvOutraParte
    w_sg_modulo          varchar2(10);
    w_existe             number(18);
    w_chave_pessoa       number(18) := Nvl(p_sq_pessoa,0);
-   w_tipo_fone          number(18);
-   w_chave_fone         number(18);
-   w_tipo_endereco      number(18);
-   w_chave_endereco     number(18);
    w_chave_conta        number(18);
-   w_sq_tipo_pessoa     number(18);
    w_forma_pagamento    varchar2(10);
-   w_sq_tipo_vinculo    number(18);
    w_sq_siw_solicitacao number(18);
    w_outra_parte        number(18);
    w_preposto           number(18);
+   w_cidade             co_cidade.sq_cidade%type;
+   w_pessoa             co_pessoa%rowtype;
 begin
    If p_operacao = 'E' Then 
       -- Exclui registro
@@ -65,7 +61,7 @@ begin
        where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
       
       -- Se tiver apenas uma outra parte, atualiza o valor para nulo em AC_ACORDO
-      select count(*) into w_existe from ac_acordo where sq_siw_solicitacao = w_sq_siw_solicitacao;
+      select count(*) into w_existe from ac_acordo_outra_parte where sq_siw_solicitacao = w_sq_siw_solicitacao;
       
       If w_existe = 1 Then
          update ac_acordo set outra_parte = null
@@ -103,356 +99,50 @@ begin
          End If;
       End If;
    Else
-      -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
-      If p_cpf is not null Then 
-         select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where nome = 'Física';
-         select count(*)       into w_existe         from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
-         If w_existe > 0 Then
-            select sq_pessoa      into w_chave_pessoa   from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
-            select sq_tipo_pessoa into w_sq_tipo_pessoa from co_pessoa        where sq_pessoa = w_chave_pessoa;
-         Else
-            w_chave_pessoa := 0;
-         End If;
-      Else          
-         select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa     where nome = 'Jurídica';
-         select count(*)       into w_existe         from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
-         If w_existe > 0 Then
-            select sq_pessoa      into w_chave_pessoa   from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj and rownum = 1;
-            select sq_tipo_pessoa into w_sq_tipo_pessoa from co_pessoa          where sq_pessoa = w_chave_pessoa;
-         Else
-            w_chave_pessoa := 0;
-         End If;
+      -- Grava dados complementares, dependendo do tipo de acordo
+      If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
+         update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
+      Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
+         update co_pessoa set fornecedor = 'S' where sq_pessoa = w_chave_pessoa;
+      Elsif substr(p_restricao,1,3) = 'GCP' Then
+         update co_pessoa set parceiro = 'S'   where sq_pessoa = w_chave_pessoa;
       End If;
+
+      -- Recupera dados da pessoa informada
+      select * into w_pessoa from co_pessoa where sq_pessoa = w_chave_pessoa;
       
-      If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
-         -- Carrega a chave da tabela CO_TIPO_VINCULO, dependendo do tipo da solicitação
-         If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
-            select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
-         Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
-            select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
-         Elsif substr(p_restricao,1,3) = 'GCP' Then
-            select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Parceiro' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
-         End If;
-         
-         -- recupera a próxima chave da pessoa
-         select sq_pessoa.nextval into w_chave_pessoa from dual;
-         
-         -- insere os dados da pessoa
-         insert into co_pessoa
-           (sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,   sq_tipo_pessoa,   nome,   nome_resumido)
-         values
-           (w_chave_pessoa, p_chave_aux,   w_sq_tipo_vinculo, w_sq_tipo_pessoa, p_nome, p_nome_resumido);
-   
-         -- Grava dados complementares, dependendo do tipo de acordo
-         If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
-            update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
-         Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
-            update co_pessoa set fornecedor = 'S' where sq_pessoa = w_chave_pessoa;
-         Elsif substr(p_restricao,1,3) = 'GCP' Then
-            update co_pessoa set parceiro = 'S'   where sq_pessoa = w_chave_pessoa;
-         End If;
-      Else -- Caso contrário, altera
-         update co_pessoa
-            set nome          = Nvl(p_nome, nome),
-                nome_resumido = Nvl(p_nome_resumido, nome_resumido)
-          where sq_pessoa = w_chave_pessoa;
-   
-         -- Grava dados complementares, dependendo do tipo de acordo
-         If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
-            update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
-         Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
-            update co_pessoa set fornecedor = 'S' where sq_pessoa = w_chave_pessoa;
-         Elsif substr(p_restricao,1,3) = 'GCP' Then
-            update co_pessoa set parceiro = 'S'   where sq_pessoa = w_chave_pessoa;
-         End If;         
-      End If;
-      
-      If p_cpf is not null then -- Se for pessoa física
-         -- Verifica se os dados de pessoa física já existem
-         select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = w_chave_pessoa;
-      
-         If w_existe = 0 Then -- Se não existir insere
-            insert into co_pessoa_fisica
-              (sq_pessoa,         nascimento,        rg_numero,            rg_emissor,   rg_emissao,   
-               cpf,               passaporte_numero, sq_pais_passaporte,   sexo,         cliente
-              )
-            values
-              (w_chave_pessoa,    p_nascimento,      p_rg_numero,          p_rg_emissor, p_rg_emissao, 
-               p_cpf,             p_passaporte,      p_sq_pais_passaporte, p_sexo,       p_chave_aux
-              );
-         Else -- Caso contrário, altera
-            update co_pessoa_fisica
-               set nascimento         = Nvl(p_nascimento, nascimento),
-                   rg_numero          = Nvl(p_rg_numero, rg_numero),
-                   rg_emissor         = Nvl(p_rg_emissor, rg_emissor),
-                   rg_emissao         = Nvl(p_rg_emissao, rg_emissao),
-                   cpf                = Nvl(p_cpf, cpf),
-                   passaporte_numero  = Nvl(p_passaporte, passaporte_numero),
-                   sq_pais_passaporte = Nvl(p_sq_pais_passaporte, sq_pais_passaporte),
-                   sexo               = Nvl(p_sexo, sexo)
-             where sq_pessoa = w_chave_pessoa;
-         End If;
-      Else
-         -- Verifica se os dados de pessoa jurídica já existem
-         select count(*) into w_existe from co_pessoa_juridica where sq_pessoa = w_chave_pessoa;
-         
-         If w_existe = 0 Then -- Se não existir insere
-            insert into co_pessoa_juridica
-              (sq_pessoa,      cnpj,   inscricao_estadual,   cliente)
-            values
-              (w_chave_pessoa, p_cnpj, p_inscricao_estadual, p_chave_aux);
-         Else -- Caso contrário, altera
-            update co_pessoa_juridica
-               set cnpj               = p_cnpj,
-                   inscricao_estadual = Nvl(p_inscricao_estadual, inscricao_estadual)
-             where sq_pessoa = w_chave_pessoa;
-         End If;
-      End If;
-      
-      -- Se foi informado o e-mail, grava. Caso contrário, remove.
-      select count(*) into w_existe
-        from co_pessoa_endereco          a
-             inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-       where a.sq_pessoa      = w_chave_pessoa
-         and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-         and b.email          = 'S'
-         and b.ativo          = 'S'
-         and a.padrao         = 'S';
-    
-      If w_existe > 0 Then
-         select sq_pessoa_endereco into w_chave_endereco
-           from co_pessoa_endereco          a
-                inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-          where a.sq_pessoa      = w_chave_pessoa
-            and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-            and b.email          = 'S'
-            and b.ativo          = 'S'
-            and a.padrao         = 'S';
-      End If;
-            
-      If p_email is not null Then
-         If w_existe = 0 Then
-            select sq_tipo_endereco into w_tipo_endereco
-              from co_tipo_endereco b
-             where b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.email          = 'S'
-               and b.ativo          = 'S';
-           
-            insert into co_pessoa_endereco
-              (sq_pessoa_endereco,         sq_pessoa,      sq_tipo_endereco, logradouro,  
-               sq_cidade,                  padrao
-              )
-            values
-              (sq_pessoa_endereco.nextval, w_chave_pessoa, w_tipo_endereco,  p_email, 
-               p_sq_cidade,                'S'
-              );
-         Else
-            update co_pessoa_endereco
-               set logradouro = p_email,
-                   sq_cidade  = p_sq_cidade
-             where sq_pessoa_endereco = w_chave_endereco;
-         End If;
-      Else
-         If w_existe > 0 Then
-            delete co_pessoa_endereco where sq_pessoa_endereco = w_chave_endereco;
-         End If;
-      End If;
-   
-      If p_logradouro is not null Then
-         -- Grava o endereco
-         select count(*) into w_existe
-           from co_pessoa_endereco          a
-                inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-          where a.sq_pessoa      = w_chave_pessoa
-            and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-            and b.nome           = 'Comercial'
-            and b.ativo          = 'S'
-            and a.padrao         = 'S';
-          
-         If w_existe = 0 Then
-            select sq_tipo_endereco into w_tipo_endereco
-              from co_tipo_endereco b
-             where b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.nome           = 'Comercial'
-               and b.ativo          = 'S';
-             
-            insert into co_pessoa_endereco
-              (sq_pessoa_endereco,         sq_pessoa,      sq_tipo_endereco, logradouro,
-               complemento,                bairro,         sq_cidade,        cep,    padrao
-              )
-            values
-              (sq_pessoa_endereco.nextval, w_chave_pessoa, w_tipo_endereco,  p_logradouro, 
-               p_complemento,              p_bairro,       p_sq_cidade,      p_cep,  'S'
-                 );
-         Else
-            select sq_pessoa_endereco into w_chave_endereco
-              from co_pessoa_endereco          a
-                   inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-             where a.sq_pessoa      = w_chave_pessoa
-               and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.nome           = 'Comercial'
-               and b.ativo          = 'S'
-               and a.padrao         = 'S';
-                
-            update co_pessoa_endereco
-               set logradouro  = p_logradouro,
-                   complemento = p_complemento,
-                   bairro      = p_bairro,
-                   sq_cidade   = p_sq_cidade,
-                   cep         = p_cep
-             where sq_pessoa_endereco = w_chave_endereco;
-         End If;
-      End If;
-   
-      If p_nr_telefone is not null Then
-         -- Grava o telefone
-         select count(*) into w_existe
-           from co_pessoa_telefone          a
-                inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-          where a.sq_pessoa      = w_chave_pessoa
-            and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-            and b.nome           = 'Comercial'
-            and b.ativo          = 'S'
-            and a.padrao         = 'S';
-          
-         If w_existe = 0 Then
-            select sq_tipo_telefone into w_tipo_fone
-              from co_tipo_telefone b
-             where b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.nome           = 'Comercial'
-               and b.ativo          = 'S';
-             
-            insert into co_pessoa_telefone
-              (sq_pessoa_telefone,         sq_pessoa,      sq_tipo_telefone, 
-               sq_cidade,                  ddd,            numero, 
-               padrao
-              )
-            values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
-               p_sq_cidade,                p_ddd,          p_nr_telefone, 
-               'S'
-              );
-         Else
-            select sq_pessoa_telefone into w_chave_fone
-              from co_pessoa_telefone          a
-                   inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-             where a.sq_pessoa      = w_chave_pessoa
-               and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.nome           = 'Comercial'
-               and b.ativo          = 'S'
-               and a.padrao         = 'S';
-               
-            update co_pessoa_telefone
-               set sq_cidade = p_sq_cidade,
-                   ddd       = p_ddd,
-                   numero    = p_nr_telefone
-             where sq_pessoa_telefone = w_chave_fone;
-         End If;
-      End If;
-   
-      -- Se foi informado o fax, grava. Caso contrário remove.
-      select count(*) into w_existe
-        from co_pessoa_telefone          a
-             inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-       where a.sq_pessoa      = w_chave_pessoa
-         and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-         and b.nome           = 'Fax'
-         and b.ativo          = 'S'
-         and a.padrao         = 'S';
-      
-      If w_existe > 0 Then
-         select sq_pessoa_telefone into w_chave_fone
-           from co_pessoa_telefone          a
-                inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-          where a.sq_pessoa      = w_chave_pessoa
-            and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-            and b.nome           = 'Fax'
-            and b.ativo          = 'S'
-            and a.padrao         = 'S';
-      End If;
-   
-      If p_nr_fax is not null Then
-         If w_existe = 0 Then
-            select sq_tipo_telefone into w_tipo_fone
-              from co_tipo_telefone b
-             where b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.nome           = 'Fax'
-               and b.ativo          = 'S';
-           
-            insert into co_pessoa_telefone
-              (sq_pessoa_telefone,         sq_pessoa,      sq_tipo_telefone, 
-               sq_cidade,                  ddd,            numero, 
-               padrao
-              )
-            values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
-               p_sq_cidade,                p_ddd,          p_nr_fax, 
-               'S'
-              );
-         Else
-            update co_pessoa_telefone
-               set sq_cidade = p_sq_cidade,
-                   ddd       = p_ddd,
-                   numero    = p_nr_fax
-             where sq_pessoa_telefone = w_chave_fone;
-         End If;
-      Else
-         If w_existe > 0 Then
-            delete co_pessoa_telefone where sq_pessoa_telefone = w_chave_fone;
-         End If;
-      End If;
-   
-      -- Se foi informado o celular, grava. Caso contrário, remove.
-      select count(*) into w_existe
-        from co_pessoa_telefone          a
-             inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-       where a.sq_pessoa      = w_chave_pessoa
-         and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-         and b.nome           = 'Celular'
-         and b.ativo          = 'S'
-         and a.padrao         = 'S';
-   
-      If w_existe > 0 Then
-         select sq_pessoa_telefone into w_chave_fone
-           from co_pessoa_telefone          a
-                inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-          where a.sq_pessoa      = w_chave_pessoa
-            and b.sq_tipo_pessoa = w_sq_tipo_pessoa
-            and b.nome           = 'Celular'
-            and b.ativo          = 'S'
-            and a.padrao         = 'S';
-      End If;
-   
-      If p_nr_celular is not null Then
-         If w_existe = 0 Then
-            select sq_tipo_telefone into w_tipo_fone
-              from co_tipo_telefone b
-             where b.sq_tipo_pessoa = w_sq_tipo_pessoa
-               and b.nome           = 'Celular'
-               and b.ativo          = 'S';
-           
-            insert into co_pessoa_telefone
-              (sq_pessoa_telefone,         sq_pessoa,      sq_tipo_telefone, 
-               sq_cidade,                  ddd,            numero, 
-               padrao
-              )
-            values
-              (sq_pessoa_telefone.nextval, w_chave_pessoa, w_tipo_fone, 
-               p_sq_cidade,                p_ddd,          p_nr_celular, 
-               'S'
-                 );
-         Else
-            update co_pessoa_telefone
-               set sq_cidade = p_sq_cidade,
-                   ddd       = p_ddd,
-                   numero    = p_nr_celular
-             where sq_pessoa_telefone = w_chave_fone;
-         End If;
-      Else
-         If w_existe > 0 Then
-            delete co_pessoa_telefone where sq_pessoa_telefone = w_chave_fone;
-         End If;
-      End If;
+      -- Atualiza os dados da pessoa
+      sp_putpessoa(p_operacao           => 'A',
+                   p_cliente            => w_pessoa.sq_pessoa_pai,
+                   p_restricao          => 'FORNECEDOR',
+                   p_tipo_pessoa        => w_pessoa.sq_tipo_pessoa,
+                   p_tipo_vinculo       => w_pessoa.sq_tipo_vinculo,
+                   p_sq_pessoa          => w_chave_pessoa,
+                   p_cpf                => p_cpf,
+                   p_cnpj               => p_cnpj,
+                   p_nome               => p_nome,
+                   p_nome_resumido      => p_nome_resumido,
+                   p_sexo               => p_sexo,
+                   p_nascimento         => p_nascimento,
+                   p_rg_numero          => p_rg_numero,
+                   p_rg_emissao         => p_rg_emissao,
+                   p_rg_emissor         => p_rg_emissor,
+                   p_passaporte         => p_passaporte,
+                   p_sq_pais_passaporte => p_sq_pais_passaporte,
+                   p_inscricao_estadual => p_inscricao_estadual,
+                   p_logradouro         => p_logradouro,
+                   p_complemento        => p_complemento,
+                   p_bairro             => p_bairro,
+                   p_sq_cidade          => p_sq_cidade,
+                   p_cep                => p_cep,
+                   p_ddd                => p_ddd,
+                   p_nr_telefone        => p_nr_telefone,
+                   p_nr_fax             => p_nr_fax,
+                   p_nr_celular         => p_nr_celular,
+                   p_email              => p_email,
+                   p_codigo_externo     => w_pessoa.codigo_externo,
+                   p_chave_nova         => w_chave_pessoa);
+                   
       If p_nr_conta is not null and (p_banco_estrang is not null or p_sq_agencia is not null) Then
          -- Se foi informado o banco, grava
          select count(*) into w_existe
@@ -501,11 +191,19 @@ begin
                 operacao_conta = p_op_conta,
                 numero_conta   = p_nr_conta
           where sq_siw_solicitacao = p_chave;
-      End If;      
+      End If;
+      
+      -- Recupera o módulo da solicitacao
+      select sigla into w_sg_modulo
+        from siw_solicitacao         a
+             inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
+               inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
+       where a.sq_siw_solicitacao = p_chave;
+       
       -- Atualiza a outra parte
       If w_sg_modulo = 'AC' Then
          update ac_acordo 
-           set outra_parte      = w_chave_pessoa,
+           set sq_tipo_pessoa   = w_pessoa.sq_tipo_pessoa,
                sq_agencia       = null,
                operacao_conta   = null,
                numero_conta     = null,
@@ -520,10 +218,6 @@ begin
                codigo_deposito  = null
          where sq_siw_solicitacao = p_chave;
          
-         If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
-            update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
-         End If;
-        
          If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
             update ac_acordo 
                set sq_agencia     = p_sq_agencia,
@@ -598,13 +292,29 @@ begin
       If p_operacao = 'I' Then
          -- Insere registro
          insert into ac_acordo_outra_parte
-            (sq_acordo_outra_parte        , sq_siw_solicitacao,    outra_parte,   tipo)
+            (sq_acordo_outra_parte,         sq_siw_solicitacao, outra_parte,     tipo)
          values
-            (sq_acordo_outra_parte.nextval, p_chave           , w_chave_pessoa,  p_tipo);
+            (sq_acordo_outra_parte.nextval, p_chave,            w_chave_pessoa,  p_tipo);
+         
          select nvl(outra_parte,0) into w_existe from ac_acordo where sq_siw_solicitacao = p_chave;
          If w_existe = 0 Then
            update ac_acordo set outra_parte = w_chave_pessoa
            where sq_siw_solicitacao = p_chave;
+         End If;
+      Else
+         If Nvl(nvl(p_pessoa_atual,0), w_chave_pessoa) <> w_chave_pessoa Then
+            update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
+            
+            If w_pessoa.sq_tipo_pessoa in (1,3) Then
+               -- Se pessoa física, apaga dados de PJ
+               delete ac_acordo_outra_rep    where sq_siw_solicitacao = p_chave;
+               delete ac_acordo_outra_parte  where sq_siw_solicitacao = p_chave;
+               
+               insert into ac_acordo_outra_parte
+                 (sq_acordo_outra_parte,         sq_siw_solicitacao, outra_parte,    tipo)
+               values
+                 (sq_acordo_outra_parte.nextval, p_chave,            w_chave_pessoa, p_tipo);
+            End If;
          End If;
       End If;
    End If;  

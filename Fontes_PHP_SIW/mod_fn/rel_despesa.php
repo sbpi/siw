@@ -67,6 +67,7 @@ $p_fim = $_REQUEST['p_fim'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
 $p_sintetico = upper(trim($_REQUEST['p_sintetico']));
 $p_financeiro = upper(trim($_REQUEST['p_financeiro']));
+$p_moedas = $_REQUEST['p_moedas'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 
 // Declaração de variáveis
@@ -112,11 +113,37 @@ function Inicial() {
     
     // Recupera as rubricas do projeto
     $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECLS');
+
+    if ($p_moedas=='S') {
+      foreach($RSQuery as $row)  {
+        if (f($row,'sg_fn_moeda')!='0') { $Moeda[f($row,'sg_fn_moeda')]='1';  $Total[f($row,'sg_fn_moeda')] = 0; }
+        if (nvl(f($row,'fn_sg_moeda'),'')!='')  { $Moeda[f($row,'fn_sg_moeda')]='1'; $Total[f($row,'fn_sg_moeda')] = 0; }
+        // Se o relatório tem três moedas diferentes, aborta pois esse é o número atual de moedas ativas
+        if (count($Moeda)==3) break;
+      }
+      // Decide a ordem de exibição das moedas no relatório
+      $i = 0;
+      switch (f($RS_Projeto,'sg_moeda')) {
+        case 'USD': $Moeda['USD']='1'; $Ordem[$i]='USD';
+                    if (nvl($Moeda['BRL'],'')!='') $Ordem[++$i]='BRL';
+                    if (nvl($Moeda['EUR'],'')!='') $Ordem[++$i]='EUR';
+                    break;
+        case 'BRL': $Moeda['BRL']='1'; $Ordem[$i]='BRL';
+                    if (nvl($Moeda['USD'],'')!='') $Ordem[++$i]='USD';
+                    if (nvl($Moeda['EUR'],'')!='') $Ordem[++$i]='EUR';
+                    break;
+        case 'EUR': $Moeda['EUR']='1'; $Ordem[$i]='EUR';
+                    if (nvl($Moeda['BRL'],'')!='') $Ordem[++$i]='BRL';
+                    if (nvl($Moeda['USD'],'')!='') $Ordem[++$i]='USD';
+                    break;
+      }
+    }
+
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RSQuery = SortArray($RSQuery,$lista[0],$lista[1],'or_rubrica','asc','or_financeiro','asc');
+      $RSQuery = SortArray($RSQuery,$lista[0],$lista[1],'or_rubrica','asc','quitacao','asc','or_financeiro','asc','or_item','asc');
     } else {
-      $RSQuery = SortArray($RSQuery,'or_rubrica','asc','or_financeiro','asc');
+      $RSQuery = SortArray($RSQuery,'or_rubrica','asc','quitacao','asc','or_financeiro','asc','or_item','asc');
     }
 
   }
@@ -206,30 +233,41 @@ function Inicial() {
     $l_html.=chr(13).'        <table class="tudo" width=99%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr align="center">';
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Número</td>';
-    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição da despesa</td>';
-    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Produto ou serviço</td>';
-    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Categoria (Usos)</td>';
-    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Item de Custo</td>';
-    $cs++; $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Comprovante de Pagamento</td>';
-    $cs++; $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Pagamento ('.f($RS_Projeto,'sb_moeda').')</td>';
-    $cs++; $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Fornecedor</td>';
+    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Descrição da despesa','descricao').'</td>';
+    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Produto ou serviço','nm_rubrica').'</td>';
+    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Categoria (Usos)','nm_rubrica_pai').'</td>';
+    $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Item de Custo','cd_rubrica').'</td>';
+    $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Comprovante de Pagamento</td>';
+    $l_html.=chr(13).'            <td colspan="'.(4+count($Ordem)).'" bgColor="#f0f0f0"><b>Pagamento</td>';
+    $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Fornecedor</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center" >';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Tipo</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Número</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data de Emissão</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Forma</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Número</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Nome</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>CNPJ/CPF</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Tipo','nm_tipo_documento').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Número','numero').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Valor','valor_doc').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Data de Emissão','dt_emissao').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Forma','nm_forma_pagamento').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Número','or_financeiro').'</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Valor '.f($RS_Projeto,'sg_moeda'),'valor').'</td>';
+    if ($p_moedas=='S') foreach($Ordem as $k=>$v) if ($k>0) $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor '.$v.'</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Data','quitacao').'</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Nome','nm_pessoa').'</td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('CNPJ/CPF','cd_pessoa').'</td>';
     $l_html.=chr(13).'          </tr>';
     $w_cor=$conTrBgColor;
     $w_total_previsto  = 0;
     $i = 0;
     foreach ($RSQuery as $row) {
+      if ($p_moedas=='S') {
+        foreach($Ordem as $k => $v) {
+          if ($v==f($row,'fn_sg_moeda')) {
+            $Valor[$v] = f($row,'fn_valor'); 
+            $Total[$v]+=$Valor[f($row,'fn_sg_moeda')];
+          } else {
+            unset($Valor[$v]);
+          }
+        }
+      }
       $i++;
       $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
       $l_html.=chr(13).'          <td align="center">'.$i.' </td>';
@@ -244,14 +282,20 @@ function Inicial() {
       $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
       $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
       $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
+      if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
       $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
       $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
       $l_html.=chr(13).'      </tr>';
       $w_total_previsto += f($row,'valor');
     } 
-    $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'><td colspan=11 align="right"><b>Total: </b></td><td align="right"><b>'.formatNumber($w_total_previsto).' </b></td><td colspan=3>&nbsp;</td>';
-    $l_html.=chr(13).'        </table></td></tr>';
+    $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
+    $l_html.=chr(13).'        <td colspan="'.$cs.'" align="right"><b>Total: </b></td>';
+    $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_previsto).' </b></td>';
+    if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($Total[$v]).'</b></td>';
+    $l_html.=chr(13).'        <td colspan=3>&nbsp;</td>';
+    $l_html.=chr(13).'      </tr valign="top"'.$w_folha.'>';
+    $l_html.=chr(13).'      </table></td></tr>';
 
     ShowHTML($l_html);
     ShowHTML('    </table>');
@@ -266,7 +310,8 @@ function Inicial() {
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
+    ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');    ShowHTML('      <tr>');
+    MontaRadioNS('<b>Exibe moeda do pagamento, além da moeda do projeto? <font color="red">("Sim" para exibir coluna com a moeda do pagamento. "Não" para omitir essa coluna)</font>.</b>',$p_moedas,'p_moedas');
     //ShowHTML('      <tr>');
     //MontaRadioNS('<b>Omite rubricas de aplicação financeira?</b>',$p_financeiro,'p_financeiro');
     //ShowHTML('      </tr><tr>');
