@@ -12,6 +12,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+include_once($w_dir_volta.'classes/sp/db_getMoedaCotacao.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicFN.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
@@ -67,6 +68,7 @@ $p_fim = $_REQUEST['p_fim'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
 $p_sintetico = upper(trim($_REQUEST['p_sintetico']));
 $p_financeiro = upper(trim($_REQUEST['p_financeiro']));
+$p_contabil = upper(trim($_REQUEST['p_contabil']));
 $p_moedas = $_REQUEST['p_moedas'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 
@@ -80,15 +82,12 @@ if ($O == '') {
     $O = 'L';
   }
 }
-switch ($O) {
-  case 'P': $w_TP = $TP . ' - Filtragem'; break;
-  default: $w_TP = $TP . ' - Listagem';   break;
-}
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
-$w_cliente = RetornaCliente();
-$w_usuario = RetornaUsuario();
-$w_menu = RetornaMenu($w_cliente, $SG);
+$w_cliente  = RetornaCliente();
+$w_usuario  = RetornaUsuario();
+$w_menu     = RetornaMenu($w_cliente, $SG);
+$w_TP       = RetornaTitulo($TP, $O);
 
 // Recupera a configuração do serviço
 $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
@@ -105,7 +104,6 @@ function Inicial() {
   global $w_Disabled;
   global $w_embed;
   $w_tipo = $_REQUEST['w_tipo'];
-  $w_sq_pessoa = upper(trim($_REQUEST['w_sq_pessoa']));
 
   if ($O == 'L') {
     // Recupera os dados do projeto selecionado
@@ -182,7 +180,7 @@ function Inicial() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro = '';
     if ($p_inicio!='')     $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
-    //if ($p_financeiro=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Rubricas de aplicação financeira omitidas</b>';
+    if ($p_contabil=='S')  $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Formato:<td><b>Versão para contabilidade</b>';
     //if ($p_sintetico=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
     ShowHTML('<tr><td align="left" colspan=2>');
     if ($w_filtro > '') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>' . $w_filtro . '</ul></tr></table>');
@@ -224,6 +222,8 @@ function Inicial() {
       $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'inicio')).' </td></tr>';
       $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
       $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'fim')).' </td></tr>';
+      $l_html .= chr(13).'      <tr><td><b>Moeda:</b></td>';
+      $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'nm_moeda')).' </td></tr>';
       $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
       $l_html.=chr(13).'          <td>'.Nvl(f($RS_Projeto,'nm_tramite'),'-').'</td></tr>';
     }
@@ -237,27 +237,35 @@ function Inicial() {
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Produto ou serviço','nm_rubrica').'</td>';
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Categoria (Usos)','nm_rubrica_pai').'</td>';
     $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>'.LinkOrdena('Item de Custo','cd_rubrica').'</td>';
-    $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Comprovante de Pagamento</td>';
-    $l_html.=chr(13).'            <td colspan="'.(4+count($Ordem)).'" bgColor="#f0f0f0"><b>Pagamento</td>';
     $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0"><b>Fornecedor</td>';
+    $l_html.=chr(13).'            <td colspan="4" bgColor="#f0f0f0"><b>Comprovante de Pagamento</td>';
+    $l_html.=chr(13).'            <td colspan="'.((count($Ordem)) ? (3+count($Ordem)) : 4).'" bgColor="#f0f0f0"><b>Pagamento</td>';
+    if ($p_contabil=='S') $l_html.=chr(13).'            <td colspan="3" bgColor="#f0f0f0"><b>Contabilidade</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center" >';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Nome','nm_pessoa').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('CNPJ/CPF','cd_pessoa').'</td>';
     $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Tipo','nm_tipo_documento').'</td>';
     $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Número','numero').'</td>';
-    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Valor','valor_doc').'</td>';
     $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Data de Emissão','dt_emissao').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Valor','valor_doc').'</td>';
     $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Forma','nm_forma_pagamento').'</td>';
     $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Número','or_financeiro').'</td>';
+    $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Data','quitacao').'</td>';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Valor '.f($RS_Projeto,'sg_moeda'),'valor').'</td>';
     if ($p_moedas=='S') foreach($Ordem as $k=>$v) if ($k>0) $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor '.$v.'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Data','quitacao').'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('Nome','nm_pessoa').'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.LinkOrdena('CNPJ/CPF','cd_pessoa').'</td>';
+    if ($p_contabil=='S') {
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor BRL</td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Taxa</td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data Taxa</td>';
+    }
     $l_html.=chr(13).'          </tr>';
     $w_cor=$conTrBgColor;
     $w_total_previsto  = 0;
+    $w_total_contabil  = 0;
     $i = 0;
     foreach ($RSQuery as $row) {
+      $w_valor_contabil = 0;
       if ($p_moedas=='S') {
         foreach($Ordem as $k => $v) {
           if ($v==f($row,'fn_sg_moeda')) {
@@ -275,25 +283,38 @@ function Inicial() {
       $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').' </td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica_pai').' </td>';
       $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
-      $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
-      $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
-      $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
-      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
-      if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
-      $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
       $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
+      $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
+      $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
+      $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
+      $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
+      $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
+      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
+      if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
+      if ($p_contabil=='S') {
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
+        if (f($row,'exige_brl')=='N') {
+          // Se já tem valor em BRL, não é necessário converter.
+          $l_html.=chr(13).'          <td colspan="2">&nbsp;</td>';
+        } else {
+          $w_cor_cell = '';
+          if (nvl(f($row,'brl_taxa_compra'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
+          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
+          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_data'),5),'???').' </td>';
+        }
+      }
       $l_html.=chr(13).'      </tr>';
       $w_total_previsto += f($row,'valor');
+      $w_total_contabil += f($row,'brl_valor_compra');
     } 
     $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
     $l_html.=chr(13).'        <td colspan="'.$cs.'" align="right"><b>Total: </b></td>';
     $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_previsto).' </b></td>';
     if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($Total[$v]).'</b></td>';
-    $l_html.=chr(13).'        <td colspan=3>&nbsp;</td>';
+    if ($p_contabil=='S') $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_contabil).' </b></td><td colspan="2">&nbsp;</td>';
     $l_html.=chr(13).'      </tr valign="top"'.$w_folha.'>';
     $l_html.=chr(13).'      </table></td></tr>';
 
@@ -310,10 +331,11 @@ function Inicial() {
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
     SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');    ShowHTML('      <tr>');
+    ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
+    ShowHTML('      <tr>');
     MontaRadioNS('<b>Exibe moeda do pagamento, além da moeda do projeto? <font color="red">("Sim" para exibir coluna com a moeda do pagamento. "Não" para omitir essa coluna)</font>.</b>',$p_moedas,'p_moedas');
-    //ShowHTML('      <tr>');
-    //MontaRadioNS('<b>Omite rubricas de aplicação financeira?</b>',$p_financeiro,'p_financeiro');
+    ShowHTML('      <tr>');
+    MontaRadioNS('<b>Emite versão para contabilidade?</b>',$p_contabil,'p_contabil');
     //ShowHTML('      </tr><tr>');
     //MontaRadioNS('<b>Exibe apenas a versão sintética do relatório? (apenas rubricas de mais alto nível)</b>',$p_sintetico,'p_sintetico');
     //ShowHTML('      </tr>');

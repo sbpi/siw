@@ -133,7 +133,7 @@ $p_agrega       = 'GRCLCAPA'; // Agrega por unidade solicitante, retornando lici
 $p_fase         = '3315,3316'; // Em execução e Concluída
 
 // Trata o valor inicial da moeda, que deve ser Real.
-$sql = new db_getMoeda; $RS = $sql->getInstanceOf($dbms, $p_moeda, 'ATIVO', null, null, ((nvl($p_moeda,'')=='') ? 'BRL' : ''));
+$sql = new db_getMoeda; $RS = $sql->getInstanceOf($dbms, $p_moeda, 'ATIVO', null, null, ((nvl($p_moeda,'')=='') ? 'BRL' : ''), null);
 foreach($RS as $row) {
   $p_moeda   = f($row,'sq_moeda');
   $w_simbolo = f($row,'simbolo'); 

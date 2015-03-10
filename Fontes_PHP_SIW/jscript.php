@@ -120,8 +120,8 @@ function Required() {
   ScriptOpen('JavaScript');
   ShowHTML('function required(){');
   if (count($w_campo_obrigatorio)>0) {
+    ShowHTML('  for (i=0;i < document.forms.length;i++){ ');
     foreach($w_campo_obrigatorio as $k => $v) {
-      print '  for (i=0;i < document.forms.length;i++){ ';
       if (strpos($k,'[')===false) {
         ShowHTML('    if (document.forms[i].'.$k.'!=undefined) document.forms[i].'.$k.'.className='.$v.';');
       } else {
@@ -129,8 +129,8 @@ function Required() {
         ShowHTML('      document.forms[i]'.$k.'.className='.$v.';');
         ShowHTML('    }');
       }
-      ShowHTML('  }');
     }
+    ShowHTML('  }');
   } else {
     ShowHTML('  return true;');
   }

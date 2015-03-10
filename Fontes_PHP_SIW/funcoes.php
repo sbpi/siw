@@ -2536,6 +2536,20 @@ function toDate($date) {
 }
 
 // =========================================================================
+// Função que retorna string no formato dd/mm/yyyy, mesmo que dia e mês
+// não tenham zeros à esquerda
+// -------------------------------------------------------------------------
+function normalizeDate($date) {
+  $partes = explode('/',$date);
+  $pos1 = strpos($date,'/');
+  $pos2 = strpos($date,'/',$pos1+1);
+  $d = substr(100+$partes[0],1);
+  $m = substr(100+$partes[1],1);
+  $a = $partes[2];
+  return("$d/$m/$a");
+}
+
+// =========================================================================
 // Função que retorna um timestamp da string informada para o formato SQL Server
 // date: string contendo a data no formato DD/MM/YYYY, HH24:MI:SS
 // -------------------------------------------------------------------------

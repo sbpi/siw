@@ -7479,7 +7479,7 @@ function ReembolsoValor() {
 
   // Se viagem nacional, seleciona BRL automaticamente.
   if (f($RS_Solic, 'internacional') == 'N') {
-    $sql = new db_getMoeda; $RS_Moeda = $sql->getInstanceOf($dbms, null, null, null, null, 'BRL');
+    $sql = new db_getMoeda; $RS_Moeda = $sql->getInstanceOf($dbms, null, null, null, null, 'BRL',null);
     foreach ($RS_Moeda as $row) {
       $RS_Moeda = $row;
       break;

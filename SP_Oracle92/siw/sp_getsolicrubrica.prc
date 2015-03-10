@@ -233,6 +233,7 @@ begin
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
                 a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
                 a.fn_valor, a.fn_sq_moeda, a.fn_sg_moeda, a.fn_sb_moeda, a.ordem or_item,
+                a.exige_brl, a.brl_taxa_data, a.brl_taxa_compra, a.brl_taxa_venda, a.brl_valor_compra,
                 codigo2numero(a.cd_financeiro) or_financeiro,
                 b.codigo cd_rubrica, b.nome nm_rubrica,
                 b1.codigo cd_rubrica_pai, b1.nome nm_rubrica_pai,

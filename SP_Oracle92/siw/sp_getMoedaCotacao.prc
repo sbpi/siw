@@ -9,9 +9,9 @@ create or replace procedure SP_GetMoedaCotacao
 begin
   If p_restricao is null Then
     open p_result for 
-      select a.sq_moeda_cotacao, a.cliente,       a.sq_moeda,       a.data,             a.taxa_compra,   a.taxa_venda,
-             b.codigo cd_moeda,  b.nome nm_moeda, b.sigla sg_moeda, b.simbolo sb_moeda, b.tipo tp_moeda, b.exclusao_ptax,
-             b.ativo  at_moeda,
+      select a.sq_moeda_cotacao, a.cliente,         a.sq_moeda,       a.data,             a.taxa_compra,   a.taxa_venda,
+             b.codigo cd_moeda,  b.nome nm_moeda,   b.sigla sg_moeda, b.simbolo sb_moeda, b.tipo tp_moeda, b.exclusao_ptax,
+             b.ativo  at_moeda,  b.bc_serie_compra, b.bc_serie_venda,
              case b.ativo  when 'S' then 'Sim' else 'Não' end as nm_ativo
         from co_moeda_cotacao    a
              inner join co_moeda b on (a.sq_moeda = b.sq_moeda)

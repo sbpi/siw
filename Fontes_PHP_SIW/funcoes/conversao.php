@@ -40,10 +40,10 @@ $w_taxa       = $_REQUEST['w_taxa'];
 
 $SQL = new db_getMoeda; 
 
-$RS_Origem = $SQL->getInstanceOf($dbms,$w_origem,null,null,null,null);
+$RS_Origem = $SQL->getInstanceOf($dbms,$w_origem,null,null,null,null,null);
 foreach ($RS_Origem as $row) {$RS_Origem = $row; break;}
 
-$RS_Destino = $SQL->getInstanceOf($dbms,$w_destino,null,null,null,null);
+$RS_Destino = $SQL->getInstanceOf($dbms,$w_destino,null,null,null,null,null);
 foreach ($RS_Destino as $row) {$RS_Destino = $row; break;}
 
 $sql = new db_getMoedaCotacao; 

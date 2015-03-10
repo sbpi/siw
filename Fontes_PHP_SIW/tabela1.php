@@ -324,8 +324,6 @@ function TipoVinculo() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -397,8 +395,6 @@ function ParSeguranca() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -590,8 +586,6 @@ function Integracao() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -656,8 +650,6 @@ function Grava() {
       } 
       break;
   } 
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -684,6 +676,5 @@ function Main() {
     Estrutura_Fecha();
     Rodape();
   } 
-  return $function_ret;
 } 
 ?>

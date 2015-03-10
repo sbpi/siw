@@ -194,6 +194,7 @@ begin
                 d31.sigla as sg_doc,  d31.nome as nm_doc,            d3.data as dt_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero as nr_conta,
                 d4.devolucao_valor,
+                g.cb_sq_moeda,        g.cb_sg_moeda,                 g.cb_sb_moeda,           g.valor cb_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
                 da.sq_pessoa_conta as sq_conta_debito, da.operacao as operacao_debito, da.numero as conta_debito,
@@ -254,6 +255,7 @@ begin
                                                                       a4.tipo_respons            = 'S'           and
                                                                       a4.fim                     is null
                                                                      )
+                      left           join vw_conta_bancaria_financeiro g on (d.sq_siw_solicitacao = g.sq_financeiro)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
                         left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
@@ -330,7 +332,7 @@ begin
             and (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_ativo          is null or (p_ativo       is not null and (p_ativo = 'N' or (p_ativo = 'S' and b1.ativo = 'S'))))
-            and (p_pais           is null or (p_pais        is not null and d.sq_pessoa_conta    = p_pais))
+            and (p_pais           is null or (p_pais        is not null and (d.sq_pessoa_conta   = p_pais or p_pais = (select w.sq_pessoa_conta from co_pessoa_conta w where w.sq_pessoa = a.sq_pessoa and w.sq_agencia = d.sq_agencia and w.numero = d.numero_conta))))
             and (p_regiao         is null or (p_regiao      is not null and ((b.protocolo_siw is not null and b8.numero_documento = p_regiao) or (b.protocolo_siw is null and b4.protocolo_siw is not null and b9.numero_documento = p_regiao))))
             and (p_cidade         is null or (p_cidade      is not null and ((b.protocolo_siw is not null and b8.ano              = p_cidade) or (b.protocolo_siw is null and b4.protocolo_siw is not null and b9.ano              = p_cidade))))
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from fn_lancamento_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))

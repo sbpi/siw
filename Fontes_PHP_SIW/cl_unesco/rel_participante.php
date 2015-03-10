@@ -149,7 +149,7 @@ $sql = new db_getCustomerData; $RS_Cliente = $sql->getInstanceOf($dbms,$w_client
 
 // Se foi informada moeda, recupera seu símbolo e nome.
 if ($p_moeda>'') {
-  $sql = new db_getMoeda; $RS = $sql->getInstanceOf($dbms, $p_moeda, null, null, null, null);
+  $sql = new db_getMoeda; $RS = $sql->getInstanceOf($dbms, $p_moeda, null, null, null, null, null);
   foreach($RS as $row) {
     $w_sb_moeda = f($row,'simbolo'); 
     $w_nm_moeda = f($row,'nome'); 

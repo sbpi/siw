@@ -9,13 +9,14 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getMoeda {
-   function getInstanceOf($dbms, $p_chave, $p_restricao, $p_nome, $p_ativo, $p_sigla) {
+   function getInstanceOf($dbms, $p_chave, $p_restricao, $p_nome, $p_ativo, $p_sigla, $p_serie) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMoeda';
      $params=array('p_chave'    =>array($p_chave,       B_INTEGER,     32),
                    'p_restricao'=>array($p_restricao,   B_VARCHAR,     30),
                    'p_nome'     =>array($p_nome,        B_VARCHAR,     60),
                    'p_ativo'    =>array($p_ativo,       B_VARCHAR,      1),
                    'p_sigla'    =>array($p_sigla,       B_VARCHAR,      3),
+                   'p_serie'    =>array($p_serie,       B_INTEGER,     32),
                    'p_result'   =>array(null,           B_CURSOR,      -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
