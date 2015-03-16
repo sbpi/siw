@@ -194,7 +194,7 @@ begin
       End If;
       
       -- Recupera o módulo da solicitacao
-      select sigla into w_sg_modulo
+      select c.sigla into w_sg_modulo
         from siw_solicitacao         a
              inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
                inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
