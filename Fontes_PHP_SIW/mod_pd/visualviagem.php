@@ -1596,8 +1596,12 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           }
         }
         $l_html.=chr(13).'        <tr valign="middle">';
-        if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N').'</td>';
-        else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
+        if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N');
+        else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S');
+        if (nvl(f($row,'sq_solic_vinculo'),f($row,'sq_siw_solicitacao'))!=f($row,'sq_siw_solicitacao')) {
+          if($l_tipo!='WORD') $l_html.=chr(13).' ('.exibeSolic($w_dir,f($row,'sq_solic_vinculo'),f($row,'dados_solic_vinculo'),'N').')';
+          else                $l_html.=chr(13).' ('.exibeSolic($w_dir,f($row,'sq_solic_vinculo'),f($row,'dados_solic_vinculo'),'N','S').')';
+        }
         $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
         if ($soma) {
           $l_html.=chr(13).'           <td align="right">'.((nvl(f($row,'sb_moeda'),'')!='') ? f($row,'sb_moeda').' ' : '').formatNumber(f($row,'valor')).'</td>';

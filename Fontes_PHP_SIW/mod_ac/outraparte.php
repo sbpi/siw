@@ -248,7 +248,7 @@ function Inicial() {
         break;
       }
     } 
-  } 
+  }
 
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
@@ -278,11 +278,19 @@ function Inicial() {
     if ($w_tipo_pessoa=='F') {
       Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
-      Validate('w_rg_numero','Identidade','1',1,2,30,'1','1');
-      Validate('w_rg_emissor','Órgão expedidor','1',1,2,30,'1','1');
-      Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
-      Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
-      Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
+      if (f($RS_Solic,'sq_tipo_pessoa')==1) {
+        Validate('w_rg_numero','Identidade','1',1,2,30,'1','1');
+        Validate('w_rg_emissor','Órgão expedidor','1',1,2,30,'1','1');
+        Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
+        Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
+        Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
+      } else {
+        Validate('w_rg_numero','Identidade','1','',2,30,'1','1');
+        Validate('w_rg_emissor','Órgão expedidor','1','',2,30,'1','1');
+        Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
+        Validate('w_passaporte_numero','Passaporte','1',1,1,20,'1','1');
+        Validate('w_sq_pais_passaporte','País emissor','SELECT',1,1,10,'1','1');
+      }
     } else {
       Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
     } 
@@ -299,9 +307,39 @@ function Inicial() {
     if (Nvl($w_pd_pais,'S')=='S') {
       Validate('w_cep','CEP','1','',9,9,'','0123456789-');
     } else {
-      Validate('w_cep','CEP','1',1,5,9,'','0123456789');
-    } 
+      Validate('w_cep','CEP','1','',5,9,'','0123456789');
+    }
+    ShowHTML('  if ((theForm.w_nr_telefone.value+theForm.w_nr_fax.value+theForm.w_nr_celular.value)!="" && theForm.w_ddd.value=="") {');
+    ShowHTML('     alert("O campo DDD é obrigatório quando informar telefone, fax ou celular!");');
+    ShowHTML('     theForm.w_ddd.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if (theForm.w_ddd.value!="" && theForm.w_nr_telefone.value=="") {');
+    ShowHTML('     alert("Se informar o DDD, então informe obrigatoriamente o telefone!\\nFax e celular são opcionais.");');
+    ShowHTML('     theForm.w_nr_telefone.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if (theForm.w_ddd.value!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
+    ShowHTML('     alert("Se informar telefone, fax ou celular, então informe o país, estado e cidade!");');
+    ShowHTML('     theForm.w_sq_pais.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if ((theForm.w_complemento.value+theForm.w_bairro.value+theForm.w_cep.value)!="" && theForm.w_logradouro.value=="") {');
+    ShowHTML('     alert("O campo logradouro é obrigatório quando informar os campos complemento, bairro ou CEP!");');
+    ShowHTML('     theForm.w_logradouro.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if (theForm.w_logradouro.value!="" && theForm.w_cep.value=="") {');
+    ShowHTML('     alert("O campo CEP é obrigatório quando informar o endereço da pessoa!");');
+    ShowHTML('     theForm.w_cep.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
     Validate('w_email','E-Mail','1','',4,60,'1','1');
+    ShowHTML('  if ((theForm.w_ddd.value+theForm.w_logradouro.value+theForm.w_email.value)!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
+    ShowHTML('     alert("Se informar algum telefone, o endereço ou o e-mail da pessoa, então informe o país, estado e cidade!");');
+    ShowHTML('     theForm.w_sq_pais.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
     if (substr($SG,0,3)!='GCR' && substr($SG,0,3)!='GCZ') {
       if (strpos('CREDITO,DEPOSITO',$w_forma_pagamento)!==false) {
         if (substr($SG,0,3)=='GCD'||(substr($SG,0,3)=='GCC')||(substr($SG,0,3)=='GCB')) {
@@ -328,13 +366,8 @@ function Inicial() {
       } elseif ($w_forma_pagamento=='EXTERIOR') {
         Validate('w_banco_estrang','Banco de destino','1','1',1,60,1,1);
         Validate('w_aba_code','Código ABA','1','',1,12,1,1);
-        Validate('w_swift_code','Código SWIFT','1','',1,30,1,1);
+        Validate('w_swift_code','Código SWIFT','1','1',1,30,1,1);
         Validate('w_endereco_estrang','Endereço da agência destino','1','',3,100,1,1);
-        ShowHTML('  if (theForm.w_aba_code.value == "" && theForm.w_swift_code.value == "" && theForm.w_endereco_estrang.value == "") {');
-        ShowHTML('     alert("Informe código ABA, código SWIFT ou endereço da agência!");');
-        ShowHTML('     document.Form.w_aba_code.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
         Validate('w_agencia_estrang','Nome da agência destino','1','1',1,60,1,1);
         Validate('w_nr_conta','Número da conta','1',1,1,30,1,1);
         Validate('w_cidade_estrang','Cidade da agência','1','1',1,60,1,1);
@@ -435,10 +468,10 @@ function Inicial() {
         if (count($RS)) $RS_Benef = $RS[0];
         $w_tipo_pessoa = ((strpos('13',f($RS_Benef,'sq_tipo_pessoa'))!==false) ? 'F' : 'J');
         if ($w_tipo_pessoa=='F') {
-          ShowHTML('        <td><b>'.(($w_tipo_pessoa=='F') ? 'CPF' : 'Cód. Estrangeiro').':</b><br><INPUT type="text" READONLY class="sti" name="w_identificador" SIZE=14 value="'.f($RS_Benef,'cpf').'">');
+          ShowHTML('        <td><b>'.((f($RS_Benef,'sq_tipo_pessoa')==1) ? 'CPF' : 'Cód. Estrangeiro').':</b><br><INPUT type="text" READONLY class="sti" name="w_identificador" SIZE=14 value="'.f($RS_Benef,'cpf').'">');
           ShowHTML('            <INPUT type="hidden" name="w_cpf"  value="'.f($RS_Benef,'cpf').'">');
         } else {
-          ShowHTML('        <td><b>'.(($w_tipo_pessoa=='F') ? 'CPF' : 'Cód. Estrangeiro').':</b><br><INPUT type="text" READONLY class="sti" name="w_identificador" SIZE=18 value="'.f($RS_Benef,'cnpj').'">');
+          ShowHTML('        <td><b>'.(f($RS_Benef,'sq_tipo_pessoa')==2 ? 'CNPJ' : 'Cód. Estrangeiro').':</b><br><INPUT type="text" READONLY class="sti" name="w_identificador" SIZE=18 value="'.f($RS_Benef,'cnpj').'">');
           ShowHTML('            <INPUT type="hidden" name="w_cnpj" value="'.f($RS_Benef,'cnpj').'">');
         }
         ShowHTML('        <tr><td colspan=2>');
@@ -456,10 +489,10 @@ function Inicial() {
       ShowHTML('      <tr><td colspan="2"><table border="0" width="100%">');
       ShowHTML('          <tr valign="top">');
       if ($w_tipo_pessoa=='F') {
-        ShowHTML('          <td>CPF:</font><br><b><font size=2>'.$w_cpf);
+        ShowHTML('          <td>'.((f($RS_Solic,'sq_tipo_pessoa')==1) ? 'CPF' : 'Cód. Estrangeiro').':</font><br><b><font size=2>'.$w_cpf);
         ShowHTML('              <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
       } else {
-        ShowHTML('          <td colspan="2">CNPJ:</font><br><b><font size=2>'.$w_cnpj);
+        ShowHTML('          <td colspan="2">'.(f($RS_Solic,'sq_tipo_pessoa')==2 ? 'CNPJ' : 'Cód. Estrangeiro').':</font><br><b><font size=2>'.$w_cnpj);
         ShowHTML('              <INPUT type="hidden" name="w_cnpj" value="'.$w_cnpj.'">');
       } 
       ShowHTML('          <tr valign="top">');

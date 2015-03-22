@@ -176,6 +176,7 @@ begin
                 coalesce(b.titulo,b.descricao,b.justificativa) as ac_titulo,
                 b1.sq_siw_tramite,    b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b2.sq_solic_vinculo, dados_solic(b2.sq_solic_vinculo) as dados_solic_vinculo,
                 case a.sigla when 'FNDVIA'
                              then case when b2.quitacao >= trunc(sysdate) then 'Agendado' else b1.nome end
                              else b1.nome 

@@ -95,7 +95,7 @@ function Inicial() {
   
   if ($O == 'L') {
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicFN; $RSQuery = $sql->getInstanceOf($dbms,null, $w_usuario, $SG, 7, 
+    $sql = new db_getSolicFN; $RSQuery = $sql->getInstanceOf($dbms,null, $w_usuario, 'EXTRATO', 7, 
         $p_ini_i, $p_ini_f, $p_inicio,$p_fim, $p_atraso, $p_solicitante, 
         $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
         $p_chave, $p_assunto, $p_conta, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
@@ -155,9 +155,10 @@ function Inicial() {
     $w_conta = 0;
     foreach ($RSQuery as $row) {
       if ($w_conta!==f($row,'sq_conta_debito')) {
+        $w_sg_moeda = ((f($row,'sg_moeda_cc')!='') ? ' ('.f($row,'sg_moeda_cc').')' : '');
         if ($w_conta!==0) {
           $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-          $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.'&nbsp;</b></td>';
+          $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.$w_sg_moeda.'&nbsp;</b></td>';
           $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_credito).'</b></td>';
           $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_debito).'</b></td>';
           $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_atual).'</b></td>';
@@ -204,9 +205,9 @@ function Inicial() {
         $l_html.=chr(13).'            <td colspan="2"><b>Documento</td>';
         $cs++; $l_html.=chr(13).'            <td rowspan="2" width="25%"><b>Pessoa</td>';
         $cs++; $l_html.=chr(13).'            <td rowspan="2" width="40%"><b>Finalidade</td>';
-        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.((f($RS_Conta,'sg_moeda')!='') ? ' ('.f($RS_Conta,'sg_moeda').')' : '').'</td>';
-        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.((f($RS_Conta,'sg_moeda')!='') ? ' ('.f($RS_Conta,'sg_moeda').')' : '').'</td>';
-        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.((f($RS_Conta,'sg_moeda')!='') ? ' ('.f($RS_Conta,'sg_moeda').')' : '').'</td>';
+        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.$w_sg_moeda.'</td>';
+        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.$w_sg_moeda.'</td>';
+        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.$w_sg_moeda.'</td>';
         $l_html.=chr(13).'          </tr>';
         $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
         $cs++; $l_html.=chr(13).'            <td><b>Data</td>';
@@ -262,7 +263,7 @@ function Inicial() {
         $l_html.=chr(13).'        <td align="center" width="25%">---</td>';
       }
       $l_html.=chr(13).'        <td width="40%">'.f($row,'descricao').'</td>';
-      if (substr(f($row,'sigla'),2,1)=='R') {
+      if (f($row,'tipo')=='C') {
         $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
         $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
         $w_credito += Nvl(f($row,'cb_valor'),0);
@@ -276,7 +277,7 @@ function Inicial() {
       $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber($w_atual).'</td>';
     } 
     $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-    $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.'&nbsp;</b></td>';
+    $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.$w_sg_moeda.'&nbsp;</b></td>';
     $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
     $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
     $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';

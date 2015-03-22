@@ -53,7 +53,7 @@ class dml_putConvOutraParte {
                    'p_aba_code'                  =>array(tvl($p_aba_code),                                 B_VARCHAR,        12),
                    'p_swift_code'                =>array(tvl($p_swift_code),                               B_VARCHAR,        30),
                    'p_endereco_estrang'          =>array(tvl($p_endereco_estrang),                         B_VARCHAR,       100),
-                   'p_banco_estrang'             =>array(tvl($p_banco_estrang),                            B_VARCHAR,        20),
+                   'p_banco_estrang'             =>array(tvl($p_banco_estrang),                            B_VARCHAR,        60),
                    'p_agencia_estrang'           =>array(tvl($p_agencia_estrang),                          B_VARCHAR,        60),
                    'p_cidade_estrang'            =>array(tvl($p_cidade_estrang),                           B_VARCHAR,        60),
                    'p_informacoes'               =>array(tvl($p_informacoes),                              B_VARCHAR,       200),
