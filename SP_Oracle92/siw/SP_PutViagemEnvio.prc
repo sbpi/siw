@@ -252,7 +252,7 @@ create or replace procedure SP_PutViagemEnvio
                where a.sq_siw_solicitacao = p_chave
                  and b.sigla              = 'BRL'
               ) k
-      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
+      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
    
 begin
    -- Recupera os dados da solicitação. Se for contratado, a unidade solicitante aprova trâmites de chefia imediata. Caso contrário, será a unidade proponente.

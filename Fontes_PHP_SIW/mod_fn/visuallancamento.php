@@ -127,7 +127,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td>---</td>';
         }
         $exibe = false;
-      } elseif($exibe && nvl($pai[4],'')!='' && !$w_exibe_processo) {
+      } elseif(nvl($pai[4],'')!='' && !$w_exibe_processo) {
         $l_html.=chr(13).'      <tr><td width="30%"><b>'.$pai[4].': </b></td>';
         $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
       }

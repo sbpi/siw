@@ -430,7 +430,10 @@ begin
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
                 d.referencia_inicio,  d.referencia_fim,              d.sq_solic_vinculo,
                 d.numero_conta,       d.processo,
-                coalesce(d.quitacao, d.vencimento) as dt_pagamento,
+                case a.sigla
+                     when 'FNDFIXO' then g.quitacao
+                     else coalesce(d.quitacao, d.vencimento)
+                end as dt_pagamento,
                 d1.nome as nm_tipo_lancamento,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
@@ -474,7 +477,11 @@ begin
             and (p_ativo          is null or (p_ativo       is not null and (p_ativo = 'N' or (p_ativo = 'S' and b1.ativo = 'S'))))
             and (p_pais           is null or (p_pais        is not null and (g.sq_pessoa_conta   = p_pais)))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai is not null and b.sq_solic_pai = p_projeto))
-            and (p_fim_i          is null or (p_fim_i       is not null and d.quitacao           between p_fim_i and p_fim_f));
+            and (p_fim_i          is null or (p_fim_i       is not null and ((a.sigla = 'FNDFIXO'  and g.quitacao           between p_fim_i and p_fim_f) or
+                                                                             (a.sigla <> 'FNDFIXO' and d.quitacao           between p_fim_i and p_fim_f)
+                                                                            )
+                                              )
+                );
    End If;
 end SP_GetSolicFN;
 /

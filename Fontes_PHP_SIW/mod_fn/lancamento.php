@@ -4124,8 +4124,12 @@ function Concluir() {
     // Recupera dados da solicitação
     $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),piece(f($RS_Solic,'dados_pai'),null,'|@|',6));
     if (f($RS_Pai,'sg_modulo')!='PR') {
+      $sql = new db_getSolicData; 
       // Se não está ligado a projeto, pega os dados do avô.
-      $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Pai,'sq_solic_pai'),piece(f($RS_Pai,'dados_pai'),null,'|@|',6));
+      $RS_Pai = $sql->getInstanceOf($dbms,f($RS_Pai,'sq_solic_pai'),piece(f($RS_Pai,'dados_pai'),null,'|@|',6));
+      $RS_Vinculo = array();
+      // Se o lançamento está ligado a um projeto diferente da viagem/contrato ao qual está ligado, recupera e guarda em RS_Vinculo
+      if (nvl(f($RS_Solic,'sq_solic_vinculo'),'')!='') $RS_Vinculo = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_solic_vinculo'),'PJCAD');
     }
     $w_moeda_pai        = f($RS_Pai,'sq_moeda');
   }
@@ -4301,14 +4305,15 @@ function Concluir() {
         ShowHTML('      <tr valign="top">');
         ShowHTML('<INPUT type="hidden" name="w_sq_documento_item[]" value="'.$w_sq_documento_item[1].'">');
         ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc[]" value="'.f($RS_Doc,'sq_lancamento_doc').'">');
+        $w_pai = nvl($RS_Vinculo,$RS_Pai);
         if (piece(f($RS_Solic,'dados_pai'),null,'|@|',6)=='PDINICIAL') {
           ShowHTML('<INPUT type="hidden" name="w_sq_projeto_rubrica[]" value="'.nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')).'">');
           $l_disabled = $w_Disabled;
           $w_Disabled = ' DISABLED ';
-          SelecaoRubrica('<u>R</u>ubrica (Projeto: <b>'.f($RS_Pai,'codigo_interno').' - '.f($RS_Pai,'titulo').')<br><font color="red">Lançamentos ligados a viagens não podem ter alteração de rubrica. Se necessário, altere as rubricas na solicitação de viagem.</font>','R', 'Selecione a rubrica para pagamento.', nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')),f($RS_Pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null,3);
+          SelecaoRubrica('<u>R</u>ubrica (Projeto: <b>'.f($w_pai,'codigo_interno').' - '.f($w_pai,'titulo').')<br><font color="red">Lançamentos ligados a viagens não podem ter alteração de rubrica. Se necessário, altere as rubricas na solicitação de viagem.</font>','R', 'Selecione a rubrica para pagamento.', nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')),f($w_pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null,3);
           $w_Disabled = $l_disabled;
         } else {
-          SelecaoRubrica('<u>R</u>ubrica (Projeto: <b>'.f($RS_Pai,'codigo_interno').' - '.f($RS_Pai,'titulo').')','R', 'Selecione a rubrica para pagamento.', nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')),f($RS_Pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null,3);
+          SelecaoRubrica('<u>R</u>ubrica (Projeto: <b>'.f($w_pai,'codigo_interno').' - '.f($w_pai,'titulo').')','R', 'Selecione a rubrica para pagamento.', nvl($w_sq_projeto_rubrica[1],f($RS_Solic,'sq_projeto_rubrica')),f($w_pai,'sq_siw_solicitacao'),null,'w_sq_projeto_rubrica[]','SELECAO',null,3);
         }
       }
     }

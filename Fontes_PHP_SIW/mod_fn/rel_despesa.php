@@ -298,12 +298,18 @@ function Inicial() {
         $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
         if (f($row,'exige_brl')=='N') {
           // Se já tem valor em BRL, não é necessário converter.
-          $l_html.=chr(13).'          <td colspan="2">&nbsp;</td>';
+          // Apenas exibe a taxa de venda do BRL e compara com a informada na conclusão do lançamento.
+          // Se for diferente, destaca na cor amarela.
+          $w_cor_cell = '';
+          if (nvl(f($row,'brl_taxa_venda'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
+          elseif (abs(f($row,'brl_valor_compra')-(f($row,'brl_taxa_venda')*f($row,'valor')))>0.1 && (f($row,'brl_taxa_venda')!=f($row,'fator_conversao'))) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightRed1.'"';
+          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_venda'),4),'???').(($w_cor_cell) ? '<br>*'.f($row,'fator_conversao') : '').' </td>';
+          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_venda_data'),5),'???').' </td>';
         } else {
           $w_cor_cell = '';
           if (nvl(f($row,'brl_taxa_compra'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
           $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
-          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_data'),5),'???').' </td>';
+          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_compra_data'),5),'???').' </td>';
         }
       }
       $l_html.=chr(13).'      </tr>';

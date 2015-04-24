@@ -151,7 +151,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
     // Se a classificação foi informada, exibe.
     if (Nvl(f($RS,'sq_cc'),'')>'') {
-      $l_html .= $crlf.'      <tr><td width="30%"><b>Classificação:<b></td>';
+      $l_html .= $crlf.'      <tr><td width="25%"><b>Classificação:<b></td>';
       $l_html .= $crlf.'        <td>'.f($RS,'nm_cc').' </td></tr>';
     }
     
@@ -641,17 +641,19 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
                 $l_html.=$crlf.'          <td><b>Agência:<b><br>---</td>';
               } 
             } elseif (f($RS,'sg_forma_pagamento')=='EXTERIOR') {
+              $l_html .= $crlf.'    <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%">';
               $l_html.=$crlf.'          <tr valign="top">';
-              $l_html.=$crlf.'          <td>Banco:<b><br>'.f($RS,'banco_estrang').'</td>';
-              $l_html.=$crlf.'          <td>ABA Code:<b><br>'.Nvl(f($RS,'aba_code'),'---').'</td>';
-              $l_html.=$crlf.'          <td>SWIFT Code:<b><br>'.Nvl(f($RS,'swift_code'),'---').'</td>';
+              $l_html.=$crlf.'            <td>Banco:<b><br>'.nvl(f($RS,'banco_estrang'),'---').'</td>';
+              $l_html.=$crlf.'            <td>ABA Code:<b><br>'.Nvl(f($RS,'aba_code'),'---').'</td>';
+              $l_html.=$crlf.'            <td>SWIFT Code:<b><br>'.Nvl(f($RS,'swift_code'),'---').'</td>';
               $l_html.=$crlf.'          <tr><td colspan=3>Endereço da agência:<b><br>'.Nvl(f($RS,'endereco_estrang'),'---').'</td>';
               $l_html.=$crlf.'          <tr valign="top">';
-              $l_html.=$crlf.'          <td colspan=2>Agência:<b><br>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
-              $l_html.=$crlf.'          <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
+              $l_html.=$crlf.'            <td colspan=2>Agência:<b><br>'.Nvl(f($RS,'agencia_estrang'),'---').'</td>';
+              $l_html.=$crlf.'            <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
               $l_html.=$crlf.'          <tr valign="top">';
-              $l_html.=$crlf.'          <td colspan=2>Cidade:<b><br>'.f($RS,'nm_cidade').'</td>';
-              $l_html.=$crlf.'          <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
+              $l_html.=$crlf.'            <td colspan=2>Cidade:<b><br>'.nvl(f($RS,'nm_cidade'),'---').'</td>';
+              $l_html.=$crlf.'            <td>País:<b><br>'.nvl(f($RS,'nm_pais'),'---').'</td>';
+              $l_html .= $crlf.'    </table>';
             } 
           } 
         } 

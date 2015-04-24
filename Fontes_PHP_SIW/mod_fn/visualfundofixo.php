@@ -23,6 +23,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   // Documentos
   $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,'DOCS');
   foreach($RS_Docs as $row) { $RS_Docs = $row; break; }
+  $w_emissao = f($RS_Docs,'data');
   
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $w_usuario || 
@@ -101,6 +102,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <tr><td><b>Forma de suprimento:</b></td><td>'.f($RS_Docs,'nm_tipo_documento').' '.f($RS_Docs,'numero').'</td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Conta bancária: </b></td><td>'.f($RS,'nm_ban_org').' AG. '.f($RS,'cd_age_org').' C/C '.f($RS,'nr_conta_org').((nvl(f($RS,'sb_moeda'),'')=='') ? '' : ' ('.f($RS,'sg_moeda').')').' </td></tr>';
+    $l_html.=chr(13).'          <tr><td><b>Data do saque: </b></td><td>'.FormataDataEdicao($w_emissao).'</td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Limite para utilização:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
     $w_inicial = f($RS,'valor');
   }
@@ -206,7 +208,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr valign="top" BGCOLOR="'.$w_cor.'">';
         $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.ExibeImagemSolic(f($RS,'sigla'),f($RS,'inicio'),f($RS,'vencimento'),f($RS,'inicio'),f($RS,'quitacao'),f($RS,'aviso_prox_conc'),f($RS,'aviso'),f($RS,'sg_tramite'), null).' '.f($RS,'codigo_interno').'</td>';
         if ($w_mod_cl=='S') $l_html.=chr(13).'        <td align="right" width="1%" nowrap>&nbsp;</td>';
-        $l_html.=chr(13).'        <td align="center" width="1%" nowrap>&nbsp;'.Nvl(FormataDataEdicao(f($RS,'inicio'),5),'-').'</td>';
+        $l_html.=chr(13).'        <td align="center" width="1%" nowrap>&nbsp;'.Nvl(FormataDataEdicao(nvl(f($RS,'inicio'),$w_emissao),5),'-').'</td>';
         $l_html.=chr(13).'        <td>'.f($RS,'nm_forma_pagamento').'&nbsp;'.f($RS,'nr_doc').'</td>';
         $l_html.=chr(13).'        <td colspan="2">'.f($RS,'nm_banco').'&nbsp;C/C '.f($RS,'nr_conta_org').'</td>';
         $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($RS,'valor')).'</td>';

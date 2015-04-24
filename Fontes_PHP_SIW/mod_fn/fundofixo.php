@@ -1031,7 +1031,7 @@ function Geral() {
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
-    Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
+    Validate('w_data','Data de saque', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
     CompValor('w_valor','Valor total do documento','>','0,00','zero');
   } 
@@ -1144,7 +1144,7 @@ function Geral() {
       ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta.'">');
     }
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
-    ShowHTML('          <td><b><u>E</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
+    ShowHTML('          <td><b><u>S</u>aque:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do saque.">'.ExibeCalendario('Form','w_data').'</td>');
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('<INPUT type="hidden" name="w_valor_doc" value="'.$w_valor_doc.'">');
 

@@ -10,12 +10,31 @@ create or replace procedure sp_calculaDiarias_OTCA(p_chave in number, p_todos in
                 inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao);
 
   cursor c_diarias is
-    select t.sq_diaria, floor(trunc(u.saida)-trunc(v.chegada)) quantidade
-      from PD_DIARIA t 
-           inner   join pd_deslocamento u on (t.sq_deslocamento_chegada = u.sq_deslocamento)
+    select t.sq_diaria, z.origem cidade_base,
+           v1.nome origem_saida,   v2.nome destino_saida,   v.saida saida_origem,  v.chegada chegada_origem, 
+           u1.nome origem_chegada, u2.nome destino_chegada, u.saida saida_destino, u.chegada chegada_destino, 
+           -- Se a origem e o destino da cidade for a cidade-base, o número de diárias é todo o período da viagem,
+           -- desde a primeira saída até a última chegada
+           floor(trunc(case u.destino when z.origem then u.chegada else u.saida end)-trunc(v.saida)) quantidade
+      from PD_DIARIA                    t 
            inner   join pd_deslocamento v on (t.sq_deslocamento_saida   = v.sq_deslocamento)
+             inner join co_cidade      v1 on (v.origem                  = v1.sq_cidade)
+             inner join co_cidade      v2 on (v.destino                 = v2.sq_cidade)
+           inner   join pd_deslocamento u on (t.sq_deslocamento_chegada = u.sq_deslocamento)
+             inner join co_cidade      u1 on (u.origem                  = u1.sq_cidade)
+             inner join co_cidade      u2 on (u.destino                 = u2.sq_cidade)
            inner   join siw_solicitacao w on (t.sq_siw_solicitacao      = w.sq_siw_solicitacao)
              inner join siw_tramite     x on (w.sq_siw_tramite          = x.sq_siw_tramite)
+           inner   join (select l.sq_siw_solicitacao, l.tipo, min(saida) saida
+                           from pd_diaria                  l
+                                inner join pd_deslocamento m on (l.sq_deslocamento_saida = m.sq_deslocamento)
+                          where l.sq_siw_solicitacao = p_chave
+                         group by l.sq_siw_solicitacao, l.tipo
+                        )               y on (t.tipo                    = y.tipo)
+             inner join pd_deslocamento z on (y.sq_siw_solicitacao      = z.sq_siw_solicitacao and
+                                              z.saida                   = y.saida and
+                                              y.tipo                    = z.tipo
+                                             )
      where t.sq_siw_solicitacao = p_chave
        and t.tipo               = coalesce(p_tipo,case x.sigla when 'CI' then 'S' else 'P' end);
    

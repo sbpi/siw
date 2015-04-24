@@ -4558,7 +4558,7 @@ function Grava() {
             ScriptOpen('JavaScript');
             ShowHTML('  alert("ATENÇÃO: Código já existe!");');
             ScriptClose();
-            RetornaFormulario(null);
+            RetornaFormulario('w_codigo_interno');
             exit;
           }
         }
