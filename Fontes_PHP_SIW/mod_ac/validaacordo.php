@@ -28,30 +28,35 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
   $l_erro='';
-  $l_tipo='';  
+  $l_tipo='';
+  
+  // Tipo da pessoa que está sendo contratada (1 ou 3 = Física; 2 ou 4 = Jurídica)
+  if (Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==1 || Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==3) $l_tipo_pessoa = 'F';
+  else $l_tipo_pessoa = 'J';
+  
   if (f($l_rs_solic,'ativo')=='S') {
     if (substr(f($l_rs_solic,'sigla'),0,3)=='GCR' && f($l_rs_solic,'cd_modalidade')!='F') {
-      $l_erro=$l_erro.'<li>Para contrato de receita, o tipo deve ser de fornecimento.';
+      $l_erro.='<li>Para contrato de receita, o tipo deve ser de fornecimento.';
       $l_tipo=0;
     } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCA' && f($l_rs_solic,'cd_modalidade')!='I') {
-      $l_erro=$l_erro.'<li>Para ACT, o tipo deve ser de parceria institucional.';
+      $l_erro.='<li>Para ACT, o tipo deve ser de parceria institucional.';
       $l_tipo=0;
     } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCB' && f($l_rs_solic,'cd_modalidade')!='E') {
-      $l_erro=$l_erro.'<li>Para contrato de bolsista, o tipo deve ser de emprego.';
+      $l_erro.='<li>Para contrato de bolsista, o tipo deve ser de emprego.';
       $l_tipo=0;
     } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCD' && (f($l_rs_solic,'cd_modalidade')=='F'&&f($l_rs_solic,'cd_modalidade')=='I')) {
-      $l_erro=$l_erro.'<li>Para contrato de despesa, o tipo não pode ser de fornecimento e não pode ser de parceria institucional.';
+      $l_erro.='<li>Para contrato de despesa, o tipo não pode ser de fornecimento e não pode ser de parceria institucional.';
       $l_tipo=0;      
     } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCP' && f($l_rs_solic,'cd_modalidade')!='I') {
-      $l_erro=$l_erro.'<li>Para contrato de parceria, o tipo deve ser de parceria institucional.';
+      $l_erro.='<li>Para contrato de parceria, o tipo deve ser de parceria institucional.';
       $l_tipo=0;
     }    
   }
-  if(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==1 && Nvl(f($l_rs_solic,'pessoa_fisica'),'')=='N') {
-      $l_erro=$l_erro.'<li>Tipo do contrato, não perimite a contração de pessoa física.';
+  if($l_tipo_pessoa=='F' && Nvl(f($l_rs_solic,'pessoa_fisica'),'')=='N') {
+      $l_erro.='<li>Tipo do contrato, não permite a contração de pessoa física.';
       $l_tipo=0;
-  } elseif (Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==2 && Nvl(f($l_rs_solic,'pessoa_juridica'),'')=='N') {
-      $l_erro=$l_erro.'<li>Tipo do contrato, não perimite a contração de pessoa jurídica.';
+  } elseif ($l_tipo_pessoa=='J' && Nvl(f($l_rs_solic,'pessoa_juridica'),'')=='N') {
+      $l_erro.='<li>Tipo do contrato, não permite a contração de pessoa jurídica.';
       $l_tipo=0;
   }
   // Verifica se o cliente tem o módulo de acordos contratado
@@ -74,16 +79,8 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   }
 
   // Recupera os dados do representante legal
-  $sql = new db_getBenef; $l_rs2 = $sql->getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
-  if (count($l_rs2)==0) {
-    $l_existe_rs2=0; 
-  } else {
-    $l_existe_rs2=count($l_rs2);
-    foreach($l_rs2 as $row) {
-      $l_rs2 = $row;
-      break;
-    }
-  }
+  $sql = new db_getConvOutroRep; $l_rs2 = $sql->getInstanceOf($dbms,$l_chave,null,null,1);
+  $l_existe_rs2 = count($l_rs2);
 
   // Recupera os dados das parcelas
   $sql = new db_getAcordoParcela; $l_rs3 = $sql->getInstanceOf($dbms,$l_chave,null,'VALIDA',null,null,null,null,null,null,null);
@@ -112,7 +109,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
       } else {
         // Validação do representante legal
         // Não há representante legal para contratos com pessoa física
-        if (Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==1) {
+        if ($l_tipo_pessoa=='F') {
           // Se outra parte for pessoa física, não pode ter representante legal
           if ($l_existe_rs2>0) {
             $l_erro.='<li>Quando a outra parte é pessoa física não pode haver representante legal.';
@@ -131,10 +128,15 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
             $l_erro.='<li>O representante legal não foi informado.';
             $l_tipo=0;
           } else {
-            if (!(Nvl(f($l_rs2,'sq_tipo_pessoa'),0)==1)) {
-              $l_erro.='<li>O representante legal deve ser pessoa física.';
-              $l_tipo=0;
-            } 
+
+            foreach($l_rs2 as $row) {
+              $sql = new db_getBenef; $l_rs21 = $sql->getInstanceOf($dbms,$l_cliente,f($row,'sq_pessoa'),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
+              $l_rs21 = $l_rs21[0];
+              if (!(f($l_rs21,'sq_tipo_pessoa')==1 || f($l_rs21,'sq_tipo_pessoa')==3)) {
+                $l_erro.='<li>O representante legal deve ser pessoa física.';
+                $l_tipo=0;
+              } 
+            }
           } 
         } 
       }
@@ -158,7 +160,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
        }
       } 
       if ($l_erro_banco==1) {
-        $l_erro=$l_erro.'<li>Dados bancários incompletos. Acesse a opção "Outra parte", confira os dados e grave a tela.';
+        $l_erro.='<li>Dados bancários incompletos. Acesse a opção "Outra parte", confira os dados e grave a tela.';
         $l_tipo=0;
       }
 

@@ -99,6 +99,7 @@ begin
          End If;
       End If;
    Else
+       
       -- Grava dados complementares, dependendo do tipo de acordo
       If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
          update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
@@ -111,6 +112,12 @@ begin
       -- Recupera dados da pessoa informada
       select * into w_pessoa from co_pessoa where sq_pessoa = w_chave_pessoa;
       
+      -- Recupera a forma de pagamento do acordo
+      select b.sigla into w_forma_pagamento
+        from ac_acordo                     a
+             inner join co_forma_pagamento b on (a.sq_forma_pagamento = b.sq_forma_pagamento)
+       where a.sq_siw_solicitacao = p_chave;
+
       -- Atualiza os dados da pessoa
       sp_putpessoa(p_operacao           => 'A',
                    p_cliente            => w_pessoa.sq_pessoa_pai,
@@ -186,11 +193,6 @@ begin
                where sq_pessoa_conta = w_chave_conta;
             End If;
          End If;
-         update ac_acordo
-            set sq_agencia     = p_sq_agencia,
-                operacao_conta = p_op_conta,
-                numero_conta   = p_nr_conta
-          where sq_siw_solicitacao = p_chave;
       End If;
       
       -- Recupera o módulo da solicitacao
@@ -220,9 +222,10 @@ begin
          
          If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
             update ac_acordo 
-               set sq_agencia     = p_sq_agencia,
-                   operacao_conta = p_op_conta,
-                   numero_conta   = p_nr_conta
+               set sq_agencia      = p_sq_agencia,
+                   operacao_conta  = p_op_conta,
+                   numero_conta    = p_nr_conta,
+                   codigo_deposito = p_codigo_deposito
             where sq_siw_solicitacao = p_chave;
          Elsif w_forma_pagamento = 'ORDEM' Then
             update ac_acordo 
@@ -260,9 +263,10 @@ begin
          
          If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
             update fn_lancamento 
-               set sq_agencia     = p_sq_agencia,
-                   operacao_conta = p_op_conta,
-                   numero_conta   = p_nr_conta
+               set sq_agencia      = p_sq_agencia,
+                   operacao_conta  = p_op_conta,
+                   numero_conta    = p_nr_conta,
+                   codigo_deposito = p_codigo_deposito
             where sq_siw_solicitacao = p_chave;
          Elsif w_forma_pagamento = 'ORDEM' Then
             update fn_lancamento 

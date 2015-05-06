@@ -27,6 +27,10 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_igcc            = f($RS,'igcc');
   $w_exibe_idec      = f($RS,'exibe_idec');
   $w_sb_moeda        = nvl(f($RS,'sb_moeda'),'');
+
+  // Tipo da pessoa que está sendo contratada (1 ou 3 = Física; 2 ou 4 = Jurídica)
+  if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1 || Nvl(f($RS,'sq_tipo_pessoa'),0)==3) $w_tipo_pessoa = 'F';
+  else $w_tipo_pessoa = 'J';
   
   // Verifica as opções de submenu
   $sql = new db_getLinkSubMenu; $RS_Submenu = $sql->getInstanceOf($dbms, $w_cliente, $w_SG);
@@ -528,12 +532,12 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       foreach($RSQuery as $row) { 
         $l_html.=$crlf.'      <tr><td colspan=2 bgColor="'.$conTrBgColor.'" style="border: 1px solid rgb(0,0,0);" ><b>';
         $l_html.=$crlf.'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')';
-        if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) $l_html.=$crlf.'          - '.f($row,'cpf').'</b>';
-        else                                   $l_html.=$crlf.'          - '.f($row,'cnpj').'</b>';
+        if ($w_tipo_pessoa=='F') $l_html.=$crlf.'          - '.f($row,'cpf').'</b>';
+        else                     $l_html.=$crlf.'          - '.f($row,'cnpj').'</b>';
         if ($l_P1==4) {
           $sql = new db_getBenef; $RSQuery1 = $sql->getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null, null, null, null, null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
-          if (f($RSQuery1,'sq_tipo_pessoa')==1) {
+          if ($w_tipo_pessoa=='F') {
             $l_html.=$crlf.'      <tr><td colspan="2">';
             $l_html.=$crlf.'          <tr><td><b>Sexo:</b></td>'; 
             $l_html.=$crlf.'              <td>'.f($RSQuery1,'nm_sexo').'</td></tr>';
@@ -549,11 +553,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=$crlf.'              <td>'.Nvl(f($RSQuery1,'passaporte_numero'),'---').'</td></tr>';
             $l_html.=$crlf.'          <tr><td><b>País emissor:</b></td>'; 
             $l_html.=$crlf.'              <td>'.Nvl(f($RSQuery1,'nm_pais_passaporte'),'---').'</td></tr>';
-          } else {
+          } elseif (f($RSQuery1,'sq_tipo_pessoa')==2) {
             $l_html.=$crlf.'      <tr><td><b>Inscrição estadual:</b></td>'; 
             $l_html.=$crlf.'          <td>'.Nvl(f($RSQuery1,'inscricao_estadual'),'---').'</td></tr>';
           } 
-          if (f($RSQuery1,'sq_tipo_pessoa')==1) {
+          if (f($RSQuery1,'sq_tipo_pessoa')==1 || f($RSQuery1,'sq_tipo_pessoa')==3) {
             $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Endereço comercial, Telefones e e-Mail</td>';
           } else {
             $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Endereço principal, Telefones e e-Mail</td>';
@@ -600,17 +604,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=$crlf.'                <td>---</td></tr>';
           }  
           if (substr($w_sigla,0,3)=='GCR') {
-            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
-            $l_html.=$crlf.'      <tr><td><b>Forma de recebimento:</b></td>';
-            $l_html.=$crlf.'      <td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento ('.upper(f($RS,'nm_forma_pagamento')).')</td>';
           } elseif (substr($w_sigla,0,3)=='GCD') {
-            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
-            $l_html.=$crlf.'      <tr><td><b>Forma de pagamento:</b></td>';
-            $l_html.=$crlf.'      <td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento ('.upper(f($RS,'nm_forma_pagamento')).')</td>';
           } elseif (substr($w_sigla,0,3)!='GCZ') {
-            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
-            $l_html.=$crlf.'      <tr><td><b>Forma de pagamento/recebimento:</b></td>';
-            $l_html.=$crlf.'      <td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+            $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento ('.upper(f($RS,'nm_forma_pagamento')).')</td>';
           } 
           if (substr($w_sigla,0,3)!='GCR' && substr($w_sigla,0,3)!='GCZ') {
             if (!(strpos('CREDITO,DEPOSITO',f($RS,'sg_forma_pagamento'))===false)) {
@@ -653,12 +651,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
               $l_html.=$crlf.'          <tr valign="top">';
               $l_html.=$crlf.'            <td colspan=2>Cidade:<b><br>'.nvl(f($RS,'nm_cidade'),'---').'</td>';
               $l_html.=$crlf.'            <td>País:<b><br>'.nvl(f($RS,'nm_pais'),'---').'</td>';
+              $l_html.=$crlf.'          <tr><td colspan=3>Informações adicionais:<b><br>'.crlf2br(nvl(f($RS,'informacoes'),'---')).'</td>';
               $l_html .= $crlf.'    </table>';
             } 
           } 
         } 
         // Representantes legais e contatos
-        if (Nvl(f($RS,'sq_tipo_pessoa'),0)==2 && $l_P1==4) {
+        if ($w_tipo_pessoa=='J') {
           if ($w_tipo_visao!=2) {
             // i==1: exibe representantes legais; i==2: contatos
             for ($i=1; $i<=2; $i++) {
