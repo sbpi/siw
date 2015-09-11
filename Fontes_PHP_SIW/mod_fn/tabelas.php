@@ -221,9 +221,9 @@ function Imposto() {
           }
         }
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -436,9 +436,9 @@ function Valor(){
     if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_codigo_externo','Código externo','1','','1','30','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } else {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -707,9 +707,9 @@ function Documento(){
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
       Validate('w_codigo_externo','Código externo','1','','1','30','1','1');
       if ($w_mod_pa=='S') Validate('w_especie_documento','Espécie documental','SELECT','','1','18','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -934,9 +934,9 @@ function Lancamento() {
       ShowHTML('     alert ("Não pode existir tipo de lançamento com valores negativos para os campos recebimento e pagamento ao mesmo tempo!");');
       ShowHTML('     return false;');
       ShowHTML('  }');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

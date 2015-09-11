@@ -1542,7 +1542,7 @@ function Excluir() {
   if (!(strpos('E', $O) === false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1 != 1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1703,7 +1703,7 @@ function Encaminhamento() {
       } elseif ($w_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
         Validate('w_despacho', 'Detalhamento do despacho', '', '1', '1', '2000', '1', '1');
       }
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     }
     if (nvl($w_tipo_despacho,'')!='' && $w_copia) {
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1857,7 +1857,7 @@ function Anotar() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     Validate('w_observacao', 'Anotação', '', '1', '1', '2000', '1', '1');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1 != 1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1945,7 +1945,7 @@ function Concluir() {
     CompData('w_fim_real', 'Término da execução', '<=', FormataDataEdicao(time()), 'data atual');
     Validate('w_custo_real', 'Recurso executado', 'VALOR', '1', 4, 18, '', '0123456789.,');
     Validate('w_nota_conclusao', 'Nota de conclusão', '', '1', '1', '2000', '1', '1');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1 != 1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2748,7 +2748,7 @@ function Tramitacao() {
     } elseif ($p_tipo_despacho != f($RS_Parametro, 'despacho_eliminar')) {
       Validate('w_despacho', 'Detalhamento do despacho', '', '1', '1', '2000', '1', '1');
     }
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($p_tipo_despacho == f($RS_Parametro, 'despacho_arqsetorial')) {
       ShowHTML('  if (w_envia_outra) {');
       ShowHTML('    if (!confirm("Você selecionou protocolos que estão de posse de outras unidades!\nCONFIRMA O ARQUIVAMENTO?")) return false;');
@@ -3279,7 +3279,7 @@ function TramitCentral() {
     ShowHTML('     alert("Não é permitido arquivar o(s) seguinte(s) protocolo(s) sem assunto: \n" + w_teste ) ');
     ShowHTML('     return false; ');
     ShowHTML('  }');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  if (!confirm("Confirma a execução da ação selecionada com os dados informados?")) return false;');
     ShowHTML('  theForm.Botao.disabled=true;');
     ValidateClose();
@@ -3671,7 +3671,7 @@ function Classificacao() {
     ShowHTML('    return false;');
     ShowHTML('  }');
     Validate('w_assunto', 'Classificação', 'HIDDEN', 1, 1, 18, '', '0123456789');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  theForm.Botao.disabled=true;');
     ValidateClose();
     ScriptClose();
@@ -3886,7 +3886,7 @@ function Recebimento() {
         if ($O == 'S' || $O == 'U') {
           Validate('w_observacao', 'Observações sobre a recusa', '1', '', '5', '2000', '1', '1');
         }
-        Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+        Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
         ShowHTML('  theForm.Botao[0].disabled=true;');
         ShowHTML('  theForm.Botao[1].disabled=true;');
       } else {

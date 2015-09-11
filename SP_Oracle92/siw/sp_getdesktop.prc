@@ -17,12 +17,12 @@ begin
    If w_interno = 'S' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, 
+         select /*+ ordered*/ v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, 
                 v.sq_menu, v.nome as nm_servico, 
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd, y.qtd as qtd_solic
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
-              inner join (select c.sq_menu, count(d.sq_siw_solicitacao) as qtd
+              inner join (select /*+ ordered*/ c.sq_menu, count(d.sq_siw_solicitacao) as qtd
                             from siw_menu                        c
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite)

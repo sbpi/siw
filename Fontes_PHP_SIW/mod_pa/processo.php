@@ -557,9 +557,9 @@ function Alterar() {
     Validate('w_descricao', 'Detalhamento do assunto', '1', '1', 1, 2000, '1', '1');
     if ($O == 'E')
       Validate('w_observacao', 'Observações a respeito da exclusão', '1', '1', 1, 2000, '1', '1');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   } elseif ($O == 'E' || $O == 'A') {
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  return(confirm("Confirma cancelamento do protocolo ' . $w_protocolo . '?\nEsta operação não poderá ser desfeita!"));');
   }
   ValidateClose();
@@ -775,7 +775,7 @@ function Central() {
       ShowHTML('    alert("Informe o motivo da devolução!"); ');
       ShowHTML('    return false;');
       ShowHTML('  } ');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao.disabled=true;');
       ValidateClose();
@@ -976,7 +976,7 @@ function Autuar() {
   ValidateOpen('Validacao');
   Validate('w_unidade_autua', 'Unidade interessada na autuação', 'SELECT', '1', 1, 18, '', '1');
   Validate('w_descricao', 'Detalhamento do assunto', '1', '1', 1, 2000, '1', '1');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1163,7 +1163,7 @@ function Juntar() {
       ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
       ShowHTML('    return false;');
       ShowHTML('  }');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para ' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados') . '?\')) return false;');
       ShowHTML('  theForm.Botao.disabled=true;');
     }
@@ -1370,7 +1370,7 @@ function Vincular() {
       ShowHTML('    alert("Processo de origem não pode ser o mesmo ao qual será vinculado!");');
       ShowHTML('    return false;');
       ShowHTML('  }');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
   } elseif ($O == 'P') {
     Validate('p_prefixo', 'Prefixo', '1', '', '5', '5', '', '0123456789');
@@ -1512,7 +1512,7 @@ function Desmembrar() {
   ShowHTML('    alert("Você deve informar pelo menos um protocolo!"); ');
   ShowHTML('    return false;');
   ShowHTML('  }');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1755,7 +1755,7 @@ function ArqSetorial() {
       ShowHTML('  }');
       //Validate('w_chave', 'nº. de protocolo', 'CHECKBOX', '1', '1', '5', '', '1');
       Validate('w_observacao', 'Observações sobre o acondicionamento do protocolo', '1', '1', 1, 2000, '1', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para ' . (($p_tipo_despacho == f($RS_Parametro, 'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados') . '?\')) return false;');
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao.disabled=true;');
@@ -1951,7 +1951,7 @@ function Arquivar() {
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_observacao', 'Observações sobre o acondicionamento do protocolo', '1', '1', 1, 2000, '1', '1');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -2039,7 +2039,7 @@ function Eliminar() {
   ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=../' . MontaURL('MESA') . '">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -2142,7 +2142,7 @@ function Emprestar() {
   Validate('w_data', 'Data do empréstimo', 'DATA', '1', '10', '10', '', '0123456789/');
   Validate('w_retorno_limite', 'Data limite para retorno', 'DATA', '', 10, 10, '', '0123456789/');
   CompData('w_retorno_limite', 'Data limite para retorno', '>=', FormataDataEdicao(time()), 'data atual');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');

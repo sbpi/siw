@@ -346,7 +346,7 @@ begin
     
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
-    If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao not in ('CI','PP') Then
+    If w_ativo = 'S' and w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao not in ('CI','PP') Then
        -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
        -- e se não for gestor do sistema, complementa o resultado para somar 16
        Result := Result + 10;

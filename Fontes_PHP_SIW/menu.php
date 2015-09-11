@@ -504,7 +504,7 @@ function Vinculacao() {
       ShowHTML('    return false;');
       ShowHTML('  }');
     } 
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 

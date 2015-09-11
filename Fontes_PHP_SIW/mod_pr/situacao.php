@@ -165,9 +165,9 @@ function Situacao() {
       Validate('w_situacao','Comentários gerais e pontos de atenção.','','1','5','1000','1','1');  
       Validate('w_progressos','Principais progressos','','','5','1000','1','1');
       Validate('w_passos','Próximos passos','','','5','1000','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');        
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');        
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  return(confirm(\'Confirma a exclusão deste registro?\'));');
     }  
     ShowHTML('  theForm.Botao[0].disabled=true;');

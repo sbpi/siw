@@ -159,9 +159,9 @@ function Abastecimento() {
       Validate('w_litros','Litros','VALOR','1',4,18,'','0123456789.,');
       Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
       Validate('w_local','Local','1','1','5','60','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -333,9 +333,9 @@ function Grupo() {
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_descricao','descrição','1','1','3','255','1','1');       
       Validate('w_sigla','Sigla','1','1','1','10','1',''); 
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -529,9 +529,9 @@ function Celular() {
       ShowHTML('    return false; ');
       ShowHTML('  } ');
       Validate('w_motivo','Motivo do bloqueio','1','','5','1000','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -715,9 +715,9 @@ function Opiniao() {
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_sigla','Sigla','1','1','1','3','1','');   
       Validate('w_ordem','Ordem','1','1','1','2','','1');  
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -895,9 +895,9 @@ function TipoVeiculo() {
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_descricao','descrição','1','1','3','255','1','1');
       Validate('w_sigla','Sigla','1','1','1','10','1','');  
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1092,9 +1092,9 @@ function Veiculo() {
       Validate('w_ano_fabricacao','Ano Fabricação','1','1','4','4','1','1'); 
       Validate('w_potencia','Potência','1','1','2','6','1','1'); 
       Validate('w_cilindrada','Cilindrada','1','1','2','6','1','1'); 
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

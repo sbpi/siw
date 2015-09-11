@@ -212,11 +212,11 @@ function Restricao() {
         Validate('w_fase_atual','Fase atual','SELECT','1','1','18','1','');   
         Validate('w_situacao_atual','Situação atual','1','',5,2000,'1','1');  
         Validate('w_data_situacao','Data situação','DATA','1','10','10','','0123456789/');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');        
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');        
       }
     } elseif ($O=='E') {
       if ($P1==2) {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
@@ -593,12 +593,12 @@ function ComentarioEtapa() {
       Validate('w_comentario','Comentário','','1','2','2000','1','1');
       Validate('w_caminho','Arquivo','','','5','255','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='V') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma o registro deste comentário?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

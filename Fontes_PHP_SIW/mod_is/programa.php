@@ -901,7 +901,7 @@ function RecursoProgramado() {
   if ($O=='A') {
     Validate('w_valor','Recurso programado','VALOR','1',4,18,'','0123456789.,');
     CompValor('w_valor','Recurso programado','>','0,00','zero');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   } elseif ($O=='P') {
     Validate('w_chave','Programa','SELECT','1',1,18,'','0123456789');
   } 
@@ -2918,7 +2918,7 @@ function Excluir() {
   if (!(strpos('E',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3001,7 +3001,7 @@ function Encaminhamento() {
     ValidateOpen('Validacao');
     Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
     Validate('w_despacho','Despacho','','1','1','2000','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3087,7 +3087,7 @@ function Anotar() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação','','1','1','2000','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3173,7 +3173,7 @@ function Concluir() {
     CompData('w_fim_real','Término da execução','<=',FormataDataEdicao(time()),'data atual');
     Validate('w_custo_real','Recurso executado', 'VALOR', '1', 4, 18, '', '0123456789.,');
     Validate('w_nota_conclusao','Nota de conclusão', '', '1', '1', '2000', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');

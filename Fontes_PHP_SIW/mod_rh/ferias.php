@@ -776,7 +776,7 @@ function Geral() {
     ShowHTML('var d2=new Date(data2.substr(6,4), data2.substr(3,2)-1, data2.substr(0,2));');
     ShowHTML('return( Math.ceil((d2.getTime()-d1.getTime())/1000/60/60/24)+1 );');
     ShowHTML('}');   
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');    
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');    
     ShowHTML('  if (theForm.w_envio.value=="S" && theForm.w_assinatura.value=="") {');
     ShowHTML('     alert("Para envio automático a assinatura eletrônica deve ser informada!");');
     ShowHTML('     theForm.w_assinatura.focus();');
@@ -996,7 +996,7 @@ function Excluir() {
   if (strpos('E',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
@@ -1114,7 +1114,7 @@ function Encaminhamento() {
         ShowHTML('  }');
       } 
     } 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1262,7 +1262,7 @@ function Opiniao() {
   ShowHTML('    return false;');
   ShowHTML('  }');
   Validate('w_motivo','Motivo da insatisfação','1','','6','1000','1','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -1324,7 +1324,7 @@ function Anotar() {
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação','','1','1','2000','1','1');
     Validate('w_caminho','Arquivo','','','5','255','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1552,7 +1552,7 @@ function Concluir() {
   FormataDataHora();
   FormataValor();
   ValidateOpen('Validacao');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();

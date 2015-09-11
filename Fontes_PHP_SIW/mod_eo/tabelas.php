@@ -174,9 +174,9 @@ function TipoArquivo() {
       Validate('w_sigla','Sigla','1','1','2','15','1','1');
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_descricao','Descricao','','1',1,2000,'1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

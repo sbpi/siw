@@ -748,7 +748,7 @@ function Inicial() {
   CompHora('["w_trabalhadas[]"][ind]', 'Hora extra diária', '<=', '["w_limite"]', $w_limite_diario_extras);
   //CompHora('w_entrada_manha','Entrada manhã','<','w_saida_manha','Saída manhã');
   ShowHTML('  }');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -1158,7 +1158,7 @@ function Lista() {
   ShowHTML('  }');
   ValidateClose();
   ValidateOpen('Validacao');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   ShowHTML('  var i; ');
   ShowHTML('  var ind; ');
   ShowHTML('  var w_erro=true; ');

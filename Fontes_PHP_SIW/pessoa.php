@@ -298,10 +298,10 @@ function Benef() {
       Validate('w_senha_adm','Senha do usuário da rede','1','1','2','30','1','1');
     }
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
   } elseif ($O=='E' || $O=='T' || $O=='D') {
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   }
   ValidateClose();
   ScriptClose();
@@ -740,7 +740,7 @@ function CadastraPessoa() {
   ShowHTML('     theForm.w_sq_pais.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();

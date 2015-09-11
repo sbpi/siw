@@ -451,7 +451,7 @@ function Identificacao() {
       } 
     } 
     if ($_SESSION['PORTAL']=='') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','14','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
     if (Nvl($P1,0)==1) {
       if (Nvl($w_sq_contrato_colaborador,'')=='') {
@@ -715,7 +715,7 @@ function Historico() {
     ShowHTML('  }');
     Validate('w_atividades_civicas','Atividades cívicas','1','',5,255,'1','1');
     if ($_SESSION['PORTAL']=='') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','14','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }     
   } 
   ValidateClose();
@@ -829,9 +829,9 @@ function Idiomas() {
     ValidateOpen('Validacao');
     if (strpos('IA',$O)!==false) {
       Validate('w_chave','Idioma','SELECT','1','1','10','','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1051,7 +1051,7 @@ function Experiencia() {
       ShowHTML('  }');
       Validate('w_atividades','Atividades desempenhadas','','1','4','4000','1','1');
       if ($_SESSION['PORTAL']=='') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1'); 
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1'); 
       }
     } elseif ($O=='E') {
       if ($_SESSION['PORTAL']=='') {
@@ -1247,11 +1247,11 @@ function Cargos() {
       Validate('w_fim','Fim','Data','','10','10','','1');
       Validate('w_nm_area','Área do conhecimento','','1','1','92','1','1');
       if ($_SESSION['PORTAL']=='') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1'); 
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1'); 
       }
     } elseif ($O=='E') {
       if ($_SESSION['PORTAL']=='') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       }
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
@@ -1425,10 +1425,10 @@ function Escolaridade() {
       Validate('w_fim','Fim','DATAMA','','7','7','','0123456789/');
       Validate('w_sq_pais','País conclusão','SELECT','1','1','10','','1');
       if ($_SESSION['PORTAL']=='') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1'); 
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1'); 
       }
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1610,10 +1610,10 @@ function Extensao() {
       Validate('w_carga_horaria','Carga horária','','1','2','4','','0123456789');
       Validate('w_conclusao','conclusao','DATA','','10','10','','0123456789/');
       if ($_SESSION['PORTAL']=='') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1'); 
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1'); 
       }
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1782,10 +1782,10 @@ function Producao() {
       Validate('w_meio','Meio de publicação','','1','2','100','1','1');
       Validate('w_data','Data','DATA','1','10','10','','0123456789/');
         if ($_SESSION['PORTAL']=='') {
-          Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+          Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         }
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

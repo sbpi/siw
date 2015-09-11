@@ -153,9 +153,9 @@ function TipoDemanda() {
       Validate('w_sigla','Sigla','1','1','1','20','1','1');
       Validate('w_descricao','Descrição','1','','4','30','1','1');
       Validate('w_sq_unidade','Setor responsável','HIDDEN','',1,18,'','0123456789');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

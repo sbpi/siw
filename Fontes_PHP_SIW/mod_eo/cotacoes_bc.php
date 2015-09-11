@@ -140,7 +140,7 @@ function Inicial() {
     ShowHTML('    alert("Total de valores a serem atualizados é superior ao limite do servidor!\nReduza-o a, no máximo, "+ Math.floor(100*max_vars/form_vars)+"% da quantidade atual reduzindo o período ou desmarcando algumas das cotações.");');
     ShowHTML('    return false;');
     ShowHTML('  }');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','15','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','15','1','1');
     ShowHTML('  document.getElementById("form-data1").style.display = "none";');
     ShowHTML('  document.getElementById("progress1").style.display = "block";');
     ValidateClose();

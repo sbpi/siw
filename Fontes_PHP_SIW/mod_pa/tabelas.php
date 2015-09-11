@@ -202,9 +202,9 @@ function TipoDespacho() {
       Validate('w_nome', 'Nome', '1', '1', '4', '60', '1', '1');
       Validate('w_sigla', 'Sigla', '1', '1', '2', '10', '1', '1');
       Validate('w_descricao', 'Descrição', '1', '1', '4', '255', '1', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -500,9 +500,9 @@ function Caixa() {
     if (!(strpos('IA', $O) === false)) {
       Validate('w_assunto', 'Assunto', '1', '1', '4', '750', '1', '1');
       Validate('w_descricao', 'Descrição', '1', '1', '4', '2000', '1', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -729,7 +729,7 @@ function alteraLocal() {
     Validate('["w_local[]"][ind]','Localização','SELECT','1','1','18','','1');
     ShowHTML('  }');
     Validate('w_observacao', 'Observação', '1', '', '4', '2000', '1', '1');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   } elseif ($O == 'P') {
     Validate('p_unidade', 'Unidade', 'SELECT', '', '1', '18', '', '1');
   }
@@ -894,9 +894,9 @@ function EspecieDocumento() {
       Validate('w_nome', 'Nome', '1', '1', '4', '30', '1', '1');
       Validate('w_sigla', 'Sigla', '1', '1', '1', '10', '1', '1');
       Validate('w_assunto', 'Classificação', 'HIDDEN', '', 1, 18, '', '0123456789');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1083,9 +1083,9 @@ function Unidade() {
         Validate('w_nr_transferencia', 'Número da guia de transferência', '1', '', '1', '5', '', '1');
         Validate('w_nr_eliminacao', 'Número da guia de eliminação', '1', '', '1', '5', '', '1');
       }
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1309,9 +1309,9 @@ function NaturezaDoc() {
       Validate('w_nome', 'Nome', '1', '1', '4', '60', '1', '1');
       Validate('w_sigla', 'Sigla', '1', '1', '2', '10', '1', '1');
       Validate('w_descricao', 'Descrição', '1', '1', '4', '1000', '1', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1476,9 +1476,9 @@ function TipoGuarda() {
     if (!(strpos('IA', $O) === false)) {
       Validate('w_sigla', 'Sigla', '1', '1', '1', '4', '1', '1');
       Validate('w_descricao', 'Descrição', '1', '1', '4', '255', '1', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1653,7 +1653,7 @@ function Parametro() {
   ShowHTML('    theForm.w_despacho_arqcentral.focus();');
   ShowHTML('    return false;');
   ShowHTML('  }');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '15', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '15', '1', '1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -1737,7 +1737,7 @@ function Renumera() {
   ShowHTML('    theForm.w_ano.focus();');
   ShowHTML('    return false');
   ShowHTML('  }');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '15', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '15', '1', '1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -1859,9 +1859,9 @@ function Assunto() {
       Validate('w_final_guarda', 'Guarda na fase final', 'SELECT', '1', '1', '18', '', '1');
       Validate('w_final_anos', 'Nº de anos na fase final', '1', '', '1', '18', '', '1');
       Validate('w_destinacao_final', 'Destinação final do documento', 'SELECT', '1', '1', '18', '', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -2165,9 +2165,9 @@ function Arquivo() {
       Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
       Validate('w_unidade', 'Unidade', 'SELECT', '1', '1', '18', '', '1');
       Validate('w_chave', 'Localização', 'SELECT', '1', '1', '18', '', '1');
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O == 'E') {
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -2342,7 +2342,7 @@ function Locais() {
       if ($O == 'C' || $O == 'I' || $O == 'A') {
         Validate('w_nome', 'Nome', '1', '1', '2', '30', '1', '1');
       }
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');

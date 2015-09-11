@@ -137,9 +137,9 @@ function TipoVinculo() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_tipo_pessoa','Aplicação','SELECT','1','1','18','','1');
       Validate('w_nome','Nome','1','1','1','20','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -356,7 +356,7 @@ function ParSeguranca() {
   Validate('w_maximo_tentativas','Máximo tentativas','1','1','1','2','','1');
   Validate('w_dias_vigencia_senha','Dias vigência','1','1','1','2','','1');
   Validate('w_dias_aviso_expiracao','Aviso expiração','1','1','1','2','','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','15','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','15','1','1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -428,7 +428,7 @@ function Integracao() {
   Validate('w_tabela','Tabela','SELECT','1','1','20','1','1');
   Validate('w_codigo_interno','Código interno','1','1','1','255','1','1');
   Validate('w_codigo_externo','Código externo','1','1','1','255','1','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','15','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','15','1','1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();

@@ -326,7 +326,7 @@ function Inicial() {
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       }
     } elseif (strpos('CP',$O)!==false) {
       if ($P1!=1 || $O=='C') {
@@ -1584,7 +1584,7 @@ function PesquisaPreco() {
       ShowHTML('  else {');
       ShowHTML('     if (theForm["w_chave_aux[]"].checked) w_erro=false;');
       ShowHTML('  }');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       if(f($RS_Solic,'nm_lcjulgamento')=='Global') {
         ShowHTML('  if (w_cont!=1 && theForm["w_chave_aux[]"].length!=w_cont) {');
         ShowHTML('    alert(\'Para licitação de julgamento global, todos os itens deve ser selecionado!\'); ');
@@ -2228,7 +2228,7 @@ function Excluir() {
   if ($O=='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2343,7 +2343,7 @@ function Encaminhamento() {
       } 
     }
     if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
@@ -2452,7 +2452,7 @@ function Anotar() {
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação','','1','1','2000','1','1');
     Validate('w_caminho','Arquivo','','','5','255','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2541,7 +2541,7 @@ function Informar() {
   ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789');
   ShowHTML('  }');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -2663,7 +2663,7 @@ function Concluir() {
   modulo();
   formatavalor();
   ValidateOpen('Validacao');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -3017,7 +3017,7 @@ function AF() {
       ShowHTML('    return false;');
       ShowHTML('  }');
     } 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();

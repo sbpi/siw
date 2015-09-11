@@ -103,7 +103,7 @@ function Inicial() {
   ValidateOpen('Validacao');
   Validate('w_observacao','Anotação','','1','1','2000','1','1');
   Validate('w_caminho','Arquivo','','','5','255','1','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
   ShowHTML('    alert("ATENÇÃO: Foi informado outro arquivo como anexo da anotação.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
   ShowHTML('  }');

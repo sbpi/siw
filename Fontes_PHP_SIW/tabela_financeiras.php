@@ -190,7 +190,7 @@ function CentroCusto() {
         Validate('w_descricao','Descrição','1','1','5','500','1','1');
         Validate('w_sigla','Sigla','1','1','2','20','1','1');
       } 
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
       ShowHTML('  if (confirm("Confirma herança dos dados da opção selecionada?")) {');
@@ -491,9 +491,9 @@ function Agencia() {
       Validate('w_sq_banco','Banco','SELECT','1','1','18','1','1');
       Validate('w_codigo','Código','1','1','4','6','X','0123456789-');
       Validate('w_nome','Nome','1','1','3','60','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -708,9 +708,9 @@ function Banco() {
     if (strpos('IA',$O)!==false) {
       Validate('w_codigo','Código','1','1','3','3','','1');
       Validate('w_nome','Nome','1','1','3','30','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -932,9 +932,9 @@ function Moeda() {
       Validate('w_bc_serie_compra','Série BC compra','1','','1','10','','0123456789');
       Validate('w_bc_serie_venda','Série BC venda','1','','1','10','','0123456789');
       Validate('w_exclusao_ptax','Exclusão PTAX','DATA','','10','10','','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1141,7 +1141,7 @@ function MoedaCotacao() {
       }
       Validate('w_taxa_compra','Taxa de compra','VALOR','1',6,18,'','0123456789,.');
       Validate('w_taxa_venda','Taxa de venda','VALOR','1',6,18,'','0123456789,.');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='P') {
       Validate('p_inicio','Início do período','DATA','','10','10','','0123456789/');
       Validate('p_fim','Término do período','DATA','','10','10','','0123456789/');
@@ -1152,7 +1152,7 @@ function MoedaCotacao() {
       ShowHTML('  }');
       CompData('p_inicio','Início do período','<=','p_fim','Término do período');      
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

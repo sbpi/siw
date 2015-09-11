@@ -186,7 +186,7 @@ function indica(){
     ShowHTML('  }');
     Validate('w_nome','Nome para exibição','1','1','1','20','1','1'); 
     if (nvl($w_auth,'true')=='true') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1'); 
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1'); 
     }
     ValidateClose();
     ScriptClose();

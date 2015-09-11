@@ -203,7 +203,7 @@ function TipoAcordo() {
     if ($O=='I' || $O=='A') {
       Validate('w_nome','Nome','1','1','5','60','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
       ShowHTML('  if (confirm("Confirma herança dos dados da opção selecionada?")) {');
@@ -213,12 +213,12 @@ function TipoAcordo() {
       ShowHTML('  } ');
       ShowHTML('  else { return false; } ');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='T' || $O=='D'){
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');     
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');     
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -553,9 +553,9 @@ function FormaPagamento(){
     if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -879,9 +879,9 @@ function Modalidades() {
         Validate('w_enquadramento_inicial','Equadramento inicial','VALOR','1','4','18','','0123456789.,');
         Validate('w_enquadramento_final','Enquadramento final','VALOR','1','4','18','','0123456789.,');
         CompValor('w_enquadramento_inicial','Equadramento inicial','<=','w_enquadramento_final','Equadramento final');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
      } elseif ($O=='E') {
-        Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+        Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
         ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
@@ -1067,9 +1067,9 @@ function FonteRecurso() {
        Validate('w_codigo','Código','1','1','1','10','1','1');
        Validate('w_nome','Nome','1','1','2','60','1','1');
        Validate('w_descricao','Descrição', '1', '', '5', '1000', '1', '1');
-       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
      } elseif ($O=='E') {
-       Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+       Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
        ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
        ShowHTML('     { return (true); }; ');
        ShowHTML('     { return (false); }; ');
@@ -1247,7 +1247,7 @@ function EspecDespesa() {
       Validate('w_codigo','Código','1','1','1','10','1','1');
       Validate('w_nome','Nome','1','1','3','70','1','1');
       Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
       ShowHTML('  if (confirm("Confirma herança dos dados da opção selecionada?")) {');
@@ -1257,7 +1257,7 @@ function EspecDespesa() {
       ShowHTML('  } ');
       ShowHTML('  else { return false; } ');
     } elseif($O=='E' || $O=='D' || $O=='T'){
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');    
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');    
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1564,7 +1564,7 @@ function PrestacaoContas() {
         Validate('w_descricao','Descrição','1','1','5','2000','1','1');
         Validate('w_tipo','Tipo de prestação de contas','SELECT','1','1','1','1','');
       } 
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');

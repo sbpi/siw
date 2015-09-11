@@ -379,7 +379,7 @@ function Inicial() {
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       }
     } elseif (strpos('CP',$O)!==false) {
       if ($P1!=1 || $O=='C') {
@@ -3598,7 +3598,7 @@ function Excluir() {
   if ($O=='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3709,7 +3709,7 @@ function Encaminhamento() {
     ValidateOpen('Validacao');
     Validate('w_destinatario','Destinatário', 'HIDDEN', '1', '1', '10', '', '1');
     Validate('w_despacho','Despacho', '', '1', '1', '2000', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3910,7 +3910,7 @@ function EncAutomatico() {
         ShowHTML('  }');
       }
     }
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -4029,7 +4029,7 @@ function Anotar() {
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação', '', '1', '1', '2000', '1', '1');
     Validate('w_caminho','Arquivo', '', '', '5', '255', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -4219,7 +4219,7 @@ function Concluir() {
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta_debito','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
        // Se não for encaminhamento
        ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -4570,7 +4570,7 @@ function SolicMail($p_solic,$p_tipo) {
   $sql = new db_getSolicData; $RSM = $sql->getInstanceOf($dbms,$p_solic,substr(f($RS_Menu,'sigla'),0,3).'GERAL');
   $w_sb_moeda  = nvl(f($RSM,'sb_moeda'),'');
   
-  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
+  if (f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S') && (f($RSM,'mail_tramite')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
@@ -4696,6 +4696,15 @@ function SolicMail($p_solic,$p_tipo) {
     foreach ($RS_Mail as $row_mail) { $RS_Mail = $row_mail; break; }
     if (f($RS_Mail, 'ativo')!='N' && nvl(f($RS_Mail, 'email'),'')!='' && (($p_tipo == 2 && f($RS_Mail, 'tramitacao') == 'S') || ($p_tipo == 3 && f($RS_Mail, 'conclusao') == 'S'))) {
         $w_destinatarios .= f($RS_Mail, 'email') . '|' . f($RS_Mail, 'nome') . '; ';
+    }
+    
+    if ($p_tipo == 3) {
+      // Recupera o e-mail do cadastrador se for conclusão
+      $sql = new DB_GetUserMail; $RS_Mail = $sql->getInstanceOf($dbms, $w_menu, f($RSM, 'cadastrador'), $w_cliente, null);
+      foreach ($RS_Mail as $row_mail) { $RS_Mail = $row_mail; break; }
+      if (f($RS_Mail, 'ativo')!='N' && nvl(f($RS_Mail, 'email'),'')!='' && f($RS_Mail, 'conclusao') == 'S') {
+          $w_destinatarios .= f($RS_Mail, 'email') . '|' . f($RS_Mail, 'nome') . '; ';
+      }     
     }
     
     // Executa o envio do e-mail

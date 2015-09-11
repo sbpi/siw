@@ -168,7 +168,7 @@ function ModalidadeCont() {
       Validate('w_sigla','Sigla','1','1','2','10','1','');
       Validate('w_nome','Nome','1','1','3','50','1','1');
       Validate('w_descricao','Descrição','1','1','3','500','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       if ($O=='A') {
         ShowHTML('  if (theForm.w_ativo[1].checked) {');
         ShowHTML('  if (confirm(\'Modalidades inativas não podem ter vinculação com tipos de afastamento. Se existir algum vínculo, ele será removido. Confirma?\'))');
@@ -177,7 +177,7 @@ function ModalidadeCont() {
         ShowHTML('  }');
       } 
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -412,9 +412,9 @@ function DireitoFerias() {
       Validate('w_faixa_fim','Dia de término do intervalo','VALOR','1',1,6,'','0123456789');
       CompValor('w_faixa_inicio','Faixa inicial','<','w_faixa_fim','faixa final');
       Validate('w_dias_ferias','Dia de férias','VALOR','1',1,6,'','0123456789');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -615,9 +615,9 @@ function Tipoafast() {
       ShowHTML('     alert(\'Não selecione nenhuma modalidade para tipos de afastamento inativos!\');');
       ShowHTML('     return false; }; ');
       ShowHTML('  }');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -861,9 +861,9 @@ function DataEspecial() {
         ShowHTML('  if (theForm.w_tipo.value == \'I\' && theForm.w_tipo.value == \'E\'){ ');
         Validate('w_abrangencia','Abrangência','SELECT','1','1','1','1','');
         ShowHTML('  };');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       } elseif ($O=='E') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
@@ -1133,7 +1133,7 @@ function Parametros() {
   Validate('w_ferias_nome','Nome do ferias','1','1','3','30','1','1');
   Validate('w_viagem_legenda','Legenda do viagem','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','0123456789');
   Validate('w_viagem_nome','Nome do viagem','1','1','3','30','1','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -1318,9 +1318,9 @@ function Cargo() {
       ShowHTML('     return (false);');
       ShowHTML('  }');
       CompValor('w_salario_piso','Piso salarial','<','w_salario_teto','teto salarial');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

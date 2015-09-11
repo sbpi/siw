@@ -1432,7 +1432,7 @@ function Excluir() {
   if ($O=='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();
@@ -1535,7 +1535,7 @@ function Encaminhamento() {
     ValidateOpen('Validacao');
     Validate('w_destinatario','Destinatário', 'HIDDEN', '1', '1', '10', '', '1');
     Validate('w_despacho','Despacho', '', '1', '1', '2000', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();
@@ -1689,7 +1689,7 @@ function EncAutomatico() {
         ShowHTML('  }');
       }
     }
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();
@@ -1792,7 +1792,7 @@ function Anotar() {
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação', '', '1', '1', '2000', '1', '1');
     Validate('w_caminho','Arquivo', '', '', '5', '255', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();
@@ -1936,7 +1936,7 @@ function Concluir() {
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();

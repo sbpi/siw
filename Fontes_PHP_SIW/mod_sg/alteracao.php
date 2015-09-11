@@ -144,7 +144,7 @@ function Geral() {
     Validate('w_externo', 'Código externo', '1', '', 1, 30, '1', '1');
     Validate('w_cadastrador', 'Cadastrador', 'SELECT', 1, 1, 18, '1', '1');
     Validate('w_observacao', 'Observação', '', '', 5, 2000, '1', '1');
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  document.Form.Botao[0].disabled = true;');
     ShowHTML('  document.Form.Botao[1].disabled = true;');
   }

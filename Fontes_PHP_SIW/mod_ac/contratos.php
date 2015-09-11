@@ -408,7 +408,7 @@ function Inicial() {
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       }
     } elseif (strpos('CP',$O)!==false) {
       if ($P1!=1 || strpos('C',$O)!==false) {
@@ -2806,7 +2806,7 @@ function Excluir() {
   if ($O='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
      // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2911,7 +2911,7 @@ function Encaminhamento() {
     ValidateOpen('Validacao');
     Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
     Validate('w_despacho','Despacho','','1','1','2000','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3061,7 +3061,7 @@ function Encaminhamento1() {
         ShowHTML('  }');
       } 
     } 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3170,7 +3170,7 @@ function Anotar() {
     if ($w_existe_tipo_log) Validate('w_tipo_log','Tipo','SELECT','1','1','18','','1');
     Validate('w_observacao','Texto','','1','1','2000','1','1');
     Validate('w_caminho','Arquivo','','','5','255','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3309,7 +3309,7 @@ function Concluir() {
       }
     }
 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3537,7 +3537,7 @@ function Aditivos() {
           }
         }
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');

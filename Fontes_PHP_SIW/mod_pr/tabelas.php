@@ -325,7 +325,7 @@ function Vinculacao() {
       } 
       Validate('P4','Linhas por página','1','1','1','4','','0123456789');
     } elseif ($O=='A') {
-       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
     ValidateClose();
     ScriptClose();
@@ -634,7 +634,7 @@ function ConfiguraViagem() {
     ValidateOpen('Validacao');
     Validate('w_rubrica','Rubrica','SELECT','1','1','18','','1');
     Validate('w_lancamento','Tipo de lançamento','SELECT','1','1','18','','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ValidateClose();
     ScriptClose();
   }
@@ -810,7 +810,7 @@ function ConfiguraCompra() {
     ValidateOpen('Validacao');
     Validate('w_rubrica','Rubrica','SELECT','1','1','18','','1');
     Validate('w_lancamento','Tipo de lançamento','SELECT','1','1','18','','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ValidateClose();
     ScriptClose();
   }
@@ -988,9 +988,9 @@ function TipoEvento() {
       Validate('w_sigla','Sigla','1','1','2','15','1','1');
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_descricao','Descricao','','1',1,2000,'1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1155,9 +1155,9 @@ function TipoRestricao() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
       Validate('w_codigo','Código externo','1','','1','30','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1321,9 +1321,9 @@ function CronPrestacao() {
       if(nvl($w_tipo,'')!='') {
         Validate('w_prestacao_contas','Prestação de contas','SELECT',1,1,18,1,1);
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

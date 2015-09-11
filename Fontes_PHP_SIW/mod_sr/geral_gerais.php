@@ -122,7 +122,7 @@
       Validate('w_justificativa','Justificativa','1',1,5,2000,'1','1');
     } 
     if ($w_envio_inclusao=='S') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','','3','30','1','1');
       ShowHTML('  if (theForm.w_envio.value=="S" && theForm.w_assinatura.value=="") {');
       ShowHTML('     alert("Para envio automático a assinatura eletrônica deve ser informada!");');
       ShowHTML('     theForm.w_assinatura.focus();');

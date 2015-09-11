@@ -258,14 +258,14 @@ function Inicial  () {
           Validate('w_limite_diario','Limite diário de unidades','VALOR','1',3,18,'','0123456789,.');
           Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789,.');
         }
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       } elseif ($O=='E') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
       } elseif ($O=='M') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       }
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -639,9 +639,9 @@ function Disponivel() {
           Validate('w_unidades','Quantidade de unidades','VALOR','1',3,18,'','0123456789,.');
         }
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -889,9 +889,9 @@ function Indisponivel() {
       }
       CompData('w_inicio','Início da indisponibilidade','<=','w_fim','Término da indisponibilidade');
       Validate('w_justificativa','Justificativa da indisponibilidade','1','1',3,2000,'1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -1327,14 +1327,14 @@ function Solic() {
         CompData('w_inicio','Início da alocação','<=','w_fim','Término da alocação');
         Validate('w_unidades','Unidades alocadas no período','VALOR','1',3,18,'','0123456789,.');
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='M') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1533,9 +1533,9 @@ function SolicPeriodo() {
       Validate('w_fim','Término da alocação','DATA',1,10,10,'','0123456789/');
       CompData('w_inicio','Início da alocação','<=','w_fim','Término da alocação');
       Validate('w_unidades','Unidades alocadas no período','VALOR','1',3,18,'','0123456789,.');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

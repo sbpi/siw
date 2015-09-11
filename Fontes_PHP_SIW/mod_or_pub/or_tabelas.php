@@ -158,9 +158,9 @@ function Iniciativa() {
       Validate('w_telefone','Telefone','1','','2','20','1','1');
       Validate('w_email','e-Mail','1','','5','60','1','1');
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
@@ -332,9 +332,9 @@ function PPA() {
       Validate('w_liquidado','Liquidado','VALOR','1','4','18','','0123456789,.');
       Validate('w_liquidar','Liquidar','VALOR','1','4','18','','0123456789,.');
       Validate('w_saldo','Saldo','1','VALOR','4','18','','0123456789,.');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');

@@ -718,7 +718,7 @@ function Geral() {
   Validate('w_armazenamento','Data de armazenamento', 'DATA', '1', '10', '10', '', '0123456789/');
   CompData('w_armazenamento','Data de armazenamento','<=',formataDataEdicao(time()),'data atual');
   CompData('w_armazenamento','Data de armazenamento','>=','w_efetiva','Data efetiva de recebimento');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1710,7 +1710,7 @@ function Excluir() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   if ($P1!=1) {
     // Se não for encaminhamento
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1782,7 +1782,7 @@ function Estorno() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   if ($P1!=1) {
     // Se não for encaminhamento
     ShowHTML('  theForm.Botao[0].disabled=true;');

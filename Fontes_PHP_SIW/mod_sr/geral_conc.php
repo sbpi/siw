@@ -33,7 +33,7 @@
   Validate('w_valor','Valor','VALOR','',4,18,'','0123456789.,');
   Validate('w_executor','Responsável pelo atendimento','SELECT',1,1,18,'','0123456789');
   Validate('w_observacao','Observações','','','1','2000','1','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();

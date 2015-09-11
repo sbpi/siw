@@ -604,7 +604,7 @@ function Geral() {
   } 
   ValidateClose();
   ValidateOpen('Validacao1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1168,7 +1168,7 @@ function Excluir() {
   if ($O=='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1284,7 +1284,7 @@ function Encaminhamento() {
         ShowHTML('  }');
       } 
     } 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1399,7 +1399,7 @@ function Atender() {
   Validate('["w_quantidade[]"][ind]','Quantidade entregue','VALOR','1',1,18,'','0123456789.');
   CompValor('["w_quantidade[]"][ind]','Quantidade entregue','<=','["w_qtd_ant[]"][ind]','quantidade solicitada');
   ShowHTML('  }');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -1523,7 +1523,7 @@ function Concluir() {
   Validate('["w_entrega[]"][ind]','Data da entrega','DATE','1',10,10,'','0123456789/');
   CompData('["w_entrega[]"][ind]','Data da entregua','<=',formataDataEdicao(time()),'data atual');
   ShowHTML('  }');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();

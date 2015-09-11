@@ -854,7 +854,7 @@ function TermoCelular() {
   if (nvl($w_envio,'')=='S') {
     Validate('w_despacho','Despacho','1','1','1','2000','1','1');
   }
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -1021,7 +1021,7 @@ function Excluir() {
   if (strpos('E',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
@@ -1133,7 +1133,7 @@ function Encaminhamento() {
         ShowHTML('  }');
       } 
     } 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1279,7 +1279,7 @@ function Opiniao() {
   ShowHTML('    return false;');
   ShowHTML('  }');
   Validate('w_motivo','Motivo da insatisfação','1','','6','1000','1','1');
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -1341,7 +1341,7 @@ function Anotar() {
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação','','1','1','2000','1','1');
     Validate('w_caminho','Arquivo','','','5','255','1','1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1675,7 +1675,7 @@ function AnaliseCelular() {
     Validate('w_acessorios','Acessórios','','','2','1000','1','1');
   }
   if ($disponiveis) {
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } else {
@@ -2043,7 +2043,7 @@ function EntregaCelular() {
     Validate('w_inicio','Início do empréstimo','DATA',1,10,10,'','0123456789/');       
     Validate('w_observacao','Observações','','',4,1000,'1','1');
   }
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -2195,7 +2195,7 @@ function DevolCelular() {
     ShowHTML('    return false;');
     ShowHTML('  }');
   }
-  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+  Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();

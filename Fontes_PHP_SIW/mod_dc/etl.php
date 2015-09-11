@@ -235,7 +235,7 @@ function Inicial() {
         Validate('w_envia_mail','Enviar e-mail','SELECT',1,1,10,'1','1');
         if ($w_envia_mail>0) Validate('w_lista_mail','Lista de e-mails','1','1',1,255,'1','1');      
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1056,10 +1056,10 @@ function Importacao() {
       if (!(strpos('I',$O)===false)) {
         Validate('w_data_arquivo','Data e hora','DATAHORA','1','17','17','','0123456789 /:,');
         Validate('w_caminho','Arquivo de dados','1','1','1','255','1','1');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       } 
     } else {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');

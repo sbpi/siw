@@ -586,7 +586,7 @@ function Menu() {
         ShowHTML('  }');
       } 
 
-      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+      Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     } elseif ($O=='H') {
 
       Validate('w_heranca', 'Origem dos dados', 'SELECT', '1', '1', '10', '', '1');
@@ -1400,7 +1400,7 @@ function Acessos() {
       Validate('w_sq_pessoa_endereco', 'Endereço', 'SELECT', 1, 1, 18, '', 1);
     } 
 
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 
@@ -1573,7 +1573,7 @@ function Visao() {
       ShowHTML('    return false;');
       ShowHTML('  }');
     } 
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 
@@ -1796,7 +1796,7 @@ function Unidade() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+  Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -2067,7 +2067,7 @@ function Email() {
   ShowHTML('  }');  
   ValidateOpen('Validacao');
   if (!(strpos("IAE",$O)===false)) {
-    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura', $_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if($P2!=1) {
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');

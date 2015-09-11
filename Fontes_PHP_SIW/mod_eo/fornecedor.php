@@ -229,7 +229,7 @@ function Inicial() {
           } else {
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do fornecedor.">AL</A>&nbsp');
           } 
-          //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLGERAL'.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclui o fornecedor." onClick="return(confirm(\'Confirma exclusão do cliente?\'));">EX</A>&nbsp');
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');
@@ -468,7 +468,7 @@ function Geral() {
     } elseif ($w_tipo_pessoa==2) {
       Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
     } 
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($O=='I') {
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -686,8 +686,7 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
 
-  switch ($SG) {
-    case 'CLGERAL':
+  if (strpos('CLGERAL,FORNECEDOR',$SG)!==FALSE) {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
@@ -766,7 +765,7 @@ function Grava() {
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
         $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.(($O=='E') ? 'L' : $O).'&w_sq_pessoa='.(($O=='E') ? '' : $_REQUEST['w_sq_pessoa']).'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       }         
       ScriptClose();
       } else {
@@ -775,15 +774,14 @@ function Grava() {
         ScriptClose();
         retornaFormulario('w_assinatura');
         exit();
-      }       
-      break;
-    default:
+      } 
+  } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
       ShowHTML('  history.back(1);');
       ScriptClose();
       break;
-  } 
+}
 } 
 
 // =========================================================================

@@ -385,7 +385,7 @@ function Inicial() {
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       }
     } elseif (strpos('CP',$O)!==false) {
       if ($P1!=1 || $O=='C') {
@@ -1908,7 +1908,7 @@ function Excluir() {
   if ($O=='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2095,7 +2095,7 @@ function Encaminhamento() {
         ShowHTML('  }');
       }
     }
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2227,7 +2227,7 @@ function Anotar() {
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação', '', '1', '1', '2000', '1', '1');
     Validate('w_caminho','Arquivo', '', '', '5', '255', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
       // Se não for encaminhamento
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2395,7 +2395,7 @@ function Concluir() {
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta_debito','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
-    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '6', '30', '1', '1');
+    Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
        // Se não for encaminhamento
        ShowHTML('  theForm.Botao[0].disabled=true;');

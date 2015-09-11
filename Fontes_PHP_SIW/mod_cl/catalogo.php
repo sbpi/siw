@@ -273,13 +273,13 @@ function Inicial() {
         if ($w_classe==1) Validate('w_apresentacao','Apresentação (embalagem)','','',1,200,'1','1');
         Validate('w_codigo_externo','Código externo','1','','2','30','1','1');
         if ($w_classe==4) Validate('w_vida_util','Vida útil','','1',1,2,'','0123456789');
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       } elseif ($O=='P') {
         Validate('p_nome','Nome','1','','3','110','1','1');
         Validate('p_codigo','Código interno','1','','2','30','1','1');
         Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
       } elseif ($O=='E') {
-        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+        Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
@@ -685,7 +685,7 @@ function PesquisaPreco() {
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
     } elseif ($O=='E') {
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='I' || $O=='A') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       if ($w_tipo_pessoa==1) {
@@ -723,7 +723,7 @@ function PesquisaPreco() {
         Validate('w_marca_modelo','Marca/Modelo','1','',2,50,'1','1');
         Validate('w_embalagem','Embalagem','1','',2,20,'1','1');
       }
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       Validate('w_ddd','DDD','1','',2,4,'','0123456789');
       Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
       Validate('w_nr_fax','Fax','1','',7,25,'1','1');

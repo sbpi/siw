@@ -184,7 +184,7 @@ begin
                    inner   join eo_unidade           d2 on (d.unidade_origem        = d2.sq_unidade)
                      inner join pa_unidade           dc on (d2.sq_unidade           = dc.sq_unidade)
                      inner join eo_unidade           dd on (dd.sq_unidade           = coalesce(dc.sq_unidade_pai,dc.sq_unidade))
-                   inner   join eo_unidade           d3 on (d.unidade_destino       = d3.sq_unidade)
+                   left    join eo_unidade           d3 on (d.unidade_destino       = d3.sq_unidade)
                    inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho      = d1.sq_tipo_despacho)
                  inner     join pa_assunto           c5 on (c4.sq_assunto           = c5.sq_assunto)
                    inner   join pa_tipo_guarda       c6 on (c5.fase_corrente_guarda = c6.sq_tipo_guarda)
@@ -212,6 +212,7 @@ begin
                                 )                    w1 on (w.sq_pessoa             = w1.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
+         and (p_restricao = 'PADALTREG' or (p_restricao <> 'PADALTREG' and d3.sq_unidade is not null))
          and (p_unid_posse  is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_numero      is null or (p_numero      is not null and c.numero_documento   = p_numero))
          and (p_ano         is null or (p_ano         is not null and c.ano                = p_ano))

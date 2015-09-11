@@ -784,16 +784,13 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     print "  var checkOK = '".$checkOK."';"."\r\n";
     print "  var checkStr = ".$Form.$VariableName.".value;"."\r\n";
     print "  var allValid = true;"."\r\n";
-    print "  for (i = 0;  i < checkStr.length;  i++)"."\r\n";
-    print "  {"."\r\n";
+    print "  for (i = 0;  i < checkStr.length;  i++) {"."\r\n";
     print "    ch = checkStr.charAt(i);"."\r\n";
     print "    if ((checkStr.charCodeAt(i) != 13) && (checkStr.charCodeAt(i) != 10) && (checkStr.charAt(i) != '\\\\')) {"."\r\n";
     print "       for (j = 0;  j < checkOK.length;  j++) {"."\r\n";
-    print "         if (ch == checkOK.charAt(j))"."\r\n";
-    print "           break;"."\r\n";
+    print "         if (ch == checkOK.charAt(j)) break;"."\r\n";
     print "       } "."\r\n";
-    print "       if (j == checkOK.length)"."\r\n";
-    print "       {"."\r\n";
+    print "       if (j == checkOK.length) {"."\r\n";
     print "         allValid = false;"."\r\n";
     print "         break;"."\r\n";
     print "       }"."\r\n";
@@ -801,7 +798,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     print "  }"."\r\n";
     print "  if (!allValid)"."\r\n";
     print "  {"."\r\n";
-    if     ($AllowLetters>"" && $AllowDigits>"")  { print "    alert('Você digitou caracteres inválidos no campo ".$DisplayName.".');"."\r\n"; }
+    if     ($AllowLetters>"" && $AllowDigits>"")  { print "    alert('Você digitou caracteres inválidos no campo ".$DisplayName." (Posição '+(i+1)+': ['+ch.charCodeAt(0)+']).\\n\\nRetire ASPAS, TRAVESSÕES e outros caracteres especiais.\\nIsso também pode ocorrer se você copiou o conteúdo de outro arquivo, por exemplo o MS-Word; nesse caso, tente antes copiar para o bloco de notas!');"."\r\n"; }
     elseif ($AllowLetters>"" && $AllowDigits=="") { 
       if ($AllowLetters == "1") { 
         print "    alert('Favor digitar apenas letras no campo ".$DisplayName.".');"."\r\n"; 

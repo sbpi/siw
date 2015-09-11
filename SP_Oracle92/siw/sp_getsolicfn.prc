@@ -94,7 +94,7 @@ begin
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 b.titulo as ac_titulo,
                 b1.sq_siw_tramite,    b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail mail_tramite,
                 case a.sigla when 'FNDVIA'
                              then case when b2.quitacao >= trunc(sysdate) then 'Agendado' else b1.nome end
                              else b1.nome 
@@ -166,7 +166,7 @@ begin
                 end as dados_avo,
                 case b1.sigla when 'AT' then b.valor else 0 end as valor_atual,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
-                b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
+                b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail mail_tramite,
                 b2.acesso,
                 case when b.protocolo_siw is null 
                      then case when b4.protocolo_siw is null
@@ -421,7 +421,7 @@ begin
                      else dados_solic(b4.sq_solic_pai) 
                 end as dados_avo,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
-                b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
+                b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail mail_tramite,
                 codigo2numero(b.codigo_interno) ord_codigo_interno,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,

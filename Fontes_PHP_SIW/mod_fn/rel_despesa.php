@@ -281,7 +281,7 @@ function Inicial() {
       $l_html.=chr(13).'          <td align="center">'.$i.' </td>';
       $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica_pai').' </td>';
+      $l_html.=chr(13).'          <td>'.nvl(f($row,'nm_rubrica_pai'),'&nbsp;').' </td>';
       $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
       $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';

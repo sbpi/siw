@@ -197,11 +197,11 @@ function Informar(){
       Validate('w_outra_parte_contato','Outra parte','1','','3','60','1','1');
       Validate('w_assunto','Assunto','1','','4','1000','1','1');
       ShowHTML('   }');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='A') {
       Validate('w_destino','Pessoa','HIDDEN','1','1','18','1','1');
       Validate('w_assunto','Observação','1','1','4','500','1','1');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','6','30','1','1');
+      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O =='P' || $O =='R'){
       Validate('p_sq_cc','Classificação','SELECT','','1','3','1','1');
       Validate('p_outra_parte_contato','Nome da outra parte','1','','2','50','1','1');
