@@ -267,34 +267,34 @@ function Inicial() {
       // Configura variável que decide se os valores serão impressos
       if ($Valor['USD']!='0' || $Valor['BRL']!='0' || $Valor['EUR']!='0') $w_imprime = true; else $w_imprime = false;
       if (f($row,'total_previsto')>0) $w_perc = $Valor[f($RS_Projeto,'sg_moeda')]/f($row,'total_previsto')*100; else $w_perc = 0;
-      if (f($row,'ultimo_nivel')=='S') {
+      if (f($row,'ultimo_nivel')=='S' && f($row,'aplicacao_financeira')=='N') {
         $w_total_previsto += f($row,'total_previsto');
         foreach($Ordem as $k => $v) $Total[$v]+=$Valor[$v];
       }
 
       $w_folha = ((f($row,'ultimo_nivel')=='N' && $p_sintetico=='N') ? ' class="folha"' : '');
 
-      if (($p_sintetico=='N' || ($p_sintetico=='S' && f($row,'sq_rubrica_pai')=='')) ||
-          ($p_financeiro=='S' || ($p_financeiro=='N' && f($row,'aplicacao_financeira')=='N'))
-         ) {
-        $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
-        if($w_embed!='WORD') $l_html.=chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
-        else                 $l_html.=chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
-        $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
-        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
+      if ($p_sintetico=='N' || ($p_sintetico=='S' && f($row,'sq_rubrica_pai')=='')) {
+        if ($p_financeiro=='N' || ($p_financeiro=='S' && f($row,'aplicacao_financeira')=='N')) {
+            $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
+            if($w_embed!='WORD') $l_html.=chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
+            else                 $l_html.=chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
+            $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
+            $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
 
-        if ($w_imprime) {
-          $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
-          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
-          $l_html.=chr(13).'          <td align="right">'.formatNumber($w_perc).' %</td>';
-          foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
-        } else {
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-          foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td>&nbsp;</td>';
+            if ($w_imprime) {
+              $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber($w_perc).' %</td>';
+              foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
+            } else {
+              $l_html.=chr(13).'          <td>&nbsp;</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+              $l_html.=chr(13).'          <td align="right">0,00%</td>';
+              foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td>&nbsp;</td>';
+            }
+            $l_html.=chr(13).'      </tr>';
         }
-        $l_html.=chr(13).'      </tr>';
       }
     } 
     $l_html.=chr(13).'          <tr class="folha">';
