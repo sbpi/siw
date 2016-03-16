@@ -440,20 +440,20 @@ function Benef() {
         }
       }
       ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('          <tr>');
-      selecaoUnidade('<U>U</U>nidade de lotação:','U','Selecione a unidade de lotação e aguarde a recarga da página para selecionar sua localização.',$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
-      ShowHTML('          <tr>');
-      selecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_sq_localizacao,nvl($w_sq_unidade_lotacao,0),'w_sq_localizacao',null);
-      ShowHTML('          </table>');
-      ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('      <tr>');
       if ($SG=='RHUSU') {
         selecaoVinculo('<u>M</u>odalidade de contratação:','M',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física','S');
       } else {
-        selecaoVinculo('<u>V</u>ínculo com a organização:','V',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física',null);
+        selecaoVinculo('<u>V</u>ínculo com a organização:','V',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física',null,null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_unidade_lotacao\'; document.Form.submit();"');
       }
 
       ShowHTML('      </tr>');
+      ShowHTML('          </table>');
+      ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+      ShowHTML('          <tr>');
+      selecaoUnidade('<U>U</U>nidade de lotação:','U','Selecione a unidade de lotação e aguarde a recarga da página para selecionar sua localização.',$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
+      ShowHTML('          <tr>');
+      selecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_sq_localizacao,nvl($w_sq_unidade_lotacao,0),'w_sq_localizacao',null);
       ShowHTML('          </table>');
       if ($SG=='RHUSU') { // Tela de usuários do RH
         if ($O=='A') $w_readonly='READONLY'; // Se for alteração, bloqueia a edição dos campos

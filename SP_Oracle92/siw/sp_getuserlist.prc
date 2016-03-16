@@ -61,7 +61,11 @@ begin
                                )                  l on (a.sq_pessoa          = l.sq_pessoa)                                
          where a.cliente           = p_cliente
            and (p_ativo            is null or (p_ativo            is not null and a.ativo              = p_ativo))
-           and (p_contratado       is null or (p_contratado       is not null and e.contratado         = p_contratado))
+           and (p_contratado       is null or (p_contratado       is not null and (e.contratado         = p_contratado or
+                                                                                   a.sq_unidade         = nvl(p_lotacao,0)
+                                                                                  )
+                                              )
+               )
            and (p_localizacao      is null or (p_localizacao      is not null and d.sq_localizacao     = p_localizacao))
            and (p_lotacao          is null or (p_lotacao          is not null and (c.sq_unidade        = p_lotacao or
                                                                                    exists                (select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = a.sq_pessoa and sq_unidade_lotacao = p_lotacao and fim is null

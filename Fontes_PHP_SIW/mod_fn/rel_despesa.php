@@ -265,56 +265,58 @@ function Inicial() {
     $w_total_contabil  = 0;
     $i = 0;
     foreach ($RSQuery as $row) {
-      $w_valor_contabil = 0;
-      if ($p_moedas=='S') {
-        foreach($Ordem as $k => $v) {
-          if ($v==f($row,'fn_sg_moeda')) {
-            $Valor[$v] = f($row,'fn_valor'); 
-            $Total[$v]+=$Valor[f($row,'fn_sg_moeda')];
-          } else {
-            unset($Valor[$v]);
+      if (substr(f($row,'sg_menu'),0,3)!='FNR') {
+        $w_valor_contabil = 0;
+        if ($p_moedas=='S') {
+          foreach($Ordem as $k => $v) {
+            if ($v==f($row,'fn_sg_moeda')) {
+              $Valor[$v] = f($row,'fn_valor'); 
+              $Total[$v]+=$Valor[f($row,'fn_sg_moeda')];
+            } else {
+              unset($Valor[$v]);
+            }
           }
         }
-      }
-      $i++;
-      $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
-      $l_html.=chr(13).'          <td align="center">'.$i.' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').' </td>';
-      $l_html.=chr(13).'          <td>'.nvl(f($row,'nm_rubrica_pai'),'&nbsp;').' </td>';
-      $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
-      $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
-      $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
-      $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
-      $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
-      $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
-      $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
-      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
-      if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
-      if ($p_contabil=='S') {
-        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
-        if (f($row,'exige_brl')=='N') {
-          // Se já tem valor em BRL, não é necessário converter.
-          // Apenas exibe a taxa de venda do BRL e compara com a informada na conclusão do lançamento.
-          // Se for diferente, destaca na cor amarela.
-          $w_cor_cell = '';
-          if (nvl(f($row,'brl_taxa_venda'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
-          elseif (abs(f($row,'brl_valor_compra')-(f($row,'brl_taxa_venda')*f($row,'valor')))>0.1 && (f($row,'brl_taxa_venda')!=f($row,'fator_conversao'))) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightRed1.'"';
-          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_venda'),4),'???').(($w_cor_cell) ? '<br>*'.f($row,'fator_conversao') : '').' </td>';
-          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_venda_data'),5),'???').' </td>';
-        } else {
-          $w_cor_cell = '';
-          if (nvl(f($row,'brl_taxa_compra'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
-          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
-          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_compra_data'),5),'???').' </td>';
+        $i++;
+        $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
+        $l_html.=chr(13).'          <td align="center">'.$i.' </td>';
+        $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
+        $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').' </td>';
+        $l_html.=chr(13).'          <td>'.nvl(f($row,'nm_rubrica_pai'),'&nbsp;').' </td>';
+        $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
+        $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
+        $l_html.=chr(13).'          <td nowrap align="center">'.f($row,'cd_pessoa').' </td>';
+        $l_html.=chr(13).'          <td>'.f($row,'nm_tipo_documento').' </td>';
+        $l_html.=chr(13).'          <td>'.f($row,'numero').' </td>';
+        $l_html.=chr(13).'          <td align="right">'.  FormataDataEdicao(f($row,'dt_emissao'),5).' </td>';
+        $l_html.=chr(13).'          <td align="right" nowrap>'.f($row,'sb_fn_moeda').' '.formatNumber(f($row,'valor_doc')).' </td>';
+        $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
+        $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
+        $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
+        if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
+        if ($p_contabil=='S') {
+          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
+          if (f($row,'exige_brl')=='N') {
+            // Se já tem valor em BRL, não é necessário converter.
+            // Apenas exibe a taxa de venda do BRL e compara com a informada na conclusão do lançamento.
+            // Se for diferente, destaca na cor amarela.
+            $w_cor_cell = '';
+            if (nvl(f($row,'brl_taxa_venda'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
+            elseif (abs(f($row,'brl_valor_compra')-(f($row,'brl_taxa_venda')*f($row,'valor')))>0.1 && (f($row,'brl_taxa_venda')!=f($row,'fator_conversao'))) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightRed1.'"';
+            $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_venda'),4),'???').(($w_cor_cell) ? '<br>*'.f($row,'fator_conversao') : '').' </td>';
+            $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_venda_data'),5),'???').' </td>';
+          } else {
+            $w_cor_cell = '';
+            if (nvl(f($row,'brl_taxa_compra'),0)==0) $w_cor_cell = ' bgcolor="'.$conTrBgColorLightYellow2.'"';
+            $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
+            $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formataDataEdicao(f($row,'brl_taxa_compra_data'),5),'???').' </td>';
+          }
         }
+        $l_html.=chr(13).'      </tr>';
+        $w_total_previsto += f($row,'valor');
+        $w_total_contabil += f($row,'brl_valor_compra');
       }
-      $l_html.=chr(13).'      </tr>';
-      $w_total_previsto += f($row,'valor');
-      $w_total_contabil += f($row,'brl_valor_compra');
     } 
     $l_html.=chr(13).'      <tr valign="top"'.$w_folha.'>';
     $l_html.=chr(13).'        <td colspan="'.$cs.'" align="right"><b>Total: </b></td>';
@@ -329,7 +331,7 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif ($O == 'P') {
-    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', 'Contas', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
+    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', 'Despesas', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
     ShowHTML('    <table width="99%" border="0">');

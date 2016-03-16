@@ -13,11 +13,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
-      if (nvl(f($row,'sq_unidade'),0)==nvl($chave,0)) {
-         ShowHTML('          <option value="'.f($row,'sq_unidade').'" SELECTED>'.f($row,'nome').((f($row,'externo')=='S') ? ' (externo)' : ' ('.f($row,'sigla').')'));
-      } else {
-         ShowHTML('          <option value="'.f($row,'sq_unidade').'">'.f($row,'nome').((f($row,'externo')=='S') ? ' (externo)' : ' ('.f($row,'sigla').')'));
-      }
+      ShowHTML('          <option value="'.f($row,'sq_unidade').'"'.((nvl(f($row,'sq_unidade'),0)==nvl($chave,0)) ? ' SELECTED': '').'>'.f($row,'nome').((f($row,'externo')=='S') ? ' (externo)' : ' ('.f($row,'sigla').')'));
     }
     ShowHTML('          </select>');
   } else {

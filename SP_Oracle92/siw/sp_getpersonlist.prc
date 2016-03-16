@@ -267,7 +267,9 @@ begin
                                                                   j.sq_siw_solicitacao = p_chave
                                                                  )
          where c.ativo          = 'S'
-           and d.interno        = 'S'
+           and (d.interno       = 'S' or 
+                (d.interno      = 'N' and 0 < (select count(*) from pj_projeto_envolv where sq_unidade = c.sq_unidade))
+               )
            and e.ativo          = 'S'
            and 'F'              = substr(e.nome,1,1)
            and h.sq_pessoa      is null
