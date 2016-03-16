@@ -141,10 +141,10 @@ begin
          order by montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao');
    Elsif p_restricao = 'PJEXECS' or p_restricao = 'PJEXECN' Then
       open p_result for 
-         select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel,
+         select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel, a.aplicacao_financeira,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao') ordena,
-                coalesce((select sum(w.valor_previsto)
+                coalesce((select sum(case x.aplicacao_financeira when 'S' then -1*w.valor_previsto else w.valor_previsto end)
                             from pj_rubrica_cronograma w
                                  inner join pj_rubrica x on (w.sq_projeto_rubrica = x.sq_projeto_rubrica)
                            where x.sq_siw_solicitacao = coalesce(p_chave, sq_siw_solicitacao)
@@ -157,7 +157,7 @@ begin
                                                         start with sq_projeto_rubrica = a.sq_projeto_rubrica
                                                        )
                          ),0) total_previsto,
-                coalesce((select sum(valor)
+                coalesce((select sum(case w.aplicacao_financeira when 'S' then -1*w.valor else w.valor end)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
                              and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
@@ -178,7 +178,7 @@ begin
                                                           start with sq_projeto_rubrica = a.sq_projeto_rubrica
                                                          )
                          ),0) total_real,
-                coalesce((select sum(valor)
+                coalesce((select sum(case w.aplicacao_financeira when 'S' then -1*w.valor else w.valor end)
                             from vw_projeto_financeiro   w
                            where w.sq_projeto         = a.sq_siw_solicitacao
                              and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
@@ -284,7 +284,7 @@ begin
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and b.aplicacao_financeira = p_aplicacao_financeira));
    Elsif p_restricao = 'FNREXECMP' Then
       open p_result for 
-         select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel,
+         select a.sq_projeto_rubrica, a.codigo, a.nome, a.descricao, a.ativo, a.sq_rubrica_pai, a.ultimo_nivel, a.aplicacao_financeira,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao') ordena,
                 c.mes, c.valor
