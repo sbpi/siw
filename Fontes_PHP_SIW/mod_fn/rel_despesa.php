@@ -66,7 +66,7 @@ $p_projeto = $_REQUEST['p_projeto'];
 $p_inicio = $_REQUEST['p_inicio'];
 $p_fim = $_REQUEST['p_fim'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
-$p_sintetico = upper(trim($_REQUEST['p_sintetico']));
+$p_receita = upper(trim($_REQUEST['p_receita']));
 $p_financeiro = upper(trim($_REQUEST['p_financeiro']));
 $p_contabil = upper(trim($_REQUEST['p_contabil']));
 $p_moedas = $_REQUEST['p_moedas'];
@@ -265,7 +265,7 @@ function Inicial() {
     $w_total_contabil  = 0;
     $i = 0;
     foreach ($RSQuery as $row) {
-      if (substr(f($row,'sg_menu'),0,3)!='FNR') {
+      if (substr(f($row,'sg_menu'),0,3)!='FNR' || $p_receita=='S') {
         $w_valor_contabil = 0;
         if ($p_moedas=='S') {
           foreach($Ordem as $k => $v) {
@@ -344,9 +344,9 @@ function Inicial() {
     MontaRadioNS('<b>Exibe moeda do pagamento, além da moeda do projeto? <font color="red">("Sim" para exibir coluna com a moeda do pagamento. "Não" para omitir essa coluna)</font>.</b>',$p_moedas,'p_moedas');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Emite versão para contabilidade?</b>',$p_contabil,'p_contabil');
-    //ShowHTML('      </tr><tr>');
-    //MontaRadioNS('<b>Exibe apenas a versão sintética do relatório? (apenas rubricas de mais alto nível)</b>',$p_sintetico,'p_sintetico');
-    //ShowHTML('      </tr>');
+    ShowHTML('      </tr><tr>');
+    MontaRadioNS('<b>Exibe também lançamentos de receita/devolução? </b>',$p_receita,'p_receita');
+    ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');

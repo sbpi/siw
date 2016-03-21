@@ -112,7 +112,7 @@ function Inicial() {
     $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
     
     // Recupera as rubricas do projeto
-    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECL');
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECLS');
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RSQuery = SortArray($RSQuery,$lista[0],$lista[1],'or_rubrica','asc','or_financeiro','asc');

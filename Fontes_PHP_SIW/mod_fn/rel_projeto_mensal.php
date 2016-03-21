@@ -142,22 +142,6 @@ function Inicial() {
     }
     // Ordena somente após o laço acima pois não há necessidade dele estar ordenado
     $RSQuery = SortArray($RSQuery,'ordena','asc','mes','asc');
-
-    //Recupera as informações do sub-menu
-    $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    foreach ($RS as $row) {
-      if     (strpos(f($row,'sigla'),'ANEXO')!==false)      $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'AREAS')!==false)      $l_nome_menu['AREAS'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'GERAL')!==false)      $l_nome_menu['GERAL'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'QUALIT')!==false)     $l_nome_menu['QUALIT'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'ETAPA')!==false)      $l_nome_menu['ETAPA'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'INTERES')!==false)    $l_nome_menu['INTERES'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'RESP')!==false)       $l_nome_menu['RESP'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'RECURSO')!==false)    $l_nome_menu['RECURSO'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'RUBRICA')!==false)    $l_nome_menu['RUBRICA'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'APOIOSOLIC')!==false) $l_nome_menu['APOIO'] = upper(f($row,'nome'));
-      else $l_nome_menu[f($row,'sigla')] = upper(f($row,'nome'));
-    }
   }
 
   headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
@@ -323,7 +307,7 @@ function Inicial() {
             else                   $l_html.=chr(13).'          <td width="6%" nowrap>'.(($i==(0+$p_mes)) ? '<b>' : '').$Mes[$i].': '.formatNumber($Valor[$w_atual][$i]).' </td>';
           }
         }
-        if (f($row,'ultimo_nivel')=='S' && $p_sintetico=='N' && $Valor[$w_atual][(0+$p_mes)]>0) {
+        if (f($row,'ultimo_nivel')=='S' && $p_sintetico=='N' && abs($Valor[$w_atual][(0+$p_mes)])>0) {
           // Recupera despesas da rubrica no mês
           $sql = new db_getSolicRubrica; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,$w_atual,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECLS');
           $RS1 = SortArray($RS1,'or_rubrica','asc','or_financeiro','asc');
@@ -387,7 +371,7 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif ($O == 'P') {
-    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', '_blank', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
+    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', 'mensal', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_concluido" value="S">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');

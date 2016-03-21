@@ -156,70 +156,7 @@ begin
                                                         connect by prior sq_projeto_rubrica = sq_rubrica_pai 
                                                         start with sq_projeto_rubrica = a.sq_projeto_rubrica
                                                        )
-                         ),0) total_previsto,
-                coalesce((select sum(case w.aplicacao_financeira when 'S' then -1*w.valor else w.valor end)
-                            from vw_projeto_financeiro   w
-                           where w.sq_projeto         = a.sq_siw_solicitacao
-                             and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
-                             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
-                             and (p_inicio     is null or 
-                                  (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
-                                                                (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
-                                                               )
-                                  )
-                                 )
-                             and w.sg_fn_moeda        = 'BRL'
-                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
-                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
-                                                            from pj_rubrica 
-                                                           where sq_siw_solicitacao = a.sq_siw_solicitacao
-                                                             and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
-                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
-                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
-                                                         )
-                         ),0) total_real,
-                coalesce((select sum(case w.aplicacao_financeira when 'S' then -1*w.valor else w.valor end)
-                            from vw_projeto_financeiro   w
-                           where w.sq_projeto         = a.sq_siw_solicitacao
-                             and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
-                             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
-                             and (p_inicio     is null or 
-                                  (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
-                                                                (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
-                                                               )
-                                  )
-                                 )
-                             and w.sg_fn_moeda        = 'USD'
-                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
-                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
-                                                            from pj_rubrica 
-                                                           where sq_siw_solicitacao = a.sq_siw_solicitacao
-                                                             and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
-                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
-                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
-                                                         )
-                         ),0) total_dolar,
-                coalesce((select sum(valor)
-                            from vw_projeto_financeiro   w
-                           where w.sq_projeto         = a.sq_siw_solicitacao
-                             and (p_restricao  = 'PJEXECN' or (p_restricao = 'PJEXECS' and w.sg_tramite = 'AT'))
-                             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
-                             and (p_inicio     is null or 
-                                  (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
-                                                                (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
-                                                               )
-                                  )
-                                 )
-                             and w.sg_fn_moeda        = 'EUR'
-                             and w.sq_projeto_rubrica = coalesce(p_chave_aux, w.sq_projeto_rubrica)
-                             and w.sq_projeto_rubrica in (select sq_projeto_rubrica 
-                                                            from pj_rubrica 
-                                                           where sq_siw_solicitacao = a.sq_siw_solicitacao
-                                                             and sq_projeto_rubrica = coalesce(p_chave_aux, sq_projeto_rubrica)
-                                                          connect by prior sq_projeto_rubrica = sq_rubrica_pai 
-                                                          start with sq_projeto_rubrica = a.sq_projeto_rubrica
-                                                         )
-                         ),0) total_euro
+                         ),0) total_previsto
            from pj_rubrica                   a
           where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
             and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
@@ -227,11 +164,31 @@ begin
             and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
             and (p_codigo               is null or (p_codigo               is not null and a.codigo               = p_codigo))
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
+   Elsif p_restricao = 'PJFINS' or p_restricao = 'PJFINN' Then
+      open p_result for 
+         select sq_projeto_rubrica, sg_fn_moeda, valor, aplicacao_financeira,
+                retornaHierarquiaRubrica(sq_projeto_rubrica, 'PAIS') lista
+           from (select w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira,
+                        sum(case when substr(w.sg_menu,1,3) = 'FNR' then trunc(-1*w.valor,2) else trunc(w.valor,2) end) valor
+                   from vw_projeto_financeiro   w
+                  where w.sq_projeto         = p_chave
+                    and (p_restricao  = 'PJFINN' or (p_restricao = 'PJFINS' and w.sg_tramite = 'AT'))
+                    and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
+                    and (p_inicio     is null or 
+                         (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or 
+                                                       (w.sg_tramite <> 'AT' and w.vencimento between p_inicio and p_fim)
+                                                      )
+                         )
+                        )
+                 group by w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira
+                );
    Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' Then
       open p_result for 
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
-                a.sq_financeiro, a.cd_financeiro, a.valor, a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
+                a.sq_financeiro, a.cd_financeiro, 
+                case when substr(a.sg_menu,1,3) = 'FNR' then trunc(-1*a.valor,2) else trunc(a.valor,2) end valor,
+                a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
                 a.fn_valor, a.fn_sq_moeda, a.fn_sg_moeda, a.fn_sb_moeda, a.ordem or_item,
                 a.exige_brl, a.fator_conversao,
                 a.brl_taxa_compra_data, a.brl_taxa_compra, a.brl_valor_compra, 
@@ -289,7 +246,8 @@ begin
                 montaOrdemRubrica(a.sq_projeto_rubrica, 'ordenacao') ordena,
                 c.mes, c.valor
            from pj_rubrica                 a
-                left  join (select w.sq_projeto_rubrica, to_char(w.quitacao,'yyyymm') mes,sum(w.valor) valor 
+                left  join (select w.sq_projeto_rubrica, to_char(w.quitacao,'yyyymm') mes,
+                                   sum(case when substr(w.sg_menu,1,3) = 'FNR' then trunc(-1*w.valor,2) else trunc(w.valor,2) end) valor
                               from siw_solicitacao                  x
                                    inner join VW_PROJETO_FINANCEIRO w on (w.sq_projeto = x.sq_siw_solicitacao)
                              where x.sq_siw_solicitacao = p_chave 

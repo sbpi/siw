@@ -114,12 +114,25 @@ function Inicial() {
     
     // Recupera as rubricas do projeto
     $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXEC'.$p_concluido);
-    foreach($RSQuery as $row)  {
-      if (f($row,'total_dolar')!='0') { $Moeda['USD']='1';  $Total['USD'] = 0; }
-      if (f($row,'total_real')!='0')  { $Moeda['BRL']='1'; $Total['BRL'] = 0; }
-      if (f($row,'total_euro')!='0')  { $Moeda['EUR']='1'; $Total['EUR'] = 0; }
-      // Se o projeto tem três moedas diferentes, aborta pois esse é o número atual de moedas ativas
-      if (count($Moeda)==3) break;
+
+    $sql = new db_getSolicRubrica; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,null,null,null,null,null,$p_inicio,$p_fim,'PJFIN'.$p_concluido);
+    foreach($RS1 as $row)  {
+      $Moeda[f($row,'sg_fn_moeda')]='1';
+      if (f($row,'aplicacao_financeira')=='N') {
+        if (!isset($Total[f($row,'sg_fn_moeda')])) {
+          $Total[f($row,'sg_fn_moeda')] = f($row,'valor');
+        } else {
+          $Total[f($row,'sg_fn_moeda')]+=f($row,'valor');
+        }
+      }
+      $lista = explode(',',str_replace(' ',',',f($row,'lista')));      
+      foreach($lista as $k => $v) {
+        if (!isset($Valor[f($row,'sq_projeto_rubrica')][f($row,'sg_fn_moeda')])) {
+          $Valor[$v][f($row,'sg_fn_moeda')] = f($row,'valor');
+        } else {
+          $Valor[$v][f($row,'sg_fn_moeda')]+=f($row,'valor');
+        }
+      }
     }
     // Decide a ordem de exibição das moedas no relatório
     $i = 0;
@@ -139,22 +152,6 @@ function Inicial() {
     }
     // Ordena somente após o laço acima pois não há necessidade dele estar ordenado
     $RSQuery = SortArray($RSQuery,'ordena','asc');
-
-    //Recupera as informações do sub-menu
-    $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    foreach ($RS as $row) {
-      if     (strpos(f($row,'sigla'),'ANEXO')!==false)      $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'AREAS')!==false)      $l_nome_menu['AREAS'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'GERAL')!==false)      $l_nome_menu['GERAL'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'QUALIT')!==false)     $l_nome_menu['QUALIT'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'ETAPA')!==false)      $l_nome_menu['ETAPA'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'INTERES')!==false)    $l_nome_menu['INTERES'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'RESP')!==false)       $l_nome_menu['RESP'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'RECURSO')!==false)    $l_nome_menu['RECURSO'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'RUBRICA')!==false)    $l_nome_menu['RUBRICA'] = upper(f($row,'nome'));
-      elseif (strpos(f($row,'sigla'),'APOIOSOLIC')!==false) $l_nome_menu['APOIO'] = upper(f($row,'nome'));
-      else $l_nome_menu[f($row,'sigla')] = upper(f($row,'nome'));
-    }
   }
 
   headerGeral('P', $w_tipo, $w_chave, 'Consulta de '.f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
@@ -260,16 +257,14 @@ function Inicial() {
     $w_cor=$conTrBgColor;
     $w_total_previsto  = 0;
     foreach ($RSQuery as $row) {
-      $Valor['USD'] = f($row,'total_dolar');
-      $Valor['BRL'] = f($row,'total_real');
-      $Valor['EUR'] = f($row,'total_euro');
-      
+      $l_previsto  = f($row,'total_previsto');
+      $l_executado = nvl($Valor[f($row,'sq_projeto_rubrica')][f($RS_Projeto,'sg_moeda')],0);
+      $l_saldo     = $l_previsto-$l_executado;
       // Configura variável que decide se os valores serão impressos
-      if ($Valor['USD']!='0' || $Valor['BRL']!='0' || $Valor['EUR']!='0') $w_imprime = true; else $w_imprime = false;
-      if (f($row,'total_previsto')>0) $w_perc = $Valor[f($RS_Projeto,'sg_moeda')]/f($row,'total_previsto')*100; else $w_perc = 0;
+      if (nvl($Valor[f($row,'sq_projeto_rubrica')]['USD'],0)!=0 || nvl($Valor[f($row,'sq_projeto_rubrica')]['BRL'],0)!=0 || nvl($Valor[f($row,'sq_projeto_rubrica')]['EUR'],0)!=0) $w_imprime = true; else $w_imprime = false;
+      if ($l_previsto>0) $w_perc = $l_executado/$l_previsto*100; else $w_perc = 0;
       if (f($row,'ultimo_nivel')=='S' && f($row,'aplicacao_financeira')=='N') {
-        $w_total_previsto += f($row,'total_previsto');
-        foreach($Ordem as $k => $v) $Total[$v]+=$Valor[$v];
+        $w_total_previsto += $l_previsto;
       }
 
       $w_folha = ((f($row,'ultimo_nivel')=='N' && $p_sintetico=='N') ? ' class="folha"' : '');
@@ -280,16 +275,19 @@ function Inicial() {
             if($w_embed!='WORD') $l_html.=chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$w_dir.$w_pagina.'detalhe&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$p_projeto.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp;';
             else                 $l_html.=chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp;';
             $l_html.=chr(13).'          <td>'.f($row,'descricao').' </td>';
-            $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
+            $l_html.=chr(13).'          <td align="right">'.formatNumber($l_previsto).' </td>';
 
             if ($w_imprime) {
-              $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
-              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+              
+              if (f($row,'aplicacao_financeira')=='S') $l_executado = -1*$l_executado;
+              
+              $l_html.=chr(13).'          <td align="right">'.formatNumber($l_executado).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$l_executado).'</td>';
               $l_html.=chr(13).'          <td align="right">'.formatNumber($w_perc).' %</td>';
-              foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
+              foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[f($row,'sq_projeto_rubrica')][$v]).'</td>';
             } else {
               $l_html.=chr(13).'          <td>&nbsp;</td>';
-              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$Valor[f($RS_Projeto,'sg_moeda')]).'</td>';
+              $l_html.=chr(13).'          <td align="right">'.formatNumber($l_saldo).'</td>';
               $l_html.=chr(13).'          <td align="right">0,00%</td>';
               foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td>&nbsp;</td>';
             }
@@ -315,7 +313,7 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif ($O == 'P') {
-    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', 'Contas', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
+    AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', 'execucao', $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
     ShowHTML('    <table width="99%" border="0">');
@@ -375,7 +373,7 @@ function Detalhe() {
   $sql = new db_getSolicRubrica; $RS_Rubrica = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,null,null,null);
   foreach($RS_Rubrica as $row) { $RS_Rubrica = $row; break; }
 
-  // Recupera as rubricas do projeto
+  // Recupera os lançamentos da rubrica
   $sql = new db_getSolicRubrica; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,$p_inicio,$p_fim,'PJEXECL'.$p_concluido);
 
   cabecalho();

@@ -227,11 +227,13 @@ function Inicial() {
             $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
     } else {
+      //echo FormataDataEdicao(time(),2).'<br>';
       $sql = new db_getSolicFN; $RS = $sql->getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P2,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
             $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
+      //echo FormataDataEdicao(time(),2);
     }
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -707,6 +709,7 @@ function Inicial() {
       }
       ShowHTML('</tr>');
     }
+    //echo FormataDataEdicao(time(),2);
   } else {
     ScriptOpen('JavaScript');
     ShowHTML(' alert("Opção não disponível");');
