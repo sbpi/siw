@@ -232,6 +232,7 @@ begin
   where a.sq_pessoa           = p_usuario
     and w_modulo              in (select sq_modulo from siw_modulo where sigla in ('AC','PR','PD')) 
     and a.sq_modulo           = (select sq_modulo from siw_modulo where sigla = 'FN')
+    and w_sg_modulo           = 'FN'
     and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
          a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
          a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))
