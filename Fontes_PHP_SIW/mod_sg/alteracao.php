@@ -241,7 +241,7 @@ function Grava() {
   ShowHTML('<base HREF="' . $conRootSIW . '">');
   ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
-  switch ($SG) {
+  switch (substr($SG,0,6)) {
     case 'AJUSTE' :
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura == '') {

@@ -4588,7 +4588,11 @@ function Diarias() {
           ShowHTML('       <td align="center">' . substr(FormataDataEdicao($w_trechos[$i][6], 4), 0, -3) . '</b></td>');
           ShowHTML('       <td align="center">' . substr(FormataDataEdicao($w_trechos[$i][7], 4), 0, -3) . '</b></td>');
           ShowHTML('       <td>');
-          ShowHTML('          <A class="HL" HREF="javascript:altera(' . f($row, 'sq_siw_solicitacao') . ',\'' . base64_encode(serialize($w_trechos[$i])) . '\');" title="Informa as diárias">Informar</A>&nbsp');
+          if (nvl($w_trechos[$i][25],'')=='') {
+             ShowHTML('          <A class="HL" HREF="javascript:alert(\'ERRO! Não foi informado o valor da diária para este destino.\');" title="ATENÇÃO: é necessário informar o valor da diária para este destino.">Informar</A>&nbsp');
+          } else {
+             ShowHTML('          <A class="HL" HREF="javascript:altera(' . f($row, 'sq_siw_solicitacao') . ',\'' . base64_encode(serialize($w_trechos[$i])) . '\');" title="Informa as diárias">Informar</A>&nbsp');
+          }
           ShowHTML('       </td>');
         }
         $i += 1;

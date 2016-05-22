@@ -77,6 +77,8 @@ class Ora8ConnectionManager extends ConnectionManager {
       $this->hostName = ORA8_SERVER_NAME;
       $this->userName = ORA8_DB_USERID;
       $this->passWord = ORA8_DB_PASSWORD;
+      //echo ($this->hostName.'-'.$this->userName.'-'.$this->passWord);
+      //die();
    }
 
    function doConnection() {

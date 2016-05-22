@@ -286,32 +286,33 @@ begin
                                                                                   z.sigla          = 'FNDEVENT'
                                                                                  )
                                   )                         da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
-                     left         join (select zd.sq_siw_solicitacao, sum(za.valor_total) as valor
-                                          from fn_imposto_doc                    za
-                                               inner     join fn_lancamento_doc  zb on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
-                                                 inner   join siw_solicitacao    zd on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
-                                               inner     join fn_imposto         zg on (za.sq_imposto         = zg.sq_imposto)
-                                               inner     join siw_solicitacao    zh on (za.solic_imposto      = zh.sq_siw_solicitacao)
-                                                 inner   join fn_lancamento      zi on (zh.sq_siw_solicitacao = zi.sq_siw_solicitacao)
-                                                 inner   join siw_tramite        zj on (zh.sq_siw_tramite     = zj.sq_siw_tramite and zj.sigla <> 'CA')
-                                                 inner   join siw_menu           zk on (zh.sq_menu            = zk.sq_menu)
-                                         where zg.calculo > 0
-                                           and (p_chave     is null or (p_chave     is not null and zd.sq_siw_solicitacao = p_chave))
-                                        group by zd.sq_siw_solicitacao
-                                       )                    dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
-                     left         join (select zd.sq_siw_solicitacao, sum(case zg.tipo when 'A' then za.valor else -1*za.valor end) as valor
-                                          from fn_documento_valores              za
-                                               inner     join fn_lancamento_doc  zb on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
-                                                 inner   join siw_solicitacao    zd on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
-                                               inner     join fn_valores         zg on (za.sq_valores         = zg.sq_valores)
-                                         where (p_chave     is null or (p_chave     is not null and zd.sq_siw_solicitacao = p_chave))
-                                        group by zd.sq_siw_solicitacao
-                                       )                    dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
                      left         join (select zb.sq_siw_solicitacao, sum(zb.valor) as valor
                                           from fn_lancamento_doc  zb
                                          where (p_chave    is null or (p_chave is not null and zb.sq_siw_solicitacao = p_chave))
                                         group by zb.sq_siw_solicitacao
                                        )                    dj on (d.sq_siw_solicitacao       = dj.sq_siw_solicitacao)
+                     left         join (select zd.sq_siw_solicitacao, sum(za.valor_total) as valor
+                                          from siw_solicitacao                     zd
+                                               inner       join fn_lancamento_doc  zb on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
+                                                 inner     join fn_imposto_doc     za on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
+                                                   inner   join fn_imposto         zg on (za.sq_imposto         = zg.sq_imposto)
+                                                   inner   join siw_solicitacao    zh on (za.solic_imposto      = zh.sq_siw_solicitacao)
+                                                     inner join fn_lancamento      zi on (zh.sq_siw_solicitacao = zi.sq_siw_solicitacao)
+                                                     inner join siw_tramite        zj on (zh.sq_siw_tramite     = zj.sq_siw_tramite and zj.sigla <> 'CA')
+                                         where zg.calculo > 0
+                                           and zd.sq_menu = p_menu
+                                           and (p_chave     is null or (p_chave     is not null and zd.sq_siw_solicitacao = p_chave))
+                                        group by zd.sq_siw_solicitacao
+                                       )                    dg on (d.sq_siw_solicitacao       = dg.sq_siw_solicitacao)
+                     left         join (select zd.sq_siw_solicitacao, sum(case zg.tipo when 'A' then za.valor else -1*za.valor end) as valor
+                                          from siw_solicitacao                     zd
+                                               inner     join fn_lancamento_doc    zb on (zb.sq_siw_solicitacao = zd.sq_siw_solicitacao)
+                                                 inner   join fn_documento_valores za on (za.sq_lancamento_doc  = zb.sq_lancamento_doc)
+                                                   inner join fn_valores           zg on (za.sq_valores         = zg.sq_valores)
+                                         where (p_chave     is null or (p_chave     is not null and zd.sq_siw_solicitacao = p_chave))
+                                           and zd.sq_menu = p_menu
+                                        group by zd.sq_siw_solicitacao
+                                       )                    dh on (d.sq_siw_solicitacao       = dh.sq_siw_solicitacao)
                      left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
                                                                    e1.fim                     is null
