@@ -1,6 +1,6 @@
 create or replace view VW_CONTA_BANCARIA_FINANCEIRO as
 -- Recupera dados a partir da conta débito do lançamento
-select case substr(a3.sigla,3,1) when 'R' then 'C' else 'D' end tipo,
+select case substr(a3.sigla,3,1) when 'D' then 'D' else 'C' end tipo,
        case b2.sigla when 'PR' then b.sq_siw_solicitacao else case c2.sigla when 'PR' then c.sq_siw_solicitacao else null end end sq_projeto,
        case b2.sigla when 'PR' then b.codigo_interno     else case c2.sigla when 'PR' then c.codigo_interno     else null end end cd_projeto,
        a1.sigla sg_tramite,
@@ -19,7 +19,7 @@ select case substr(a3.sigla,3,1) when 'R' then 'C' else 'D' end tipo,
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite)
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
-       inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu)
+       inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and substr(a3.sigla,3,1) in ('C','D'))
        left        join siw_solicitacao   b  on (a.sq_solic_pai        = b.sq_siw_solicitacao)
          left      join siw_menu          b1 on (b.sq_menu             = b1.sq_menu)
            left    join siw_modulo        b2 on (b1.sq_modulo          = b2.sq_modulo)
