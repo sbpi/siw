@@ -2110,12 +2110,10 @@ function Parcelas() {
     if (strpos('IA',$O)!==false) {
       Validate('w_ordem','Número de ordem da parcela','1','1','1','4','','0123456789');
       Validate('w_data','Data de vencimento da parcela','DATA','1','10','10','','0123456789/');
-      /*
-      if ($w_segmento=='Público' || $w_segmento=='Agência') {
+      if ($w_segmento=='Público' || $w_segmento=='Agência' || $w_segmento=='Organismo Internacional') {
         CompData('w_data','Data de vencimento','>=','w_inicio','Data de início de vigência');
-        CompData('w_data','Data de vencimento','<=','w_fim','Data de término de vigência');
+        CompData('w_data','Data de vencimento','<=','w_fim',  FormataDataEdicao($w_fim).' (término da vigência do contrato mais '.$w_dias_pagamento.' dias, que é o limite para encerramento financeiro do contrato)');
       }
-      */
       if(nvl($w_sq_acordo_aditivo,'')=='') {
         Validate('w_valor','Valor da parcela','VALOR','1',4,18,'','0123456789.,');
       } else {

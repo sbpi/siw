@@ -11,8 +11,12 @@ create or replace function CODIGO2NUMERO(p_codigo in varchar2) return varchar2 i
   w_prefixo siw_menu.prefixo%type;
   w_numero  varchar2(255);
   w_ano     varchar2(4);
+  w_tamanho number(5);
 begin
-  If instr(p_codigo,'-') = 0 and instr(p_codigo,'-') = 0 Then
+  -- Recupera tamanho máximo que pode ser colocado na variável "w_prefixo", que recebe de SIW_MEBNU.PREFIXO
+  select data_length into w_tamanho from user_tab_columns where table_name = 'SIW_MENU' and column_name = 'PREFIXO';
+     
+  If (instr(p_codigo,'-') = 0 and instr(p_codigo,'-') = 0) or instr(p_codigo,'-') > w_tamanho Then
      Result := p_codigo;
   Else
      If instr(p_codigo,'-') > 0 Then
