@@ -142,6 +142,7 @@ begin
                 to_char(d.envelope_2,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_2,
                 to_char(d.envelope_3,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_3,
                 d.fundo_fixo,         d.sq_modalidade_artigo,        coalesce(d.data_homologacao, b.conclusao) as data_autorizacao,
+                d.justificativa_regra_pesquisas,                     d.justificativa_regra_propostas,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 case when b.protocolo_siw is null
@@ -355,27 +356,29 @@ begin
                 codigo2numero(c1.codigo_interno) as ord_cd_material,
                 e.sq_pessoa, e.sq_tipo_pessoa, e.nome as nm_fornecedor,
                 coalesce(e1.cpf, e2.cnpj) as cd_fornecedor
-           from siw_solicitacao                           a
-                inner       join siw_menu                 a1 on (a.sq_menu             = a1.sq_menu)
-                inner       join siw_tramite              a2 on (a.sq_siw_tramite      = a2.sq_siw_tramite and
-                                                                 a2.sigla              = 'AT'
-                                                                )
-                inner       join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-                  inner     join lc_modalidade            b1 on (b.sq_lcmodalidade     = b1.sq_lcmodalidade)
-                  inner     join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
-                    inner   join cl_material              c1 on (c.sq_material         = c1.sq_material)
-                    inner   join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
-                                                                 d.pesquisa            = 'N' and
-                                                                 d.vencedor            = 'S'
-                                                                )
-                      inner join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
-                      left  join co_pessoa_fisica         e1 on (e.sq_pessoa           = e1.sq_pessoa)
-                      left  join co_pessoa_juridica       e2 on (e.sq_pessoa           = e2.sq_pessoa)
-                  left      join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
-                    left    join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
-                      left  join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
+           from siw_solicitacao                               a
+                inner           join siw_menu                 a1 on (a.sq_menu             = a1.sq_menu)
+                inner           join siw_tramite              a2 on (a.sq_siw_tramite      = a2.sq_siw_tramite and
+                                                                     a2.sigla              = 'AT'
+                                                                    )
+                inner           join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  inner         join lc_modalidade            b1 on (b.sq_lcmodalidade     = b1.sq_lcmodalidade)
+                  inner         join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                    inner       join cl_material              c1 on (c.sq_material         = c1.sq_material)
+                    inner       join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
+                                                                     d.pesquisa            = 'N' and
+                                                                     d.vencedor            = 'S'
+                                                                    )
+                      inner     join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
+                      left      join co_pessoa_fisica         e1 on (e.sq_pessoa           = e1.sq_pessoa)
+                      left      join co_pessoa_juridica       e2 on (e.sq_pessoa           = e2.sq_pessoa)
+                  left          join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
+                    left        join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
+                      left      join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
+                        left    join siw_solicitacao          i on (h.sq_siw_solicitacao   = i.sq_siw_solicitacao)
+                          left  join siw_tramite              j on (i.sq_siw_tramite       = j.sq_siw_tramite and j.sigla <> 'CA')
           where a1.sq_menu           = p_menu
-            and h.sq_siw_solicitacao is null
+            and j.sq_siw_tramite     is null -- Item com contrato não cancelado não pode ser vinculado a outro contrato
             and b1.gera_contrato     = 'S'
          order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Elsif p_restricao = 'FUNDO_FIXO' Then

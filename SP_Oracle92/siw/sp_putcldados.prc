@@ -31,10 +31,14 @@ create or replace procedure SP_PutCLDados
     p_nota_conclusao        in varchar2 default null,
     p_fundo_fixo            in varchar2 default null,
     p_quantidade            in number   default null,
-    p_detalhamento          in varchar2 default null
+    p_detalhamento          in varchar2 default null,
+    p_rubrica               in varchar2 default null,
+    p_just_pesquisa         in varchar2 default null,
+    p_just_proposta         in varchar2 default null
    ) is
    w_numero_certame cl_solicitacao.numero_certame%type;
    w_sq_modalidade  number(18);
+   w_cont           number(18);
    w_prefixo        siw_menu.prefixo%type;
    w_codigo         siw_solicitacao.codigo_interno%type;
    w_sigla_menu     siw_menu.sigla%type;
@@ -60,7 +64,16 @@ begin
       If length(p_envelope_3)=10 Then w_envelope_3 := to_date(p_envelope_3,'dd/mm/yyyy'); Else w_envelope_3 := to_date(p_envelope_3,'dd/mm/yyyy, hh24:mi:ss'); End If;
    End If;
 
-   If p_restricao = 'PROT' Then
+   If p_restricao = 'JUST-PESQ-PROP' Then
+     
+      -- Atualiza a tabela da licitação com as justificativas para não cumprimento 
+      -- das quantidades mínimas de pesquisas de preço e/ou propostas
+      Update cl_solicitacao set
+         justificativa_regra_pesquisas = coalesce(p_just_pesquisa,justificativa_regra_pesquisas),
+         justificativa_regra_propostas = coalesce(p_just_pesquisa,justificativa_regra_pesquisas)
+      Where sq_siw_solicitacao = p_chave;
+      
+   Elsif p_restricao = 'PROT' Then
       -- Recupera a modalidade atual
       select a.sq_lcmodalidade, a.numero_certame into w_sq_modalidade, w_numero_certame from cl_solicitacao a where sq_siw_solicitacao = p_chave;
       
@@ -77,11 +90,11 @@ begin
       Where sq_siw_solicitacao = p_chave;
       
       If substr(w_sigla_menu,1,4) = 'CLLC' and (coalesce(w_numero_certame,'#') <> p_numero_certame or (coalesce(w_sq_modalidade,0) <> p_sq_lcmodalidade)) Then
-        -- Recupera o número do certame
-        CL_CriaParametro(p_chave, w_numero_certame);
+          -- Recupera o número do certame
+          CL_CriaParametro(p_chave, w_numero_certame);
 
-        -- Atualiza a tabela da licitação com os dados da análise
-        Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
+          -- Atualiza a tabela da licitação com os dados da análise
+          Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
       End If;
       
       If p_protocolo is not null Then
@@ -169,7 +182,8 @@ begin
          ordem                  = p_ordem,
          quantidade             = coalesce(p_quantidade,quantidade),
          dias_validade_proposta = coalesce(p_dias_item,dias_validade_proposta),
-         detalhamento           = coalesce(p_detalhamento,detalhamento)
+         detalhamento           = coalesce(p_detalhamento,detalhamento),
+         sq_projeto_rubrica     = coalesce(to_number(p_rubrica),sq_projeto_rubrica)
       Where sq_solicitacao_item = p_chave;
    ElsIf p_restricao = 'VENCEDOR' Then
       -- Registra os vencedores da licitação

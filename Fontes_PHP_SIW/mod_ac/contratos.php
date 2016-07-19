@@ -985,14 +985,16 @@ function BuscaCompra() {
       } elseif ($w_fornecedor!=f($row,'nm_fornecedor')) {
         ShowHTML('      <tr><td height=1></td><td height=1></td><td colspan=4 height=1 bgcolor="black">');
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td></td><td></td>');
+        if ($w_mod_pa=='S') ShowHTML('        <td></td>');
+        ShowHTML('        <td></td>');
         ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.f($row,'cd_fornecedor').'&nbsp;</td>');
         ShowHTML('        <td>'.f($row,'nm_fornecedor').'</td>');
         $w_fornecedor = f($row,'nm_fornecedor');
         $w_exibe      = true;
       } else {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td></td><td></td><td></td><td></td>');
+        if ($w_mod_pa=='S') ShowHTML('        <td></td>');
+        ShowHTML('        <td></td><td></td><td></td>');
       }
       ShowHTML('        <td>'.f($row,'ordem').' - '.f($row,'nm_material').'</td>');
       if ($w_exibe) {

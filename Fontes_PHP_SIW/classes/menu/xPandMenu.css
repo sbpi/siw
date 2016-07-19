@@ -266,7 +266,8 @@ FONT-WEIGHT: bold;
   FONT-SIZE: 101%;
   BORDER-LEFT: black 1px solid;
   BORDER-BOTTOM: black 1px solid;
-  BACKGROUND-COLOR: #ffffbb
+  BACKGROUND-COLOR: #ffffbb;
+  BACKGROUND: #ffffbb;
 }
 
 textarea.STIO 

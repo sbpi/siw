@@ -5660,20 +5660,20 @@ function Encaminhamento() {
       } else {
         Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
         ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-        ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+        ShowHTML('     alert("Informe o despacho apenas se for devolução para a fase anterior!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-        ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value=="") {');
+        ShowHTML('     alert("Informe um despacho descrevendo o motivo da devolução!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
         if (Nvl(substr($w_erro, 0, 1), '') == '1' || substr(Nvl($w_erro, 'nulo'), 0, 1) == '2') {
           if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
             Validate('w_justificativa', 'Justificativa', '', '', '1', '2000', '1', '1');
-            ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
-            ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
+            ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value=="") {');
+            ShowHTML('     alert("Informe uma justificativa para o não cumprimento do prazo regulamentar!");');
             ShowHTML('     theForm.w_justificativa.focus();');
             ShowHTML('     return false;');
             ShowHTML('}');

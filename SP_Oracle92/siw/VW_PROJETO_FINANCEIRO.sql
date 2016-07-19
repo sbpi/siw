@@ -2,7 +2,7 @@ create or replace view VW_PROJETO_FINANCEIRO as
 -- Pagamentos com detalhamento de itens
 select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
-       e.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,
+       e.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.codigo_externo cd_financeiro_externo,
        a.descricao||' - '||e.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then e.valor_total when e2.qtd_itens      = 1 then f.valor else e.valor_total*f.fator end valor,  -- Valor convertido na moeda do projeto
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda, 
@@ -14,7 +14,7 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
        a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        a3.sigla      sg_menu,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao, e.ordem,
+       c.vencimento, c.quitacao, a.conclusao, e.ordem,
        -- Necessidade de conversão para BRL (contabilidade): 
        -- se o pagamento foi em Reais ou se o projeto é em Reais e foi inserido um valor nessa moeda, não precisa.
        case when a2.sigla          = 'BRL' then 'N'
@@ -86,7 +86,8 @@ UNION ALL
 -- Pagamentos sem detalhamento de itens
 select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
-       c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.descricao ds_financeiro,
+       c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
+       a.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, -- Valor convertido na moeda do projeto
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda,
        case when f.sq_siw_solicitacao is null then a2.sigla      else b2.sigla              end sg_fn_moeda, 
@@ -97,7 +98,7 @@ select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
        a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        a3.sigla      sg_menu,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao, 1 ordem,
+       c.vencimento, c.quitacao, a.conclusao, 1 ordem,
        case when a2.sigla          = 'BRL' then 'N'
             when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then 'N'
             else 'S'

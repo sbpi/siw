@@ -45,43 +45,61 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
       $l_erro.='<li>Informe pelo menos um item para licitação.';
       $l_tipo=0; 
     }
+    // Verifica se foram inseridos itens inativos
+    foreach ($l_rs_item as $row) {
+      if (f($row,'exibe_catalogo')=='N' || f($row,'ativo')=='N') {
+        $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') não está disponível. Remova-o da lista de itens.';
+        $l_tipo  = 0;
+      }
+      if (nvl(f($row,'det_item'),'')=='') {
+        $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') precisa ser detalhado. Na tela de itens, clique na operação "AL" deste item e informe os dados solicitados.';
+        $l_tipo  = 0;        
+      }
+    }
+  }
+  
+  // Verifica se cada item possui o mínimo de pesquisas de preço exigido pela modalidade
+  // ou se foi informada justificativa para quebra da regra
+  if(nvl(f($l_rs_solic,'justificativa_regra_pesquisas'),'')=='' && (f($l_rs_tramite,'sigla')=='PP' || f($l_rs_tramite,'sigla')=='EE' || (f($l_rs_tramite,'sigla')=='CI') && f($l_rs_solic,'certame')=='N')) {
+    $sql = new db_getCLSolicItem; $l_rs_pesquisa = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
+    foreach($l_rs_pesquisa as $row) {
+      if (f($row,'qtd_desejada')>0) {
+        if (f($row,'qtd_pesquisas')<f($l_rs_solic,'minimo_pesquisas')) {
+          $l_erro .= '<li>'.f($l_rs_solic,'nm_lcmodalidade').' exige '.f($l_rs_solic,'minimo_pesquisas').'  pesquisa'.((f($l_rs_solic,'minimo_pesquisas')!=1) ? 's' : '').' de preço válida'.((f($l_rs_solic,'minimo_pesquisas')!=1) ? 's' : '').' e '.f($row,'nome').((f($row,'qtd_pesquisas')>0) ? ' só tem '.f($row,'qtd_pesquisas') : ' não tem nenhuma').'. Cadastre a quantidade exigida ou justifique.';
+          if ($l_tipo == '') $l_tipo = 2;
+        }
+      }
+    }
+  }
+
+  // Verifica se cada item possui o mínimo de propostas exigido pela modalidade
+  // ou se foi informada justificativa para quebra da regra
+  if(nvl(f($l_rs_solic,'justificativa_regra_propostas'),'')=='' && (f($l_rs_tramite,'sigla')=='EE' || (f($l_rs_tramite,'sigla')=='CI') && f($l_rs_solic,'certame')=='N')) {
+    $sql = new db_getCLSolicItem; $l_rs_pesquisa = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOG');
+    foreach($l_rs_pesquisa as $row) {
+      if (f($row,'qtd_desejada')>0) {
+        if (f($row,'qtd_propostas')==0) {
+          $l_erro .= '<li>É obrigatório informar ao menos uma proposta para o item '.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') ';
+          $l_tipo = 0;
+        } elseif (f($row,'qtd_propostas')<f($l_rs_solic,'minimo_participantes')) {
+          $l_erro .= '<li>'.f($l_rs_solic,'nm_lcmodalidade').' exige '.f($l_rs_solic,'minimo_participantes').'  proposta'.((f($l_rs_solic,'minimo_participantes')!=1) ? 's' : '').' e '.f($row,'nome').((f($row,'qtd_propostas')>0) ? ' só tem '.f($row,'qtd_propostas') : ' não tem nenhuma').'. Cadastre a quantidade exigida ou justifique.';
+          if ($l_tipo == '') $l_tipo = 2;
+        }
+      }
+    }
   }
   
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
-  if (count($l_rs_tramite)>0) {
+  if (count($l_rs_tramite)>0 || (f($l_rs_tramite,'sigla')=='CI') && f($l_rs_solic,'gera_contrato')=='N') {
     if(f($l_rs_tramite,'sigla')=='AP') {
       if(nvl(f($l_rs_solic,'sq_lcmodalidade'),'')=='') {
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }
-    } elseif(f($l_rs_tramite,'sigla')=='PP') {
-      // Verifica se cada item possui o mínimo de pesquisas de preço exigido pela modalidade
-      $sql = new db_getCLSolicItem; $l_rs_pesquisa = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
-      if(count($l_rs_pesquisa)>0) {
-        foreach($l_rs_pesquisa as $row) {
-          if (f($row,'qtd')<f($l_rs_solic,'minimo_pesquisas')) {
-            $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') '.((f($row,'qtd')>0) ? 'só tem '.f($row,'qtd').' pesquisa(s) de preço válida(s).' : 'não tem pesquisa de preço válida.');
-            $l_tipo  = 0;
-          }
-        }
-      }
     } elseif(f($l_rs_tramite,'sigla')=='EA') {
       if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')=='') {
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
-      }
-    } elseif(f($l_rs_tramite,'sigla')=='EE')  {
-      $sql = new db_getCLSolicItem; $l_rs_pesquisa = $sql->getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOG');
-      foreach($l_rs_pesquisa as $row) {
-        if (f($row,'qt_propostas')==0) {
-          $l_erro .= '<li>A licitação não tem nenhuma proposta.';
-          $l_tipo  = 0;
-        /*
-        } elseif (((f($row,'qt_itens') * f($row,'qt_fornecedores'))!=f($row,'qt_propostas'))) {
-          $l_erro .= '<li>Para critério de '.(($w_cliente==6881) ? 'avaliação' : 'julgamento').' global é necessário que cada fornecedor cote todos os itens.';
-          $l_tipo  = 0;
-        */
-        }
       }
     }
   }

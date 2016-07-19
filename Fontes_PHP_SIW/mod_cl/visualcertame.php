@@ -10,6 +10,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms,$w_cliente);
   $w_cliente_arp = f($RS,'ata_registro_preco');
 
+  // Verifica se o cliente tem solicitação de compras no menu
+  $sql = new db_getMenuCode; $RS_MenuCode = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+  if (count($RS_MenuCode)>0) $w_pedido = true; else $w_pedido = false;
+
   // Recupera os dados da solicitacao
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,$w_menu,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -23,6 +27,16 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_participantes  = f($RS,'minimo_participantes');
   $w_sb_moeda       = nvl(f($RS,'sb_moeda'),'');
   $w_conclusao      = f($RS,'conclui_sem_proposta');
+
+  // Verifica se o registro pai tem rubricas
+  $w_exige_rubrica = false;
+  if (nvl(f($RS,'sq_solic_pai'),'')!='' && piece(f($RS,'dados_pai'),null,'|@|',6)=='PJCAD') {
+    $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,f($RS,'sq_solic_pai'),null,'S',null,null,null,null,null,'VISUAL');
+    if (count($RSQuery)>0) {
+      $w_solic_pai = f($RS,'sq_solic_pai');
+      $w_exige_rubrica = true;
+    }
+  }
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
@@ -104,8 +118,16 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td><b>Número original: </b></td><td>'.f($RS,'numero_original').' </td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td><td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 
     }
-    $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.CRLF2BR(Nvl(f($RS,'justificativa'),'---')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Justificativa (motivo):</b></td><td>'.CRLF2BR(Nvl(f($RS,'justificativa'),'---')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
+
+    if (Nvl(f($RS,'justificativa_regra_pesquisas'),'')>'') {
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Justificativa para o não cumprimento do número mínimo de pesquisas de preço:</b></td><td colspan="12">'.crLf2Br(f($RS,'justificativa_regra_pesquisas')).' </td></tr>';
+    } 
+    if (Nvl(f($RS,'justificativa_regra_propostas'),'')>'') {
+      // Se o campo de justificativa estiver preenchido, exibe
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Justificativa para o não cumprimento do número mínimo de propostas:</b></td><td colspan="12">'.crLf2Br(f($RS,'justificativa_regra_propostas')).' </td></tr>';
+    } 
     
     if (nvl(f($RS,'sq_financeiro'),'')!='') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -290,7 +312,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
       }
     } 
-
+    
     //Listagem dos itens da licitação
     $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
     $RS1 = SortArray($RS1,'ordem','asc','valor_unidade','asc');
@@ -300,11 +322,17 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'        <tr align="center">';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Item</td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Pedido</td>';
+      $colspan=0;
+      $colspan++; $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Item</td>';
+      $colspan++; $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
+      if ($w_exige_rubrica) {
+        $colspan++; $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Rubrica</td>';
+      }
+      $colspan++; $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
+      $colspan++; $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
+      if ($w_pedido) {
+        $colspan++; $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Pedido</td>';
+      }
       $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
       if ($w_gera_contrato=='S' and $l_sg_tramite=='AT') {
         $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Contrato</td>';
@@ -313,7 +341,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        </tr>';
       $l_html.=chr(13).'        <tr align="center">';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Licitada</td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Comprada</td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Adquirida</td>';
       if (f($RS,'ativo')=='S' && $w_pede_valor_pedido=='N') {
         $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Unitário</td>';
         $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Total</td>';
@@ -326,10 +354,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $w_item_comp    = 0;
       $w_item_unit    = 0;
       $w_cor=$conTrBgColor;
-      foreach($RS1 as $row) { 
+      foreach($RS1 as $row) {
         if ($w_atual!=f($row,'sq_material')) {
           if ($w_exibe) {
-            $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
+            $l_html.=chr(13).'      <tr><td colspan="'.($colspan-1).'"><td align="right" nowrap><b>Totais do item</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,0).'</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,0).'</td>';
             if(f($RS,'ativo')=='S') {
@@ -340,6 +368,9 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'      <tr align="center" valign="top">';
           $l_html.=chr(13).'        <td>'.nvl(f($row,'ordem'),'---').'</td>';
           $l_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
+          if ($w_exige_rubrica) {
+            $l_html.=chr(13).'        <td align="left">'.f($row,'cd_rubrica').' - '.f($row,'nm_rubrica').'</td>';
+          }
           if($l_tipo=='WORD') $l_html.=chr(13).'        <td align="left">'.f($row,'nome');
           else                $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null);
           if (nvl(f($row,'det_item'),'')!='') {
@@ -353,11 +384,13 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $w_item_unit  = 0;
         } else {
           $l_html.=chr(13).'      <tr align="center">';
-          $l_html.=chr(13).'        <td colspan=4></td>';
+          $l_html.=chr(13).'        <td colspan="'.(($w_exige_rubrica) ? 5 : 4).'"></td>';
           $w_exibe = true;
         }
-        if($l_tipo!='WORD') $l_html.=chr(13).'        <td align="left" nowrap>'.nvl(exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N'),'---').'</td>';
-        else                $l_html.=chr(13).'        <td align="left" nowrap>'.nvl(exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N','S'),'---').'</td>';
+        if ($w_pedido) {
+          if($l_tipo!='WORD') $l_html.=chr(13).'        <td align="left" nowrap>'.nvl(exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N'),'---').'</td>';
+          else                $l_html.=chr(13).'        <td align="left" nowrap>'.nvl(exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N','S'),'---').'</td>';
+        }
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>';
         if (f($RS,'ativo')=='S' && $w_pede_valor_pedido=='N') {
@@ -375,7 +408,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }        
         if ($w_gera_contrato=='S' and $l_sg_tramite=='AT') {
           if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'dados_filho'),'N'),'---').'</td></tr>';
-          else                         $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'dados_filho'),'N','S'),'---').'</td></tr>';
+          else                                $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'dados_filho'),'N','S'),'---').'</td></tr>';
         }
         $l_html.=chr(13).'        </tr>';
         $w_item_lic   += f($row,'qtd_pedido');
@@ -383,7 +416,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $w_item_unit  = f($row,'pesquisa_preco_medio');
       }
       if ($w_exibe && f($RS,'ativo')=='S' && $w_pede_valor_pedido=='N') {
-        $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
+        $l_html.=chr(13).'      <tr><td colspan="'.($colspan-1).'"><td align="right" nowrap><b>Totais do item</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,0).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,0).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_unit,4).'</td>';

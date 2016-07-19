@@ -9,7 +9,8 @@ create or replace procedure SP_PutCLSolicItem
     p_qtd_ant                  in  number   default null,
     p_valor                    in  number   default null,
     p_cancelado                in  varchar2 default null,
-    p_motivo_cancelamento      in  varchar2 default null
+    p_motivo_cancelamento      in  varchar2 default null,
+    p_rubrica                  in  varchar2 default null
    ) is
    w_chave      number(18);
    w_valor      number(18,4);
@@ -35,9 +36,9 @@ begin
       select sq_solicitacao_item.nextval into w_chave from dual;
       -- Insere registro
       insert into cl_solicitacao_item
-        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   detalhamento, cancelado,                 motivo_cancelamento,   sq_unidade_medida)
+        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   detalhamento,   cancelado,                 motivo_cancelamento,   sq_unidade_medida,   sq_projeto_rubrica)
       (select
-         w_chave,             p_chave,            p_material,  p_quantidade, detalhamento, coalesce(p_cancelado,'N'), p_motivo_cancelamento, a.sq_unidade_medida
+         w_chave,             p_chave,            p_material,  p_quantidade, p_detalhamento, coalesce(p_cancelado,'N'), p_motivo_cancelamento, a.sq_unidade_medida, p_rubrica
          from cl_material a
         where sq_material = p_material
       );
@@ -47,7 +48,8 @@ begin
          set quantidade          = p_quantidade,
              detalhamento        = p_detalhamento,
              cancelado           = coalesce(p_cancelado,'N'),
-             motivo_cancelamento = p_motivo_cancelamento
+             motivo_cancelamento = p_motivo_cancelamento,
+             sq_projeto_rubrica  = p_rubrica
        where sq_solicitacao_item = p_chave_aux;
    Elsif p_operacao = 'E' Then
       -- p_chave_aux2 é passado apenas pelo item da licitação
@@ -164,9 +166,9 @@ begin
 
          -- Insere registro
          insert into cl_solicitacao_item
-           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida,   detalhamento)
+           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida,   detalhamento, sq_projeto_rubrica)
          (select 
-            w_chave,             p_chave,            w_material,  w_qtd,      a.sq_unidade_medida, detalhamento
+            w_chave,             p_chave,            w_material,  w_qtd,      a.sq_unidade_medida, detalhamento, p_rubrica
             from cl_solicitacao_item a where a.sq_solicitacao_item = p_chave_aux2
          );
       Else
@@ -178,7 +180,8 @@ begin
           
          -- Acresce a quantidade do item do pedido à quantidade já existente na licitação
          update cl_solicitacao_item 
-            set quantidade = quantidade + w_qtd 
+            set quantidade = quantidade + w_qtd,
+                sq_projeto_rubrica = p_rubrica
          where sq_solicitacao_item = w_chave;
       End If;
       

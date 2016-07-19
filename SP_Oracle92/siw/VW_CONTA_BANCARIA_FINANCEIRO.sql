@@ -1,6 +1,6 @@
 create or replace view VW_CONTA_BANCARIA_FINANCEIRO as
 -- Recupera dados a partir da conta débito do lançamento
-select case substr(a3.sigla,3,1) when 'D' then 'D' else 'C' end tipo,
+select a3.sigla sg_menu, case when (a3.sigla = 'FNATRANSF' or substr(a3.sigla,3,1) = 'D') then 'D' else 'C' end tipo,
        case b2.sigla when 'PR' then b.sq_siw_solicitacao else case c2.sigla when 'PR' then c.sq_siw_solicitacao else null end end sq_projeto,
        case b2.sigla when 'PR' then b.codigo_interno     else case c2.sigla when 'PR' then c.codigo_interno     else null end end cd_projeto,
        a1.sigla sg_tramite,
@@ -19,7 +19,7 @@ select case substr(a3.sigla,3,1) when 'D' then 'D' else 'C' end tipo,
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite)
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
-       inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and substr(a3.sigla,3,1) in ('C','D'))
+       inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNAAPLICA')
        left        join siw_solicitacao   b  on (a.sq_solic_pai        = b.sq_siw_solicitacao)
          left      join siw_menu          b1 on (b.sq_menu             = b1.sq_menu)
            left    join siw_modulo        b2 on (b1.sq_modulo          = b2.sq_modulo)
@@ -36,11 +36,11 @@ select case substr(a3.sigla,3,1) when 'D' then 'D' else 'C' end tipo,
                                                 e.sq_moeda             = f.sq_moeda
                                                )
  where -- Se petty cash, não pode estar cancelado. Caso contrário, deve estar concluído
- 	     (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
+        (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
     or (a3.sigla !='FNDFIXO' and a1.sigla = 'AT') 
 UNION ALL
 -- Recupera dados da conta crédito de trasnferências bancárias
-select 'C' tipo,
+select a3.sigla sg_menu, 'C' tipo,
        case b2.sigla when 'PR' then b.sq_siw_solicitacao else case c2.sigla when 'PR' then c.sq_siw_solicitacao else null end end sq_projeto,
        case b2.sigla when 'PR' then b.codigo_interno     else case c2.sigla when 'PR' then c.codigo_interno     else null end end cd_projeto,
        a1.sigla sg_tramite,
@@ -79,5 +79,5 @@ select 'C' tipo,
                                                  e.sq_moeda            = f.sq_moeda
                                                 )
  where -- Se petty cash, não pode estar cancelado. Caso contrário, deve estar concluído
- 	     (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
+        (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
     or (a3.sigla !='FNDFIXO' and a1.sigla = 'AT')

@@ -919,7 +919,7 @@ function Modalidades() {
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Sigla','sigla').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Mínimo pesquisas','minimo_pesquisas').'</td>');
-    ShowHTML('          <td colspan="3"><b>'.LinkOrdena('Certame','nm_certame').'</td>');
+    ShowHTML('          <td colspan="3"><b>Certame</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Gera contrato','nm_gera_contrato').'</td>');
     ShowHTML('          <td colspan="2"><b>'.LinkOrdena('Enquadramento'.(($w_cliente==17305) ? ' (US$)' : ''),'enquadramento_inicial').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
@@ -929,11 +929,11 @@ function Modalidades() {
     }
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Permite</td>');
-    ShowHTML('          <td><b>Mín. particip.</td>');
-    ShowHTML('          <td><b>Mín. prop. válidas</td>');
-    ShowHTML('          <td><b>De</td>');
-    ShowHTML('          <td><b>Até</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Permite','nm_certame').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Mín. particip.','minimo_participantes').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Mín. prop. válidas','minimo_propostas_validas').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('De','enquadramento_inicial').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Até','enquadramento_final').'</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem

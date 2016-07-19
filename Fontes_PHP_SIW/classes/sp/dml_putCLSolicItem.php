@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putCLSolicItem {
    function getInstanceOf($dbms, $operacao, $p_chave_aux, $p_chave, $p_chave_aux2, $p_material, $p_detalhamento, $p_quantidade, 
-          $p_qtd_ant, $p_valor, $p_cancelado, $p_motivo_cancelamento) {
+          $p_qtd_ant, $p_valor, $p_cancelado, $p_motivo_cancelamento, $p_rubrica) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCLSolicItem';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
@@ -23,7 +23,8 @@ class dml_putCLSolicItem {
                    'p_qtd_ant'                   =>array(tonumber(tvl($p_qtd_ant)),                        B_NUMERIC,      18,2),
                    'p_valor'                     =>array(tonumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                    'p_cancelado'                 =>array(tvl($p_cancelado),                                B_VARCHAR,         1),
-                   'p_motivo_cancelamento'       =>array(tvl($p_motivo_cancelamento),                      B_VARCHAR,       500)
+                   'p_motivo_cancelamento'       =>array(tvl($p_motivo_cancelamento),                      B_VARCHAR,       500),
+                   'p_rubrica'                   =>array(tvl($p_rubrica),                                  B_INTEGER,        32)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

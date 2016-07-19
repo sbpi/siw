@@ -186,11 +186,11 @@ begin
       open p_result for 
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
-                a.sq_financeiro, a.cd_financeiro, 
+                a.sq_financeiro, a.cd_financeiro, a.cd_financeiro_externo,
                 case when substr(a.sg_menu,1,3) = 'FNR' then trunc(-1*a.valor,2) else trunc(a.valor,2) end valor,
                 a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
                 a.fn_valor, a.fn_sq_moeda, a.fn_sg_moeda, a.fn_sb_moeda, a.ordem or_item,
-                a.exige_brl, a.fator_conversao,
+                a.exige_brl, a.fator_conversao, a.conclusao,
                 a.brl_taxa_compra_data, a.brl_taxa_compra, a.brl_valor_compra, 
                 a.brl_taxa_venda_data,  a.brl_taxa_venda,  a.brl_valor_venda,
                 codigo2numero(a.cd_financeiro) or_financeiro,
@@ -200,7 +200,9 @@ begin
                 a.ds_financeiro descricao, d.inicio, 
                 e.sigla sg_tramite,
                 f.sigla sg_menu,
-                g.aviso_prox_conc, g.quitacao, g.vencimento,
+                g.aviso_prox_conc, g.quitacao, g.vencimento, 
+                g411.nome nm_banco, g411.codigo cd_banco,
+                nvl(g5.nome, f111.nome) nm_pais,
                 cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso,
                 g1.nome nm_forma_pagamento,
                 g2.sq_pessoa, g2.nome nm_pessoa, coalesce(g3.cpf, g4.cnpj) cd_pessoa,
@@ -214,11 +216,18 @@ begin
                   inner   join co_moeda           d1 on (d.sq_moeda           = d1.sq_moeda)
                   inner   join siw_tramite         e on (d.sq_siw_tramite     = e.sq_siw_tramite)
                   inner   join siw_menu            f on (d.sq_menu            = f.sq_menu)
+                  inner   join siw_cliente        f1 on (f.sq_pessoa          = f1.sq_pessoa)
+                    inner join co_cidade         f11 on (f1.sq_cidade_padrao  = f11.sq_cidade)
+                    inner join co_pais          f111 on (f11.sq_pais          = f111.sq_pais)
                   inner   join fn_lancamento       g on (d.sq_siw_solicitacao = g.sq_siw_solicitacao)
                     inner join co_forma_pagamento g1 on (g.sq_forma_pagamento = g1.sq_forma_pagamento)
                     inner join co_pessoa          g2 on (g.pessoa             = g2.sq_pessoa)
                     left  join co_pessoa_fisica   g3 on (g.pessoa             = g3.sq_pessoa)
+                    left  join co_pessoa_conta    g4 on (g.sq_pessoa_conta    = g4.sq_pessoa_conta)
+                    left  join co_agencia        g41 on (g4.sq_agencia        = g41.sq_agencia)
+                    left  join co_banco         g411 on (g41.sq_banco         = g411.sq_banco)
                     left  join co_pessoa_juridica g4 on (g.pessoa             = g4.sq_pessoa)
+                    left  join co_pais            g5 on (g.sq_pais_estrang    = g5.sq_pais)
                   left    join fn_lancamento_doc   h on (d.sq_siw_solicitacao = h.sq_siw_solicitacao)
                     left join fn_tipo_documento    i on (h.sq_tipo_documento  = i.sq_tipo_documento)
           where a.sq_projeto  = p_chave

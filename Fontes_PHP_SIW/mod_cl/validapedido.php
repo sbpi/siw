@@ -62,6 +62,10 @@ function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
         $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') não está disponível. Remova-o da lista de itens.';
         $l_tipo  = 0;
       }
+      if (nvl(f($row,'det_item'),'')=='') {
+        $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') precisa ser detalhado. Na tela de itens, clique na operação "AL" deste item e detalhe as características desejadas para compra/contratação.';
+        $l_tipo  = 0;        
+      }
     }
   } 
 
