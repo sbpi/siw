@@ -71,6 +71,12 @@ $p_financeiro = upper(trim($_REQUEST['p_financeiro']));
 $p_concluido = $_REQUEST['p_concluido'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 
+$p_logo    = trim($_REQUEST['p_logo']);
+$p_numero  = trim($_REQUEST['p_numero']);
+$p_nome    = trim($_REQUEST['p_nome']);
+$p_cargo   = trim($_REQUEST['p_cargo']);
+$p_emissao = trim($_REQUEST['p_emissao']);
+  
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
@@ -200,6 +206,10 @@ function Inicial() {
       Validate('p_inicio', 'Pagamento inicial', 'DATA', '1', '10', '10', '', '0123456789/');
       Validate('p_fim', 'Pagamento final', 'DATA', '1', '10', '10', '', '0123456789/');
       CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
+      Validate('p_numero', 'Número da solicitação', '', '', '1', '10', '1', '');
+      Validate('p_nome', 'Nome completo', '', '', '1', '50', '1', '');
+      Validate('p_cargo', 'Cargo/Função', '', '', '1', '50', '1', '');
+      Validate('p_emissao', 'Data de emissão', 'DATA', '', '10', '10', '', '0123456789/');
       ValidateClose();
       ScriptClose();
     }
@@ -207,7 +217,7 @@ function Inicial() {
     ShowHTML('</HEAD>');
     if ($O == 'L') {
       BodyOpenClean('onLoad="this.focus()";');
-      CabecalhoRelatorio($w_cliente, 'Desembolsos e Aportes Locais', 4, $w_chave);
+      CabecalhoRelatorio($w_cliente, 'Desembolsos e Aportes Locais', 4, $w_chave, (($p_logo=='S') ? 'N' : 'S'), 'S');
     } else {
       BodyOpen('onLoad="document.focus()";');
       ShowHTML('<B><FONT COLOR="#000000">' . $w_TP . '</font></B>');
@@ -216,38 +226,40 @@ function Inicial() {
   }
   ShowHTML('<div align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
-    ShowHTML('<tr><td align="left" colspan=2>');
-    ShowHTML('<table border=0><tr><td colspan="10">Pagamento realizado de <b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b></tr></table>');
+    if ($p_logo=='N') {
+      ShowHTML('<tr><td align="left" colspan=2>');
+      ShowHTML('<table border=0><tr><td colspan="10">Pagamento realizado de <b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b></tr></table>');
+    }
 
     $l_html = '';
     $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
     $l_html.=chr(13).'        <table class="tudo" width=99%  border="1" cellspacing="0" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr align="center">';
-    $l_html.=chr(13).'            <td rowspan="3" colspan="7" bgColor="#f0f0f0"><b>CONTROLE DE DESEMBOLSOS E APORTES LOCAIS<br>Equivalente em '.f($RS_Projeto,'sb_moeda').'</td>';
-    $l_html.=chr(13).'            <td colspan="3" bgColor="#f0f0f0"><b>Orçamento Vigente - Em '.f($RS_Projeto,'sb_moeda').'</td>';
+    $l_html.=chr(13).'            <td rowspan="3" colspan="7">'.(($p_logo=='S') ? '<img ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,'img/logo-bid.png',null,null,null,'EMBED').'" alt="img" /><br><br>' : '').'<b>CONTROLE DE DESEMBOLSOS E APORTES LOCAIS<br>Equivalente em '.f($RS_Projeto,'sb_moeda').'</td>';
+    $l_html.=chr(13).'            <td colspan="3"><b>Orçamento Vigente - Em '.f($RS_Projeto,'sb_moeda').'</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center">';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0">BID - '.f($RS_Projeto,'sb_moeda').'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="right">'.formatNumber(f($RS_Projeto,'valor')).'</td>';
-    $l_html.=chr(13).'            <td  bgColor="#f0f0f0"align="right">100,0%</td>';
+    $l_html.=chr(13).'            <td>BID - '.f($RS_Projeto,'sb_moeda').'</td>';
+    $l_html.=chr(13).'            <td align="right">'.formatNumber(f($RS_Projeto,'valor')).'</td>';
+    $l_html.=chr(13).'            <td align="right">100,0%</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center">';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0">Local - '.f($RS_Projeto,'sb_moeda').'</td>';
-    $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">0,00</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="right">0,0%</td>';
+    $l_html.=chr(13).'            <td>Local - '.f($RS_Projeto,'sb_moeda').'</td>';
+    $l_html.=chr(13).'            <td align="right">0,00</td>';
+    $l_html.=chr(13).'            <td align="right">0,0%</td>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'          <tr align="center">';
-    $l_html.=chr(13).'            <td colspan="7" bgColor="#f0f0f0" align="left" valign="bottom"><b>Projeto nº '.f($RS_Projeto,'codigo_interno').'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0">Total - '.f($RS_Projeto,'sb_moeda').'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="right">'.formatNumber(f($RS_Projeto,'valor')).'</td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="right">100,0%</td>';
+    $l_html.=chr(13).'            <td colspan="7" align="left" valign="bottom"><b>Projeto nº '.nvl(f($RS_Projeto,'codigo_externo'),f($RS_Projeto,'codigo_interno')).'</td>';
+    $l_html.=chr(13).'            <td>Total - '.f($RS_Projeto,'sb_moeda').'</td>';
+    $l_html.=chr(13).'            <td align="right">'.formatNumber(f($RS_Projeto,'valor')).'</td>';
+    $l_html.=chr(13).'            <td align="right">100,0%</td>';
     $l_html.=chr(13).'          </tr>';
 
     $l_html.=chr(13).'          <tr align="center">';
     $l_html.=chr(13).'            <td rowspan="2" colspan="2" bgColor="#f0f0f0">Categorias de Investimento</td>';
     $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0">Orçamento Vigente</td>';
     $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0">Acumulado<br>Solicitação Anterior</td>';
-    $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0">Solicitação nº 12</td>';
+    $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0">Solicitação nº '.$p_numero.'</td>';
     $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0">Acumulado Atual</td>';
     $l_html.=chr(13).'          </tr>';
 
@@ -367,8 +379,16 @@ function Inicial() {
     $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">0,0%</td>';
     $l_html.=chr(13).'          </tr>';
 
-    $l_html.=chr(13).'          <tr class="folha" style="height: 100;">';
-    $l_html.=chr(13).'            <td colspan="10"><blockquote>Data: Brasília, '.date('d/m/Y').'</blockquote></td>';
+    $l_html.=chr(13).'          <tr class="folha">';
+    $l_html.=chr(13).'            <td colspan="10" align="center"><table border=0 width=40%>';
+    $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'              <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
+    $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'              <tr><td align="center">_____________________________</td></tr>';
+    $l_html.=chr(13).'              <tr><td align="center"><font size="2"><b>'.$p_nome.'</b></font></td></tr>';
+    $l_html.=chr(13).'              <tr><td align="center"><font size="2"><b>'.$p_cargo.'</b></font></td></tr>';
+    $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'            </table>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'        </table></td></tr>';
 
@@ -390,6 +410,12 @@ function Inicial() {
     SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
+    ShowHTML('      <tr><td><b>Número da <u>S</u>olicitação:</b><br><input ' . $w_Disabled . ' accesskey="S" type="text" name="p_numero" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_numero . '"></td>');
+    ShowHTML('      <tr><td><b><u>N</u>ome completo:</b><br><input ' . $w_Disabled . ' accesskey="N" type="text" name="p_nome" class="sti" SIZE="35" MAXLENGTH="50" VALUE="' . $p_nome . '"></td>');
+    ShowHTML('      <tr><td><b><u>C</u>argo/função:</b><br><input ' . $w_Disabled . ' accesskey="C" type="text" name="p_cargo" class="sti" SIZE="35" MAXLENGTH="50" VALUE="' . $p_cargo . '"></td>');
+    ShowHTML('      <tr><td><b><u>D</u>ata do relatório:</b><br><input ' . $w_Disabled . ' accesskey="D" type="text" name="p_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_emissao . '" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('      <tr>');
+    MontaRadioNS('<b>Exibe logomarca do BID?</b>',$p_logo,'p_logo');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');
@@ -504,7 +530,7 @@ function EstadoExecucao() {
     ShowHTML('<BASE HREF="' . $conRootSIW . '">');
     ShowHTML('</HEAD>');
     BodyOpenClean('onLoad="this.focus()";');
-    CabecalhoRelatorio($w_cliente, 'Estado de Execução', 4, $w_chave);
+    CabecalhoRelatorio($w_cliente, 'Estado de Execução', 4, $w_chave, 'S', 'S', (($p_logo=='S') ? 'img/logo-bid.png' : ''));
     ShowHTML('<HR>');
   }
   ShowHTML('<div align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -516,9 +542,9 @@ function EstadoExecucao() {
     $l_html.=chr(13).'      <table class="tudo" width=99%  border="0" cellspacing="0" bordercolor="#00000" align="center">';
     $l_html.=chr(13).'        <tr style="height: 40;"><td colspan="11" align="center"><font size="3"><b>ESTADO DE EXECUÇÃO DO PROJETO</b></font></center>';
     $l_html.=chr(13).'        <tr><td colspan="11"><b>NOME DO ORGANISMO EXECUTOR: '.f($RS_Cliente,'nome').' - '.f($RS_Cliente,'nome_resumido').'</b></td></tr>';
-    $l_html.=chr(13).'        <tr><td colspan="11"><b>Nº do Contrato de Empréstimo ou Convênio de Cooperação Técnica: '.f($RS_Projeto,'codigo_interno').'</b></td></tr>';
-    $l_html.=chr(13).'        <tr><td colspan="11"><b>Nº da Solicitação: </b></td></tr>';
-    $l_html.=chr(13).'        <tr><td colspan="11"><b>Data: </b></td></tr>';
+    $l_html.=chr(13).'        <tr><td colspan="11"><b>Nº do Contrato de Empréstimo ou Convênio de Cooperação Técnica: '.nvl(f($RS_Projeto,'codigo_externo'),f($RS_Projeto,'codigo_interno')).'</b></td></tr>';
+    $l_html.=chr(13).'        <tr><td colspan="11"><b>Nº da Solicitação: '.$p_numero.'</b></td></tr>';
+    $l_html.=chr(13).'        <tr><td colspan="11"><b>Data: '.$p_emissao.'</b></td></tr>';
     $l_html.=chr(13).'        <tr><td colspan="11">&nbsp;</td></tr>';
     $l_html.=chr(13).'      </table>';
     $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
@@ -634,8 +660,16 @@ function EstadoExecucao() {
     $l_html.=chr(13).'            <td align="right" bgColor="#f0f0f0">&nbsp;</td>';
     $l_html.=chr(13).'          </tr>';
 
-    $l_html.=chr(13).'          <tr class="folha" style="height: 100;">';
-    $l_html.=chr(13).'            <td colspan="11">&nbsp;</td>';
+    $l_html.=chr(13).'          <tr class="folha">';
+    $l_html.=chr(13).'            <td colspan="10" align="center"><table border=0 width=40%>';
+    $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'              <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
+    $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'              <tr><td align="center">_____________________________</td></tr>';
+    $l_html.=chr(13).'              <tr><td align="center"><font size="2"><b>'.$p_nome.'</b></font></td></tr>';
+    $l_html.=chr(13).'              <tr><td align="center"><font size="2"><b>'.$p_cargo.'</b></font></td></tr>';
+    $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'            </table>';
     $l_html.=chr(13).'          </tr>';
     $l_html.=chr(13).'        </table></td></tr>';
 

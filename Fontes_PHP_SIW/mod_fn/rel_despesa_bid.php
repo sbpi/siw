@@ -73,6 +73,12 @@ $p_contabil = upper(trim($_REQUEST['p_contabil']));
 $p_moedas = $_REQUEST['p_moedas'];
 $p_ordena = lower($_REQUEST['p_ordena']);
 
+$p_logo    = trim($_REQUEST['p_logo']);
+$p_numero  = trim($_REQUEST['p_numero']);
+$p_nome    = trim($_REQUEST['p_nome']);
+$p_cargo   = trim($_REQUEST['p_cargo']);
+$p_emissao = trim($_REQUEST['p_emissao']);
+
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
@@ -118,6 +124,10 @@ function Inicial() {
   Validate('p_inicio', 'Pagamento inicial', 'DATA', '', '10', '10', '', '0123456789/');
   Validate('p_fim', 'Pagamento final', 'DATA', '', '10', '10', '', '0123456789/');
   CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
+  Validate('p_numero', 'Número da solicitação', '', '', '1', '10', '1', '');
+  Validate('p_nome', 'Nome completo', '', '', '1', '50', '1', '');
+  Validate('p_cargo', 'Cargo/Função', '', '', '1', '50', '1', '');
+  Validate('p_emissao', 'Data de emissão', 'DATA', '', '10', '10', '', '0123456789/');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
@@ -140,6 +150,12 @@ function Inicial() {
   SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
   ShowHTML('      </tr>');
   ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
+  ShowHTML('      <tr><td><b>Número da <u>S</u>olicitação:</b><br><input ' . $w_Disabled . ' accesskey="S" type="text" name="p_numero" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_numero . '"></td>');
+  ShowHTML('      <tr><td><b><u>N</u>ome completo:</b><br><input ' . $w_Disabled . ' accesskey="N" type="text" name="p_nome" class="sti" SIZE="35" MAXLENGTH="50" VALUE="' . $p_nome . '"></td>');
+  ShowHTML('      <tr><td><b><u>C</u>argo/função:</b><br><input ' . $w_Disabled . ' accesskey="C" type="text" name="p_cargo" class="sti" SIZE="35" MAXLENGTH="50" VALUE="' . $p_cargo . '"></td>');
+  ShowHTML('      <tr><td><b><u>D</u>ata do relatório:</b><br><input ' . $w_Disabled . ' accesskey="D" type="text" name="p_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_emissao . '" onKeyDown="FormataData(this,event);"></td>');
+  ShowHTML('      <tr>');
+  MontaRadioNS('<b>Exibe logomarca do BID?</b>',$p_logo,'p_logo');
   ShowHTML('      <tr><td align="center"><hr>');
   ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
   ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');
@@ -187,7 +203,7 @@ function detalhamentoDespesa() {
     ShowHTML('<BASE HREF="' . $conRootSIW . '">');
     ShowHTML('</HEAD>');
     BodyOpenClean('onLoad="this.focus()";');
-    CabecalhoRelatorio($w_cliente, f($RS_Menu,'nome'), 4, $w_chave);
+    CabecalhoRelatorio($w_cliente, f($RS_Menu,'nome'), 4, $w_chave, 'S', 'S', (($p_logo=='S') ? 'img/logo-bid.png' : ''));
     ShowHTML('<HR>');
   }
   ShowHTML('<div align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -200,11 +216,11 @@ function detalhamentoDespesa() {
 
     $l_html.=chr(13).'    <tr><td colspan="2"><table width="100%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PROJETO: '.f($RS_Projeto,'codigo_interno').' - '.f($RS_Projeto,'titulo').' ('.f($RS_Projeto,'sq_siw_solicitacao').')</b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PROJETO: '.nvl(f($RS_Projeto,'codigo_externo'),f($RS_Projeto,'codigo_interno')).' - '.f($RS_Projeto,'titulo').' ('.f($RS_Projeto,'sq_siw_solicitacao').')</b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     $l_html .= chr(13).'</table>';
   }
-  $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>Pagamentos por Fontes x Períodos<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>Pagamentos por Fontes x Períodos - Solicitação nº '.$p_numero.'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan=2>Período: <b>' . nvl($p_inicio,FormataDataEdicao(f($RS_Projeto,'inicio'))) . '</b> a <b>' . nvl($p_fim,FormataDataEdicao(f($RS_Projeto,'fim'))) . '</b>';
   $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
   $l_html.=chr(13).'        <table class="tudo" width=99%  border="1" cellpadding=2 cellspacing=0 bordercolor="#00000">';
@@ -260,6 +276,18 @@ function detalhamentoDespesa() {
   $l_html.=chr(13).'      </tr>';
    * 
    */
+
+  $l_html.=chr(13).'          <tr class="folha">';
+  $l_html.=chr(13).'            <td colspan="9" align="center"><table border=0 width=40%>';
+  $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+  $l_html.=chr(13).'              <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
+  $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+  $l_html.=chr(13).'              <tr><td align="center">_____________________________</td></tr>';
+  $l_html.=chr(13).'              <tr><td align="center"><font size="2"><b>'.$p_nome.'</b></font></td></tr>';
+  $l_html.=chr(13).'              <tr><td align="center"><font size="2"><b>'.$p_cargo.'</b></font></td></tr>';
+  $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
+  $l_html.=chr(13).'            </table>';
+  $l_html.=chr(13).'          </tr>';
   $l_html.=chr(13).'      </table></td></tr>';
 
   ShowHTML($l_html);
@@ -299,7 +327,7 @@ function detalhamentoRubrica() {
     ShowHTML('<BASE HREF="' . $conRootSIW . '">');
     ShowHTML('</HEAD>');
     BodyOpenClean('onLoad="this.focus()";');
-    CabecalhoRelatorio($w_cliente, f($RS_Menu,'nome'), 4, $w_chave);
+    CabecalhoRelatorio($w_cliente, f($RS_Menu,'nome'), 4, $w_chave, 'S', 'S', (($p_logo=='S') ? 'img/logo-bid.png' : ''));
     ShowHTML('<HR>');
   }
   ShowHTML('<div align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -431,12 +459,12 @@ function detalhamentoRubrica() {
       $l_html.=chr(13).'        <table style="page-break-after: always;" class="tudo" width=99%  border="1" cellpadding=2 cellspacing=0 bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'            <td rowspan="2" colspan="6" bgColor="#f0f0f0" align="left"><b>Executor:<br> '.f($RS_Projeto,'titulo').'</td>';
-      $l_html.=chr(13).'            <td rowspan="2" colspan="3" bgColor="#f0f0f0" align="left"><b>Número da Operação:<br> '.f($RS_Projeto,'codigo_interno').'</td>';
+      $l_html.=chr(13).'            <td rowspan="2" colspan="3" bgColor="#f0f0f0" align="left"><b>Número da Operação:<br> '.nvl(f($RS_Projeto,'codigo_externo'),f($RS_Projeto,'codigo_interno')).'</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Pedido:</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>' . nvl($p_inicio,FormataDataEdicao(f($RS_Projeto,'inicio'),5)) . '</td>';
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>012</td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>'.$p_numero.'</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>' . nvl($p_fim,FormataDataEdicao(f($RS_Projeto,'fim'),5)) . '</td>';
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center">';
@@ -574,7 +602,19 @@ function detalhamentoRubrica() {
     $l_html.=chr(13).'            <td align="right"><b>'.formatNumber($w_tot_bid).' </b></td>';
     $l_html.=chr(13).'            <td align="right"><b>'.formatNumber($w_tot_out).' </b></td>';
     $l_html.=chr(13).'          </tr>';
+    $l_html.=chr(13).'        </table></td></tr>';
     $l_html.=chr(13).'        </table>';
+
+    $l_html.=chr(13).'      <tr><td align="center" colspan="11" align="center"><table border=0 width=40%>';
+    $l_html.=chr(13).'        <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'        <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
+    $l_html.=chr(13).'        <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'        <tr><td align="center">_____________________________</td></tr>';
+    $l_html.=chr(13).'        <tr><td align="center"><font size="2"><b>'.$p_nome.'</b></font></td></tr>';
+    $l_html.=chr(13).'        <tr><td align="center"><font size="2"><b>'.$p_cargo.'</b></font></td></tr>';
+    $l_html.=chr(13).'        <tr style="height: 25"><td>&nbsp;</td></tr>';
+    $l_html.=chr(13).'        </table>';
+    $l_html.=chr(13).'      </tr>';
   }
 
   ShowHTML($l_html);

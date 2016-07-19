@@ -342,7 +342,6 @@ function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l
     } elseif ($l_tipo_arq=='EXCEL') {
       $l_embed = 'WORD';
       HeaderExcel($_REQUEST['orientacao']);
-      CabecalhoWord($w_cliente,$l_titulo,$l_pagina,$l_cspan,$l_rspan);
       if ($l_filtro>'') ShowHTML($l_filtro);
     } else {
       $l_embed = 'HTML';
@@ -371,7 +370,6 @@ function headerGeral($l_formato, $l_tipo_arq, $l_chave, $l_titulo, &$l_embed, $l
       $l_embed = 'WORD';
       $l_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
       HeaderExcel($_REQUEST['orientacao']);
-      CabecalhoWord($w_cliente,$l_titulo,$l_pagina,$l_cspan,$l_rspan);
       if ($l_filtro>'') ShowHTML($l_filtro);
     } else {
       $l_embed = 'HTML';
@@ -427,7 +425,7 @@ function LinkOrdena($p_label,$p_campo,$p_form=null) {
   foreach(headers_list() as $k => $v) {
     if (strpos(upper($v),'FILENAME')!==false) $html = false;
   }
-  if (!$html) return $p_label;
+  if (!$html || $w_embed=='WORD') return $p_label;
 
   foreach($_POST as $chv => $vlr) {
     if (nvl($vlr,'')>'' && (upper(substr($chv,0,2))=="W_" || upper(substr($chv,0,2))=="P_")) {
@@ -486,13 +484,17 @@ function LinkOrdena($p_label,$p_campo,$p_form=null) {
 // =========================================================================
 // Montagem do cabeçalho de relatórios
 // -------------------------------------------------------------------------
-function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$titulo='S',$exporta='S') {
+function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$titulo='S',$exporta='S', $logo=null) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   if($titulo == 'S'){
-    $sql = new db_getCustomerData; $RS_Logo = $sql->getInstanceOf($dbms,$p_cliente);
-    if (f($RS_Logo,'logo')>'') {
-      $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
+    if (nvl($logo,'')=='') {
+      $sql = new db_getCustomerData; $RS_Logo = $sql->getInstanceOf($dbms,$p_cliente);
+      if (f($RS_Logo,'logo')>'') {
+        $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
+      }
+    } else {
+      $p_logo = $logo;
     }
     ShowHTML('<table WIDTH="100%" BORDER=0><tr><td ROWSPAN='.$p_rowspan.'><img ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'" alt="img" /><td ALIGN="RIGHT"><b><font SIZE=4 COLOR="#000000">'.$p_titulo.'</font></b></td></tr>');
     ShowHTML('<tr><td ALIGN="RIGHT"><b><font COLOR="#000000">'.DataHora().'</font></b></td></tr>');
@@ -977,7 +979,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (nvl($w_embed,'')!='') {
     $l_embed = $w_embed;
-  } elseif ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD' || $l_word=='S'){
+  } elseif (upper($_REQUEST['p_tipo']) == 'PDF' || upper($l_word)=='WORD' || upper($l_word)=='EXCEL' || $l_word=='S'){
     $l_embed = 'WORD';
   }
   if (strpos($l_texto,'|@|')!==false) {
@@ -995,7 +997,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
     $l_array = explode('|@|', f($RS,'dados_solic'));
     if(nvl($l_embed,'-')!= 'WORD') {
       $l_hint = $l_array[4].(($l_exibe_titulo=='N') ? ' - '.$l_array[2] : '');
-      $l_string = '<a class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+      $l_string = '<a class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.nvl($l_texto,$l_array[1]).(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
     } else {
       $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
     }
