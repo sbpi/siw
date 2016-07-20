@@ -32,7 +32,14 @@ begin
                                       and sg_tramite = 'AT'
                                   );
    Elsif p_operacao = 'I' Then
-      i := 0;
+      select nvl(max(to_number(replace(codigo_externo,'.'))),0)
+        into i
+        from siw_solicitacao
+      where sq_siw_solicitacao in (select distinct sq_financeiro
+                                     from vw_projeto_financeiro 
+                                    where sq_projeto = nvl(p_chave,0)
+                                      and sg_tramite = 'AT'
+                                  );
       for crec in c_dados loop
           i := i + 1;
           update siw_solicitacao 

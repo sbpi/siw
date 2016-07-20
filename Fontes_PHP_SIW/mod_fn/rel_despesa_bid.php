@@ -226,15 +226,19 @@ function detalhamentoDespesa() {
   $l_html.=chr(13).'        <table class="tudo" width=99%  border="1" cellpadding=2 cellspacing=0 bordercolor="#00000">';
   $l_html.=chr(13).'          <tr align="center">';
   $cs=0;
-  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0" nowrap><b>Nº do DOC</td>';
-  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Rubrica</td>';
-  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Fornecedor</td>';
-  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Nº Fatura</td>';
-  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data Pagamento</td>';
-  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>DESCRIÇÃO DO PAGAMENTO</td>';
-  $l_html.=chr(13).'            <td bgColor="#f0f0f0" nowrap><b>BID - '.f($RS_Projeto,'sb_moeda').'</td>';
-  $l_html.=chr(13).'            <td bgColor="#f0f0f0" nowrap><b>LOCAL - '.f($RS_Projeto,'sb_moeda').'</td>';
-  $l_html.=chr(13).'            <td bgColor="#f0f0f0" nowrap><b>TOTAL - '.f($RS_Projeto,'sb_moeda').'</td>';
+  $l_html.=chr(13).'            <td colspan="2" bgColor="#f0f0f0" nowrap><b>Nº do DOC</td>';
+  $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Rubrica</td>';
+  $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Fornecedor</td>';
+  $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nº Fatura</td>';
+  $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Data Pagamento</td>';
+  $cs++; $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>DESCRIÇÃO DO PAGAMENTO</td>';
+  $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" nowrap><b>BID - '.f($RS_Projeto,'sb_moeda').'</td>';
+  $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" nowrap><b>LOCAL - '.f($RS_Projeto,'sb_moeda').'</td>';
+  $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0" nowrap><b>TOTAL - '.f($RS_Projeto,'sb_moeda').'</td>';
+  $l_html.=chr(13).'          </tr>';
+  $l_html.=chr(13).'          <tr align="center">';
+  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0" nowrap><b>BID</td>';
+  $cs++; $l_html.=chr(13).'            <td bgColor="#f0f0f0" nowrap><b>OTCA</td>';
   $l_html.=chr(13).'          </tr>';
   $w_cor=$conTrBgColor;
   $w_total_previsto  = 0;
@@ -251,9 +255,10 @@ function detalhamentoDespesa() {
           $w_codigo = f($row,'cd_financeiro_externo');
         }
       } else {
-        $w_codigo = f($row,'cd_financeiro');
+        '&nbsp;';
       }
-      $l_html.=chr(13).'          <td nowrap>&nbsp;'.exibeSolic($w_dir,(($w_tipo=='') ? f($row,'sq_financeiro') : ''),$w_codigo,'N',$w_tipo);
+      $l_html.=chr(13).'          <td nowrap>&nbsp;'.$w_codigo;
+      $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,(($w_tipo=='') ? f($row,'sq_financeiro') : ''),f($row,'cd_financeiro'),'N',$w_tipo);
       $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').' </td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
       $l_html.=chr(13).'          <td align="center">&nbsp;'.f($row,'numero').' </td>';
@@ -278,7 +283,7 @@ function detalhamentoDespesa() {
    */
 
   $l_html.=chr(13).'          <tr class="folha">';
-  $l_html.=chr(13).'            <td colspan="9" align="center"><table border=0 width=40%>';
+  $l_html.=chr(13).'            <td colspan="10" align="center"><table border=0 width=40%>';
   $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
   $l_html.=chr(13).'              <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
   $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
@@ -366,7 +371,7 @@ function detalhamentoRubrica() {
     if ($w_filho==0 || $linha>=$limite || $w_filho!=f($row,'cd_rubrica')) {
       if ($w_filho>0 || $linha >0) {
         $l_html.=chr(13).'          <tr valign="top">';
-        $l_html.=chr(13).'            <td colspan="2" rowspan="5">&nbsp;</td>';
+        $l_html.=chr(13).'            <td colspan="3" rowspan="5">&nbsp;</td>';
         $l_html.=chr(13).'            <td colspan="4">&nbsp;</td>';
         $l_html.=chr(13).'            <td>&nbsp;</td>';
         $l_html.=chr(13).'            <td>&nbsp;</td>';
@@ -458,7 +463,7 @@ function detalhamentoRubrica() {
       }
       $l_html.=chr(13).'        <table style="page-break-after: always;" class="tudo" width=99%  border="1" cellpadding=2 cellspacing=0 bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'            <td rowspan="2" colspan="6" bgColor="#f0f0f0" align="left"><b>Executor:<br> '.f($RS_Projeto,'titulo').'</td>';
+      $l_html.=chr(13).'            <td rowspan="2" colspan="7" bgColor="#f0f0f0" align="left"><b>Executor:<br> '.f($RS_Projeto,'titulo').'</td>';
       $l_html.=chr(13).'            <td rowspan="2" colspan="3" bgColor="#f0f0f0" align="left"><b>Número da Operação:<br> '.nvl(f($RS_Projeto,'codigo_externo'),f($RS_Projeto,'codigo_interno')).'</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Pedido:</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>' . nvl($p_inicio,FormataDataEdicao(f($RS_Projeto,'inicio'),5)) . '</td>';
@@ -468,7 +473,7 @@ function detalhamentoRubrica() {
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>' . nvl($p_fim,FormataDataEdicao(f($RS_Projeto,'fim'),5)) . '</td>';
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'            <td rowspan="2" colspan="4" bgColor="#f0f0f0" align="left"><b>Número e Título do Componente:<br> '.$w_pai.' '.$w_nm_pai.'</td>';
+      $l_html.=chr(13).'            <td rowspan="2" colspan="5" bgColor="#f0f0f0" align="left"><b>Número e Título do Componente:<br> '.$w_pai.' '.$w_nm_pai.'</td>';
       $l_html.=chr(13).'            <td rowspan="2" colspan="5" bgColor="#f0f0f0" align="left"><b>Número e Título da Subcategoria:<br> '.$w_filho.' '.$w_nm_filho.'</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Moeda:</td>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>&nbsp;</td>';
@@ -479,6 +484,7 @@ function detalhamentoRubrica() {
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nº do Item</td>';
+      $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nº OTCA</td>';
       $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nome e endereço do Contratista, o fornecedor, etc., o contrato/ordem de compra, número de referência</td>';
       $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nº de referência da fatura</td>';
       $l_html.=chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>País de origem</td>';
@@ -508,9 +514,10 @@ function detalhamentoRubrica() {
           $w_codigo = f($row,'cd_financeiro_externo');
         }
       } else {
-        $w_codigo = f($row,'cd_financeiro');
+        $w_codigo = '&nbsp;';
       }
-      $l_html.=chr(13).'          <td nowrap>&nbsp;'.exibeSolic($w_dir,(($w_tipo=='') ? f($row,'sq_financeiro') : ''),$w_codigo,'N',$w_tipo);
+      $l_html.=chr(13).'          <td nowrap>&nbsp;'.$w_codigo;
+      $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,(($w_tipo=='') ? f($row,'sq_financeiro') : ''),f($row,'cd_financeiro'),'N',$w_tipo);
       $l_html.=chr(13).'          <td>'.f($row,'nm_pessoa').' </td>';
       $l_html.=chr(13).'          <td align="center">&nbsp;'.f($row,'numero').' </td>';
       $l_html.=chr(13).'          <td>&nbsp;'.f($row,'nm_pais').'</td>';
@@ -548,7 +555,7 @@ function detalhamentoRubrica() {
   }
   if ($w_filho>0) {
     $l_html.=chr(13).'          <tr valign="top">';
-    $l_html.=chr(13).'            <td colspan="2" rowspan="6">&nbsp;</td>';
+    $l_html.=chr(13).'            <td colspan="3" rowspan="6">&nbsp;</td>';
     $l_html.=chr(13).'            <td colspan="4">&nbsp;</td>';
     $l_html.=chr(13).'            <td>&nbsp;</td>';
     $l_html.=chr(13).'            <td>&nbsp;</td>';
@@ -605,7 +612,7 @@ function detalhamentoRubrica() {
     $l_html.=chr(13).'        </table></td></tr>';
     $l_html.=chr(13).'        </table>';
 
-    $l_html.=chr(13).'      <tr><td align="center" colspan="11" align="center"><table border=0 width=40%>';
+    $l_html.=chr(13).'      <tr><td align="center" colspan="12" align="center"><table border=0 width=40%>';
     $l_html.=chr(13).'        <tr style="height: 25"><td>&nbsp;</td></tr>';
     $l_html.=chr(13).'        <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
     $l_html.=chr(13).'        <tr style="height: 25"><td>&nbsp;</td></tr>';
