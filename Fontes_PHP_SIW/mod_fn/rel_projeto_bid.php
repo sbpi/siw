@@ -661,7 +661,7 @@ function EstadoExecucao() {
     $l_html.=chr(13).'          </tr>';
 
     $l_html.=chr(13).'          <tr class="folha">';
-    $l_html.=chr(13).'            <td colspan="10" align="center"><table border=0 width=40%>';
+    $l_html.=chr(13).'            <td colspan="11" align="center"><table border=0 width=40%>';
     $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
     $l_html.=chr(13).'              <tr><td><font size="2"><b>Brasília, '.$p_emissao.'.</b></font></td></tr>';
     $l_html.=chr(13).'              <tr style="height: 25"><td>&nbsp;</td></tr>';
