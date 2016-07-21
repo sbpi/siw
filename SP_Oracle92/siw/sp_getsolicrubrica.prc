@@ -202,6 +202,7 @@ begin
                 f.sigla sg_menu,
                 g.aviso_prox_conc, g.quitacao, g.vencimento, 
                 g411.nome nm_banco, g411.codigo cd_banco,
+                g42.sigla cb_sg_moeda, g42.simbolo cb_sb_moeda, -- Código e sigla da moeda da conta bancária
                 nvl(g5.nome, f111.nome) nm_pais,
                 cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso,
                 g1.nome nm_forma_pagamento,
@@ -226,6 +227,7 @@ begin
                     left  join co_pessoa_conta    g4 on (g.sq_pessoa_conta    = g4.sq_pessoa_conta)
                     left  join co_agencia        g41 on (g4.sq_agencia        = g41.sq_agencia)
                     left  join co_banco         g411 on (g41.sq_banco         = g411.sq_banco)
+                    left  join co_moeda          g42 on (g4.sq_moeda          = g42.sq_moeda)
                     left  join co_pessoa_juridica g4 on (g.pessoa             = g4.sq_pessoa)
                     left  join co_pais            g5 on (g.sq_pais_estrang    = g5.sq_pais)
                   left    join fn_lancamento_doc   h on (d.sq_siw_solicitacao = h.sq_siw_solicitacao)

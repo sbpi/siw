@@ -522,31 +522,38 @@ function detalhamentoRubrica() {
       $l_html.=chr(13).'          <td align="center">&nbsp;'.f($row,'numero').' </td>';
       $l_html.=chr(13).'          <td>&nbsp;'.f($row,'nm_pais').'</td>';
       $l_html.=chr(13).'          <td align="center">'.nvl(FormataDataEdicao(f($row,'quitacao')),'&nbsp;').'</td>';
-      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
-      if (f($row,'exige_brl')=='N') {
-        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'fator_conversao'),4).' </td>';
+      if (f($row,'cb_sg_moeda')==f($RS_Projeto,'sg_moeda')) {
+        $l_html.=chr(13).'          <td>&nbsp;</td>';
+        $l_html.=chr(13).'          <td>&nbsp;</td>';
+        $l_html.=chr(13).'          <td>&nbsp;</td>';
       } else {
-        $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
+        if (f($row,'exige_brl')=='N') {
+          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'fator_conversao'),4).' </td>';
+        } else {
+          $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
+        }
+        // Gato até resolver como recuperar a moeda da operação de câmbio envolvida no pagamento
+        //$l_html.=chr(13).'          <td align="center">'.f($row,'nm_banco').'</td>';
+        $l_html.=chr(13).'          <td align="center">RENDIMENTO</td>';
       }
-      
-      $l_html.=chr(13).'          <td align="center">'.f($row,'nm_banco').'</td>';
       $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
       $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
       $l_html.=chr(13).'          <td align="right">0,00 </td>';
       $l_html.=chr(13).'      </tr>';
-      $w_lin_brl    += f($row,'brl_valor_compra');
+      if (f($row,'cb_sg_moeda')!=f($RS_Projeto,'sg_moeda')) $w_lin_brl    += f($row,'brl_valor_compra');
       $w_lin_usd    += f($row,'valor');
       $w_lin_bid    += f($row,'valor');
       $w_lin_out    = 0;
-      $w_filho_brl  += f($row,'brl_valor_compra');
+      if (f($row,'cb_sg_moeda')!=f($RS_Projeto,'sg_moeda')) $w_filho_brl  += f($row,'brl_valor_compra');
       $w_filho_usd  += f($row,'valor');
       $w_filho_bid  += f($row,'valor');
       $w_filho_out  = 0;
-      $w_pai_brl  += f($row,'brl_valor_compra');
+      if (f($row,'cb_sg_moeda')!=f($RS_Projeto,'sg_moeda')) $w_pai_brl  += f($row,'brl_valor_compra');
       $w_pai_usd  += f($row,'valor');
       $w_pai_bid  += f($row,'valor');
       $w_pai_out  = 0;
-      $w_tot_brl  += f($row,'brl_valor_compra');
+      if (f($row,'cb_sg_moeda')!=f($RS_Projeto,'sg_moeda')) $w_tot_brl  += f($row,'brl_valor_compra');
       $w_tot_usd  += f($row,'valor');
       $w_tot_bid  += f($row,'valor');
       $w_tot_out  = 0;
