@@ -18,7 +18,7 @@ create or replace procedure SP_GetUserList
     p_result           out sys_refcursor
    ) is
 begin
-   If p_restricao is null Then
+   If p_restricao is null or p_restricao = 'TODOS' Then
       open p_result for 
         select a.sq_pessoa, a.username, a.gestor_seguranca, a.gestor_sistema, a.ativo, a.email,
                a.tipo_autenticacao, a.gestor_portal, a.gestor_dashboard as gestor_dashbord, a.gestor_conteudo,
@@ -68,13 +68,13 @@ begin
                )
            and (p_localizacao      is null or (p_localizacao      is not null and d.sq_localizacao     = p_localizacao))
            and (p_lotacao          is null or (p_lotacao          is not null and (c.sq_unidade        = p_lotacao or
-                                                                                   exists                (select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = a.sq_pessoa and sq_unidade_lotacao = p_lotacao and fim is null
+                                                                                   exists                (select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = a.sq_pessoa and sq_unidade_lotacao = p_lotacao and fim is null and p_restricao = 'TODOS'
                                                                                                            UNION
                                                                                                            select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = a.sq_pessoa and sq_unidade_exercicio = p_lotacao and fim is null
                                                                                                            UNION 
-                                                                                                           select sq_unidade from eo_unidade_resp where sq_pessoa = a.sq_pessoa and sq_unidade = p_lotacao and fim is null
+                                                                                                           select sq_unidade from eo_unidade_resp where sq_pessoa = a.sq_pessoa and sq_unidade = p_lotacao and fim is null and p_restricao = 'TODOS'
                                                                                                            UNION
-                                                                                                           select sq_unidade from sg_pessoa_unidade where sq_pessoa = a.sq_pessoa and sq_unidade = p_lotacao
+                                                                                                           select sq_unidade from sg_pessoa_unidade where sq_pessoa = a.sq_pessoa and sq_unidade = p_lotacao and p_restricao = 'TODOS'
                                                                                                           )
                                                                                   )
                                               )

@@ -15,6 +15,11 @@
 
 }
 
+.padrao {
+  border-collapse: collapse;
+  border: solid 1px black;
+}
+
 .tudo tr.highlight {
   background-color: #B8DFF5;
 /*  color:#fff;*/

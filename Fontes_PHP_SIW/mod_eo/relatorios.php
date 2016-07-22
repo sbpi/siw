@@ -220,13 +220,13 @@ function Rel_Unidades() {
             $sql = new db_getaddressList; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,f($row,'sq_unidade'),'LISTALOCALIZACAO',null);
             if (count($RS1)>0) {
               ShowHTML('      <tr><td colspan="2"><br><b>Locais ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
-              ShowHTML('  <tr><td  colspan="2"><table width="100%" border="1">');
+              ShowHTML('  <tr><td colspan="2"><table width="100%" class="padrao" border="1">');
               ShowHTML('    <tr align="center" valign="top">');
-              ShowHTML('      <td><b>Localização</b></td>');
-              ShowHTML('      <td><b>Cidade</b></td>');
-              ShowHTML('      <td><b>Telefone</b></td>');
-              ShowHTML('      <td><b>Ramal</b></td>');                   
-              ShowHTML('      <td><b>Ativo</b></td>');
+              ShowHTML('      <td width="25%"><b>Localização</b></td>');
+              ShowHTML('      <td width="25%"><b>Cidade</b></td>');
+              ShowHTML('      <td width="25%"><b>Telefone</b></td>');
+              ShowHTML('      <td width="15%"><b>Ramal</b></td>');                   
+              ShowHTML('      <td width="10%"><b>Ativo</b></td>');
               ShowHTML('    </tr>');
               $w_cor=$conTrBgColor;
               foreach($RS1 as $row1) {
@@ -246,15 +246,19 @@ function Rel_Unidades() {
             $sql = new db_getUserList; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,null,null,'S',null,null,null,null,null);
             $RS1 = SortArray($RS1,'nome','asc');
             if (count($RS1)>0) {
-              ShowHTML('      <tr><td colspan="2"><br><b>Pessoas ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
-              ShowHTML('  <tr><td  colspan="2"><table width="100%" border="1">');
+              ShowHTML('      <tr><td colspan="2"><br><b>Usuários da unidade ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
+              ShowHTML('  <tr><td colspan="2"><table width="100%" border="1" class="padrao">');
               ShowHTML('    <tr align="center" valign="top">');
-              ShowHTML('      <td><b>Nome completo</b></td>');
-              ShowHTML('      <td><b>Nome resumido</b></td>');
-              ShowHTML('      <td><b>Vínculo</b></td>');
-              ShowHTML('      <td><b>Localização</b></td>');
-              ShowHTML('      <td><b>Ramal</b></td>');
-              ShowHTML('      <td><b>e-Mail</b></td>');
+              ShowHTML('      <td width="28%"><b>Nome completo</b></td>');
+              ShowHTML('      <td width="15%"><b>Nome resumido</b></td>');
+              ShowHTML('      <td width="15%"><b>Vínculo</b></td>');
+              ShowHTML('      <td width="10%"><b>Localização</b></td>');
+              ShowHTML('      <td width="5%"><b>Ramal</b></td>');
+              ShowHTML('      <td width="27%"><b>e-Mail</b></td>');
+//              ShowHTML('      <td><b>Módulo</b></td>');
+//              ShowHTML('      <td><b>Visão</b></td>');
+//              ShowHTML('      <td><b>Dirigente</b></td>');
+//              ShowHTML('      <td><b>Trâmite</b></td>');
               ShowHTML('    </tr>');
               $w_cor=$conTrBgColor;
               foreach($RS1 as $row1) {
@@ -273,6 +277,10 @@ function Rel_Unidades() {
                 } else {
                   ShowHTML('        <td>---</td>');
                 }
+//                ShowHTML('        <td align="center">'.nvl(f($row1,'qtd_modulo'),'---').'</td>');
+//                ShowHTML('        <td align="center">'.nvl(f($row1,'qtd_visao'),'---').'</td>');
+//                ShowHTML('        <td align="center">'.nvl(f($row1,'qtd_dirigente'),'---').'</td>');
+//                ShowHTML('        <td align="center">'.nvl(f($row1,'qtd_tramite'),'---').'</td>');
                 ShowHTML('      </tr>');
               }
               ShowHTML('</table>');

@@ -32,9 +32,21 @@ begin
                                       and sg_tramite = 'AT'
                                   );
    Elsif p_operacao = 'I' Then
+      i := 0;
+/*     
       select nvl(max(to_number(replace(codigo_externo,'.'))),0)
         into i
         from siw_solicitacao
+      where sq_siw_solicitacao in (select distinct sq_financeiro
+                                     from vw_projeto_financeiro 
+                                    where sq_projeto = nvl(p_chave,0)
+                                      and sg_tramite = 'AT'
+                                  );
+*/
+
+      -- Apaga a numeração externa de todos os lançamentos do projeto informado
+      update siw_solicitacao
+         set codigo_externo = null
       where sq_siw_solicitacao in (select distinct sq_financeiro
                                      from vw_projeto_financeiro 
                                     where sq_projeto = nvl(p_chave,0)
