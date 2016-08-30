@@ -18,7 +18,7 @@ begin
                 inner join pa_arquivo     b on (a.sq_localizacao = b.sq_localizacao)
                 inner join eo_localizacao c on (b.sq_localizacao = c.sq_localizacao)
                 inner join eo_unidade     d on (c.sq_unidade     = d.sq_unidade)
-          where sq_localizacao = p_chave
+          where a.sq_localizacao = p_chave
             and (p_chave_aux       is null or (p_chave_aux    is not null and a.sq_arquivo_local = p_chave_aux))
             and (p_nome            is null or (p_nome         is not null and upper(acentos(a.nome)) like upper(acentos(p_nome))))
             and (p_ativo           is null or (p_ativo        is not null and a.ativo  = p_ativo));

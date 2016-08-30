@@ -9,7 +9,7 @@ create or replace procedure SP_GetOrPrioridade
 begin
    -- Recupera as iniciativas prioritárias do Governo
    open p_result for 
-       select a.sq_orprioridade chave, a.codigo, a.nome, a. b.sq_orprioridade existe,
+       select a.sq_orprioridade chave, a.codigo, a.nome, b.sq_orprioridade existe,
              a.cliente, a.responsavel, a.telefone, a.email, a.ativo, a.padrao, a.ordem,
              case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
              case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao,
