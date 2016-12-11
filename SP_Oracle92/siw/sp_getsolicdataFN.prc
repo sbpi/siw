@@ -184,7 +184,8 @@ begin
                      left         join co_pessoa_conta      di on (d.pessoa                   = di.sq_pessoa and
                                                                    d.sq_agencia               = di.sq_agencia and
                                                                    coalesce(d.operacao_conta,'-') = coalesce(di.operacao,'-') and
-                                                                   d.numero_conta             = di.numero
+                                                                   d.numero_conta             = di.numero and
+                                                                   d.sq_pessoa_conta          <> di.sq_pessoa_conta
                                                                   )
                        left       join co_agencia          di1 on (di.sq_agencia              = di1.sq_agencia)
                          left     join co_banco           di11 on (di1.sq_banco               = di11.sq_banco)

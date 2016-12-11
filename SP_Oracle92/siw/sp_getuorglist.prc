@@ -125,6 +125,19 @@ begin
                and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
                and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             order by nome;
+      Elsif p_restricao = 'ENDERECO' Then
+         open p_result for 
+            select a.sq_unidade, a.ativo, 
+                   case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                   b.nome, b.sigla,
+                   c.sq_pessoa_endereco, c.logradouro,
+                   f.nome nm_cidade, f.co_uf
+              from pd_unidade                        a
+                   inner     join eo_unidade         b on (a.sq_unidade         = b.sq_unidade)
+                     inner   join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
+                       inner join co_cidade          f on (c.sq_cidade          = f.sq_cidade)
+             where c.sq_pessoa = p_cliente 
+               and ((p_chave is null) or (p_chave is not null and c.sq_pessoa_endereco = p_chave));
       Elsif p_restricao = 'VIAGEM' Then
          open p_result for 
             select a.sq_unidade, a.ativo, 

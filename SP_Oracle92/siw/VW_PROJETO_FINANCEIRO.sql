@@ -1,10 +1,15 @@
 create or replace view VW_PROJETO_FINANCEIRO as
 -- Pagamentos com detalhamento de itens
-select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
+select 'I' TIPO, e2.qtd_itens,
+       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
        e.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.codigo_externo cd_financeiro_externo,
        a.descricao||' - '||e.descricao ds_financeiro,
-       case when f.sq_siw_solicitacao is null then e.valor_total when e2.qtd_itens      = 1 then f.valor else e.valor_total*f.fator end valor,  -- Valor convertido na moeda do projeto
+       case when f.sq_siw_solicitacao is null then e.valor_total
+            when e2.qtd_itens = 1 then f.valor 
+            when e2.qtd_itens = 2 then round(e.valor_total*f.fator,2) -- 2 itens arredonda para não dar erro
+            else e.valor_total*f.fator -- mais de 2 itens, só retorna o valor
+       end valor, -- Valor convertido na moeda do projeto
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.sigla      else b2.sigla              end sg_fn_moeda, 
        case when f.sq_siw_solicitacao is null then a2.simbolo    else b2.simbolo            end sb_fn_moeda, 
@@ -84,7 +89,8 @@ select 'I' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a
                                                   )
 UNION ALL
 -- Pagamentos sem detalhamento de itens
-select 'D' TIPO, b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
+select 'D' TIPO, 1 qtd_itens,
+       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
        c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
        a.descricao ds_financeiro,

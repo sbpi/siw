@@ -940,7 +940,7 @@ function Geral() {
     if (count($RS_Rub)>0) {
       if (nvl($w_sq_projeto_rubrica,'')=='') {
         // Recupera os documentos do lançamento
-        $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
+        $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,nvl($w_chave,0),null,null,null,null,null,null,'DOCS');
         if (count($RS_Doc)>0) {
           foreach($RS_Doc as $row) {
             $sql = new db_getLancamentoItem; $RS_Item = $sql->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
@@ -1032,8 +1032,10 @@ function Geral() {
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
     Validate('w_data','Data de saque', 'DATA', '1', '10', '10', '', '0123456789/');
+    CompData('w_data','Data de saque','<=','w_vencimento','Limite para utilização');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
     CompValor('w_valor','Valor total do documento','>','0,00','zero');
+    CompValor('w_valor','Valor total do documento','<=',formatNumber(f($RS_Parametro,'fundo_fixo_valor')),formatNumber(f($RS_Parametro,'fundo_fixo_valor')));
   } 
   ValidateClose();
   ScriptClose();
@@ -2074,7 +2076,7 @@ function Grava() {
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
           $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$w_moeda,
           $w_chave_nova, $w_codigo);
-
+        
       if ($O!='E') {
         // Recupera o beneficiário do fundo fixo (chamado de "Suprido")
         $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_solicitante'],null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
@@ -2111,7 +2113,7 @@ function Grava() {
         $SQL = new dml_putLancamentoDoc; $SQL->getInstanceOf($dbms,$O,$w_chave_nova,$_REQUEST['w_chave_doc'],$_REQUEST['w_sq_tipo_documento'],
           $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$w_moeda,$_REQUEST['w_valor'],
           'N','N','N',null,null,null,null, $w_chave_doc);
-
+        
         // Verifica o número de trâmites ativos. Se houver somente um, recupera o trâmite de conclusão
         $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $w_menu,null,null,null);
         $RS = SortArray($RS,'ordem','asc');
@@ -2126,7 +2128,7 @@ function Grava() {
 
         if ($w_cont==1 || $P1==0) {
           // Grava versão da solicitação
-          $w_html = VisualFundoFixo($_REQUEST['w_chave'],'L',$w_usuario,2,'1');
+          $w_html = VisualFundoFixo($w_chave_nova,'L',$w_usuario,2,'1');
           CriaBaseLine($w_chave_nova,$w_html,f($RS_Menu,'nome'),$w_ee);
 
           if ($w_cont==1) {

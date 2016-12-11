@@ -974,6 +974,11 @@ function Geral() {
     // Recupera as possibilidades de vinculação financeira
     $sql = new db_getCLFinanceiro; $RS_Financ = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,$w_solic_pai,null,null,null,null,null,null,null,null);
   }
+
+  if ($w_sq_lcmodalidade>'') {
+    //Recupera os dados da modalidade
+    $sql = new db_getLCModalidade; $RS_Modal = $sql->getInstanceOf($dbms, $w_sq_lcmodalidade, $w_cliente, null, null, null, null);
+  }
   
   Cabecalho();
   head();
@@ -1188,7 +1193,39 @@ function Geral() {
       } 
     }
     ShowHTML('          <tr>');
-    SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
+    SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_lcmodalidade\'; document.Form.submit();"');
+    if (nvl($w_sq_lcmodalidade,'')!='') {
+      ShowHTML('<tr><td colspan=2>');
+      ShowHTML('    <TABLE BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('        <tr align="center">');
+      ShowHTML('          <td colspan="9"><b>Dados da modalidade selecionada</b></td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr align="center">');
+      ShowHTML('          <td rowspan="2"><b>Quantidade mínima de pesquisas de preço</td>');
+      ShowHTML('          <td colspan="3"><b>Certame</td>');
+      ShowHTML('          <td rowspan="2"><b>Gera contrato</td>');
+      ShowHTML('          <td colspan="2"><b>Enquadramento'.(($w_cliente==17305) ? ' (US$)' : '').'</td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr align="center">');
+      ShowHTML('          <td><b>Permite</td>');
+      ShowHTML('          <td><b>Número mínimo de participantes</td>');
+      ShowHTML('          <td><b>Quantidade mínima de propostas válidas</td>');
+      ShowHTML('          <td><b>De</td>');
+      ShowHTML('          <td><b>Até</td>');
+      ShowHTML('        </tr>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td align="center">'.f($RS_Modal[0],'minimo_pesquisas').'</td>');
+      ShowHTML('        <td align="center">'.f($RS_Modal[0],'nm_certame').'</td>');
+      ShowHTML('        <td align="center">'.f($RS_Modal[0],'minimo_participantes').'</td>');
+      ShowHTML('        <td align="center">'.f($RS_Modal[0],'minimo_propostas_validas').'</td>');
+      ShowHTML('        <td align="center">'.f($RS_Modal[0],'nm_gera_contrato').'</td>');
+      ShowHTML('        <td align="right">'.formatNumber(f($RS_Modal[0],'enquadramento_inicial')).'</td>');
+      ShowHTML('        <td align="right">'.formatNumber(f($RS_Modal[0],'enquadramento_final')).'</td>');
+      ShowHTML('      </tr>');       
+      ShowHTML('    </table>');
+      ShowHTML('  </td>');
+      ShowHTML('</tr>');
+    }
     if ($w_pa=='S') {
       SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo da compra.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
     } elseif($w_segmento=='Público') {
@@ -3612,7 +3649,7 @@ function Encaminhamento() {
       if (strpos($w_erro,'proposta')!==false) {
         Validate('w_just_proposta', 'Justificativa para o não cumprimento do número mínimo de propostas', '', '1', '1', '2000', '1', '1');
       } 
-    } else {
+    } elseif ($w_sg_tramite!='CI') {
       if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
         Validate('w_despacho','Despacho','1','1','1','2000','1','1');
       } else {
@@ -3665,14 +3702,14 @@ function Encaminhamento() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
     ShowHTML('    <tr><td colspan="2"><table border=0 width="100%">');
+    
     if ($w_sg_tramite=='CI') {
-
       if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
         if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-          if (strpos($w_erro,'pesquisa(s)')!==false) {
+          if (strpos($w_erro,'pesquisa')!==false) {
             ShowHTML('    <tr><td><b>Justificativa para o não cumprimento do número mínimo de pesquisas de preço:</b><br><textarea '.$w_Disabled.' name="w_just_pesquisa" class="STI" ROWS=5 cols=75>'.$w_just_pesquisa.'</TEXTAREA></td>');
           } 
-          if (strpos($w_erro,'proposta(s)')!==false) {
+          if (strpos($w_erro,'proposta')!==false) {
             ShowHTML('    <tr><td><b>Justificativa para o não cumprimento do número mínimo de propostas:</b><br><textarea '.$w_Disabled.' name="w_just_proposta" class="STI" ROWS=5 cols=75>'.$w_just_proposta.'</TEXTAREA></td>');
           } 
         } 
@@ -3990,9 +4027,10 @@ function Concluir() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualCertame($w_chave,'L',$w_usuario,$P1,$P4));
+  
   if (substr(Nvl($w_erro,'nulo'),0,1)!=='0') {
     ShowHTML('<HR>');
-    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'CLLCCONC', $w_pagina . $par, $O);
+    AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, 'CLLCCONC', $w_pagina . $par, $O, null, 'enctype="multipart/form-data"');
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -4053,6 +4091,7 @@ function Concluir() {
         ShowHTML('          <td><b>Fornecedor</td>');
         ShowHTML('          <td><b>Validade</td>');
         ShowHTML('          <td><b>$ Unitário</td>');
+        ShowHTML('          <td><b>$ Total</td>');
         ShowHTML('          <td><b>Vencedor</td>');
         ShowHTML('        </tr>');
         // Lista os registros selecionados para listagem
@@ -4080,6 +4119,7 @@ function Concluir() {
             ShowHTML('        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>');
             ShowHTML('        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>');
             ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
+            ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_item'),4),'---').'</td>');
             ShowHTML('          <INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'chave').'">');
             if ($w_conclusao=='S') {
               // Se a situação não exige indicador de vencedor
@@ -4911,6 +4951,13 @@ function Grava() {
     case 'CLLCCONC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
+        if (is_array($_FILES)) {
+          
+        }
+
+echo $par;
+ExibeArray(is_array($_FILES));
+die();
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,
                 null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null);

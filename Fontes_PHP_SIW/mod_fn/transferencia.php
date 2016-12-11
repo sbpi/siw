@@ -1231,7 +1231,7 @@ function Grava() {
         // Recupera os dados da conta crédito
         $sql = new db_getContaBancoList; $RS2 = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_conta_credito'],'FINANCEIRO');
         foreach($RS2 as $row) { $RS2 = $row; break; }
-        $w_conta            = null;
+        $w_conta            = f($RS2,'sq_pessoa_conta');
         $w_sq_banco         = f($RS2,'sq_banco');
         $w_sq_agencia       = f($RS2,'sq_agencia');
         $w_operacao         = f($RS2,'operacao');

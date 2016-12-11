@@ -67,12 +67,12 @@ begin
 
    -- Recupera a forma de pagamento
    If w_sg_modulo = 'AC' Then
-      select b.sigla into w_forma_pagamento
+      select acentos(b.sigla) into w_forma_pagamento
         from ac_acordo                     a
              inner join co_forma_pagamento b on (a.sq_forma_pagamento = b.sq_forma_pagamento)
        where sq_siw_solicitacao = p_chave;
    Elsif w_sg_modulo = 'FN' Then
-      select b.sigla into w_forma_pagamento
+      select acentos(b.sigla) into w_forma_pagamento
         from fn_lancamento                 a
              inner join co_forma_pagamento b on (a.sq_forma_pagamento = b.sq_forma_pagamento)
        where sq_siw_solicitacao = p_chave;

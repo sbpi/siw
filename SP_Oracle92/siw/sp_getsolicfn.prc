@@ -275,7 +275,8 @@ begin
                         left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
                                                                       d.sq_agencia               = d4.sq_agencia and
                                                                       coalesce(d.operacao_conta,'-') = coalesce(d4.operacao,'-') and
-                                                                      d.numero_conta             = d4.numero
+                                                                      d.numero_conta             = d4.numero and
+                                                                      d.sq_pessoa_conta          <> d4.sq_pessoa_conta
                                                                      )
                         left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                         left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
@@ -333,7 +334,7 @@ begin
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_ativo          is null or (p_ativo       is not null and (p_ativo = 'N' or (p_ativo = 'S' and b1.ativo = 'S'))))
             and (p_pais           is null or (p_pais        is not null and (d.sq_pessoa_conta   = p_pais or 
-                                                                             p_pais = (select w.sq_pessoa_conta from co_pessoa_conta w where w.sq_pessoa = a.sq_pessoa and w.sq_agencia = d.sq_agencia and w.numero = d.numero_conta)
+                                                                             p_pais = (select w.sq_pessoa_conta from co_pessoa_conta w where w.sq_pessoa = a.sq_pessoa and w.sq_agencia = d.sq_agencia and w.numero = d.numero_conta and w.sq_pessoa_conta <> d.sq_pessoa_conta)
                                                                             )
                                              )
                 )

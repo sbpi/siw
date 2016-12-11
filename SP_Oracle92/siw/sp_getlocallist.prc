@@ -9,11 +9,11 @@ begin
       open p_result for 
          select a.sq_localizacao,c.logradouro||' - '||a.nome||' ('||b.sigla||')' localizacao,
                 b.sq_unidade, b.sq_unidade_pai
-           from eo_localizacao a, eo_unidade b, co_pessoa_endereco c
-          where a.sq_unidade         = b.sq_unidade
-            and b.sq_pessoa_endereco = c.sq_pessoa_endereco
-            and c.sq_pessoa          = p_cliente
-            and (p_chave is null or (p_chave is not null and b.sq_unidade = p_chave))
+           from eo_localizacao                a
+                inner join eo_unidade         b on a.sq_unidade         = b.sq_unidade
+                inner join co_pessoa_endereco c on b.sq_pessoa_endereco = c.sq_pessoa_endereco
+          where c.sq_pessoa = p_cliente
+            and (p_chave    is null or (p_chave is not null and b.sq_unidade = p_chave))
           order by c.logradouro, a.nome, b.sigla;
    End If;
 end SP_GetLocalList;

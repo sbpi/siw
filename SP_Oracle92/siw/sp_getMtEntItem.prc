@@ -88,7 +88,7 @@ begin
                 g3.pesquisa_data,                   g3.pesquisa_validade,
                 case g3.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,               case g3.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 g31.nome as nm_tipo_material,       g31.sigla as sg_tipo_material,       g31.classe,
-                case g31.classe when 1 then 'Medicamento' when 2 then 'Alimento' when 3 then 'Consumo' when 4 then 'Permanente' when 5 then 'Serviço' end as nm_classe,
+                retornaNomeClasse(g31.classe) nm_classe,
                 montanometipomaterial(g31.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(g31.sq_tipo_material) as nm_tipo_material_completo,
                 g32.nome as nm_unidade_medida,      g32.sigla as sg_unidade_medida,

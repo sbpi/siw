@@ -493,18 +493,20 @@ function Geral() {
   }
 
   // Recupera dados do comprovante
-  $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
-  $RS = SortArray($RS,'sq_tipo_documento','asc');
-  foreach ($RS as $row) {$RS=$row; break;}
-  if (nvl($w_copia,'')=='') $w_chave_doc =  f($RS,'sq_lancamento_doc'); // Se cópia, não copia a chave do documento 
-  $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
-  $w_numero               = f($RS,'numero');
-  $w_data                 = FormataDataEdicao(f($RS,'data'));
-  $w_serie                = f($RS,'serie');
-  $w_valor_doc            = formatNumber(f($RS,'valor'));
-  $w_patrimonio           = f($RS,'patrimonio');
-  $w_tributo              = f($RS,'calcula_tributo');
-  $w_retencao             = f($RS,'calcula_retencao');
+  if (nvl($w_troca,'')=='' && (nvl($w_copia,'')!='' || nvl($w_chave,'')!='')) {
+    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
+    $RS = SortArray($RS,'sq_tipo_documento','asc');
+    foreach ($RS as $row) {$RS=$row; break;}
+    if (nvl($w_copia,'')=='') $w_chave_doc =  f($RS,'sq_lancamento_doc'); // Se cópia, não copia a chave do documento 
+    $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
+    $w_numero               = f($RS,'numero');
+    $w_data                 = FormataDataEdicao(f($RS,'data'));
+    $w_serie                = f($RS,'serie');
+    $w_valor_doc            = formatNumber(f($RS,'valor'));
+    $w_patrimonio           = f($RS,'patrimonio');
+    $w_tributo              = f($RS,'calcula_tributo');
+    $w_retencao             = f($RS,'calcula_retencao');    
+  }
 
   // Default: pagamento para pessoa jurídica
   $w_tipo_pessoa = nvl($w_tipo_pessoa,2);

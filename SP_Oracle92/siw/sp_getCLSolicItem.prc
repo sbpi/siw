@@ -29,13 +29,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -90,13 +84,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 g.fabricante, g.marca_modelo, g.embalagem, g.valor_unidade, g.valor_item, g.fator_embalagem
            from cl_solicitacao_item                a
@@ -171,13 +159,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -246,13 +228,7 @@ begin
                 b.apresentacao,             b.codigo_interno,            b.codigo_externo, 
                 b.ativo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida
@@ -315,13 +291,7 @@ begin
                 b.apresentacao,              b.codigo_interno,            b.codigo_externo, 
                 b.ativo,
                 c.nome as nm_tipo_material,  c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -372,13 +342,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -452,13 +416,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -502,13 +460,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -551,13 +503,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -613,13 +559,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
@@ -685,13 +625,7 @@ begin
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
                 c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
-                case c.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(c.classe) nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,

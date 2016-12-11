@@ -70,7 +70,8 @@ select a3.sigla sg_menu, 'C' tipo,
          left      join fn_lancamento_doc d1 on (d.sq_siw_solicitacao  = d1.sq_siw_solicitacao)
          inner     join co_pessoa_conta   e  on (d.cliente             = e.sq_pessoa and
                                                  d.sq_agencia          = e.sq_agencia and
-                                                 d.numero_conta        = e.numero
+                                                 d.numero_conta        = e.numero and
+                                                 d.sq_pessoa_conta     <> e.sq_pessoa_conta
                                                 )
            inner   join co_moeda          e1 on (e.sq_moeda            = e1.sq_moeda)
            inner   join co_agencia        e2 on (e.sq_agencia          = e2.sq_agencia)

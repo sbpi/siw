@@ -16,13 +16,7 @@ begin
          select a.sq_tipo_material as chave, a.cliente, a.sq_tipo_pai, a.unidade_gestora, a.nome, a.sigla, 
                 a.descricao, a.codigo_externo, a.ativo, a.classe,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(a.classe) nm_classe,
                 montanometipomaterial(a.sq_tipo_material) as nome_completo,
                 b.nome nm_unidade, b.sigla sg_unidade
            from cl_tipo_material      a
@@ -40,13 +34,7 @@ begin
       open p_result for
          select distinct a.sq_tipo_material chave,a.nome, a.codigo_externo, a.classe,
                 montanometipomaterial(a.sq_tipo_material,'CODCOMP') as nome_completo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe
+                retornaNomeClasse(a.classe) nm_classe
            from cl_tipo_material  a
           where a.cliente = p_cliente
          connect by prior a.sq_tipo_pai = a.sq_tipo_material
@@ -64,13 +52,7 @@ begin
       open p_result for
          select a.sq_tipo_material chave,a.nome, a.codigo_externo, a.classe,
                 montanometipomaterial(a.sq_tipo_material) as nome_completo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(a.classe) nm_classe,
                 coalesce(b.qtd,0) as qt_materiais
            from cl_tipo_material  a
                 left  join (select x.sq_tipo_material, count(x.sq_material) qtd 
@@ -84,13 +66,7 @@ begin
       open p_result for
          select a.sq_tipo_material chave,a.nome, a.codigo_externo, a.classe,
                 montanometipomaterial(a.sq_tipo_material) as nome_completo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(a.classe) nm_classe,
                 coalesce(b.qtd,0) as qt_materiais
            from cl_tipo_material  a
                 left  join (select x.sq_tipo_material, count(x.sq_material) qtd 
@@ -105,13 +81,7 @@ begin
       open p_result for
          select a.sq_tipo_material chave,a.nome, a.codigo_externo, a.classe,
                 montanometipomaterial(a.sq_tipo_material) as nome_completo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe,
+                retornaNomeClasse(a.classe) nm_classe,
                 coalesce(b.qtd,0) as qt_materiais
            from cl_tipo_material   a
                 left  join (select x.sq_tipo_material, count(x.sq_material) qtd 
@@ -126,18 +96,12 @@ begin
                                             connect by prior x.sq_tipo_material = x.sq_tipo_pai
                                            )
          order by a.nome;
-   Elsif upper(p_restricao) = 'FOLHA' or upper(p_restricao) = 'FOLHACON' Then
+   Elsif substr(upper(p_restricao),1,5) = 'FOLHA' Then
      -- Recupera apenas os registros sem filhos
       open p_result for
          select a.sq_tipo_material as chave, a.sq_tipo_pai, a.nome, a.sigla, a.codigo_externo, a.classe,
                 montanometipomaterial(a.sq_tipo_material, 'inverso') as nome_completo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe
+                retornaNomeClasse(a.classe) nm_classe
            from cl_tipo_material a
                 left  join (select sq_tipo_pai
                               from cl_tipo_material 
@@ -166,7 +130,8 @@ begin
                                          )
                 )
             and (p_restricao  = 'FOLHA' or
-                 (p_restricao = 'FOLHACON' and a.classe in (1,2,3))
+                 (p_restricao = 'FOLHACON' and a.classe in (1,2,3)) or
+                 (p_restricao = 'FOLHAPER' and a.classe = 4)
                 )
          order by 7;
    Elsif p_restricao = 'EXISTE' Then
@@ -175,13 +140,7 @@ begin
          select b.sq_tipo_material as chave, b.cliente, b.nome, 
                 b.sigla, b.descricao, b.ativo, b.codigo_externo, b.classe,
                 case b.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
-                case b.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe
+                retornaNomeClasse(a.classe) nm_classe
            from cl_tipo_material            a
                 inner join cl_tipo_material b on (a.sq_tipo_pai = b.sq_tipo_pai)
           where a.cliente            = p_cliente
@@ -200,17 +159,11 @@ begin
          select a.sq_tipo_material as chave, a.cliente, a.nome,
                 a.sigla, a.descricao, a.ativo, a.codigo_externo, a.classe,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
-                case a.classe
-                     when 1 then 'Medicamento'
-                     when 2 then 'Alimento'
-                     when 3 then 'Consumo'
-                     when 4 then 'Permanente'
-                     when 5 then 'Serviço'
-                end as nm_classe
-           from cl_tipo_material                a
-                inner join cl_material          b on (a.sq_tipo_material = b.sq_tipo_material)
-          where a.cliente                = p_cliente
-            and a.sq_tipo_material  = p_chave
+                retornaNomeClasse(a.classe) nm_classe
+           from cl_tipo_material       a
+                inner join cl_material b on (a.sq_tipo_material = b.sq_tipo_material)
+          where a.cliente          = p_cliente
+            and a.sq_tipo_material = p_chave
          order by a.nome;
    Elsif p_restricao is not null Then
       If upper(p_restricao) = 'IS NULL' Then
@@ -218,13 +171,7 @@ begin
             select a.sq_tipo_material as chave, a.cliente, a.sq_tipo_pai, a.nome, a.sigla, 
                    a.descricao, a.ativo, a.codigo_externo, a.classe,
                    montanometipomaterial(a.sq_tipo_material) as nome_completo,
-                   case a.classe
-                        when 1 then 'Medicamento'
-                        when 2 then 'Alimento'
-                        when 3 then 'Consumo'
-                        when 4 then 'Permanente'
-                        when 5 then 'Serviço'
-                   end as nm_classe,
+                   retornaNomeClasse(a.classe) nm_classe,
                    coalesce(b.filho,0) as filho,
                    coalesce(c.qtd,0) as qt_materiais
               from cl_tipo_material a
@@ -249,13 +196,7 @@ begin
             select a.sq_tipo_material as chave, a.cliente, a.sq_tipo_pai, a.nome, a.sigla, 
                    a.descricao, a.ativo, a.codigo_externo, a.classe,
                    montanometipomaterial(a.sq_tipo_material) as nome_completo,
-                   case a.classe
-                        when 1 then 'Medicamento'
-                        when 2 then 'Alimento'
-                        when 3 then 'Consumo'
-                        when 4 then 'Permanente'
-                        when 5 then 'Serviço'
-                   end as nm_classe,
+                   retornaNomeClasse(a.classe) nm_classe,
                    coalesce(b.filho,0) as filho,
                    coalesce(c.qtd,0) as qt_materiais
               from cl_tipo_material a
