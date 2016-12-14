@@ -184,7 +184,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   $RS1 = SortArray($RS3,'data_lancamento','asc','sq_siw_solicitacao','asc');
   if (count($RS1)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table class="tudo" width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
     $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
     if ($w_mod_cl=='S') $l_html.=chr(13).'            <td rowspan="2"><b>Compra</td>';
@@ -221,7 +221,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if ($w_tipo!='WORD') $l_html.=chr(13).'        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>';
       else                 $l_html.=chr(13).'        '.f($row,'codigo_interno').'';
-      if ($w_mod_cl=='S') $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_vinculo'),f($row,'dados_vinculo'),'N',$w_tipo).'</td>';
+      if ($w_mod_cl=='S') $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_vinculo'),f($row,'dados_vinculo'),'N',$w_tipo).'&nbsp;</td>';
       $l_html.=chr(13).'        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'data_lancamento'),5),'-').'&nbsp;</td>';
       $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_tipo_documento').' '.f($row,'numero').'</td>';
       if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {

@@ -189,6 +189,8 @@ $p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = upper($_REQUEST['p_sqcc']);
 $p_sq_orprior   = $_REQUEST['p_sq_orprior'];
+$p_sq_menu_relac= $_REQUEST['p_sq_menu_relac'];
+$p_chave_pai    = $_REQUEST['p_chave_pai'];
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $sql = new db_getLinkSubMenu; $RS = $sql->getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -652,6 +654,7 @@ function Geral() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave              = $_REQUEST['w_chave'];
+  $w_chave_pai          = nvl($_REQUEST['w_chave_pai'],$p_chave_pai);
   $w_sq_tipo_lancamento = $_REQUEST['w_sq_tipo_lancamento'];
   $w_readonly           = '';
   $w_erro               = '';
@@ -674,11 +677,11 @@ function Geral() {
     $w_solic_vinculo = $_REQUEST['w_solic_vinculo'];
 
     // Se for recarga da página
-    $w_sq_menu_relac        = $_REQUEST['w_sq_menu_relac'];    
+    $w_sq_menu_relac        = nvl($_REQUEST['w_sq_menu_relac'],$p_sq_menu_relac);
     if($w_sq_menu_relac=='CLASSIF') {
       $w_chave_pai          = '';
     } else {
-      $w_chave_pai          = $_REQUEST['w_chave_pai'];
+      $w_chave_pai          = nvl($_REQUEST['w_chave_pai'],$p_chave_pai);
     }
     $w_pessoa               = $_REQUEST['w_pessoa'];
     $w_pessoa_nm            = $_REQUEST['w_pessoa_nm'];
@@ -1004,7 +1007,7 @@ function Geral() {
       if (nvl($w_sq_projeto_rubrica,'')!='') Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     }
     if($w_segmento=='Público') Validate('w_numero_processo','Número do processo','1','',1,30,'1','1');
-    if ($w_mod_co=='S') { 
+    if ($w_mod_co=='S' and $w_cliente==10135) { 
       Validate('w_vinc_numero', 'Número da compra', '1', '1', '1', '6', '', '0123456789');
       Validate('w_vinc_ano', 'Ano da compra', '1', '1', '4', '4', '', '0123456789');
     }
@@ -1053,8 +1056,9 @@ function Geral() {
       $w_Disabled=' DISABLED ';
       if ($O=='V') $w_Erro = Validacao($w_sq_solicitacao,$SG);
     }  
+    
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
-    ShowHTML(MontaFiltro('POST'));
+    ShowHTML('<INPUT type="hidden" name="p_chave_pai" value="'.$p_chave_pai.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');

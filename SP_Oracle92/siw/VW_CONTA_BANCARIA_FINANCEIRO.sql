@@ -33,10 +33,10 @@ select a3.sigla sg_menu, case when (a3.sigla = 'FNATRANSF' or substr(a3.sigla,3,
            inner   join co_agencia        e2 on (e.sq_agencia          = e2.sq_agencia)
              inner join co_banco          e3 on (e2.sq_banco           = e3.sq_banco)
            left    join siw_solic_cotacao f  on (a.sq_siw_solicitacao  = f.sq_siw_solicitacao and
-                                                e.sq_moeda             = f.sq_moeda
-                                               )
+                                                 e.sq_moeda             = f.sq_moeda
+                                                )
  where -- Se petty cash, não pode estar cancelado. Caso contrário, deve estar concluído
-        (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
+       (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
     or (a3.sigla !='FNDFIXO' and a1.sigla = 'AT') 
 UNION ALL
 -- Recupera dados da conta crédito de trasnferências bancárias
@@ -71,7 +71,10 @@ select a3.sigla sg_menu, 'C' tipo,
          inner     join co_pessoa_conta   e  on (d.cliente             = e.sq_pessoa and
                                                  d.sq_agencia          = e.sq_agencia and
                                                  d.numero_conta        = e.numero and
-                                                 d.sq_pessoa_conta     <> e.sq_pessoa_conta
+                                                 ((a3.sigla = 'FNATRANSF' and d.sq_pessoa_conta <> e.sq_pessoa_conta) or
+                                                  (a3.sigla = 'FNAAPLICA' and d.sq_pessoa_conta =  e.sq_pessoa_conta) or
+                                                  a3.sigla not in ('FNATRANSF','FNAAPLICA')
+                                                 )
                                                 )
            inner   join co_moeda          e1 on (e.sq_moeda            = e1.sq_moeda)
            inner   join co_agencia        e2 on (e.sq_agencia          = e2.sq_agencia)
@@ -80,5 +83,5 @@ select a3.sigla sg_menu, 'C' tipo,
                                                  e.sq_moeda            = f.sq_moeda
                                                 )
  where -- Se petty cash, não pode estar cancelado. Caso contrário, deve estar concluído
-        (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
+       (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
     or (a3.sigla !='FNDFIXO' and a1.sigla = 'AT')

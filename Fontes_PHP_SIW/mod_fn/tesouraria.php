@@ -266,7 +266,7 @@ function Inicial() {
     Validate('p_sq_acao_ppa','CPF','CPF','','14','14','','0123456789-.');
     Validate('p_empenho','CNPJ','CNPJ','','18','18','','0123456789/-.');
     Validate('p_atraso','Vinculação','','','2','90','1','1');
-    Validate('p_uf','Projeto','','','2','90','1','1');
+    //Validate('p_uf','Projeto','','','2','90','1','1');    
     Validate('p_proponente','Beneficiário','','','2','90','1','');
     Validate('p_fim_i','Pagamento inicial','DATA','','10','10','','0123456789/');
     Validate('p_fim_f','Pagamento final','DATA','','10','10','','0123456789/');
@@ -356,8 +356,12 @@ function Inicial() {
     ShowHTML('          <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_sq_acao_ppa" VALUE="'.$p_sq_acao_ppa.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
     ShowHTML('          <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_empenho" VALUE="'.$p_empenho.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
     ShowHTML('      <tr valign="top">');
+    ShowHTML('      <tr valign="top">');
+    $sql = new db_getLinkData; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($l_rs,'sq_menu'),null,null,null,'p_projeto','PJLIST',null,2,3);
+    //ShowHTML('          <td><b><U>P</U>rojeto:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="p_uf" size="18" maxlength="18" value="'.$p_uf.'"></td>');
+    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>V</U>inculação:<br><INPUT ACCESSKEY="V" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
-    ShowHTML('          <td><b><U>P</U>rojeto:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="p_uf" size="18" maxlength="18" value="'.$p_uf.'"></td>');
     ShowHTML('          <td><b><U>B</U>eneficiário:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr valign="top">');
     SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$p_pais,null,'p_pais',null,null);
@@ -897,7 +901,7 @@ function Geral() {
 
     if (nvl($w_troca,'')=='' && (nvl($w_copia,'')!='' || nvl($w_chave,'')!='')) {
       // Recupera dados do comprovante
-      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms1,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
+      $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
       $RS = SortArray($RS,'sq_tipo_documento','asc');
       foreach ($RS as $row) {$RS=$row; break;}
       $w_chave_doc           =  f($RS,'sq_lancamento_doc');

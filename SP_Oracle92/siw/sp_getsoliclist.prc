@@ -809,7 +809,9 @@ begin
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo,
-                codigo2numero(b.codigo_interno) as ord_codigo_interno
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
+                case b1.sigla when 'AT' then d.inicio_real else b.inicio end inicio,
+                case b1.sigla when 'AT' then d.fim_real    else b.fim    end fim
            from siw_solicitacao                b
                 inner     join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and b1.sigla <> 'CA')
                 inner     join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)

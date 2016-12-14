@@ -73,6 +73,28 @@ begin
                                    connect by prior sq_rubrica_pai = sq_projeto_rubrica
                                    start with sq_projeto_rubrica = coalesce(w_chave, p_chave_aux, 0)
                                   );
+
+      -- Também apaga os cronogramas desembolso das rubricas superiores
+      delete pj_cronograma_apoio
+      where sq_rubrica_cronograma in (select sq_rubrica_cronograma 
+                                        from pj_rubrica_cronograma 
+                                       where sq_projeto_rubrica <> coalesce(w_chave, p_chave_aux, 0)
+                                         and sq_projeto_rubrica in (select sq_projeto_rubrica
+                                                                      from pj_rubrica
+                                                                     where sq_siw_solicitacao = p_chave
+                                                                    connect by prior sq_rubrica_pai = sq_projeto_rubrica
+                                                                    start with sq_projeto_rubrica = coalesce(w_chave, p_chave_aux, 0)
+                                                                   )
+                                     );
+
+      delete pj_rubrica_cronograma
+      where sq_projeto_rubrica <> coalesce(w_chave, p_chave_aux, 0)
+        and sq_projeto_rubrica in (select sq_projeto_rubrica
+                                     from pj_rubrica
+                                    where sq_siw_solicitacao = p_chave
+                                   connect by prior sq_rubrica_pai = sq_projeto_rubrica
+                                   start with sq_projeto_rubrica = coalesce(w_chave, p_chave_aux, 0)
+                                  );
    End If;
 end SP_PutProjetoRubrica;
 /

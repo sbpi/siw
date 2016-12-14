@@ -185,7 +185,10 @@ begin
                                                                    d.sq_agencia               = di.sq_agencia and
                                                                    coalesce(d.operacao_conta,'-') = coalesce(di.operacao,'-') and
                                                                    d.numero_conta             = di.numero and
-                                                                   d.sq_pessoa_conta          <> di.sq_pessoa_conta
+                                                                   ((a.sigla = 'FNATRANSF' and d.sq_pessoa_conta <> di.sq_pessoa_conta) or
+                                                                    (a.sigla ='FNAAPLICA' and d.sq_pessoa_conta =  di.sq_pessoa_conta) or
+                                                                    a.sigla not in ('FNATRANSF','FNAAPLICA')
+                                                                   )
                                                                   )
                        left       join co_agencia          di1 on (di.sq_agencia              = di1.sq_agencia)
                          left     join co_banco           di11 on (di1.sq_banco               = di11.sq_banco)

@@ -276,7 +276,10 @@ begin
                                                                       d.sq_agencia               = d4.sq_agencia and
                                                                       coalesce(d.operacao_conta,'-') = coalesce(d4.operacao,'-') and
                                                                       d.numero_conta             = d4.numero and
-                                                                      d.sq_pessoa_conta          <> d4.sq_pessoa_conta
+                                                                      ((a.sigla = 'FNATRANSF' and d.sq_pessoa_conta <> d4.sq_pessoa_conta) or
+                                                                       (a.sigla = 'FNAAPLICA' and d.sq_pessoa_conta =  d4.sq_pessoa_conta) or
+                                                                       a.sigla not in ('FNATRANSF','FNAAPLICA')
+                                                                      )
                                                                      )
                         left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                         left         join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
@@ -345,7 +348,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and ((substr(a.sigla,4)  = 'CONT' and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
-                                                                             (substr(a.sigla,4) <> 'CONT' and b.sq_solic_pai     is not null and b.sq_solic_pai     = p_projeto)
+                                                                             (substr(a.sigla,4) <> 'CONT' and ((b.sq_solic_pai is not null and b.sq_solic_pai = p_projeto) or (b4.sq_solic_pai is not null and b4.sq_solic_pai = p_projeto)))
                                                                             )
                                              )
                 )
