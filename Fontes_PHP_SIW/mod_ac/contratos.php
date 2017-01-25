@@ -4625,7 +4625,6 @@ function Grava() {
           ShowHTML('  alert("ATENÇÃO: Existe lançamento financeiro para esta nota, não sendo possível sua exclusão!");');
           ScriptClose();
           RetornaFormulario(null);
-          exit;
         }
       }
       $SQL = new dml_putAcordoNota; 

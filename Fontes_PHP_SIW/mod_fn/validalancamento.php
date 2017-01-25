@@ -20,6 +20,8 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
   $sql = new db_getSolicData; $l_rs_solic = $sql->getInstanceOf($dbms,$l_chave,$p_sg1);
+  $v_dados_pai  = explode('|@|',f($l_rs_solic,'dados_pai'));
+  $v_modulo_pai = $v_dados_pai[11];
   //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento.
@@ -76,7 +78,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
           $l_erro.='<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.formatNumber(Nvl(f($l_row,'total_item'),0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
           $l_tipo=0;
         }
-      }
+      } 
     }
     if (f($l_rs_solic,'sigla')!='FNDVIA' && f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc') && f($l_rs_tramite,'ativo')=='S') {
       $l_erro.='<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores dos documentos (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_doc'),0)).'</b>).';
@@ -110,13 +112,26 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   // 5 - Pagamento de contrato só pode ser enviado se o saldo do contrato for maior ou igual ao valor do pagamento
   if (f($l_rs_solic,'sigla')=='FNDCONT') {
     // Recupera os dados do contrato
-    $v_dados_pai = explode('|@|',f($l_rs_solic,'dados_pai'));
     $sql = new db_getSolicData; $l_rs_cont = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_solic_pai'),$v_dados_pai[5]);
     if (f($l_rs_solic,'valor')>f($l_rs_cont,'saldo_contrato') && f($l_rs_tramite,'ativo')=='S') {
       $l_erro.='<li>Saldo de <b>'.$v_dados_pai[1].' (R$ '.formatNumber(f($l_rs_cont,'saldo_contrato')).')</b> não é suficiente para pagamento do valor deste lançamento (<b>R$ '.formatNumber(f($l_rs_solic,'valor')).'</b>).';
       $l_tipo=0;
     }
   }
+  
+  if ($v_modulo_pai=='CO') {
+    // Recupera itens do vencedor
+    $sql = new db_getSolicCL; $l_rs_comp = $sql->getInstanceOf($dbms,$v_dados_pai[3],$_SESSION['SQ_PESSOA'],'FINANCEIRO',3,
+        null,null,null,null,null,null,null,null,null,null,f($l_rs_solic,'sq_solic_pai'),null,null,null,null,null,null,
+        null,null,null,null,null,null,null,$l_chave,null,null,null,null,null,null,null,Nvl(f($l_rs_solic,'pessoa'),0));
+    foreach($l_rs_comp as $row) {
+      if (f($row,'quantidade_autorizada')-(f($row,'qtd_paga')+f($row,'qtd_fn'))<0) {
+        $l_erro.='<li>A quantidade informada no item <b>'.f($row,'ordem').'</b> excede a quantidade disponível para pagamento, que é igual a '.formatNumber(f($row,'quantidade_autorizada')-f($row,'qtd_paga'),0).'.';
+        $l_tipo=0;
+      }
+    }
+  }
+
   
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
     $sql = new db_getSolicRubrica; $l_rs_rubrica = $sql->getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,'SELECAO');

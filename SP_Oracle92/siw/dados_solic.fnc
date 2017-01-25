@@ -31,15 +31,19 @@ create or replace function dados_solic(p_chave in number) return varchar2 is
             a2.sigla as sg_modulo,
             b.sq_siw_solicitacao,
             coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo,
-            coalesce(b.titulo, c.destino, d.assunto, b.descricao, b.justificativa) as titulo
-       from siw_menu                             a
-            left  join siw_menu                  a1 on (a.sq_menu             = a1.sq_menu_pai and
-                                                        a1.sigla              like '%VISUAL%'
-                                                       )
-            inner join siw_modulo                a2 on (a.sq_modulo           = a2.sq_modulo)
-            inner join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
-            left  join sr_solicitacao_transporte c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
-            left  join gd_demanda                d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+            coalesce(b.titulo, c.destino, d.assunto, b.descricao, b.justificativa) as titulo,
+            b.sq_solic_pai,b1.codigo_interno cd_solic_pai, b2.sigla sigla_pai, b3.sigla as sg_modulo_pai
+       from siw_menu                                   a
+            left        join siw_menu                  a1 on (a.sq_menu             = a1.sq_menu_pai and
+                                                              a1.sigla              like '%VISUAL%'
+                                                             )
+            inner       join siw_modulo                a2 on (a.sq_modulo           = a2.sq_modulo)
+            inner       join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
+              left      join siw_solicitacao           b1 on (b.sq_solic_pai        = b1.sq_siw_solicitacao)
+                left    join siw_menu                  b2 on (b1.sq_menu            = b2.sq_menu)
+                  left  join siw_modulo                b3 on (b2.sq_modulo          = b3.sq_modulo)
+            left        join sr_solicitacao_transporte c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+            left        join gd_demanda                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
       where b.sq_siw_solicitacao = p_chave;
 begin
   if p_chave is not null then
@@ -47,7 +51,18 @@ begin
      select count(sq_siw_solicitacao) into w_reg from siw_solicitacao where sq_siw_solicitacao = p_chave;
      if w_reg > 0 then
         for crec in c_dados loop
-            Result := crec.nome||': '||crec.codigo||'|@|'||crec.codigo||'|@|'||crec.titulo||'|@|'||crec.sq_menu||'|@|'||crec.nome||'|@|'||crec.sigla||'|@|'||crec.p1||'|@|'||crec.p2||'|@|'||crec.p3||'|@|'||crec.p4||'|@|'||crec.link||'|@|'||crec.sg_modulo;
+            Result := crec.nome||': '||crec.codigo||'|@|'||
+                      crec.codigo||'|@|'||
+                      crec.titulo||'|@|'||
+                      crec.sq_menu||'|@|'||
+                      crec.nome||'|@|'||
+                      crec.sigla||'|@|'||
+                      crec.p1||'|@|'||crec.p2||'|@|'||crec.p3||'|@|'||crec.p4||'|@|'||crec.link||'|@|'||
+                      crec.sg_modulo||'|@|'||
+                      crec.sq_solic_pai||'|@|'||
+                      crec.cd_solic_pai||'|@|'||
+                      crec.sigla_pai||'|@|'||
+                      crec.sg_modulo_pai;
         end loop;
      end if;
   end if;

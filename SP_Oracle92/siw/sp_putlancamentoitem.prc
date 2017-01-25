@@ -13,6 +13,7 @@ create or replace procedure SP_PutLancamentoItem
    ) is
    
    w_sigla     siw_menu.sigla%type;
+   w_sigla_pai siw_menu.sigla%type;
    w_chave_aux fn_documento_item.sq_documento_item%type := p_chave_aux;
    w_reg       number(18);
 begin
@@ -68,14 +69,16 @@ begin
       End If;
    End If;
    
-   -- Se for pagamento de diária, acumula valores no documento e na solicitação
-   select c.sigla into w_sigla
-     from fn_lancamento_doc            a
-          inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-            inner join siw_menu        c on (b.sq_menu            = c.sq_menu)
+   -- Se for recebimento ou pagamento de diária/licitação, acumula valores no documento e na solicitação
+   select c.sigla, nvl(e.sigla,'-') into w_sigla, w_sigla_pai
+     from fn_lancamento_doc              a
+          inner     join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+            inner   join siw_menu        c on (b.sq_menu            = c.sq_menu)
+            left    join siw_solicitacao d on (b.sq_solic_pai       = d.sq_siw_solicitacao)
+              left  join siw_menu        e on (d.sq_menu            = e.sq_menu)
     where a.sq_lancamento_doc = p_chave;
     
-   If w_sigla = 'FNDVIA' or w_sigla = 'FNREVENT' Then
+   If w_sigla = 'FNDVIA' or w_sigla = 'FNREVENT' or w_sigla_pai = 'CLLCCAD' Then
       -- Atualiza o documento
       update fn_lancamento_doc a
          set a.valor = coalesce((select sum(x.valor_total) from fn_documento_item x where x.sq_lancamento_doc = a.sq_lancamento_doc),0)

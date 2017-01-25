@@ -874,7 +874,7 @@ function MontaFiltro($p_method,$p_session=false) {
 // rerecebendo o nome do campo
 // a ser dado focus no formulário original
 // -------------------------------------------------------------------------
-function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_dir=null,$l_pagina=null,$l_par=null,$l_p1=null,$l_p2=null,$l_p3=null,$l_p4=null,$l_tp=null,$l_r=null) {
+function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_dir=null,$l_pagina=null,$l_par=null,$l_p1=null,$l_p2=null,$l_p3=null,$l_p4=null,$l_tp=null,$l_r=null,$l_automatico=1) {
   extract($GLOBALS);
   $l_form = '';
   // Os parâmetros informados prevalecem sobre os valores default
@@ -910,14 +910,16 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
   }
   ShowHTML($l_form);
   ShowHTML('</form>');
-  ScriptOpen('JavaScript');
-  // Registra no servidor syslog erro na assinatura eletrônica
-  if (nvl($l_troca,'x')=='w_assinatura') {
-    $w_resultado = enviaSyslog('AI','ASSINATURA INVÁLIDA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO']);
-    if ($w_resultado>'') ShowHTML('  alert(\'ATENÇÃO: erro no registro do log.\n'.$w_resultado.'\');');
+  if ($l_automatico) {
+    ScriptOpen('JavaScript');
+    // Registra no servidor syslog erro na assinatura eletrônica
+    if (nvl($l_troca,'x')=='w_assinatura') {
+      $w_resultado = enviaSyslog('AI','ASSINATURA INVÁLIDA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO']);
+      if ($w_resultado>'') ShowHTML('  alert(\'ATENÇÃO: erro no registro do log.\n'.$w_resultado.'\');');
+    }
+    ShowHTML('  document.forms["RetornaDados"].submit();');
+    ScriptClose();
   }
-  ShowHTML('  document.forms["RetornaDados"].submit();');
-  ScriptClose();
   exit();
 }
 
@@ -1147,12 +1149,25 @@ function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
 // =========================================================================
 // Montagem da URL com os dados de um material ou serviço
 // -------------------------------------------------------------------------
-function ExibeMaterial($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
+function ExibeMaterial($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic,$hint=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_cl/catalogo.php?par=TELAMATERIAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste material ou serviço!">'.$p_nome.'</a>';
+    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_cl/catalogo.php?par=TELAMATERIAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="'.((nvl($hint,'')!='') ? $hint : 'Clique para exibir os dados deste material ou serviço!').'">'.$p_nome.'</a>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Montagem da URL com os dados de um material ou serviço
+// -------------------------------------------------------------------------
+function ExibePermanente($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic,$hint=null) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_chave,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_mt/permanente.php?par=TELAPERMANENTE&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaBem\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="'.((nvl($hint,'')!='') ? $hint : 'Clique para exibir os dados deste bem patrimonial!').'">'.$p_nome.'</a>';
   }
   return $l_string;
 }
@@ -2238,8 +2253,8 @@ function MontaURL($p_sigla) {
 // =========================================================================
 // Montagem de cabeçalho padrão de formulário
 // -------------------------------------------------------------------------
-function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,$p_P3,$p_P4,$p_TP,$p_SG,$p_R,$p_O, $p_retorno=null) {
-  $l_html = '<form action="'.$p_Action.'" method="'.$p_Method.'" id="'.strtolower($p_Name).'" NAME="'.$p_Name.'"'.((nvl($p_onSubmit,'')=='') ? '' : ' onSubmit="'.$p_onSubmit.'"').((nvl($p_Target,'')=='') ? '' : '" target="'.$p_Target.'"').'>';
+function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,$p_P3,$p_P4,$p_TP,$p_SG,$p_R,$p_O, $p_retorno=null, $atributo=null) {
+  $l_html = '<form action="'.$p_Action.'" method="'.$p_Method.'" id="'.strtolower($p_Name).'" NAME="'.$p_Name.'"'.((nvl($p_onSubmit,'')=='') ? '' : ' onSubmit="'.$p_onSubmit.'"').((nvl($p_Target,'')=='') ? '' : '" target="'.$p_Target.'"').((nvl($atributo,'')!='') ? ' '.$atributo : '').'>';
   if (nvl($p_P1,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P1" VALUE="'.$p_P1.'">';
   if (nvl($p_P2,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P2" VALUE="'.$p_P2.'">';
   if (nvl($p_P3,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P3" VALUE="'.$p_P3.'">';

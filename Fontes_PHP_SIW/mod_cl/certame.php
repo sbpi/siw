@@ -1658,12 +1658,12 @@ function ItensContrato() {
       ShowHTML('    return false;');
       ShowHTML('  }');
       ShowHTML('  for (i=1; i < theForm["w_sq_material[]"].length; i++) {');
-      ShowHTML('    if((theForm["w_sq_material[]"][i].checked)&&(theForm["w_quantidade[]"][i].value==\'\')){');
-      ShowHTML('      alert("Para todas os itens selecionados você deve informar a quantidade!"); ');
+      ShowHTML('    if((theForm["w_sq_material[]"][i].checked)&&(theForm["w_quantidade[]"][i].value=="")){');
+      ShowHTML('      alert("Para todos os itens selecionados você deve informar a quantidade!"); ');
       ShowHTML('      return false;');
       ShowHTML('    }');
-      ShowHTML('    if((theForm["w_sq_material[]"][i].checked)&&(theForm["w_quantidade[]"][i].value==\'0,00\')){');
-      ShowHTML('      alert("Para todas os itens selecionados você deve informar a quantidade maior que zero!"); ');
+      ShowHTML('    if((theForm["w_sq_material[]"][i].checked)&&(theForm["w_quantidade[]"][i].value=="0,00")){');
+      ShowHTML('      alert("Para todos os itens selecionados você deve informar a quantidade maior que zero!"); ');
       ShowHTML('      return false;');
       ShowHTML('    }');
       ShowHTML('  }');
@@ -2324,7 +2324,7 @@ function PesquisaPreco() {
       Validate('p_cpf','CPF','CPF','','14','14','','0123456789.-');
       Validate('p_cnpj','CNPJ','CNPJ','','18','18','','0123456789.-/');
       ShowHTML('  if (theForm.p_nome.value=="" && theForm.p_cpf.value=="" && theForm.p_cnpj.value=="") {');
-      ShowHTML('     alert (\'Informe um critério para busca!\');');
+      ShowHTML('     alert ("Informe um critério para busca!");');
       ShowHTML('     theForm.p_nome.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
@@ -4951,13 +4951,13 @@ function Grava() {
     case 'CLLCCONC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-        if (is_array($_FILES)) {
-          
-        }
-
-echo $par;
-ExibeArray(is_array($_FILES));
-die();
+//        if (is_array($_FILES)) {
+//          
+//        }
+//
+//echo $par;
+//ExibeArray($_POST);
+//die();
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,
                 null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null);

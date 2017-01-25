@@ -303,8 +303,8 @@ function Inicial() {
     } 
     ShowHTML('          </select></td>');
     ShowHTML('        <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');    
-    ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('    <tr><td align="center" colspan="3">');
+    ShowHTML('    <tr><td align="center" colspan="4" height="1" bgcolor="#000000">');
+    ShowHTML('    <tr><td align="center" colspan="4">');
     ShowHTML('          <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
     ShowHTML('        </td>');

@@ -262,6 +262,7 @@ begin
                                                                             )
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
+                        left         join siw_menu            b41 on (b4.sq_menu                 = b41.sq_menu)
                         left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
                         left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                         left         join pa_documento         b9 on (b4.protocolo_siw           = b9.sq_siw_solicitacao)
@@ -347,7 +348,7 @@ begin
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_tipo_lancamento = p_sq_orprior))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and ((substr(a.sigla,4)  = 'CONT' and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
+            and (p_projeto        is null or (p_projeto     is not null and (((substr(a.sigla,4) = 'CONT' or substr(b41.sigla,1,2) = 'CL') and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
                                                                              (substr(a.sigla,4) <> 'CONT' and ((b.sq_solic_pai is not null and b.sq_solic_pai = p_projeto) or (b4.sq_solic_pai is not null and b4.sq_solic_pai = p_projeto)))
                                                                             )
                                              )
@@ -467,6 +468,7 @@ begin
                      inner          join vw_conta_bancaria_financeiro g on (b.sq_siw_solicitacao = g.sq_financeiro)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
+                        left         join siw_menu            b41 on (b4.sq_menu                 = b41.sq_menu)
                         left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
                         left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                         left         join siw_solicitacao      b7 on (b4.sq_solic_pai            = b7.sq_siw_solicitacao)
@@ -480,7 +482,11 @@ begin
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_ativo          is null or (p_ativo       is not null and (p_ativo = 'N' or (p_ativo = 'S' and b1.ativo = 'S'))))
             and (p_pais           is null or (p_pais        is not null and (g.sq_pessoa_conta   = p_pais)))
-            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai is not null and b.sq_solic_pai = p_projeto))
+            and (p_projeto        is null or (p_projeto     is not null and (((substr(a.sigla,4) = 'CONT' or substr(b41.sigla,1,2) = 'CL') and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
+                                                                             (substr(a.sigla,4) <> 'CONT' and ((b.sq_solic_pai is not null and b.sq_solic_pai = p_projeto) or (b4.sq_solic_pai is not null and b4.sq_solic_pai = p_projeto)))
+                                                                            )
+                                             )
+                )
             and (p_fim_i          is null or (p_fim_i       is not null and ((a.sigla = 'FNDFIXO'  and g.quitacao           between p_fim_i and p_fim_f) or
                                                                              (a.sigla <> 'FNDFIXO' and d.quitacao           between p_fim_i and p_fim_f)
                                                                             )

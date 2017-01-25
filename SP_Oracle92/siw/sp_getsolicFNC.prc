@@ -379,7 +379,7 @@ begin
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from fn_lancamento_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and k.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and ((substr(a.sigla,4)  = 'CONT' and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
+            and (p_projeto        is null or (p_projeto     is not null and (((substr(a.sigla,4)  = 'CONT' or substr(b4.sg_menu,1,2) = 'CL') and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
                                                                              (substr(a.sigla,4)  = 'VIA'  and (coalesce(b4.sq_siw_solicitacao,0) = p_projeto or coalesce(b41.sq_siw_solicitacao,0) = p_projeto)) or
                                                                              (substr(a.sigla,4) <> 'CONT' and b.sq_solic_pai     is not null and b.sq_solic_pai     = p_projeto)
                                                                             )

@@ -381,6 +381,66 @@ begin
             and j.sq_siw_tramite     is null -- Item com contrato não cancelado não pode ser vinculado a outro contrato
             and b1.gera_contrato     = 'S'
          order by b.numero_certame, e.nome, lpad(c.ordem,4);
+   Elsif p_restricao = 'FINANCEIRO' Then
+      -- Recupera as solicitações de compras passíveis de vinculação a pagamento (exceto fundo fixo)
+      open p_result for
+         select distinct a.sq_siw_solicitacao, a.codigo_interno, a.titulo,
+                codigo2numero(a.codigo_interno) as ord_codigo_interno,
+                b.numero_certame, b.processo,
+                coalesce(b.numero_certame,a.codigo_interno) as cd_certame,
+                codigo2numero(coalesce(b.numero_certame,a.codigo_interno)) as ord_cd_certame,
+                c.sq_solicitacao_item, c.ordem, c.detalhamento,
+                coalesce(c3.sq_projeto_rubrica,c.sq_projeto_rubrica) sq_projeto_rubrica,
+                c.quantidade_autorizada, coalesce(c2.qtd_paga,0) qtd_paga, coalesce(c3.qtd_fn,0) qtd_fn,
+                c3.sq_documento_item,
+                c1.codigo_interno as cd_material, c1.nome as nm_material,
+                codigo2numero(c1.codigo_interno) as ord_cd_material,
+                d.sq_item_fornecedor, d.fabricante, d.marca_modelo, d.valor_unidade, d.valor_item, 
+                e.sq_pessoa, e.sq_tipo_pessoa, e.nome as nm_fornecedor,
+                coalesce(e1.cpf, e2.cnpj) as cd_fornecedor
+           from siw_solicitacao                               a
+                inner           join siw_menu                 a1 on (a.sq_menu             = a1.sq_menu)
+                inner           join siw_tramite              a2 on (a.sq_siw_tramite      = a2.sq_siw_tramite and
+                                                                     a2.sigla              = 'AT'
+                                                                    )
+                inner           join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao and
+                                                                     b.fundo_fixo          = 'N'
+                                                                    )
+                  inner         join lc_modalidade            b1 on (b.sq_lcmodalidade     = b1.sq_lcmodalidade)
+                  inner         join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                    inner       join cl_material              c1 on (c.sq_material         = c1.sq_material)
+                    left        join (select y.sq_siw_solicitacao, w.sq_solicitacao_item, sum(w.quantidade) qtd_paga
+                                        from fn_documento_item            w
+                                             inner join fn_lancamento_doc x on w.sq_lancamento_doc  = x.sq_lancamento_doc
+                                             inner join siw_solicitacao   y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                                             inner join siw_tramite       z on y.sq_siw_tramite     = z.sq_siw_tramite
+                                       where z.sigla <> 'CA'
+                                         and (p_sq_acao_ppa is null or (p_sq_acao_ppa is not null and y.sq_siw_solicitacao <> p_sq_acao_ppa))
+                                      group by y.sq_siw_solicitacao, w.sq_solicitacao_item
+                                     )                        c2 on (c.sq_solicitacao_item = c2.sq_solicitacao_item)
+                    left        join (select x.sq_siw_solicitacao, w.sq_documento_item, w.sq_solicitacao_item, 
+                                             w.quantidade qtd_fn, w.sq_projeto_rubrica
+                                        from fn_documento_item            w
+                                             inner join fn_lancamento_doc x on w.sq_lancamento_doc  = x.sq_lancamento_doc
+                                       where x.sq_siw_solicitacao = p_sq_acao_ppa
+                                     )                        c3 on (c.sq_solicitacao_item = c3.sq_solicitacao_item)
+                    inner       join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
+                                                                     d.pesquisa            = 'N' and
+                                                                     d.vencedor            = 'S'
+                                                                    )
+                      inner     join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
+                      left      join co_pessoa_fisica         e1 on (e.sq_pessoa           = e1.sq_pessoa)
+                      left      join co_pessoa_juridica       e2 on (e.sq_pessoa           = e2.sq_pessoa)
+                  left          join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
+                    left        join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
+                      left      join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
+          where a1.sq_menu           = p_menu
+            and h.sq_siw_solicitacao is null -- Item vinculado a contrato não pode ter pagamento avulso
+            and ((p_chave            is null and c.quantidade_autorizada > coalesce(c2.qtd_paga,0)) or 
+                 (p_chave            is not null and a.sq_siw_solicitacao = p_chave)
+                )
+            and (p_fornecedor        is null or (p_fornecedor  is not null and e.sq_pessoa = p_fornecedor))
+         order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Elsif p_restricao = 'FUNDO_FIXO' Then
       -- Recupera as solicitações de compras passíveis de pagamento por fundo fixo
       open p_result for
