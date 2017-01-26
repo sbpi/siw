@@ -29,7 +29,7 @@ begin
       insert into fn_lancamento_doc
         (sq_lancamento_doc,         sq_siw_solicitacao, sq_tipo_documento,   numero,           data, 
          serie,                     valor,              patrimonio,          calcula_retencao, calcula_tributo,
-         sq_acordo_nota,            valor_inicial,      valor_excedente,    valor_reajuste
+         sq_acordo_nota,            valor_inicial,      valor_excedente,     valor_reajuste
         )
       values
         (w_chave_aux,               p_chave,            p_sq_tipo_documento, p_numero,         p_data, 

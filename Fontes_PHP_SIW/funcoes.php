@@ -926,7 +926,11 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
 // =========================================================================
 // Exibe o conteúdo da querystring, do formulário e das variáveis de sessão
 // -------------------------------------------------------------------------
-function ExibeArray($array) { echo '<pre>'.var_export($array,true).'</pre>'; }
+function ExibeArray($array, $retorno='html') { 
+  if ($retorno=='texto') return '<pre>'.var_export($array,true).'</pre>';
+  else echo '<pre>'.var_export($array,true).'</pre>'; 
+  return true;
+}
 
 // =========================================================================
 // Exibe o conteúdo da querystring, do formulário e das variáveis de sessão
@@ -2990,11 +2994,17 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'</table></dt><br />';
 
     $w_html .= chr(10).'<dt>Dados da querystring:<table border=0>';
-    foreach($_GET as $chv => $vlr) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
+    foreach($_GET as $chv => $vlr) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.((is_array($vlr)) ? exibearray($vlr) : $vlr).']'; }
     $w_html .= chr(10).'</table></dt><br />';
 
     $w_html .= chr(10).'<dt>Dados do formulário:<table border=0>';
-    foreach($_POST as $chv => $vlr) { if (lower($chv)!='w_assinatura' && lower($chv)!='password') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
+    foreach($_POST as $chv => $vlr) { if (lower($chv)!='w_assinatura' && lower($chv)!='password') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.((is_array($vlr)) ? exibearray($vlr) : $vlr).']'; }
+    $w_html .= chr(10).'</table></dt><br />';
+
+    $w_html .= chr(10).'<dt>Dados do formulário MULTIPART:<table border=0>';
+    foreach($_FILES as $chv => $vlr) { if (lower($chv)!='w_assinatura' && lower($chv)!='password') 
+      $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.
+                 ((is_array($vlr)) ? exibearray($vlr,'texto') : $vlr).']'; }
     $w_html .= chr(10).'</table></dt><br />';
 
     $w_html .= chr(10).'<dt>Variáveis de sessão:<table border=0>';

@@ -10,6 +10,7 @@ begin
       open p_result for 
          select a.sq_documento_item,  a.sq_lancamento_doc, a.descricao, a.sq_projeto_rubrica,
                 a.quantidade, a.valor_unitario, a.valor_total, a.ordem, a.data_cotacao, a.valor_cotacao,
+                a.sq_solicitacao_item,
                 b.sq_siw_solicitacao, b.sq_tipo_documento, 
                 c.nome as nm_rubrica, c.codigo as codigo_rubrica
            from fn_documento_item           a

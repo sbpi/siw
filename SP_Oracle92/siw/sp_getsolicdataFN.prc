@@ -215,7 +215,9 @@ begin
                                         group by x.sq_siw_solicitacao
                                        )                    m3 on (m2.sq_siw_solicitacao      = m3.sq_siw_solicitacao)
                    left           join co_moeda             mo on (b.sq_moeda                 = mo.sq_moeda)
-                   left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
+                   left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao or
+                                                                   d.sq_solic_vinculo         = q.sq_siw_solicitacao
+                                                                  )
                      left         join siw_solicitacao      q2 on (q.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
                      left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) as qtd_rubrica
                                           from pj_rubrica                 x
