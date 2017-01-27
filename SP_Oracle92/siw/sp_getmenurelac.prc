@@ -1,5 +1,5 @@
 create or replace procedure SP_GetMenuRelac
-   (p_sq_menu    in number   default null,
+   (p_sq_menu    in number,
     p_acordo     in varchar2 default null,
     p_acao       in varchar2 default null,
     p_viagem     in varchar2 default null,

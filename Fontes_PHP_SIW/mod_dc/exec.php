@@ -282,7 +282,7 @@ function ResultSql() {
      
            foreach($RS as $row) {
              ShowHTML('<tr valign="top">');
-             foreach ($row as $key => $val) { 
+             foreach ($row as $key => $val) {
                ShowHTML('<td>'.nvl($val,$dispnull).'</td>');
              }
              ShowHTML('</tr>');

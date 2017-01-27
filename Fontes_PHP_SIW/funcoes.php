@@ -2967,9 +2967,9 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<p ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</b></p>';
     $w_html .= chr(10).'<table BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5" width="100%"><tr><td><font COLOR="#000000">';
     $w_html .= chr(10).'<dl><dt><b>Data e hora da ocorrência:</b> <font FACE="courier">'.date('d/m/Y, h:i:s').'<br /><br /></font></dt>';
-    $w_html .= chr(10).'<dt><b>Descrição:</b><DD><font FACE="courier">'.crlf2br($Err['message']).'<br /><br /></font>';
+    $w_html .= chr(10).'<dt><b>Descrição:</b><DD><font FACE="courier">'.nvl(crlf2br($Err['message']),'Descrição do erro não capturada. Provavelmente é um <i>warning</i>.').'<br /><br /></font>';
     $w_html .= chr(10).'<dt><b>Arquivo:</b><DD><font FACE="courier">'.$file.', linha: '.$line.'<br /><br /></font>';
-    //$w_html .= chr(10).'<dt>Objeto:<DD><font FACE="courier">'.$object.'<br /><br /></font>';
+    //$w_html .= chr(10).'<dt><b>Objeto:</b><DD><font FACE="courier">'.$object.'<br /><br /></font>';
 
     $w_html .= chr(10).'<dt><b>Comando em execução:</b><blockquote><pre>'.nvl(crlf2br($Err['sqltext']),'nenhum').'</pre></blockquote></font></dt>';
     if (is_array($params)) {
@@ -2983,16 +2983,6 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
       }
       $w_html .= chr(10).'</table></dt><br />';
     }
-    
-    $w_html .= chr(10).'<dt>Variáveis de servidor:<table border=0>';
-    $w_html .= chr(10).'<tr valign="top"><td align="right">SCRIPT_NAME=><td>['.$_SERVER['SCRIPT_NAME'].']';
-    $w_html .= chr(10).'<tr valign="top"><td align="right">SERVER_NAME=><td>['.$_SERVER['SERVER_NAME'].']';
-    $w_html .= chr(10).'<tr valign="top"><td align="right">SERVER_PORT=><td>['.$_SERVER['SERVER_PORT'].']';
-    $w_html .= chr(10).'<tr valign="top"><td align="right">SERVER_PROTOCOL=><td>['.$_SERVER['SERVER_PROTOCOL'].']';
-    $w_html .= chr(10).'<tr valign="top"><td align="right">HTTP_ACCEPT_LANGUAGE=><td>['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']';
-    $w_html .= chr(10).'<tr valign="top"><td align="right">HTTP_USER_AGENT=><td>['.$_SERVER['HTTP_USER_AGENT'].']';
-    $w_html .= chr(10).'</table></dt><br />';
-
     $w_html .= chr(10).'<dt>Dados da querystring:<table border=0>';
     foreach($_GET as $chv => $vlr) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.((is_array($vlr)) ? exibearray($vlr) : $vlr).']'; }
     $w_html .= chr(10).'</table></dt><br />';
@@ -3010,6 +3000,44 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<dt>Variáveis de sessão:<table border=0>';
     foreach($_SESSION as $chv => $vlr) { if (strpos(upper($chv),'SENHA')===false && strpos(upper($chv),'PASSWORD')===false) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; } }
     $w_html .= chr(10).'</table></dt>';
+    
+    $indicesServer =  array('SCRIPT_NAME', 
+                            'REQUEST_METHOD', 
+                            'REQUEST_URI', 
+                            'HTTP_REFERER', 
+                            //'PHP_SELF', 
+                            //'SCRIPT_FILENAME',  
+                            'HTTP_USER_AGENT', 
+                            'REMOTE_ADDR', 
+                            'REMOTE_HOST', 
+                            'REMOTE_PORT', 
+                            'HTTP_ACCEPT_LANGUAGE', 
+                            'HTTPS', 
+                            'SERVER_NAME', 
+                            'SERVER_PORT', 
+                            'SERVER_SOFTWARE', 
+                            'SERVER_PROTOCOL', 
+                            'argv', 
+                            'argc', 
+                            //'HTTP_ACCEPT', 
+                            //'HTTP_ACCEPT_CHARSET', 
+                            //'HTTP_ACCEPT_ENCODING',
+                            //'HTTP_CONNECTION', 
+                            //'HTTP_HOST', 
+                            //'REMOTE_USER', 
+                            //'REDIRECT_REMOTE_USER', 
+                            //'SERVER_ADMIN', 
+                            //'SERVER_SIGNATURE', 
+                            //'PHP_AUTH_DIGEST', 
+                            //'PHP_AUTH_USER', 
+                            //'PHP_AUTH_PW', 
+                            //'AUTH_TYPE', 
+                            //'PATH_INFO'
+                           ); 
+    
+    $w_html .= chr(10).'<dt>Variáveis de servidor:<table border=0>';
+    foreach ($indicesServer as $arg) $w_html .= chr(10).'<tr valign="top"><td align="right">'.$arg.'=><td>['.$_SERVER[$arg].']';
+    $w_html .= chr(10).'</table></dt><br />';
     
     $w_html .= chr(10).'</font></td></tr></table><blockquote>';
     $w_html .= '</body></html>';
