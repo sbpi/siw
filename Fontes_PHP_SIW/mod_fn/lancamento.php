@@ -450,7 +450,7 @@ function Inicial() {
         ShowHTML('    <td>');
         if (substr($SG,3)=='CONT') ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Buscaparcela&R='.$w_pagina.$par.'&O=P&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         else                       ShowHTML('    <td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-        if ($w_compras=='S' && $SG=='FNDEVENT') ShowHTML('    <a accesskey="H" class="ss" href="'.$w_dir.$w_pagina.'BuscaCompra&R='.$w_pagina.$par.'&O=H&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Inclui um novo contrato a partir de uma compra/licitação."><u>H</u>erdar</a>');
+        if ($w_compras=='S' && $SG=='FNDEVENT') ShowHTML('    <a accesskey="H" class="ss" href="'.$w_dir.$w_pagina.'BuscaCompra&R='.$w_pagina.$par.'&O=H&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Inclui um novo pagamento a partir de uma compra/licitação."><u>H</u>erdar</a>');
       }
     } 
     if ($P1==2 || $P1==6 || (strpos(upper($R),'GR_')===false && strpos(upper($R),'LANCAMENTO')===false && Nvl($R,'')!='')) {
@@ -2546,6 +2546,15 @@ function Documentos() {
   $w_dados_pai      = explode('|@|',f($RS1,'dados_pai'));
   $w_sigla_pai      = $w_dados_pai[5];
   $w_modulo_pai     = $w_dados_pai[11];
+
+  // Recupera os dados do documento vinculado ao lançamento
+  $sql = new db_getLancamentoDoc; $RS_Doc = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null,null,null,null,null,null);
+  $w_doc_unico = false;
+  if (count($RS_Doc)==1) {
+    $RS_Doc = $RS_Doc[0];
+    if ($O=='L') $O = 'A';
+    $w_doc_unico = true; // Se tem apenas um documento, abre direto a tela de alteração.
+  }
   
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
@@ -2561,17 +2570,15 @@ function Documentos() {
     $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
   } elseif (strpos('AEV',$O)!==false) {
-    // Recupera os dados do endereço informado
-    $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,$w_chave,$w_sq_lancamento_doc,null,null,null,null,null,null);
-    foreach ($RS as $row) {$RS=$row; break;}
-    $w_sq_tipo_documento    = f($RS,'sq_tipo_documento');
-    $w_numero               = f($RS,'numero');
-    $w_data                 = FormataDataEdicao(f($RS,'data'));
-    $w_serie                = f($RS,'serie');
-    $w_valor                = formatNumber(f($RS,'valor'));
-    $w_patrimonio           = f($RS,'patrimonio');
-    $w_tributo              = f($RS,'calcula_tributo');
-    $w_retencao             = f($RS,'calcula_retencao');
+    $w_sq_lancamento_doc    = f($RS_Doc,'sq_lancamento_doc');
+    $w_sq_tipo_documento    = f($RS_Doc,'sq_tipo_documento');
+    $w_numero               = f($RS_Doc,'numero');
+    $w_data                 = FormataDataEdicao(f($RS_Doc,'data'));
+    $w_serie                = f($RS_Doc,'serie');
+    $w_valor                = formatNumber(f($RS_Doc,'valor'));
+    $w_patrimonio           = f($RS_Doc,'patrimonio');
+    $w_tributo              = f($RS_Doc,'calcula_tributo');
+    $w_retencao             = f($RS_Doc,'calcula_retencao');
   } 
   // Recupera a sigla do tipo do documento para tratar a Nota Fiscal e
   // verifica se o tipo de documento tem incidência de tributos e retenção.
@@ -2782,8 +2789,13 @@ function Documentos() {
       } else {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
-    } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Voltar">');
+    }
+    if ($w_doc_unico) {
+      // Se tem apenas um documento, permite fechar a janela
+      ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
+    } else {
+      ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Voltar">');
+    }
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('</FORM>');
