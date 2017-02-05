@@ -233,8 +233,10 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
             }
           }
           if ($w_pendencia!='') {
-            $l_erro.='<li>Pagamento bloqueado em função de prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
-            $l_tipo=0;
+            //$l_erro.='<li>Pagamento bloqueado em função de prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
+            //$l_tipo=0;
+            $l_erro.='<li>ATENÇÃO: Beneficiário tem prestação de contas pendente: <b>'.substr($w_pendencia,2).'</b>.';
+            $l_tipo=2;
           }
         }
       }
