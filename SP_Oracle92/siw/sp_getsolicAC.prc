@@ -234,8 +234,8 @@ begin
                         left         join eo_indicador             db on (d.sq_eoindicador       = db.sq_eoindicador and
                                                                           d.sq_eoindicador       is not null
                                                                          )
-                        left         join siw_solicitacao      dc  on (d.sq_solic_compra         = dc.sq_siw_solicitacao and
-                                                                       d.sq_solic_compra         is not null
+                        left         join siw_solicitacao      dc  on (d.sq_solic_vinculo        = dc.sq_siw_solicitacao and
+                                                                       d.sq_solic_vinculo        is not null
                                                                       )
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
@@ -247,7 +247,7 @@ begin
                                                                       e2.fim                     is null
                                                                      )
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
-                      left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                      left           join pj_projeto           m  on (d.sq_solic_vinculo         = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc and
                                                                       b.sq_cc                    is not null
@@ -288,7 +288,7 @@ begin
                                                                                                     )
                                              )
                 )
-            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_projeto        is null or (p_projeto     is not null and (b.sq_solic_pai      = p_projeto or d.sq_solic_vinculo  = p_projeto)))
             and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.objeto,null) like '%'||acentos(p_assunto,null)||'%'))
@@ -338,7 +338,7 @@ begin
                   instr(p_restricao,'ESPEC')   = 0 and
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
-                 ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
+                 ((instr(p_restricao,'PROJ')    > 0    and (b.sq_solic_pai is not null or d.sq_solic_vinculo is not null)) or
                   (instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
                   (instr(p_restricao,'IDEC')    > 0    and d1.exibe_idec = 'S') or

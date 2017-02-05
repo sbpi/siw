@@ -39,11 +39,11 @@ begin
                                                        'CA'                 <> Nvl(b2.sigla,'-')
                                                       )
              inner      join fn_tipo_lancamento c  on (a.sq_tipo_lancamento = c.sq_tipo_lancamento)
-             left outer join ac_acordo          d  on (b.sq_solic_pai       = d.sq_siw_solicitacao)
+             left       join ac_acordo          d  on (b.sq_solic_pai       = d.sq_siw_solicitacao)
                left     join siw_solicitacao    d1 on (d.sq_siw_solicitacao = d1.sq_siw_solicitacao)
-             left outer join pj_projeto         e  on (b.sq_solic_pai       = e.sq_siw_solicitacao)
+             left       join pj_projeto         e  on (a.sq_solic_vinculo   = e.sq_siw_solicitacao)
                left     join siw_solicitacao    e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-             left outer join ct_cc              f  on (b.sq_cc              = f.sq_cc)
+             left       join ct_cc              f  on (b.sq_cc              = f.sq_cc)
              inner      join co_pessoa          g  on (a.pessoa             = g.sq_pessoa)
        where ((Instr(p_restricao,'FLUXO') > 0 and (a.vencimento between Add_Months(p_dt_ini,-2) and p_dt_fim)) or
               (Instr(p_restricao,'FLUXO') = 0 and ((p_dt_ini is not null and a.vencimento       between p_dt_ini and p_dt_fim) or
@@ -83,12 +83,12 @@ begin
                                                          'CA'                 <> Nvl(b2.sigla,'-') and
                                                          0                    < InStr(p_fase,Nvl(b2.sigla,'-'))
                                                         )
-               left outer join pj_projeto         e  on (b.sq_solic_pai       = e.sq_siw_solicitacao)
+               left       join pj_projeto         e  on (a.sq_solic_vinculo   = e.sq_siw_solicitacao)
                  left     join siw_solicitacao    e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-               left outer join ct_cc              f  on (b.sq_cc              = f.sq_cc)
+               left       join ct_cc              f  on (b.sq_cc              = f.sq_cc)
              inner        join co_pessoa          g  on (a.outra_parte        = g.sq_pessoa)
              inner        join ac_acordo_parcela  d  on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
-               left outer join (select x.sq_siw_solicitacao, x.sq_acordo_parcela, x.quitacao
+               left       join (select x.sq_siw_solicitacao, x.sq_acordo_parcela, x.quitacao
                                  from fn_lancamento                x
                                       inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                         inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and

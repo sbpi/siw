@@ -25,7 +25,7 @@ create or replace procedure sp_ajustaFasePagamento(p_cliente in number, p_pessoa
                                                      )
               inner   join pd_categoria_diaria w7 on (w4.diaria             = w7.sq_categoria_diaria)
               inner   join siw_solicitacao     w5 on (w4.sq_siw_solicitacao = w5.sq_siw_solicitacao)
-                inner join siw_tramite         w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite and w6.sigla  in ('PC','AP'))
+                inner join siw_tramite         w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite and w6.sigla in ('VP','PC','AP'))
       where w.cliente = p_cliente        
        and (coalesce(p_todos,'-') = 'TODOS' or (coalesce(p_todos,'-') <> 'TODOS' and w.pessoa = coalesce(p_pessoa,0)))
      order by w.sq_siw_solicitacao,  w1.cadastrador, w2.sq_menu, g.sq_siw_tramite, h.sq_siw_tramite, w5.inclusao;

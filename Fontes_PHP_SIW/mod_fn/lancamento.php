@@ -908,7 +908,7 @@ function BuscaCompra() {
   ShowHTML('<tr><td>Selecione o certame/fornecedor desejado para geração do pagamento, clicando na operação "Selecionar".');
   ShowHTML('<tr><td colspan=6>');
   ShowHTML('    <TABLE WIDTH="100%" border=0>');
-  if (count($RS)<=0) {
+  if (!count($RS)) {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
   } else {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -1098,8 +1098,6 @@ function Geral() {
         $w_solic_vinculo = piece(f($RS,'dados_solic'),null,'|@|',13);
       }
     }
-    
-    
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
     if ($w_copia>'') { $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG); }
@@ -2361,7 +2359,7 @@ function OutraParte() {
         ShowHTML('          <td><b>CPF/CNPJ/Cód. Estrangeiro</td>');
         ShowHTML('          <td><b>Operações</td>');
         ShowHTML('        </tr>');
-        if (count($RS)<=0) {
+        if (!count($RS)) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não há pessoas que contenham o texto informado.</b></td></tr>');
         } else {
           foreach($RS as $row) {
@@ -3145,7 +3143,7 @@ function RubricaDoc() {
     if(f($RS1,'tipo_rubrica')==2) ShowHTML('            <td><b>Destino</b></td>');
     ShowHTML('            <td><b>Valor</b></td>');
     ShowHTML('          </tr>');
-    if (count($RS)<=0) {
+    if (!count($RS)) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -3327,7 +3325,7 @@ function Itens() {
     ShowHTML('          <td><b>$ Total</td>');
     ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
-    if (count($RS)<=0) {
+    if (!count($RS)) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -3799,7 +3797,7 @@ function BuscaParcela() {
     ShowHTML('            <td><b>Venc.</b></td>');
     ShowHTML('            <td><b>Tipo lançam.</b></td>');
     ShowHTML('            <td><b>Valor</b></td>');
-    if (count($RS)<=0) {
+    if (!count($RS)) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -4820,7 +4818,7 @@ function FichaRubrica() {
   BodyOpen(null);
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (count($RS)<=0) {
+  if (!count($RS)) {
     ScriptOpen('JavaScript');
     ShowHTML('alert("Não existe nenhum lançamento para esta rubrica!");');
     ShowHTML('window.close();');

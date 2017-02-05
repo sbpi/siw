@@ -33,18 +33,18 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
   // Execução financeira da viagem
   $sql = new db_getSolicList; $RSF = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
-        null,null,null,null,null,null,null,null,null,null,$l_chave, null, null, null, null, null, null,
+        null,null,null,null,null,null,null,null,'T',null,$l_chave, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null);
-        
-  $w_financeiro = false;
-  if (count($RSF)>0) {
-    foreach($RSF as $row) {
-      if (f($row,'sg_tramite')!='CA') {
-        $w_financeiro = true;
-        break;
-      }
-    }
-  }
+  
+  $w_financeiro = count($RSF);
+//  if (count($RSF)>0) {
+//    foreach($RSF as $row) {
+//      if (f($row,'sg_tramite')!='CA') {
+//        $w_financeiro = true;
+//        break;
+//      }
+//    }
+//  }
   
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {

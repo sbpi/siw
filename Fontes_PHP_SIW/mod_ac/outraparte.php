@@ -102,6 +102,9 @@ function Inicial() {
   // Recupera os dados da solicitação
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms,$w_chave,$SG);
   $w_tipo_pessoa = ((strpos('13',f($RS_Solic,'sq_tipo_pessoa'))!==false) ? 'F' : 'J');
+  $w_dados_pai   = explode('|@|',f($RS_Solic,'dados_pai'));
+  $w_sigla_pai   = $w_dados_pai[5];
+  $w_modulo_pai  = $w_dados_pai[11];
   
   if (strpos('IGV',$O)===false && $w_tipo_pessoa=='J' && nvl($w_sq_acordo_outra_parte,'')=='') $O='L';
 
@@ -426,7 +429,7 @@ function Inicial() {
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'representante.php?par=inicial&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_tipo=2&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Contato').'&SG=GCCREPRES\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Contatos</A>&nbsp');
             }
             ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_sq_pessoa='.f($row,'outra_parte').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
-            ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_sq_pessoa='.f($row,'outra_parte').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+            if ($w_modulo_pai!='CO') ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_sq_pessoa='.f($row,'outra_parte').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
             ShowHTML('        </td>');
             ShowHTML('      </tr>');
           } 

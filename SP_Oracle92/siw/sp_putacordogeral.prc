@@ -73,7 +73,8 @@ create or replace procedure SP_PutAcordoGeral
       select distinct outra_parte, tipo from ac_acordo_outra_parte where sq_siw_solicitacao = p_copia;
    
    cursor c_compra (l_solicitacao in number, l_fornecedor in number) is
-      select a.sq_siw_solicitacao, a.solicitante, a.cadastrador, a.executor, a.descricao, a.justificativa, a.inicio, a.fim, a.valor, 
+      select a.sq_siw_solicitacao, a.sq_solic_pai,
+             a.solicitante, a.cadastrador, a.executor, a.descricao, a.justificativa, a.inicio, a.fim, a.valor, 
              a.sq_cc, a.palavra_chave, a.sq_cidade_origem, a.ano, a.observacao, a.codigo_interno, a.protocolo_siw,
              b.sq_especie_documento, b.sq_especificacao_despesa, b.sq_eoindicador, b.sq_lcfonte_recurso, b.sq_lcmodalidade, b.sq_lcjulgamento, 
              b.sq_lcsituacao, b.sq_unidade, b.numero_original, b.data_recebimento, b.processo, b.indice_base, b.tipo_reajuste, b.limite_variacao, 
@@ -293,7 +294,7 @@ begin
                       a.numero_ata               = crec.numero_ata,
                       a.data_diario_oficial      = crec.data_diario_oficial,
                       a.pagina_diario_oficial    = crec.pagina_diario_oficial,
-                      a.sq_solic_compra          = crec.sq_siw_solicitacao
+                      a.sq_solic_vinculo         = crec.sq_solic_pai
                 where a.sq_siw_solicitacao = w_chave;
 
                -- Indica a tabela de outras partes
@@ -466,7 +467,31 @@ begin
            and sq_siw_solicitacao = w_chave;
       End If;
    End If;
-      
+
+   -- Coloca o projeto ao qual o acordo está vinculado.
+   If p_operacao          in ('I','A') Then
+      for crec in (select case when b2.sigla = 'PR' then b.sq_siw_solicitacao
+                               when c2.sigla = 'PR' then c.sq_siw_solicitacao
+                               when d2.sigla = 'PR' then d.sq_siw_solicitacao
+                          end vinculo
+                     from ac_acordo                          a 
+                          inner         join siw_solicitacao a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                            inner       join siw_solicitacao b  on (a1.sq_solic_pai      = b.sq_siw_solicitacao)
+                              inner     join siw_menu        b1 on (b.sq_menu            = b1.sq_menu)
+                                inner   join siw_modulo      b2 on (b1.sq_modulo         = b2.sq_modulo)
+                              left      join siw_solicitacao c  on (b.sq_solic_pai       = c.sq_siw_solicitacao)
+                                left    join siw_menu        c1 on (c.sq_menu            = c1.sq_menu)
+                                  left  join siw_modulo      c2 on (c1.sq_modulo         = c2.sq_modulo)
+                              left      join siw_solicitacao d  on (c.sq_solic_pai       = d.sq_siw_solicitacao)
+                                left    join siw_menu        d1 on (d.sq_menu            = d1.sq_menu)
+                                  left  join siw_modulo      d2 on (d1.sq_modulo         = d2.sq_modulo)
+                    where a.sq_solic_vinculo   is null
+                      and a.sq_siw_solicitacao = w_chave
+                  )
+      loop
+         update ac_acordo set sq_solic_vinculo = crec.vinculo where sq_siw_solicitacao = w_chave;
+      end loop;
+   End If;
    
    -- O tratamento a seguir é relativo ao código interno do acordo.
    If p_codigo is not null Then

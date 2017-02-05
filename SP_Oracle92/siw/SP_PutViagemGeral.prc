@@ -287,7 +287,7 @@ begin
          (select 
              sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          sysdate,              'N',
-             'Cancelamento'
+             nvl(p_observacao,'Cancelamento')
             from siw_solicitacao a
            where a.sq_siw_solicitacao = p_chave
          );

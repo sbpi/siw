@@ -51,6 +51,7 @@ include_once($w_dir_volta.'classes/sp/db_getUserMail.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemGeral.php');
+include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemOutra.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Contas.php');
@@ -430,13 +431,18 @@ function Inicial() {
         ShowHTML('    return false;');
         ShowHTML('  }');
         Validate('w_despacho','Despacho','','','1','2000','1','1');
-        ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+        ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value!="") {');
         ShowHTML('     alert("Informe o despacho apenas se for devolução para a fase anterior!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-        ShowHTML('     alert("Informe um despacho descrevendo o motivo da devolução!");');
+        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value=="") {');
+        ShowHTML('     alert("Informe o motivo da devolução!");');
+        ShowHTML('     theForm.w_despacho.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        ShowHTML('  if (theForm.w_envio[2].checked && theForm.w_despacho.value=="") {');
+        ShowHTML('     alert("Informe o motivo do cancelamento!");');
         ShowHTML('     theForm.w_despacho.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
@@ -700,9 +706,9 @@ function Inicial() {
         ShowHTML('  <table width="97%" border="0">');
         ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
         ShowHTML('      <tr><td><b>Tipo do Encaminhamento</b><br>');
-        ShowHTML('        <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N"'.((Nvl($w_envio,'N')=='N') ? ' checked' : '').'> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S"'.((Nvl($w_envio,'N')=='S') ? ' checked' : '').'> Devolver para a fase anterior');
+        ShowHTML('        <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N"'.((Nvl($w_envio,'N')=='N') ? ' checked' : '').'> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S"'.((Nvl($w_envio,'N')=='S') ? ' checked' : '').'> Devolver para a fase anterior <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="C"'.((Nvl($w_envio,'N')=='C') ? ' checked' : '').'> Cancelar');
         ShowHTML('      <tr>');
-        ShowHTML('      <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a solicitação.">'.$w_despacho.'</TEXTAREA></td>');
+        ShowHTML('      <tr><td><b>M<u>o</u>tivo da devolução/cancelamento (informar apenas se for devolução ou cancelamento):</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a solicitação.">'.$w_despacho.'</TEXTAREA></td>');
         ShowHTML('    </table>');
         ShowHTML('    <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
         ShowHTML('    <tr><td align="center" colspan=4><hr><input class="STB" type="submit" name="Botao" value="Enviar"></td></tr>');
@@ -7670,18 +7676,18 @@ function Grava() {
           // Recupera os dados para montagem correta do menu
           $sql = new db_getMenuData; $RS1 = $sql->getInstanceOf($dbms, $w_menu);
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'' . $w_codigo . ' cadastrada com sucesso!\');');
-          ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=A&w_chave=' . $w_chave_nova . '&w_documento=' . $w_codigo . '&R=' . $R . '&SG=' . f($RS1, 'sigla') . '&TP=' . RemoveTP($TP)) . '\';');
+          ShowHTML('  alert("' . $w_codigo . ' cadastrada com sucesso!");');
+          ShowHTML('  parent.menu.location="' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=A&w_chave=' . $w_chave_nova . '&w_documento=' . $w_codigo . '&R=' . $R . '&SG=' . f($RS1, 'sigla') . '&TP=' . RemoveTP($TP)) . '";');
           ScriptClose();
         } elseif ($O == 'E') {
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '\';');
+          ShowHTML('  location.href="' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '";');
           ScriptClose();
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
           $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $SG);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS1, 'link') . '&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '\';');
+          ShowHTML('  location.href="' . montaURL_JS($w_dir, f($RS1, 'link') . '&O=' . $O . '&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . $SG . MontaFiltro('GET')) . '";');
           ScriptClose();
         }
       } else {
@@ -8489,6 +8495,44 @@ function Grava() {
 
                   echo '<td>Enviado</td>';
                 }
+              }
+            } elseif ($_POST['w_envio']=='C') {
+              // Execução financeira da viagem
+              $sql = new db_getSolicList; $RSF = $sql->getInstanceOf($dbms,$_POST['w_menu'],$w_usuario,'FILHOS',null,
+                    null,null,null,null,null,null,null,null,null,null,$w_chave, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null);
+
+              // Viagem com financeiro pago não pode ser cancelada
+              $w_financeiro = false;
+              foreach($RSF as $row) {
+                if (f($row,'sg_tramite')=='AT') {
+                  $w_financeiro = true;
+                  break;
+                }
+              }
+              
+              if ($w_financeiro) {
+                echo '<td>Viagem tem pagamentos concluídos e não pode ser cancelada.</td>';
+              } else {
+                foreach($RSF as $row) {
+                  if (f($row,'sg_tramite')!='CA') {
+                    // Cancela os lançamentos vinculados à viagem
+                    $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,'E',$w_cliente,
+                            f($row,'sq_siw_solicitacao'),f($row,'sq_menu'), null, null, $w_usuario, null,
+                            null,null,null,null,null,null,null,null,null,'Viagem foi cancelada.',null,
+                            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+                            $w_chave_nova, $w_cd_financeiro);
+                  }
+                }
+                
+                // Cancela a viagem
+                $SQL = new dml_putViagemGeral; $SQL->getInstanceOf($dbms, 'E', $w_cliente,
+                        $w_chave, $_REQUEST['w_menu'], null, null,null, $_SESSION['SQ_PESSOA'],
+                        null,null,null,'Motivo do cancelamento: '.$_POST['w_despacho'],
+                        null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+                        null,null,null,$w_chave_nova, null, $w_cd_viagem);
+
+                echo '<td>Cancelada</td>';                
               }
             } else {
               //Verifica a fase imediatamente anterior à atual.

@@ -206,7 +206,7 @@ begin
          (select 
              sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          sysdate,              'N',
-             'Cancelamento'
+             nvl(p_observacao,'Cancelamento')
             from siw_solicitacao a
            where a.sq_siw_solicitacao = p_chave
          );
@@ -275,8 +275,30 @@ begin
       update siw_solicitacao a set a.protocolo_siw = w_protocolo_siw where sq_siw_solicitacao = w_chave;
    End If;
 
-   -- Recupera os parâmetros do cliente informado
-   select * into w_reg from fn_parametro where cliente = p_cliente;
+   -- Coloca o projeto ao qual o lançamento está vinculado.
+   If p_operacao          in ('I','A') Then
+      for crec in (select case when b2.sigla = 'PR' then b.sq_siw_solicitacao
+                               when c2.sigla = 'PR' then c.sq_siw_solicitacao
+                               when d2.sigla = 'PR' then d.sq_siw_solicitacao
+                          end vinculo
+                     from fn_lancamento                      a 
+                          inner         join siw_solicitacao a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                            inner       join siw_solicitacao b  on (a1.sq_solic_pai      = b.sq_siw_solicitacao)
+                              inner     join siw_menu        b1 on (b.sq_menu            = b1.sq_menu)
+                                inner   join siw_modulo      b2 on (b1.sq_modulo         = b2.sq_modulo)
+                              left      join siw_solicitacao c  on (b.sq_solic_pai       = c.sq_siw_solicitacao)
+                                left    join siw_menu        c1 on (c.sq_menu            = c1.sq_menu)
+                                  left  join siw_modulo      c2 on (c1.sq_modulo         = c2.sq_modulo)
+                              left      join siw_solicitacao d  on (c.sq_solic_pai       = d.sq_siw_solicitacao)
+                                left    join siw_menu        d1 on (d.sq_menu            = d1.sq_menu)
+                                  left  join siw_modulo      d2 on (d1.sq_modulo         = d2.sq_modulo)
+                    where a.sq_solic_vinculo   is null
+                      and a.sq_siw_solicitacao = w_chave
+                  )
+      loop
+         update fn_lancamento set sq_solic_vinculo = crec.vinculo where sq_siw_solicitacao = w_chave;
+      end loop;
+   End If;
 
    -- O tratamento a seguir é relativo ao código interno do lançamento.
    If p_operacao          in ('I','A') and 
@@ -287,6 +309,9 @@ begin
    Then
       
       If w_menu.numeracao_automatica = 0 Then
+         -- Recupera os parâmetros do cliente informado
+         select * into w_reg from fn_parametro where cliente = p_cliente;
+         
          If to_char(p_vencimento,'yyyy') <  w_reg.ano_corrente Then
       
             -- Configura o ano do acordo para o ano informado na data de início.

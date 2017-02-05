@@ -188,7 +188,7 @@ begin
            from siw_menu                                      a
                 inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner          join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
-                  inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite and b1.sigla <> 'CA')
+                  inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
                     left       join fn_lancamento             b2 on (b.sq_siw_solicitacao  = b2.sq_siw_solicitacao)
                     left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
                       inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
@@ -197,11 +197,11 @@ begin
                   inner        join siw_solicitacao           c  on (b.sq_solic_pai        = c.sq_siw_solicitacao)
                     inner      join siw_menu                  c1 on (c.sq_menu             = c1.sq_menu)
                       inner    join siw_modulo                c2 on (c1.sq_modulo          = c2.sq_modulo)
-          where (c2.sigla            = 'PD' or (c2.sigla <> 'PD' and b1.ativo = 'S'))
+          where (c2.sigla           = 'PD' or p_ativo = 'T' or (c2.sigla <> 'PD' and b1.ativo = 'S'))
             and a1.sigla            <> 'GD'
             and substr(a.sigla,1,3) <> 'GDP'
             and b.sq_tipo_evento    is null
-            and b.sq_solic_pai =  p_chave;
+            and b.sq_solic_pai      =  p_chave;
    Elsif substr(p_restricao,1,2) = 'GD'   or 
       substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or 
       p_restricao = 'ORPACOMP'         or substr(p_restricao,1,4) = 'GRORP' Then

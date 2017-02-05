@@ -79,7 +79,7 @@ begin
                 d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
                 d.sq_lcfonte_recurso, d.sq_especificacao_despesa,    d.financeiro_unico,
                 d.prestacao_contas,   d.pagina_diario_oficial,       d.condicoes_pagamento,
-                d.valor_caucao,
+                d.valor_caucao,       d.sq_solic_vinculo,
                 case d.prestacao_contas when 'S' then 'Sim' else 'Não' end as nm_prestacao_contas,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 retornaExcedenteContrato(d.sq_siw_solicitacao,b.fim) as limite_usado,
@@ -164,19 +164,21 @@ begin
                                            and x.prorrogacao = 'S'
                                         group by x.sq_siw_solicitacao
                                        )                    d14 on (d.sq_siw_solicitacao       = d14.sq_siw_solicitacao)
-                     left         join siw_solicitacao      dc on (d.sq_solic_compra          = dc.sq_siw_solicitacao)
-                       left       join cl_solicitacao       dd on (dc.sq_siw_solicitacao      = dd.sq_siw_solicitacao)
-                   inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
-                     left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
-                                                                   e1.tipo_respons            = 'T'           and
-                                                                   e1.fim                     is null
-                                                                  )
+                     left         join cl_solicitacao       dd  on (b.sq_solic_pai             = dd.sq_siw_solicitacao)
+                     left         join siw_solicitacao      dc  on (dd.sq_siw_solicitacao      = dc.sq_siw_solicitacao)
+                   inner          join eo_unidade           e   on (b.sq_unidade               = e.sq_unidade)
+                     left         join eo_unidade_resp      e1  on (e.sq_unidade               = e1.sq_unidade and
+                                                                    e1.tipo_respons            = 'T'           and
+                                                                    e1.fim                     is null
+                                                                   )
                      left         join eo_unidade_resp      e2 on (e.sq_unidade               = e2.sq_unidade and
                                                                    e2.tipo_respons            = 'S'           and
                                                                    e2.fim                     is null
                                                                   )
                    inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
-                   left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                   left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao or
+                                                                   d.sq_solic_vinculo         = m.sq_siw_solicitacao
+                                                                  )
                      left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) qtd_rubrica
                                           from pj_rubrica                 x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)

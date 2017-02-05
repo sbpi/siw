@@ -131,17 +131,33 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html .= $crlf.'      </table>';
     // Identificação do acordo
     $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    
-    // Exibe a vinculação
-    $l_html.=$crlf.'      <tr><td valign="top"><b>Vinculação: </b></td>';
-    if($l_tipo!='WORD') $l_html.=$crlf.'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
-    else                $l_html.=$crlf.'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-    
-    if (nvl(f($RS,'sq_compra'),'')!='') {
-      $l_html.=$crlf.'      <tr><td valign="top"><b>Compra/licitação: </b></td>';
-      if($l_tipo!='WORD') $l_html.=$crlf.'        <td><A class="HL" HREF="mod_cl/certame.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'sq_compra').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLLCCAD'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="compra">'.f($RS,'cd_compra').'&nbsp;</a></td></tr>';
-      else                $l_html.=$crlf.'        <td>'.f($RS,'cd_compra').'</td></tr>';
+    if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
+      // Recupera dados da solicitação de compra
+      $sql = new db_getSolicData; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_solic_vinculo'),null);
+      $vinc = explode('|@|',f($RS1,'dados_solic'));
+      if ($vinc[5]=='PJCAD') { 
+        $texto = 'Projeto'; $exibe = false;
+      } else {
+        $texto = $vinc[4];
+      }
+      $l_html.=chr(13).'      <tr><td width="30%"><b>'.$texto.': </b></td>';
+      $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_vinculo'),f($RS1,'dados_solic'),'N',$l_tipo).'</td>';
     }
+    if (nvl(f($RS,'dados_pai'),'')!='') {
+      $pai = explode('|@|',f($RS,'dados_pai'));
+      if ($pai[5]=='PJCAD' && $exibe) {
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
+        if (Nvl(f($RS,'dados_pai'),'')!='') {
+          $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>---</td>';
+        }
+        $exibe = false;
+      } elseif(nvl($pai[4],'')!='' && !$w_exibe_processo) {
+        $l_html.=chr(13).'      <tr><td width="30%"><b>'.$pai[4].': </b></td>';
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
+      }
+    } 
 
     if (nvl(f($RS,'nm_etapa'),'')>'' && $w_cliente != '10135') {
       if (substr($w_sigla,0,3)=='GCB') {   
@@ -161,11 +177,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     
     if (substr($w_sigla,0,3)=='GCB'){ 
       $l_html.=$crlf.'      <tr valign="top">';
-      $l_html.=$crlf.'        <td><b><font size=1>Plano de trabalho: </b></td>';
+      $l_html.=$crlf.'        <td><b>Plano de trabalho: </b></td>';
       $l_html.=$crlf.'        <td>'.CRLF2BR(f($RS,'objeto')).'</td></tr>';
     } else {                        
       $l_html.=$crlf.'      <tr valign="top">';
-      $l_html.=$crlf.'        <td><b><font size=1>Objeto: </b></td>';
+      $l_html.=$crlf.'        <td><b>Objeto: </b></td>';
       $l_html.=$crlf.'        <td>'.CRLF2BR(f($RS,'objeto')).'</td></tr>';
     }
     $l_html.=$crlf.'      <tr><td valign="top"><b>Tipo:</b></td>';
@@ -525,9 +541,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     else                                $l_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRA(S) PARTE(S)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $sql = new db_getConvOutraParte; $RSQuery = $sql->getInstanceOf($dbms,null,$l_chave,null,null);
     if (count($RSQuery)==0) {
-      if     (substr($w_sigla,0,3)=='GCB') $l_html.=$crlf.'      <tr><td colspan=2 align="center"><font size=1>Bolsita não informado';
-      elseif (substr($w_sigla,0,3)=='GCZ') $l_html.=$crlf.'      <tr><td colspan=2 align="center"><font size=1>Detentor não informado';
-      else                                 $l_html.=$crlf.'      <tr><td colspan=2 align="center"><font size=1>Outra parte não informada';
+      if     (substr($w_sigla,0,3)=='GCB') $l_html.=$crlf.'      <tr><td colspan=2 align="center">Bolsita não informado';
+      elseif (substr($w_sigla,0,3)=='GCZ') $l_html.=$crlf.'      <tr><td colspan=2 align="center">Detentor não informado';
+      else                                 $l_html.=$crlf.'      <tr><td colspan=2 align="center">Outra parte não informada';
     } else {
       foreach($RSQuery as $row) { 
         $l_html.=$crlf.'      <tr><td colspan=2 bgColor="'.$conTrBgColor.'" style="border: 1px solid rgb(0,0,0);" ><b>';
@@ -666,7 +682,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
               $label = (($i==1) ? 'Representantes legais' : 'Contatos');
               $l_html.=$crlf.'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><b>'.$label.'</b></td>';
               if (count($RSQuery)==0) {
-                $l_html.=$crlf.'      <tr><td colspan=2><font size=1><b>'.$label.' não informados</b></font></td></tr>';
+                $l_html.=$crlf.'      <tr><td colspan=2><b>'.$label.' não informados</b></font></td></tr>';
               } else {
                 $l_html.=$crlf.'      <tr><td colspan="2" align="center">';
                 $l_html.=$crlf.'        <table width=100%  border="1" bordercolor="#00000">';              
@@ -1013,7 +1029,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=$crlf.'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
         $l_html.=$crlf.'        <td colspan=3>';
         if (round($w_valor_inicial-$w_total,2)!=0) {
-          $l_html.=$crlf.'        <font size=1><b>O valor das parcelas difere do valor contratado ('.formatNumber($w_valor_inicial-$w_total).')</b></td>';
+          $l_html.=$crlf.'        <b>O valor das parcelas difere do valor contratado ('.formatNumber($w_valor_inicial-$w_total).')</b></td>';
         } else {
           $l_html.=$crlf.'        &nbsp;</td>';
         } 
@@ -1065,11 +1081,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         } else {
           $l_html.=$crlf.'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
         }
-        $l_html.=$crlf.'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
+        $l_html.=$crlf.'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),2).'</b></td>';
         if ($w_cliente==9614) {
-          $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+          $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),2).'</b></td>';
         } else {
-          $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+          $l_html.=$crlf.'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),2).'</b></td>';
         }
 
         $l_html.=$crlf.'      </tr>';
@@ -1085,7 +1101,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if ($w_cliente==9634) { // SMSSP trabalha com quantidades mensais
         $l_html.=$crlf.'      <tr>';
         $l_html.=$crlf.'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
-        $l_html.=$crlf.'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
+        $l_html.=$crlf.'        <td><b>'.formatNumber($w_total_preco,2).'</b></td>';
         $l_html.=$crlf.'      </tr>';
       }
       $l_html.=$crlf.'    </table></td></tr>';

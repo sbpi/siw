@@ -375,10 +375,15 @@ begin
                   left          join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
                     left        join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
                       left      join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
-                        left    join siw_solicitacao          i on (h.sq_siw_solicitacao   = i.sq_siw_solicitacao)
-                          left  join siw_tramite              j on (i.sq_siw_tramite       = j.sq_siw_tramite and j.sigla <> 'CA')
+                        left    join siw_solicitacao          i  on (h.sq_siw_solicitacao  = i.sq_siw_solicitacao)
+                          left  join siw_tramite              j  on (i.sq_siw_tramite      = j.sq_siw_tramite and j.sigla <> 'CA')
+                    left        join fn_documento_item        k  on (c.sq_solicitacao_item = k.sq_solicitacao_item)
+                      left      join fn_lancamento_doc        k1 on (k.sq_lancamento_doc   = k1.sq_lancamento_doc)
+                        left    join siw_solicitacao          k2 on (k1.sq_siw_solicitacao = k2.sq_siw_solicitacao)
+                          left  join siw_tramite              k3 on (k2.sq_siw_tramite     = k3.sq_siw_tramite)
           where a1.sq_menu           = p_menu
             and j.sq_siw_tramite     is null -- Item com contrato não cancelado não pode ser vinculado a outro contrato
+            and k3.sq_siw_tramite    is null -- Item vinculado a pagamento avulso não pode ser vinculado a outro contrato
             and b1.gera_contrato     = 'S'
          order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Elsif p_restricao = 'FINANCEIRO' Then
@@ -434,8 +439,10 @@ begin
                   left          join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
                     left        join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
                       left      join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
+                        left    join siw_solicitacao          i on (h.sq_siw_solicitacao   = i.sq_siw_solicitacao)
+                          left  join siw_tramite              j on (i.sq_siw_tramite       = j.sq_siw_tramite and j.sigla <> 'CA')
           where a1.sq_menu           = p_menu
-            and h.sq_siw_solicitacao is null -- Item vinculado a contrato não pode ter pagamento avulso
+            and j.sq_siw_tramite     is null -- Item vinculado a contrato não pode ter pagamento avulso
             and ((p_chave            is null and c.quantidade_autorizada > coalesce(c2.qtd_paga,0)) or 
                  (p_chave            is not null and a.sq_siw_solicitacao = p_chave)
                 )

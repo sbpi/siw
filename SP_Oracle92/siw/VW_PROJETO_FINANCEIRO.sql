@@ -69,16 +69,14 @@ select 'I' TIPO, e2.qtd_itens,
            inner     join pj_rubrica        e1 on (e.sq_projeto_rubrica  = e1.sq_projeto_rubrica)
              inner   join siw_solicitacao   b  on (e1.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
-       left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator,
-                                  case when l3.sq_menu is not null then l2.sq_moeda else l.sq_moeda end sq_moeda
+       left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, l.sq_moeda sq_moeda
                              from siw_solicitacao                    k
                                   inner       join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
-                                  inner       join siw_solicitacao   l on (k.sq_solic_pai       = l.sq_siw_solicitacao)
-                                    inner     join siw_menu         l1 on (l.sq_menu            = l1.sq_menu)
-                                      left    join siw_solicitacao  l2 on (l.sq_solic_pai       = l2.sq_siw_solicitacao)
-                                        left  join siw_menu         l3 on (l2.sq_menu           = l3.sq_menu and substr(l3.sigla,1,2) = 'PJ')
-                                  inner       join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
-                                                                           m.sq_moeda           = case when l3.sq_menu is not null then l2.sq_moeda else l.sq_moeda end and
+                                  inner       join fn_lancamento    k2 on (k.sq_siw_solicitacao = k2.sq_siw_solicitacao)
+                                    inner     join siw_solicitacao   l on (k2.sq_solic_vinculo  = l.sq_siw_solicitacao)
+                                      inner   join siw_menu         l1 on (l.sq_menu            = l1.sq_menu)
+                                    inner     join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
+                                                                           m.sq_moeda           = l.sq_moeda and
                                                                            m.valor              > 0
                                                                           )
                           )                 f  on (a.sq_siw_solicitacao  = f.sq_siw_solicitacao)
@@ -138,16 +136,14 @@ select 'D' TIPO, 1 qtd_itens,
              inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
-       left        join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator,
-                                case when l3.sq_menu is not null then l2.sq_moeda else l.sq_moeda end sq_moeda
+       left        join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, l.sq_moeda sq_moeda
                            from siw_solicitacao                    k
                                 inner       join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
-                                inner       join siw_solicitacao   l on (k.sq_solic_pai       = l.sq_siw_solicitacao)
-                                  inner     join siw_menu         l1 on (l.sq_menu            = l1.sq_menu)
-                                    left    join siw_solicitacao  l2 on (l.sq_solic_pai       = l2.sq_siw_solicitacao)
-                                      left  join siw_menu         l3 on (l2.sq_menu           = l3.sq_menu and substr(l3.sigla,1,2) = 'PJ')
-                                inner       join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
-                                                                         m.sq_moeda           = case when l3.sq_menu is not null then l2.sq_moeda else l.sq_moeda end and
+                                inner       join fn_lancamento    k2 on (k.sq_siw_solicitacao = k2.sq_siw_solicitacao)
+                                  inner     join siw_solicitacao   l on (k2.sq_solic_vinculo  = l.sq_siw_solicitacao)
+                                    inner   join siw_menu         l1 on (l.sq_menu            = l1.sq_menu)
+                                  inner     join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
+                                                                         m.sq_moeda           = l.sq_moeda and
                                                                          m.valor              > 0
                                                                         )
                         )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)

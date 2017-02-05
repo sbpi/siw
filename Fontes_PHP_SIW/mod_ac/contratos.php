@@ -136,7 +136,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
 
-if ((strpos($SG,'PARC')!==false) || !(strpos($SG,'ANEXO')===false) || !(strpos($SG,'OUTRA')===false) || !(strpos($SG,'DADOS')===false) || !(strpos($SG,'NOTA')===false)) {
+if (strpos($SG,'ITEM')!==false || strpos($SG,'PARC')!==false || strpos($SG,'ANEXO')!==false || strpos($SG,'OUTRA')!==false || strpos($SG,'DADOS')!==false || strpos($SG,'NOTA')!==false) {
   if ((strpos('IGV',$O)===false) && $_REQUEST['w_chave_aux']=='') $O='L';
 } elseif (strpos($SG,'ENVIO')!==false) {
   $O='V';
@@ -1100,86 +1100,112 @@ function Geral() {
     $w_pessoa               = $_REQUEST['w_pessoa'];
     $w_pessoa_atual         = $_REQUEST['w_pessoa_atual'];
     $w_tipo_pessoa          = $_REQUEST['w_tipo_pessoa'];
-  } else {
-    if ((strpos('AEV',$O)!==false || nvl($w_copia,'')!='' || nvl($w_herda,'')!='') && $w_troca=='') {
-      if (nvl($w_copia,'')!='') {
-        // Recupera os dados do contrato
-        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG);
-      } elseif (nvl($w_herda,'')!='') {
-        // Recupera os dados do contrato
-        $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],'CLLCCAD',3,
-            null,null,null,null,null,null,null,null,null,null,substr($w_herda,0,strpos($w_herda,'|')),null,null,null,null,null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        if (count($RS)>0) $RS = $RS[0];
-        
-        $w_cd_compra = f($RS,'codigo_interno');
-        $w_ds_compra = nvl(f($RS,'objeto'),f($RS,'justificativa'));
-
-        // Recupera os dados do beneficiário em co_pessoa
-        $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,substr($w_herda,strpos($w_herda,'|')+1),null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
-        if (count($RS_Benef)>0) $RS_Benef = $RS_Benef[0];
-      } else {
-        $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
+    $w_modulo_pai           = $_REQUEST['w_modulo_pai'];
+    $w_cd_compra            = $_REQUEST['w_cd_compra'];
+    $w_ds_compra            = $_REQUEST['w_ds_compra'];
+  
+    
+    if ($w_chave_pai) {
+      // Garante que conseguirá recuperar as rubricas do projeto
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null);
+      
+      $w_modulo_pai = piece(f($RS,'dados_solic'),null,'|@|',12);
+      
+      if ($w_modulo_pai==='PR' || $w_modulo_pai==='CO') {
+        $w_solic_vinculo = piece(f($RS,'dados_solic'),null,'|@|',13);
+      }
+    }
+  } elseif (strpos('AEV',$O)!==false || nvl($w_copia,'')!='') {
+    if (nvl($w_copia,'')!='') {
+      // Recupera os dados do contrato
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_copia,$SG);
+    } else {
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave,$SG);
+    } 
+    if (count($RS)>0) {
+      $w_codigo_interno       = f($RS,'codigo_interno');
+      $w_titulo               = f($RS,'titulo');
+      $w_sq_unidade_resp      = f($RS,'sq_unidade');
+      $w_objeto               = f($RS,'objeto');
+      $w_aviso                = f($RS,'aviso_prox_conc');
+      $w_dias                 = f($RS,'dias_aviso');
+      $w_inicio_real          = f($RS,'inicio');
+      $w_fim_real             = f($RS,'fim');
+      $w_custo_real           = f($RS,'valor_contrato');
+      $w_projeto              = f($RS,'sq_solic_pai');
+      $w_etapa                = f($RS,'sq_projeto_etapa');
+      $w_sq_tipo_acordo       = f($RS,'sq_tipo_acordo');
+      $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
+      $w_forma_atual          = f($RS,'sq_forma_pagamento');
+      $w_chave_pai            = f($RS,'sq_solic_pai');
+      $w_chave_aux            = null;
+      $w_sq_menu              = f($RS,'sq_menu');
+      $w_sq_unidade           = f($RS,'sq_unidade');
+      $w_sq_tramite           = f($RS,'sq_siw_tramite');
+      $w_solicitante          = f($RS,'solicitante');
+      $w_cadastrador          = f($RS,'cadastrador');
+      $w_executor             = f($RS,'executor');
+      $w_descricao            = f($RS,'descricao');
+      $w_justificativa        = f($RS,'justificativa');
+      $w_inicio               = FormataDataEdicao(f($RS,'inicio'));
+      if (strpos('AEV',$O)!==false) {
+        $w_inicio_atual       = FormataDataEdicao(f($RS,'inicio'));
       } 
-      if (count($RS)>0) {
-        $w_codigo_interno       = ((nvl($w_herda,'')!='') ? '' : f($RS,'codigo_interno'));
-        $w_titulo               = ((nvl($w_herda,'')!='') ? f($RS_Benef,'nm_pessoa') : f($RS,'titulo'));
-        $w_sq_unidade_resp      = ((nvl($w_herda,'')!='') ? '' : f($RS,'sq_unidade'));
-        $w_objeto               = f($RS,'objeto');
-        $w_aviso                = f($RS,'aviso_prox_conc');
-        $w_dias                 = f($RS,'dias_aviso');
-        $w_inicio_real          = f($RS,'inicio');
-        $w_fim_real             = f($RS,'fim');
-        $w_custo_real           = f($RS,'valor_contrato');
-        $w_projeto              = f($RS,'sq_solic_pai');
-        $w_etapa                = f($RS,'sq_projeto_etapa');
-        $w_sq_tipo_acordo       = f($RS,'sq_tipo_acordo');
-        $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
-        $w_forma_atual          = f($RS,'sq_forma_pagamento');
-        $w_chave_pai            = f($RS,'sq_solic_pai');
-        $w_chave_aux            = null;
-        $w_sq_menu              = f($RS,'sq_menu');
-        $w_sq_unidade           = f($RS,'sq_unidade');
-        $w_sq_tramite           = f($RS,'sq_siw_tramite');
-        $w_solicitante          = ((nvl($w_herda,'')!='') ? '' : f($RS,'solicitante'));
-        $w_cadastrador          = f($RS,'cadastrador');
-        $w_executor             = f($RS,'executor');
-        $w_descricao            = f($RS,'descricao');
-        $w_justificativa        = ((nvl($w_herda,'')!='') ? '' : f($RS,'justificativa'));
-        $w_inicio               = ((nvl($w_herda,'')!='') ? '' : FormataDataEdicao(f($RS,'inicio')));
-        if (strpos('AEV',$O)!==false) {
-          $w_inicio_atual       = FormataDataEdicao(f($RS,'inicio'));
-        } 
-        $w_fim                  = ((nvl($w_herda,'')!='') ? '' : FormataDataEdicao(f($RS,'fim')));
-        $w_inclusao             = f($RS,'inclusao');
-        $w_ultima_alteracao     = f($RS,'ultima_alteracao');
-        $w_conclusao            = f($RS,'conclusao');
-        $w_valor                = number_format(f($RS,'valor'),2,',','.');
-        $w_moeda                = f($RS,'sq_moeda');
-        $w_data_hora            = f($RS,'data_hora');
-        $w_sqcc                 = f($RS,'sq_cc');
-        $w_pais                 = f($RS,'sq_pais');
-        $w_uf                   = f($RS,'co_uf');
-        $w_cidade               = f($RS,'sq_cidade_origem');
-        $w_palavra_chave        = f($RS,'palavra_chave');
-        $w_numero_empenho       = f($RS,'empenho');
-        $w_numero_processo      = f($RS,'processo');
-        $w_protocolo            = nvl(f($RS,'protocolo_completo'),f($RS,'processo'));
-        $w_protocolo_nm         = f($RS,'processo');
-        $w_opiniao              = f($RS,'opiniao');
-        $w_data_assinatura      = FormataDataEdicao(f($RS,'assinatura'));
-        $w_data_publicacao      = FormataDataEdicao(f($RS,'publicacao'));
-        $w_sq_lcmodalidade      = f($RS,'sq_lcmodalidade');
-        $w_aditivo              = nvl(f($RS,'aditivo'),0);
-        $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
-        $w_sq_menu_relac        = $w_dados_pai[3];
-        if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
-        $w_pessoa               = f($RS,'outra_parte');
-        $w_pessoa_atual         = f($RS,'outra_parte');
-        $w_tipo_pessoa          = f($RS,'sq_tipo_pessoa');
-      } 
+      $w_fim                  = FormataDataEdicao(f($RS,'fim'));
+      $w_inclusao             = f($RS,'inclusao');
+      $w_ultima_alteracao     = f($RS,'ultima_alteracao');
+      $w_conclusao            = f($RS,'conclusao');
+      $w_valor                = number_format(f($RS,'valor'),2,',','.');
+      $w_moeda                = f($RS,'sq_moeda');
+      $w_data_hora            = f($RS,'data_hora');
+      $w_sqcc                 = f($RS,'sq_cc');
+      $w_pais                 = f($RS,'sq_pais');
+      $w_uf                   = f($RS,'co_uf');
+      $w_cidade               = f($RS,'sq_cidade_origem');
+      $w_palavra_chave        = f($RS,'palavra_chave');
+      $w_numero_empenho       = f($RS,'empenho');
+      $w_numero_processo      = f($RS,'processo');
+      $w_protocolo            = nvl(f($RS,'protocolo_completo'),f($RS,'processo'));
+      $w_protocolo_nm         = f($RS,'processo');
+      $w_opiniao              = f($RS,'opiniao');
+      $w_data_assinatura      = FormataDataEdicao(f($RS,'assinatura'));
+      $w_data_publicacao      = FormataDataEdicao(f($RS,'publicacao'));
+      $w_sq_lcmodalidade      = f($RS,'sq_lcmodalidade');
+      $w_aditivo              = nvl(f($RS,'aditivo'),0);
+      $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
+      $w_modulo_pai           = $w_dados_pai[11];
+      $w_sq_menu_relac        = $w_dados_pai[3];
+      if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
+      $w_pessoa               = f($RS,'outra_parte');
+      $w_pessoa_atual         = f($RS,'outra_parte');
+      $w_tipo_pessoa          = f($RS,'sq_tipo_pessoa');
     } 
   } 
+  
+  if ($w_herda || $w_modulo_pai==='CO') {
+    // Recupera os dados da licitação
+    $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],'CLLCCAD',3,
+        null,null,null,null,null,null,null,null,null,null,(($w_herda) ? substr($w_herda,0,strpos($w_herda,'|')) :$w_chave_pai),
+        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+        null);
+    if (count($RS_Solic)>0) $RS_Solic = $RS_Solic[0];
+    
+    $w_cd_compra            = f($RS_Solic,'codigo_interno');
+    $w_ds_compra            = nvl(f($RS_Solic,'objeto'),f($RS_Solic,'justificativa'));
+    $w_modulo_pai           = 'CO'; // Não retirar esta linha. Útil na herança.
+    $w_moeda                = f($RS_Solic,'sq_moeda');
+    $w_nm_moeda             = f($RS_Solic,'nm_moeda');
+    if ($w_herda) {
+      $w_pessoa             = substr($w_herda,strpos($w_herda,'|')+1);
+      $w_chave_pai          = substr($w_herda,0,strpos($w_herda,'|'));
+      $w_sq_unidade_resp    = f($RS_Solic,'sq_unidade');
+      $w_solicitante        = f($RS_Solic,'solicitante');
+      $w_justificativa      = f($RS_Solic,'justificativa');
+      $w_sq_menu_relac      = f($RS_Solic,'sq_menu');
+      $w_solic_vinculo      = f($RS_Solic,'sq_solic_pai');
+    }
+  }
+  
   if (Nvl($w_sq_tipo_acordo,0)>0) {
     $sql = new db_getAgreeType; $RS = $sql->getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,$SG);
     foreach($RS as $row) {
@@ -1190,11 +1216,19 @@ function Geral() {
   if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
 
   // Recupera os dados do beneficiário
-  if (Nvl($w_pessoa,'')!='') {
+  if ($w_pessoa) {
     $sql = new db_getBenef; $RS_Benef = $sql->getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
     if (count($RS_Benef)>0) {
       foreach($RS_Benef as $row) { $RS_Benef = $row; break; }
+      $w_cpf           = f($RS_Benef,'cpf');
+      $w_cnpj          = f($RS_Benef,'cnpj');
+      $w_sq_prop       = f($RS_Benef,'sq_pessoa');
+      $w_nome          = f($RS_Benef,'nm_pessoa');
+      $w_nome_resumido = f($RS_Benef,'nome_resumido');
+      $w_sexo          = f($RS_Benef,'sexo');
+      $w_vinculo       = f($RS_Benef,'sq_tipo_vinculo');
       $w_tipo_pessoa   = f($RS_Benef,'sq_tipo_pessoa');
+      $w_titulo        = nvl($w_titulo,f($RS_Benef,'nm_pessoa'));
     }
   }
   
@@ -1220,7 +1254,7 @@ function Geral() {
     }
     Validate('w_titulo','Título','1',1,5,100,'1','1'); 
     Validate('w_sq_tipo_acordo','Tipo','SELECT',1,1,18,'','0123456789');
-    if ($O=='I') Validate('w_pessoa_nm', 'Outra parte:', 'HIDDEN', 1, 5, 100, '1', '1');
+    if ($O=='I' && $w_modulo_pai!='CO') Validate('w_pessoa_nm', 'Outra parte:', 'HIDDEN', 1, 5, 100, '1', '1');
     if (substr($SG,0,3)!='GCB') Validate('w_objeto','Objeto','1',1,5,2000,'1','1');
     else                        Validate('w_objeto','Plano de trabalho','1',1,5,2000,'1','1');
     if (substr($SG,0,3)!='GCA' || substr($SG,0,3)!='GCZ') {
@@ -1235,7 +1269,7 @@ function Geral() {
     if($w_aditivo==0) {
       Validate('w_inicio','Início vigência','DATA',1,10,10,'','0123456789/');
       Validate('w_fim','Término vigência','DATA',1,10,10,'','0123456789/');
-      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI' && $w_modulo_pai!='CO') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
       CompData('w_inicio','Início vigência','<=','w_fim','Término vigência');
       if (substr($SG,0,3)!='GCA' && nvl($w_herda,'')=='') {
         Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
@@ -1243,79 +1277,81 @@ function Geral() {
     }
     Validate('w_solicitante','Responsável','',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
-    if(nvl($w_sq_menu_relac,'')>'') {
-      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-      if ($w_sq_menu_relac=='CLASSIF') {
-        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-      } else {
-        Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
+    if ($w_modulo_pai!='CO') {
+      if(nvl($w_sq_menu_relac,'')>'') {
+        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+        if ($w_sq_menu_relac=='CLASSIF') {
+          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+        } else {
+          Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
+        }
+      } elseif (substr($SG,0,3)=='GCB' || $w_cd_modalidade!='F') {
+        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
       }
-    } elseif (substr($SG,0,3)=='GCB' || $w_cd_modalidade!='F') {
-      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if($w_sq_menu_relac!='CLASSIF') { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
+      if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135' && $w_cliente != '17305') {
+         if (substr($SG,0,3)=='GCB') {
+           Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
+         } else {
+           Validate('w_etapa','Tema e modalidade','SELECT','',1,18,'','0123456789');
+         }
+         ShowHTML('  if (theForm.w_etapa[theForm.w_etapa.selectedIndex].value=="" && theForm.w_etapa.selectedIndex != 0) {');
+         ShowHTML('     alert("A modalidade selecionada não permite esta vinculação.\n Ela pode estar com  100% de conclusão ou ser usada como tema.");');
+         ShowHTML('     theForm.w_etapa.focus();');
+         ShowHTML('     return false;');
+         ShowHTML('  }');
+      }
+  /**
+  *     if (substr($SG,0,3)=='GCB') {
+  *       ShowHTML('if (theForm.w_projeto!=undefined) {');
+  *       Validate('w_projeto','Projeto','SELECT',1,1,18,'','0123456789');
+  *       ShowHTML('}');
+  *       Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
+  *       ShowHTML('  if (theForm.w_etapa[theForm.w_etapa.selectedIndex].value=="" && theForm.w_etapa.selectedIndex != 0) {');
+  *       ShowHTML('     alert("A modalidade selecionada não permite esta vinculação.\n Ela pode estar com  100% de conclusão ou ser usada como tema.");');
+  *       ShowHTML('     theForm.w_etapa.focus();');
+  *       ShowHTML('     return false;');
+  *       ShowHTML('  }');
+  *     } elseif ($w_cd_modalidade!='F') {
+  *       ShowHTML('if (theForm.w_projeto!=undefined) {');
+  *       Validate('w_projeto','Projeto','SELECT','',1,18,'','0123456789');
+  *       ShowHTML('}');
+  *       Validate('w_etapa','Etapa','SELECT','',1,18,'','0123456789');
+  *       ShowHTML('  if (theForm.w_etapa[theForm.w_etapa.selectedIndex].value=="" && theForm.w_etapa.selectedIndex != 0) {');
+  *       ShowHTML('     alert("A modalidade selecionada não permite esta vinculação.\n Ela pode estar com  100% de conclusão ou ser usada como tema.");');
+  *       ShowHTML('     theForm.w_etapa.focus();');
+  *       ShowHTML('     return false;');
+  *       ShowHTML('  }');
+  *     } 
+  *     if (f($RS_Menu,'solicita_cc')=='S') {
+  *       if ($w_cd_modalidade!='F') {
+  *         Validate('w_sqcc','Classificação','SELECT','',1,18,'','0123456789');
+  *       } else {
+  *         Validate('w_sqcc','Classificação','SELECT','1',1,18,'','0123456789');
+  *       } 
+  *     } 
+  *     if ($w_cd_modalidade!='F' && f($RS_Menu,'solicita_cc')=='S') {
+  *       ShowHTML('if (theForm.w_projeto!=undefined) {');
+  *       ShowHTML('  if (theForm.w_projeto.selectedIndex > 0 && theForm.w_sqcc.selectedIndex > 0) {');
+  *       ShowHTML('     alert("Informe um projeto ou uma classificação. Você não pode escolher ambos!");');
+  *       ShowHTML('     theForm.w_projeto.focus();');
+  *       ShowHTML('     return false;');
+  *       ShowHTML('  }');
+  *       ShowHTML('  if (theForm.w_projeto.selectedIndex == 0 && theForm.w_sqcc.selectedIndex == 0) {');
+  *       ShowHTML('     alert("Informe um projeto ou uma classificação!");');
+  *       ShowHTML('     theForm.w_projeto.focus();');
+  *       ShowHTML('     return false;');
+  *       ShowHTML('  }');
+  *       ShowHTML('} else {');
+  *       ShowHTML('  if (theForm.w_sqcc.selectedIndex == 0) {');
+  *       ShowHTML('     alert("Informe uma classificação!");');
+  *       ShowHTML('     theForm.w_sqcc.focus();');
+  *       ShowHTML('     return false;');
+  *       ShowHTML('  }');
+  *       ShowHTML('}');
+  *     } 
+  */
     }
-    if($w_sq_menu_relac!='CLASSIF') { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }
-    if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135' && $w_cliente != '17305') {
-       if (substr($SG,0,3)=='GCB') {
-         Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
-       } else {
-         Validate('w_etapa','Tema e modalidade','SELECT','',1,18,'','0123456789');
-       }
-       ShowHTML('  if (theForm.w_etapa[theForm.w_etapa.selectedIndex].value=="" && theForm.w_etapa.selectedIndex != 0) {');
-       ShowHTML('     alert("A modalidade selecionada não permite esta vinculação.\n Ela pode estar com  100% de conclusão ou ser usada como tema.");');
-       ShowHTML('     theForm.w_etapa.focus();');
-       ShowHTML('     return false;');
-       ShowHTML('  }');
-    }
-/**
-*     if (substr($SG,0,3)=='GCB') {
-*       ShowHTML('if (theForm.w_projeto!=undefined) {');
-*       Validate('w_projeto','Projeto','SELECT',1,1,18,'','0123456789');
-*       ShowHTML('}');
-*       Validate('w_etapa','Tema e modalidade','SELECT',1,1,18,'','0123456789');
-*       ShowHTML('  if (theForm.w_etapa[theForm.w_etapa.selectedIndex].value=="" && theForm.w_etapa.selectedIndex != 0) {');
-*       ShowHTML('     alert("A modalidade selecionada não permite esta vinculação.\n Ela pode estar com  100% de conclusão ou ser usada como tema.");');
-*       ShowHTML('     theForm.w_etapa.focus();');
-*       ShowHTML('     return false;');
-*       ShowHTML('  }');
-*     } elseif ($w_cd_modalidade!='F') {
-*       ShowHTML('if (theForm.w_projeto!=undefined) {');
-*       Validate('w_projeto','Projeto','SELECT','',1,18,'','0123456789');
-*       ShowHTML('}');
-*       Validate('w_etapa','Etapa','SELECT','',1,18,'','0123456789');
-*       ShowHTML('  if (theForm.w_etapa[theForm.w_etapa.selectedIndex].value=="" && theForm.w_etapa.selectedIndex != 0) {');
-*       ShowHTML('     alert("A modalidade selecionada não permite esta vinculação.\n Ela pode estar com  100% de conclusão ou ser usada como tema.");');
-*       ShowHTML('     theForm.w_etapa.focus();');
-*       ShowHTML('     return false;');
-*       ShowHTML('  }');
-*     } 
-*     if (f($RS_Menu,'solicita_cc')=='S') {
-*       if ($w_cd_modalidade!='F') {
-*         Validate('w_sqcc','Classificação','SELECT','',1,18,'','0123456789');
-*       } else {
-*         Validate('w_sqcc','Classificação','SELECT','1',1,18,'','0123456789');
-*       } 
-*     } 
-*     if ($w_cd_modalidade!='F' && f($RS_Menu,'solicita_cc')=='S') {
-*       ShowHTML('if (theForm.w_projeto!=undefined) {');
-*       ShowHTML('  if (theForm.w_projeto.selectedIndex > 0 && theForm.w_sqcc.selectedIndex > 0) {');
-*       ShowHTML('     alert("Informe um projeto ou uma classificação. Você não pode escolher ambos!");');
-*       ShowHTML('     theForm.w_projeto.focus();');
-*       ShowHTML('     return false;');
-*       ShowHTML('  }');
-*       ShowHTML('  if (theForm.w_projeto.selectedIndex == 0 && theForm.w_sqcc.selectedIndex == 0) {');
-*       ShowHTML('     alert("Informe um projeto ou uma classificação!");');
-*       ShowHTML('     theForm.w_projeto.focus();');
-*       ShowHTML('     return false;');
-*       ShowHTML('  }');
-*       ShowHTML('} else {');
-*       ShowHTML('  if (theForm.w_sqcc.selectedIndex == 0) {');
-*       ShowHTML('     alert("Informe uma classificação!");');
-*       ShowHTML('     theForm.w_sqcc.focus();');
-*       ShowHTML('     return false;');
-*       ShowHTML('  }');
-*       ShowHTML('}');
-*     } 
-*/
     Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
     Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
     Validate('w_cidade','Cidade','SELECT',1,1,18,'','0123456789');
@@ -1384,7 +1420,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="'.$w_tipo_pessoa.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
-    if (nvl($w_cd_compra,'')!='') {
+    if ($w_modulo_pai=='CO') {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Dados da Licitação</td></td></tr>');
@@ -1393,6 +1429,21 @@ function Geral() {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>Número:</b><br>'.$w_cd_compra.'</td>');
       ShowHTML('          <td><b>Justificativa/Objeto:</b><br>'.$w_ds_compra.'</td>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td><b>Outra parte:</b><br>'.$w_nome);
+      ShowHTML('          <INPUT type="hidden" name="w_pessoa" value="'.$w_pessoa.'">');
+      if (count($RS_Benef)) {
+        if ($w_tipo_pessoa==1 || $w_tipo_pessoa==3) {
+          ShowHTML('        <td><b>'.(($w_tipo_pessoa==1) ? 'CPF' : 'Cód. Estrangeiro').':</b><br>'.f($RS_Benef,'cpf'));
+          ShowHTML('          <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
+        } else {
+          ShowHTML('        <td><b>'.(($w_tipo_pessoa==2) ? 'CNPJ' : 'Cód. Estrangeiro').':</b><br>'.f($RS_Benef,'cnpj'));
+          ShowHTML('          <INPUT type="hidden" name="w_cnpj" value="'.$w_cnpj.'">');
+        }
+      }
+      ShowHTML('          <tr><td colspan="2"><b>Projeto para débito:</b><br>'.piece(f($RS_Solic,'dados_pai'),null,'|@|',2).' - '.piece(f($RS_Solic,'dados_pai'),null,'|@|',3));
+      ShowHTML('          <INPUT type="hidden" name="w_solic_vinculo" value="'.$w_solic_vinculo.'">');
+      ShowHTML('          <INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
       ShowHTML('      </tr></table>');
     }
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1420,12 +1471,14 @@ function Geral() {
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     if ($O=='I') {
       ShowHTML('        <tr valign="top">');
-      SelecaoPessoaOrigem('Outra <u>p</u>arte:', 'P', 'Clique na lupa para selecionar a pessoa.', $w_pessoa, null, 'w_pessoa', null, null, 'onFocus="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_objeto\'; document.Form.submit();"', 1, 'w_identificador');
-      if (count($RS_Benef)) {
-        if ($w_tipo_pessoa==1 || $w_tipo_pessoa==3) {
-          ShowHTML('        <td><b>'.(($w_tipo_pessoa==1) ? 'CPF' : 'Cód. Estrangeiro').':<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cpf" VALUE="'.f($RS_Benef,'cpf').'" SIZE="16">');
-        } else {
-          ShowHTML('        <td><b>'.(($w_tipo_pessoa==2) ? 'CNPJ' : 'Cód. Estrangeiro').':<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cnpj" VALUE="'.f($RS_Benef,'cnpj').'" SIZE="20">');
+      if ($w_modulo_pai!=='CO') {
+        SelecaoPessoaOrigem('Outra <u>p</u>arte:', 'P', 'Clique na lupa para selecionar a pessoa.', $w_pessoa, null, 'w_pessoa', null, null, 'onFocus="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_objeto\'; document.Form.submit();"', 1, 'w_identificador');
+        if (count($RS_Benef)) {
+          if ($w_tipo_pessoa==1 || $w_tipo_pessoa==3) {
+            ShowHTML('        <td><b>'.(($w_tipo_pessoa==1) ? 'CPF' : 'Cód. Estrangeiro').':<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cpf" VALUE="'.f($RS_Benef,'cpf').'" SIZE="16">');
+          } else {
+            ShowHTML('        <td><b>'.(($w_tipo_pessoa==2) ? 'CNPJ' : 'Cód. Estrangeiro').':<br><INPUT READONLY ACCESSKEY="C" TYPE="text" class="stio" NAME="w_cnpj" VALUE="'.f($RS_Benef,'cnpj').'" SIZE="20">');
+          }
         }
       }
     }
@@ -1449,7 +1502,16 @@ function Geral() {
       ShowHTML('        <tr valign="top">');
       ShowHTML('              <td><b>Iní<u>c</u>io vigência:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
       ShowHTML('              <td><b><u>F</u>im vigência:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
-      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+        if ($w_modulo_pai=='CO') {
+          if (nvl($w_herda,'')=='') ShowHTML('          <td><b>Moeda:<br>'.f($RS_Solic,'nm_moeda').'</b></td>');
+          ShowHTML('          <INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');          
+        } else {
+          selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+        }
+      }
+
       if (substr($SG,0,3)!='GCA' && nvl($w_herda,'')=='') {
         ShowHTML('              <td><b>Valo<u>r</u>:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total real ou estimado."></td>');
       } else {
@@ -1459,7 +1521,16 @@ function Geral() {
       ShowHTML('        <tr valign="top">');
       ShowHTML('              <td><b>Início vigência:</b><br>'.$w_inicio.'</td>');
       ShowHTML('              <td><b>Fim vigência:</b><br>'.$w_fim.'</td>');
-      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+      
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
+        if ($w_modulo_pai=='CO') {
+          ShowHTML('          <td><b>Moeda:<br>'.f($RS_Solic,'nm_moeda').'</b></td>');
+          ShowHTML('          <INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');          
+        } else {
+          selecaoMoeda('<u>M</u>oeda:','U','Selecione a moeda na relação.',$w_moeda,null,'w_moeda','ATIVO',null);
+        }
+      }
+
       ShowHTML('              <td><b>Valor:</b><br>'.$w_valor.'</td>');
       ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.$w_inicio.'">');
       ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
@@ -1470,66 +1541,68 @@ function Geral() {
     SelecaoPessoa('<u>G</u>estor do contrato:','G','Selecione o gestor do contrato.',$w_solicitante,null,'w_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável monitoramento:','S','Selecione o setor responsável pelo monitoramento.',$w_sq_unidade_resp,null,'w_sq_unidade_resp',null,null);
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Vinculação</td></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    
-    ShowHTML('          <tr valign="top">');
-    selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
-    if(Nvl($w_sq_menu_relac,'')!='') {
-      ShowHTML('          <tr valign="top">');
-      if ($w_sq_menu_relac=='CLASSIF') {
-        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
-      } else {
-        if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135' && $w_cliente != '17305') {
-          SelecaoSolic('Vinculação:', null, null, $w_cliente, $w_chave_pai, $w_sq_menu_relac, f($RS_Menu, 'sq_menu'), 'w_chave_pai', f($RS_Relac, 'sigla'), 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
-          ShowHTML('      <tr>');
-          if (substr(f($RS_Menu, 'sigla'), 2) == 'B')
-            SelecaoEtapa('<u>T</u>ema e modalidade:', 'T', 'Se necessário, indique a etapa desejada para a vinculação.', $w_etapa, $w_chave_pai, null, 'w_etapa', 'CONTRATO', null);
-          else
-            SelecaoEtapa('E<u>t</u>apa:', 'T', 'Se necessário, indique a etapa desejada para a vinculação.', $w_etapa, $w_chave_pai, null, 'w_etapa', 'CONTRATO', null);
-          ShowHTML('      </tr>');
-        } else {
-          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),null);
-        }
-      }
-    }    
+    if ($w_modulo_pai!='CO') {
+      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Vinculação</td></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
 
-/**
-*     if (substr($SG,0,3)=='GCB') {
-*       ShowHTML('      <tr><td>Selecione uma forma de vinculação.</td></tr>');
-*       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-*       // Recupera dados da opção Projetos
-*       ShowHTML('      <tr>');
-*       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
-*       SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto que deseja a vinculação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto',f($RS_Menu,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
-*       ShowHTML('      </tr>');
-*       ShowHTML('      <tr>');
-*       SelecaoEtapa('<u>T</u>ema e modalidade:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_projeto,null,'w_etapa','CONTRATO',null);
-*       ShowHTML('      </tr>');
-*     } elseif (Nvl($w_cd_modalidade,'F')!='F') {
-*       ShowHTML('      <tr><td>Selecione uma forma de vinculação.</td></tr>');
-*       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-*       // Recupera dados da opção Projetos
-*       ShowHTML('      <tr>');
-*       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-*       $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,substr($SG,0,3).'CAD');
-*       SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto que deseja para a vinculação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto',f($RS1,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
-*       ShowHTML('      </tr>');
-*       ShowHTML('      <tr>');
-*       SelecaoEtapa('<u>E</u>tapa:','E','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_projeto,null,'w_etapa','CONTRATO',null);
-*       ShowHTML('      </tr>');
-*     } else {
-*       ShowHTML('      <tr><td>Classifique o acordo perante uma das opções exibidas na lista.</font></td></tr>');
-*       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-*     }
-*     if (f($RS_Menu,'solicita_cc')=='S') {
-*       ShowHTML('          <tr>');
-*       SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
-*       ShowHTML('          </tr>');
-*     } 
-*/
+      ShowHTML('          <tr valign="top">');
+      selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+      if(Nvl($w_sq_menu_relac,'')!='') {
+        ShowHTML('          <tr valign="top">');
+        if ($w_sq_menu_relac=='CLASSIF') {
+          SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
+        } else {
+          if(f($RS_Relac,'sg_modulo')=='PR' && $w_cliente != '10135' && $w_cliente != '17305') {
+            SelecaoSolic('Vinculação:', null, null, $w_cliente, $w_chave_pai, $w_sq_menu_relac, f($RS_Menu, 'sq_menu'), 'w_chave_pai', f($RS_Relac, 'sigla'), 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
+            ShowHTML('      <tr>');
+            if (substr(f($RS_Menu, 'sigla'), 2) == 'B')
+              SelecaoEtapa('<u>T</u>ema e modalidade:', 'T', 'Se necessário, indique a etapa desejada para a vinculação.', $w_etapa, $w_chave_pai, null, 'w_etapa', 'CONTRATO', null);
+            else
+              SelecaoEtapa('E<u>t</u>apa:', 'T', 'Se necessário, indique a etapa desejada para a vinculação.', $w_etapa, $w_chave_pai, null, 'w_etapa', 'CONTRATO', null);
+            ShowHTML('      </tr>');
+          } else {
+            SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),null);
+          }
+        }
+      }    
+
+  /**
+  *     if (substr($SG,0,3)=='GCB') {
+  *       ShowHTML('      <tr><td>Selecione uma forma de vinculação.</td></tr>');
+  *       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  *       // Recupera dados da opção Projetos
+  *       ShowHTML('      <tr>');
+  *       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
+  *       SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto que deseja a vinculação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto',f($RS_Menu,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
+  *       ShowHTML('      </tr>');
+  *       ShowHTML('      <tr>');
+  *       SelecaoEtapa('<u>T</u>ema e modalidade:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_projeto,null,'w_etapa','CONTRATO',null);
+  *       ShowHTML('      </tr>');
+  *     } elseif (Nvl($w_cd_modalidade,'F')!='F') {
+  *       ShowHTML('      <tr><td>Selecione uma forma de vinculação.</td></tr>');
+  *       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  *       // Recupera dados da opção Projetos
+  *       ShowHTML('      <tr>');
+  *       $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+  *       $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,substr($SG,0,3).'CAD');
+  *       SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto que deseja para a vinculação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto',f($RS1,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
+  *       ShowHTML('      </tr>');
+  *       ShowHTML('      <tr>');
+  *       SelecaoEtapa('<u>E</u>tapa:','E','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_projeto,null,'w_etapa','CONTRATO',null);
+  *       ShowHTML('      </tr>');
+  *     } else {
+  *       ShowHTML('      <tr><td>Classifique o acordo perante uma das opções exibidas na lista.</font></td></tr>');
+  *       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  *     }
+  *     if (f($RS_Menu,'solicita_cc')=='S') {
+  *       ShowHTML('          <tr>');
+  *       SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
+  *       ShowHTML('          </tr>');
+  *     } 
+  */
+    }
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Local do Fornecimento ou Prestação do Serviço</td></td></tr>');

@@ -106,7 +106,7 @@ begin
                    inner   join pd_categoria_diaria f on (a.diaria              = f.sq_categoria_diaria)
                    inner   join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
                      inner join siw_tramite         c on (b.sq_siw_tramite      = c.sq_siw_tramite and
-                                                          c.sigla               in ('PC','AP')
+                                                          c.sigla               in ('VP','PC','AP')
                                                          )
                      inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
                      inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
