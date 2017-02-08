@@ -17,15 +17,24 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
     include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
     //selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo,$colspan);
     selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'SERVICOS', $atributo,$colspan);
-  } elseif ($chaveAux=='COMPRA_FUNDO') {
-    $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',5,
-        null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,
-        null, null, null, null, null, null, null,null, null, null, null,null,null,null,null,null);
-    $l_RS = SortArray($l_RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
+  } elseif ($chaveAux=='COMPRA_FUNDO' || $restricao=='MTBEM') {
+    if ($restricao=='MTBEM') {
+      $sql = new db_getSolicList; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'PJCAD',5,
+                null,null,null,null,null,null,
+                null,null,null,null,
+                null,null,null,null,null,null,null,
+                null,null,null,$l_fase,null,null,null,null,null);
+      $l_RS = SortArray($l_RS,'ord_codigo_interno','asc', 'phpdt_inclusao','desc');
+    } else {
+      $sql = new db_getSolicCL; $l_RS = $sql->getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',5,
+          null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,
+          null, null, null, null, null, null, null,null, null, null, null,null,null,null,null,null);
+      $l_RS = SortArray($l_RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
+    }
     ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($l_RS as $l_row) {
-      ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'"'.((nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? ' SELECTED': '').'>'.f($l_row,'codigo_interno'));
+      ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'"'.((nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? ' SELECTED': '').'>'.f($l_row,'codigo_interno').(($restricao=='MTBEM') ? ' - '.f($l_row,'titulo') : ''));
     } 
     ShowHTML('          </select>');  
   } elseif(substr($restricao,0,2)=='IS') {
@@ -74,38 +83,25 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
       $sql = new db_getMenuData; $l_RS1 = $sql->getInstanceOf($dbms,$chaveAux);
       $l_sigla = f($l_RS1,'sigla');
       foreach ($l_RS as $l_row1) {
+        if ($l_cont==0) ShowHTML('          <option value="">---');
         if ($l_sigla==='GCCCAD') {
           // Se for convênio
           if (nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0)){
-            if ($l_cont==0) {
-              ShowHTML('          <option value="">---');
-              $l_cont += 1;
-            }
             ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'" SELECTED>'.f($l_row1,'titulo'));
           } else {
             if (nvl(f($l_row1,'qtd_projeto'),0)==0 || nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chaveAux3,0)) {
-              if ($l_cont==0) {
-                ShowHTML('          <option value="">---');
-                $l_cont += 1;
-              }
               ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'">'.f($l_row1,'titulo'));
             }
           }          
         } else {
-          if ($l_cont==0) {
-            ShowHTML('          <option value="">---');
-            $l_cont += 1;
-          }
-          if (nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0))
-            ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'" SELECTED>'.f($l_row1,'titulo'));
-          else
-            ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'">'.f($l_row1,'titulo'));      
+          ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'"'.
+                  ((nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.
+                  f($l_row1,'titulo').
+                  ' ('.f($l_row1,'codigo_interno').')');
         }
+        $l_cont++;
       } 
-      if ($l_cont==0) {
-        ShowHTML('          <option value="">Nenhum registro encontrado.');
-        $l_cont += 1;
-      }
+      if ($l_cont==0) ShowHTML('          <option value="">Nenhum registro encontrado.');
       ShowHTML('          </select>');
     }
   }

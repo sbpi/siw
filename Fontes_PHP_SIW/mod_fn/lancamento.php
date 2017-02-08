@@ -1087,15 +1087,17 @@ function Geral() {
     $w_patrimonio           = $_REQUEST['w_patrimonio'];
     $w_tipo                 = $_REQUEST['w_tipo'];
   
-    
     if ($w_chave_pai) {
       // Garante que conseguirá recuperar as rubricas do projeto
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null);
       
       $w_modulo_pai = piece(f($RS,'dados_solic'),null,'|@|',12);
       
-      if ($w_modulo_pai==='PR' || $w_modulo_pai==='CO') {
+      if ($w_modulo_pai==='AC' || $w_modulo_pai==='CO') {
+        // Se compras ou contratos, o vínculo é com seu projeto.
         $w_solic_vinculo = piece(f($RS,'dados_solic'),null,'|@|',13);
+      } elseif ($w_modulo_pai==='PR') {
+        $w_solic_vinculo = $w_chave_pai;
       }
     }
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
