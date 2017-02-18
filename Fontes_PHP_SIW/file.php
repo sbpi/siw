@@ -116,9 +116,9 @@ function DownloadFile($strFileName,$blnForceDownload) {
   }
   
   if ($blnForceDownload=='true') {
-    header('Content-Disposition: attachment; filename='.$w_filename);
+    header('Content-Disposition: attachment; filename="'.$w_filename.'"');
   } else {
-    header('Content-Disposition: inline; filename='.$w_filename);
+    header('Content-Disposition: inline; filename="'.$w_filename.'"');
   } 
   header('Content-Length: '.$fileSize,false);
 
