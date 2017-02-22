@@ -4441,7 +4441,7 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
-  ExibeVariaveis();
+  //ExibeVariaveis();
   switch ($SG) {
     case 'CLLCCAD':
       // Verifica se a Assinatura Eletrônica é válida
