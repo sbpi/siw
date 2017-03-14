@@ -904,6 +904,7 @@ begin
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, b.codigo_interno,
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 b3.sigla as sg_modulo, 
                 case when d.sq_siw_solicitacao is not null 
                      then b.titulo
@@ -992,7 +993,8 @@ begin
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 )
          UNION
-         select b.sq_siw_solicitacao, b.codigo_interno,
+         select b.sq_siw_solicitacao, b.codigo_interno, 
+                codigo2numero(b.codigo_interno) as ord_codigo_interno,
                 b3.sigla as sg_modulo, 
                 case when d.sq_siw_solicitacao is not null 
                      then b.titulo

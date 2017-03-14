@@ -8,7 +8,7 @@ create or replace procedure SP_GetTipoLancamento
     
    w_projeto number(18);
    w_rubrica number(18);
-   w_tipo    varchar2(1);
+   w_tipo    varchar2(1) := 'T';
    w_menu    varchar2(4);
 begin
    If upper(p_restricao) = 'SUBTODOS' Then
@@ -135,8 +135,7 @@ begin
                   ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
                    (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
                    (substr(p_restricao,3,1) = 'E' and a.reembolso = 'S') or
-                   ((w_menu not in ('PDSV','CLPC','CLLC')) or
-                    (w_menu = 'PDSV' and
+                   ((w_menu = 'PDSV' and
                      0 < (select count(*) 
                             from pd_vinculo_financeiro x 
                            where x.sq_siw_solicitacao = w_projeto

@@ -171,7 +171,7 @@ begin
                      else d2.nome_resumido||' ('||to_char(b.inicio,'dd/mm/yy')||'-'||to_char(b.fim,'dd/mm/yy')||')' 
                 end as titulo
            from siw_menu                                       a 
-                   inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                   inner             join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
@@ -320,8 +320,7 @@ begin
             and (p_empenho        is null or (p_empenho     is not null and upper(d.empenho)     = upper(p_empenho)))
             and (p_processo       is null or (p_processo    is not null and upper(d.processo)    = upper(p_processo)))
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.conclusao is null and (a.destinatario = 'S' and b.executor = p_pessoa) or (a.destinatario = 'N' and b2.acesso > 15)) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or

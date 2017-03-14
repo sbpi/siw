@@ -72,16 +72,18 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
       }
     }
     if (count($RS1)>0) {
+      $sql = new db_getMenuData; $l_RS1 = $sql->getInstanceOf($dbms,$chaveAux);
+      $l_sigla = f($l_RS1,'sigla');
+      
       $sql = new db_getSolicList; $l_RS = $sql->getInstanceOf($dbms,$chaveAux,$w_usuario,$chaveAux2,null,
                 null,null,null,null,null,null,
                 null,null,null,null,
                 null,null,null,null,null,null,null,
                 null,null,null,$l_fase,null,null,null,null,null);
+      $l_RS = SortArray($l_RS,'ord_codigo_interno','asc', 'phpdt_inclusao','desc');
       
       ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       $l_cont = 0;
-      $sql = new db_getMenuData; $l_RS1 = $sql->getInstanceOf($dbms,$chaveAux);
-      $l_sigla = f($l_RS1,'sigla');
       foreach ($l_RS as $l_row1) {
         if ($l_cont==0) ShowHTML('          <option value="">---');
         if ($l_sigla==='GCCCAD') {
@@ -93,6 +95,21 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
               ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'">'.f($l_row1,'titulo'));
             }
           }          
+        } elseif ($l_sigla==='FNDFIXO') {
+          
+          // Se for fundo fixo, recupera os dados do registro
+          $sql = new db_getSolicData; $l_RS2 = $sql->getInstanceOf($dbms,f($l_row1,'sq_siw_solicitacao'),'FNDFIXO');
+
+          // Documentos
+          $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,f($l_row1,'sq_siw_solicitacao'),null,null,null,null,null,null,'DOCS');
+          foreach($RS_Docs as $row) { $RS_Docs = $row; break; }
+          $w_emissao = f($RS_Docs,'data');
+          
+          ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'"'.
+                  ((nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.
+                  f($l_row1,'codigo_interno').
+                  ' - SAQUE: '.FormataDataEdicao(f($RS_Docs,'data'),5).' '.f($l_RS2,'nm_ban_org').' '.f($l_RS2,'nr_conta_org').((nvl(f($l_RS2,'sb_moeda'),'')=='') ? '' : ' ('.f($l_RS2,'sg_moeda').')').
+                  ' - '.piece(f($l_RS2,'dados_pai'),null,'|@|',2));
         } else {
           ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'"'.
                   ((nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? ' SELECTED' : '').'>'.

@@ -348,7 +348,11 @@ begin
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_tipo_lancamento = p_sq_orprior))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and (d.sq_solic_vinculo = p_projeto/* or b.sq_solic_pai = p_projeto*/)))
+            and (p_projeto        is null or (p_projeto     is not null and ((d.sq_solic_vinculo = p_projeto and a.sigla <> 'FNDFUNDO') or
+                                                                             (b.sq_solic_pai     = p_projeto and a.sigla =  'FNDFUNDO')
+                                                                            )
+                                             )
+                )
             and (p_assunto        is null or (p_assunto     is not null and (acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%' or acentos(b.justificativa,null) like '%'||acentos(p_assunto,null)||'%')))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and trunc(d.vencimento)-cast(p_prazo as integer)<=trunc(sysdate)))

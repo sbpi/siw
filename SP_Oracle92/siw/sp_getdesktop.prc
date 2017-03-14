@@ -31,16 +31,17 @@ begin
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
-                             and e.sigla not in ('CI','CA')
-                             and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
-                             and (('N'    = c.consulta_opiniao and d.conclusao is null) or
-                                  ('S'    = c.consulta_opiniao and d.opiniao is null)
+                             and e.ordem     > 1         -- Esta construção é 5 vezes mais rápida que NOT IN ('CI','CA')
+                             and e.sigla     <> 'CA'
+                             and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
+                             and (('N'       = c.consulta_opiniao and d.conclusao is null) or
+                                  ('S'       = c.consulta_opiniao and d.opiniao is null)
                                  )
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                              and f.acesso > 0
                              group by c.sq_menu
                          )          y on (v.sq_menu = y.sq_menu)
-              left  join (select c.sq_menu, count(*) as qtd 
+              left  join (select /*+ ordered*/ c.sq_menu, count(*) as qtd 
                             from siw_menu                        c
                                  inner   join siw_modulo        c1 on (c.sq_modulo           = c1.sq_modulo)
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
@@ -49,10 +50,10 @@ begin
                                                  from siw_solicitacao        x
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
-                             and (c1.sigla   <> 'FN' or (c1.sigla = 'FN' and e.sigla <> 'EE'))
+                             and (c1.sigla   <> 'FN' or (c1.sigla = 'FN' and e.sigla <> 'EE') or (c1.sigla = 'AC' and d.conclusao is null))
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
-                             and e.sigla     not in ('CI','CA')
-                             and c.tramite   = 'S'
+                             and e.ordem     > 1         -- Esta construção é 5 vezes mais rápida que NOT IN ('CI','CA')
+                             and e.sigla     <> 'CA'
                              and c.ativo     = 'S'
                              and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))

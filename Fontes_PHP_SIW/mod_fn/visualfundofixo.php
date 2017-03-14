@@ -101,6 +101,13 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <tr><td><b>Suprido:</b></td><td>'.f($RS,'nm_pessoa').' </td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Forma de suprimento:</b></td><td>'.f($RS_Docs,'nm_tipo_documento').' '.f($RS_Docs,'numero').'</td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $v_chave,null,null,null,null);
+    $RS_Moeda_Cot = SortArray($RS_Moeda_Cot,'sb_moeda','asc');
+    foreach($RS_Moeda_Cot as $row) {
+      if ($w_sb_moeda!=f($row,'sb_moeda_cot')) {
+        $l_html.=chr(13).'          <tr><td></td><td>'.f($row,'sb_moeda_cot').' '.formatNumber(f($row,'vl_cotacao')).' </td></tr>';
+      }
+    }
     $l_html.=chr(13).'          <tr><td><b>Conta bancária: </b></td><td>'.f($RS,'nm_ban_org').' AG. '.f($RS,'cd_age_org').' C/C '.f($RS,'nr_conta_org').((nvl(f($RS,'sb_moeda'),'')=='') ? '' : ' ('.f($RS,'sg_moeda').')').' </td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Data do saque: </b></td><td>'.FormataDataEdicao($w_emissao).'</td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Limite para utilização:</b></td><td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
@@ -163,10 +170,8 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   */
   $sql = new db_getLinkData; $RSL = $sql->getInstanceOf($dbms,$w_cliente,'FNDFUNDO');
   $sql = new db_getSolicFN; $RS1 = $sql->getInstanceOf($dbms,f($RSL,'sq_menu'),$w_usuario,null,3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-            $p_chave, $p_objeto, $p_pais, $l_regiao, $p_uf, $l_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $v_chave, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
+            null,null,null,null,null,null, null,null,null,null, null, null, null, null, null, null, null,
+            null, null, null, null, null, $v_chave, null, null, null, null);
   
   //$RS1 = SortArray($RS1,'dt_pagamento','asc','nm_pessoa','asc','vencimento','asc','valor','asc');
   // Gera recordset para montagem da tabela de pagamentos efetuados, combinando o lançamento financeiro com seu comprovante
