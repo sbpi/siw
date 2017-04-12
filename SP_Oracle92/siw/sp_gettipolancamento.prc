@@ -135,6 +135,7 @@ begin
                   ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
                    (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
                    (substr(p_restricao,3,1) = 'E' and a.reembolso = 'S') or
+                   (substr(p_restricao,3,1) = 'A') or
                    ((w_menu = 'PDSV' and
                      0 < (select count(*) 
                             from pd_vinculo_financeiro x 

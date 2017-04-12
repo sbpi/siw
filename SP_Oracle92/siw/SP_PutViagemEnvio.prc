@@ -398,6 +398,8 @@ begin
                Then w_salto := 1;
                Else w_salto := w_salto + 2;
             End If;
+/*
+Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do Márcio Cabral.
          Elsif w_sg_tramite = 'CI' and w_cliente = 17305 Then
             -- O trãmite após o de cadastramento é o de cotação de passagens (DF).
             -- Se for indicado que não haverá despesas com passagens, salta esse trâmite.
@@ -405,6 +407,7 @@ begin
                Then w_salto := 2;
                Else w_salto := 1;
             End If;
+*/
          Else
             w_salto := 1;
          End If;
@@ -441,6 +444,7 @@ begin
             End If;
          End If;
       Elsif w_cliente in (10135, 17305) and w_sg_tramite = 'VP' Then
+         /* Tramite de verificação da prestação de contas foi removido em 22/03/2017, a pedido do Márcio Cabral.*/
          If w_reembolso = 'S' Then        -- ABDI/OTCA: Se tiver reembolso, vai para aprovação da GERPE.
             w_salto := w_salto + 1;
          Elsif w_ressarcimento = 'S' Then -- ABDI/OTCA: Se tiver ressarcimento, vai para envio à GERAF.
