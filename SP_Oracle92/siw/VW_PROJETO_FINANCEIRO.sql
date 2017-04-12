@@ -86,7 +86,7 @@ select 'I' TIPO, e2.qtd_itens,
                                                    c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
                                                   )
 UNION ALL
--- Pagamentos por fundo fixo
+-- Pagamentos sem detalhamento de itens
 select 'D' TIPO, 1 qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
@@ -154,7 +154,7 @@ select 'D' TIPO, 1 qtd_itens,
                                                 )
  where e.sq_documento_item is null
 UNION ALL
--- Pagamentos sem detalhamento de itens
+-- Pagamentos por fundo fixo
 select 'D' TIPO, 1 qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
@@ -204,7 +204,7 @@ select 'D' TIPO, 1 qtd_itens,
              inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
-       left        join (select k.sq_siw_solicitacao, k2.valor/m.valor*k.valor valor, k2.valor/m.valor fator, l.sq_moeda sq_moeda
+       left        join (select k.sq_siw_solicitacao, m.valor/k2.valor*k.valor valor, k2.valor/m.valor fator, l.sq_moeda sq_moeda
                            from siw_solicitacao                    k -- FNDFIXO
                                 inner       join siw_solicitacao  k2 on (k.sq_solic_pai        = k2.sq_siw_solicitacao) -- FNDFUNDO
                                   inner     join fn_lancamento    k3 on (k2.sq_siw_solicitacao = k3.sq_siw_solicitacao)
