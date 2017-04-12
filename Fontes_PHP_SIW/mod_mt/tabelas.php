@@ -412,7 +412,8 @@ function Situacao() {
     ShowHTML('          <td><b>'.LinkOrdena('Entrada','entrada').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Saida','saida').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Consumo','consumo').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Permanente','permanete').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Permanente','permanente').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Situação física','situacao_fisica').'</font></td>');
     if ($w_libera_edicao=='S') {    
       ShowHTML('          <td class="remover"><b>Operações</font></td>');
     }
@@ -431,6 +432,7 @@ function Situacao() {
         ShowHTML('        <td align="center">'.f($row,'saida').'</td>');
         ShowHTML('        <td align="center">'.f($row,'consumo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'permanente').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'situacao_fisica').'</td>');
         if ($w_libera_edicao=='S') {    
           ShowHTML('        <td valign="top" nowrap class="remover">');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -452,24 +454,20 @@ function Situacao() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('       <tr>    <td colspan=3><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_sigla" class="sti" SIZE="3" MAXLENGTH="2" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td><table border=0 width="100%">');
     ShowHTML('        <tr valign="top">');
-    MontaRadioSN('<b>Entrada?</b>',$w_entrada,'w_entrada');
-    ShowHTML('        <tr valign="top">');
-    MontaRadioSN('<b>Saida?</b>',$w_saida,'w_saida');
-    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('          <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_sigla" class="sti" SIZE="3" MAXLENGTH="2" VALUE="'.$w_sigla.'"></td>');
     MontaRadioSN('<b>Estorno?</b>',$w_estorno,'w_estorno');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Consumo?</b>',$w_consumo,'w_consumo');
-  ShowHTML('        <tr valign="top">');
+    MontaRadioSN('<b>Entrada?</b>',$w_entrada,'w_entrada');
+    MontaRadioSN('<b>Saida?</b>',$w_saida,'w_saida');
+    ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Permanente?</b>',$w_permanente,'w_permanente');
-  ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Inativa Bem?</b>',$w_inativa_bem,'w_inativa_bem');
-  ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Situação Física?</b>',$w_situacao_fisica,'w_situacao_fisica');
-  ShowHTML('        <tr valign="top">');
+    ShowHTML('        <tr>');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
     ShowHTML('      <tr><td align="LEFT"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
