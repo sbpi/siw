@@ -1848,11 +1848,11 @@ function Geral() {
                     ((f($row,'fabricante')) ? ' FABRICANTE '.f($row,'fabricante') : '').
                     ((f($row,'marca_modelo')) ? ' MODELO '.f($row,'marca_modelo') : '');
             ShowHTML('      <tr valign="center">');
-            ShowHTML('          <td align="center"'.((count($RS_Rub)) ? ' rowspan="2"' : '').'>'.f($row,'ordem').'</td>');
+            ShowHTML('          <td align="center"'.((count($RS_Rub)) ? ' rowspan="2"' : '').'>'.nvl(f($row,'ordem'),$i).'</td>');
             ShowHTML('          <td>'.$texto);
             ShowHTML('              <INPUT type="hidden" name="w_sq_itens[]" value="'.f($row,'sq_solicitacao_item').'">');
             ShowHTML('              <INPUT type="hidden" name="w_chave_item[]" value="'.f($row,'sq_documento_item').'">');
-            ShowHTML('              <INPUT type="hidden" name="w_ordem[]" value="'.f($row,'ordem').'">');
+            ShowHTML('              <INPUT type="hidden" name="w_ordem[]" value="'.nvl(f($row,'ordem'),$i).'">');
             ShowHTML('              <INPUT type="hidden" name="w_detalhamento[]" value="'.$texto.'">');
             ShowHTML('          <td align="center"><input '.$w_Disabled.' type="text" name="w_quantidade[]" class="sti" SIZE="6" MAXLENGTH="18" VALUE="'.formatNumber($qtd,0).'" style="text-align:right;" title="Informe a quantidade a ser paga deste item." onBlur="atualizaValor();"></td>');
             ShowHTML('          <td align="center"><input '.$w_Disabled.' READONLY tabindex="-1" type="text" name="w_vl_unitario[]" SIZE="10" VALUE="'.formatNumber(f($row,'valor_unidade')).'" class="sti" style="background: #f0f0f0; text-align:right;"></td>');
@@ -4520,10 +4520,12 @@ function Concluir() {
     if ($w_moeda_solic!=$w_moeda_pai && nvl($w_moeda_pai,'')!='')     $w_moedas[nvl(f($w_projeto,'sq_moeda'),f($RS_Pai,'sq_moeda'))]   = nvl(f($w_projeto,'sb_moeda'),f($RS_Pai,'sb_moeda'));
     if ($w_moeda_solic!=$w_moeda_conta && nvl($w_moeda_conta,'')!='') $w_moedas[f($RS_Conta,'sq_moeda')] = f($RS_Conta,'sb_moeda');
     if (is_array($w_moedas)) asort($w_moedas);
+//ExibeVariaveis();
     
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $w_chave,null,null,null,null);
     foreach($RS_Moeda_Cot as $row) {
       if ($w_moeda_solic!=f($row,'sq_moeda_cot') && array_key_exists(f($row,'sq_moeda_cot'),$w_moedas)) {
+        //echo '['.f($row,'sq_moeda_cot').'] ['.f($row,'sq_moeda_cot').'] ['.w_valor_.f($row,'sq_moeda_cot').'] ['.f($row,'sq_moeda_cot').'] ['.$_REQUEST[w_valor_.f($row,'sq_moeda_cot')].'] ['.formatNumber(f($row,'vl_cotacao')).']';
         $linha = '$w_valor_'.f($row,'sq_moeda_cot').' = nvl($_REQUEST[\'w_valor_'.f($row,'sq_moeda_cot').'\'],\''.formatNumber(f($row,'vl_cotacao')).'\');';
         eval($linha);
       }
@@ -5145,13 +5147,15 @@ function Grava() {
           // Copia os documentos e os itens do lançamento original
           $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$_REQUEST['w_copia'],null,null,null,null,null,null,'DOCS');
           $RS_Docs = SortArray($RS_Docs,'data','asc');
+          $i = 1;
           foreach($RS_Docs as $row) {
             $SQL = new db_getLancamentoItem; $RS = $SQL->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
             $RS = SortArray($RS,'ordem','asc','rubrica','asc');
             foreach ($RS as $row1) {
               $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$w_chave_doc,null,
                 f($row1,'sq_projeto_rubrica'),f($row1,'descricao'),f($row1,'quantidade'),formatNumber(f($row1,'valor_unitario')),
-                f($row1,'ordem'),f($row1,'data_cotacao'),formatNumber(f($row1,'valor_cotacao')),f($row1,'sq_solicitacao_item'));
+                nvl(f($row1,'ordem'),$i),f($row1,'data_cotacao'),formatNumber(f($row1,'valor_cotacao')),f($row1,'sq_solicitacao_item'));
+              $i++;
             }
           }
         }

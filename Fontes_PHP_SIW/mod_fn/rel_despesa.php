@@ -308,10 +308,17 @@ function detalhamentoDespesa() {
   foreach ($RSQuery as $row) {
     if (substr(f($row,'sg_menu'),0,3)!='FNR' || $p_receita=='S') {
       $w_valor_contabil = 0;
+      
+      $fn_valor = f($row,'fn_valor');
+      if (strpos(f($row,'descricao'),'FCTS')!==false) $fn_valor = abs($fn_valor);
+      
+      $valor = f($row,'valor');
+      if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+      
       if ($p_moedas=='S') {
         foreach($Ordem as $k => $v) {
           if ($v==f($row,'fn_sg_moeda')) {
-            $Valor[$v] = f($row,'fn_valor'); 
+            $Valor[$v] = $fn_valor; 
             $Total[$v]+=$Valor[f($row,'fn_sg_moeda')];
           } else {
             unset($Valor[$v]);
@@ -355,7 +362,7 @@ function detalhamentoDespesa() {
         }
       }
       $l_html.=chr(13).'      </tr>';
-      $w_total_previsto += f($row,'valor');
+      $w_total_previsto += $valor;
       $w_total_contabil += f($row,'brl_valor_compra');
     }
   } 

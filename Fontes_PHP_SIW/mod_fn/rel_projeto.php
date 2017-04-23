@@ -118,19 +118,22 @@ function Inicial() {
     $sql = new db_getSolicRubrica; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,null,null,null,null,null,$p_inicio,$p_fim,'PJFIN'.$p_concluido);
     foreach($RS1 as $row)  {
       $Moeda[f($row,'sg_fn_moeda')]='1';
+      $valor = f($row,'valor');
+      if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+
       if (f($row,'aplicacao_financeira')=='N') {
         if (!isset($Total[f($row,'sg_fn_moeda')])) {
-          $Total[f($row,'sg_fn_moeda')] = f($row,'valor');
+          $Total[f($row,'sg_fn_moeda')] = $valor;
         } else {
-          $Total[f($row,'sg_fn_moeda')]+=f($row,'valor');
+          $Total[f($row,'sg_fn_moeda')]+=$valor;
         }
       }
       $lista = explode(',',str_replace(' ',',',f($row,'lista')));      
       foreach($lista as $k => $v) {
         if (!isset($Valor[f($row,'sq_projeto_rubrica')][f($row,'sg_fn_moeda')])) {
-          $Valor[$v][f($row,'sg_fn_moeda')] = f($row,'valor');
+          $Valor[$v][f($row,'sg_fn_moeda')] = $valor;
         } else {
-          $Valor[$v][f($row,'sg_fn_moeda')]+=f($row,'valor');
+          $Valor[$v][f($row,'sg_fn_moeda')]+= $valor;
         }
       }
     }
@@ -434,7 +437,9 @@ function Detalhe() {
       ShowHTML('        <td>'.f($row,'descricao').'</td>');
       ShowHTML('        <td align="right" nowrap>'.f($row,'sb_moeda').' '.formatNumber(f($row,'valor')).'</td>');
       ShowHTML('      </tr>');
-      if (nvl($Total[f($row,'sb_moeda')],'')=='') $Total[f($row,'sb_moeda')] = f($row,'valor'); else $Total[f($row,'sb_moeda')] += f($row,'valor');
+      $valor = f($row,'valor');
+      if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+      if (nvl($Total[f($row,'sb_moeda')],'')=='') $Total[f($row,'sb_moeda')] = $valor; else $Total[f($row,'sb_moeda')] += $valor;
     } 
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
     ShowHTML('        <td align="right" colspan="3"><b>Tota'.((count($Total)==1) ? 'l' : 'is').'&nbsp;</b></td>');
