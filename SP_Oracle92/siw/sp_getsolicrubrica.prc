@@ -166,9 +166,9 @@ begin
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
    Elsif p_restricao = 'PJFINS' or p_restricao = 'PJFINN' Then
       open p_result for 
-         select sq_projeto_rubrica, sg_fn_moeda, valor, aplicacao_financeira,
+         select sq_projeto_rubrica, sg_fn_moeda, valor, aplicacao_financeira, descricao,
                 retornaHierarquiaRubrica(sq_projeto_rubrica, 'PAIS') lista
-           from (select w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira,
+           from (select w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira, w.ds_financeiro descricao, 
                         sum(case when substr(w.sg_menu,1,3) = 'FNR' then trunc(-1*w.valor,2) else trunc(w.valor,2) end) valor
                    from vw_projeto_financeiro   w
                   where w.sq_projeto         = p_chave
@@ -180,7 +180,7 @@ begin
                                                       )
                          )
                         )
-                 group by w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira
+                 group by w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira, w.ds_financeiro
                 );
    Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' Then
       open p_result for 
