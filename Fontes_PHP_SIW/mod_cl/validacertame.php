@@ -65,7 +65,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
     foreach($l_rs_pesquisa as $row) {
       if (f($row,'qtd_desejada')>0) {
         if (f($row,'qtd_pesquisas')<f($l_rs_solic,'minimo_pesquisas')) {
-          $l_erro .= '<li>'.f($l_rs_solic,'nm_lcmodalidade').' exige '.f($l_rs_solic,'minimo_pesquisas').'  pesquisa'.((f($l_rs_solic,'minimo_pesquisas')!=1) ? 's' : '').' de preço válida'.((f($l_rs_solic,'minimo_pesquisas')!=1) ? 's' : '').' e '.f($row,'nome').((f($row,'qtd_pesquisas')>0) ? ' só tem '.f($row,'qtd_pesquisas') : ' não tem nenhuma').'. Cadastre a quantidade exigida ou justifique.';
+          $l_erro .= '<li>'.f($l_rs_solic,'nm_lcmodalidade').' exige '.f($l_rs_solic,'minimo_pesquisas').'  pesquisa'.((f($l_rs_solic,'minimo_pesquisas')!=1) ? 's' : '').' de preço válida'.((f($l_rs_solic,'minimo_pesquisas')!=1) ? 's' : '').' e '.f($row,'nome').((f($row,'qtd_pesquisas')>0) ? ' só tem '.f($row,'qtd_pesquisas') : ' não tem nenhuma').'. Cadastre a quantidade exigida ou justifique quando for concluir.';
           if ($l_tipo == '') $l_tipo = 2;
         }
       }
@@ -82,7 +82,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
           $l_erro .= '<li>É obrigatório informar ao menos uma proposta para o item '.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') ';
           $l_tipo = 0;
         } elseif (f($row,'qtd_propostas')<f($l_rs_solic,'minimo_participantes')) {
-          $l_erro .= '<li>'.f($l_rs_solic,'nm_lcmodalidade').' exige '.f($l_rs_solic,'minimo_participantes').'  proposta'.((f($l_rs_solic,'minimo_participantes')!=1) ? 's' : '').' e '.f($row,'nome').((f($row,'qtd_propostas')>0) ? ' só tem '.f($row,'qtd_propostas') : ' não tem nenhuma').'. Cadastre a quantidade exigida ou justifique.';
+          $l_erro .= '<li>'.f($l_rs_solic,'nm_lcmodalidade').' exige '.f($l_rs_solic,'minimo_participantes').'  proposta'.((f($l_rs_solic,'minimo_participantes')!=1) ? 's' : '').' e '.f($row,'nome').((f($row,'qtd_propostas')>0) ? ' só tem '.f($row,'qtd_propostas') : ' não tem nenhuma').'. Cadastre a quantidade exigida ou justifique quando for concluir.';
           if ($l_tipo == '') $l_tipo = 2;
         }
       }
@@ -96,8 +96,8 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }
-    } elseif(f($l_rs_tramite,'sigla')=='EA') {
-      if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')=='') {
+    } elseif(f($l_rs_tramite,'sigla')=='EA' || f($l_rs_tramite,'sigla')=='EE') {
+      if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')!='') {
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }

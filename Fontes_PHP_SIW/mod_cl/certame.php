@@ -690,11 +690,12 @@ function Inicial() {
               } else {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'dadosanalise&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Dados da análise&SG=CLLCDADOS'.MontaFiltro('GET').'" title="Informar os dados da solicitação.">IN</A>&nbsp');
               }
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_pesquisa=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pesquisa de preço'.'&SG='.substr($SG,0,4).'PRECO').'\',\'PesquisaPreco\',\'resizable=yes,status=no,toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Insere a pesquisa de precos do itens da solicitação.">Pesquisa</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_pesquisa=N&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Propostas'.'&SG='.substr($SG,0,4).'PRECO').'\',\'Proposta\',\'resizable=yes,status=no,toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Insere as propostas da licitação.">Propostas</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='AP') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DadosPrevios&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Informar&SG=CLLCPROT'.MontaFiltro('GET').'" title="Informar.">Informar</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='PP') {
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_pesquisa=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pesquisa de preço'.'&SG='.substr($SG,0,4).'PRECO').'\',\'PesquisaPreco\',\'resizable=yes,status=no,toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Insere a pesquisa de preco do itens da solicitação.">Pesquisa de preço</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_pesquisa=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pesquisa de preço'.'&SG='.substr($SG,0,4).'PRECO').'\',\'PesquisaPreco\',\'resizable=yes,status=no,toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Insere a pesquisa de precos do itens da solicitação.">Pesquisa</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='EA') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'dadosanalise&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Dados da análise&SG=CLLCDADOS'.MontaFiltro('GET').'" title="Inserir os dados de análise.">Dados da análise</A>&nbsp');
             }
@@ -2540,6 +2541,7 @@ function PesquisaPreco() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     // Verifica se é cotação ou proposta
     $colspan=0;
+    echo $w_pesquisa;
     if ($w_pesquisa=='S') {
       $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
       $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
@@ -2549,6 +2551,7 @@ function PesquisaPreco() {
       $colspan++; ShowHTML('          <td rowspan=2><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
       ShowHTML('          <td colspan=3><b>Última pesquisa</b></td>');
       $colspan++; ShowHTML('          <td rowspan=2 nowrap><b>'.LinkOrdena('Pesq. preços','qtd_cotacao').'</td>');
+      $colspan++; ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr align="center">');
       $colspan++; ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>');
@@ -3277,7 +3280,7 @@ function DadosAnalise() {
   Validate('["w_dias_item[]"][ind]','Dias da proposta para o item','VALOR','1',1,4,'','0123456789');
   ShowHTML('  }');
   ShowHTML('  for (ind=1; ind < theForm["w_detalhamento[]"].length; ind++) {');
-  Validate('["w_quantidade[]"][ind]','Quantidade','1','1','1','18','','0123456789');
+  Validate('["w_quantidade[]"][ind]','Quantidade','1','1','1','18','','0123456789.');
   if ($w_exige_rubrica) {
     Validate('["w_rubrica[]"][ind]','Rubrica','1','1','1','18','','0123456789');
   }
@@ -3915,7 +3918,29 @@ function Concluir() {
   $w_conclusao     = f($RS,'conclui_sem_proposta');
   $w_just_pesquisa = f($RS,'justificativa_regra_pesquisas');
   $w_just_proposta = f($RS,'justificativa_regra_propostas');
-  $w_just_valor    = f($RS,'justificativa_regra_valor');
+  $w_just_valor    = f($RS,'justificativa_preco_maior');
+  $w_caminho       = f($RS,'sq_arquivo_justificativa');
+  $w_homologacao   = FormataDataEdicao(f($RS,'data_homologacao'));
+  $w_participantes = [];
+
+  // Se a licitação foi devolvida para execução, verifica se há vencedores registrados
+  if ($w_participantes>0) {
+    $sql = new db_getCLSolicItem; $RS_Propostas = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
+    if (count($RS_Propostas)) {
+      $RS_Propostas = SortArray($RS_Propostas,'ordem','asc','nome','asc','valor_unidade','asc');
+      $w_atual    = 0;
+      $i          = 0;
+      foreach($RS_Propostas as $row) { 
+        if ($w_atual!=f($row,'sq_material')) {
+          $w_atual      = f($row,'sq_material');
+          $i += 1;
+        }
+        if (nvl(f($row,'fornecedor'),'')!='' && $w_conclusao=='N' && f($row,'vencedor')=='S') {
+          $w_vencedor[$i] = f($row,'sq_item_fornecedor');
+        }
+      } 
+    }
+  }
 
   // Se for recarga da página
   if ($w_troca>'') {
@@ -3932,7 +3957,6 @@ function Concluir() {
     $w_just_pesquisa      = $_REQUEST['w_just_pesquisa'];
     $w_just_proposta      = $_REQUEST['w_just_proposta'];
     $w_just_valor         = $_REQUEST['w_just_valor'];
-    $w_caminho            = $_REQUEST['w_caminho'];
   }
   
   // Recupera enquadramentos
@@ -3983,7 +4007,11 @@ function Concluir() {
   ShowHTML('  }');
   ShowHTML('  if (w_justificativa) {');
   ShowHTML('    theForm.w_just_valor.className="STIO";');
-  ShowHTML('    theForm.w_caminho.className="STIO";');
+  if (!$w_caminho) {
+    // Se já houver arquivo anexado (licitação devolvida da conclusão), 
+    // não é obrigatório indicar novamente
+    ShowHTML('    theForm.w_caminho.className="STIO";');
+  }
   ShowHTML('  } else {');
   ShowHTML('    theForm.w_just_valor.className="STI";');
   ShowHTML('    theForm.w_caminho.className="STI";');
@@ -4027,10 +4055,10 @@ function Concluir() {
     ShowHTML('    return false;');
     ShowHTML('  }');
   }
-  if (strpos($w_erro,'pesquisa')!==false) {
+  if (strpos($w_erro,'pesquisa')!==false || $w_just_pesquisa) {
     Validate('w_just_pesquisa', 'Justificativa para o não cumprimento do número mínimo de pesquisas de preço', '', '1', '1', '2000', '1', '1');
   } 
-  if (strpos($w_erro,'proposta')!==false) {
+  if (strpos($w_erro,'proposta')!==false || $w_just_proposta) {
     Validate('w_just_proposta', 'Justificativa para o não cumprimento do número mínimo de propostas', '', '1', '1', '2000', '1', '1');
   } 
   Validate('w_just_valor', 'Justificativa para vencedor com preço acima do menor', '', '', '3', '2000', '1', '1');
@@ -4041,7 +4069,7 @@ function Concluir() {
   ShowHTML('      theForm.w_just_valor.focus();');
   ShowHTML('      return (false);');
   ShowHTML('    }');
-  ShowHTML('    if (  theForm.w_caminho.value == "") {');
+  ShowHTML('    if (theForm.w_caminho.value=="" && theForm.w_caminho.className=="STIO") {');
   ShowHTML('      alert("Favor indicar o arquivo que contém a justificativa para vencedor de item com preço acima do menor!");');
   ShowHTML('      theForm.w_caminho.focus();');
   ShowHTML('      return (false);');
@@ -4055,9 +4083,9 @@ function Concluir() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
   if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="verificaPreco(); document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad="this.focus()";');
+    BodyOpen('onLoad="verificaPreco(); this.focus()";');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -4075,6 +4103,7 @@ function Concluir() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
     ShowHTML('<INPUT type="hidden" name="w_atual" value="'.$w_caminho.'">');
+    ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="' . f($RS_Cliente, 'upload_maximo') . '">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="100%" border="0">');
     // Se a modalidade não permite participantes, então não exibe mensagem
@@ -4117,9 +4146,7 @@ function Concluir() {
     // Se a modalidade não permite participantes, então não há indicação de vencedores
     if ($w_participantes>0) {
       ShowHTML('<tr><td colspan=3><b>Vencedor(es):</b><br>');
-      $sql = new db_getCLSolicItem; $RS1 = $sql->getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
-      if (count($RS1)>0) {
-        $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
+      if (count($RS_Propostas)>0) {
         ShowHTML('    <tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">');
@@ -4138,7 +4165,7 @@ function Concluir() {
         $w_exibe    = false;
         $w_item_lic = 0;
         $w_cor      = $conTrAlternateBgColor;
-        foreach($RS1 as $row) { 
+        foreach($RS_Propostas as $row) { 
           if ($w_atual!=f($row,'sq_material')) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -4163,7 +4190,7 @@ function Concluir() {
               // Se a situação não exige indicador de vencedor
               ShowHTML('        <td align="center">---<INPUT type="hidden" name="w_vencedor['.$i.']" value=""></td>');
             } else {
-              ShowHTML('        <td align="center" nowrap><INPUT class="str" type="radio" name="w_vencedor['.$i.']" value="'.f($row,'sq_item_fornecedor').'"'.((nvl($w_vencedor[$i],'')=='') ? '' : 'CHECKED').' onClick="verificaPreco('.$i.')"></td>');
+              ShowHTML('        <td align="center" nowrap><INPUT class="str" type="radio" name="w_vencedor['.$i.']" value="'.f($row,'sq_item_fornecedor').'"'.((nvl($w_vencedor[$i],0)=='' || f($row,'vencedor')=='S') ? 'CHECKED' : '').' onClick="verificaPreco()"></td>');
             }
           }
         } 
@@ -4171,11 +4198,11 @@ function Concluir() {
       }
     }
         
-    if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-      if (strpos($w_erro,'pesquisa')!==false) {
+    if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2' || $w_just_pesquisa || $w_just_proposta) {
+      if (strpos($w_erro,'pesquisa')!==false || $w_just_pesquisa) {
         ShowHTML('    <tr><td><b>Justificativa para o não cumprimento do número mínimo de pesquisas de preço:</b><br><textarea '.$w_Disabled.' name="w_just_pesquisa" class="STI" ROWS=5 cols=75>'.$w_just_pesquisa.'</TEXTAREA></td>');
       } 
-      if (strpos($w_erro,'proposta')!==false) {
+      if (strpos($w_erro,'proposta')!==false || $w_just_proposta) {
         ShowHTML('    <tr><td><b>Justificativa para o não cumprimento do número mínimo de propostas:</b><br><textarea '.$w_Disabled.' name="w_just_proposta" class="STI" ROWS=5 cols=75 >'.$w_just_proposta.'</TEXTAREA></td>');
       } 
     } 
@@ -4472,7 +4499,7 @@ function Grava() {
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$w_chave_nova,null,$_REQUEST['w_sq_lcmodalidade'],$_REQUEST['w_numero_processo'],
             $_REQUEST['w_abertura'],$_REQUEST['w_envelope_1'],$_REQUEST['w_envelope_2'],$_REQUEST['w_envelope_3'],
             $_REQUEST['w_codigo'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            $_REQUEST['w_protocolo'],null,null,null,null,null,null,null,null,null);
+            $_REQUEST['w_protocolo'],null,null,null,null,null,null,null,null,null,null,null);
         }
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
@@ -4656,7 +4683,7 @@ function Grava() {
         $_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],nvl($_REQUEST['w_limite_variacao'],0),
         $_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_sq_espec_despesa'],$_REQUEST['w_sq_lcjulgamento'],$_REQUEST['w_sq_lcsituacao'],
         $_REQUEST['w_financeiro_unico'],null,null,null,null,$_REQUEST['w_dias'],null,$_REQUEST['w_protocolo'],$_REQUEST['w_inicio'],
-        $_REQUEST['w_prioridade'],null,null,null,null,null,null,null);
+        $_REQUEST['w_prioridade'],null,null,null,null,null,null,null,null,null);
       
       // Atualiza a ordem dos itens da solicitação
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
@@ -4664,7 +4691,7 @@ function Grava() {
           $SQL->getInstanceOf($dbms,'ORDENACAO',$_REQUEST['w_chave_aux'][$i],null,null,null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_ordem'][$i],null,
               $_REQUEST['w_dias_item'][$i],null,null,null,null,null,$_REQUEST['w_quantidade'][$i],$_REQUEST['w_detalhamento'][$i],
-              $_REQUEST['w_rubrica'][$i],null,null);
+              $_REQUEST['w_rubrica'][$i],null,null,null,null);
         } 
       }
       $sql = new db_getCLSolicItem; $RS = $sql->getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,'COMPRA');
@@ -4673,7 +4700,7 @@ function Grava() {
       foreach($RS as $row) {
         $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'ORDENACAO',f($row,'chave'),null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_cont,
-                null,null,null,null,null,null,null,null,null,null,null,null);
+                null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         $w_cont+=1;
       }
       ScriptOpen('JavaScript');
@@ -4693,7 +4720,7 @@ function Grava() {
       $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,$_REQUEST['w_sq_lcmodalidade'],
         $_REQUEST['w_numero_processo'],$_REQUEST['w_abertura'],$_REQUEST['w_envelope_1'],$_REQUEST['w_envelope_2'],$_REQUEST['w_envelope_3'],
         $_REQUEST['w_numero_certame'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        $_REQUEST['w_protocolo'],null,null,null,null,null,null,null,null,null);
+        $_REQUEST['w_protocolo'],null,null,null,null,null,null,null,null,null,null,null);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG=CLLCCAD'.MontaFiltro('GET')).'\';');
@@ -4712,7 +4739,7 @@ function Grava() {
       $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'SITUACAO',$_REQUEST['w_chave'],null,null,null,
         $_REQUEST['w_abertura'],$_REQUEST['w_envelope_1'],$_REQUEST['w_envelope_2'],$_REQUEST['w_envelope_3'],
         null,null,null,null,null,null,null,null,null,$_REQUEST['w_sq_lcsituacao'],null,null,null,null,null,
-        null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_prioridade'],null,null,null,null,null,null,null);
+        null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_prioridade'],null,null,null,null,null,null,null,null,null);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLLCCAD'.MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -4882,7 +4909,7 @@ function Grava() {
               $SQL = new dml_putCLDados; 
               $SQL->getInstanceOf($dbms,'JUST-PESQ-PROP',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,
                   null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                  null,null, $_REQUEST['w_just_pesquisa'], $_REQUEST['w_just_proposta']);
+                  null,null, $_REQUEST['w_just_pesquisa'], $_REQUEST['w_just_proposta'],null,null);
             }
             
             //Rotina para gravação da imagem da versão da solicitacão no log.
@@ -4990,13 +5017,61 @@ function Grava() {
     case 'CLLCCONC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-//        if (is_array($_FILES)) {
-//          
-//        }
-//
-//echo $par;
-//ExibeArray($_POST);
-//die();
+        $w_chave_arquivo = $_REQUEST['w_atual'];
+        if ($_FILES['w_caminho']['error']!==UPLOAD_ERR_NO_FILE) {
+          // Processa somente se foi recebido algum arquivo
+          $w_maximo = $_REQUEST['w_upload_maximo'];
+          foreach ($_FILES as $Chv => $Field) {
+            if (!($Field['error']==UPLOAD_ERR_OK)) {
+              // Verifica se o tamanho do arquivo está compatível com o limite. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            }
+            $w_tamanho = $Field['size'];            
+            if ($Field['size'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              if ($Field['size'] > $w_maximo) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
+                ScriptClose();
+                retornaFormulario('w_observacao');
+                exit();
+              } 
+              // Se já há um nome para o arquivo, mantém 
+              if ($_REQUEST['w_atual']) {
+                $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+                foreach ($RS as $row) {
+                  if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+                  if (!(strpos(f($row,'caminho'),'.')===false)) {
+                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
+                  } else {
+                    $w_file = basename(f($row,'caminho'));
+                  }
+                }
+              } else {
+                $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+                if (!(strpos($Field['name'],'.')===false)) {
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+                }
+              } 
+              $w_tipo    = $Field['type'];
+              $w_nome    = $Field['name'];
+              if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+            } elseif(nvl($Field['name'],'')!=''){
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
+            }
+          } 
+          
+          $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,(($_REQUEST['w_atual']=='') ? 'I' : 'A'),$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_atual'],'Justificativa para vencedor com preço acima do menor valor proposto.',null,$w_file,$w_tamanho,$w_tipo,$w_nome, $w_chave_arquivo);
+        }
+
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,
                 null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null);
@@ -5010,14 +5085,27 @@ function Grava() {
           $SQL = new dml_putCLDados; 
           $SQL->getInstanceOf($dbms,'CONCLUSAO',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,null,$_REQUEST['w_homologacao'],$_REQUEST['w_data_diario'],
-              $_REQUEST['w_pagina_diario'],null,null,null,null,null,null,null,null,null,null,null,null,null);
-
+              $_REQUEST['w_pagina_diario'],null,null,null,null,null,null,null,null,null,null,null,null,null, 
+              $_REQUEST['w_just_valor'], $w_chave_arquivo);
+          
+        
+          // Se não tem justifica para vencedor com preço maior que o menor valor proposto,
+          // apaga a justificativa para essa situação caso ele exista
+          if (nvl($_REQUEST['w_just_valor'],'')=='' && $_REQUEST['w_atual']) {
+            $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+            $SQL = new dml_putSolicArquivo; 
+            foreach ($RS as $row) {
+              if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+              $SQL->getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,null,null,null,null, $w_chave_arquivo);
+            }
+          }
+          
           // Registra o vencedor de cada item
-          for ($i=0; $i<=count($_POST['w_vencedor'])-1; $i=$i+1) {
-            if (Nvl($_REQUEST['w_vencedor'][$i],'')>'') {
-              $SQL->getInstanceOf($dbms,'VENCEDOR',$_REQUEST['w_vencedor'][$i],null,null,null,null,null,null,
+          for ($i=1; $i<=count($_POST['w_vencedor']); $i++) {
+            if (Nvl($_POST['w_vencedor'][$i],'')>'') {
+              $SQL->getInstanceOf($dbms,'VENCEDOR',$_POST['w_vencedor'][$i],null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                null,null,null,null,null,null,null,null,null);
+                null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
 
@@ -5025,7 +5113,7 @@ function Grava() {
             $SQL = new dml_putCLDados; 
             $SQL->getInstanceOf($dbms,'JUST-PESQ-PROP',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                null,null, $_REQUEST['w_just_pesquisa'], $_REQUEST['w_just_proposta']);
+                null,null, $_REQUEST['w_just_pesquisa'], $_REQUEST['w_just_proposta'],null,null);
           }
             
           // Registra a conclusão da solicitação

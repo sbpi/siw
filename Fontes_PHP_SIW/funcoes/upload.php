@@ -1,7 +1,7 @@
 <?php
 header('Expires: ' . -1500);
 $session = $_REQUEST['sid'];
-session_id($session); // reestabele-ce a sessão
+session_id($session); // estabelece a sessão
 session_start();
 
 $w_dir_volta = '../';

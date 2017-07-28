@@ -1217,7 +1217,6 @@ function Geral() {
       $w_justificativa      = f($RS_Solic,'justificativa');
       $w_sq_menu_relac      = f($RS_Solic,'sq_menu');
       $w_solic_vinculo      = f($RS_Solic,'sq_solic_pai');
-      $w_sq_projeto_rubrica = f($RS_Solic,'sq_projeto_rubrica');
     }
 
     // Recupera itens do vencedor
@@ -1231,6 +1230,7 @@ function Geral() {
         $w_valor_itens += f($row,'valor_item');
       }
       $w_valor = formatNumber($w_valor_itens);
+      $w_sq_projeto_rubrica = f($row,'sq_projeto_rubrica');
     }
   }
   if(nvl($w_sq_menu_relac,0)>0) { $sql = new db_getMenuData; $RS_Relac  = $sql->getInstanceOf($dbms,$w_sq_menu_relac); }

@@ -79,6 +79,41 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
     }
     $l_html.=chr(13).'      <tr><td width="30%"><b>Modalidade: </b></td><td>'.f($RS,'nm_lcmodalidade').' </td></tr>';
+
+    if (nvl(f($RS,'sq_lcmodalidade'),'')!='') {
+      //Recupera os dados da modalidade
+      $sql = new db_getLCModalidade; $RS_Modal = $sql->getInstanceOf($dbms, f($RS,'sq_lcmodalidade'), $w_cliente, null, null, null, null);
+      $l_html.=chr(13).('<tr><td><td>');
+      $l_html.=chr(13).('    <TABLE BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      $l_html.=chr(13).('        <tr align="center">');
+      $l_html.=chr(13).('          <td colspan="9"><b>Dados da modalidade selecionada</b></td>');
+      $l_html.=chr(13).('        </tr>');
+      $l_html.=chr(13).('        <tr align="center">');
+      $l_html.=chr(13).('          <td rowspan="2"><b>Quantidade mínima de pesquisas de preço</td>');
+      $l_html.=chr(13).('          <td colspan="3"><b>Certame</td>');
+      $l_html.=chr(13).('          <td rowspan="2"><b>Gera contrato</td>');
+      $l_html.=chr(13).('          <td colspan="2"><b>Enquadramento'.(($w_cliente==17305) ? ' (US$)' : '').'</td>');
+      $l_html.=chr(13).('        </tr>');
+      $l_html.=chr(13).('        <tr align="center">');
+      $l_html.=chr(13).('          <td><b>Permite</td>');
+      $l_html.=chr(13).('          <td><b>Número mínimo de participantes</td>');
+      $l_html.=chr(13).('          <td><b>Quantidade mínima de propostas válidas</td>');
+      $l_html.=chr(13).('          <td><b>De</td>');
+      $l_html.=chr(13).('          <td><b>Até</td>');
+      $l_html.=chr(13).('        </tr>');
+      $l_html.=chr(13).('      <tr valign="top">');
+      $l_html.=chr(13).('        <td align="center">'.f($RS_Modal[0],'minimo_pesquisas').'</td>');
+      $l_html.=chr(13).('        <td align="center">'.f($RS_Modal[0],'nm_certame').'</td>');
+      $l_html.=chr(13).('        <td align="center">'.f($RS_Modal[0],'minimo_participantes').'</td>');
+      $l_html.=chr(13).('        <td align="center">'.f($RS_Modal[0],'minimo_propostas_validas').'</td>');
+      $l_html.=chr(13).('        <td align="center">'.f($RS_Modal[0],'nm_gera_contrato').'</td>');
+      $l_html.=chr(13).('        <td align="right">'.formatNumber(f($RS_Modal[0],'enquadramento_inicial')).'</td>');
+      $l_html.=chr(13).('        <td align="right">'.formatNumber(f($RS_Modal[0],'enquadramento_final')).'</td>');
+      $l_html.=chr(13).('      </tr>');       
+      $l_html.=chr(13).('    </table>');
+      $l_html.=chr(13).('  </td>');
+      $l_html.=chr(13).('</tr>');
+    }
     
     // Exibe a vinculação
     if (f($RS,'dados_pai')!='???') {
@@ -284,10 +319,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           foreach($RS1 as $row) { 
             $w_percentual_acrescimo = f($row,'percentual_acrescimo');
             $l_html.=chr(13).'      <tr valign="top">';
-            $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>';
-            if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
-            else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
-            $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
+            $l_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
+            if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+            else                $l_html.=chr(13).'        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+            $l_html.=chr(13).'        <td align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
             if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
             else                $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
             $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'proposta_data'),5),'---').'</td>';
@@ -309,6 +344,12 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total,4).'</b></td>';
           $l_html.=chr(13).'      </tr>';
           $l_html.=chr(13).'    </table>';
+          if (Nvl(f($RS,'justificativa_preco_maior'),'')>'') {
+            $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Justificativa para vencedores com preço acima do menor:</b></td><td colspan="12">'.crLf2Br(f($RS,'justificativa_preco_maior'));
+            if (f($RS,'sq_arquivo_justificativa')) {
+              $l_html.=chr(13).'              <b>'.LinkArquivo('SS',$w_cliente,f($RS,'sq_arquivo_justificativa'),'_blank','Clique para exibir o arquivo atual.','Exibir arquivo',null).'</b>';
+            } 
+          } 
         }
       }
     } 

@@ -2682,7 +2682,7 @@ function Grava() {
               if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
             }
           } 
-          $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+          $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome, $w_chave_arquivo);
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -2900,7 +2900,7 @@ function Grava() {
           // Grava tipo de pagamento e nota de conclusão
           $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
             null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-            $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo'],null,null,null,null,null);
+            $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo'],null,null,null,null,null,null,null);
           /*
           if ($_REQUEST['w_fundo_fixo']=='S') {
             // Conclui a solicitação
@@ -2935,7 +2935,7 @@ function Grava() {
             // Grava o protocolo somente se não for fundo fixo
             $SQL = new dml_putCLDados; $SQL->getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,null,$_REQUEST['w_numero_processo'],
               null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-              $_REQUEST['w_protocolo'],null,null,null,null,null,null,null,null,null);
+              $_REQUEST['w_protocolo'],null,null,null,null,null,null,null,null,null,null,null);
           }
             
           // Conclui a solicitação

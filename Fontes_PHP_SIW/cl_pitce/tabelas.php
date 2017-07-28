@@ -2700,7 +2700,7 @@ function Grava() {
             }
           } 
           $SQL = new dml_putSolicArquivo; $SQL->getInstanceOf($dbms,$O,
-            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome, $w_chave_arquivo);
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
