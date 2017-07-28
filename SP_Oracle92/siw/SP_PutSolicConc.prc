@@ -277,11 +277,12 @@ begin
 
    for crec in c_vencedor loop
       -- Grava os itens de uma licitação, indicando o vencedor
-       update cl_item_fornecedor 
+      -- Código comentado pois a indicação do vencedor é feita na tela de conclusão da licitação
+       /*update cl_item_fornecedor 
           set vencedor = 'S' 
        where sq_solicitacao_item = crec.sq_solicitacao_item
          and sq_material         = crec.sq_material
-         and fornecedor          = crec.fornecedor;
+         and fornecedor          = crec.fornecedor;*/
        
        -- Grava as quantidades compradas
        update cl_solicitacao_item

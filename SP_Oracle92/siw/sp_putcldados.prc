@@ -34,11 +34,12 @@ create or replace procedure SP_PutCLDados
     p_detalhamento          in varchar2 default null,
     p_rubrica               in varchar2 default null,
     p_just_pesquisa         in varchar2 default null,
-    p_just_proposta         in varchar2 default null
+    p_just_proposta         in varchar2 default null,
+    p_just_preco_maior      in varchar2 default null,
+    p_arquivo_justificativa in varchar2 default null
    ) is
    w_numero_certame cl_solicitacao.numero_certame%type;
    w_sq_modalidade  number(18);
-   w_cont           number(18);
    w_prefixo        siw_menu.prefixo%type;
    w_codigo         siw_solicitacao.codigo_interno%type;
    w_sigla_menu     siw_menu.sigla%type;
@@ -70,7 +71,7 @@ begin
       -- das quantidades mínimas de pesquisas de preço e/ou propostas
       Update cl_solicitacao set
          justificativa_regra_pesquisas = coalesce(p_just_pesquisa,justificativa_regra_pesquisas),
-         justificativa_regra_propostas = coalesce(p_just_pesquisa,justificativa_regra_pesquisas)
+         justificativa_regra_propostas = coalesce(p_just_proposta,justificativa_regra_propostas)
       Where sq_siw_solicitacao = p_chave;
       
    Elsif p_restricao = 'PROT' Then
@@ -158,9 +159,11 @@ begin
    ElsIf p_restricao = 'CONCLUSAO' Then
       -- Atualiza a tabela da licitação com os dados da conclusão
       Update cl_solicitacao set
-         data_homologacao         = p_data_homologacao,
-         data_diario_oficial      = p_data_diario_oficial,
-         pagina_diario_oficial    = p_pagina_diario_oficial
+         data_homologacao          = p_data_homologacao,
+         data_diario_oficial       = p_data_diario_oficial,
+         pagina_diario_oficial     = p_pagina_diario_oficial,
+         justificativa_preco_maior = p_just_preco_maior,
+         sq_arquivo_justificativa  = p_arquivo_justificativa
       Where sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'SITUACAO' Then
       -- Atualiza a situação da licitação
@@ -187,6 +190,13 @@ begin
       Where sq_solicitacao_item = p_chave;
    ElsIf p_restricao = 'VENCEDOR' Then
       -- Registra os vencedores da licitação
+
+      -- Primeiro garante que não será registrado nenhum outro vencedor para o mesmo item
+      update cl_item_fornecedor
+         set vencedor = 'N'
+      where sq_solicitacao_item = (select sq_solicitacao_item from cl_item_fornecedor where sq_item_fornecedor = p_chave);
+
+      -- Depois grava o vencedor indicado
       Update cl_item_fornecedor set
          vencedor = 'S'
       Where sq_item_fornecedor = p_chave;

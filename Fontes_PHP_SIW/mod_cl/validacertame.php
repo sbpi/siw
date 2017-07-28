@@ -97,7 +97,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
         $l_tipo=0;       
       }
     } elseif(f($l_rs_tramite,'sigla')=='EA' || f($l_rs_tramite,'sigla')=='EE') {
-      if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')!='') {
+      if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')=='') {
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }

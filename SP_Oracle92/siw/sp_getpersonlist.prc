@@ -110,7 +110,8 @@ begin
            and d.contratado      = 'S'
            and a.sq_tipo_pessoa  = e.sq_tipo_pessoa
            and e.ativo           = 'S'
-           and 'F'               = substr(e.nome,1,1)
+           and (c.sq_pessoa      is null or (c.sq_pessoa is not null and c.ativo = 'S'))
+           and substr(e.nome,1,1) in ('F','P')
            and a.sq_pessoa_pai   = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -132,7 +133,7 @@ begin
            and d.interno         = 'S'
            and a.sq_tipo_pessoa  = e.sq_tipo_pessoa
            and e.ativo           = 'S'
-           and 'F'               = substr(e.nome,1,1)
+           and substr(e.nome,1,1) in ('F','P')
            and a.sq_pessoa_pai   = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -153,7 +154,7 @@ begin
          where c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and 'F'               = substr(e.nome,1,1)
+           and substr(e.nome,1,1) in ('F','P')
            and a.sq_pessoa_pai  = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -176,7 +177,7 @@ begin
            and c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and 'F'               = substr(e.nome,1,1)
+           and substr(e.nome,1,1) in ('F','P')
            and a.sq_pessoa_pai  = p_cliente 
            and c.sq_unidade     = w.sq_unid_executora
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
@@ -202,7 +203,7 @@ begin
            and c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
-           and 'F'               = substr(e.nome,1,1)
+           and substr(e.nome,1,1) in ('F','P')
            and a.sq_pessoa_pai  = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
@@ -234,8 +235,8 @@ begin
                  inner   join co_tipo_pessoa     f on (a.sq_tipo_pessoa = f.sq_tipo_pessoa)
           where a.fornecedor = 'S'
             and (p_restricao  not in ('FORNECPF','FORNECPJ','FORNECPD') or
-                 (p_restricao = 'FORNECPF' and 'F' = substr(f.nome,1,1)) or 
-                 (p_restricao = 'FORNECPJ' and 'J' = substr(f.nome,1,1)) or
+                 (p_restricao = 'FORNECPF' and substr(f.nome,1,1) in ('F','P')) or 
+                 (p_restricao = 'FORNECPJ' and substr(f.nome,1,1) in ('J','O')) or
                  (p_restricao = 'FORNECPD' and 0 < (select count(*) from pd_desconto_agencia k where k.ativo='S' and k.agencia_viagem = a.sq_pessoa))
                 )
             and (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
@@ -271,7 +272,7 @@ begin
                 (d.interno      = 'N' and 0 < (select count(*) from pj_projeto_envolv where sq_unidade = c.sq_unidade))
                )
            and e.ativo          = 'S'
-           and 'F'              = substr(e.nome,1,1)
+           and substr(e.nome,1,1) in ('F','P')
            and h.sq_pessoa      is null
            and i.sq_pessoa      is null
            and j.sq_pessoa      is null
@@ -449,7 +450,7 @@ begin
                                                    )
                inner   join co_tipo_pessoa    e on (a.sq_tipo_pessoa  = e.sq_tipo_pessoa and
                                                     e.ativo           = 'S' and
-                                                    'F'               = substr(e.nome,1,1)
+                                                    substr(e.nome,1,1) in ('F','P')
                                                    )
          where a.sq_pessoa_pai  = p_cliente 
            and (p_nome       is null or (p_nome       is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or
