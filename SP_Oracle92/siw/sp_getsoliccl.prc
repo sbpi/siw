@@ -344,6 +344,98 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6 and b1.ativo = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
+   Elsif p_restricao = 'MESA' Then
+      -- Recupera as compras para exibição na mesa de trabalho
+      open p_result for
+         select a.sq_menu,            a.sigla,
+                b.sq_siw_solicitacao, b.inicio,                      b.fim,
+                b.sq_solic_pai,       b.sq_unidade,
+                b.codigo_interno,
+                case when b.sq_solic_pai is null
+                     then case when b.sq_plano is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome
+                                    end
+                               else 'Plano: '||b3.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai)
+                end as dados_pai,
+                b1.sigla as sg_tramite,
+                d.data_homologacao,   d.aviso_prox_conc,             d.data_abertura,
+                d.envelope_1,         d.envelope_2,                  d.envelope_3,
+                to_char(d.data_abertura,'dd/mm/yyyy, hh24:mi:ss') phpdt_data_abertura,
+                to_char(d.envelope_1,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_1,
+                to_char(d.envelope_2,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_2,
+                to_char(d.envelope_3,'dd/mm/yyyy, hh24:mi:ss')    phpdt_envelope_3,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                e.sigla sg_unidade_resp,
+                n.sigla as sg_cc,
+                p.nome_resumido as nm_exec
+           from siw_menu                                        a
+                --inner             join siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)
+                --inner             join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
+                inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)
+                   inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso
+                                          from siw_solicitacao             x
+                                               inner  join cl_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)
+                                               inner join siw_menu         y on (x.sq_menu        = y.sq_menu and
+                                                                                 y.sq_menu        = coalesce(p_menu, y.sq_menu)
+                                                                                )
+                                       )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                   inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                   left           join pe_plano                 b3 on (b.sq_plano                 = b3.sq_plano)
+                   inner          join cl_solicitacao           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                   inner          join eo_unidade               e  on (b.sq_unidade               = e.sq_unidade)
+                   left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
+                   left           join ct_cc                    n  on (b.sq_cc                    = n.sq_cc)
+                   /*inner          join co_cidade                f  on (b.sq_cidade_origem         = f.sq_cidade)
+                   left           join pj_projeto               b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
+                   left           join pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)
+                   left           join co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)
+                     left         join co_moeda                 b7 on (b6.ativo                   = b7.ativo and
+                                                                       b7.sigla                   = case coalesce(b6.sigla,'-')
+                                                                                                         when 'USD' then 'BRL'
+                                                                                                         when 'BRL' then 'USD'
+                                                                                                         else '-'
+                                                                                                    end
+                                                                      )
+                     left         join ct_especificacao_despesa d1 on (d.sq_especificacao_despesa = d1.sq_especificacao_despesa)
+                     left         join eo_indicador             d2 on (d.sq_eoindicador           = d2.sq_eoindicador)
+                     left         join lc_fonte_recurso         d3 on (d.sq_lcfonte_recurso       = d3.sq_lcfonte_recurso)
+                     left         join lc_modalidade            d4 on (d.sq_lcmodalidade          = d4.sq_lcmodalidade)
+                     left         join lc_modalidade_artigo    d41 on (d.sq_modalidade_artigo     = d41.sq_modalidade_artigo)
+                     left         join lc_julgamento            d5 on (d.sq_lcjulgamento          = d5.sq_lcjulgamento)
+                     left         join lc_situacao              d6 on (d.sq_lcsituacao            = d6.sq_lcsituacao)
+                     left         join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
+                     left         join cl_vinculo_financeiro    d8 on (d.sq_financeiro            = d8.sq_clvinculo_financeiro)
+                       left       join pj_rubrica              d81 on (d8.sq_projeto_rubrica      = d81.sq_projeto_rubrica)
+                       left       join fn_tipo_lancamento      d82 on (d8.sq_tipo_lancamento      = d82.sq_tipo_lancamento)
+                       left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                       e1.tipo_respons            = 'T'           and
+                                                                       e1.fim                     is null
+                                                                      )
+                       left       join eo_unidade_resp          e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                       e2.tipo_respons            = 'S'           and
+                                                                       e2.fim                     is null
+                                                                      )
+                   left           join siw_solicitacao          m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                   left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
+                   left           join co_pessoa                q  on (b.recebedor                = q.sq_pessoa)
+                   left           join eo_unidade_resp          a3 on (c.sq_unidade               = a3.sq_unidade and
+                                                                       a3.tipo_respons            = 'T'           and
+                                                                       a3.fim                     is null
+                                                                      )
+                   left           join eo_unidade_resp          a4 on (c.sq_unidade               = a4.sq_unidade and
+                                                                       a4.tipo_respons            = 'S'           and
+                                                                       a4.fim                     is null
+                                                                      )*/
+          where (p_menu      is null or (p_menu  is not null and a.sq_menu = p_menu))
+            and b1.ativo     = 'S'
+            and b1.sigla     <> 'CI'
+            and ((b.executor = p_pessoa and b.conclusao is null) or
+                 b2.acesso   > 15
+                );
    Elsif p_restricao = 'CONTRATO' Then
       -- Recupera as solicitações que o usuário pode ver
       open p_result for

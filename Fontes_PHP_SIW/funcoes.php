@@ -38,6 +38,64 @@ function array_key_case_change(&$array, $mode = 'CASE_LOWER') {
 }
 
 // =========================================================================
+// Converte array para formato XML
+// -------------------------------------------------------------------------
+function arrayToJson($array,$loop=0) {
+  // Coloca chaves somente uma vez a cada chamada
+  $json = (($loop) ? '' : '{ ');
+
+  foreach($array as $key => $value) {
+    // Trata chave contendo aspas duplas
+    $json.='"'.str_replace('"','\"',$key).'"';
+
+    if (is_array($value)) {
+        // Trata subarray
+        $json.= ' : [ '.arrayToJson($value,$loop).' ], ';
+    } else {
+        // Trata valor contendo aspas duplas
+        $json.= ' : "'.str_replace('"','\"',$value).'", ';
+    }
+  }
+  
+  // Coloca chaves somente uma vez a cada chamada
+  $json.=(($loop) ? '' : ' }');;
+  
+  $loop++;
+  
+  // Remove vírgula desnecessária
+  return str_replace(',  }','}',$json);
+}
+// =========================================================================
+// Converte array para formato JSON
+// -------------------------------------------------------------------------
+function arrayToXML($array,$loop=0) {
+  // Coloca chaves somente uma vez a cada chamada
+  $xml = (($loop) ? '' : '<record>');
+
+  foreach($array as $key => $value) {
+    // Trata chave contendo aspas duplas
+    $xml.='<'.str_replace(' ','_',str_replace('"','\"',$key)).'>';
+
+    if (is_array($value)) {
+        // Trata subarray
+        $xml.= arrayToJson($value,$loop);
+    } else {
+        // Trata valor contendo aspas duplas
+        $xml.= $value;
+    }
+    $xml.='</'.str_replace(' ','_',str_replace('"','\"',$key)).'>';
+  }
+  
+  // Coloca chaves somente uma vez a cada chamada
+  $xml.=(($loop) ? '' : '</record>');;
+  
+  $loop++;
+  
+  // Remove vírgula desnecessária
+  return str_replace(',  }','}',$xml);
+}
+
+// =========================================================================
 // Função para classificação de arrays
 // -------------------------------------------------------------------------
 function SortArray() {

@@ -45,7 +45,7 @@ class PgSqlConnectionManager extends ConnectionManager {
       $this->passWord = PGSQL_DB_PASSWORD;
    }
 
-   function doConnection() {
+   function doConnection($DB_CHARSET="") {
     if(!($this->conHandle = Pg_Connect("host=$this->hostName port=5432 user=$this->userName password=$this->passWord dbname=".PGSQL_DATABASE_NAME))) {
          die("Cannot Connect to Host");
       }
@@ -61,7 +61,7 @@ class MSSqlConnectionManager extends ConnectionManager {
       $this->passWord = MSSQL_DB_PASSWORD;
    }
 
-   function doConnection() {
+   function doConnection($DB_CHARSET="") {
       if(!($this->conHandle = mssql_connect($this->hostName, $this->userName, $this->passWord))){
          die("Cannot Connect to Host");
       }
@@ -81,8 +81,8 @@ class Ora8ConnectionManager extends ConnectionManager {
       //die();
    }
 
-   function doConnection() {
-      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName))){
+   function doConnection($DB_CHARSET="WE8MSWIN1252") {
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,$DB_CHARSET))){
          die("Cannot Connect to Host");
       }
    }
@@ -97,7 +97,7 @@ class Ora9ConnectionManager extends ConnectionManager {
       $this->passWord = ORA9_DB_PASSWORD;
    }
 
-   function doConnection() {
+   function doConnection($DB_CHARSET="WE8MSWIN1252") {
       if (!function_exists('oci_new_connect')) {
         $e['message'] = 'Função oci_new_connect inexistente';
         $e['sqltext'] = 'Não se aplica';
@@ -112,7 +112,7 @@ class Ora9ConnectionManager extends ConnectionManager {
 //echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");
 //echo '<BR>NLS_DATE_FORMAT==>'.getenv("NLS_DATE_FORMAT");
 //echo '<BR>NLS_NUMERIC_CHARACTERS==>'.getenv("NLS_NUMERIC_CHARACTERS");
-      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,'WE8MSWIN1252'))) {
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,$DB_CHARSET))) {
          error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); 
       } else {
         error_reporting($l_error_reporting); 
@@ -129,7 +129,7 @@ class Ora10ConnectionManager extends ConnectionManager {
       $this->passWord = ORA10_DB_PASSWORD;
    }
 
-   function doConnection() {
+   function doConnection($DB_CHARSET="WE8MSWIN1252") {
       if (!function_exists('oci_new_connect')) {
         $e['message'] = 'Função oci_new_connect inexistente';
         $e['sqltext'] = 'Não se aplica';
@@ -145,7 +145,7 @@ class Ora10ConnectionManager extends ConnectionManager {
 //echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");
 //echo '<BR>NLS_DATE_FORMAT==>'.getenv("NLS_DATE_FORMAT");
 //echo '<BR>NLS_NUMERIC_CHARACTERS==>'.getenv("NLS_NUMERIC_CHARACTERS");
-      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,'WE8MSWIN1252'))) {
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,$DB_CHARSET))) {
          error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); 
       } else {
         error_reporting($l_error_reporting); 
@@ -161,7 +161,7 @@ class OraHMConnectionManager extends ConnectionManager {
       $this->passWord = ORAHM_DB_PASSWORD;
    }
 
-   function doConnection() {
+   function doConnection($DB_CHARSET="WE8MSWIN1252") {
       if (!function_exists('oci_new_connect')) {
         $e['message'] = 'Função oci_new_connect inexistente';
         $e['sqltext'] = 'Não se aplica';
@@ -177,7 +177,7 @@ class OraHMConnectionManager extends ConnectionManager {
 //echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");
 //echo '<BR>NLS_DATE_FORMAT==>'.getenv("NLS_DATE_FORMAT");
 //echo '<BR>NLS_NUMERIC_CHARACTERS==>'.getenv("NLS_NUMERIC_CHARACTERS");
-      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,'WE8MSWIN1252'))) {
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,$DB_CHARSET))) {
          error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); 
       } else {
         error_reporting($l_error_reporting); 

@@ -975,7 +975,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>=10) {
+    if($l_diaria=='S' && (($w_cliente==10135 && $w_or_tramite>=10) || ($w_cliente==17305 && $w_or_tramite>=6))) {
       unset($w_trechos);
       unset($w_tot_diaria_P);
       $sql = new db_getPD_Deslocamento; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
@@ -1156,9 +1156,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $w_diferenca = false;
     
     // Dados da prestação de contas
-    if ((($w_cliente==10135 && $w_or_tramite>=10) || ($w_cliente==17305 && $w_or_tramite>=8)) && f($RS,'cumprimento')!='N') {
+    if ((($w_cliente==10135 && $w_or_tramite>=10) || ($w_cliente==17305 && $w_or_tramite>=6)) && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && (is_array($w_tot_diaria_P) || $w_financeiro) && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && (is_array($w_tot_diaria_P) || $w_financeiro) && (($w_cliente==10135 && $w_or_tramite>=10) || ($w_cliente==17305 && $w_or_tramite>=6)) && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         // Garante que os arrays dos pagamentos previsto e realizado têm as mesmas moedas.
         if (count($w_tot_diaria_S)>0) {
           foreach($w_tot_diaria_S as $k => $v) {
@@ -1252,10 +1252,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $l_html.=chr(13).'        <td>'.f($row,'sg_moeda').' ('.f($row,'nm_moeda').')</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'</td>';
             $l_html.=chr(13).'        <td>'.crlf2br(f($row,'justificativa')).'</td>';
-            if ($w_or_tramite<=9) {
+            if ((($w_cliente==10135 && $w_or_tramite<=11) || ($w_cliente==17305 && $w_or_tramite<=6))) {
               // No trâmite de prestação de contas
               $l_html.=chr(13).'        <td align="center" colspan="2">&nbsp;</td>';
-            } elseif ($w_or_tramite==10 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+            } elseif ((($w_cliente==10135 && $w_or_tramite==12) || ($w_cliente==17305 && $w_or_tramite==7)) && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
               // No trâmite de verificação da prestação de contas mas sem valor informado.
               $l_html.=chr(13).'        <td align="center" colspan="2">Em análise</td>';
             } else {
@@ -1343,7 +1343,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     // Bilhete de passagem
     $sql = new db_getPD_Bilhete; $RS1 = $sql->getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
-    if ($w_or_tramite>5 || count($RS1)>0) {
+    if ((($w_cliente==10135 && $w_or_tramite>5) || ($w_cliente==17305 && $w_or_tramite>=3)) || count($RS1)>0) {
       if (count($RS1)>0) {
         $l_html.=chr(13).'      <tr><td colspan="14"><br /><font size="2"><b>BILHETES EMITIDOS</b></font><hr NOSHADE color=#000000 SIZE=1 /></td></tr>';
         $l_html.=chr(13).'      <tr><td colspan="14">';

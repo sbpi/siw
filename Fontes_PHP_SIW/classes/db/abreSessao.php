@@ -9,10 +9,10 @@ include_once("ConnectionManagerFactory.php");
 */
 
 class abreSessao {
-   function getInstanceOf($DB_TYPE) {
+   function getInstanceOf($DB_TYPE,$DB_CHARSET="") {
      $conn = new ConnectionManagerFactory; 
      $DBMS = $conn->getInstanceOf($DB_TYPE);
-     $DBMS->doConnection();
+     $DBMS->doConnection($DB_CHARSET);
      $DBMS->selectDatabase();
      if ($DB_TYPE==ORA8 || $DB_TYPE==ORA9 || $DB_TYPE==ORA10 || $DB_TYPE==ORAHM) { 
        $query = 'ALTER SESSION SET NLS_TERRITORY = \'BRAZIL\'';

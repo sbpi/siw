@@ -29,11 +29,11 @@ begin
  select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
 
  select count(*) into w_existe
-   from (select sq_pessoa from sg_autenticacao a where a.sq_pessoa = p_usuario and a.gestor_sistema = 'S' and a.ativo = 'S'
+   from (/*select sq_pessoa from sg_autenticacao a where a.sq_pessoa = p_usuario and a.gestor_sistema = 'S' and a.ativo = 'S'
          UNION
          select sq_pessoa from sg_pessoa_modulo b where b.sq_pessoa = p_usuario and b.sq_modulo = (select sq_modulo from siw_menu where sq_menu = p_menu)
          UNION
-         select sq_pessoa from pd_usuario c where c.sq_pessoa = p_usuario
+         */select sq_pessoa from pd_usuario c where c.sq_pessoa = p_usuario
          UNION
          select 1 from pd_parametro where cadastrador_geral = 'S' and cliente = w_cliente
         );

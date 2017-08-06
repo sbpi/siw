@@ -260,8 +260,8 @@ function Inicial() {
     $sql = new db_getMTBem;
     $RS = $sql->getInstanceOf($dbms,$w_cliente, $w_usuario, $p_chave, $p_sqcc, 
             $p_projeto, $p_financeiro, $p_tipo_material, $p_material, $p_rgp, $p_descricao,
-            $p_marca, $p_modelo, $p_observacao, $p_ativo, $p_almoxarifado, $p_unidade,  
-            $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_restricao);
+            $p_marca, $p_modelo, $p_observacao, $p_ativo, $p_almoxarifado, $p_endereco, 
+            $p_unidade,  $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'numero_rgp','asc');
@@ -269,7 +269,7 @@ function Inicial() {
       $RS = SortArray($RS,'numero_rgp','asc'); 
     }
   } elseif (strpos('MCAEV',$O)!==false) {
-    $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_sqcc            = f($RS,'sq_cc');
     $w_projeto         = f($RS,'sq_projeto');
@@ -465,7 +465,7 @@ function Inicial() {
     }  
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -613,7 +613,7 @@ function Inicial() {
     selecaoalmoxarifado('Al<u>m</u>oxarifado:','M', 'Selecione o almoxarifado ao qual o bem pertence.', $p_almoxarifado,'p_almoxarifado',null,null);
 
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,$p_endereco,'p_unidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_unidade\'; document.Form.submit();"', 3);
+    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,$p_endereco,'p_unidade','MOD_MT','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_unidade\'; document.Form.submit();"', 3);
 
     ShowHTML('      <tr>');
     selecaoLocalizacao('Lo<U>c</U>alização:','C',null,$p_localizacao,$p_unidade,'p_localizacao',null,null,3);
@@ -690,7 +690,7 @@ function PesquisaPreco() {
   $p_campo          = $_REQUEST['p_campo'];
 
   // Recupera os dados do item
-  $sql = new db_getMTBem; $RS_Item = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getMTBem; $RS_Item = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Item as $row){$RS_Item=$row; break;}
 
   if ($w_troca>'' && $O!='E') {
@@ -784,7 +784,7 @@ function PesquisaPreco() {
       }
     }
   } elseif ($O=='L') {  
-    $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
+    $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_fornecedor','asc');
@@ -1000,7 +1000,7 @@ function PesquisaPreco() {
     if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED '; 
     //Recupera os dados do item
     if(nvl($w_chave_aux,'')=='') {
-      $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item   = f($row,'nome');
@@ -1010,7 +1010,7 @@ function PesquisaPreco() {
         break;
       }
     } else {
-      $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
+      $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
       //exibeArray($RS);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
@@ -1273,7 +1273,7 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
   extract($GLOBALS);
 
   // Recupera os dados do material ou serviço
-  $sql = new db_getMTBem; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $sql = new db_getMTBem; $l_rs = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($l_rs as $row) { $l_rs = $row; break; }
 
   // Se for listagem dos dados
@@ -1338,7 +1338,7 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
 
   if (f($RS_Cliente,'ata_registro_preco')=='S') {
     // Exibe atas de registro de preço onde o item esteja disponível
-    $sql = new db_getMTBem; $l_rs1 = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
+    $sql = new db_getMTBem; $l_rs1 = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S',null,'S',null,null,null,'RELATORIO');
     $l_rs1 = SortArray($l_rs1,'numero_ata','asc','nr_item_ata','asc'); 
  
     $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
@@ -1544,7 +1544,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,$_REQUEST['w_rgp'],null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,$_REQUEST['w_rgp'],null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
@@ -1558,7 +1558,7 @@ function Grava() {
 
           if (nvl($_REQUEST['w_codigo_interno'],'nulo')!='nulo') {
             // Testa a existência do código
-            $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+            $sql = new db_getMTBem; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) { $RS = $row; break; }
               if (f($RS,'existe')>0) {

@@ -35,7 +35,7 @@ class db_getSolicCL {
                    'p_assunto'                  =>array(tvl($p_assunto),        B_VARCHAR,        90),
                    'p_pais'                     =>array(tvl($p_pais),           B_INTEGER,        32),
                    'p_regiao'                   =>array(tvl($p_regiao),         B_INTEGER,        32),
-                   'p_uf'                       =>array(tvl($p_uf),             B_VARCHAR,         2),
+                   'p_uf'                       =>array(tvl($p_uf),             B_VARCHAR,        12),
                    'p_cidade'                   =>array(tvl($p_cidade),         B_INTEGER,        32),
                    'p_usu_resp'                 =>array(tvl($p_usu_resp),       B_INTEGER,        32),
                    'p_uorg_resp'                =>array(tvl($p_uorg_resp),      B_INTEGER,        32),

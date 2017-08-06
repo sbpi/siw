@@ -14,6 +14,7 @@ create or replace procedure sp_getMTBem
     p_observacao    in varchar2  default null,
     p_ativo         in varchar2  default null,
     p_almoxarifado  in number    default null,
+    p_endereco      in number    default null,
     p_unidade       in number    default null,
     p_localizacao   in number    default null,
     p_situacao      in number    default null,
@@ -87,6 +88,7 @@ begin
             and (p_situacao      is null or (p_situacao      is not null and p.sq_mtsituacao       = p_situacao))
             and (p_localizacao   is null or (p_localizacao   is not null and p.sq_localizacao      = p_localizacao))
             and (p_almoxarifado  is null or (p_almoxarifado  is not null and p.sq_almoxarifado     = p_almoxarifado))
+            and (p_endereco      is null or (p_endereco      is not null and d.sq_pessoa_endereco  = p_endereco))
             and (p_unidade       is null or (p_unidade       is not null and e.sq_unidade          = p_unidade))
             and (p_rgp           is null or (p_rgp           is not null and p.numero_rgp          = p_rgp))
             and (p_descricao     is null or (p_descricao     is not null and acentos(p.descricao_complementar) like '%'||acentos(p_descricao)||'%'))

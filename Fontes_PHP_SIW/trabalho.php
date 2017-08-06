@@ -150,7 +150,7 @@ function Mesa() {
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=\'this.focus()\';');
+  BodyOpen('onLoad="this.focus()";');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');
@@ -325,7 +325,7 @@ function Mesa() {
       
       if (nvl($w_compras,'')!='') {
         $sql = new db_getLinkData; $RSMenu_Compras = $sql->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
-        $sql = new db_getSolicCL; $RS_Compras = $sql->getInstanceOf($dbms,f($RSMenu_Compras,'sq_menu'),$w_usuario,'CLLCCAD',2,
+        $sql = new db_getSolicCL; $RS_Compras = $sql->getInstanceOf($dbms,f($RSMenu_Compras,'sq_menu'),$w_usuario,'MESA',2,
             formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null, null, null, 
             null, null, null, null,null, null, null, null, null, null, null, null, null, null, null, null,null,null,null,null);
         $RS_Compras = SortArray($RS_Compras,'codigo_interno', 'asc');
@@ -348,7 +348,38 @@ function Mesa() {
 
       if (nvl($w_viagem,'')!='') {
         $sql = new db_getLinkData; $RSMenu_Viagem = $sql->getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-        $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
+        
+        // Pendências de prestação de contas
+        $sql = new db_getSolicList; $RS_Pendencia = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PDMESA',4,
+            null,null,null,null,'S',null,null,null,null,null,null,
+            null, null, null, null, null, null, null,null, null, null, null, null, null, null, $w_usuario);
+        $RS_Pendencia = SortArray($RS_Pendencia,'inicio', 'desc', 'fim', 'desc');
+
+        // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+        foreach($RS_Pendencia as $row) {
+          $w_saida   = f($row,'phpdt_saida');
+          $w_chegada = f($row,'phpdt_chegada');
+          if (f($row,'concluida')=='S') {
+            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_datas, 'Viagem a serviço\r\nSituação: Finalizada', 'N');
+          } elseif (f($row,'sg_tramite')=='AE' ||f($row,'sg_tramite')=='EE') {
+            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_datas, 'Viagem a serviço\r\nSituação: Confirmada', 'N');
+          } else {
+            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_datas, 'Viagem a serviço\r\nSituação: Prevista', 'N');
+          }
+          $w_datas[formataDataEdicao($w_saida)]['valor']= str_replace('serviço','serviço (saída às '.date('H:i',$w_saida).'h)',$w_datas[formataDataEdicao($w_saida)]['valor']);
+          $w_datas[formataDataEdicao($w_chegada)]['valor']= str_replace('serviço','serviço (chegada às '.date('H:i',$w_chegada).'h)',$w_datas[formataDataEdicao($w_chegada)]['valor']);
+        }
+        reset($RS_Pendencia);
+        foreach($RS_Pendencia as $row) {
+          $w_saida   = f($row,'phpdt_saida');
+          $w_chegada = f($row,'phpdt_chegada');
+          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_cores, $conTrBgColorLightRed1, 'N');
+          if (date('H',$w_saida)>13)   $w_cores[formataDataEdicao($w_saida)]['valor']   = $conTrBgColorLightRed2;
+          if (date('H',$w_chegada)<14) $w_cores[formataDataEdicao($w_chegada)]['valor'] = $conTrBgColorLightRed2;
+        }
+        
+        // Viagens no período do calendário da mesa de trabalho
+        $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PDMESA',4,
             formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
             null, null, null, null, null, null, null,null, null, null, null, null, null, null, $w_usuario);
         $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
@@ -471,6 +502,43 @@ function Mesa() {
 
       $w_nome_mes1 = upper(mesAno(date('F',toDate('01/'.$w_mes1.'/'.$w_ano1)),'resumido'));
       $w_nome_mes3 = upper(mesAno(date('F',toDate('01/'.$w_mes3.'/'.$w_ano3)),'resumido').'/'.$w_ano3);
+
+      // Pendências de prestação de contas de viagens
+      if (count($RS_Pendencia)>0 && nvl($w_viagem ,'')!='') {
+        ShowHTML('          <P>');
+        ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
+        ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
+        ShowHTML('              <tr><td align="center"><b>PENDÊNCIAS DE PRESTAÇÃO DE CONTAS DE VIAGENS</b><br>');
+        ShowHTML('                <b><font color="red">ATENÇÃO: <u>Preste contas das viagens abaixo e envie para a fase seguinte</u> para evitar bloqueio dos adiantamentos de diárias!</font></b>');
+        ShowHTML('              <tr><td>');
+        ShowHTML('                <table width="100%" border="1" cellspacing=0 bgcolor="'.$conTrBgColor.'">');
+        ShowHTML('                  <tr align="center" valign="middle">');
+        ShowHTML('                    <td><b>Início</td>');
+        ShowHTML('                    <td><b>Término</td>');
+        ShowHTML('                    <td><b>Nº</td>');
+        ShowHTML('                    <td><b>Destinos</td>');
+        ShowHTML('                    <td><b>Operação</td>');
+        reset($RS_Pendencia);
+        $w_cor = $w_cor=$conTrBgColor;
+        $i = 0;
+        foreach($RS_Pendencia as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_saida')),'-').'</td>');
+          ShowHTML('                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_chegada')),'-').'</td>');
+          ShowHTML('                    <td nowrap>');
+          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+          ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Viagem,'link'),0,strpos(f($RSMenu_Viagem,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Viagem,'p1').'&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+          ShowHTML('                    <td>'.f($row,'trechos').'&nbsp;</td>');
+          if (!$i) ShowHTML('                    <td rowspan="'.count($RS_Pendencia).'"><A class="hl" HREF="'.f($RSMenu_Viagem,'link').'&O=L&p_atraso=S&P1=2&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Informar os dados da prestação de contas.">Prestar contas</A>&nbsp</td>');
+          ShowHTML('                  </tr>');
+          $i++;
+        }
+        ShowHTML('                </table>');
+        ShowHTML('              </table>');
+        ShowHTML('          </P>');
+      }
+      // Final da exibição das pendências de prestação de contas de viagens
   
       // Exibição de datas de licitações ==============
       if (count($RS_Compras)>0 && nvl($w_compras ,'')!='') {
@@ -546,9 +614,9 @@ function Mesa() {
         ShowHTML('              </table>');
       }
       // Final da exibição de licitações ================================
-
-  
+      
       if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
+        ShowHTML('          <P>');
         ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
         ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
         if ($w_ano1!=$w_ano3) {
@@ -610,6 +678,7 @@ function Mesa() {
           ShowHTML('                </table>');
         }
         ShowHTML('              </table>');
+        ShowHTML('          </P>');
       }
     }
     ShowHTML('        </table>');

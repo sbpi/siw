@@ -13,7 +13,7 @@ begin
       p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO' or
       p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'      or p_restricao = 'MOD_PA_SET' or
       p_restricao = 'CL_PITCE'     or p_restricao = 'CL_RENAPI'        or p_restricao = 'ACESSOS' or
-      p_restricao = 'CADPA'
+      p_restricao = 'CADPA'        or p_restricao = 'MOD_MT'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
@@ -41,7 +41,7 @@ begin
                                                    (p_restricao          = 'EXTERNO' and (a.externo  = 'N' or (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade))))
                                                   )
                 )
-            and (p_chave               is null or coalesce(p_restricao,'x') in ('ACESSOS','CADPA') or (p_chave is not null and a.sq_unidade = p_chave))
+            and (p_chave               is null or coalesce(p_restricao,'x') in ('ACESSOS','CADPA','MOD_MT') or (p_chave is not null and a.sq_unidade = p_chave))
             and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
             and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             and (p_restricao           is null or (p_restricao is not null and
@@ -52,6 +52,11 @@ begin
                                                     (p_restricao = 'CODIGONULL'   and a.informal = 'N' and a.codigo <> '00') or 
                                                     (p_restricao = 'MOD_PE'       and g.sq_unidade is not null) or 
                                                     (p_restricao = 'MOD_PA'       and h.sq_unidade is not null and h.ativo = 'S') or 
+                                                    (p_restricao = 'MOD_MT'       and a.ativo = 'S' 
+                                                                                  and (a.sq_pessoa_endereco = coalesce(p_chave,a.sq_pessoa_endereco) or
+                                                                                       0 < (select count(*) from eo_localizacao w where w.sq_unidade = a.sq_unidade and w.sq_pessoa_endereco = coalesce(p_chave,0))
+                                                                                      )
+                                                    ) or 
                                                     (p_restricao = 'MOD_PA_PAI'   and h.sq_unidade is not null and h.ativo = 'S' and h.sq_unidade_pai  is null) or 
                                                     (p_restricao = 'MOD_CL_PAI'   and i.sq_unidade is not null and i.ativo = 'S' and i.sq_unidade_pai  is null) or 
                                                     (p_restricao = 'MOD_PA_PROT'  and h.sq_unidade is not null and h.ativo = 'S' and h.autua_processo  = 'S') or 
@@ -62,7 +67,9 @@ begin
                                                     (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S') or
                                                     (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI')) or
                                                     (p_restricao = 'CL_RENAPI'    and a.unidade_gestora = 'S') or
-                                                    (p_restricao = 'CADPA'        and h.registra_documento = 'S' and h.ativo = 'S' and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
+                                                    (p_restricao = 'CADPA'        and h.registra_documento = 'S' and 
+                                                                                      h.ativo = 'S' and 
+                                                                                      a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
                                                                                                        UNION
                                                                                                        select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
                                                                                                        UNION
@@ -80,16 +87,17 @@ begin
                                                                                                            and z.sigla     = 'PA'
                                                                                                       )
                                                     ) or
-                                                    (p_restricao = 'ACESSOS'      and a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
-                                                                                                       UNION
-                                                                                                       select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
-                                                                                                       UNION
-                                                                                                       select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
-                                                                                                       UNION 
-                                                                                                       select sq_unidade from eo_unidade_resp where sq_pessoa = p_chave and fim is null
-                                                                                                       UNION
-                                                                                                       select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_chave
-                                                                                                      )
+                                                    (p_restricao  = 'ACESSOS' and 
+                                                     a.sq_unidade in (select sq_unidade from sg_autenticacao where sq_pessoa = p_chave
+                                                                      UNION
+                                                                      select sq_unidade_lotacao from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
+                                                                      UNION
+                                                                      select sq_unidade_exercicio from gp_contrato_colaborador where sq_pessoa = p_chave and fim is null
+                                                                      UNION 
+                                                                      select sq_unidade from eo_unidade_resp where sq_pessoa = p_chave and fim is null
+                                                                      UNION
+                                                                      select sq_unidade from sg_pessoa_unidade where sq_pessoa = p_chave
+                                                                     )
                                                     )
                                                    )
                                                   )

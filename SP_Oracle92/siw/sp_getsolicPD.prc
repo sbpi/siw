@@ -67,7 +67,9 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
-   If substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
+   If instr(p_restricao,'MESA') = 0 and 
+      (substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD') 
+   Then
       -- Recupera as viagens que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -241,6 +243,48 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
+   Elsif instr(p_restricao,'MESA') > 0 Then
+      -- Recupera as viagens que o usuário pode ver
+      open p_result for
+         select a.sigla,
+                b.sq_siw_solicitacao,   b.inicio,      b.fim,      b.codigo_interno,
+                b1.sigla as sg_tramite,
+                d.aviso_prox_conc,      d.inicio_real, d.fim_real, d.concluida,
+                to_char(r.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida, to_char(r.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
+                pd_retornatrechos(b.sq_siw_solicitacao) as trechos
+           from siw_menu                                a
+                inner         join pd_parametro         a5 on (a.sq_pessoa                = a5.cliente)
+                inner         join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                  inner       join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                  inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                    inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner join (select x.sq_unidade, 
+                                           coalesce(y.limite_passagem,0) as limite_passagem, 
+                                           coalesce(y.limite_diaria,0)   as limite_diaria
+                                      from pd_unidade                  x
+                                           left join pd_unidade_limite y on (x.sq_unidade = y.sq_unidade and
+                                                                             y.ano        = coalesce(p_sq_orprior,y.ano)
+                                                                            )
+                                   )                    d5 on (d.sq_unidade_resp          = d5.sq_unidade)
+                      left    join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
+                 left         join (select x.sq_siw_solicitacao, min(y.saida) as saida, max(y.chegada) as chegada
+                                      from siw_solicitacao            x
+                                           inner join pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where x.sq_menu = p_menu
+                                       and y.tipo    = 'S'
+                                    group by x.sq_siw_solicitacao
+                                   )                    r  on (b.sq_siw_solicitacao       = r.sq_siw_solicitacao)
+          where a.sq_menu         = p_menu
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_pessoa         = p_sq_orprior))
+            and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
+                                                                             (b.fim              between p_ini_i  and p_ini_f) or
+                                                                             (p_ini_i            between b.inicio and b.fim)   or
+                                                                             (p_ini_f            between b.inicio and b.fim)
+                                                                            )
+                                             )
+                )
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0))
+            and b1.sigla <> 'CA';
    End If;
 end SP_GetSolicPD;
 /

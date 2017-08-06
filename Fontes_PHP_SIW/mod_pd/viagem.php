@@ -1157,6 +1157,9 @@ function Geral() {
     if ($O == 'I' && $w_cadgeral == 'S') {
       ShowHTML('      <tr>');
       SelecaoPessoaOrigem('<u>B</u>eneficiário:', 'P', 'Clique na lupa para selecionar o beneficiário.', nvl($w_sq_prop, $_SESSION['SQ_PESSOA']), null, 'w_sq_prop', 'NF,EF', null, null, 1, 'w_email');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_sq_prop" value="' . $w_sq_prop. '">');
+      ShowHTML('      <tr><td colspan="4"><b>Beneficiário: ' . $w_nm_prop_res . ' (CPF ' . $w_cpf . ')</b></td>');
     }
     ShowHTML('      <tr><td><b>Contato na au<u>s</u>ência:</b><br><input ' . $w_Disabled . ' accesskey="S" type="text" name="w_proponente" class="sti" SIZE="60" MAXLENGTH="90" VALUE="' . $w_proponente . '" title="Indique pessoa para contato durante os dias de ausência."></td>');
     ShowHTML('      <tr><td colspan="4" valign="top"><b>A<u>g</u>enda:</b><br><textarea ' . $w_Disabled . ' accesskey="G" name="w_assunto" class="STI" ROWS=5 cols=75 title="Agenda das atividades durante todos os dias em que estiver ausente.">' . $w_assunto . '</TEXTAREA></td>');
@@ -6305,7 +6308,7 @@ function SolicMail($p_solic, $p_tipo) {
       if (($p_tipo == 2 && f($RS_Mail, 'tramitacao') == 'S') || ($p_tipo == 3 && f($RS_Mail, 'conclusao') == 'S')) {
         $w_destinatarios .= f($RS_Mail, 'email') . '|' . f($RS_Mail, 'nome') . '; ';
       }
-    }
+    } 
     // Executa o envio do e-mail
     if ($w_destinatarios > '')
       $w_resultado = EnviaMail($w_assunto, $w_html, $w_destinatarios, $w_anexos);
@@ -7345,7 +7348,7 @@ function Reembolso() {
   }
   if ($findev==1) ShowHTML('<INPUT type="hidden" name="w_fin_dev" value="' . f($RS_Fin_Dev, 'chave') . '">');
 
-    ShowHTML('<tr><td colspan="2"><br><br><b>Arquivos contendo comprovantes (máximo de ' . formatNumber((f($RS_Cliente, 'upload_maximo') / 1024), 0) . ' KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&w_tipo_reg=' . $w_tipo_reg . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDTRECHO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+    ShowHTML('<tr><td colspan="2"><br><br><b>Arquivos contendo comprovantes (máximo de ' . formatNumber((f($RS_Cliente, 'upload_maximo') / 1024), 0) . ' KBytes): (<a accesskey="I" class="SS" href="' . $w_dir . $w_pagina . 'relAnexo&R=' . $w_pagina . $par . '&O=I&w_chave=' . $w_chave . '&w_tipo_reg=' . $w_tipo_reg . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=1&P4=' . $P4 . '&TP=' . $TP . '&w_cumprimento=' . $w_cumprimento . '&SG=PDRELANEXO' . MontaFiltro('GET') . '"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
     $sql = new db_getPD_Deslocamento; //$RS = $sql->getInstanceOf($dbms, $w_chave, null, 'P', 'PDTRECHO');
     $sql = new db_getSolicRelAnexo;
     $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_cliente, $w_tipo_reg);
@@ -7432,10 +7435,10 @@ function Reembolso() {
         ShowHTML('        <td>' . f($row, 'sg_moeda') . ' (' . f($row, 'nm_moeda') . ')</td>');
         ShowHTML('        <td align="right">' . formatNumber(f($row, 'valor_solicitado')) . '&nbsp;&nbsp;&nbsp;</td>');
         ShowHTML('        <td>' . crlf2br(f($row, 'justificativa')) . '</td>');
-        if ($w_or_tramite <= 11) {
+        if ((($w_cliente==10135 && $w_or_tramite<=11) || ($w_cliente==17305 && $w_or_tramite<=6))) {
           // No trâmite de prestação de contas
           ShowHTML('        <td align="center" colspan="2">&nbsp;</td>');
-        } elseif ($w_or_tramite == 12 && f($row, 'valor_autorizado') == 0 && f($row, 'observacao') == '') {
+        } elseif ((($w_cliente==10135 && $w_or_tramite==12) || ($w_cliente==17305 && $w_or_tramite==7)) && f($row, 'valor_autorizado') == 0 && f($row, 'observacao') == '') {
           // No trâmite de verificação da prestação de contas mas sem valor informado.
           ShowHTML('        <td align="center" colspan="2">Em análise</td>');
         } else {
@@ -8304,7 +8307,7 @@ function Grava() {
                           $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_reembolso'], $_REQUEST['w_deposito'], $_REQUEST['w_valor'],
                           $_REQUEST['w_observacao'], $_REQUEST['w_financeiro'], $_REQUEST['w_rubrica'], $_REQUEST['w_lancamento'],
                           $_REQUEST['w_ressarcimento'], $_REQUEST['w_ressarcimento_data'], $_REQUEST['w_ressarcimento_valor'],
-                          $_REQUEST['w_ressarcimento_observacao'], $_REQUEST['w_fin_dev'], $_REQUEST['w_rub_dev'], $_REQUEST['w_lan_def'],
+                          $_REQUEST['w_ressarcimento_observacao'], $_REQUEST['w_fin_dev'], $_REQUEST['w_rub_dev'], $_REQUEST['w_lan_dev'],
                           $_REQUEST['w_exclui_arquivo'], $w_file, $w_tamanho, $w_tipo, $w_nome);
         } else {
           ScriptOpen('JavaScript');
@@ -8467,19 +8470,18 @@ function Grava() {
             }
             // Envia e-mail comunicando de tramitação
             SolicMail($_REQUEST['w_chave'], 2);
+            ScriptOpen('JavaScript');
             if ($P1 == 1) {
               // Se for envio da fase de cadastramento, remonta o menu principal
               // Recupera os dados para montagem correta do menu
               $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms, $w_menu);
-              ScriptOpen('JavaScript');
               ShowHTML('  parent.menu.location=\'' . montaURL_JS(null, $conRootSIW . 'menu.php?par=ExibeDocs&O=L&R=' . $R . '&SG=' . f($RS, 'sigla') . '&TP=' . RemoveTP(RemoveTP($TP)) . MontaFiltro('GET')) . '\';');
               ScriptClose();
             } else {
               // Volta para a listagem
-              ScriptOpen('JavaScript');
               ShowHTML('  location.href=\'' . montaURL_JS($w_dir, f($RS_Menu, 'link') . '&O=L&w_chave=' . $_REQUEST['w_chave'] . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&SG=' . f($RS_Menu, 'sigla') . MontaFiltro('GET')) . '\';');
-              ScriptClose();
             }
+            ScriptClose();
           }
         }
       } else {
