@@ -317,6 +317,8 @@ function Mesa() {
       $RS_Ano[$i] = $sql->getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
       $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
     }
+    
+    $w_datas = array();
 
     if ($_SESSION['DBMS']!=8) {
       // Recupera os dados da unidade de lotação do usuário
@@ -354,29 +356,6 @@ function Mesa() {
             null,null,null,null,'S',null,null,null,null,null,null,
             null, null, null, null, null, null, null,null, null, null, null, null, null, null, $w_usuario);
         $RS_Pendencia = SortArray($RS_Pendencia,'inicio', 'desc', 'fim', 'desc');
-
-        // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-        foreach($RS_Pendencia as $row) {
-          $w_saida   = f($row,'phpdt_saida');
-          $w_chegada = f($row,'phpdt_chegada');
-          if (f($row,'concluida')=='S') {
-            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_datas, 'Viagem a serviço\r\nSituação: Finalizada', 'N');
-          } elseif (f($row,'sg_tramite')=='AE' ||f($row,'sg_tramite')=='EE') {
-            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_datas, 'Viagem a serviço\r\nSituação: Confirmada', 'N');
-          } else {
-            retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_datas, 'Viagem a serviço\r\nSituação: Prevista', 'N');
-          }
-          $w_datas[formataDataEdicao($w_saida)]['valor']= str_replace('serviço','serviço (saída às '.date('H:i',$w_saida).'h)',$w_datas[formataDataEdicao($w_saida)]['valor']);
-          $w_datas[formataDataEdicao($w_chegada)]['valor']= str_replace('serviço','serviço (chegada às '.date('H:i',$w_chegada).'h)',$w_datas[formataDataEdicao($w_chegada)]['valor']);
-        }
-        reset($RS_Pendencia);
-        foreach($RS_Pendencia as $row) {
-          $w_saida   = f($row,'phpdt_saida');
-          $w_chegada = f($row,'phpdt_chegada');
-          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), $w_cores, $conTrBgColorLightRed1, 'N');
-          if (date('H',$w_saida)>13)   $w_cores[formataDataEdicao($w_saida)]['valor']   = $conTrBgColorLightRed2;
-          if (date('H',$w_chegada)<14) $w_cores[formataDataEdicao($w_chegada)]['valor'] = $conTrBgColorLightRed2;
-        }
         
         // Viagens no período do calendário da mesa de trabalho
         $sql = new db_getSolicList; $RS_Viagem = $sql->getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PDMESA',4,
@@ -566,52 +545,56 @@ function Mesa() {
             $w_array[date(Ymd,f($row,'envelope_3')).'-'.f($row,'codigo_interno').'E3']['evento'] = 'Abert.env.3';
           }
         }
-        // Ordena o array pela data
-        $w_array = SortArray($w_array,'data','asc','codigo_interno','asc'); 
 
-        ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
-        ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
-        if ($w_ano1!=$w_ano3) {
-          ShowHTML('              <tr><td align="center"><b>LICITAÇÕES ('.$w_nome_mes1.'/'.$w_ano1.' - '.$w_nome_mes3.')</b><br>');
-        } else {
-          ShowHTML('              <tr><td align="center"><b>LICITAÇÕES ('.$w_nome_mes1.'-'.$w_nome_mes3.')</b><br>');
-        }
-        // Exibe as licitações permitidas ao usuário logado
-        ShowHTML('              <tr><td>');
-        ShowHTML('                <table width="100%" border="1" cellspacing=0 bgcolor="'.$conTrBgColor.'">');
-        ShowHTML('                  <tr align="center" valign="middle">');
-        ShowHTML('                    <td><b>Data</td>');
-        ShowHTML('                    <td><b>Evento</td>');
-        ShowHTML('                    <td><b>Número</td>');
-        ShowHTML('                    <td width="1">&nbsp;</td>');
-        ShowHTML('                    <td><b>Vinculação</td>');
-        ShowHTML('                    <td><b>Solicitante</td>');
-        ShowHTML('                    <td><b>Executor</td>');
-        $w_cor = $w_cor=$conTrBgColor;
-        // Exibe o array com as datas
-        foreach($w_array as $row) {
-          if (nvl(f($row,'data_abertura'),'')!='' || nvl(f($row,'envelope_1'),'')!='' || nvl(f($row,'envelope_2'),'')!='' || nvl(f($row,'envelope_3'),'')!='') {
-            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('                    <td nowrap align="center">&nbsp;'.formataDataEdicao(f($row,'data'),5).((date('H:i',f($row,'data'))!='00:00') ? ' '.date('H:i',f($row,'data')) : '').'&nbsp;</td>');
-            ShowHTML('                    <td>'.f($row,'evento').'</td>');
-            ShowHTML('                    <td nowrap width="1%">');
-            ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'data_abertura'),f($row,'data_homologacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-            ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Compras,'link'),0,strpos(f($RSMenu_Compras,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Compras,'p1').'&P2='.f($RSMenu_Compras,'p2').'&P3='.f($RSMenu_Compras,'p3').'&P4='.f($RSMenu_Compras,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Compras,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
-            ShowHTML('                    </td>');
-            ShowHTML('                    <td width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
-            if ($_SESSION['INTERNO']=='S') {
-              if ($w_cliente==6881)                    ShowHTML('                    <td>'.f($row,'sg_cc').'</td>');
-              elseif (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('                    <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
-              else                                     ShowHTML('                    <td>---</td>');
-            }
-            ShowHTML('                    <td>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
-            ShowHTML('                    <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
-            ShowHTML('                  </tr>');
+        if (count($w_array)) {
+          // Ordena o array pela data
+          $w_array = SortArray($w_array,'data','asc','codigo_interno','asc'); 
+          
+          ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
+          ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
+          if ($w_ano1!=$w_ano3) {
+            ShowHTML('              <tr><td align="center"><b>LICITAÇÕES ('.$w_nome_mes1.'/'.$w_ano1.' - '.$w_nome_mes3.')</b><br>');
+          } else {
+            ShowHTML('              <tr><td align="center"><b>LICITAÇÕES ('.$w_nome_mes1.'-'.$w_nome_mes3.')</b><br>');
           }
+          // Exibe as licitações permitidas ao usuário logado
+          ShowHTML('              <tr><td>');
+          ShowHTML('                <table width="100%" border="1" cellspacing=0 bgcolor="'.$conTrBgColor.'">');
+          ShowHTML('                  <tr align="center" valign="middle">');
+          ShowHTML('                    <td><b>Data</td>');
+          ShowHTML('                    <td><b>Evento</td>');
+          ShowHTML('                    <td><b>Número</td>');
+          ShowHTML('                    <td width="1">&nbsp;</td>');
+          ShowHTML('                    <td><b>Vinculação</td>');
+          ShowHTML('                    <td><b>Solicitante</td>');
+          ShowHTML('                    <td><b>Executor</td>');
+          $w_cor = $w_cor=$conTrBgColor;
+          // Exibe o array com as datas
+          foreach($w_array as $row) {
+            if (nvl(f($row,'data_abertura'),'')!='' || nvl(f($row,'envelope_1'),'')!='' || nvl(f($row,'envelope_2'),'')!='' || nvl(f($row,'envelope_3'),'')!='') {
+              $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+              ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top">');
+              ShowHTML('                    <td nowrap align="center">&nbsp;'.formataDataEdicao(f($row,'data'),5).((date('H:i',f($row,'data'))!='00:00') ? ' '.date('H:i',f($row,'data')) : '').'&nbsp;</td>');
+              ShowHTML('                    <td>'.f($row,'evento').'</td>');
+              ShowHTML('                    <td nowrap width="1%">');
+              ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'data_abertura'),f($row,'data_homologacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+              ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Compras,'link'),0,strpos(f($RSMenu_Compras,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Compras,'p1').'&P2='.f($RSMenu_Compras,'p2').'&P3='.f($RSMenu_Compras,'p3').'&P4='.f($RSMenu_Compras,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Compras,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+              ShowHTML('                    </td>');
+              ShowHTML('                    <td width="1">'.ExibeAnotacao('../',$w_cliente,null,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno')).'</td>');
+              if ($_SESSION['INTERNO']=='S') {
+                if ($w_cliente==6881)                    ShowHTML('                    <td>'.f($row,'sg_cc').'</td>');
+                elseif (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('                    <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
+                else                                     ShowHTML('                    <td>---</td>');
+              }
+              ShowHTML('                    <td>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+              ShowHTML('                    <td>'.Nvl(f($row,'nm_exec'),'---').'</td>');
+              ShowHTML('                  </tr>');
+            }
+          }
+          ShowHTML('                </table>');
+          ShowHTML('              </table>');
+          
         }
-        ShowHTML('                </table>');
-        ShowHTML('              </table>');
       }
       // Final da exibição de licitações ================================
       

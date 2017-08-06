@@ -373,8 +373,6 @@ begin
                 n.sigla as sg_cc,
                 p.nome_resumido as nm_exec
            from siw_menu                                        a
-                --inner             join siw_modulo               a1 on (a.sq_modulo                = a1.sq_modulo)
-                --inner             join eo_unidade               c  on (a.sq_unid_executora        = c.sq_unidade)
                 inner             join siw_solicitacao          b  on (a.sq_menu                  = b.sq_menu)
                    inner          join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_pessoa,null) as acesso
                                           from siw_solicitacao             x
@@ -389,47 +387,6 @@ begin
                    inner          join eo_unidade               e  on (b.sq_unidade               = e.sq_unidade)
                    left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
                    left           join ct_cc                    n  on (b.sq_cc                    = n.sq_cc)
-                   /*inner          join co_cidade                f  on (b.sq_cidade_origem         = f.sq_cidade)
-                   left           join pj_projeto               b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
-                   left           join pa_documento             b5 on (b.protocolo_siw            = b5.sq_siw_solicitacao)
-                   left           join co_moeda                 b6 on (b.sq_moeda                 = b6.sq_moeda)
-                     left         join co_moeda                 b7 on (b6.ativo                   = b7.ativo and
-                                                                       b7.sigla                   = case coalesce(b6.sigla,'-')
-                                                                                                         when 'USD' then 'BRL'
-                                                                                                         when 'BRL' then 'USD'
-                                                                                                         else '-'
-                                                                                                    end
-                                                                      )
-                     left         join ct_especificacao_despesa d1 on (d.sq_especificacao_despesa = d1.sq_especificacao_despesa)
-                     left         join eo_indicador             d2 on (d.sq_eoindicador           = d2.sq_eoindicador)
-                     left         join lc_fonte_recurso         d3 on (d.sq_lcfonte_recurso       = d3.sq_lcfonte_recurso)
-                     left         join lc_modalidade            d4 on (d.sq_lcmodalidade          = d4.sq_lcmodalidade)
-                     left         join lc_modalidade_artigo    d41 on (d.sq_modalidade_artigo     = d41.sq_modalidade_artigo)
-                     left         join lc_julgamento            d5 on (d.sq_lcjulgamento          = d5.sq_lcjulgamento)
-                     left         join lc_situacao              d6 on (d.sq_lcsituacao            = d6.sq_lcsituacao)
-                     left         join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
-                     left         join cl_vinculo_financeiro    d8 on (d.sq_financeiro            = d8.sq_clvinculo_financeiro)
-                       left       join pj_rubrica              d81 on (d8.sq_projeto_rubrica      = d81.sq_projeto_rubrica)
-                       left       join fn_tipo_lancamento      d82 on (d8.sq_tipo_lancamento      = d82.sq_tipo_lancamento)
-                       left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and
-                                                                       e1.tipo_respons            = 'T'           and
-                                                                       e1.fim                     is null
-                                                                      )
-                       left       join eo_unidade_resp          e2 on (e.sq_unidade               = e2.sq_unidade and
-                                                                       e2.tipo_respons            = 'S'           and
-                                                                       e2.fim                     is null
-                                                                      )
-                   left           join siw_solicitacao          m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
-                   left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
-                   left           join co_pessoa                q  on (b.recebedor                = q.sq_pessoa)
-                   left           join eo_unidade_resp          a3 on (c.sq_unidade               = a3.sq_unidade and
-                                                                       a3.tipo_respons            = 'T'           and
-                                                                       a3.fim                     is null
-                                                                      )
-                   left           join eo_unidade_resp          a4 on (c.sq_unidade               = a4.sq_unidade and
-                                                                       a4.tipo_respons            = 'S'           and
-                                                                       a4.fim                     is null
-                                                                      )*/
           where (p_menu      is null or (p_menu  is not null and a.sq_menu = p_menu))
             and b1.ativo     = 'S'
             and b1.sigla     <> 'CI'
