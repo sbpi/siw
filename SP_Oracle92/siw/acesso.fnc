@@ -595,7 +595,7 @@ begin
          select count(*) into w_existe 
            from sg_tramite_pessoa a 
           where a.sq_pessoa          = p_usuario
-            and a.sq_pessoa_endereco = w_sq_endereco_unidade 
+            --and a.sq_pessoa_endereco = w_sq_endereco_unidade 
             and a.sq_siw_tramite     = w_sq_siw_tramite
             and (w_sigla <> 'PADCAD' or
                  (w_sigla = 'PADCAD' and
@@ -721,7 +721,7 @@ begin
             select count(*) into w_existe 
               from sg_tramite_pessoa a 
              where a.sq_pessoa          = p_usuario
-               and a.sq_pessoa_endereco = w_sq_endereco_unidade 
+               --and a.sq_pessoa_endereco = w_sq_endereco_unidade 
                and a.sq_siw_tramite     = w_sq_siw_tramite
                -- Se o usuário cumprir o trâmite, a solicitação deve ser de uma unidade vinculada à sua lotação ou o usuário deve ter visão na unidade solicitante
                and (w_unidade_lotacao   in (select w.sq_unidade
@@ -766,7 +766,7 @@ begin
       select count(*) into w_existe 
         from sg_tramite_pessoa a 
        where a.sq_pessoa          = p_usuario
-         and a.sq_pessoa_endereco = w_sq_endereco_unidade 
+         --and a.sq_pessoa_endereco = w_sq_endereco_unidade 
          and a.sq_siw_tramite     = coalesce(p_tramite, w_sq_siw_tramite)
          and (w_sigla <> 'PADCAD' or
               (w_sigla = 'PADCAD' and
