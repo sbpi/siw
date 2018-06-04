@@ -3,7 +3,8 @@ create or replace view VW_PROJETO_FINANCEIRO as
 select 'I' TIPO, e2.qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
-       e.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.codigo_externo cd_financeiro_externo,
+       e.sq_projeto_rubrica, g.sq_solic_apoio sq_fonte, g.sq_siw_solicitacao sq_projeto_fonte, g.entidade nm_fonte,
+       a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.codigo_externo cd_financeiro_externo,
        a.descricao||' - '||e.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then e.valor_total
             when e2.qtd_itens = 1 then f.valor 
@@ -19,7 +20,7 @@ select 'I' TIPO, e2.qtd_itens,
        a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        a3.sigla      sg_menu,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao, a.conclusao, e.ordem,
+       c.vencimento, c.quitacao, a.conclusao, e.ordem, e.sq_documento_item,
        -- Necessidade de conversão para BRL (contabilidade): 
        -- se o pagamento foi em Reais ou se o projeto é em Reais e foi inserido um valor nessa moeda, não precisa.
        case when a2.sigla          = 'BRL' then 'N'
@@ -69,6 +70,7 @@ select 'I' TIPO, e2.qtd_itens,
            inner     join pj_rubrica        e1 on (e.sq_projeto_rubrica  = e1.sq_projeto_rubrica)
              inner   join siw_solicitacao   b  on (e1.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
+           left      join siw_solic_apoio   g  on (e.sq_solic_apoio      = g.sq_solic_apoio)
        left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, l.sq_moeda sq_moeda
                              from siw_solicitacao                    k
                                   inner       join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
@@ -90,7 +92,8 @@ UNION ALL
 select 'D' TIPO, 1 qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
-       c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
+       c.sq_projeto_rubrica, g.sq_solic_apoio sq_fonte, g.sq_siw_solicitacao sq_projeto_fonte, g.entidade nm_fonte,
+       a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
        a.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, -- Valor convertido na moeda do projeto
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda,
@@ -102,7 +105,7 @@ select 'D' TIPO, 1 qtd_itens,
        a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        a3.sigla      sg_menu,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao, a.conclusao, 1 ordem,
+       c.vencimento, c.quitacao, a.conclusao, 1 ordem, 0 sq_documento_item,
        case when a2.sigla          = 'BRL' then 'N'
             when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then 'N'
             else 'S'
@@ -134,6 +137,7 @@ select 'D' TIPO, 1 qtd_itens,
                                                 )
            inner   join siw_solicitacao   b  on (c1.sq_siw_solicitacao = b.sq_siw_solicitacao)
              inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
+         left      join siw_solic_apoio   g  on (c.sq_solic_apoio      = g.sq_solic_apoio)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
        left        join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, l.sq_moeda sq_moeda
@@ -158,7 +162,8 @@ UNION ALL
 select 'D' TIPO, 1 qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
-       c.sq_projeto_rubrica, a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
+       c.sq_projeto_rubrica, g.sq_solic_apoio sq_fonte, g.sq_siw_solicitacao sq_projeto_fonte, g.entidade nm_fonte,
+       a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
        a.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, -- Valor convertido na moeda do projeto
        case when f.sq_siw_solicitacao is null then a2.sq_moeda   else b2.sq_moeda           end sq_fn_moeda,
@@ -170,7 +175,7 @@ select 'D' TIPO, 1 qtd_itens,
        a2.simbolo    fn_sb_moeda, -- Símbolo da moeda do pagamento
        a3.sigla      sg_menu,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
-       c.vencimento, c.quitacao, a.conclusao, 1 ordem,
+       c.vencimento, c.quitacao, a.conclusao, 1 ordem, 0 sq_documento_item,
        case when a2.sigla          = 'BRL' then 'N'
             when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then 'N'
             else 'S'
@@ -202,6 +207,7 @@ select 'D' TIPO, 1 qtd_itens,
                                                 )
            inner   join siw_solicitacao   b  on (c1.sq_siw_solicitacao = b.sq_siw_solicitacao)
              inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
+         left      join siw_solic_apoio   g  on (c.sq_solic_apoio      = g.sq_solic_apoio)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
        left        join (select k.sq_siw_solicitacao, m.valor/k2.valor*k.valor valor, k2.valor/m.valor fator, l.sq_moeda sq_moeda

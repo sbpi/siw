@@ -10,6 +10,7 @@ create or replace function CalculaValorContrato(p_chave in number, p_aditivo in 
   w_inicio_adi  ac_acordo_aditivo.inicio%type;
   w_fim_adi     ac_acordo_aditivo.fim%type;
   w_tipo_prazo  ac_tipo_acordo.prazo_indeterm%type;
+  w_fase        siw_tramite.sigla%type;
   
   cursor c_dados is
      select a.sq_siw_solicitacao, sum(b.valor) as valor
@@ -38,9 +39,10 @@ begin
   If w_existe = 0 Then return null; End If;
   
   -- Caso contrário, recupera dados do contrato
-  select a.inicio,     a.fim,     c.inicio,     c.fim,     d.prazo_indeterm 
-    into w_inicio_con, w_fim_con, w_inicio_ori, w_fim_ori, w_tipo_prazo
+  select a.inicio,     a.fim,     b.sigla, c.inicio,     c.fim,     d.prazo_indeterm 
+    into w_inicio_con, w_fim_con, w_fase,  w_inicio_ori, w_fim_ori, w_tipo_prazo
     from siw_solicitacao             a 
+         inner   join siw_tramite    b on (a.sq_siw_tramite      = b.sq_siw_tramite)
          inner join ac_acordo        c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
            inner join ac_tipo_acordo d on (c.sq_tipo_acordo     = d.sq_tipo_acordo)
    where a.sq_siw_solicitacao = p_chave;
@@ -69,7 +71,7 @@ begin
      -- Se pagamento não continuado, recupera a prorrogação mais recente
      select count(*) into w_existe from ac_acordo_aditivo where sq_siw_solicitacao = p_chave and prorrogacao = 'S';
      
-     If w_existe = 0 Then
+     If w_existe = 0 or w_fase = 'CI' Then
         w_aditivo := null;
      Else
         select max(sq_acordo_aditivo) into w_aditivo from ac_acordo_aditivo where sq_siw_solicitacao = p_chave and prorrogacao = 'S';

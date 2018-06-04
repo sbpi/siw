@@ -895,7 +895,7 @@ function Geral() {
       $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,
               null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null,null,
-              null,null,null,null);
+              null,null,null,null,null,null,null,null);
       foreach($RS_Vinculo as $row) {$RS_Vinculo = $row; break; }
       $w_solic_vinculo = f($RS_Vinculo,sq_siw_solicitacao);
       $w_justificativa = f($RS_Vinculo,'justificativa');

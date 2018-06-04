@@ -565,7 +565,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
     if(nvl($l_chave,'')>'') {
       if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<a  class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.nvl($l_chave,$w_chave).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><img border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif" alt="img" /></a>');
     }
-    ShowHTML('&nbsp;<img ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();" alt="img" />');
+    ShowHTML('&nbsp;<img ALIGN="CENTER" TITLE="" SRC="images/impressora.gif" onClick="window.print();"/>');
 
     $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.nvl($l_chave,$w_chave).'&w_sq_pessoa='.$w_sq_pessoa.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&w_usuario='.$w_usuario.'&w_dt_ini='.$w_dt_ini.'&w_dt_fim='.$w_dt_fim.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&w_filtro='.$_REQUEST['w_filtro'].'&SG='.$SG.MontaFiltro('GET'));
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.gif" alt="img" />');

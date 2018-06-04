@@ -9,12 +9,13 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getSolicCL {
-   function getInstanceOf($dbms,        $p_menu,        $p_pessoa,      $p_restricao,   $p_tipo, 
-        $p_ini_i,       $p_ini_f,       $p_fim_i,       $p_fim_f,       $p_atraso,      $p_solicitante,     $p_unidade,
-        $p_prioridade,  $p_ativo,       $p_proponente,  $p_chave,       $p_assunto,     $p_pais,            $p_regiao, 
-        $p_uf,          $p_cidade,      $p_usu_resp,    $p_uorg_resp,   $p_palavra,     $p_prazo,           $p_fase, 
-        $p_sqcc,        $p_projeto,     $p_atividade,   $p_acao_ppa,    $p_orprior,     $p_empenho,         $p_processo,
-        $p_moeda,       $p_vencedor,    $p_externo,     $p_cnpj,        $p_fornecedor) {
+   function getInstanceOf($dbms,          $p_menu,        $p_pessoa,      $p_restricao,   $p_tipo, 
+        $p_ini_i,       $p_ini_f,         $p_fim_i,       $p_fim_f,       $p_atraso,      $p_solicitante,     $p_unidade,
+        $p_prioridade,  $p_ativo,         $p_proponente,  $p_chave,       $p_assunto,     $p_tipo_material,   $p_seq_protocolo, 
+        $p_situacao,    $p_ano_protocolo, $p_usu_resp,    $p_uorg_resp,   $p_palavra,     $p_prazo,           $p_fase, 
+        $p_sqcc,        $p_projeto,       $p_atividade,   $p_acao_ppa,    $p_orprior,     $p_empenho,         $p_servico,
+        $p_moeda,       $p_vencedor,      $p_externo,     $p_cnpj,        $p_fornecedor,  $p_pais,            $p_regiao,
+        $p_uf,          $p_cidade) {
 
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicCL';
      $params=array('p_menu'                     =>array($p_menu,                B_INTEGER,        32),
@@ -33,10 +34,10 @@ class db_getSolicCL {
                    'p_proponente'               =>array(tvl($p_proponente),     B_VARCHAR,        90),
                    'p_chave'                    =>array(tvl($p_chave),          B_INTEGER,        32),
                    'p_assunto'                  =>array(tvl($p_assunto),        B_VARCHAR,        90),
-                   'p_pais'                     =>array(tvl($p_pais),           B_INTEGER,        32),
-                   'p_regiao'                   =>array(tvl($p_regiao),         B_INTEGER,        32),
-                   'p_uf'                       =>array(tvl($p_uf),             B_VARCHAR,        12),
-                   'p_cidade'                   =>array(tvl($p_cidade),         B_INTEGER,        32),
+                   'p_tipo_material'            =>array(tvl($p_tipo_material),  B_INTEGER,        32),
+                   'p_seq_protocolo'            =>array(tvl($p_seq_protocolo),  B_INTEGER,        32),
+                   'p_situacao'                 =>array(tvl($p_situacao),       B_VARCHAR,        12),
+                   'p_ano_protocolo'            =>array(tvl($p_ano_protocolo),  B_INTEGER,        32),
                    'p_usu_resp'                 =>array(tvl($p_usu_resp),       B_INTEGER,        32),
                    'p_uorg_resp'                =>array(tvl($p_uorg_resp),      B_INTEGER,        32),
                    'p_palavra'                  =>array(tvl($p_palavra),        B_VARCHAR,        90),
@@ -48,12 +49,16 @@ class db_getSolicCL {
                    'p_acao_ppa'                 =>array(tvl($p_acao_ppa),       B_INTEGER,        32),
                    'p_orprior'                  =>array(tvl($p_orprior),        B_INTEGER,        32),
                    'p_empenho'                  =>array(tvl($p_empenho),        B_VARCHAR,        30),
-                   'p_processo'                 =>array(tvl($p_processo),       B_VARCHAR,        30),
+                   'p_servico'                  =>array(tvl($p_servico),        B_VARCHAR,        30),
                    'p_moeda'                    =>array(tvl($p_moeda),          B_INTEGER,        32), 
                    'p_vencedor'                 =>array(tvl($p_vencedor),       B_VARCHAR,         1),
                    'p_externo'                  =>array(tvl($p_externo),        B_VARCHAR,        60),
                    'p_cnpj'                     =>array(tvl($p_cnpj),           B_VARCHAR,        20),
-                   'p_fornecedor'               =>array(tvl($p_fornecedor),     B_VARCHAR,        60),                                     
+                   'p_fornecedor'               =>array(tvl($p_fornecedor),     B_VARCHAR,        60),
+                   'p_pais'                     =>array(tvl($p_pais),           B_INTEGER,        32),
+                   'p_regiao'                   =>array(tvl($p_regiao),         B_INTEGER,        32),
+                   'p_uf'                       =>array(tvl($p_uf),             B_VARCHAR,        12),
+                   'p_cidade'                   =>array(tvl($p_cidade),         B_INTEGER,        32),                                     
                    'p_result'                   =>array(null,                   B_CURSOR,         -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -77,6 +77,9 @@ $conImgGeo      = 'images/icone/earth_16.png';
 $conImgFin      = 'images/icone/dollar-green.png';
 $conImgSheet     = 'images/Folder/SheetImg.gif';
 
+
+$conImgTurnRight = 'images/icone/turn-right.png';
+
 //---------------------------Definições de banco
 
 $strschema	= '';
@@ -92,9 +95,9 @@ $conEnviaMail   = false;
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
 $conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
-$conDefaultPath = 'http://titan.sbpi1.com.br';
+$conDefaultPath = 'http://galileu.sbpi1.com.br';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://titan.sbpi1.com.br/siw/';
+$conRootSIW     = 'http://galileu.sbpi1.com.br/siw/';
 $conDiretorio   = 'c:/www/siw/';
 $conFontPath    = $conDiretorio.'fonts/linux/';
 $conFileVirtual = '/siw_files/';

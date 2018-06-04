@@ -142,7 +142,7 @@ function Inicial() {
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="p_moedas" value="N">');
   ShowHTML('<INPUT type="hidden" name="p_contabil" value="N">');
-  ShowHTML('<INPUT type="hidden" name="p_receita" value="N">');
+  ShowHTML('<INPUT type="hidden" name="p_receita" value="S">');
   ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
   ShowHTML('    <table width="99%" border="0">');
   ShowHTML('      <tr>');
@@ -272,15 +272,12 @@ function detalhamentoDespesa() {
       $w_total_contabil += f($row,'brl_valor_compra');
     }
   } 
-  /*
   $l_html.=chr(13).'      <tr valign="top">';
-  $l_html.=chr(13).'        <td colspan="'.$cs.'" align="right"><b>Total: </b></td>';
+  $l_html.=chr(13).'        <td colspan="'.$cs.'" align="right"><b>Totais: </b></td>';
   $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_previsto).' </b></td>';
   $l_html.=chr(13).'        <td>&nbsp;</td>';
   $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_previsto).' </b></td>';
   $l_html.=chr(13).'      </tr>';
-   * 
-   */
 
   $l_html.=chr(13).'          <tr class="folha">';
   $l_html.=chr(13).'            <td colspan="10" align="center"><table border=0 width=40%>';

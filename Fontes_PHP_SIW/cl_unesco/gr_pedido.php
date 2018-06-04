@@ -16,10 +16,6 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
-include_once($w_dir_volta.'classes/sp/db_getRegionData.php');
-include_once($w_dir_volta.'classes/sp/db_getStateData.php');
-include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_getMoeda.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
@@ -83,41 +79,45 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 $w_ano      = RetornaAno();
 
-$p_tipo         = upper($_REQUEST['w_tipo']);
-$p_projeto      = upper($_REQUEST['p_projeto']);
-$p_atividade    = upper($_REQUEST['p_atividade']);
-$p_graf         = upper($_REQUEST['p_graf']);
-$p_ativo        = upper($_REQUEST['p_ativo']);
-$p_solicitante  = upper($_REQUEST['p_solicitante']);
-$p_prioridade   = upper($_REQUEST['p_prioridade']);
-$p_unidade      = upper($_REQUEST['p_unidade']);
-$p_proponente   = upper($_REQUEST['p_proponente']);
-$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
-$p_ordena       = lower($_REQUEST['p_ordena']);
-$p_ini_i        = upper($_REQUEST['p_ini_i']);
-$p_ini_f        = upper($_REQUEST['p_ini_f']);
-$p_fim_i        = upper($_REQUEST['p_fim_i']);
-$p_fim_f        = upper($_REQUEST['p_fim_f']);
-$p_atraso       = upper($_REQUEST['p_atraso']);
-$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
-$p_empenho      = upper($_REQUEST['p_empenho']);
-$p_chave        = upper($_REQUEST['p_chave']);
-$p_assunto      = upper($_REQUEST['p_assunto']);
-$p_pais         = upper($_REQUEST['p_pais']);
-$p_regiao       = upper($_REQUEST['p_regiao']);
-$p_uf           = upper($_REQUEST['p_uf']);
-$p_cidade       = upper($_REQUEST['p_cidade']);
-$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
-$p_palavra      = upper($_REQUEST['p_palavra']);
-$p_prazo        = upper($_REQUEST['p_prazo']);
-$p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = upper($_REQUEST['p_sqcc']);
-$p_agrega       = upper($_REQUEST['p_agrega']);
-$p_tamanho      = upper($_REQUEST['p_tamanho']);
-$p_ano          = $_REQUEST['p_ano'];
-$p_inicio       = $_REQUEST['p_inicio'];
-$p_final        = $_REQUEST['p_final'];
-$p_moeda        = $_REQUEST['p_moeda'];
+$p_tipo          = upper($_REQUEST['w_tipo']);
+$p_projeto       = upper($_REQUEST['p_projeto']);
+$p_atividade     = upper($_REQUEST['p_atividade']);
+$p_graf          = upper($_REQUEST['p_graf']);
+$p_ativo         = upper($_REQUEST['p_ativo']);
+$p_solicitante   = upper($_REQUEST['p_solicitante']);
+$p_prioridade    = upper($_REQUEST['p_prioridade']);
+$p_unidade       = upper($_REQUEST['p_unidade']);
+$p_proponente    = upper($_REQUEST['p_proponente']);
+$p_usu_resp      = upper($_REQUEST['p_usu_resp']);
+$p_ordena        = lower($_REQUEST['p_ordena']);
+$p_ini_i         = upper($_REQUEST['p_ini_i']);
+$p_ini_f         = upper($_REQUEST['p_ini_f']);
+$p_fim_i         = upper($_REQUEST['p_fim_i']);
+$p_fim_f         = upper($_REQUEST['p_fim_f']);
+$p_atraso        = upper($_REQUEST['p_atraso']);
+$p_acao_ppa      = upper($_REQUEST['p_acao_ppa']);
+$p_empenho       = upper($_REQUEST['p_empenho']);
+$p_chave         = upper($_REQUEST['p_chave']);
+$p_assunto       = upper($_REQUEST['p_assunto']);
+$p_tipo_material = upper($_REQUEST['p_tipo_material']);
+$p_seq_protocolo = upper($_REQUEST['p_seq_protocolo']);
+$p_situacao      = upper($_REQUEST['p_situacao']);
+$p_ano_protocolo = upper($_REQUEST['p_ano_protocolo']);
+$p_pais          = upper($_REQUEST['p_pais']);
+$p_regiao        = upper($_REQUEST['p_regiao']);
+$p_uf            = upper($_REQUEST['p_uf']);
+$p_cidade        = upper($_REQUEST['p_cidade']);
+$p_uorg_resp     = upper($_REQUEST['p_uorg_resp']);
+$p_palavra       = upper($_REQUEST['p_palavra']);
+$p_prazo         = upper($_REQUEST['p_prazo']);
+$p_fase          = explodeArray($_REQUEST['p_fase']);
+$p_sqcc          = upper($_REQUEST['p_sqcc']);
+$p_agrega        = upper($_REQUEST['p_agrega']);
+$p_tamanho       = upper($_REQUEST['p_tamanho']);
+$p_ano           = $_REQUEST['p_ano'];
+$p_inicio        = $_REQUEST['p_inicio'];
+$p_final         = $_REQUEST['p_final'];
+$p_moeda         = $_REQUEST['p_moeda']; 
 
 // Recupera a configuração do serviço
 $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
@@ -143,9 +143,9 @@ foreach($RS as $row) {
 $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
     null,null,null,null,$p_atraso,$p_solicitante,
     $p_unidade,null,$p_ativo,$p_proponente,
-    $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+    $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,
     $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-    $p_acao_ppa, null, $p_empenho, null, null,null,null,null,null);
+    $p_acao_ppa, null, $p_empenho, null, null,null,null,null,null,null,null,null,null);
 
 foreach($RS1 as $row) {
   if (nvl($p_inicio,'')=='') {
@@ -203,8 +203,9 @@ function Gerencial() {
     // Recupera os dados a partir do filtro
     $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,null,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
+        $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor,
+        $p_pais, $p_regiao, $p_uf, $p_cidade);
     $RS1 = SortArray($RS1,'or_unidade_resp', 'asc', 'sg_unidade_resp','asc');
   } 
 

@@ -166,9 +166,10 @@ begin
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
    Elsif p_restricao = 'PJFINS' or p_restricao = 'PJFINN' Then
       open p_result for 
-         select sq_projeto_rubrica, sg_fn_moeda, valor, aplicacao_financeira, descricao,
+         select sq_projeto_rubrica, sg_fn_moeda, valor, aplicacao_financeira, descricao, sq_fonte, nm_fonte,
                 retornaHierarquiaRubrica(sq_projeto_rubrica, 'PAIS') lista
            from (select w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira, w.ds_financeiro descricao, 
+                        w.sq_fonte, w.nm_fonte,
                         sum(case when substr(w.sg_menu,1,3) = 'FNR' then trunc(-1*w.valor,2) else trunc(w.valor,2) end) valor
                    from vw_projeto_financeiro   w
                   where w.sq_projeto         = p_chave
@@ -180,19 +181,22 @@ begin
                                                       )
                          )
                         )
-                 group by w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira, w.ds_financeiro
+                 group by w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira, w.ds_financeiro, w.sq_fonte, w.nm_fonte
                 );
    Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' Then
       open p_result for 
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda, 
                 a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
+                a.sq_fonte, a.nm_fonte,
                 a.sq_financeiro, a.cd_financeiro, a.cd_financeiro_externo,
                 case when substr(a.sg_menu,1,3) = 'FNR' then trunc(-1*a.valor,2) else trunc(a.valor,2) end valor,
                 a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
-                a.fn_valor, a.fn_sq_moeda, a.fn_sg_moeda, a.fn_sb_moeda, a.ordem or_item,
+                a.fn_valor, a.fn_sq_moeda, a.fn_sg_moeda, a.fn_sb_moeda, a.ordem or_item, a.sq_documento_item,
                 a.exige_brl, a.fator_conversao, a.conclusao,
-                a.brl_taxa_compra_data, a.brl_taxa_compra, a.brl_valor_compra, 
-                a.brl_taxa_venda_data,  a.brl_taxa_venda,  a.brl_valor_venda,
+                a.brl_taxa_compra_data, a.brl_taxa_compra, 
+                case when substr(a.sg_menu,1,3) = 'FNR' then trunc(-1*a.brl_valor_compra,2) else a.brl_valor_compra end brl_valor_compra, 
+                a.brl_taxa_venda_data,  a.brl_taxa_venda,
+                case when substr(a.sg_menu,1,3) = 'FNR' then trunc(-1*a.brl_valor_venda,2) else a.brl_valor_venda end brl_valor_venda, 
                 codigo2numero(a.cd_financeiro) or_financeiro,
                 b.codigo cd_rubrica, b.nome nm_rubrica,
                 b1.codigo cd_rubrica_pai, b1.nome nm_rubrica_pai,

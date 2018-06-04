@@ -22,6 +22,7 @@ include_once($w_dir_volta.'classes/sp/db_getRegionData.php');
 include_once($w_dir_volta.'classes/sp/db_getStateData.php');
 include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
+include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
@@ -711,11 +712,13 @@ function Inicial() {
               } 
             } 
           } else {
-            if (Nvl(f($row,'solicitante'),0)==$w_usuario || 
+            if (Nvl(f($row,'solicitante'),0) ==$w_usuario || 
                 Nvl(f($row,'titular'),0)     ==$w_usuario || 
                 Nvl(f($row,'substituto'),0)  ==$w_usuario || 
                 Nvl(f($row,'tit_exec'),0)    ==$w_usuario || 
-                Nvl(f($row,'subst_exec'),0)  ==$w_usuario
+                Nvl(f($row,'subst_exec'),0)  ==$w_usuario ||
+                Nvl(f($row,'cadastrador'),0) ==$w_usuario ||
+                RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S'
                ) {
               ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tramite='.f($row,'sq_siw_tramite').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia para outro responsável.">EN</A>&nbsp');
             } else {
@@ -933,7 +936,7 @@ function BuscaCompra() {
   // Recupera certames passíveis de contratação
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$_SESSION['SQ_PESSOA'],'CONTRATO',3,
       null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null, null,null,null,null);
       
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1187,7 +1190,7 @@ function Geral() {
     $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],'CLLCCAD',3,
         null,null,null,null,null,null,null,null,null,null,(($w_herda) ? substr($w_herda,0,strpos($w_herda,'|')) :$w_chave_pai),
         null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null);
+        null, null,null,null,null);
     if (count($RS_Solic)>0) $RS_Solic = $RS_Solic[0];
     
     $w_cd_compra            = f($RS_Solic,'codigo_interno');

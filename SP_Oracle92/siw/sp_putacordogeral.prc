@@ -70,7 +70,9 @@ create or replace procedure SP_PutAcordoGeral
       select * from ac_acordo_parcela where sq_siw_solicitacao = p_copia order by ordem, vencimento;
 
    cursor c_outra_parte is
-      select distinct outra_parte, tipo from ac_acordo_outra_parte where sq_siw_solicitacao = p_copia;
+      select distinct outra_parte, tipo 
+        from ac_acordo_outra_parte 
+       where sq_siw_solicitacao = p_copia;
    
    cursor c_compra (l_solicitacao in number, l_fornecedor in number) is
       select a.sq_siw_solicitacao, a.sq_solic_pai,
@@ -204,7 +206,8 @@ begin
             insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
             values (w_outra_parte, w_chave, crec.outra_parte, crec.tipo);
             
-            -- Copia os representantes de cada outra parte
+            -- Copia os representantes de cada outra parte apenas se o contratado
+            -- for o mesmo do contrato de origem.
             insert into ac_acordo_outra_rep
               (sq_acordo_outra_parte, sq_pessoa, sq_siw_solicitacao, cargo, tipo)
             (select distinct w_outra_parte, a.sq_pessoa, w_chave, a.cargo, a.tipo
@@ -212,7 +215,10 @@ begin
                     inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte and
                                                            b.outra_parte           = crec.outra_parte
                                                           )
-               where a.sq_siw_solicitacao = p_copia);
+                    inner join ac_acordo             c on (a.sq_siw_solicitacao    = c.sq_siw_solicitacao)
+               where a.sq_siw_solicitacao = p_copia
+                 and c.outra_parte        = p_pessoa
+            );
          end loop;
          
 

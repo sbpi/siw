@@ -95,14 +95,14 @@ begin
            sq_tipo_lancamento,   sq_tipo_pessoa,     emissao,             vencimento,
            observacao,           aviso_prox_conc,    dias_aviso,          tipo,
            processo,             referencia_inicio,  referencia_fim,      condicoes_pagamento,
-           sq_solic_vinculo,     sq_projeto_rubrica
+           sq_solic_vinculo,     sq_projeto_rubrica, sq_solic_apoio
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
            p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica,
            p_numero_processo,    w_inicio,          w_fim,               p_condicao,
-           p_vinculo,            p_rubrica
+           p_vinculo,            p_rubrica,         p_solic_apoio
       );
 
       -- Insere log da solicitação
@@ -162,7 +162,8 @@ begin
           referencia_fim       = p_per_fim,
           condicoes_pagamento  = p_condicao,
           sq_solic_vinculo     = p_vinculo,
-          sq_projeto_rubrica   = p_rubrica
+          sq_projeto_rubrica   = p_rubrica,
+          sq_solic_apoio       = p_solic_apoio
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then
@@ -188,6 +189,14 @@ begin
             set sq_projeto_rubrica = p_rubrica
          where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave)
            and sq_projeto_rubrica is null;
+      End If;
+
+      -- Se recebeu fonte de financiamento, atualiza os itens do lançamento que estão com esse campo nulo
+      If p_solic_apoio is not null Then
+         update fn_documento_item
+            set sq_solic_apoio = p_solic_apoio
+         where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave)
+           and p_solic_apoio is null;
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação

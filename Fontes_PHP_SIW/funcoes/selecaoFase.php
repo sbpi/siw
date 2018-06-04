@@ -12,8 +12,13 @@ function selecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$p_solic,$campo,$r
   } else {
     ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
+  ShowHTML('          <option value="">---</option>');
   if ($restricao=='DEVFLUXO') {
     $rs = SortArray($rs,'ordem','desc');
+    foreach($rs as $row) {
+      ShowHTML('          <option value="'.f($row,'sq_siw_tramite').'"'.((f($row,'sq_siw_tramite')==$chave) ? ' SELECTED' : '').'>'.f($row,'ordem').' - '.f($row,'nome').' ('.f($row,'nm_chefia').')');
+    }
+  } elseif ($restricao=='FLUXO') {
     foreach($rs as $row) {
       ShowHTML('          <option value="'.f($row,'sq_siw_tramite').'"'.((f($row,'sq_siw_tramite')==$chave) ? ' SELECTED' : '').'>'.f($row,'ordem').' - '.f($row,'nome').' ('.f($row,'nm_chefia').')');
     }

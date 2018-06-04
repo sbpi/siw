@@ -17,7 +17,7 @@ create or replace procedure sp_putMatServ
     p_ativo           in  varchar2 default null,
     p_chave_nova      out number
    ) is
-   w_raiz      varchar2(80);
+   w_raiz      varchar2(255);
    w_existe    number(18);
    w_chave     number(18)                             := p_chave;
    w_codigo    cl_material.codigo_interno%type        := p_codigo_interno;

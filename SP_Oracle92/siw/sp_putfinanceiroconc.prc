@@ -93,9 +93,9 @@ begin
 
         -- Insere o item
         insert into fn_documento_item
-               (sq_documento_item,         sq_lancamento_doc, sq_projeto_rubrica, ordem,        descricao,
+               (sq_documento_item,         sq_lancamento_doc, sq_projeto_rubrica, ordem,         descricao,
                 quantidade,                valor_unitario,    valor_total,        valor_cotacao)
-        (select sq_documento_item.nextval, w_chave_doc,       p_rubrica,          1,            x.nome,
+        (select sq_documento_item.nextval, w_chave_doc,       p_rubrica,          1,             x.nome,
                 1,                         p_valor_real,      p_valor_real,       0
            from siw_solicitacao     w
                 inner join siw_menu x on (w.sq_menu = x.sq_menu)

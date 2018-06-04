@@ -106,7 +106,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
-                f.nome nm_cidade,
+                case f1.padrao when 'S' then f.nome||' - '||f.co_uf else f.nome||' ('||f1.nome||')' end as nm_cidade,
                 m2.titulo nm_projeto,
                 n.sq_cc,              n.nome as nm_cc,                  n.sigla as sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
@@ -176,6 +176,7 @@ begin
                                                                    e2.fim                     is null
                                                                   )
                    inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                     inner        join co_pais              f1 on (f.sq_pais                  = f1.sq_pais)
                    left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao or
                                                                    d.sq_solic_vinculo         = m.sq_siw_solicitacao
                                                                   )

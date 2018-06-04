@@ -71,33 +71,42 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
   $l_rs4 = $sql->getInstanceOf($dbms, $v_chave, null, null);
   $l_existe_rs4 = count($l_rs4);
 
-// Recupera as diárias da solicitação de viagem
-  $sql = new db_getPD_Deslocamento;
-  $l_rs5 = $sql->getInstanceOf($dbms, $v_chave, null, 'S', 'PDDIARIA');
-  $l_existe_rs5 = count($l_rs5);
-  $l_rs5 = SortArray($l_rs5, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
-  $l_i = 0;
-  foreach ($l_rs5 as $row) {
-    if ($l_i == 0)
-      $w_inicio_s = f($row, 'saida');
-    $w_fim_s = f($row, 'chegada');
-    $l_i++;
-  }
-  reset($l_rs5);
+  
+  
+  if (nvl(f($l_rs_solic, 'diaria'), '') == '' && f($l_rs_solic, 'hospedagem') == 'N' && f($l_rs_solic, 'veiculo') == 'N') {
+    //Viagem sem pagamento de diárias/hospedagem/veículo
+    $l_existe_diaria = 0;
+    $l_existe_rs5 = 0;
+    $l_existe_rs6 = 0;
+  } else {  
+    $l_existe_diaria = 1;
+    // Recupera as diárias da solicitação de viagem
+    $sql = new db_getPD_Deslocamento;
+    $l_rs5 = $sql->getInstanceOf($dbms, $v_chave, null, 'S', 'PDDIARIA');
+    $l_existe_rs5 = count($l_rs5);
+    $l_rs5 = SortArray($l_rs5, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
+    $l_i = 0;
+    foreach ($l_rs5 as $row) {
+      if ($l_i == 0) $w_inicio_s = f($row, 'saida');
+      $w_fim_s = f($row, 'chegada');
+      $l_i++;
+    }
+    reset($l_rs5);
 
-// Recupera as diárias da prestação de contas de viagem
-  $sql = new db_getPD_Deslocamento;
-  $l_rs6 = $sql->getInstanceOf($dbms, $v_chave, null, 'P', 'PDDIARIA');
-  $l_existe_rs6 = count($l_rs6);
-  $l_rs6 = SortArray($l_rs6, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
-  $l_i = 0;
-  foreach ($l_rs6 as $row) {
-    if ($l_i == 0)
-      $w_inicio_p = f($row, 'saida');
-    $w_fim_p = f($row, 'chegada');
-    $l_i++;
+  // Recupera as diárias da prestação de contas de viagem
+    $sql = new db_getPD_Deslocamento;
+    $l_rs6 = $sql->getInstanceOf($dbms, $v_chave, null, 'P', 'PDDIARIA');
+    $l_existe_rs6 = count($l_rs6);
+    $l_rs6 = SortArray($l_rs6, 'phpdt_saida', 'asc', 'phpdt_chegada', 'asc');
+    $l_i = 0;
+    foreach ($l_rs6 as $row) {
+      if ($l_i == 0)
+        $w_inicio_p = f($row, 'saida');
+      $w_fim_p = f($row, 'chegada');
+      $l_i++;
+    }
+    reset($l_rs6);
   }
-  reset($l_rs6);
 
 //-----------------------------------------------------------------------------------
 // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
@@ -145,9 +154,9 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
            ) $l_erro_banco = 1;
       }
     }
-
-    if (nvl(f($l_rs_solic,'sg_forma_pagamento'),'')=='') {
-      $l_erro .= '<li>Dados para pagamento das diárias precisam ser informadados. Acesse a tela do beneficiário e clique no botão "Gravar"';
+    
+    if (nvl(f($l_rs_solic,'sg_forma_pagamento'),'')=='' && $l_existe_diaria) {
+      $l_erro .= '<li>Dados para pagamento das diárias precisam ser informados. Acesse a tela do beneficiário e clique no botão "Gravar"';
       $l_tipo=0;
     } elseif ($l_erro_banco==1) {
       $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
@@ -202,7 +211,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
       $l_tipo = 0;
     }
 
-    if (nvl(f($l_rs_solic, 'diaria'), '') != '' || f($l_rs_solic, 'hospedagem') == 'S' || f($l_rs_solic, 'veiculo') == 'S') {
+    if ($l_existe_diaria) {
 // Se foi informado que há diária/hospedagem/locação de veículo, pelo menos um deslocamento deve informar a quantidade de diárias
       if (f($l_rs_solic, 'diaria') != '')
         $w_erro_diaria = true;
@@ -354,7 +363,7 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         $l_tipo = 0;
       }
 
-      if (f($l_rs_solic, 'cumprimento') == 'P' && (nvl(f($l_rs_solic, 'diaria'), '') != '' || f($l_rs_solic, 'hospedagem') == 'S' || f($l_rs_solic, 'veiculo') == 'S')) {
+      if (f($l_rs_solic, 'cumprimento') == 'P' && $l_existe_diaria) {
         $w_cont = 0;
         $l_i = 1;
         foreach ($l_rs6 as $row) {

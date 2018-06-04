@@ -8603,7 +8603,7 @@ function Grava() {
         $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $SG);
         if (f($RS, 'concluida') == 'S') {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: Outro usuário já concluiu esta solicitação!\');');
+          ShowHTML('  alert("ATENÇÃO: Outro usuário já concluiu esta solicitação!");');
           ScriptClose();
           exit();
         } else {

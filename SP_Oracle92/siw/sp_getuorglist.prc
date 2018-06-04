@@ -109,7 +109,8 @@ begin
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, a.externo,
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, coalesce(d.nome,'Informar') as responsavel,
                    coalesce(e.qtd,0) as qtd_resp,
-                   coalesce(f.qtd,0) as qtd_local
+                   coalesce(f.qtd,0) as qtd_local,
+                   coalesce(g.qtd,0) as qtd_bem
               from eo_unidade                        a
                    left   outer join eo_unidade_resp c on (a.sq_unidade = c.sq_unidade
                                                            and c.tipo_respons = 'T'
@@ -125,7 +126,12 @@ begin
                                         from eo_localizacao x
                                        where ativo = 'S'
                                       group by sq_unidade
-                                     )               f on (a.sq_unidade = f.sq_unidade),
+                                     )               f on (a.sq_unidade = f.sq_unidade)
+                   left   outer join (select x.sq_unidade, count(y.sq_permanente) as qtd
+                                        from eo_localizacao           x
+                                             inner join mt_permanente y on x.sq_localizacao = y.sq_localizacao
+                                      group by x.sq_unidade
+                                     )               g on (a.sq_unidade = g.sq_unidade),
                    co_pessoa_endereco                b
              where a.sq_pessoa_endereco   = b.sq_pessoa_endereco
                and a.sq_unidade_pai       is null
@@ -375,7 +381,8 @@ begin
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,  a.externo,
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, coalesce(d.nome,'Informar') as responsavel,
                    coalesce(e.qtd,0) as qtd_resp,
-                   coalesce(f.qtd,0) as qtd_local
+                   coalesce(f.qtd,0) as qtd_local,
+                   coalesce(g.qtd,0) as qtd_bem
               from eo_unidade                        a
                    left   outer join eo_unidade_resp c on (a.sq_unidade = c.sq_unidade
                                                            and c.tipo_respons = 'T'
@@ -391,7 +398,12 @@ begin
                                         from eo_localizacao x
                                        where ativo = 'S'
                                       group by sq_unidade
-                                     )               f on (a.sq_unidade = f.sq_unidade),
+                                     )               f on (a.sq_unidade = f.sq_unidade)
+                   left   outer join (select x.sq_unidade, count(y.sq_permanente) as qtd
+                                        from eo_localizacao           x
+                                             inner join mt_permanente y on x.sq_localizacao = y.sq_localizacao
+                                      group by x.sq_unidade
+                                     )               g on (a.sq_unidade = g.sq_unidade),
                    co_pessoa_endereco                b
              where a.sq_pessoa_endereco   = b.sq_pessoa_endereco
                and a.sq_unidade_pai       = p_chave

@@ -123,7 +123,8 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     // Recupera itens do vencedor
     $sql = new db_getSolicCL; $l_rs_comp = $sql->getInstanceOf($dbms,$v_dados_pai[3],$_SESSION['SQ_PESSOA'],'FINANCEIRO',3,
         null,null,null,null,null,null,null,null,null,null,f($l_rs_solic,'sq_solic_pai'),null,null,null,null,null,null,
-        null,null,null,null,null,null,null,$l_chave,null,null,null,null,null,null,null,Nvl(f($l_rs_solic,'pessoa'),0));
+        null,null,null,null,null,null,null,$l_chave,null,null,null,null,null,null,null,Nvl(f($l_rs_solic,'pessoa'),0),
+        null,null,null,null);
     foreach($l_rs_comp as $row) {
       if (f($row,'quantidade_autorizada')-(f($row,'qtd_paga')+f($row,'qtd_fn'))<0) {
         $l_erro.='<li>A quantidade informada no item <b>'.f($row,'ordem').'</b> excede a quantidade disponível para pagamento, que é igual a '.formatNumber(f($row,'quantidade_autorizada')-f($row,'qtd_paga'),0).'.';

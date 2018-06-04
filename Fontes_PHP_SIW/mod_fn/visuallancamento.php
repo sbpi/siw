@@ -679,13 +679,44 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       if ($w_total>0) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="right"'.(($w_entidade!='') ? ' colspan=2' : '').'><b>Total</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
+        $l_html.=chr(13).'        <td align="right" width="20%"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
         $l_html.=chr(13).'      </tr>';
       }      
       $l_html.=chr(13).'         </table></td></tr>';
     }
   }
   
+  // Fontes de financiamento
+  $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'FONTE');
+  if(count($RS)>0) {
+    $RS = SortArray($RS,'nm_fonte','asc');
+    if (count($RS)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>FONTES DE FINANCIAMENTO E VALORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'        <table width=100% border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Fonte</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor total'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      $w_total = 0;
+      foreach($RS as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="left">'.f($row,'nm_fonte').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_total'),0)).'&nbsp;&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+        $w_total += nvl(f($row,'valor_total'),0);
+      } 
+      if ($w_total>0) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="right"><b>Total</b></td>';
+        $l_html.=chr(13).'        <td align="right" width="20%"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+      }      
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
+  }
+
   // Arquivos vinculados
   $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
   $RS = SortArray($RS,'nome','asc');

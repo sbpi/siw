@@ -1,27 +1,28 @@
 create or replace procedure sp_getMTBem
-   (p_cliente       in number,
-    p_usuario       in number,
-    p_chave         in number    default null,
-    p_ctcc          in number    default null,
-    p_projeto       in number    default null,
-    p_financeiro    in varchar2  default null,
-    p_tipo_material in number    default null,
-    p_material      in varchar2  default null,
-    p_rgp           in number    default null,
-    p_descricao     in varchar2  default null,
-    p_marca         in varchar2  default null,
-    p_modelo        in varchar2  default null,
-    p_observacao    in varchar2  default null,
-    p_ativo         in varchar2  default null,
-    p_almoxarifado  in number    default null,
-    p_endereco      in number    default null,
-    p_unidade       in number    default null,
-    p_localizacao   in number    default null,
-    p_situacao      in number    default null,
-    p_inicio        in date      default null,
-    p_fim           in date      default null,
-    p_restricao     in varchar2  default null,
-    p_result        out sys_refcursor) is
+   (p_cliente        in number,
+    p_usuario        in number,
+    p_chave          in number     default null,
+    p_ctcc           in number     default null,
+    p_projeto        in number     default null,
+    p_financeiro     in varchar2   default null,
+    p_tipo_material  in number     default null,
+    p_material       in varchar2   default null,
+    p_rgp            in number     default null,
+    p_descricao      in varchar2   default null,
+    p_marca          in varchar2   default null,
+    p_modelo         in varchar2   default null,
+    p_observacao     in varchar2   default null,
+    p_ativo          in varchar2   default null,
+    p_almoxarifado   in number     default null,
+    p_endereco       in number     default null,
+    p_unidade        in number     default null,
+    p_localizacao    in number     default null,
+    p_situacao       in number     default null,
+    p_inicio         in date       default null,
+    p_fim            in date       default null,
+    p_codigo_externo in varchar2   default null,
+    p_restricao      in varchar2   default null,
+    p_result         out sys_refcursor) is
 begin
    If p_restricao is null Then
       -- Recupera bens permanentes
@@ -81,30 +82,31 @@ begin
                                              inner join co_moeda moe on (cot.sq_moeda = moe.sq_moeda)
                                        where moe.sigla = 'EUR'
                                      )                eur  on (p.sq_permanente       = eur.sq_permanente)
-          where a.cliente        = p_cliente
-            and (p_chave         is null or (p_chave         is not null and p.sq_permanente       = p_chave))
-            and (p_material      is null or (p_material      is not null and acentos(a.nome)       like '%'||acentos(p_material)||'%'))
-            and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material    = p_tipo_material))
-            and (p_situacao      is null or (p_situacao      is not null and p.sq_mtsituacao       = p_situacao))
-            and (p_localizacao   is null or (p_localizacao   is not null and p.sq_localizacao      = p_localizacao))
-            and (p_almoxarifado  is null or (p_almoxarifado  is not null and p.sq_almoxarifado     = p_almoxarifado))
-            and (p_endereco      is null or (p_endereco      is not null and d.sq_pessoa_endereco  = p_endereco))
-            and (p_unidade       is null or (p_unidade       is not null and e.sq_unidade          = p_unidade))
-            and (p_rgp           is null or (p_rgp           is not null and p.numero_rgp          = p_rgp))
-            and (p_descricao     is null or (p_descricao     is not null and acentos(p.descricao_complementar) like '%'||acentos(p_descricao)||'%'))
-            and (p_marca         is null or (p_marca         is not null and acentos(p.marca)      like '%'||acentos(p_marca)||'%'))
-            and (p_modelo        is null or (p_modelo        is not null and acentos(p.modelo)     like '%'||acentos(p_modelo)||'%'))
-            and (p_observacao    is null or (p_observacao    is not null and acentos(p.observacao) like '%'||acentos(p_observacao)||'%'))
-            and (p_ctcc          is null or (p_ctcc          is not null and p.sq_cc               = p_ctcc))
-            and (p_projeto       is null or (p_projeto       is not null and p.sq_projeto          = p_projeto))
-            and (p_financeiro    is null or (p_financeiro    is not null and m.codigo_interno      = p_financeiro))
-            and (p_inicio        is null or (p_inicio        is not null and 
-                                                             ((p_restricao = 'GARANTIA' and p.data_fim_garantia between p_inicio and p_fim) or
-                                                              (nvl(p_restricao,'-') <> 'GARANTIA' and p.data_tombamento  between p_inicio and p_fim)
-                                                             )
-                                            )
+          where a.cliente         = p_cliente
+            and (p_chave          is null or (p_chave          is not null and p.sq_permanente       = p_chave))
+            and (p_material       is null or (p_material       is not null and acentos(a.nome)       like '%'||acentos(p_material)||'%'))
+            and (p_tipo_material  is null or (p_tipo_material  is not null and a.sq_tipo_material    = p_tipo_material))
+            and (p_situacao       is null or (p_situacao       is not null and p.sq_mtsituacao       = p_situacao))
+            and (p_localizacao    is null or (p_localizacao    is not null and p.sq_localizacao      = p_localizacao))
+            and (p_almoxarifado   is null or (p_almoxarifado   is not null and p.sq_almoxarifado     = p_almoxarifado))
+            and (p_endereco       is null or (p_endereco       is not null and d.sq_pessoa_endereco  = p_endereco))
+            and (p_unidade        is null or (p_unidade        is not null and e.sq_unidade          = p_unidade))
+            and (p_rgp            is null or (p_rgp            is not null and p.numero_rgp          = p_rgp))
+            and (p_descricao      is null or (p_descricao      is not null and acentos(p.descricao_complementar) like '%'||acentos(p_descricao)||'%'))
+            and (p_codigo_externo is null or (p_codigo_externo is not null and acentos(p.codigo_externo) like '%'||acentos(p_codigo_externo)||'%'))
+            and (p_marca          is null or (p_marca          is not null and acentos(p.marca)      like '%'||acentos(p_marca)||'%'))
+            and (p_modelo         is null or (p_modelo         is not null and acentos(p.modelo)     like '%'||acentos(p_modelo)||'%'))
+            and (p_observacao     is null or (p_observacao     is not null and acentos(p.observacao) like '%'||acentos(p_observacao)||'%'))
+            and (p_ctcc           is null or (p_ctcc           is not null and p.sq_cc               = p_ctcc))
+            and (p_projeto        is null or (p_projeto        is not null and p.sq_projeto          = p_projeto))
+            and (p_financeiro     is null or (p_financeiro     is not null and m.codigo_interno      = p_financeiro))
+            and (p_inicio         is null or (p_inicio         is not null and 
+                                                               ((p_restricao = 'GARANTIA' and p.data_fim_garantia between p_inicio and p_fim) or
+                                                                (nvl(p_restricao,'-') <> 'GARANTIA' and p.data_tombamento  between p_inicio and p_fim)
+                                                               )
+                                             )
                 )
-            and (p_ativo         is null or (p_ativo         is not null and p.ativo            = p_ativo));
+            and (p_ativo          is null or (p_ativo         is not null and p.ativo            = p_ativo));
    ElsIf p_restricao = 'EXISTE' or p_restricao = 'EXISTECOD' Then
       -- Verifica se o nome ou a codigo do material ou serviço já foi inserida
       open p_result for 

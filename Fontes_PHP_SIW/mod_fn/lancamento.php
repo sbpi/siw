@@ -43,7 +43,7 @@ include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
-include_once($w_dir_volta.'classes/sp/db_getCronograma.php'); 
+include_once($w_dir_volta.'classes/sp/db_getSolicApoioList.php');
 include_once($w_dir_volta.'classes/sp/db_getAcordoNota.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoOutra.php');
@@ -83,7 +83,8 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
-include_once($w_dir_volta.'funcoes/selecaoRubricaApoio.php');
+//include_once($w_dir_volta.'funcoes/selecaoRubricaApoio.php');
+include_once($w_dir_volta.'funcoes/selecaoSolicApoio.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRubrica.php');
 include_once('visuallancamento.php');
 include_once('validalancamento.php');
@@ -891,7 +892,7 @@ function BuscaCompra() {
   // Recupera certames passíveis de contratação
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$_SESSION['SQ_PESSOA'],'FINANCEIRO',3,
       null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1087,7 +1088,7 @@ function Geral() {
     $w_patrimonio           = $_REQUEST['w_patrimonio'];
     $w_tipo                 = $_REQUEST['w_tipo'];
   
-    if ($w_chave_pai) {
+    if ($w_chave_pai && !$w_solic_vinculo) {
       // Garante que conseguirá recuperar as rubricas do projeto
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null);
       
@@ -1201,7 +1202,7 @@ function Geral() {
     $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],'CLLCCAD',3,
         null,null,null,null,null,null,null,null,null,null,(($w_herda) ? substr($w_herda,0,strpos($w_herda,'|')) :$w_chave_pai),
         null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null);
+        null,null,null,null,null);
     if (count($RS_Solic)>0) $RS_Solic = $RS_Solic[0];
     
     $w_cd_compra            = f($RS_Solic,'codigo_interno');
@@ -1222,7 +1223,7 @@ function Geral() {
     // Recupera itens do vencedor
     $sql = new db_getSolicCL; $RS_Itens = $sql->getInstanceOf($dbms,f($RS_Solic,'sq_menu'),$_SESSION['SQ_PESSOA'],'FINANCEIRO',3,
         null,null,null,null,null,null,null,null,null,null,f($RS_Solic,'sq_siw_solicitacao'),null,null,null,null,null,null,
-        null,null,null,null,null,null,null,$w_chave,null,null,null,null,null,null,null,$w_pessoa);
+        null,null,null,null,null,null,null,$w_chave,null,null,null,null,null,null,null,$w_pessoa,null,null,null,null);
     $w_valor_itens = 0;
 
     if (!is_array($_POST['w_quantidade'])) {
@@ -1265,7 +1266,7 @@ function Geral() {
         
         
         // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
-        $sql = new db_getCronograma; $RS_Fonte = $sql->getInstanceOf($dbms,$w_sq_projeto_rubrica,$w_chave_aux,null,null,null,'RUBFONTES');
+        $sql = new db_getSolicApoioList; $RS_Fonte = $sql->getInstanceOf($dbms, nvl($w_solic_vinculo,$w_chave_pai), null, null, null);
         if (count($RS_Fonte)==0) {
           $w_exibe_ff = false;
         } else {
@@ -1608,7 +1609,7 @@ function Geral() {
       }
       if (nvl(f($RS_Relac,'sigla'),'')!='') { $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla')); }
     } elseif(nvl($w_projeto,'---') == 'PR' || count($RS_Itens)) {
-      if (substr($SG,3)=='CONT' || count($RS_Itens)) {
+      if (count($RS_Itens)) {
         ShowHTML('          <tr><td colspan="2">Projeto para débito:<br><b>'.piece(f($RS_Solic,'dados_pai'),null,'|@|',2).' - '.piece(f($RS_Solic,'dados_pai'),null,'|@|',3).'</b>');
         ShowHTML('          <INPUT type="hidden" name="w_solic_vinculo" value="'.$w_solic_vinculo.'">');
       } else {
@@ -1626,7 +1627,8 @@ function Geral() {
       // Trata fonte de financiamento
       if ($w_exibe_ff) {
         ShowHTML('      <tr>');
-        SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
+        //SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
+        SelecaoSolicApoio('<u>F</u>onte de financiamento','F',null,$w_solic_apoio,nvl($w_solic_vinculo,$w_chave_pai),'w_solic_apoio',null,null,2);
         ShowHTML('      </tr>');
       } else {
         ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
@@ -1842,13 +1844,18 @@ function Geral() {
         foreach($RS_Itens as $row) {
           $qtd   = (($w_herda) ? f($row,'quantidade_autorizada')-f($row,'qtd_paga') : f($row,'qtd_fn'));
           $qtd   = nvl($_POST['w_quantidade'][$i],$qtd);
+          // Ajusta o número de linhas de cada item
+          $rowspan=0;
+          if (count($RS_Rub))     $rowspan++;
+          if (count($w_exibe_ff)) $rowspan++;
+          
           if (f($row,'quantidade_autorizada')-f($row,'qtd_paga')>0 || f($row,'qtd_fn')) {
             $val   = $qtd*f($row,'valor_unidade');
             $texto = f($row,'nm_material').' '.f($row,'detalhamento').
                     ((f($row,'fabricante')) ? ' FABRICANTE '.f($row,'fabricante') : '').
                     ((f($row,'marca_modelo')) ? ' MODELO '.f($row,'marca_modelo') : '');
             ShowHTML('      <tr valign="center">');
-            ShowHTML('          <td align="center"'.((count($RS_Rub)) ? ' rowspan="2"' : '').'>'.nvl(f($row,'ordem'),$i).'</td>');
+            ShowHTML('          <td align="center"'.(($rowspan) ? ' rowspan="'.$rowspan.'"' : '').'>'.nvl(f($row,'ordem'),$i).'</td>');
             ShowHTML('          <td>'.$texto);
             ShowHTML('              <INPUT type="hidden" name="w_sq_itens[]" value="'.f($row,'sq_solicitacao_item').'">');
             ShowHTML('              <INPUT type="hidden" name="w_chave_item[]" value="'.f($row,'sq_documento_item').'">');
@@ -1863,14 +1870,15 @@ function Geral() {
               SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', nvl($_POST['w_rubrica'][$i],f($row,'sq_projeto_rubrica')),nvl($w_solic_vinculo,$w_chave_pai),null,'w_rubrica[]','SELECAO',null,4);
               ShowHTML('      </tr>');
 
-  //            // Trata fonte de financiamento
-  //            if ($w_exibe_ff) {
-  //              ShowHTML('      <tr>');
-  //              SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
-  //              ShowHTML('      </tr>');
-  //            } else {
-  //              ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
-  //            }
+              // Trata fonte de financiamento
+              if ($w_exibe_ff) {
+                ShowHTML('      <tr>');
+                //SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
+                SelecaoSolicApoio('<u>F</u>onte de financiamento','F',null,nvl($_POST['w_solic_apoio'][$i],f($row,'sq_solic_apoio')),nvl($w_solic_vinculo,$w_chave_pai),'w_solic_apoio[]',null,null,4);
+                ShowHTML('      </tr>');
+              } else {
+                ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
+              }
 
   //            // Trata autorização da despesa
   //            if ($w_exige_autorizacao=='S') {
@@ -5153,8 +5161,9 @@ function Grava() {
             $RS = SortArray($RS,'ordem','asc','rubrica','asc');
             foreach ($RS as $row1) {
               $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$w_chave_doc,null,
-                f($row1,'sq_projeto_rubrica'),f($row1,'descricao'),f($row1,'quantidade'),formatNumber(f($row1,'valor_unitario')),
-                nvl(f($row1,'ordem'),$i),f($row1,'data_cotacao'),formatNumber(f($row1,'valor_cotacao')),f($row1,'sq_solicitacao_item'));
+                f($row1,'sq_projeto_rubrica'),f($row1,'sq_solic_apoio'),f($row1,'descricao'),f($row1,'quantidade'),
+                formatNumber(f($row1,'valor_unitario')),nvl(f($row1,'ordem'),$i),f($row1,'data_cotacao'),
+                formatNumber(f($row1,'valor_cotacao')),f($row1,'sq_solicitacao_item'));
               $i++;
             }
           }
@@ -5169,9 +5178,9 @@ function Grava() {
               $operacao = 'E';
             }
             $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$operacao,
-                $w_chave_doc,$_REQUEST['w_chave_item'][$i],$_REQUEST['w_rubrica'][$i],$_REQUEST['w_detalhamento'][$i],
-                $_REQUEST['w_quantidade'][$i],$_REQUEST['w_vl_unitario'][$i],$_REQUEST['w_ordem'][$i],null,null,
-                $_REQUEST['w_sq_itens'][$i]);
+                $w_chave_doc,$_REQUEST['w_chave_item'][$i],$_REQUEST['w_rubrica'][$i],$_REQUEST['w_solic_apoio'][$i],
+                $_REQUEST['w_detalhamento'][$i],$_REQUEST['w_quantidade'][$i],$_REQUEST['w_vl_unitario'][$i],
+                $_REQUEST['w_ordem'][$i],null,null,$_REQUEST['w_sq_itens'][$i]);
           }
         } 
 
@@ -5355,9 +5364,10 @@ function Grava() {
   } elseif ($SG=='ITEM') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-      $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_lancamento_doc'],$_REQUEST['w_sq_documento_item'],
-        $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_descricao'],$_REQUEST['w_quantidade'],$_REQUEST['w_valor_unitario'],
-        $_REQUEST['w_ordem'],$_REQUEST['w_data_cotacao'],$_REQUEST['w_valor_cotacao'],$_REQUEST['w_sq_solicitacao_item']);
+      $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_lancamento_doc'],
+        $_REQUEST['w_sq_documento_item'],$_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],
+        $_REQUEST['w_descricao'],$_REQUEST['w_quantidade'],$_REQUEST['w_valor_unitario'],$_REQUEST['w_ordem'],
+        $_REQUEST['w_data_cotacao'],$_REQUEST['w_valor_cotacao'],$_REQUEST['w_sq_solicitacao_item']);
       ScriptOpen('JavaScript');
       if ($P1==0) {
         if ($P2==1||$P2==3) {
@@ -5673,8 +5683,9 @@ function Grava() {
             // Grava a rubrica de cada item do lançamento
             for ($i = 0; $i < count($_REQUEST['w_sq_projeto_rubrica']); $i++) {
               if (Nvl($_REQUEST['w_sq_projeto_rubrica'][$i], '')!='') {
-                $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,'J',$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_documento_item'][$i],
-                  $_REQUEST['w_sq_projeto_rubrica'][$i],null,null,null,null,null,null,null);
+                $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,'J',$_REQUEST['w_sq_lancamento_doc'][$i],
+                $_REQUEST['w_sq_documento_item'][$i],$_REQUEST['w_sq_projeto_rubrica'][$i],$_REQUEST['w_solic_apoio'][$i],
+                null,null,null,null,null,null,null);
               }
             }
           }

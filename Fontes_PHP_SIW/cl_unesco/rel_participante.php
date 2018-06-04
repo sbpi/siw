@@ -92,27 +92,31 @@ if (strlen($p_fim_i)==7) {
   $p_fim_i = '01/'.substr($p_fim_i,5).'/'.substr($p_fim_i,0,4);
 }
 
-$p_atraso       = upper($_REQUEST['p_atraso']);
-$p_codigo       = upper($_REQUEST['p_codigo']);
-$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
-$p_empenho      = upper($_REQUEST['p_empenho']);
-$p_chave        = upper($_REQUEST['p_chave']);
-$p_assunto      = upper($_REQUEST['p_assunto']);
-$p_pais         = upper($_REQUEST['p_pais']);
-$p_regiao       = upper($_REQUEST['p_regiao']);
-$p_uf           = upper($_REQUEST['p_uf']);
-$p_cidade       = upper($_REQUEST['p_cidade']);
-$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
-$p_palavra      = upper($_REQUEST['p_palavra']);
-$p_prazo        = upper($_REQUEST['p_prazo']);
-$p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = upper($_REQUEST['p_sqcc']);
-$p_moeda        = $_REQUEST['p_moeda'];
-$p_vencedor     = $_REQUEST['p_vencedor'];
-$p_externo      = $_REQUEST['p_externo'];
-$p_cnpj         = $_REQUEST['p_cnpj'];
-$p_fornecedor   = $_REQUEST['p_fornecedor'];
+$p_atraso        = upper($_REQUEST['p_atraso']);
+$p_codigo        = upper($_REQUEST['p_codigo']);
+$p_acao_ppa      = upper($_REQUEST['p_acao_ppa']);
+$p_empenho       = upper($_REQUEST['p_empenho']);
+$p_chave         = upper($_REQUEST['p_chave']);
+$p_assunto       = upper($_REQUEST['p_assunto']);
+$p_tipo_material = upper($_REQUEST['p_tipo_material']);
+$p_seq_protocolo = upper($_REQUEST['p_seq_protocolo']);
+$p_situacao      = upper($_REQUEST['p_situacao']);
+$p_ano_protocolo = upper($_REQUEST['p_ano_protocolo']);
+$p_pais          = upper($_REQUEST['p_pais']);
+$p_regiao        = upper($_REQUEST['p_regiao']);
+$p_uf            = upper($_REQUEST['p_uf']);
+$p_cidade        = upper($_REQUEST['p_cidade']);
+$p_usu_resp      = upper($_REQUEST['p_usu_resp']);
+$p_uorg_resp     = upper($_REQUEST['p_uorg_resp']);
+$p_palavra       = upper($_REQUEST['p_palavra']);
+$p_prazo         = upper($_REQUEST['p_prazo']);
+$p_fase          = explodeArray($_REQUEST['p_fase']);
+$p_sqcc          = upper($_REQUEST['p_sqcc']);
+$p_moeda         = $_REQUEST['p_moeda'];
+$p_vencedor      = $_REQUEST['p_vencedor'];
+$p_externo       = $_REQUEST['p_externo'];
+$p_cnpj          = $_REQUEST['p_cnpj'];
+$p_fornecedor    = $_REQUEST['p_fornecedor']; 
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -196,8 +200,8 @@ function Inicial() {
       if (nvl($p_solic_pai,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-            $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null);
+            $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+            $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null,null,null,null,null);
           if($w_tipo=='WORD') $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S','S').'</b>]';
           else                $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
       } elseif ($p_sqcc>'') {
@@ -218,25 +222,25 @@ function Inicial() {
       if (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
         $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas pedidos com vinculação</b>]';
       } 
-      if ($p_pais>'') {
+      if ($p_tipo_material>'') {
         $w_linha++;
-        $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_pais,null,null,null,null,null,null,'REGISTROS');
+        $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
         foreach($RS as $row) { $RS = $row; break; }
         $w_filtro .= '<tr valign="top"><td align="right">Tipo de material/serviço<td>[<b>'.f($RS,'nome_completo').'</b>]';
       } 
       if (nvl($p_chave,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
                   $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-                  $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-                  $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null);
+                  $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+                  $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null,null,null,null,null);
         $w_filtro.='<tr valign="top"><td align="right">Pedido <td>[<b>'.f($RS,'codigo_interno').'</b>]';
       } 
       //if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_empenho>'')  $w_filtro .= '<tr valign="top"><td align="right">Código <td>[<b>'.$p_empenho.'</b>]';
       if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Material<td>[<b>'.$p_proponente.'</b>]'; }
-      if ($p_regiao>'' || $p_cidade>'') {
+      if ($p_seq_protocolo>'' || $p_ano_protocolo>'') {
         $w_linha++;
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_seq_protocolo>'') ? str_pad($p_seq_protocolo,6,'0',PAD_RIGHT) : '*').'/'.(($p_ano_protocolo>'') ? $p_ano_protocolo : '*').'</b>]';
       } 
       if ($p_usu_resp>'') {
         $w_linha++;
@@ -253,9 +257,9 @@ function Inicial() {
         $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
         $w_filtro .= '<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
-      if ($p_uf>'') {
+      if ($p_situacao>'') {
         $w_linha++;
-        $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, $p_uf, $w_cliente, null, null, null, null, null, null);
+        $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, $p_situacao, $w_cliente, null, null, null, null, null, null);
         foreach ($RS as $row) {
           $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Situação do certame <td>[<b>'.f($row,'nome').'</b>]';
           break;
@@ -450,15 +454,15 @@ function Inicial() {
     if (nvl($p_moeda,'')!='')       $SQL.="   and b.sq_moeda             = ".$p_moeda.$crlf;
     if (nvl($p_sq_acao_ppa,'')!='') $SQL.="   and d.sq_modalidade_artigo = ".$p_sq_acao_ppa.$crlf;
     if (nvl($p_sq_orprior,'')!='')  $SQL.="   and b.sq_plano             = ".$p_sq_orprior.$crlf;
-    if (nvl($p_pais,'')!='')        $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=".$p_pais."))".$crlf;
-    if (nvl($p_regiao,'')!='')      $SQL.="   and d.processo             like '%".$p_regiao."%'))".$crlf;
-    if (nvl($p_cidade,'')!='')      $SQL.="   and d.processo             like '%".$p_cidade."%'".$crlf;
+    if (nvl($p_tipo_material,'')!='')        $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=".$p_tipo_material."))".$crlf;
+    if (nvl($p_seq_protocolo,'')!='')      $SQL.="   and d.processo             like '%".$p_seq_protocolo."%'))".$crlf;
+    if (nvl($p_ano_protocolo,'')!='')      $SQL.="   and d.processo             like '%".$p_ano_protocolo."%'".$crlf;
     if (nvl($p_usu_resp,'')!='')    $SQL.="   and d4.sq_lcmodalidade     = ".$p_usu_resp.$crlf;
     if (nvl($p_uorg_resp,'')!='')   $SQL.="   and (b1.sigla <> 'AT' and e.sq_unidade = ".$p_uorg_resp.")".$crlf;
     if (nvl($p_sqcc,'')!='')        $SQL.="   and b.sq_cc                = ".$p_sqcc.$crlf;
     if (nvl($p_projeto,'')!='')     $SQL.="   and b.sq_solic_pai         = ".$p_projeto.$crlf;
-    if (nvl($p_processo,'')!='')    $SQL.="   and (('".$p_processo."'    = 'CLASSIF' and b.sq_cc is not null) or ('".$p_processo."' <> 'CLASSIF' and m.sq_menu = to_number(".$p_processo.")))".$crlf;
-    if (nvl($p_uf,'')!='')          $SQL.="   and d6.sq_lcsituacao       = ".$p_uf.$crlf;
+    if (nvl($p_servico,'')!='')    $SQL.="   and (('".$p_servico."'    = 'CLASSIF' and b.sq_cc is not null) or ('".$p_servico."' <> 'CLASSIF' and m.sq_menu = to_number(".$p_servico.")))".$crlf;
+    if (nvl($p_situacao,'')!='')          $SQL.="   and d6.sq_lcsituacao       = ".$p_situacao.$crlf;
     if (nvl($p_proponente,'')!='')  $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(y.nome,null) like '%'||acentos('".$p_proponente."',null)||'%')".$crlf;
     if (nvl($p_assunto,'')!='')     $SQL.="   and acentos(b.codigo_externo,null) like '%'||acentos('".$p_assunto."',null)||'%'".$crlf;
     if (nvl($p_palavra,'')!='')     $SQL.="   and acentos(d.numero_certame,null) like '%'||acentos('".$p_palavra."',null)||'%'".$crlf;

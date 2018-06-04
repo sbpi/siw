@@ -432,7 +432,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        fonte.phpShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
+        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 

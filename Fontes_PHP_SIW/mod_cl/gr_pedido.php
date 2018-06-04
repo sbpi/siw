@@ -29,6 +29,10 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
+include_once($w_dir_volta.'funcoes/selecaoPais.php');
+include_once($w_dir_volta.'funcoes/selecaoRegiao.php');
+include_once($w_dir_volta.'funcoes/selecaoEstado.php');
+include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServSubord.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoLCModalidade.php');
@@ -98,41 +102,45 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 $w_ano      = RetornaAno();
 
-$p_tipo         = upper($_REQUEST['w_tipo']);
-$p_projeto      = upper($_REQUEST['p_projeto']);
-$p_atividade    = upper($_REQUEST['p_atividade']);
-$p_graf         = upper($_REQUEST['p_graf']);
-$p_ativo        = upper($_REQUEST['p_ativo']);
-$p_solicitante  = upper($_REQUEST['p_solicitante']);
-$p_prioridade   = upper($_REQUEST['p_prioridade']);
-$p_unidade      = upper($_REQUEST['p_unidade']);
-$p_proponente   = upper($_REQUEST['p_proponente']);
-$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
-$p_ordena       = lower($_REQUEST['p_ordena']);
-$p_ini_i        = upper($_REQUEST['p_ini_i']);
-$p_ini_f        = upper($_REQUEST['p_ini_f']);
-$p_fim_i        = upper($_REQUEST['p_fim_i']);
-$p_fim_f        = upper($_REQUEST['p_fim_f']);
-$p_atraso       = upper($_REQUEST['p_atraso']);
-$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
-$p_empenho      = upper($_REQUEST['p_empenho']);
-$p_chave        = upper($_REQUEST['p_chave']);
-$p_assunto      = upper($_REQUEST['p_assunto']);
-$p_pais         = upper($_REQUEST['p_pais']);
-$p_regiao       = upper($_REQUEST['p_regiao']);
-$p_uf           = upper($_REQUEST['p_uf']);
-$p_cidade       = upper($_REQUEST['p_cidade']);
-$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
-$p_palavra      = upper($_REQUEST['p_palavra']);
-$p_prazo        = upper($_REQUEST['p_prazo']);
-$p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = upper($_REQUEST['p_sqcc']);
-$p_agrega       = upper($_REQUEST['p_agrega']);
-$p_tamanho      = upper($_REQUEST['p_tamanho']);
-$p_vencedor     = $_REQUEST['p_vencedor'];
-$p_externo      = $_REQUEST['p_externo'];
-$p_cnpj         = $_REQUEST['p_cnpj'];
-$p_fornecedor   = $_REQUEST['p_fornecedor'];
+$p_tipo          = upper($_REQUEST['w_tipo']);
+$p_projeto       = upper($_REQUEST['p_projeto']);
+$p_atividade     = upper($_REQUEST['p_atividade']);
+$p_graf          = upper($_REQUEST['p_graf']);
+$p_ativo         = upper($_REQUEST['p_ativo']);
+$p_solicitante   = upper($_REQUEST['p_solicitante']);
+$p_prioridade    = upper($_REQUEST['p_prioridade']);
+$p_unidade       = upper($_REQUEST['p_unidade']);
+$p_proponente    = upper($_REQUEST['p_proponente']);
+$p_usu_resp      = upper($_REQUEST['p_usu_resp']);
+$p_ordena        = lower($_REQUEST['p_ordena']);
+$p_ini_i         = upper($_REQUEST['p_ini_i']);
+$p_ini_f         = upper($_REQUEST['p_ini_f']);
+$p_fim_i         = upper($_REQUEST['p_fim_i']);
+$p_fim_f         = upper($_REQUEST['p_fim_f']);
+$p_atraso        = upper($_REQUEST['p_atraso']);
+$p_acao_ppa      = upper($_REQUEST['p_acao_ppa']);
+$p_empenho       = upper($_REQUEST['p_empenho']);
+$p_chave         = upper($_REQUEST['p_chave']);
+$p_assunto       = upper($_REQUEST['p_assunto']);
+$p_tipo_material = upper($_REQUEST['p_tipo_material']);
+$p_seq_protocolo = upper($_REQUEST['p_seq_protocolo']);
+$p_situacao      = upper($_REQUEST['p_situacao']);
+$p_ano_protocolo = upper($_REQUEST['p_ano_protocolo']);
+$p_pais          = upper($_REQUEST['p_pais']);
+$p_regiao        = upper($_REQUEST['p_regiao']);
+$p_uf            = upper($_REQUEST['p_uf']);
+$p_cidade        = upper($_REQUEST['p_cidade']);
+$p_uorg_resp     = upper($_REQUEST['p_uorg_resp']);
+$p_palavra       = upper($_REQUEST['p_palavra']);
+$p_prazo         = upper($_REQUEST['p_prazo']);
+$p_fase          = explodeArray($_REQUEST['p_fase']);
+$p_sqcc          = upper($_REQUEST['p_sqcc']);
+$p_agrega        = upper($_REQUEST['p_agrega']);
+$p_tamanho       = upper($_REQUEST['p_tamanho']);
+$p_vencedor      = $_REQUEST['p_vencedor'];
+$p_externo       = $_REQUEST['p_externo'];
+$p_cnpj          = $_REQUEST['p_cnpj'];
+$p_fornecedor    = $_REQUEST['p_fornecedor'];
 
 // Verifica se o cliente tem o módulo de projetos
 $sql = new db_getSiwCliModLis; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,'PR');
@@ -160,7 +168,6 @@ exit;
 function Gerencial() {
   extract($GLOBALS);
   global $w_embed;
-  
   $w_pag   = 1;
   $w_linha = 0;
   
@@ -188,9 +195,9 @@ function Gerencial() {
       $sql = new db_getPersonData; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
-    if ($p_uf>'') {
+    if ($p_situacao>'') {
       $w_linha++;
-      $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, $p_uf, $w_cliente, null, null, null, null, null, null);
+      $sql = new db_getLCSituacao; $RS = $sql->getInstanceOf($dbms, $p_situacao, $w_cliente, null, null, null, null, null, null);
       foreach ($RS as $row) {
         $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Situação do certame <td>[<b>'.f($row,'nome').'</b>]';
         break;
@@ -208,9 +215,9 @@ function Gerencial() {
     if ($p_externo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Código '.(($w_cliente==6881) ? 'SA' : 'externo').' <td>[<b>'.$p_externo.'</b>]'; }
     if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Material<td>[<b>'.$p_proponente.'</b>]'; }
     if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Número do certame <td>[<b>'.$p_palavra.'</b>]'; }
-    if ($p_pais>'') {
+    if ($p_tipo_material>'') {
       $w_linha++;
-      $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_pais,null,null,null,null,null,null,'REGISTROS');
+      $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo de material/serviço<td>[<b>'.f($RS,'nome_completo').'</b>]';
     } 
@@ -220,9 +227,9 @@ function Gerencial() {
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Modalidade<td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_regiao>'' || $p_cidade>'') {
+    if ($p_seq_protocolo>'' || $p_ano_protocolo>'') {
       $w_linha++;
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_seq_protocolo>'') ? str_pad($p_seq_protocolo,6,'0',PAD_RIGHT) : '*').'/'.(($p_ano_protocolo>'') ? $p_ano_protocolo : '*').'</b>]';
     } 
     if ($p_ativo=='S') {
       $w_linha++;
@@ -235,14 +242,16 @@ function Gerencial() {
     // Recupera os dados a partir do filtro
     $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,null,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor);
+        $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
+        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor,
+        $p_pais, $p_regiao, $p_uf, $p_cidade);
 
     switch ($p_agrega) {
       case $sigla.'ABERTURA':      $RS1 = SortArray($RS1,'data_abertura','asc');         break;
       case $sigla.'AUTORIZ':       $RS1 = SortArray($RS1,'data_autorizacao','asc');      break;
       case $sigla.'UNIDADE':       $RS1 = SortArray($RS1,'nm_unidade_resp','asc');       break;
       case $sigla.'CC':            $RS1 = SortArray($RS1,'nm_cc','asc');                 break;
+      case $sigla.'PAIS':          $RS1 = SortArray($RS1,'nm_pais','asc');               break;
       case $sigla.'PROJ':          $RS1 = SortArray($RS1,'dados_pai','asc');             break;
       case $sigla.'MODAL':         $RS1 = SortArray($RS1,'nm_lcmodalidade','asc');       break;
       case $sigla.'ENQ':           $RS1 = SortArray($RS1,'nm_enquadramento','asc');      break;
@@ -268,8 +277,8 @@ function Gerencial() {
       Validate('p_proponente','Material','','','2','60','1','');
       if ($SG==$sigla.'LIC') {
         Validate('p_palavra','Certame','','','2','14','1','1');
-        Validate('p_regiao','Sequencial do protocolo','','','1','10','','0123456789');
-        Validate('p_cidade','Ano do protocolo','','','4','4','','0123456789');
+        Validate('p_seq_protocolo','Sequencial do protocolo','','','1','10','','0123456789');
+        Validate('p_ano_protocolo','Ano do protocolo','','','4','4','','0123456789');
         Validate('p_ini_i','Início do período','DATA','','10','10','','0123456789/');
         Validate('p_ini_f','Término do período','DATA','','10','10','','0123456789/');
         ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
@@ -342,28 +351,30 @@ function Gerencial() {
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
           case $sigla.'ENQ':       ShowHTML('     document.Form.p_acao_ppa.value=filtro;'); break;
-          case $sigla.'CIDADE':    ShowHTML('     document.Form.p_cidade.value=filtro;');   break;
+          case $sigla.'CIDADE':    ShowHTML('     document.Form.p_ano_protocolo.value=filtro;');   break;
           case $sigla.'UNIDADE':   ShowHTML('     document.Form.p_unidade.value=filtro;');  break;
           case $sigla.'PROJ':      ShowHTML('     document.Form.p_projeto.value=filtro;');  break;
+          case $sigla.'PAIS':      ShowHTML('     document.Form.p_pais.value=filtro;');     break;
           case $sigla.'CC':        ShowHTML('     document.Form.p_sqcc.value=filtro;');     break;
           case $sigla.'ABERTURA':  ShowHTML('     document.Form.p_ini_i.value=filtro;');    break;
           case $sigla.'AUTORIZ':
             ShowHTML('     document.Form.p_fim_i.value="01/"+filtro.substr(5,2)+"/"+filtro.substr(0,4);');
             break;
           case $sigla.'MODAL':     ShowHTML('     document.Form.p_usu_resp.value=filtro;'); break;
-          case $sigla.'SITUACAO':  ShowHTML('     document.Form.p_uf.value=filtro;');       break;
+          case $sigla.'SITUACAO':  ShowHTML('     document.Form.p_situacao.value=filtro;');       break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
           case $sigla.'ENQ':       ShowHTML('    else document.Form.p_acao_ppa.value="'.$_REQUEST['p_acao_ppa'].'";'); break;
-          case $sigla.'CIDADE':    ShowHTML('    else document.Form.p_cidade.value="'.$_REQUEST['p_cidade'].'";');     break;
+          case $sigla.'CIDADE':    ShowHTML('    else document.Form.p_ano_protocolo.value="'.$_REQUEST['p_ano_protocolo'].'";');     break;
           case $sigla.'UNIDADE':   ShowHTML('    else document.Form.p_unidade.value="'.$_REQUEST['p_unidade'].'";');   break;
+          case $sigla.'PAIS':      ShowHTML('    else document.Form.p_pais.value="'.$_REQUEST['p_pais'].'";');         break;
           case $sigla.'PROJ':      ShowHTML('    else document.Form.p_projeto.value="'.$_REQUEST['p_projeto'].'";');   break;
           case $sigla.'CC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');       break;
           case $sigla.'ABERTURA':  ShowHTML('    else document.Form.p_ini_i.value="'.$_REQUEST['p_ini_i'].'";');       break;
           case $sigla.'AUTORIZ':   ShowHTML('    else document.Form.p_fim_i.value="'.$_REQUEST['p_fim_i'].'";');       break;
           case $sigla.'MODAL':     ShowHTML('    else document.Form.p_usu_resp.value="'.$_REQUEST['p_usu_resp'].'";'); break;
-          case $sigla.'SITUACAO':  ShowHTML('    else document.Form.p_uf.value="'.$_REQUEST['p_uf'].'";');             break;
+          case $sigla.'SITUACAO':  ShowHTML('    else document.Form.p_situacao.value="'.$_REQUEST['p_situacao'].'";');             break;
         } 
         $sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
@@ -392,14 +403,15 @@ function Gerencial() {
         ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
         switch ($p_agrega) {
           case $sigla.'ENQ':       if ($_REQUEST['p_acao_ppa']=='') ShowHTML('<input type="Hidden" name="p_acao_ppa" value="">');  break;
-          case $sigla.'CIDADE':    if ($_REQUEST['p_cidade']=='')   ShowHTML('<input type="Hidden" name="p_cidade" value="">');    break;
+          case $sigla.'CIDADE':    if ($_REQUEST['p_ano_protocolo']=='')   ShowHTML('<input type="Hidden" name="p_ano_protocolo" value="">');    break;
           case $sigla.'UNIDADE':   if ($_REQUEST['p_unidade']=='')  ShowHTML('<input type="Hidden" name="p_unidade" value="">');   break;
+          case $sigla.'PAIS':      if ($_REQUEST['p_pais']=='')     ShowHTML('<input type="Hidden" name="p_pais" value="">');      break;
           case $sigla.'PROJ':      if ($_REQUEST['p_projeto']=='')  ShowHTML('<input type="Hidden" name="p_projeto" value="">');   break;
           case $sigla.'CC':        if ($_REQUEST['p_sqcc']=='')     ShowHTML('<input type="Hidden" name="p_sqcc" value="">');      break;
           case $sigla.'ABERTURA':  if ($_REQUEST['p_ini_i']=='')    ShowHTML('<input type="Hidden" name="p_ini_i" value="">');     break;
           case $sigla.'AUTORIZ':   if ($_REQUEST['p_fim_i']=='')    ShowHTML('<input type="Hidden" name="p_fim_i" value="">');     break;
           case $sigla.'MODAL':     if ($_REQUEST['p_usu_resp']=='') ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');  break;
-          case $sigla.'SITUACAO':  if ($_REQUEST['p_uf']=='')       ShowHTML('<input type="Hidden" name="p_uf" value="">');        break;
+          case $sigla.'SITUACAO':  if ($_REQUEST['p_situacao']=='')       ShowHTML('<input type="Hidden" name="p_situacao" value="">');        break;
         } 
       } 
       $w_nm_quebra  = '';
@@ -483,6 +495,30 @@ function Gerencial() {
               } 
               $w_nm_quebra  = date('Y/m',f($row,'data_autorizacao'));
               $w_chave      = date('Y/m',f($row,'data_autorizacao'));
+              $w_qt_quebra  = 0;
+              $t_solic      = 0;
+              $t_cad        = 0;
+              $t_tram       = 0;
+              $t_conc       = 0;
+              $t_atraso     = 0;
+              $t_aviso      = 0;
+              $t_valor      = 0;
+              $t_acima      = 0;
+              $t_custo      = 0;
+              $w_linha     += 1;
+            } 
+            break;
+          case $sigla.'PAIS':
+            if ($w_nm_quebra!=f($row,'nm_pais')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
+              } 
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_pais'));
+              } 
+              $w_nm_quebra  = f($row,'nm_pais');
+              $w_chave      = f($row,'sq_pais');
               $w_qt_quebra  = 0;
               $t_solic      = 0;
               $t_cad        = 0;
@@ -661,6 +697,7 @@ function Gerencial() {
             case $sigla.'ENQ':         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_enquadramento'));  break;
             case $sigla.'CIDADE':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_destino'));        break;
             case $sigla.'UNIDADE':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
+            case $sigla.'PAIS':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_pais'));           break;
             case $sigla.'PROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.piece(f($row,'dados_pai'),null,'|@|',2)); break;
             case $sigla.'CC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_cc'));            break;
             case $sigla.'ABERTURA':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'data_abertura'));     break;
@@ -761,6 +798,7 @@ function Gerencial() {
     if (f($RS_Menu,'sigla')=='CLLCCAD') {
       ShowHTML(' <option value="'.$sigla.'MODAL"'.(($p_agrega==$sigla.'MODAL') ? ' SELECTED': '').'>Modalidade');
     }
+    ShowHTML(' <option value="'.$sigla.'PAIS"'.(($p_agrega==$sigla.'PAIS') ? ' SELECTED': '').'>País');
     if ($w_pr=='S') ShowHTML(' <option value="'.$sigla.'PROJ"'.(($p_agrega==$sigla.'PROJ') ? ' SELECTED': '').'>Projeto');
     if (f($RS_Menu,'sigla')=='CLLCCAD') {
       ShowHTML(' <option value="'.$sigla.'SITUACAO"'.(($p_agrega==$sigla.'SITUACAO') ? ' SELECTED': '').'>Situação do certame');
@@ -786,14 +824,14 @@ function Gerencial() {
     }
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
-    selecaoTipoMatServSubord('<u>T</u>ipo de material/serviço:','S','Selecione o grupo/subgrupo de material/serviço desejado.',null,$p_pais,'p_pais','SUBTODOS',null);
+    selecaoTipoMatServSubord('<u>T</u>ipo de material/serviço:','S','Selecione o grupo/subgrupo de material/serviço desejado.',null,$p_tipo_material,'p_tipo_material','SUBTODOS',null);
     ShowHTML('      </tr>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>C</U>ódigo '.(($SG==$sigla.'LIC') ? ' da licitação': ' da solicitação').':<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_empenho" size="20" maxlength="60" value="'.$p_empenho.'"></td>');
     if ($SG==$sigla.'LIC') {
-      ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$p_regiao.'">/<INPUT class="STI" type="text" name="p_cidade" size="4" maxlength="4" value="'.$p_cidade.'"></td>');
+      ShowHTML('     <td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_seq_protocolo" style="text-align:right;" size="7" maxlength="6" value="'.$p_seq_protocolo.'">/<INPUT class="STI" type="text" name="p_ano_protocolo" size="4" maxlength="4" value="'.$p_ano_protocolo.'"></td>');
       ShowHTML('   <tr valign="top">');
     }
     SelecaoPessoa('<u>R</u>esponsável pela execução:','N','Selecione o responsável na relação.',$p_prioridade,null,'p_prioridade','USUARIOS');
@@ -810,10 +848,16 @@ function Gerencial() {
       ShowHTML('     <td><b>Número d<u>o</u> certame:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14">');
       SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$p_usu_resp,null,'p_usu_resp',null,null);
       ShowHTML('<tr valign="top">');
-      SelecaoLCSituacao('<u>S</u>ituação do certame:','S','Selecione a situação do certame.',$p_uf,null,'p_uf',null,null);
+      SelecaoLCSituacao('<u>S</u>ituação do certame:','S','Selecione a situação do certame.',$p_situacao,null,'p_situacao',null,null);
       ShowHTML('     <td><b><U>C</U>ódigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="30" value="'.$p_assunto.'"></td>');
       //MontaRadioNS('<b>Apenas decisão judicial?</b>',$p_ativo,'p_ativo');
     }
+    ShowHTML('      <tr>');
+    SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
+    SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+    SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('   <tr valign="top">');
     if ($SG==$sigla.'LIC') {
       ShowHTML('     <td>');
@@ -822,6 +866,7 @@ function Gerencial() {
     } else {
       ShowHTML('     <td><b>A<u>u</u>torização entre:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">');
     }
+
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('   <tr valign="top"><td colspan="2"><input type="checkbox" class="stc" name="p_vencedor" value="S"'.((nvl($p_vencedor,'')!='') ? ' checked' : '').'> Recuperar apenas certames com vencedores indicados');
     ShowHTML('    </table>');
@@ -860,6 +905,7 @@ function ImprimeCabecalho() {
     case $sigla.'ENQ':         ShowHTML('          <td><b>Enquadramento</td>');        break;
     case $sigla.'CIDADE':      ShowHTML('          <td><b>Cidade destino</td>');       break;
     case $sigla.'UNIDADE':     ShowHTML('          <td><b>Unidade solicitante</td>');  break;
+    case $sigla.'PAIS':        ShowHTML('          <td><b>País</td>');                 break;
     case $sigla.'PROJ':        ShowHTML('          <td><b>Projeto</td>');              break;
     case $sigla.'CC':          ShowHTML('          <td><b>Classificação</font></td>'); break;
     case $sigla.'ABERTURA':    ShowHTML('          <td><b>Mês de abertura</td>');      break;

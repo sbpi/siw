@@ -3,6 +3,7 @@ create or replace procedure SP_PutLancamentoItem
     p_chave               in number,
     p_chave_aux           in number   default null,
     p_sq_projeto_rubrica  in number   default null,
+    p_solic_apoio         in number   default null,
     p_descricao           in varchar2 default null,
     p_quantidade          in number   default null,
     p_valor_unitario      in number   default null,
@@ -22,18 +23,19 @@ begin
       select sq_documento_item.nextval into w_chave_aux from dual;
       
       insert into fn_documento_item
-        (sq_documento_item,           sq_lancamento_doc,  sq_projeto_rubrica,   descricao,
-         quantidade,                  valor_unitario,     ordem,                data_cotacao,
-         valor_cotacao,               sq_solicitacao_item
+        (sq_documento_item,           sq_lancamento_doc,   sq_projeto_rubrica,   descricao,
+         quantidade,                  valor_unitario,      ordem,                data_cotacao,
+         valor_cotacao,               sq_solicitacao_item, sq_solic_apoio
         )
       values
         (w_chave_aux,                 p_chave,            p_sq_projeto_rubrica, p_descricao,
          p_quantidade,                p_valor_unitario,   p_ordem,              p_data_cotacao,
-         coalesce(p_valor_cotacao,0), p_solic_item
+         coalesce(p_valor_cotacao,0), p_solic_item,       p_solic_apoio
         );
    Elsif p_operacao = 'A' Then -- Alteração
       update fn_documento_item
          set sq_projeto_rubrica  = p_sq_projeto_rubrica,
+             sq_solic_apoio      = p_solic_apoio,
              descricao           = p_descricao,
              quantidade          = p_quantidade,
              valor_unitario      = p_valor_unitario,

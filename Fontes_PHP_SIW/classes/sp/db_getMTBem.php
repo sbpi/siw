@@ -12,7 +12,8 @@ class db_getMTBem {
    function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_sqcc, 
         $p_projeto, $p_financeiro, $p_tipo, $p_material, $p_rgp, $p_descricao,
         $p_marca, $p_modelo, $p_observacao, $p_ativo, $p_almoxarifado, $p_endereco,
-        $p_unidade, $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_restricao) {
+        $p_unidade, $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_codigo_externo,
+        $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMTBem';  
      $params=array('p_cliente'            =>array($p_cliente,                        B_INTEGER,        32),
                    'p_usuario'            =>array($p_usuario,                        B_INTEGER,        32),
@@ -34,8 +35,9 @@ class db_getMTBem {
                    'p_localizacao'        =>array(tvl($p_localizacao),               B_INTEGER,        32),
                    'p_situacao'           =>array(tvl($p_situacao),                  B_INTEGER,        32),
                    'p_inicio'             =>array(tvl($p_inicio),                    B_DATE,           32),
-                   'p_fim'                =>array(tvl($p_fim),                       B_DATE,           32),
-                   'p_restricao'          =>array($p_restricao,                      B_VARCHAR,        20),                                 
+                   'p_fim'                =>array(tvl($p_fim),                       B_DATE,           32),   
+                   'p_codigo_externo'     =>array(tvl($p_codigo_externo),            B_VARCHAR,        30), 
+                   'p_restricao'          =>array($p_restricao,                      B_VARCHAR,        20),                             
                    'p_result'             =>array(null,                              B_CURSOR,         -1)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -186,8 +186,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=$crlf.'      <tr><td valign="top"><b>Tipo:</b></td>';
     $l_html.=$crlf.'          <td>'.f($RS,'nm_tipo_acordo').'</td></tr>';
-    $l_html.=$crlf.'      <tr><td><b>Cidade de origem:</b></td>';
-    $l_html.=$crlf.'          <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
+    $l_html.=$crlf.'      <tr><td><b>Local de entrega/prestação serviço:</b></td>';
+    $l_html.=$crlf.'          <td>'.f($RS,'nm_cidade').'</td></tr>';
     if ($l_tipo!='WORD') {
       $l_html.=$crlf.'          <tr><td><b>Gestor do contrato:</b></td>';
       $l_html.=$crlf.'              <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
